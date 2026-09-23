@@ -45,7 +45,7 @@ OhMyLMS is the go-to WordPress coaching plugin for:
 5. **Memberships & subscriptions (Pro)** — Monthly or yearly coaching memberships for predictable recurring revenue.
 6. **One-click upsells (Pro)** — Increase revenue per student with post-purchase upsell offers, no redirect needed.
 
-== 🎯 Popular Use Cases for Coaches ==
+== 🎯 Popular Use Cases for Coaches ===
 
 **Group Coaching Programs (Business & Agency)**
 Run structured group coaching with cohorts — students enroll, start on a set date, and move through your curriculum as a group. Perfect for high-ticket coaching offers.
