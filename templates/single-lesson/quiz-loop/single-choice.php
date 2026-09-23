@@ -1,0 +1,32 @@
+
+<?php
+/**
+ * The template for displaying lesson's Audio, Video, Text content
+ *
+ * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/single-choice.php.
+ *
+ * @package OMLMS\Templates
+ * @version  1.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+?>
+
+<div class="quiz-checkbox-radio-options type-radio">
+
+	<?php foreach ($question['questions'] as $option){ ?>
+	<label class="single-option">
+		<input type="radio" data-question-id="<?php echo $option['question_id']; ?>" name="attempt[<?php echo $attempt['id']; ?>][quiz_question][<?php echo $option['question_id'] ?>][]"  value="<?php echo $option['id']; ?>">
+		<div class="option-box">
+			<span class="checked-check">
+				<svg width="8" height="8" fill="none" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="4" fill="#fff"/></svg>
+			</span>
+			<span class="option-title">
+				<?php echo esc_html( $option['answer'] ); ?>
+			</span>
+		</div>
+	</label>
+	<?php } ?>
+</div>

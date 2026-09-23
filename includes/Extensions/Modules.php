@@ -1,0 +1,17 @@
+<?php
+namespace OMLMS\Extensions;
+
+/** Project modules are explicitly enabled by trusted site configuration. */
+final class Modules {
+    public static function load() {
+        $enabled = defined('OMLMS_ENABLED_MODULES') ? OMLMS_ENABLED_MODULES : [];
+        $enabled = apply_filters('ohmylms_enabled_modules', $enabled);
+        foreach (array_unique((array) $enabled) as $id) {
+            if (!is_string($id) || !preg_match('/^[a-z][a-z0-9_-]*$/D', $id)) { continue; }
+            $root = realpath(OHMYLMS_DIR . '/modules');
+            $file = realpath(OHMYLMS_DIR . '/modules/' . $id . '/module.php');
+            if (!$root || !$file || strpos($file, $root . DIRECTORY_SEPARATOR) !== 0) { continue; }
+            require_once $file;
+        }
+    }
+}

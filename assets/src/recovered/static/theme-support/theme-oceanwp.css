@@ -1,0 +1,50 @@
+.theme-oceanwp.creator-lms-page #main #content-wrap {
+    padding-top: 0;
+    padding-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.theme-oceanwp.creator-lms-page #main #content-wrap > .content-area {
+    width: 100%;
+    padding-right: 0;
+    border: none;
+    margin: 0;
+    box-shadow: none;
+}
+
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=text]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=password]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=email]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=url]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=date]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=month]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=time]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=datetime]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=datetime-local]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=week]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=number]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=search]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=tel]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form input[type=color]:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form select:focus, 
+.theme-oceanwp.creator-lms-page .creator-lms-checkout-form-wrapper form textarea:focus {
+    border-color: #ebebef;
+}
+
+.theme-oceanwp.creator-lms-page .creator-lms-password-show .show-password-icon {
+    top: 17px;
+}
+
+.theme-oceanwp.creator-lms-page .creator-lms-password-show .eye-off {
+    top: -1px;
+}
+
+.theme-oceanwp.creator-lms-page .creator-lms-form-login-toggle a {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+.theme-oceanwp.creator-lms-page .creator-lms-form-login .forgote-pasword-row .forgot-pass {
+    text-decoration: none !important;
+}

@@ -1,0 +1,92 @@
+.creator-lms-page {
+    .creator-lms-leaderboard {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 8px;
+        border: 1px solid #EBEBEF;
+        background-color: #FFF;
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        .creator-lms-leaderboard-content {
+            width: calc(100% - 65px);
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        figure {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background-color: #eeeeee;
+            
+            img {
+                width: 100%;
+                height: 100%;
+                border-radius: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .student-name {
+            color: var(--creator-lms-heading-color);
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.1;
+
+            .score {
+                display: block;
+                color: #A1A1AA;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 1.2;
+                margin: 6px 0 0 0;
+            }
+        }
+
+        .creator-lms-leaderboard-position {
+            border-radius: 8px;
+            background: #FFF;
+            box-shadow: 0px 1px 2px 0px #D3D6DD;
+            display: inline-block;
+            color: var(--creator-lms-heading-color);
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1;
+            padding: 5px 7px;
+            width: 50px;
+            text-align: center;
+        }
+
+        &.position-success {
+            .creator-lms-leaderboard-position {
+                background-color: #35bd4c1a;
+                color: #35BD4C;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-leaderboard {
+        padding: 11px 13px;
+        border-radius: 8px;
+    }
+
+    .creator-lms-page .creator-lms-leaderboard .student-name {
+        font-size: 14px;
+    }
+
+    .creator-lms-page .creator-lms-leaderboard .creator-lms-leaderboard-position {
+        font-size: 13px;
+        padding: 4px 6px;
+        width: 46px;
+    }
+    .creator-lms-page .creator-lms-leaderboard .student-name .score {
+        font-size: 12px;
+    }
+}

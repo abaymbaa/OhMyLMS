@@ -1,0 +1,93 @@
+.creator-lms-page {
+    .creator-lms-single-course-layout-2 {
+        .creator-lms-course-reviews-wrapper {
+            margin-top: 40px;
+        }
+
+        .creator-lms-course-reviews {
+            display: flex;
+            flex-flow: row wrap;
+            gap: 20px;
+    
+            .creator-lms-course-single-review {
+                border: 1px solid #EBECED;
+                padding: 24px!important;
+                border-radius: 8px;
+                width: calc(100% / 2 - 10px);
+                display: none;
+                row-gap: 12px;
+    
+                &:nth-child(1),
+                &:nth-child(2) {
+                    display: block;
+                }
+    
+                &.shown {
+                    display: block;
+                }
+            }
+    
+            .review-description {
+                padding-left: 0;
+                font-size: 14px;
+            }
+    
+            .show-more-review {
+                width: 100%;
+                border-radius: 8px;
+                border: 1px solid #EBECED;
+                background: transparent;
+                display: block;
+                cursor: pointer;
+                height: 40px;
+                padding: 10px;
+                color: var(--creator-lms-primary-color);
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-transform: none;
+                letter-spacing: 0;
+    
+                svg {
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        .creator-lms-course-reviews-form .creator-lms-reviews-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-reviews-form .creator-lms-reviews-title {
+        font-size: 20px;
+    }
+    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-reviews .creator-lms-course-single-review {
+        padding: 17px !important;
+        border-radius: 10px;
+        gap: 12px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-reviews .creator-lms-course-single-review {
+        width: 100%;
+    }
+    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-reviews {
+        gap: 10px;
+    }
+
+}
+
+@media screen and (max-width: 575px) {
+    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-reviews-wrapper {
+        margin-top: 30px;
+    }
+
+}

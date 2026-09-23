@@ -1,0 +1,20 @@
+{
+    "name": "coderex/ecommerce",
+    "description": "E-Commerce module",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "CodeRex\\Ecommerce\\": "includes/"
+        },
+		"classmap": [
+			"includes/Gateways/GatewayOffline.php",
+			"includes/Gateways/Stripe/GatewayStripeIntents.php",
+            "includes/Gateways/Mollie/GatewayMollie.php"
+		]
+    },
+    "authors": [
+        {
+            "name": "Code Rex"
+        }
+    ]
+}

@@ -1,0 +1,118 @@
+<?php
+
+namespace OMLMS\Emails\StudentsEmail;
+
+use OMLMS\Emails\Emails;
+use function CodeRex\Ecommerce\ecommerce;
+
+class ConfirmEnrollment {
+
+	public function __construct() {
+		add_action( 'creator_lms_after_enrolled_student', array( $this, 'trigger' ), 10 );
+	}
+
+	public function basic_settings(): array {
+		$basic = array(
+			'id'             => 'student_confirm_enrollment',
+			'template_html'  => 'emails/creators/new-order.php',
+			'title'          => __( 'Notify Student When Enrollment Is Confirmed', 'ohmylms' ),
+			'tooltip'        => __( 'Notify the students when their course enrollment is confirmed, and they can start the course.', 'ohmylms' ),
+			'recipient_type' => 'student',
+			'description'    => __( 'This email is sent to the student when a new order is received.', 'ohmylms' ),
+		);
+		return $basic;
+	}
+
+	public function default_settings(): array {
+		$default_settings = array(
+			'enable'             => false,
+			'heading'            => __( 'Enrollment Complete: Welcome to Your Course!', 'ohmylms' ),
+			'subject'            => __( 'Successfully Enrolled', 'ohmylms' ),
+			'additional_content' => '<p style="margin: 0 0 15px 0; padding:0; color: #1F2328;">Dear [student_name],</p><p style="margin: 0 0 15px 0; padding:0; color: #1F2328;">Your enrollment in <strong>[course_name]</strong> is confirmed! We\'re excited to have you on this journey of learning and growth.</p>',
+			'button_text'        => 'Access My Course',
+			'footer_text'        => 'Be sure to check out the introductory materials and set your goals for the course. We\'re excited to have you as part of our learning community!',
+			'button_link'        => '',
+			'recipient_email'    => array(),
+		);
+		return $default_settings;
+	}
+
+	public function trigger( $order ) {
+
+		if ( ! is_object( $order ) ) {
+			$order_id = absint( $order );
+			$order    = ecommerce_get_order( $order_id );
+		}
+
+		if ( ! is_object( $order ) ) {
+			return;
+		}
+
+		$settings   = get_option( 'create_lms_email_student_confirm_enrollment', $this->default_settings() );
+		$student_id = $order->get_student_id();
+		$user       = get_user_by( 'id', $student_id );
+		$name       = '';
+		$to         = '';
+		if ( $user ) {
+			$to   = $user->user_email;
+			$name = $user->display_name;
+		}
+
+		if ( ! $to ) {
+			return;
+		}
+
+		$subject = isset( $settings['subject'] ) ? $settings['subject'] : '';
+
+		global $wpdb;
+		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$course      = false;
+
+		if ( empty( $enroll_data['course_id'] ) ) {
+			return;
+		}
+
+		$course = omlms_get_course( $enroll_data['course_id'] );
+
+		$email_settings = Emails::get_email_settings();
+		if ( $order && is_array( $email_settings ) && is_array( $enroll_data ) && is_array( $settings ) && $course ) {
+			// Use omlms_get_template to get the email body
+			ob_start();
+			omlms_get_template(
+				'emails/confirm-enrollment', // Template file name (without .php)
+				array(
+					'order'          => $order,
+					'student_name'   => $name,
+					'enroll_data'    => $enroll_data,
+					'course'         => $course,
+					'settings'       => $settings,
+					'email_settings' => $email_settings,
+				)
+			);
+
+			$html_body = ob_get_clean();
+
+			ob_start();
+			omlms_get_template( 'emails/email-styles' );
+			$styles = ob_get_clean();
+
+			$html_body = Emails::replace_merge_tags( $html_body, $order, $course );
+
+			$sender_name  = $email_settings['creator_lms_email_sender_name'];
+			$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+			$headers      = array(
+				'MIME-Version: 1.0',
+				'Content-Type: text/html; charset=UTF-8',
+			);
+
+			if ( $sender_email && $sender_name ) {
+				$from      = 'From: ' . $sender_name;
+				$from      = 'From: ' . $sender_name . ' <' . $sender_email . '>';
+				$headers[] = $from;
+			}
+
+			wp_mail( $to, $subject, $html_body, $headers );
+		}
+	}
+}

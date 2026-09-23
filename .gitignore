@@ -1,0 +1,9 @@
+node_modules/
+build/
+test-results/
+playwright-report/
+coverage/
+.env*
+!.env.example
+*.log
+

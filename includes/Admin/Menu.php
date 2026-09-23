@@ -1,0 +1,306 @@
+<?php
+
+namespace OMLMS\Admin;
+
+use OMLMS\Admin\Pages\AdminSettings;
+
+class Menu {
+
+	/**
+	 * Admin constructor.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
+		add_action( 'admin_menu', array( $this, 'init_menu' ) );
+		add_action( 'admin_menu', array( $this, 'register_submenu' ) );
+		add_action( 'admin_menu', array( $this, 'menu_highlight' ) );
+		add_action( 'wp_loaded', array( $this, 'save_settings' ) );
+		add_action( 'admin_footer', array( $this, 'open_link_with_new_page' ) );
+		add_action( 'admin_bar_menu', array( $this, 'lms_admin_menu_option' ), 100 );
+	}
+
+
+	/**
+	 * Init menu
+	 *
+	 * @since 1.0.0
+	 */
+	public function init_menu() {
+		global $submenu;
+
+		$slug          = CREATOR_LMS_SLUG;
+		$menu_position = 6;
+		$capability    = 'manage_options';
+
+		add_menu_page(
+			__( 'OhMyLMS', 'ohmylms' ),
+			__( 'OhMyLMS', 'ohmylms' ),
+			$capability,
+			$slug,
+			array( $this, 'plugin_page' ),
+			$this->get_menu_icon(),
+			$menu_position
+		);
+		$pending_count = $this->count_unchecked_orders();
+		$pending_count	= apply_filters( 'creator_lms_pending_orders_count', $pending_count );
+		$pending_count = 0;
+		$badge_html    = $pending_count > 0 ? " <span class='update-plugins count-$pending_count'><span class='plugin-count'>$pending_count</span></span>" : '';
+		if ( current_user_can( $capability ) ) {
+			$submenu[ $slug ][] = array( esc_attr__( 'Dashboard', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/dashboard' );
+			$submenu[ $slug ][] = array( esc_attr__( 'Courses', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/courses' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Categories', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/categories' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Tags', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/tags' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Quizzes', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/quizzes' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			if( creator_lms_is_pro() ) {
+				$submenu[ $slug ][] = array( esc_attr__( 'Assignments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assignments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
+			$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+			 if ( apply_filters( 'creator_lms_show_sessions_menu', false ) ) {
+			 	$submenu[ $slug ][] = array( esc_attr__( 'Sessions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/sessions' );
+			 }
+
+			$submenu[ $slug ][] = array( esc_attr__( 'Membership', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/memberships' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Coupon', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/coupons' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Orders', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/orders' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Subscriptions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/subscriptions' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Students', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/students' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			if( apply_filters( 'creator_lms_show_gamification_menu', false ) ) {
+				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
+			
+			if ( apply_filters( 'creatorlms_should_enable_webhooks', false ) ) {
+				$submenu[ $slug ][] = array( esc_attr__( 'Webhooks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/webhooks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
+		
+		
+		}
+	}
+
+	/**
+	 * Count unchecked orders
+	 *
+	 * @return int
+	 *
+	 * @since 1.0.0
+	 */
+	private function count_unchecked_orders() {
+		$args = array(
+			'post_type'      => 'omlms-order',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'meta_query'     => array(
+				array(
+					'key'     => '_is_open',
+					'compare' => 'NOT EXISTS',
+				),
+			),
+		);
+
+		$query            = new \WP_Query( $args );
+		$unchecked_orders = $query->found_posts;
+		return $unchecked_orders;
+	}
+
+
+	/**
+	 * Register submenu
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_submenu() {
+		$slug       = CREATOR_LMS_SLUG;
+		$capability = 'manage_creator_lms';
+
+		add_submenu_page(
+			$slug,
+			__( 'Settings', 'ohmylms' ),
+			__( 'Settings', 'ohmylms' ),
+			$capability,
+			admin_url( 'admin.php?page=creator-lms#/settings/general-settings' ),
+			null
+		);
+
+		do_action( 'creatorlms_after_settings_menu_item' );
+
+		
+		if( !creator_lms_is_pro() ) {
+			// add_submenu_page(
+			// 	$slug,
+			// 	__( 'Free Vs Pro', 'ohmylms' ),
+			// 	__( 'Free Vs Pro', 'ohmylms' ),
+			// 	$capability,
+			// 	admin_url( 'admin.php?page=creator-lms#/free-vs-pro' ),
+			// 	null
+			// );
+		}
+
+		add_submenu_page(
+			$slug,
+			__( 'Help & Feedback', 'ohmylms' ),
+			'<span class="omlms-open-new-tab">' . __( 'Help & Feedback', 'ohmylms' ) . '</span>',
+			$capability,
+			'https://creatorlms.net/contact-us/',
+			null
+		);
+	}
+
+	public function open_link_with_new_page() {
+		?>
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$('.omlms-open-new-tab').parent().attr('target','_blank');
+			});
+		</script>
+		<?php
+	}
+
+
+	public function menu_highlight() {
+		global $parent_file, $submenu_file, $post_type, $current_screen;
+
+		switch ( $post_type ) {
+			case 'omlms-course':
+			case 'omlms-order':
+			case 'omlms-coupon':
+				$parent_file = 'creator_lms'; // WPCS: override ok.
+				break;
+		}
+	}
+
+
+	/**
+	 * Render the plugin page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function plugin_page() {
+		require_once CREATOR_LMS_INCLUDES . '/Admin/views/app.php';
+	}
+
+
+	/**
+	 * Render tools page
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_tools_page(): void {
+		require_once CREATOR_LMS_INCLUDES . '/Admin/views/tools.php';
+	}
+
+
+	/**
+	 * Render settings page
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_settings_page(): void {
+		global $creator_lms_current_tab, $creator_lms_current_section;
+		$creator_lms_current_tab = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
+		$tabs                    = apply_filters( 'creator_lms_settings_tabs_array', array() );
+		require_once CREATOR_LMS_INCLUDES . '/Admin/views/settings.php';
+	}
+
+
+	/**
+	 * Save settings data
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public function save_settings(): void {
+		global $creator_lms_current_tab, $creator_lms_current_section, $creator_lms_current_page;
+		if ( is_crlm_admin_page() ) {
+			$creator_lms_current_section = empty( $_GET['section'] ) ? '' : sanitize_title( wp_unslash( $_GET['section'] ) ); // WPCS: input var okay, CSRF ok.
+			$creator_lms_current_tab     = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
+			$creator_lms_current_page    = empty( $_GET['page'] ) ? 'omlms-settings' : sanitize_title( wp_unslash( $_GET['page'] ) ); // WPCS: input var okay, CSRF ok.
+
+			if ( ! empty( $_POST['save'] ) ) {
+				AdminSettings::save();
+			}
+		}
+	}
+
+	/**
+	 * Add folded menu class
+	 *
+	 * @param string $classes
+	 *
+	 * @return string
+	 */
+	public function add_folded_menu_class( $classes ) {
+		return $classes . ' folded';
+	}
+
+	/**
+	 * Add custom menu option to the admin bar.
+	 */
+	public function lms_admin_menu_option( $wp_admin_bar ) {
+		$archive_page_id  = get_option( 'creator_lms_course_page_id', 0 );
+		$archive_page_url = home_url();
+		if ( $archive_page_id ) {
+			$archive_page_url = get_permalink( $archive_page_id );
+		}
+
+		$wp_admin_bar->add_node(
+			array(
+				'id'     => 'visit-omlms-courses',
+				'title'  => 'Visit Courses',
+				'href'   => $archive_page_url, // Your custom page URL
+				'parent' => 'site-name', // Add under Visit Site
+				'meta'   => array(
+					'title'  => __( 'Visit Courses', 'ohmylms' ), // Tooltip
+					'target' => '_blank', // Open in new tab
+					'class'  => 'visit-omlms-courses-class',
+				),
+			)
+		);
+
+		if( !creator_lms_is_pro() ) {
+			return;
+		}
+		// For memberships
+		$membership_page_id  = get_option( 'creator_lms_membership_page_id', 0 );
+		if ( ! $membership_page_id ) {
+			return;
+		}
+		$membership_page_url = home_url();
+		if ( $membership_page_id ) {
+			$membership_page_url = get_permalink( $membership_page_id );
+		}
+		$wp_admin_bar->add_node(
+			array(
+				'id'     => 'visit-omlms-memberships',
+				'title'  => 'Visit Memberships',
+				'href'   => $membership_page_url, // Your custom page URL
+				'parent' => 'site-name', // Add under Visit Site
+				'meta'   => array(
+					'title'  => __( 'Visit Memberships', 'ohmylms' ), // Tooltip
+					'target' => '_blank', // Open in new tab
+					'class'  => 'visit-omlms-memberships-class',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Gets the SVG icon for menu
+	 *
+	 * @desc Gets the SVG icon for menu
+	 * @return string
+	 * @since 1.0.0
+	 */
+	private function get_menu_icon() {
+		return 'data:image/svg+xml;base64,' . base64_encode(        //phpcs:ignore
+			'<?xml version="1.0" encoding="utf-8"?>
+			<!-- Generator: Adobe Illustrator 27.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="19" viewBox="0 0 20 19" fill="none">
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M2.60227 12.4573C3.83527 13.8718 5.84269 14.733 8.06157 14.733C10.2204 14.733 12.1786 13.9263 13.4052 12.5868L15.9512 14.9181C13.9694 17.0823 11.0279 18.1851 8.06157 18.1851C5.00001 18.1851 1.98405 17.0017 0 14.7256L2.60227 12.4573Z" fill="#A8AAAD"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M5.62282 11.9229C6.66317 12.309 7.77643 12.4158 8.9626 12.2432C10.1117 12.076 11.1105 11.6665 11.985 11.0169C12.1178 10.9182 12.2472 10.8171 12.3726 10.7132L12.3765 10.7149L12.4322 10.6634C12.6072 10.5157 12.774 10.3623 12.9311 10.2022L20 3.66677L14.4622 3.80363L10.8692 7.09554L10.8587 7.09031C10.8558 7.09806 10.8528 7.10579 10.8497 7.11349L9.94072 7.94627C9.8413 8.01486 9.74868 8.08035 9.67184 8.14275C9.3187 8.42126 8.9086 8.59449 8.44155 8.66245C7.72243 8.76709 7.09112 8.6167 6.54761 8.21128C6.00411 7.80585 5.68003 7.24358 5.57539 6.52447C5.47075 5.80535 5.62114 5.17404 6.02657 4.63054C6.43091 4.07961 6.99264 3.75183 7.71176 3.64719C8.17881 3.57923 8.62181 3.63211 9.04075 3.80583C9.45862 3.97214 9.79939 4.23295 10.0631 4.58824L12.8482 2.01958C12.1776 1.20871 11.4744 0.760382 10.451 0.386931C9.42766 0.0134798 8.34142 -0.0896406 7.19232 0.0775697C6.00616 0.250174 4.97003 0.673484 4.08394 1.3475C3.20419 2.01302 2.56114 2.84851 2.1548 3.85395C1.74846 4.85939 1.62835 5.93296 1.79448 7.07464C1.96062 8.21633 2.3817 9.21114 3.05774 10.0591C3.73377 10.907 4.5888 11.5283 5.62282 11.9229Z" fill="#A8AAAD"/>
+			</svg>'
+		);
+	}
+}

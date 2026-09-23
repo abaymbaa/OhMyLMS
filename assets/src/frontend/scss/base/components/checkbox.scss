@@ -1,0 +1,66 @@
+.creator-lms-page {
+    .creator-lms-checkbox {
+        position: relative;
+        display: block;
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        .creator-lms-checkbox-text {
+            position: relative;
+            color: var(--creator-lms-body-text-color);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.53;
+            display: block;
+            padding-left: 27px;
+
+            .checkedbox {
+                border-radius: 4px;
+                border: 1px solid #CCC;
+                width: 18px;
+                height: 18px;
+                display: block;
+                position: absolute;
+                top: 2px;
+                left: 0;
+                background: #fff;
+                transition: all 0.3s ease;
+
+                &:before {
+                    content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTAgNyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNOC4xNDYuMjRMMy41MTggNC44NjggMS4zOTcgMi43NDdBLjgxOC44MTggMCAwMC4yNCAzLjkwNGwyLjcgMi43YS44MTguODE4IDAgMDAxLjE1NyAwbDUuMjA2LTUuMjA3QS44MTguODE4IDAgMDA4LjE0Ni4yNHoiLz48L3N2Zz4=");
+                    display: block;
+                    width: 10px;
+                    height: auto;
+                    line-height: 1;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transition: all 0.3s ease;
+                    transform: translate(-50%, -50%);
+                    opacity: 0;
+                }
+            }
+        }
+
+        input[type="checkbox"]:checked + .creator-lms-checkbox-text .checkedbox {
+            background: var(--creator-lms-primary-color);
+            border-color: var(--creator-lms-primary-color);
+        }
+
+        input[type="checkbox"]:checked + .creator-lms-checkbox-text .checkedbox:before {
+            opacity: 1;
+        }
+
+        input[type="checkbox"]:focus {
+            .creator-lms-checkbox-text .checkedbox {
+                border-color: var(--creator-lms-primary-color);
+            }
+        }
+
+    }
+}

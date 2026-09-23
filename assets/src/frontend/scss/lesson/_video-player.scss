@@ -1,0 +1,1247 @@
+/**
+ * CreatorLMS Custom Video Player Styles
+ * 
+ * Styles for the custom video player with YouTube, Vimeo, and self-hosted support
+ * 
+ * @package CreatorLMS
+ * @version 1.0.0
+ */
+
+/* Main Video Player Container */
+.omlms-custom-video-player {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    background-color: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 26px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+
+    &:fullscreen {
+        border-radius: 0;
+    }
+
+    &:-webkit-full-screen {
+        border-radius: 0;
+    }
+
+    &:-moz-full-screen {
+        border-radius: 0;
+    }
+
+    &:-ms-fullscreen {
+        border-radius: 0;
+    }
+}
+
+/* Video Player Container */
+.omlms-video-player-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; // Below the blocker
+    overflow: hidden; // Critical: hide overflowing iframe parts
+    cursor: pointer; // Indicate video is clickable
+    
+    iframe,
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+    }
+    
+    // YouTube branding removal trick
+    // Make iframe 200% height and position at -50% to cut off top/bottom branding
+    iframe[src*="youtube"] {
+        pointer-events: auto;
+        top: -50% !important;
+        height: 200% !important;
+        opacity: 0; // Hide initially to prevent zoom flash
+        transition: opacity 0.2s ease;
+        
+        &.player-ready {
+            opacity: 1; // Show when player is ready
+        }
+    }
+
+    .omlms-html5-video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+}
+
+/* YouTube Poster Image - Shows before iframe loads */
+.omlms-youtube-poster {
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Branding Blocker Overlays - Cover YouTube UI elements */
+.omlms-branding-blocker-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px; // Cover YouTube's top bar completely
+    background: transparent;
+    z-index: 9997;
+    pointer-events: auto !important;
+    cursor: default;
+}
+
+.omlms-branding-blocker-bottom-right {
+    position: absolute;
+    bottom: 80px; // Position above custom controls
+    right: 0;
+    width: 250px; // Cover YouTube logo and controls
+    height: 100px;
+    background: transparent;
+    z-index: 9997;
+    pointer-events: auto !important;
+    cursor: default;
+}
+
+// Add a full video area blocker that sits between video and controls
+.omlms-video-interaction-blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 80px; // Leave space for custom controls
+    z-index: 9996; // Below the specific blockers but above YouTube iframe
+    pointer-events: auto !important;
+    cursor: default;
+    background: transparent;
+}
+
+/* Full-screen click blocker for YouTube to prevent YouTube's play button and hover UI from being clicked */
+/* Only active before first play - gets hidden once video starts */
+.omlms-youtube-click-blocker {  
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 9998; // Below big play button (9999) and custom controls (10000) but above YouTube iframe
+    cursor: pointer;
+    background: transparent;
+    pointer-events: auto !important;
+}
+
+/* Custom Big Play Button - YouTube style rounded rectangle */
+.omlms-big-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; // Above YouTube iframe and click blocker, below controls
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    pointer-events: auto !important;
+    
+    // YouTube-style rounded rectangle button
+    width: 68px;
+    height: 48px;
+    background: var(--creator-lms-primary-color, #4F46E5);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: brightness(1.1);
+    }
+    
+    &:active {
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    
+    // Hide the SVG circle, only show play icon
+    svg {
+        width: 48px;
+        height: 48px;
+        display: block;
+    }
+    
+    // Hide the circle background from SVG
+    .play-button-circle {
+        display: none;
+    }
+    
+    // White play icon
+    .play-button-icon {
+        fill: #ffffff;
+    }
+}
+
+// Prevent clicks on YouTube controls - force use of custom controls
+.omlms-custom-video-player {
+    // Ensure proper stacking context
+    position: relative;
+    isolation: isolate;
+    
+    // Allow interaction with video through blocker
+    .omlms-branding-blocker-top {
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    
+    // Allow interaction with our custom controls
+    .omlms-custom-controls {
+        position: absolute;
+        z-index: 10000 !important; // Above the blocker
+        pointer-events: auto !important;
+    }
+}
+
+/* Custom Controls Container */
+.omlms-custom-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 70%, transparent 100%);
+    padding: 24px 20px 0px;
+    z-index: 10000 !important; // Above all blockers and overlays
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: auto !important; // Ensure controls are always clickable
+    
+    &.hidden {
+        opacity: 0;
+        transform: translateY(100%);
+        pointer-events: none;
+    }
+}
+
+/* Progress Container */
+.omlms-controls-progress-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Progress Bar */
+.omlms-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: height 0.2s ease;
+
+    &:hover {
+        height: 7px;
+    }
+
+    &:hover .omlms-progress-handle,
+    &:active .omlms-progress-handle {
+        opacity: 1;
+        transform: translateY(-50%) translateX(-50%) scale(1);
+    }
+    
+    // Active state when dragging
+    &.is-seeking {
+        height: 7px;
+        
+        .omlms-progress-handle {
+            opacity: 1;
+            transform: translateY(-50%) translateX(-50%) scale(1.2);
+        }
+    }
+}
+
+.omlms-progress-filled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--creator-lms-primary-color, #4F46E5);
+    border-radius: 3px;
+    transition: width 0.05s linear;
+    will-change: width;
+    
+    // Remove transition when actively seeking for instant feedback
+    .is-seeking & {
+        transition: none;
+    }
+}
+
+.omlms-progress-handle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%) translateX(-50%) scale(0);
+    width: 14px;
+    height: 14px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    will-change: left;
+    
+    // Remove transition when actively seeking for instant feedback
+    .is-seeking & {
+        transition: none;
+    }
+}
+
+/* Time Display */
+.omlms-time-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    .omlms-separator {
+        opacity: 0.7;
+        margin: 0 2px;
+    }
+
+    .omlms-current-time,
+    .omlms-duration {
+        font-weight: 500;
+        min-width: 40px;
+        text-align: center;
+    }
+}
+
+/* Controls Bottom Row */
+.omlms-controls-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.omlms-controls-left,
+.omlms-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Control Buttons */
+.omlms-control-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    outline: none;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    &:active {
+        transform: scale(0.92);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+    }
+}
+
+/* Play/Pause Button */
+.omlms-play-pause {
+    position: relative;
+    width: 40px;
+    height: 40px;
+
+    svg {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* Volume Control */
+.omlms-volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+
+    .omlms-volume-btn {
+        position: relative;
+        z-index: 2;
+    }
+
+    .omlms-volume-slider {
+        width: 0;
+        opacity: 0;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    &:hover .omlms-volume-slider {
+        width: 100px;
+        opacity: 1;
+    }
+}
+
+// Custom div-based volume slider (no input conflicts)
+.omlms-volume-track {
+    position: relative;
+    width: 100px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    flex-shrink: 0;
+    
+    // Keyboard focus styles
+    &:focus {
+        outline: none;
+    }
+    
+    &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.5);
+        outline-offset: 2px;
+    }
+    
+    // Active/dragging state
+    &.is-dragging {
+        height: 6px;
+        
+        .omlms-volume-thumb {
+            transform: translate(-50%, -50%) scale(1.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.15);
+        }
+    }
+}
+
+.omlms-volume-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: width 0.1s ease;
+}
+
+.omlms-volume-thumb {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    opacity: 0.9;
+}
+
+.omlms-volume-track:hover .omlms-volume-thumb,
+.omlms-volume-track:focus .omlms-volume-thumb,
+.omlms-volume-track:focus-visible .omlms-volume-thumb {
+    transform: translate(-50%, -50%) scale(1.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.1);
+    opacity: 1;
+}
+
+.omlms-volume-track:active .omlms-volume-thumb {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Speed Control */
+.omlms-speed-control {
+    position: relative;
+}
+
+.omlms-speed-btn {
+    min-width: 48px;
+    
+    .omlms-speed-text {
+        font-size: 14px;
+        font-weight: 600;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+}
+
+.omlms-speed-menu {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 8px;
+    background-color: rgba(28, 28, 28, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    z-index: 20;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        background: none;
+        border: none;
+        color: #fff;
+        padding: 8px 16px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        transition: background-color 0.15s ease;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+            background-color: var(--creator-lms-primary-color, #4F46E5);
+            font-weight: 600;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+            outline-offset: -2px;
+        }
+    }
+}
+
+/* Fullscreen Button */
+.omlms-fullscreen-btn {
+    svg {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* Logo Overlay — replaces big play button when set */
+.creator-lms-page img.omlms-player-logo {
+    position: absolute;
+    z-index: 9999;
+    display: block;
+    cursor: pointer;
+    width: 74px !important;
+    height: 48px !important;
+    background-color: var(--creator-lms-primary-color, #4F46E5);
+    padding: 12px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    object-fit: contain;
+    pointer-events: auto !important;
+    transition: filter 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        filter: brightness(1.1);
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Error Message */
+.omlms-video-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(239, 68, 68, 0.95);
+    color: #fff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 15;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+}
+
+/* Loading State */
+.omlms-video-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 5;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    .omlms-custom-controls {
+        padding: 16px 12px 10px;
+    }
+
+    .omlms-control-btn {
+        padding: 4px;
+
+        svg {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    .omlms-play-pause {
+        width: 32px;
+        height: 32px;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    .omlms-time-display {
+        font-size: 12px;
+    }
+
+    .omlms-volume-control {
+        .omlms-volume-slider {
+            width: 0 !important;
+            display: none;
+        }
+    }
+
+    .omlms-speed-btn {
+        min-width: 40px;
+        
+        .omlms-speed-text {
+            font-size: 13px;
+        }
+    }
+
+    .omlms-controls-bottom {
+        gap: 6px;
+    }
+
+    .omlms-controls-left,
+    .omlms-controls-right {
+        gap: 4px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .omlms-custom-controls {
+        padding: 12px 8px px;
+    }
+
+    .omlms-progress-bar {
+        height: 4px;
+
+        &:hover {
+            height: 4px;
+        }
+    }
+
+    .omlms-time-display {
+        font-size: 11px;
+
+        .omlms-current-time,
+        .omlms-duration {
+            min-width: 30px;
+        }
+    }
+
+    .omlms-speed-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+
+        &.active {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        button {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+    }
+}
+
+/* Fullscreen Mode Adjustments */
+.omlms-custom-video-player:fullscreen,
+.omlms-custom-video-player:-webkit-full-screen,
+.omlms-custom-video-player:-moz-full-screen,
+.omlms-custom-video-player:-ms-fullscreen {
+    .omlms-custom-controls {
+        padding: 24px 20px 16px;
+    }
+
+    .omlms-progress-bar {
+        height: 6px;
+
+        &:hover {
+            height: 8px;
+        }
+    }
+
+    .omlms-control-btn {
+        padding: 8px;
+
+        svg {
+            width: 28px;
+            height: 28px;
+        }
+    }
+
+    .omlms-play-pause {
+        width: 44px;
+        height: 44px;
+
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .omlms-time-display {
+        font-size: 16px;
+    }
+
+    .omlms-volume-control:hover .omlms-volume-slider {
+        width: 100px;
+    }
+}
+
+/* Keyboard Control Indicators */
+.omlms-volume-indicator,
+.omlms-seek-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 20px 32px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    z-index: 10000;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 140px;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    animation: fadeInScale 0.2s ease-out;
+
+    svg {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+    }
+
+    span {
+        white-space: nowrap;
+    }
+}
+
+.omlms-volume-indicator {
+    .omlms-volume-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .omlms-volume-current {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .omlms-volume-delta {
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1;
+    }
+}
+
+.omlms-seek-indicator {
+    font-size: 20px;
+    padding: 24px 36px;
+    
+    svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    span {
+        letter-spacing: 0.3px;
+        font-weight: 600;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Make video player focusable with keyboard */
+.omlms-custom-video-player {
+    &:focus {
+        outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+        outline-offset: 2px;
+    }
+    
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+}
+
+/* Accessibility Improvements */
+.omlms-custom-video-player:focus-within {
+    outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+    outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .omlms-custom-controls,
+    .omlms-progress-bar,
+    .omlms-progress-handle,
+    .omlms-volume-slider,
+    .omlms-speed-menu,
+    .omlms-control-btn {
+        transition: none;
+    }
+}
+
+/* Dark mode support (if theme supports it) */
+@media (prefers-color-scheme: dark) {
+    .omlms-custom-video-player {
+        background-color: #000;
+    }
+}
+
+/* Hide native controls when using custom controls */
+.omlms-custom-video-player video::-webkit-media-controls {
+    display: none !important;
+}
+
+.omlms-custom-video-player video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+/* Pointer cursor for interactive elements */
+.omlms-progress-bar,
+.omlms-control-btn,
+.omlms-speed-menu button {
+    cursor: pointer;
+}
+
+/* Prevent text selection on controls */
+.omlms-custom-controls {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px), (hover: none) {
+    // Make video player container responsive
+    .omlms-custom-video-player {
+        margin-bottom: 16px;
+        border-radius: 8px;
+    }
+    
+    // Ensure YouTube iframe is touchable on mobile
+    .omlms-video-player-container iframe {
+        pointer-events: auto !important;
+        touch-action: auto !important;
+    }
+    
+    // Remove YouTube click blocker on mobile to allow direct iframe interaction
+    .omlms-youtube-click-blocker {
+        display: none !important;
+    }
+    
+    // Adjust branding blockers for mobile
+    .omlms-branding-blocker-top,
+    .omlms-branding-blocker-bottom-right,
+    .omlms-video-interaction-blocker {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    // Compact touch targets for controls on mobile
+    .omlms-control-btn {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 8px 6px;
+        
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+    
+    // YouTube-style button on mobile - sized to cover YT's button
+    .omlms-big-play-button {
+        width: 72px;
+        height: 50px;
+        border-radius: 12px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        
+        svg {
+            width: 22px;
+            height: 22px;
+        }
+    }
+    
+    // Compact progress bar for mobile
+    .omlms-progress-bar {
+        height: 4px;
+        margin-bottom: 6px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        
+        &:active,
+        &.is-seeking {
+            height: 6px;
+        }
+        
+        // Always show handle on mobile for easier dragging
+        .omlms-progress-handle {
+            opacity: 1;
+            transform: translateY(-50%) translateX(-50%) scale(1);
+            width: 12px;
+            height: 12px;
+        }
+        
+        &:active .omlms-progress-handle,
+        &.is-seeking .omlms-progress-handle {
+            transform: translateY(-50%) translateX(-50%) scale(1.2);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+    }
+    
+    .omlms-progress-filled {
+        border-radius: 2px;
+    }
+    
+    // Compact volume slider for mobile
+    .omlms-volume-track {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        height: 4px;
+        width: 50px;
+        
+        .omlms-volume-thumb {
+            width: 10px;
+            height: 10px;
+            margin-left: -5px;
+            opacity: 1; // Always visible on mobile
+        }
+    }
+    
+    .omlms-volume-control {
+        .omlms-volume-slider {
+            display: none; // Hide slider on mobile, only show mute button
+        }
+    }
+    
+    // Compact time display for mobile
+    .omlms-time-display {
+        font-size: 11px;
+        gap: 2px;
+        
+        .omlms-current-time,
+        .omlms-duration {
+            min-width: 28px;
+            font-size: 11px;
+        }
+        
+        .omlms-separator {
+            font-size: 10px;
+        }
+    }
+    
+    // Compact control visibility and spacing on mobile
+    .omlms-custom-controls {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        padding: 10px 10px 6px;
+        
+        // Subtle gradient for cleaner look on mobile
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+        
+        // Ensure controls don't overflow
+        overflow: visible;
+    }
+    
+    .omlms-controls-progress-container {
+        gap: 4px;
+    }
+    
+    .omlms-controls-bottom {
+        gap: 4px;
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+    
+    .omlms-controls-left,
+    .omlms-controls-right {
+        gap: 4px;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+    
+    // Speed control adjustments for mobile
+    .omlms-speed-control {
+        .omlms-speed-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            
+            .omlms-speed-text {
+                font-size: 11px;
+                min-width: 24px;
+            }
+        }
+        
+        .omlms-speed-menu {
+            bottom: calc(100% + 8px);
+            right: 0;
+            min-width: 70px;
+            
+            button {
+                padding: 10px 12px;
+                font-size: 12px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+    }
+    
+    // Prevent double-tap zoom on interactive elements
+    .omlms-custom-video-player,
+    .omlms-big-play-button,
+    .omlms-control-btn,
+    .omlms-progress-bar,
+    .omlms-volume-track,
+    .omlms-speed-menu button {
+        touch-action: manipulation;
+    }
+    
+    // Compact indicators on mobile
+    .omlms-volume-indicator,
+    .omlms-seek-indicator {
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+    }
+    
+    .omlms-volume-indicator {
+        .omlms-volume-text {
+            font-size: 14px;
+            margin-top: 6px;
+            
+            .omlms-volume-delta {
+                font-size: 11px;
+            }
+        }
+    }
+    
+    .omlms-seek-indicator {
+        font-size: 14px;
+        gap: 6px;
+    }
+}
+
+/* Small mobile devices (portrait phones) */
+@media (max-width: 480px) {
+    .omlms-custom-video-player {
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .omlms-big-play-button {
+        width: 68px;
+        height: 48px;
+        border-radius: 10px;
+        
+        svg {
+            width: 40px;
+            height: 40px;
+        }
+    }
+    
+    .omlms-custom-controls {
+        padding: 0px 6px 0px;
+    }
+    
+    .omlms-control-btn {
+        padding: 6px 4px;
+        min-width: 32px;
+        min-height: 32px;
+        
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+    
+    .omlms-time-display {
+        font-size: 10px;
+        
+        .omlms-current-time,
+        .omlms-duration {
+            min-width: 24px;
+        }
+    }
+    
+    .omlms-progress-bar {
+        height: 3px;
+        margin-bottom: 4px;
+        
+        .omlms-progress-handle {
+            width: 10px;
+            height: 10px;
+        }
+    }
+    
+    // Stack controls on very small screens if needed
+    .omlms-controls-bottom {
+        gap: 2px;
+    }
+    
+    .omlms-controls-left,
+    .omlms-controls-right {
+        gap: 2px;
+    }
+}
+
+/* Landscape mobile devices */
+@media (max-width: 768px) and (orientation: landscape) {
+    .omlms-custom-video-player {
+        margin-bottom: 0;
+        border-radius: 0;
+        
+        &:not(:fullscreen) {
+            border-radius: 6px;
+        }
+    }
+    
+    .omlms-big-play-button {
+        width: 68px;
+        height: 48px;
+        border-radius: 10px;
+        
+        svg {
+            width: 40px;
+            height: 40px;
+        }
+    }
+    
+    .omlms-custom-controls {
+        padding: 8px 12px 4px;
+    }
+    
+    .omlms-controls-progress-container {
+        margin-bottom: 4px;
+    }
+    
+    .omlms-control-btn {
+        min-width: 34px;
+        min-height: 34px;
+        padding: 6px 5px;
+        
+        svg {
+            width: 15px;
+            height: 15px;
+        }
+    }
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .omlms-video-player-container iframe {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    
+    // Ensure video container is properly touchable
+    .omlms-custom-video-player {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    // Fix iOS touch issues
+    .omlms-progress-bar,
+    .omlms-volume-track {
+        -webkit-tap-highlight-color: transparent;
+    }
+}

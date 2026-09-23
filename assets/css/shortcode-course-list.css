@@ -1,0 +1,239 @@
+/**
+ * Course List Shortcode Styles
+ * 
+ * Enhanced CSS for design customization and layout control
+ */
+
+/* Base wrapper styling */
+.omlms-shortcode-courses {
+    width: 100%;
+    --omlms-gap: 20px;
+}
+
+/* Column layout controls */
+.omlms-shortcode-courses[data-columns="1"] .course-list,
+.omlms-shortcode-courses[data-columns="1"] .courses-grid,
+.omlms-shortcode-courses[data-columns="1"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--omlms-gap, 20px);
+}
+
+.omlms-shortcode-courses[data-columns="2"] .course-list,
+.omlms-shortcode-courses[data-columns="2"] .courses-grid,
+.omlms-shortcode-courses[data-columns="2"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--omlms-gap, 20px);
+}
+
+.omlms-shortcode-courses[data-columns="3"] .course-list,
+.omlms-shortcode-courses[data-columns="3"] .courses-grid,
+.omlms-shortcode-courses[data-columns="3"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--omlms-gap, 20px);
+}
+
+.omlms-shortcode-courses[data-columns="4"] .course-list,
+.omlms-shortcode-courses[data-columns="4"] .courses-grid,
+.omlms-shortcode-courses[data-columns="4"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--omlms-gap, 20px);
+}
+
+.omlms-shortcode-courses[data-columns="5"] .course-list,
+.omlms-shortcode-courses[data-columns="5"] .courses-grid,
+.omlms-shortcode-courses[data-columns="5"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--omlms-gap, 20px);
+}
+
+.omlms-shortcode-courses[data-columns="6"] .course-list,
+.omlms-shortcode-courses[data-columns="6"] .courses-grid,
+.omlms-shortcode-courses[data-columns="6"] .creator-lms-courses {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--omlms-gap, 20px);
+}
+
+/* Responsive behavior */
+@media (max-width: 1024px) {
+    .omlms-shortcode-courses[data-columns="4"] .course-list,
+    .omlms-shortcode-courses[data-columns="4"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="4"] .creator-lms-courses,
+    .omlms-shortcode-courses[data-columns="5"] .course-list,
+    .omlms-shortcode-courses[data-columns="5"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="5"] .creator-lms-courses,
+    .omlms-shortcode-courses[data-columns="6"] .course-list,
+    .omlms-shortcode-courses[data-columns="6"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="6"] .creator-lms-courses {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .omlms-shortcode-courses[data-columns="3"] .course-list,
+    .omlms-shortcode-courses[data-columns="3"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="3"] .creator-lms-courses,
+    .omlms-shortcode-courses[data-columns="4"] .course-list,
+    .omlms-shortcode-courses[data-columns="4"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="4"] .creator-lms-courses,
+    .omlms-shortcode-courses[data-columns="5"] .course-list,
+    .omlms-shortcode-courses[data-columns="5"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="5"] .creator-lms-courses,
+    .omlms-shortcode-courses[data-columns="6"] .course-list,
+    .omlms-shortcode-courses[data-columns="6"] .courses-grid,
+    .omlms-shortcode-courses[data-columns="6"] .creator-lms-courses {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .omlms-shortcode-courses .course-list,
+    .omlms-shortcode-courses .courses-grid,
+    .omlms-shortcode-courses .creator-lms-courses {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Ensure grid items don't have conflicting flex/width properties */
+.omlms-shortcode-courses .course-list > *,
+.omlms-shortcode-courses .courses-grid > *,
+.omlms-shortcode-courses .creator-lms-courses > * {
+    width: auto !important;
+    flex: none !important;
+}
+
+/* Animation effects */
+.omlms-shortcode-courses.animation-fadeIn .course-card {
+    animation: omlmsSlideInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(1) { animation-delay: 0.1s; }
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(2) { animation-delay: 0.2s; }
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(3) { animation-delay: 0.3s; }
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(4) { animation-delay: 0.4s; }
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(5) { animation-delay: 0.5s; }
+.omlms-shortcode-courses.animation-fadeIn .course-card:nth-child(6) { animation-delay: 0.6s; }
+
+.omlms-shortcode-courses.animation-slideUp .course-card {
+    animation: omlmsSlideInUp 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(1) { animation-delay: 0.1s; }
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(2) { animation-delay: 0.15s; }
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(3) { animation-delay: 0.2s; }
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(4) { animation-delay: 0.25s; }
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(5) { animation-delay: 0.3s; }
+.omlms-shortcode-courses.animation-slideUp .course-card:nth-child(6) { animation-delay: 0.35s; }
+
+.omlms-shortcode-courses.animation-scale .course-card {
+    animation: omlmsScaleIn 0.6s ease-out forwards;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(1) { animation-delay: 0.1s; }
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(2) { animation-delay: 0.2s; }
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(3) { animation-delay: 0.3s; }
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(4) { animation-delay: 0.4s; }
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(5) { animation-delay: 0.5s; }
+.omlms-shortcode-courses.animation-scale .course-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Hover effects */
+.omlms-shortcode-courses.hover-lift .course-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.omlms-shortcode-courses.hover-lift .course-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.omlms-shortcode-courses.hover-scale .course-card {
+    transition: transform 0.3s ease;
+}
+
+.omlms-shortcode-courses.hover-scale .course-card:hover {
+    transform: scale(1.05);
+}
+
+.omlms-shortcode-courses.hover-rotate .course-card {
+    transition: transform 0.3s ease;
+}
+
+.omlms-shortcode-courses.hover-rotate .course-card:hover {
+    transform: rotate(2deg) scale(1.02);
+}
+
+.omlms-shortcode-courses.hover-glow .course-card {
+    transition: box-shadow 0.3s ease;
+}
+
+.omlms-shortcode-courses.hover-glow .course-card:hover {
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.3);
+}
+
+/* Keyframe animations */
+@keyframes omlmsSlideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes omlmsScaleIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Layout-specific adjustments */
+.omlms-shortcode-courses.layout-list .course-card {
+    width: 100% !important;
+}
+
+.omlms-shortcode-courses.layout-grid .course-card {
+    height: auto;
+}
+
+/* Filter and sidebar handling for shortcode */
+.omlms-shortcode-courses .creator-lms-course-sidebar {
+    display: none; /* Hide sidebar in shortcode by default */
+}
+
+.omlms-shortcode-courses[data-show-filter="yes"] .creator-lms-course-sidebar {
+    display: block;
+}
+
+/* Load more button styling */
+.omlms-shortcode-courses .load-more-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Ensure consistent card heights in grid */
+.omlms-shortcode-courses.layout-grid .course-list,
+.omlms-shortcode-courses.layout-grid .courses-grid,
+.omlms-shortcode-courses.layout-grid .creator-lms-courses {
+    align-items: stretch;
+}
+
+.omlms-shortcode-courses.layout-grid .course-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Transition for smooth effects */
+.omlms-shortcode-courses .course-card {
+    transition: all 0.3s ease;
+}

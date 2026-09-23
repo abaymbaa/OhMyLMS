@@ -1,0 +1,68 @@
+.creator-lms-page {
+    .creator-lms-scroll-to-top {
+        position: fixed;
+        bottom: 50px;
+        right: 10%;
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s ease;
+
+        &.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        button {
+            background-color: var(--creator-lms-primary-color);
+            border: none;
+            box-shadow: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+
+            svg {
+                display: block;
+                width: 24px;
+                height: auto;
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .creator-lms-page .creator-lms-scroll-to-top button {
+        width: 40px;
+        height: 40px;
+    }
+    .creator-lms-page .creator-lms-scroll-to-top button svg {
+        width: 18px;
+    }
+    
+}
+
+
+@media screen and (max-width: 991px) {
+    .creator-lms-page .creator-lms-scroll-to-top {
+        bottom: 110px;
+    }
+    
+}
+
+@media screen and (max-width: 575px) {
+    .creator-lms-page .creator-lms-scroll-to-top {
+        bottom: 130px;
+    }
+    
+}

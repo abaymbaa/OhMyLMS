@@ -1,0 +1,43 @@
+.theme-twentysixteen.creator-lms-page::before {
+    display: none;
+}
+.theme-twentysixteen.creator-lms-page:not(.creator-lms-checkout) .site-content {
+    padding: 0;
+}
+
+.theme-twentysixteen.creator-lms-page .creator-lms {
+    max-width: 100%;
+}
+
+.theme-twentysixteen.creator-lms-page:not(.creator-lms-checkout) .site-content > .content-area {
+    float: none;
+    margin-right: 0;
+    width: 100%;
+}
+
+.theme-twentysixteen.creator-lms-page:not(.creator-lms-checkout) .site-inner {
+    max-width: 100%;
+}
+
+.theme-twentysixteen.creator-lms-page .creator-lms-single-course.show-sticky-price > .creator-lms-widget-pricebox {
+    bottom: 21px;
+}
+
+.theme-twentysixteen.creator-lms-page article .entry-content {
+    padding: 0;
+    margin: 0;
+}
+
+.theme-twentysixteen.creator-lms-page article .entry-content a {
+    box-shadow: none;
+}
+
+.theme-twentysixteen.creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+    line-height: 1;
+}
+
+@media screen and (max-width: 709px) {
+    .theme-twentysixteen.creator-lms-page .creator-lms-single-course.show-sticky-price > .creator-lms-widget-pricebox {
+        bottom: 0;
+   }
+}

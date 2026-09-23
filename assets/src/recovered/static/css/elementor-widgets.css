@@ -1,0 +1,136 @@
+/* CreatorLMS Elementor Widgets Styles */
+
+.creator-lms-elementor-checkout-widget {
+	width: 100%;
+}
+
+/* Editor preview styles */
+.creator-lms-checkout-preview {
+	padding: 40px;
+	text-align: center;
+	background: #f8f9fa;
+	border: 2px dashed #dee2e6;
+	border-radius: 8px;
+	color: #6c757d;
+}
+
+.creator-lms-checkout-preview h3 {
+	margin: 0 0 10px 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: #495057;
+}
+
+.creator-lms-checkout-preview p {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+/* Empty cart message styling */
+.creator-lms-empty-cart-message {
+	text-align: center;
+	padding: 40px 30px;
+	background: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+}
+
+.creator-lms-empty-cart-message h3 {
+	margin: 0 0 15px 0;
+	font-size: 24px;
+	font-weight: 600;
+	color: var(--creator-lms-heading-color, #2c3e50);
+}
+
+.creator-lms-empty-cart-message p {
+	margin: 0 0 25px 0;
+	font-size: 16px;
+	line-height: 1.5;
+	color: var(--creator-lms-text-color, #555);
+}
+
+.creator-lms-browse-courses-btn {
+	display: inline-block;
+	padding: 12px 24px;
+	background: var(--creator-lms-primary-color, #007cba);
+	color: #fff;
+	text-decoration: none;
+	border-radius: 6px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+}
+
+.creator-lms-browse-courses-btn:hover {
+	background: var(--creator-lms-primary-color-hover, #005a87);
+	color: #fff;
+	text-decoration: none;
+	transform: translateY(-1px);
+}
+
+/* Edit mode notice */
+.creator-lms-edit-mode-notice {
+	background: #e3f2fd;
+	border: 1px solid #2196f3;
+	border-radius: 4px;
+	padding: 10px 15px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.creator-lms-edit-mode-notice small {
+	color: #1976d2;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* Ensure Elementor controls don't interfere with checkout styling */
+.elementor-widget-creator-lms-checkout .creator-lms-checkout-form-wrapper {
+	width: 100%;
+	max-width: none;
+}
+
+/* Responsive adjustments for Elementor */
+@media (max-width: 768px) {
+	.elementor-widget-creator-lms-checkout .creator-lms-checkout-form-wrapper {
+		flex-direction: column;
+	}
+	
+	.elementor-widget-creator-lms-checkout .creator-lms-checkout-form-left,
+	.elementor-widget-creator-lms-checkout .creator-lms-checkout-form-right {
+		width: 100%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.creator-lms-empty-cart-message {
+		padding: 30px 20px;
+	}
+
+	.creator-lms-empty-cart-message h3 {
+		font-size: 20px;
+	}
+
+	.creator-lms-empty-cart-message p {
+		font-size: 14px;
+	}
+}
+
+/* CreatorLMS Dashboard Widget */
+.elementor-widget-creator-lms-dashboard {
+    width: 100%;
+}
+
+.elementor-widget-creator-lms-dashboard .creator-lms {
+    max-width: none;
+    width: 100%;
+}
+
+/* CreatorLMS Profile Widget */
+.elementor-widget-creator-lms-profile {
+    width: 100%;
+}
+.elementor-widget-creator-lms-profile .creator-lms {
+    max-width: none;
+    width: 100%;
+}

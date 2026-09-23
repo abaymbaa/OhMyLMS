@@ -1,0 +1,25 @@
+.theme-twentysixteen.creator-lms-page .creator-lms {
+    max-width: 100%;
+}
+
+.theme-twentytwenty.creator-lms-page .search-toggle-wrapper {
+    display: none;
+}
+
+.theme-twentytwenty.creator-lms-page .creator-lms {
+    width: 100%!important;
+}
+
+.theme-twentytwenty.creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+    top: calc(50% - 2px);
+}
+
+.theme-twentytwenty.creator-lms-page .creator-lms-checkout-payment .creator-lms-tnc-wrapper .creator-lms-checkbox-text .checkedbox:before {
+    height: 12px;
+}
+
+@media screen and (max-width: 1199px) {
+    .theme-twentytwenty.creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+        top: calc(50% - 1px);
+   }
+}

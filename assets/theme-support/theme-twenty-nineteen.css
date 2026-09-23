@@ -1,0 +1,31 @@
+.theme-twentysixteen.creator-lms-page .creator-lms {
+    max-width: 100%;
+}
+.theme-twentynineteen.creator-lms-page .entry .entry-content, 
+.theme-twentynineteen.creator-lms-page .entry .entry-summary {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.theme-twentynineteen.creator-lms-page h1:not(.site-title):before, .theme-twentynineteen.creator-lms-page h2:before {
+    display: none;
+}
+
+.theme-twentynineteen.creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+    top: calc(50% - 2px);
+}
+
+.theme-twentynineteen.creator-lms-page .creator-lms-checkout-payment .creator-lms-tnc-wrapper .creator-lms-checkbox-text .checkedbox:before {
+    height: 12px;
+}
+
+.theme-twentynineteen.creator-lms-page .widget.widget_search {
+    display: none;
+}
+
+@media screen and (max-width: 1199px) {
+    .theme-twentynineteen.creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+        top: calc(50% - 1px);
+   }
+}

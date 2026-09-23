@@ -1,0 +1,627 @@
+.creator-lms-page {
+    .creator-lms-sidebar-widget {
+        background-color: #FFF;
+        box-shadow: 0px 1px 2px #DBDDE1;
+        position: relative;
+        padding: 24px;
+        border-radius: 14px;
+        margin-bottom: 20px;
+
+        &.with-gray-color {
+            background-color: #EBF0FC;
+            box-shadow: none;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-widget-title {
+            color: var(--creator-lms-heading-color);
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 17px;
+            width: 100%;
+        }
+
+        .sidebar-widget-description {
+            color: var(--creator-lms-body-text-color);
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    // -----sidebar pricebox widget-----
+    .creator-lms-widget-pricebox {
+        .price-discount-area {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            row-gap: 8px;
+
+            del {
+                color: var(--creator-lms-heading-color);
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 1;
+                margin-right: 8px;
+            }
+
+            & > .omlms-price-amount,
+            .free,
+            ins {
+                text-decoration: none;
+                color: var(--creator-lms-heading-color);
+                font-size: 30px;
+                font-weight: 700;
+                line-height: 1;
+            }
+
+            ins {
+                width: 100%;
+                margin-bottom: 10px;
+                background: transparent;
+                padding: 0;
+            }
+
+            .discount-percentage {
+                color: var(--creator-lms-body-text-color);
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 1;
+                margin-right: 10px;
+            }
+
+            .amount {
+                color: var(--creator-lms-heading-color);
+                word-wrap: break-word;
+            }
+
+            .special-deal-tag {
+                color: #F02D00;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1;
+                border-radius: 8px;
+                background: #FFF;
+                box-shadow: 0px 1px 2px 0px #D3D6DD;
+                padding: 7px 12px;
+                display: inline-block;
+                margin-left: auto;
+            }
+        }
+
+        .creator-lms-btn-area {
+            margin-top: 25px;
+            text-align: center;
+
+            .creator-lms-button {
+                width: 100%;
+                font-size: 18px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 13px 24px;
+                color: #fff;
+
+                svg {
+                    display: block;
+                    position: relative;
+                    top: -2px;
+                }
+
+                path {
+                    transition: all 0.3s ease;
+                }
+
+                &:hover {
+                    color: var(--creator-lms-primary-color);
+                    background-color: transparent;
+                    border-color: var(--creator-lms-primary-color);
+
+                    path {
+                        fill: var(--creator-lms-primary-color);
+                    }
+                    
+                }
+
+                &.creator-lms-button-outline{
+                    color: var(--creator-lms-primary-color);
+
+                    &:hover {
+                        background-color: var(--creator-lms-primary-color);
+                        color: #FFF;
+                    }
+                }
+                
+            }
+        }
+
+        .discount-countdown {
+            text-align: center;
+            color: #F02D00;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-top: 12px;
+
+            .creator-lms-course-discount-timer {
+                font-weight: 500;
+            }
+        }
+    }
+
+    // -----sidebar membership widget-----
+    .creator-lms-widget-membership {
+        .membership-tag {
+            color: var(--creator-lms-primary-color);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1;
+            display: inline-block;
+            border-radius: 8px;
+            background: rgba(var(--creator-lms-primary-color-rgb), 0.102);
+            padding: 7px 12px;
+            margin: 0 0 17px;
+
+            svg {
+                position: relative;
+                top: 1px;
+                margin-right: 3px;
+                display: inline-block;
+            }
+        }
+        
+        .sidebar-widget-title {
+            margin-bottom: 9px;
+        }
+
+        .creator-lms-button-area {
+            margin-top: 26px;
+
+            .creator-lms-button {
+                font-size: 16px;
+                font-weight: 700;
+                width: 100%;
+                background-color: transparent;
+                color: var(--creator-lms-heading-color);
+                border-color: #EBECED;
+                padding: 14px 24px;
+
+                &:hover {
+                    background-color: var(--creator-lms-primary-color);
+                    color: #fff;
+                    border-color: var(--creator-lms-primary-color);
+                }
+            }
+        }
+    }
+
+    // -----sidebar progress bar widget-----
+    .score-progressbar-box {
+        position: relative;
+        padding: 20px 24px;
+        border-radius: 8px;
+        background: #FFF;
+        box-shadow: 0px 2px 2px 0px rgba(199, 206, 220, 0.41);
+        width: 100%;
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            // width: calc(50% - 8px);
+            flex: 1;
+        }
+    }
+
+    .creator-lms-widget-progressbar {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 16px;
+
+        .sidebar-widget-title {
+            margin-bottom: 4px;
+        }
+    }
+
+    // -----sidebar certificate widget-----
+    .creator-lms-widget-certificate {
+        .sidebar-widget-title {
+            margin-bottom: 4px;
+        }
+
+        .certificate-box {
+            border-radius: 8px;
+            background: #FFF;
+            box-shadow: 0px 2px 2px 0px rgba(199, 206, 220, 0.41);
+            padding: 25px 30px;
+            margin-top: 22px;
+
+            .lock-icon {
+                display: block;
+                text-align: center;
+                margin-bottom: 15px;
+
+                svg {
+                    display: block;
+                    margin: 0 auto;
+                }
+            }
+
+            .certificate-title {
+                color: var(--creator-lms-heading-color);
+                font-size: 20px;
+                font-weight: 700;
+                line-height: 1.3;
+                text-align: center;
+                margin-bottom: 14px;
+            }
+
+            .certificate-placeholder-line {
+                display: block;
+                margin: 0 auto;
+                max-width: 100%;
+            }
+
+            .certificate-logo {
+                list-style: none;
+                padding: 0;
+                margin: 23px 0 0;
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                gap: 20px;
+
+                img {
+                    display: block;
+                }
+            }
+        }
+    }
+
+    // -----sidebar leaderboard widget-----
+    .creator-lms-widget-leaderboard {
+        max-height: 480px;
+        overflow: auto;
+        
+        .creator-lms-leaderboard-wrapper {
+            display: flex;
+            flex-flow: row wrap;
+            gap: 14px;
+        }
+    }
+
+    // -----sidebar drop course widget-----
+    .creator-lms-widget-drop-course {
+        .sidebar-widget-title {
+            margin-bottom: 4px;
+        }
+
+        .drop-course-wrapper {
+            margin-top: 18px;
+        }
+
+        .creator-lms-button {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #FF6F6F;
+            color: #FF6F6F;
+
+            &:hover {
+                border-color: #FF6F6F;
+                background-color: #FF6F6F;
+                color: #fff;
+            }
+        }
+
+    }
+
+    // -----sidebar course meta widget-----
+    .creator-lms-widget-course-meta {
+        .creator-lms-course-meta {
+            margin: 0;
+            flex-flow: column;
+            align-items: flex-start;
+            row-gap: 23px;
+        }
+    }
+
+    // -----sidebar course author widget-----
+    .creator-lms-widget-course-author {
+        .course-author-wrapper {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            gap: 17px;
+
+            .author-avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 100%;
+                background-color: #d1d1d4;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 100%;
+                }
+            }
+
+            .author-info {
+                width: calc(100% - 55px);
+                color: #A1A1AA;
+                font-size: 15px;
+                font-weight: 400;
+                line-height: 1.4;
+                margin: 0;
+                padding: 0;
+                border: none;
+
+                strong {
+                    font-weight: 500;
+                    color: var(--creator-lms-heading-color);
+                }
+
+                .designation {
+                    font-size: 14px;
+                    display: block;
+                    text-transform: capitalize;
+                }
+            }
+        }
+    }
+
+    // -----sidebar course taxonomy widget-----
+    .creator-lms-widget-course-taxonomy {
+        .single-taxonomy {
+            position: relative;
+            padding: 22px 0;
+
+            &::before {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: -24px;
+                width: calc(100% + 48px);
+                height: 1px;
+                background: #EBECED;
+            }
+
+            &:first-child {
+                padding-top: 0;
+            }
+
+            &:last-child {
+                padding-bottom: 0;
+
+                &::before {
+                    display: none;
+                }
+            }
+
+            
+        }
+    
+        .creator-lms-category {
+            .sidebar-widget-title {
+                margin-bottom: 9px;
+            }
+
+            .category-lists {
+                display: flex;
+                flex-flow: row wrap;
+                gap: 3px;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    line-height: 1;
+                    color: var(--creator-lms-body-text-color);
+
+                    a {
+                        display: inline-block;
+                        color: var(--creator-lms-body-text-color);
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.3;
+                        letter-spacing: -0.14px;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        cursor: text;
+
+                        &:hover {
+                            color: var(--creator-lms-primary-color);
+                        }
+
+                        &:focus {
+                            outline: 1px dotted var(--creator-lms-primary-color);
+                            outline-offset: -2px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .creator-lms-tag {
+            .sidebar-widget-title {
+                margin-bottom: 20px;
+            }
+
+            .tag-lists {
+                display: flex;
+                flex-flow: row wrap;
+                gap: 6px;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    line-height: 1;
+
+                    a {
+                        display: inline-block;
+                        color: var(--creator-lms-body-text-color);
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.3;
+                        letter-spacing: -0.14px;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        background-color: #EBF0FC;
+                        padding: 6px 12px 7px;
+                        transition: all 0.3s ease;
+                        cursor: text;
+
+                        &:hover {
+                            background-color: var(--creator-lms-primary-color);
+                            color: #fff;
+                        }
+                        &:focus {
+                            outline: 2px solid var(--creator-lms-outline-color);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //------pricebox for mobile view in header-----
+    .creator-lms-course-header {
+        .creator-lms-widget-pricebox {
+            display: none;
+        }
+    }
+
+}
+
+
+@media screen and (max-width: 1199px) {
+    
+    .creator-lms-page .creator-lms-sidebar-widget {
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .creator-lms-page .creator-lms-sidebar-widget .sidebar-widget-title {
+        font-size: 16px;
+    }
+
+    // -----pricebox widget-----
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area del {
+        font-size: 16px;
+    }
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area .discount-percentage {
+        font-size: 16px;
+    }
+
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area > .omlms-price-amount, 
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area .free, 
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area ins {
+        font-size: 26px;
+    }
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area .special-deal-tag {
+        font-size: 12px;
+    }
+    .creator-lms-page .creator-lms-widget-pricebox .creator-lms-btn-area .creator-lms-button {
+        font-size: 15px;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+
+    // -----membership widget-----
+    .creator-lms-page .creator-lms-widget-membership .creator-lms-button-area .creator-lms-button {
+        font-size: 14px;
+        padding: 10px 18px;
+    }
+    .creator-lms-page .creator-lms-widget-membership .membership-tag {
+        font-size: 13px;
+    }
+    .creator-lms-page .creator-lms-widget-membership .membership-tag svg {
+        width: 17px;
+        height: auto;
+    }
+    
+
+    // -----progressbar widget-----
+    .creator-lms-page .score-progressbar-box {
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .creator-lms-progressbar .progressbar-title span:last-child {
+        font-size: 14px;
+    }
+    .creator-lms-page .creator-lms-circle-progressbar .progressbar-title {
+        margin-top: 7px;
+        transform: translateY(4px);
+    }
+
+    // -----certificate widget-----
+    .creator-lms-page .creator-lms-widget-certificate .certificate-box {
+        border-radius: 8px;
+        padding: 20px 24px;
+    }
+
+    // -----taxonomy widget-----
+    .creator-lms-page .creator-lms-widget-course-taxonomy .single-taxonomy::before {
+        left: -20px;
+        width: calc(100% + 40px);
+    }
+    
+}
+
+@media screen and (max-width: 991px) {
+    .creator-lms-page .creator-lms-content .creator-lms-sidebar-widget {
+        padding: 14px;
+    }
+    .creator-lms-page .creator-lms-course-header .creator-lms-widget-pricebox {
+        display: block;
+        margin-bottom: 0;
+        margin-top: 24px;
+        padding: 12px 14px 14px;
+    }
+    .creator-lms-page .creator-lms-sidebar .creator-lms-widget-pricebox {
+        display: none;
+    }
+    
+}
+
+@media screen and (max-width: 575px) {
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area > .omlms-price-amount, 
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area .free, 
+    .creator-lms-page .creator-lms-widget-pricebox .price-discount-area ins {
+        font-size: 22px;
+    }
+
+    .creator-lms-page .creator-lms-widget-certificate .certificate-box .certificate-title {
+        font-size: 16px;
+    }
+    .creator-lms-page .creator-lms-widget-certificate .certificate-box {
+        padding: 20px 15px 15px;
+    }
+    .creator-lms-page .creator-lms-widget-certificate .certificate-box .certificate-logo {
+        gap: 6px;
+    }
+    .creator-lms-page .creator-lms-widget-certificate .certificate-box .lock-icon {
+        margin-bottom: 10px;
+    }
+    
+}
+
+@media screen and (max-width: 360px) {
+    .creator-lms-page .creator-lms-sidebar-widget .creator-lms-circle-progressbar .circle-progress-svg {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .creator-lms-page .creator-lms-sidebar-widget .creator-lms-circle-progressbar .percent-text {
+        top: 45px;
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "ohmylms",
+  "version": "1.2.20",
+  "private": true,
+  "description": "OhMyLMS source recovery, extensibility SDK and reproducible assets",
+  "license": "GPL-2.0-or-later",
+  "engines": {
+    "node": "26.0.0"
+  },
+  "packageManager": "npm@11.12.1",
+  "scripts": {
+    "recover": "node tools/recover.mjs",
+    "build:recovered": "node tools/build-recovered.mjs",
+    "build:sdk": "webpack --config webpack.config.cjs --mode production",
+    "build:application": "node tools/build-recovered.mjs --extensions",
+    "build": "npm run build:application && npm run build:sdk",
+    "dev": "node tools/dev.mjs",
+    "test": "node tools/build-recovered.mjs --parity && node --test tests/js/*.test.mjs",
+    "test:reproducible": "node tools/check-reproducible.mjs",
+    "test:browser": "playwright test",
+    "lint": "node tools/check-source.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@babel/generator": "7.29.8",
+    "@babel/parser": "7.29.9",
+    "@babel/preset-react": "7.29.7",
+    "@babel/traverse": "7.29.8",
+    "@babel/types": "7.29.8",
+    "@playwright/test": "1.63.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "6.55.0",
+    "babel-loader": "10.1.1",
+    "css-loader": "7.1.5",
+    "mini-css-extract-plugin": "2.10.2",
+    "sass": "1.105.0",
+    "sass-loader": "16.0.8",
+    "source-map": "0.7.6",
+    "webpack": "5.111.1",
+    "webpack-cli": "6.0.1"
+  }
+}

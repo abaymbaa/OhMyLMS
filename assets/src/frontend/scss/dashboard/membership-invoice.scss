@@ -1,0 +1,286 @@
+.creator-lms-page {
+    .creator-lms-membership-invoice {
+        .invoice-breadcrumb {
+            margin: 0px 0 20px;
+
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-flow: row wrap;
+                gap: 20px;
+
+                li {
+                    color: var(--creator-lms-heading-color);
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1;
+                    text-decoration: none;
+                    position: relative;
+
+                    &::before {
+                        content: "/";
+                        position: absolute;
+                        left: -11px;
+                        top: 0;
+                        color: #A1A1AA;
+                        line-height: 1;
+                    }
+
+                    &:first-child {
+                        &::before {
+                            display: none;
+                        }
+                    }
+
+                    svg {
+                        display: block;
+
+                        path {
+                            transition: all 0.3s ease;
+                        }
+                    }
+
+                    a {
+                        color: #A1A1AA;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1;
+                        text-decoration: none;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            color: var(--creator-lms-heading-color);
+
+                            path:first-child {
+                                stroke: var(--creator-lms-heading-color);
+                            }
+
+                            path:nth-child(2) {
+                                fill: var(--creator-lms-heading-color);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .invoice-header {
+            border-radius: 8px;
+            background-color: #FFF;
+            box-shadow: 0px 1px 3px 0px rgba(211, 214, 221, 0.80);
+            padding: 20px;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 15px;
+
+            .invoice-left {
+                width: calc(100% - 100px);
+            }
+
+            .invoice-title {
+                color: var(--creator-lms-heading-color);
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 1.4;
+                margin: 0 0 10px;
+            }
+
+            .invoice-tags {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-flow: row wrap;
+                gap: 8px;
+
+                li {
+                    color: var(--creator-lms-heading-color);
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1;
+                    border-radius: 8px;
+                    background-color: #F3F5F7;
+                    padding: 7px 12px 8px;
+
+                    &.invoice-payment-status {
+                        color: #35BD4C;
+                        background-color: rgba(53, 189, 76, 0.10);
+                    }
+                }
+            }
+
+            .print-button {
+                color: var(--creator-lms-heading-color);
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                border-radius: 10px;
+                border: 1px solid #DCDFE4;
+                padding: 8px 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background-color: transparent;
+
+                path {
+                    transition: all 0.3s ease;
+                }
+
+                &:hover {
+                    color: var(--creator-lms-primary-color);
+                    border-color: var(--creator-lms-primary-color);
+
+                    path {
+                        stroke: var(--creator-lms-primary-color);
+                    }
+                }
+            }
+        }
+        
+        .membership-invoice-table {
+            .dashboard-table-tr {
+                .dashboard-table-td {
+                    &.membership-item {
+                        width: calc(100% - 290px);
+                    }
+                    
+                    &.membership-price {
+                        width: 80px;
+                    }
+
+                    &.quantity {
+                        width: 60px;
+                        border: none;
+
+                        svg {
+                            display: inline-block;
+                        }
+                    }
+
+                    &.total {
+                        width: 60px;
+                        text-align: right;
+                    }
+                }
+            }
+
+            .dashboard-table-head {
+                border-radius: 8px;
+                padding: 11px 20px;
+            }
+            
+            .dashboard-table-body {
+                .dashboard-table-tr {
+                    padding: 15px 0;
+
+                    &:last-child {
+                        border-bottom: 0;
+                        padding-bottom: 10px;
+                    }
+                    
+                }
+
+                .dashboard-table-foot-tr {
+                    flex-direction: column;
+                    align-items: flex-end;
+                    gap: 14px;
+
+                    .item-subtotal {
+                        display: flex;
+                        gap: 10px;
+                    }
+
+                    .td-label {
+                        width: 120px;
+                        text-align: right;
+                    }
+
+                    .td-value {
+                        font-weight: 700;
+                        color: var(--creator-lms-heading-color);
+                        width: 115px;
+                        display: inline-block;
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .creator-lms-membership-invoice .invoice-header .invoice-title {
+        font-size: 16px;
+    }
+    .creator-lms-page .creator-lms-membership-invoice .invoice-header .invoice-tags li {
+        font-size: 12px;
+    }
+
+    .creator-lms-page .membership-invoice-table .dashboard-table-tr > .dashboard-table-td.quantity,
+    .creator-lms-page .membership-invoice-table .dashboard-table-tr > .dashboard-table-td.membership-price  {
+        display: none;
+    }
+   
+    .creator-lms-page .membership-invoice-table .dashboard-table-tr .dashboard-table-td.total {
+        width: 100px;
+        margin-left: auto;
+        text-align: right;
+    }
+    
+    .creator-lms-page .membership-invoice-table .dashboard-table-mobile-td .dashboard-table-td.membership-price,
+    .creator-lms-page .membership-invoice-table .dashboard-table-mobile-td .dashboard-table-td.quantity {
+        width: 100%!important;
+        gap: 0;
+    }
+
+    .creator-lms-page .membership-invoice-table .dashboard-table-mobile-td .dashboard-table-td.quantity svg {
+        margin-right: 4px;
+        width: 8px;
+        height: auto;
+    }
+
+    .creator-lms-page .membership-invoice-table .dashboard-table-mobile-td .dashboard-table-td {
+        align-items: center;
+    }
+
+    .creator-lms-page .creator-lms-membership-invoice .membership-invoice-table .dashboard-table-tr .dashboard-table-td.membership-item {
+        width: calc(100% - 103px);
+    }
+    .creator-lms-page .creator-lms-membership-invoice .membership-invoice-table .dashboard-table-body .dashboard-table-tr {
+        padding: 14px 16px;
+    }
+
+}
+
+@media screen and (max-width: 575px) {
+    .creator-lms-page .creator-lms-membership-invoice .invoice-header {
+        padding: 14px;
+    }
+    .creator-lms-page .creator-lms-membership-invoice .invoice-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .creator-lms-page .creator-lms-membership-invoice .invoice-header .invoice-left {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .creator-lms-page .creator-lms-membership-invoice .membership-invoice-table .dashboard-table-body .dashboard-table-foot-tr .td-label {
+        width: 100px;
+    }
+    .creator-lms-page .creator-lms-membership-invoice .membership-invoice-table .dashboard-table-body .dashboard-table-foot-tr .td-value {
+        width: 75px;
+    }
+}

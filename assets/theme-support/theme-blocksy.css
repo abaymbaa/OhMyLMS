@@ -1,0 +1,42 @@
+.theme-blocksy.creator-lms-page .ct-header-search {
+    display: none;
+}
+
+.theme-blocksy.creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+    border: 1px solid var(--creator-lms-primary-color) !important;
+    border-radius: 12px;
+}
+
+.theme-blocksy.creator-lms-page #main > [data-vertical-spacing*=bottom] {
+    padding-bottom: 0;
+}
+
+.theme-blocksy.creator-lms-page #main > [data-vertical-spacing*=top] {
+    padding-top: 0;
+}
+
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper select:focus,
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper textarea:focus,
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input:is([type=url], 
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=tel],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=text],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=time],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=date],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=datetime],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=datetime-local],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=email],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=number],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=search],
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper input[type=password]):focus,
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper fieldset.wc-stripe-elements-field:focus,
+.theme-blocksy.creator-lms-page .creator-lms-checkout-form-wrapper .ff-inherit-theme-style .ff-el-form-control:not([size]):not([multiple]):focus {
+    color: #52525b;
+    border-color: #ebebef;
+    background-color: transparent;
+}
+
+@media screen and (max-width: 1199px) {
+    .theme-blocksy.creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+        border-radius: 8px;
+   }
+}

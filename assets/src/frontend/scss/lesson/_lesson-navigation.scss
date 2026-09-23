@@ -1,0 +1,208 @@
+.creator-lms-page {
+    .creator-lms-lesson-details {
+        .creator-lms-lesson-navigation {
+            border-top: 1px solid #ECEDF2;
+            padding-top: 24px;
+            position: relative;
+            bottom: 0;
+            background: #f9fafd;
+            z-index: 2;
+
+            .default-navigation {
+                display: flex;
+                align-items: center;
+                flex-flow: row wrap;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .creator-lms-checkbox {
+                border-radius: 10px;
+                background-color: #35BD4C;
+                padding: 12px 20px;
+
+                &:focus {
+                    outline: 2px solid rgba(var(--creator-lms-primary-color-rgb), 0.3490196078);
+                }
+            }
+
+            .creator-lms-checkbox-text {
+                color: #FFF;
+                font-size: 14px;
+                line-height: 1;
+                font-weight: 500;
+
+                .checkedbox {
+                    width: 18px;
+                    height: 18px;
+                    top: -2px;
+                    border-color: #fff;
+                    background: transparent;
+                    display: flex;
+                    flex-flow: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    svg {
+                        opacity: 0;
+                        visibility: hidden;
+                        display: block;
+                        line-height: 1;
+                    }
+
+                    &:before {
+                        height: 14px;
+                        visibility: hidden;
+                        transition: all 0.3s ease;
+                        opacity: 0;
+                    }
+
+                }
+            }
+
+            .creator-lms-checkbox input[type=checkbox]:checked + .creator-lms-checkbox-text .checkedbox {
+                background: transparent;
+                border-color: #fff;
+            }
+            .creator-lms-checkbox input[type=checkbox]:checked + .creator-lms-checkbox-text .checkedbox svg {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .next-lesson {
+                color: #fff;
+                font-size: 14px;
+                padding: 10px 20px;
+                height: 38px;
+                border-radius: 10px;
+
+                &:hover {
+                    color: var(--creator-lms-primary-color);
+                }
+            }
+            
+            //-----navigation for assignment and quiz-----
+            .assignment-quiz-navigation {
+                display: flex;
+                align-items: center;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                gap: 12px;
+
+                .skip {
+                    color: #696971;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 1.2;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                        color: var(--creator-lms-primary-color);
+                    }
+                }
+
+                form {
+                    margin-left: auto;
+                }
+
+                .creator-lms-button {
+                    color: #fff;
+                    font-size: 14px;
+                    padding: 10px 20px 9px;
+                    background-color: var(--creator-lms-primary-color);
+                    height: 38px;
+                    border-radius: 10px;
+
+                    
+                    &:hover {
+                        color: var(--creator-lms-primary-color);
+                        background-color: transparent;
+                    }
+
+                    &:disabled {
+                        cursor: not-allowed;
+                        border-color: #FFF;
+                        background-color: #FFF;
+                        color: rgba(0, 13, 37, 0.16);
+                        box-shadow: 0px 1px 2px 0px #DBDDE1;
+                        opacity: 1;
+                    }
+
+                    // &.quiz-taken {
+                    //     border-color: #FFF;
+                    //     background-color: #FFF;
+                    //     color: var(--creator-lms-heading-color);
+                    //     box-shadow: 0px 1px 2px 0px #DBDDE1;
+                    // }
+                }
+
+            }
+
+            .assignment-navigation {
+                justify-content: flex-end;
+
+                a.skip {
+                    margin-right: auto;
+                }
+            }
+
+            .creator-lms-quiz-notice {
+                color: #A1A1AA;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 15px;
+                margin: 16px 0 0;
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 5px;
+            }
+
+        }
+
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox {
+        border-radius: 8px;
+    }
+
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .assignment-quiz-navigation .creator-lms-button {
+        border-radius: 8px;
+    }
+
+}
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .quiz-navigation {
+        justify-content: flex-end;
+    }
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .quiz-navigation form {
+        margin-left: 0;
+    }
+
+}
+
+@media screen and (max-width: 425px) {
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .default-navigation {
+        gap: 9px;
+    }
+
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox {
+        padding: 12px 16px;
+    }
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .next-lesson {
+        padding: 10px 16px;
+    }
+
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox-text {
+        font-size: 13px;
+    }
+    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .next-lesson {
+        font-size: 13px;
+    }
+
+}

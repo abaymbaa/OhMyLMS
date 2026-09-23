@@ -1,0 +1,47 @@
+.theme-woodmart.creator-lms-page:not(.creator-lms-checkout) .main-page-wrapper .container, 
+.theme-woodmart.creator-lms-page:not(.creator-lms-checkout) .main-page-wrapper .container-fluid {
+    max-width: 100%;
+    padding: 0;
+}
+
+.theme-woodmart.creator-lms-page:not(.creator-lms-checkout) .main-page-wrapper main {
+    display: block;
+}
+
+.theme-woodmart.creator-lms-page .creator-lms-single-membership .membership-body .membership-courses li:not(.im-strong)::before {
+    top: 7px;
+}
+
+
+.theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-wrapper {
+    flex-flow: column-reverse;
+    gap: 44px;
+}
+.theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-right {
+    width: 100%;
+    padding: 0;
+}
+
+.theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-outer::before {
+    width: 100%;
+}
+.theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-outer .creator-lms-container {
+    padding: 0;
+}
+
+.theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-left {
+    width: 100%;
+    padding: 0;
+    border-right: none;
+}
+
+.theme-woodmart.creator-lms-checkout .creator-lms-order-review-table-wrapper {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 991px) {
+    .theme-woodmart.creator-lms-checkout .creator-lms-checkout-form-wrapper {
+        flex-flow: column;
+        gap: 20px;
+    }
+}

@@ -1,0 +1,78 @@
+.theme-woostify.creator-lms-page .site-content {
+    margin: 0;
+}
+.theme-woostify.creator-lms-page .site-content .woostify-container {
+    max-width: 100%;
+    padding: 0;
+}
+
+.theme-woostify.creator-lms-checkout #customer_details {
+    float: none;
+    width: 100%;
+    padding-right: 0;
+}
+
+.theme-woostify.creator-lms-checkout #order_review {
+    float: none;
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.theme-woostify.creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow:before,
+.theme-woostify.creator-lms-page .grid-style3 .creator-lms-course-cards .slick-arrow:before {
+    display: none;
+}
+
+.theme-woostify.creator-lms-page .grid-style3 .creator-lms-course-cards .slick-arrow.slick-prev svg {
+    position: relative;
+    left: -2px;
+}
+
+.theme-woostify.creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow.slick-prev {
+    left: inherit;
+}
+
+
+.theme-woostify.creator-lms-page .creator-lms-course-reviews-form #commentform #comment {
+    border-radius: 14px;
+    border: 1px solid #EBECED;
+    padding: 14px 20px;
+    font-size: 14px;
+}
+.theme-woostify.creator-lms-page .creator-lms-table .creator-lms-head .creator-lms-th {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.theme-woostify.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab li a {
+    padding-right: 13px;
+}
+.theme-woostify.creator-lms-page .creator-lms-student-profile .student-membership .creator-lms-dashboard-table .dashboard-table-tr .dashboard-table-td.action {
+    width: 46px;
+}
+
+.theme-woostify.creator-lms-page .creator-lms-dashboard-table .dashboard-table-body .dashboard-table-tr .dashboard-table-td .status-tag {
+    white-space: nowrap;
+}
+
+.theme-woostify.creator-lms-page .creator-lms-dashboard-table .dashboard-table-body .dashboard-table-tr .dashboard-table-td .status-tag:before,
+.theme-woostify.creator-lms-page .creator-lms-dashboard-table .dashboard-table-body .dashboard-table-tr .dashboard-table-td .status-tag:after {
+    display: none;
+}
+
+.theme-woostify.creator-lms-page .creator-lms-checkout-customer-details#customer_details {
+    width: 100%;
+    float: none;
+    padding-right: inherit;
+}
+
+@media screen and (max-width: 767px) {
+    .theme-woostify.creator-lms-page .creator-lms-dashboard-table .dashboard-table-tr .table-accordion-handler:before {
+        top: 2px;
+    }
+    .theme-woostify.creator-lms-page .creator-lms-dashboard-table .dashboard-table-tr.active .table-accordion-handler:before {
+        top: -1px;
+    }
+}

@@ -1,0 +1,134 @@
+.theme-thrive-theme.creator-lms-page ul>li:not(.thrv-styled-list-item), ol>li:not(.thrv-styled-list-item) {
+    margin-left: 0;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-course-reviews-form .comment-form-submit {
+    float: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 20px 0 0;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-course-reviews-form .comment-form #submit {
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 20px;
+    color: #fff;
+    border-radius: 10px;
+    background-color: var(--creator-lms-primary-color);
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none !important;
+    box-shadow: none;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1;
+    height: 40px;
+    min-width: auto;
+    width: auto;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-course-reviews-form .comment-form #submit:disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    background: #BBCAEC;
+    border-color: #BBCAEC;
+}
+
+
+
+/* --checkout page-- */
+.theme-thrive-theme.creator-lms-page .creator-lms-no-cart-data * {
+    box-sizing: border-box;
+}
+.theme-thrive-theme.creator-lms-page .creator-lms-checkout-form-outer {
+    background-color: #fff;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-checkout-form-wrapper {
+    flex-flow: column-reverse;
+    gap: 42px;
+}
+.theme-thrive-theme.creator-lms-page .creator-lms-checkout-form-outer::before {
+    background-color: transparent;
+}
+.theme-thrive-theme.creator-lms-page .creator-lms-checkout-form-left {
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border-right: none;
+    position: relative;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-checkout-form-right {
+    width: 100%;
+    padding: 0;
+}
+
+.theme-thrive-theme.creator-lms-page .creator-lms-order-review-table-wrapper {
+    margin-bottom: 0;
+}
+
+.theme-thrive-theme.creator-lms-checkout .creator-lms-checkout-notice {
+    margin-bottom: 20px;
+}
+
+.theme-thrive-theme.creator-lms-checkout .creator-lms {
+    background-color: transparent;
+}
+
+.theme-thrive-theme.creator-lms-checkout .creator-lms * {
+   box-sizing: border-box;
+}
+
+/* ---thank you---- */
+.theme-thrive-theme.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+    border-radius: 20px;
+    max-width: 100%;
+    padding: 20px;
+    gap: 20px;
+    flex-flow: column;
+}
+.theme-thrive-theme.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content-right {
+    width: 100%;
+}
+
+@media screen and (max-width: 1199px) {
+    .theme-thrive-theme.creator-lms-checkout .creator-lms-order {
+        padding-left: 15px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .theme-thrive-theme.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+        border-radius: 14px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .theme-thrive-theme.creator-lms-checkout .creator-lms-order {
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .theme-thrive-theme.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+        border-radius: 10px;
+        padding: 20px;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .theme-thrive-theme.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+        border-radius: 10px;
+        padding: 14px;
+    }
+}

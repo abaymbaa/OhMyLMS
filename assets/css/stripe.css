@@ -1,0 +1,43 @@
+.creator-lms-page .omlms-credit-card-form {
+    border: none;
+    margin: 0;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 12px;
+    /* box-shadow: 0px 1px 8px #2222221a; */
+}
+.creator-lms-page .omlms-credit-card-form .form-row label {
+    font-size: 14px;
+    line-height: 1;
+    display: none;
+    margin-bottom: 10px;
+}
+.creator-lms-page .omlms-credit-card-form .form-row .required {
+    color: #F85656;
+}
+.creator-lms-page .omlms-credit-card-form .form-row.form-row-wide {
+    width: 100%;
+}
+
+.creator-lms-page .omlms-credit-card-form .wc-stripe-elements-field {
+    border: 1px solid #c8d2e980;
+    padding: 10px 13px 10px;
+    background-color: #F4F5F7;
+    outline: 0;
+    border-radius: 8px;
+}
+
+.creator-lms-page .omlms-credit-card-form .form-row-last,
+.creator-lms-page .omlms-credit-card-form .form-row-first {
+    width: calc(100% / 2 - 6px);
+}
+
+
+@media (max-width: 425px) {
+    .creator-lms-page .omlms-credit-card-form .form-row-last,
+    .creator-lms-page .omlms-credit-card-form .form-row-first {
+        width: 100%;
+    }
+    
+}

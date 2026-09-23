@@ -1,0 +1,38 @@
+.theme-flatsome.creator-lms-page .content-area .container, 
+.theme-flatsome.creator-lms-page .content-area .container-width, 
+.theme-flatsome.creator-lms-page .content-area .full-width 
+.theme-flatsome.creator-lms-page .content-area .ubermenu-nav, 
+.theme-flatsome.creator-lms-page .content-area .row {
+    max-width: 100%;
+}
+
+.theme-flatsome.creator-lms-page .content-area .col {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.theme-flatsome.creator-lms-page .creator-lms-no-cart-data .creator-lms-no-cart-data-wrapper .no-cart-title {
+    margin: 0;
+}
+
+.theme-flatsome.creator-lms-page .creator-lms-checkout-form-wrapper .creator-lms-checkout-title {
+    width: auto;
+}
+
+.theme-flatsome.creator-lms-page .uppercase, 
+.theme-flatsome.creator-lms-page h6, 
+.theme-flatsome.creator-lms-page span.widget-title, 
+.theme-flatsome.creator-lms-page th {
+    text-transform: none;
+}
+
+.theme-flatsome.creator-lms-page .processing:before {
+    display: none;
+}
+
+@media (min-width: 850px) {
+    .theme-flatsome.creator-lms-page .comment-form>div, 
+    .theme-flatsome.creator-lms-page .comment-form>p {
+        padding: 0;
+    }
+}

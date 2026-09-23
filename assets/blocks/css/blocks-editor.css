@@ -1,0 +1,108 @@
+/**
+ * CreatorLMS Blocks Editor Styles
+ *
+ * @package CreatorLMS
+ */
+
+/* ServerSideRender checkout form in editor */
+.wp-block-creator-lms-checkout .components-server-side-render,
+.wp-block-creator-lms-checkout .components-server-side-render .creator-lms {
+	width: 100%;
+}
+
+/* Ensure checkout form styles are applied in editor */
+.wp-block-creator-lms-checkout .creator-lms-checkout-form-wrapper,
+.wp-block-creator-lms-checkout .creator-lms-checkout-form {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Block preview in editor */
+.creator-lms-checkout-block-preview {
+	border-radius: 8px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.creator-lms-checkout-block-preview h4 {
+	color: #1e1e1e;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.creator-lms-checkout-block-preview p {
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.creator-lms-checkout-block-preview small {
+	font-size: 12px;
+	font-style: italic;
+}
+
+/* Enhanced checkout form preview styles */
+.creator-lms-checkout-block-preview input {
+	outline: none;
+	transition: border-color 0.3s ease;
+}
+
+.creator-lms-checkout-block-preview input:focus {
+	border-color: #007cba !important;
+	box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.1);
+}
+
+.creator-lms-checkout-block-preview button:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+}
+
+.creator-lms-checkout-block-preview label {
+	font-weight: 500;
+}
+
+/* Responsive preview */
+@media (max-width: 768px) {
+	.creator-lms-checkout-block-preview > div:nth-child(2) > div {
+		flex-direction: column !important;
+	}
+	
+	.creator-lms-checkout-block-preview > div:nth-child(2) > div > div:last-child {
+		flex: 1 1 auto !important;
+		margin-top: 20px;
+	}
+}
+
+/* Block in editor list */
+.block-editor-block-types-list__item-icon svg {
+	fill: currentColor;
+}
+
+/* Category icon */
+.editor-block-list-item-creator-lms .editor-block-list-item-icon {
+	color: #2196F3;
+}
+/* Dashboard block in editor */
+.wp-block-creator-lms-dashboard .components-server-side-render,
+.wp-block-creator-lms-dashboard .components-server-side-render .creator-lms {
+	width: 100%;
+}
+
+/* Dashboard block preview in editor */
+.creator-lms-dashboard-block-preview {
+	border-radius: 8px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.creator-lms-dashboard-block-preview h4 {
+	color: #1e1e1e;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.creator-lms-dashboard-block-preview p {
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.creator-lms-dashboard-block-preview small {
+	font-size: 12px;
+	font-style: italic;
+}

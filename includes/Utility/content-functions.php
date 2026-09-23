@@ -1,0 +1,190 @@
+<?php
+
+/**
+ * Modify the permalink structure for lessons.
+ *
+ * @param string  $permalink The original permalink.
+ * @param WP_Post $post The post object.
+ * @return string The modified permalink.
+ *
+ * @since 1.0.0
+ */
+function creator_lms_content_link( $permalink, $post ) {
+	$post_types = array( 'omlms-lesson', 'omlms-quiz', 'omlms-assignment' );
+	if ( ! in_array( $post->post_type, $post_types ) ) {
+		return $permalink;
+	}
+	$course_id = creator_lms_get_course_by_content_id( $post->ID );
+	$course    = omlms_get_course( $course_id );
+
+	if ( ! $course ) {
+		return $permalink;
+	}
+	return $course->get_content_link( $post->ID );
+}
+
+add_filter( 'post_type_link', 'creator_lms_content_link', 10, 2 );
+
+
+/**
+ * Get pretty permalink for omlms-lesson, omlms-quiz, or omlms-assignment, even if parent course is draft.
+ *
+ * @param int $content_id The ID of the lesson, quiz, or assignment.
+ * @return string The pretty permalink, or empty string if not found.
+ * 
+ * @since 1.0.0
+ */
+function creatorlms_get_pretty_content_permalink( $content_id ) {
+	
+    $post = get_post( $content_id );
+    if ( ! $post ) {
+        return '';
+    }
+    $post_type = $post->post_type;
+    $valid_types = array( 'omlms-lesson', 'omlms-quiz', 'omlms-assignment' );
+    if ( ! in_array( $post_type, $valid_types ) ) {
+        return get_permalink( $content_id );
+    }
+
+    $course_id = creator_lms_get_course_by_content_id( $content_id );
+    if ( ! $course_id ) {
+        return get_permalink( $content_id );
+    }
+    $course = get_post( $course_id );
+    if ( ! $course ) {
+        return get_permalink( $content_id );
+    }
+
+	$content_slug = $post->post_name;
+
+    // If permalinks are set to Plain, return a custom query URL
+    if ( ! get_option( 'permalink_structure' ) ) {
+        if ( 'omlms-lesson' === $post_type ) {
+            return home_url( '/?omlms-lesson=' . $content_slug );
+        } elseif ( 'omlms-quiz' === $post_type ) {
+            return home_url( '/?omlms-quiz=' . $content_slug );
+        } elseif ( 'omlms-assignment' === $post_type ) {
+            return home_url( '/?omlms-assignment=' . $content_slug );
+        }
+    }
+
+    $permalink_structure = function_exists( 'omlms_get_permalink_structure' ) ? omlms_get_permalink_structure() : array();
+    $course_base = isset( $permalink_structure['course_base'] ) ? $permalink_structure['course_base'] : 'omlms-courses';
+    $lesson_base = isset( $permalink_structure['lesson_base'] ) ? $permalink_structure['lesson_base'] : 'lessons';
+    $quiz_base = isset( $permalink_structure['quiz_base'] ) ? $permalink_structure['quiz_base'] : 'quizzes';
+    $assignment_base = isset( $permalink_structure['assignment_base'] ) ? $permalink_structure['assignment_base'] : 'assignments';
+
+    $course_slug  = $course->post_name;
+    $content_slug = $post->post_name;
+
+    if ( 'omlms-lesson'  === $post_type ) {
+        $url = home_url( "/$course_base/$course_slug/$lesson_base/$content_slug/" );
+    } elseif ( 'omlms-quiz' === $post_type ) {
+        $url = home_url( "/$course_base/$course_slug/$quiz_base/$content_slug/" );
+    } elseif ( 'omlms-assignment' === $post_type ) {
+        $url = home_url( "/$course_base/$course_slug/$assignment_base/$content_slug/" );
+    } else {
+        $url = get_permalink( $content_id );
+    }
+    return $url;
+}
+
+
+/**
+ * Get chapter ID by content ID.
+ *
+ * @param int $content_id The ID of the content.
+ * @return int|null The chapter ID or null if not found.
+ *
+ * @since 1.0.0
+ */
+function creator_lms_get_chapter_id_by_content_id( $content_id ) {
+	static $cache = array();
+
+	if ( isset( $cache[ $content_id ] ) ) {
+		return $cache[ $content_id ];
+	}
+
+	global $wpdb;
+	$chapter_id = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT chapter_id FROM {$wpdb->prefix}omlms_content_relationship WHERE content_id = %d LIMIT 1",
+			$content_id
+		)
+	);
+	$result = $chapter_id ? (int) $chapter_id : 0;
+
+	if ($result) $cache[ $content_id ] = $result;
+	return $result;
+}
+
+
+/**
+ * Get chapter ID by content ID.
+ *
+ * @param int $content_id The ID of the content.
+ * @return int|null The chapter ID or null if not found.
+ *
+ * @since 1.0.0
+ */
+function creator_lms_get_content_type_id_by_content_id( $content_id ) {
+	global $wpdb;
+	$sql    = $wpdb->prepare(
+		"SELECT content_type FROM {$wpdb->prefix}omlms_content_relationship WHERE content_id = %d LIMIT 1",
+		$content_id
+	);
+	$result = $wpdb->get_row( $sql );
+	return isset($result->content_type) ? $result->content_type : null;
+}
+
+
+/**
+ * Get course ID by content ID.
+ *
+ * @param int $content_id The ID of the content.
+ * @return int|null The course ID or null if not found.
+ *
+ * @since 1.0.0
+ */
+function creator_lms_get_course_by_content_id( $content_id ) {
+	global $wpdb;
+	$chapter_id = creator_lms_get_chapter_id_by_content_id( $content_id );
+	if ( ! $chapter_id ) {
+		return null;
+	}
+
+	$course_id = creator_lms_get_course_id_by_chapter_id( $chapter_id );
+
+	if ( ! $course_id ) {
+		return null;
+	}
+	return $course_id;
+}
+
+function omlms_format_file_size( $size ) {
+	if ( $size >= 1073741824 ) {
+		return number_format( $size / 1073741824, 2 ) . ' GB';
+	} elseif ( $size >= 1048576 ) {
+		return number_format( $size / 1048576, 2 ) . ' MB';
+	} elseif ( $size >= 1024 ) {
+		return number_format( $size / 1024, 2 ) . ' KB';
+	} else {
+		return $size . ' bytes';
+	}
+}
+
+
+function crator_lms_get_question_ans_by_question_id( $question_id ) {
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'omlms_question_answers'; // Replace 'your_table_name' with the actual table name
+
+	$results = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT * FROM $table_name WHERE question_id = %d AND is_correct = 1",
+			$question_id
+		),
+		ARRAY_A
+	);
+
+	return $results;
+}

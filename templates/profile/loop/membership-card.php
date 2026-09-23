@@ -1,0 +1,150 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+use function CodeRex\Ecommerce\ecommerce;
+// Extract data from membership object
+$subscription = isset( $memebership->subscription ) ? $memebership->subscription : null;
+$order = isset( $memebership->order ) ? $memebership->order : null;
+$products = $memebership->get_products();
+$course_count = count( $products );
+$is_one_time = $memebership->get_subscription_period() === 'one_time';
+if ( ! $order ) {
+    return;
+}
+
+$recurring_amount = 0;
+
+if( ! $is_one_time ) {
+    $tax_amount = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+    $recurring_amount = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
+}
+
+
+// Safely get status
+$status = $subscription ? $subscription->get_status() : '';
+$status_classes = 'omlms-membership-status ' . 'omlms-status-' . strtolower( $status );
+
+// Safely get price
+$price_html = __( 'Not available', 'ohmylms' );
+
+if( $is_one_time ) {
+    $price_html = omlms_price( $memebership->get_regular_price() ) . ' / ' . __( 'One Time', 'ohmylms' );
+} else {
+    if ( $subscription ) {
+        $price_html = omlms_price( $recurring_amount ) . ' / ' . $subscription->get_billing_period();
+    } else {
+        $price_html = omlms_price( $memebership->get_regular_price() ) . ' / ' . $memebership->get_subscription_period();
+    }
+}
+
+// Safely get purchase date
+$purchase_date = $order ? omlms_format_datetime( $order->get_date_created() ) : __( 'Not available', 'ohmylms' );
+
+if( ! $is_one_time ) {
+
+    $price              = $memebership->get_regular_price();
+    $billing_period     = $memebership->get_subscription_period();
+
+    $billing_interval   = $memebership->get_subscription_period_interval();
+    
+    $stored_totals = ecommerce()->session->get('cart_totals');
+    if (!empty($stored_totals) && isset($stored_totals['tax_rate']) && $stored_totals['tax_rate'] > 0) {
+        $tax_rate = $stored_totals['tax_rate'];
+        // Now calculate tax based on the discounted total.
+        $tax_data = \TaxCalculator::get_instance()->calculate_tax($tax_rate, array(
+            'total' => $price,
+        ));
+        $price = isset($tax_data['total_with_tax']) ? $tax_data['total_with_tax'] : $price;
+    }
+    $price_html = omlms_price($price) . ' / ' . $billing_period;
+    $now        = current_time('timestamp');
+
+    switch ($billing_period) {
+        case 'month':
+            $renewal = strtotime("+$billing_interval month", $now);
+            break;
+        case 'week':
+            $renewal = strtotime("+$billing_interval week", $now);
+            break;
+        case 'day':
+            $renewal = strtotime("+$billing_interval day", $now);
+            break;
+        case 'year':
+        default:
+            $renewal = strtotime("+$billing_interval year", $now);
+            break;
+    }
+    $renewal_date = date_i18n(get_option('date_format'), $renewal);
+}else{
+    $renewal_date = '';
+}
+
+// Safely get payment method
+$payment_method = $order && $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Not available', 'ohmylms' );
+?>
+<div class="omlms-membership-card creator-lms-dashboard-single-membership">
+    <div class="omlms-membership-card-header">
+        <h3 class="omlms-membership-name"><?php echo $memebership->get_name(); ?></h3>
+        <span class="<?php echo esc_attr( $status_classes ); ?>"><?php echo esc_html( ucfirst( $status ) ); ?></span>
+    </div>
+    <div class="omlms-membership-card-body">
+        <ul class="omlms-membership-details">
+            <li>
+                <strong><?php echo __( 'Price:', 'ohmylms' ); ?></strong>
+                <span><?php echo $price_html; ?></span>
+            </li>
+            <li>
+                <strong><?php echo __( 'Courses Included:', 'ohmylms' ); ?></strong>
+                <span><?php echo $course_count > 0 ? $course_count : __( 'No courses yet', 'ohmylms' ); ?></span>
+            </li>
+            <li>
+                <strong><?php echo __( 'Purchase Date:', 'ohmylms' ); ?></strong>
+                <span><?php echo $purchase_date; ?></span>
+            </li>
+            <?php if ( ! $is_one_time ) : ?>
+            <li>
+                <strong><?php echo __( 'Next Renewal:', 'ohmylms' ); ?></strong>
+                <span><?php echo $renewal_date; ?></span>
+            </li>
+            <?php endif; ?>
+            <li>
+                <strong><?php echo __( 'Payment Method:', 'ohmylms' ); ?></strong>
+                <span><?php echo esc_html( $payment_method ); ?></span>
+            </li>
+        </ul>
+    </div>
+    <div class="omlms-membership-card-footer">
+        <a href="#" class="omlms-button view-plan" role="button"><?php echo __( 'View Plan', 'ohmylms' ); ?></a>
+    </div>
+
+    <div class="creator-lms-membership-modal" aria-hidden="true">
+        <div class="creator-lms-membership-modal-wrapper">
+            <div class="creator-lms-membership-modal-inner">
+                <h4 class="membership-modal-title">
+                    <?php echo __( 'Plan Details', 'ohmylms' ); ?>
+                    <a href="#" role="button" class="close-modal">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1L1 13M1 1l12 12"/></svg>
+                    </a>
+                </h4>
+                <div class="membership-plan-wrapper">
+                    <div class="membership-table-header">
+                        <p class="plan-name"><?php echo $memebership->get_name(); ?></p>
+                        <span class="price"><?php echo $price_html; ?></span>
+                    </div>
+                    <?php if ( $course_count > 0 ) : ?>
+                    <ul class="membership-table-list">
+                        <?php foreach ( $products as $product ) : ?>
+                            <li>
+                                <svg width="12" height="10" fill="none" viewBox="0 0 12 10" xmlns="http://www.w3.org/2000/svg"><path stroke="#35BD4C" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.697 1.667L4.03 8.332 1 5.303"/></svg>
+                                <?php echo isset( $product['label'] ) ? esc_html( $product['label'] ) : ''; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php else: ?>
+                        <p class="omlms-no-courses-message"><?php echo __( 'No courses are included in this membership yet.', 'ohmylms' ); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

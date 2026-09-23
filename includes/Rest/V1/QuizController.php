@@ -1,0 +1,1268 @@
+<?php
+namespace OMLMS\Rest\V1;
+
+use OMLMS\Abstracts\RestController;
+use OMLMS\Data\Question;
+use OMLMS\Data\Quiz;
+use OMLMS\Data\Student;
+use WP_Query;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
+use WP_Error;
+use OMLMS\DataException;
+/**
+ * Controller for handling quiz REST API endpoints.
+ *
+ * This class extends the RESTController abstract class and defines REST API routes
+ * for course-related CRUD operations and many more.
+ *
+ * @since 1.0.0
+ */
+class QuizController extends RestController {
+
+	/**
+	 * The base route for quiz base endpoints.
+	 *
+	 * @var string
+	 * @since 1.0.0
+	 */
+	protected $base = 'quiz';
+
+	public function check_quiz_permission() {
+		return current_user_can( 'edit_posts' );
+	}
+
+	/**
+	 * Registers REST API routes for quiz operations.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_routes() {
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_items' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_collection_params(),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_item' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/trash-bulk/',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'trash_bulk' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/contents/',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_items_with_content' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_collection_params(),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_item_with_content' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the quiz.', 'ohmylms' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_collection_params(),
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_item' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_item' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => $this->get_collection_params(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/content',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the Quiz.', 'ohmylms' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_questions' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_questions' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/report',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the Quiz.', 'ohmylms' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_report' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/report/(?P<attempt_id>[\d]+)',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the Quiz.', 'ohmylms' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_attempt_report' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'review_attempt_report' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/report/(?P<attempt_id>[\d]+)/(?P<quiz_attempt_answer_id>[\d]+)',
+			array(
+				'args' => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the Quiz.', 'ohmylms' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'update_attempt_report_manually' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Get collection of quizs.
+	 *
+	 * This method handles the retrieval of quizs based on the provided request parameters.
+	 * It supports various filters and pagination options to customize the query.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing query parameters.
+	 * @return WP_Error|\WP_HTTP_Response|\WP_REST_Response The response object containing the quizs data or an error.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_items( $request ) {
+		$args = array(
+			'offset'              => isset( $request['offset'] ) ? intval( $request['offset'] ) : 0,
+			'order'               => isset( $request['order'] ) ? sanitize_text_field( $request['order'] ) : 'DESC',
+			'orderby'             => isset( $request['orderby'] ) ? sanitize_text_field( $request['orderby'] ) : 'date',
+			'paged'               => isset( $request['page'] ) ? intval( $request['page'] ) : 1,
+			'post__in'            => isset( $request['include'] ) ? array_map( 'intval', (array) $request['include'] ) : array(),
+			'post__not_in'        => isset( $request['exclude'] ) ? array_map( 'intval', (array) $request['exclude'] ) : array(),
+			'posts_per_page'      => isset( $request['per_page'] ) ? intval( $request['per_page'] ) : 10,
+			'name'                => isset( $request['slug'] ) ? sanitize_text_field( $request['slug'] ) : '',
+			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
+			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
+			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
+			'post_type'           => CREATOR_LMS_QUIZ_CPT,
+			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : array( 'draft', 'publish', 'future' ),
+		);
+
+		$args['date_query'] = array();
+
+		if ( 'any' === $args['post_status'] || ! in_array( $args['post_status'], array( 'draft', 'publish', 'future' ) ) ) {
+			$args['post_status'] = array( 'draft', 'publish', 'future' );
+		}
+
+		if ( isset( $request['before'] ) ) {
+			$args['date_query'][0]['before'] = sanitize_text_field( $request['before'] );
+		}
+
+		if ( isset( $request['after'] ) ) {
+			$args['date_query'][0]['after'] = sanitize_text_field( $request['after'] );
+		}
+
+		if ( isset( $request['filter'] ) && is_array( $request['filter'] ) ) {
+			$args = array_merge( $args, $request['filter'] );
+			unset( $args['filter'] );
+		}
+
+		$args       = apply_filters( 'creator_lms_rest_omlms_quiz_query', $args, $request );
+		$query_args = $this->prepare_items_query( $args, $request );
+
+		$posts_query  = new WP_Query();
+		$query_result = $posts_query->query( $query_args );
+		$posts        = array();
+
+		foreach ( $query_result as $post ) {
+			if ( ! current_user_can( 'read_post', $post->ID ) ) {
+				continue;
+			}
+			$data    = $this->prepare_item_for_response( $post, $request );
+			$posts[] = $this->prepare_response_for_collection( $data );
+		}
+		$page                 = (int) $query_args['paged'];
+		$total_posts          = $posts_query->found_posts;
+		$total_filtered_posts = $total_posts;
+
+		if ( $total_posts < 1 && $page > 1 ) {
+			unset( $query_args['paged'] );
+			$count_query = new WP_Query();
+			$count_query->query( $query_args );
+			$total_posts = $count_query->found_posts;
+		}
+
+		$max_pages = ceil( $total_posts / (int) $query_args['posts_per_page'] );
+
+		if ( isset( $request['orderby'] ) && in_array( $request['orderby'], array( 'number_of_submissions' ) ) ) {
+			usort(
+				$posts,
+				function ( $a, $b ) use ( $request ) {
+					if ( strtoupper( $request['order'] ) === 'DESC' ) {
+						return $a['number_of_submissions'] <=> $b['number_of_submissions'];
+					} else {
+						return $b['number_of_submissions'] <=> $a['number_of_submissions'];
+					}
+				}
+			);
+		}
+
+		if ( isset( $request['orderby'] ) && $request['orderby'] === 'course_name' ) {
+			usort(
+				$posts,
+				function ( $a, $b ) use ( $request ) {
+					if ( isset( $b['courses']['course_name'] ) ) {
+						$order = strtoupper( $request['order'] ) === 'DESC' ? -1 : 1;
+						return strcasecmp( $a['courses']['course_name'], $b['courses']['course_name'] ) * $order;
+					}
+				}
+			);
+		}
+
+		if ( ! empty( $request['course_id'] ) ) {
+			$course_id = (int) $request['course_id'];
+
+			$posts = array_filter(
+				$posts,
+				function ( $post ) use ( $course_id ) {
+					return isset( $post['courses']['id'] ) && $post['courses']['id'] == $course_id;
+				}
+			);
+
+			// Re-index array (optional)
+			$posts                = array_values( $posts );
+			$total_filtered_posts = count( $posts );
+		}
+
+		$response = rest_ensure_response( $posts );
+		$response->header( 'X-WP-Total', (int) $total_posts );
+		$response->header( 'X-WP-TotalPages', (int) $max_pages );
+		$response->header( 'X-WP-NoOfFilteredQuizzes', (int) $total_filtered_posts );
+
+		$request_params = $request->get_query_params();
+		if ( ! empty( $request_params['filter'] ) ) {
+			unset( $request_params['filter']['posts_per_page'] );
+			unset( $request_params['filter']['paged'] );
+		}
+		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
+
+		if ( $page > 1 ) {
+			$prev_page = $page - 1;
+			if ( $prev_page > $max_pages ) {
+				$prev_page = $max_pages;
+			}
+			$prev_link = add_query_arg( 'page', $prev_page, $base );
+			$response->link_header( 'prev', $prev_link );
+		}
+		if ( $max_pages > $page ) {
+			$next_page = $page + 1;
+			$next_link = add_query_arg( 'page', $next_page, $base );
+			$response->link_header( 'next', $next_link );
+		}
+		return $response;
+	}
+
+
+
+	/**
+	 * Get collection of quizs with content.
+	 *
+	 * This method handles the retrieval of quizs based on the provided request parameters.
+	 * It supports various filters and pagination options to customize the query.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing query parameters.
+	 * @return WP_Error|\WP_HTTP_Response|\WP_REST_Response The response object containing the quizs data or an error.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_items_with_content( $request ) {
+		$args = array(
+			'offset'              => isset( $request['offset'] ) ? intval( $request['offset'] ) : 0,
+			'order'               => isset( $request['order'] ) ? sanitize_text_field( $request['order'] ) : 'DESC',
+			'orderby'             => isset( $request['orderby'] ) ? sanitize_text_field( $request['orderby'] ) : 'date',
+			'paged'               => isset( $request['page'] ) ? intval( $request['page'] ) : 1,
+			'post__in'            => isset( $request['include'] ) ? array_map( 'intval', (array) $request['include'] ) : array(),
+			'post__not_in'        => isset( $request['exclude'] ) ? array_map( 'intval', (array) $request['exclude'] ) : array(),
+			'posts_per_page'      => isset( $request['per_page'] ) ? intval( $request['per_page'] ) : 10,
+			'name'                => isset( $request['slug'] ) ? sanitize_text_field( $request['slug'] ) : '',
+			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
+			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
+			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
+			'post_type'           => CREATOR_LMS_QUIZ_CPT,
+			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
+		);
+
+		$args['date_query'] = array();
+
+		if ( isset( $request['before'] ) ) {
+			$args['date_query'][0]['before'] = sanitize_text_field( $request['before'] );
+		}
+
+		if ( isset( $request['after'] ) ) {
+			$args['date_query'][0]['after'] = sanitize_text_field( $request['after'] );
+		}
+
+		if ( isset( $request['filter'] ) && is_array( $request['filter'] ) ) {
+			$args = array_merge( $args, $request['filter'] );
+			unset( $args['filter'] );
+		}
+
+		$args       = apply_filters( 'creator_lms_rest_omlms_quiz_query', $args, $request );
+		$query_args = $this->prepare_items_query( $args, $request );
+
+		$posts_query  = new WP_Query();
+		$query_result = $posts_query->query( $query_args );
+		$posts        = array();
+
+		foreach ( $query_result as $post ) {
+			if ( ! current_user_can( 'read_post', $post->ID ) ) {
+				continue;
+			}
+			$data    = $this->prepare_item_for_response( $post, $request );
+			$posts[] = $this->prepare_response_for_collection( $data );
+		}
+		$page        = (int) $query_args['paged'];
+		$total_posts = $posts_query->found_posts;
+
+		if ( $total_posts < 1 && $page > 1 ) {
+			unset( $query_args['paged'] );
+			$count_query = new WP_Query();
+			$count_query->query( $query_args );
+			$total_posts = $count_query->found_posts;
+		}
+
+		$max_pages = ceil( $total_posts / (int) $query_args['posts_per_page'] );
+
+		$response = rest_ensure_response( $posts );
+		$response->header( 'X-WP-Total', (int) $total_posts );
+		$response->header( 'X-WP-TotalPages', (int) $max_pages );
+
+		$request_params = $request->get_query_params();
+		if ( ! empty( $request_params['filter'] ) ) {
+			unset( $request_params['filter']['posts_per_page'] );
+			unset( $request_params['filter']['paged'] );
+		}
+		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
+
+		if ( $page > 1 ) {
+			$prev_page = $page - 1;
+			if ( $prev_page > $max_pages ) {
+				$prev_page = $max_pages;
+			}
+			$prev_link = add_query_arg( 'page', $prev_page, $base );
+			$response->link_header( 'prev', $prev_link );
+		}
+		if ( $max_pages > $page ) {
+			$next_page = $page + 1;
+			$next_link = add_query_arg( 'page', $next_page, $base );
+			$response->link_header( 'next', $next_link );
+		}
+		return $response;
+	}
+
+	/**
+	 * Add quiz
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
+	 * @throws \Exception
+	 * @since 1.0.0
+	 */
+	public function create_item( $request ) {
+
+		if ( ! empty( $request['id'] ) ) {
+			// Translators: %s is replaced with error name.
+			return new WP_Error( 'creator_lms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
+		}
+		try {
+			$quiz_id = $this->save_quiz( $request );
+
+			$post = get_post( $quiz_id );
+			/**
+			 * Fires after a Quiz is inserted via the REST API.
+			 *
+			 * @param \WP_Post         $post    The post object for the quiz.
+			 * @param \WP_REST_Request $request The request object.
+			 * @param bool             $creating Whether the quiz is being created (true) or updated (false).
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'creator_lms_rest_insert_quiz', $post, $request, true );
+
+			$request->set_param( 'context', 'edit' );
+			$response = $this->prepare_item_for_response( $post, $request );
+			$response = rest_ensure_response( $response );
+			if ( ! is_wp_error( $response ) ) {
+				$response->set_status( 201 );
+			}
+			return $response;
+		} catch ( DataException $e ) {
+			return new WP_Error( 400, $e->getMessage(), array( 'status' => $e->getCode() ) );
+		}
+	}
+
+
+	/**
+	 * Add quiz
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
+	 * @throws \Exception
+	 * @since 1.0.0
+	 */
+	public function create_item_with_content( $request ) {
+
+		if ( ! empty( $request['id'] ) ) {
+			// Translators: %s is replaced with error name.
+			return new WP_Error( 'creator_lms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
+		}
+		try {
+			$quiz_id = $this->save_quiz( $request );
+
+			$post = get_post( $quiz_id );
+			/**
+			 * Fires after a Quiz is inserted via the REST API.
+			 *
+			 * @param \WP_Post         $post    The post object for the quiz.
+			 * @param \WP_REST_Request $request The request object.
+			 * @param bool             $creating Whether the quiz is being created (true) or updated (false).
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'creator_lms_rest_insert_quiz', $post, $request, true );
+
+			$request->set_param( 'context', 'edit' );
+			$response = $this->prepare_item_for_response( $post, $request );
+			$response = rest_ensure_response( $response );
+			if ( ! is_wp_error( $response ) ) {
+				$response->set_status( 201 );
+			}
+			return $response;
+		} catch ( DataException $e ) {
+			return new WP_Error( 400, $e->getMessage(), array( 'status' => $e->getCode() ) );
+		}
+	}
+
+
+	/**
+	 * Delete bulk quizs.
+	 *
+	 * @param \WP_REST_Request $request The REST request object.
+	 * @return \WP_REST_Response The response object indicating success or failure.
+	 *
+	 * @since 1.0.0
+	 */
+	public function trash_bulk( $request ) {
+		$quiz_ids = $request->get_param( 'quiz_ids' );
+		if ( is_array( $quiz_ids ) ) {
+			foreach ( $quiz_ids as $quiz_id ) {
+				if ( get_post_type( $quiz_id ) !== 'omlms-quiz' ) {
+					return new \WP_REST_Response( array( 'message' => 'Invalid quiz ID.' ), 400 );
+				}
+				wp_trash_post( $quiz_id );
+				do_action( 'creator_lms_rest_delete_quiz', $quiz_id );
+			}
+			return new \WP_REST_Response( array( 'message' => 'Deleted Successfully' ), 200 );
+		}
+		return new \WP_REST_Response( array( 'message' => 'Failed to trash the quiz.' ), 500 );
+	}
+
+
+	/**
+	 * Update Quiz settings
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
+	 * @since 1.0.0
+	 */
+	public function update_item( $request ) {
+
+		$post_id = (int) $request['id'];
+
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_QUIZ_CPT ) {
+			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		try {
+			$quiz_id = $this->save_quiz( $request );
+			$post    = get_post( $quiz_id );
+			$this->update_additional_fields_for_object( $post, $request );
+			$this->update_post_meta_fields( $post, $request );
+			$this->save_question( $post, $request );
+			$request->set_param( 'context', 'edit' );
+			$data                  = $this->prepare_item_for_response( $post, $request );
+			$question              = omlms_get_quiz( $post->ID )->get_questions();
+			$data_array            = rest_get_server()->response_to_data( $data, false );
+			$data_array['content'] = $question;
+			$response              = rest_ensure_response( $data_array );
+			return rest_ensure_response( $response );
+
+		} catch ( DataException $e ) {
+			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
+	}
+
+	public function save_question( $post, $request ) {
+		$questions = $request['content'] ?? array();
+
+		foreach ( $questions as $question_data ) {
+			$get = new QuestionController();
+			if ( isset( $question_data['id'] ) ) {
+				$get->update_item( $question_data );
+			} else {
+				$get->create_item( $question_data );
+			}
+		}
+	}
+
+	/**
+	 * Get quiz content
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
+	 * @since 1.0.0
+	 */
+	public function get_item( $request ) {
+		$id   = (int) $request['id'];
+		$post = get_post( $id );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+
+		$data                  = $this->prepare_item_for_response( $post, $request );
+		$question              = omlms_get_quiz( $post->ID )->get_questions();
+		$data_array            = rest_get_server()->response_to_data( $data, false );
+		$data_array['content'] = $question;
+		$response              = rest_ensure_response( $data_array );
+
+		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
+
+		return $response;
+
+		return rest_ensure_response( $response );
+	}
+
+
+	/**
+	 * Delete a single quiz.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
+	 *
+	 * @since 1.0.0
+	 */
+	public function delete_item( $request ) {
+		$quiz_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
+		if ( ! $quiz_id ) {
+			return new WP_Error( 'creator_lms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		$quiz = omlms_get_quiz( $quiz_id );
+
+		if ( ! ( $quiz instanceof Quiz ) ) {
+			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		$quiz->delete();
+
+		/**
+		 * Executes the 'creator_lms_rest_delete_quiz' action hook.
+		 * This hook is triggered when a quiz is being deleted via the REST API.
+		 *
+		 * @param array $request The request array.
+		 * @since 1.0.0
+		 */
+		do_action( 'creator_lms_rest_delete_quiz', $quiz_id );
+
+		$response = array(
+			'id'      => $quiz_id,
+			'status'  => 'success',
+			'message' => __( 'Quiz has been deleted successfully.', 'ohmylms' ),
+		);
+		return rest_ensure_response( $response );
+	}
+
+
+	/**
+	 * Save quiz
+	 *
+	 * @param WP_REST_Request $request
+	 * @return bool
+	 * @since 1.0.0
+	 */
+	public function save_quiz( $request ) {
+		$quiz = $this->prepare_item_for_database( $request );
+		return $quiz->save();
+	}
+
+
+	public function get_report( $request ) {
+		$id   = (int) $request['id'];
+		$post = get_post( $id );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		$quiz = omlms_get_quiz( $post->ID );
+
+		$report   = $quiz->get_report();
+		$data     = array(
+			'report'               => $report,
+			'question_total_marks' => $quiz->get_total_marks(),
+			'passing_mark'         => $quiz->get_passing_grade(),
+		);
+		$response = rest_ensure_response( $data );
+
+		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
+		return $response;
+	}
+
+
+	/**
+	 * Get attempt report for a quiz.
+	 * This method retrieves the report for a specific quiz attempt.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing the quiz ID and attempt ID.
+	 * @return \WP_Error|\WP_REST_Response The response object containing the attempt report data or an error.
+	 * @since 1.0.0
+	 */
+	public function get_attempt_report( $request ) {
+		$id         = (int) $request['id'];
+		$attempt_id = (int) $request['attempt_id'];
+		$post       = get_post( $id );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		$quiz     	= omlms_get_quiz( $post->ID );
+		$report   	= $quiz->get_attempt_report( $attempt_id );
+		$attempt 	= creatorlms_get_attempt( $attempt_id );
+		$student 	= $attempt->get_student();
+		$course_id 	= $attempt->get_course_id();
+		$course	 	= omlms_get_course( $course_id );
+		$data     = array(
+			'report'               	=> $report,
+			'question_total_marks' 	=> $quiz->get_total_marks(),
+			'total_question'       	=> $quiz->get_total_question(),
+			'passing_mark'         	=> $quiz->get_passing_grade(),
+			'start_date'			=> $attempt->get_start_date(),
+			'end_date'              => ($attempt->get_end_date() instanceof \DateTimeInterface) ? $attempt->get_end_date()->format('Y-m-d H:i:s') : $attempt->get_end_date(),
+			'score'					=> $attempt->get_total_score(),
+			'student'              	=> array(
+				'id'         => $student->get_id(),
+				'name'       => $student->get_name(),
+				'email'      => $student->get_email(),
+			),
+			'course'	=> array(
+				'id'         => $course->get_id(),
+				'name'       => $course->get_name(),
+			),
+		);
+		$response = rest_ensure_response( $data );
+		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
+		return $response;
+	}
+
+	/**
+	 * Review attempt report for a quiz.
+	 * This method allows the review of a specific quiz attempt by updating the questions and their answers.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing the quiz ID and attempt ID.
+	 * @return \WP_Error|\WP_REST_Response The response object containing the updated attempt report data or an error.
+	 * @since 1.0.0
+	 */
+	public function review_attempt_report( $request ) {
+		$id         = (int) $request['id'];
+		$attempt_id = (int) $request['attempt_id'];
+
+		$data = $request->get_params( 'data' );
+
+		if ( empty( $id ) ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		$quiz = omlms_get_quiz( $id );
+
+		if ( empty( $quiz ) ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+
+		if ( isset( $data['report']['questions'] ) ) {
+			$questions = $data['report']['questions'];
+			foreach ( $questions as $question ) {
+				$quiz->review_question( $question['id'], $attempt_id, $question );
+			}
+		}
+
+		$attempt = creatorlms_get_attempt( $attempt_id );
+		$score = $attempt->get_total_score();
+		
+		global $wpdb;
+
+		$wpdb->update(
+			"{$wpdb->prefix}omlms_quiz_attempts",
+			array(
+				'status' => 'completed',
+				'total'	 => $score,
+			),
+			array(
+				'id' => $attempt_id,
+			),
+			array(
+				'%s',
+			),
+			array(
+				'%d',
+			)
+		);
+		$student_id   = $wpdb->get_var( $wpdb->prepare( "SELECT student_id FROM {$wpdb->prefix}omlms_quiz_attempts WHERE id = %d", $attempt_id ) );
+		$course_id    = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$get_attempts = $quiz->get_attempt_report( $attempt_id );
+		do_action('ohmylms_attempt_graded', ['quiz_id'=>$id, 'attempt_id'=>$attempt_id, 'course_id'=>(int)$course_id, 'student_id'=>(int)$student_id, 'total'=>(float)$score, 'status'=>'completed', 'reason'=>'manual-review']);
+		$previous_completion_rate = 0;
+		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
+			$student = new Student( $student_id );
+			$previous_completion_rate = $student->get_over_all_completion_rate( $course_id );
+			$student->complete_lesson( $quiz->get_id(), $course_id );
+		}
+
+		do_action(
+			'creator_lms_rest_review_quiz_attempt',
+			$quiz->get_id(),
+			$course_id,
+			$student_id,
+			$score
+		);
+
+		
+		$student = new \OMLMS\Data\Student( $student_id );
+		$maybe_course_completion = $student && $student->is_course_completed( $course_id ) ? 'yes' : 'no';
+
+		if( $maybe_course_completion === 'yes' ){
+			do_action( 'creator_lms_student_completed_course_after_reviewing_quiz', $student_id, $course_id );
+			$completion_rate = $student->get_over_all_completion_rate( $course_id );
+			if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 ) {
+				global $wpdb;
+				$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+				$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
+				if ( isset( $enroll_data['order_id'] ) ) {
+					do_action( 'creator_lms_course_completed', $student_id, $course_id, $enroll_data['order_id'] );
+				}
+			}
+		}
+
+		$data = array(
+			'status'  => 'success',
+			'message' => __( 'Quiz has been reviewed successfully.', 'ohmylms' ),
+			'data'    => $quiz->get_attempt_report( $attempt_id ),
+		);
+		return rest_ensure_response( $data );
+	}
+
+
+	/**
+	 * Update attempt report manually for a quiz.
+	 * This method allows manual updates to the attempt report for a specific quiz attempt.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing the quiz ID, attempt ID, and other parameters.
+	 * @return \WP_Error|\WP_REST_Response The response object containing the updated attempt report data or an error.
+	 * @since 1.0.0
+	 */
+	public function update_attempt_report_manually( $request ) {
+		$id                     = (int) $request['id'];
+		$quiz_attempt_answer_id = (int) $request['quiz_attempt_answer_id'];
+		$attempt_id             = (int) $request['attempt_id'];
+		$post                   = get_post( $id );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
+			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		$quiz = omlms_get_quiz( $post->ID );
+		$quiz->update_attempt_report_manually( $quiz_attempt_answer_id, $request );
+		$report       = $quiz->get_attempt_report( $attempt_id );
+		$data         = array(
+			'report'               => $report,
+			'question_total_marks' => $quiz->get_total_marks(),
+			'total_question'       => $quiz->get_total_question(),
+			'passing_mark'         => $quiz->get_passing_grade(),
+		);
+		$student_id   = get_current_user_id();
+		$course_id    = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$get_attempts = $quiz->get_all_quiz_attempts_by_attempt_id( $student_id, $course_id, $attempt_id );
+		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
+			$student = new Student( $student_id );
+			$student->complete_lesson( $quiz->get_id(), $course_id );
+		}
+
+		$response = rest_ensure_response( $data );
+
+		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
+		return $response;
+	}
+
+
+	/**
+	 * Prepare a quiz for database.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return bool|Quiz
+	 *
+	 * @throws \Exception
+	 * @since 1.0.0
+	 */
+	protected function prepare_item_for_database( $request ) {
+		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
+
+		if ( isset( $request['id'] ) ) {
+			$quiz = omlms_get_quiz( $id );
+		} else {
+			$quiz = new Quiz();
+		}
+
+		if ( isset( $request['name'] ) ) {
+			$quiz->set_name( wp_filter_post_kses( $request['name'] ) );
+		}
+
+		if ( isset( $request['description'] ) ) {
+			$quiz->set_description( wp_filter_post_kses( $request['description'] ) );
+		}
+
+		if ( isset( $request['slug'] ) ) {
+			$quiz->set_slug( wp_filter_post_kses( $request['slug'] ) );
+		}
+
+		if ( isset( $request['status'] ) ) {
+			$quiz->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+		}
+		$this->set_quiz_meta( $quiz, $request );
+		return $quiz;
+	}
+
+	/**
+	 * Prepare a single quiz for response.
+	 *
+	 * @param \WP_Post         $post The post object.
+	 * @param \WP_REST_Request $request
+	 * @return WP_REST_Response
+	 *
+	 * @throws \Exception
+	 * @since 1.0.0
+	 */
+	public function prepare_item_for_response( $post, $request ) {
+		$quiz = omlms_get_quiz( $post->ID );
+		$data = $this->get_quiz_data( $quiz );
+
+		$response = rest_ensure_response( $data );
+		$response->add_links( $this->prepare_links( $quiz, $request ) );
+
+		/**
+		 * Filters the response for the quiz in the REST API.
+		 *
+		 * This filter allows developers to modify the quiz response data before it is returned by the REST API.
+		 *
+		 * @param array $response The response data for the quiz.
+		 * @param \WP_Post $post The WP_Post object representing the quiz.
+		 * @param \WP_REST_Request $request The request object containing information about the API request.
+		 *
+		 * @since 1.0.0
+		 */
+		return apply_filters( 'creator_lms_rest_prepare_quiz', $response, $post, $request );
+	}
+
+
+
+
+	/**
+	 * Get quiz data.
+	 *
+	 * @param quiz $quiz
+	 * @return array
+	 *
+	 * @since 1.0.0
+	 */
+	protected function get_quiz_data( $quiz ) {
+		$course_id = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$courses   = array();
+		if ( $course_id ) {
+			$course = omlms_get_course( $course_id );
+			if ( $course ) {
+				$courses['id']          = $course_id;
+				$courses['course_name'] = $course->get_name();
+			}
+		}
+		$report                = $quiz->get_report();
+		$number_of_submissions = 0;
+		if ( is_array( $report ) ) {
+			$number_of_submissions = count( $report );
+		}
+		$data = array(
+			'id'                    => $quiz->get_id(),
+			'name'                  => $quiz->get_name(),
+			'type'                  => 'quiz',
+			'description'           => $quiz->get_description(),
+			'preview_url'           => $quiz->get_permalink(),
+			'slug'                  => $quiz->get_slug(),
+			'status'                => $quiz->get_status(),
+			'settings'              => $quiz->get_settings(),
+			'drip_settings'         => $quiz->get_drip_settings(),
+			'courses'               => $courses,
+			'number_of_submissions' => $number_of_submissions,
+			'date_created'          => $quiz->get_date_created(),
+		);
+		return $data;
+	}
+
+
+
+
+	/**
+	 * Prepare links for the request.
+	 *
+	 * @param $product
+	 * @param $request
+	 * @return array[]
+	 *
+	 * @since 1.0.0
+	 */
+	protected function prepare_links( $product, $request ) {
+		$links = array(
+			'self'       => array(
+				'href' => rest_url( sprintf( '%s/%s/%d', $this->namespace, $this->base, $product->get_id() ) ),
+			),
+			'collection' => array(
+				'href' => rest_url( sprintf( '%s/%s', $this->namespace, $this->base ) ),
+			),
+		);
+
+		return $links;
+	}
+
+
+
+	/**
+	 * Update post meta fields for a quiz.
+	 *
+	 * This method updates the meta fields for a given quiz post based on the provided request data.
+	 *
+	 * @param \WP_Post         $post The post object representing the quiz.
+	 * @param \WP_REST_Request $request The REST request object containing the meta data.
+	 * @return bool True on success, false on failure.
+	 *
+	 * @throws DataException
+	 * @since 1.0.0
+	 */
+	protected function update_post_meta_fields( $post, $request ) {
+		$quiz = omlms_get_quiz( $post );
+		$quiz = $this->set_quiz_meta( $quiz, $request );
+		$quiz->save();
+		/**
+		 * Fires after the meta data for a quiz is updated.
+		 *
+		 * @param WP_Post $quiz The updated quiz object.
+		 *
+		 * @since 1.0.0
+		 */
+		do_action( 'creator_lms_rest_quiz_meta_updated', $quiz );
+
+		return true;
+	}
+
+
+	/**
+	 * Set product meta data for a quiz.
+	 *
+	 * @param Quiz            $quiz The quiz object.
+	 * @param WP_REST_Request $request The REST request object containing the meta data.
+	 * @return Quiz The updated quiz object.
+	 *
+	 * @since 1.0.0
+	 */
+	protected function set_quiz_meta( $quiz, $request ) {
+		if ( isset( $request['questions'] ) ) {
+			$quiz->set_questions( $request['questions'] );
+		}
+		if ( isset( $request['settings'] ) ) {
+			$quiz->set_settings( $request['settings'] );
+		}
+		if ( isset( $request['drip_settings'] ) ) {
+			$quiz->set_drip_settings( $request['drip_settings'] );
+		}
+
+		return $quiz;
+	}
+
+
+
+	/**
+	 * Prepares the query arguments for fetching items.
+	 *
+	 * This function filters and constructs the query arguments based on the allowed query variables.
+	 * It ensures that only valid query variables are included in the final query arguments.
+	 *
+	 * @param array                $prepared_args The prepared arguments for the query.
+	 * @param WP_REST_Request|null $request The REST request object.
+	 *
+	 * @return array The filtered and prepared query arguments.
+	 * @since 1.0.0
+	 */
+	protected function prepare_items_query( $prepared_args = array(), $request = null ) {
+
+		$valid_vars = array_flip( $this->get_allowed_query_vars() );
+		$query_args = array();
+		foreach ( $valid_vars as $var => $index ) {
+			if ( isset( $prepared_args[ $var ] ) ) {
+				/**
+				 * Filter the query_vars used in `get_items` for the constructed query.
+				 *
+				 * The dynamic portion of the hook name, $var, refers to the query_var key.
+				 *
+				 * @param mixed $prepared_args[ $var ] The query_var value.
+				 */
+				$query_args[ $var ] = apply_filters( "creator_lms_rest_query_var-{$var}", $prepared_args[ $var ] );
+			}
+		}
+
+		$query_args['ignore_sticky_posts'] = true;
+
+		if ( 'include' === $query_args['orderby'] ) {
+			$query_args['orderby'] = 'post__in';
+		} elseif ( 'id' === $query_args['orderby'] ) {
+			$query_args['orderby'] = 'ID'; // ID must be capitalized.
+		} elseif ( 'slug' === $query_args['orderby'] ) {
+			$query_args['orderby'] = 'name';
+		}
+
+		return $query_args;
+	}
+
+
+
+	/**
+	 * Get the allowed query variables for the REST API.
+	 *
+	 * This method retrieves the list of query variables that are allowed to be used
+	 * in REST API requests for quizs. It merges the public and private query variables
+	 * and applies filters to allow customization.
+	 *
+	 * @return array The array of allowed query variables.
+	 *
+	 * @since 1.0.0
+	 */
+	protected function get_allowed_query_vars() {
+		global $wp;
+
+		/**
+		 * Filter the publicly allowed query vars.
+		 *
+		 * Allows adjusting of the default query vars that are made public.
+		 *
+		 * @param array  Array of allowed WP_Query query vars.
+		 */
+		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
+
+		$post_type_obj = get_post_type_object( CREATOR_LMS_QUIZ_CPT );
+		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
+			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
+		}
+		$rest_valid = array(
+			'date_query',
+			'ignore_sticky_posts',
+			'offset',
+			'post__in',
+			'post__not_in',
+			'post_parent',
+			'post_parent__in',
+			'post_parent__not_in',
+			'posts_per_page',
+			'meta_query',
+			'tax_query',
+			'meta_key',
+			'meta_value',
+			'meta_compare',
+			'meta_value_num',
+		);
+		$valid_vars = array_merge( $valid_vars, $rest_valid );
+
+		/**
+		 * Filter the valid query variables for the REST API.
+		 *
+		 * This filter allows developers to modify the list of valid query variables
+		 * that can be used in REST API requests for quizs.
+		 *
+		 * @param array $valid_vars The array of valid query variables.
+		 */
+		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+
+		return $valid_vars;
+	}
+
+
+	/**
+	 * Retrieves the lessons of a chapter.
+	 *
+	 * This method fetches the lessons associated with a specific chapter ID.
+	 *
+	 * @param \WP_REST_Request $request The REST request object containing the chapter ID.
+	 * @return WP_Error|\WP_HTTP_Response|\WP_REST_Response The response object containing the lessons data or an error.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_questions( $request ) {
+		$quiz_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
+		// Check the chapter id exist or not
+		if ( ! $quiz_id ) {
+			return new WP_Error( 'creator_lms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		// Get existing chapter by chapter id
+		$quiz = omlms_get_quiz( $quiz_id );
+
+		// Check the chapter exist or not.
+		if ( ! ( $quiz instanceof Quiz ) ) {
+			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		$questions = $quiz->get_questions();
+
+		$response = array(
+			'status'  => 'success',
+			'message' => __( 'Quiz fetched successfully', 'ohmylms' ),
+			'data'    => $questions,
+		);
+
+		return rest_ensure_response( $response );
+	}
+
+
+
+	/**
+	 * Updates the contents of a chapter.
+	 *
+	 * This method updates the lessons associated with a specific chapter ID.
+	 *
+	 * @param WP_REST_Request $request The REST request object containing the chapter ID and lessons data.
+	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response The response object indicating success or failure.
+	 *
+	 * @since 1.0.0
+	 */
+	public function update_questions( $request ) {
+		$quiz_id = (int) $request['id'];
+
+		// Check the chapter id exist or not
+		if ( ! $quiz_id ) {
+			return new WP_Error( 'creator_lms_rest_chapter_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+
+		// Get existing chapter by chapter id
+		$quiz = omlms_get_quiz( $quiz_id );
+
+		// Check the chapter exist or not.
+		if ( ! ( $quiz instanceof Quiz ) ) {
+			return new WP_Error( 'creator_lms_rest_chapter_empty_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+		$all_data       = $request->get_json_params();
+		$quiz_data      = $all_data['quiz'];
+		$questions_data = $all_data['questions'];
+		$this->save_quiz( $quiz_data );
+		foreach ( $questions_data as $question ) {
+			if ( isset( $question['id'] ) ) {
+				$quiz_obj = omlms_get_question( $question['id'] );
+			} else {
+				$quiz_obj = new Question();
+			}
+			// $quiz_obj = omlms_get_question( $question['id'] );
+			$quiz_obj->set_id( $question['id'] );
+			$quiz_obj->set_name( $question['name'] );
+			$quiz_obj->set_description( $question['description'] );
+			$quiz_obj->set_settings( $question['settings'] );
+			if ( isset( $question['thumbnail_id'] ) ) {
+				$quiz_obj->set_thumbnail_id( $question['thumbnail_id'] );
+			}
+			if ( isset( $question['video_id'] ) ) {
+				$quiz_obj->set_video_id( $question['video_id'] );
+			}
+			$quiz_obj->save_quiz_answer( $question, $question['id'] );
+			$quiz_obj->save();
+		}
+		$response = array(
+			'status'  => 'success',
+			'message' => __( 'Contents updated successfully', 'ohmylms' ),
+		);
+		return rest_ensure_response( $response );
+	}
+}

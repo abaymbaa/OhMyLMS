@@ -1,0 +1,154 @@
+<?php
+/**
+ * Template for displaying course filters.
+ *
+ * This template can be overridden by copying it to yourtheme/creator-lms/filters.php.
+ *
+ * @package OMLMS\Templates
+ * @version  1.0.0
+ */
+
+defined( 'ABSPATH' ) || exit();
+if( isset($atts) && is_array($atts) && !empty($atts) && isset($atts['show_filter']) ){
+    $is_filter_enabled = $atts['show_filter'];
+    $filter_data = get_option('creator_lms_archive_page_filters',[]);
+    if( !is_array($filter_data) || empty($filter_data) ){
+        $filter_data = ['category', 'tag', 'price_type', 'difficulty_level'];
+    }
+}else{
+    $is_filter_enabled = get_option('creator_lms_archive_page_filter_is_enabled','no');
+    $filter_data = get_option('creator_lms_archive_page_filters',[]);
+}
+
+if( 'no' === $is_filter_enabled ){
+    return;
+}
+
+
+$items = [
+    'category' => [],
+    'tag'      => [],
+    'price_type'=> [],
+    'difficulty_level' => [],
+];
+?>
+
+<div class="creator-lms-filter-accordion creator-lms-default-accordion">
+    <?php 
+        if (!empty($filter_data)) { 
+            foreach ($filter_data as $filter) { 
+                $filter_title = '';
+                if('category' == $filter) {
+                    $filter_title = __('Category', 'ohmylms');
+                    if (taxonomy_exists('course_category')) {
+                        $terms = get_terms([
+                            'taxonomy'   => 'course_category',
+                            'hide_empty' => false, // Set to true to exclude empty terms
+                        ]);
+
+                        if (!empty($terms) && !is_wp_error($terms)) {
+                            $items['category'] = $terms;
+                        }
+                    }
+                }
+
+                if('tag' == $filter) {
+                    $filter_title = __('Tag', 'ohmylms');
+                    if (taxonomy_exists('course_tag')) {
+                        $terms = get_terms([
+                            'taxonomy'   => 'course_tag',
+                            'hide_empty' => false, // Set to true to exclude empty terms
+                        ]);
+
+                        if (!empty($terms) && !is_wp_error($terms)) {
+                            $items['tag'] = $terms;
+                        }
+                    }
+                }
+
+                if('price_type' == $filter) {
+                    $filter_title = __('Price Type', 'ohmylms');
+                    $items['price_type'] = [
+                        [
+                            'name' => 'Paid',
+                            'slug' => 'paid'
+                        ],
+                        [
+                            'name' => 'Free',
+                            'slug' => 'free'
+                        ],
+                    ];
+                }
+
+                if('difficulty_level' == $filter) {
+                    $filter_title = __('Level', 'ohmylms');
+                    $items['difficulty_level'] = [
+                        [
+                            'name' => 'All Levels',
+                            'slug' => 'all'
+                        ],
+                        [
+                            'name' => 'Beginner',
+                            'slug' => 'beginner'
+                        ],
+                        [
+                            'name' => 'Experience',
+                            'slug' => 'experience'
+                        ],
+                        [
+                            'name' => 'Expert',
+                            'slug' => 'expert'
+                        ],
+                        
+                    ];
+                }
+                if( $filter_title && !empty($items[$filter]) ){
+
+                ?>
+                    <div class="creator-lms-accordion-item">
+                        <div class="creator-lms-accordion-head" aria-expanded="true">
+                            <span class="creator-lms-accordion-title">
+                                <?php echo $filter_title; ?>
+
+                                <svg width="13" height="7" fill="none" viewBox="0 0 13 7" xmlns="http://www.w3.org/2000/svg"><path fill="#A1A1AA" stroke="#A1A1AA" stroke-width=".3" d="M1.146 5.766a.792.792 0 001.124 0L5.896 2.14a.792.792 0 011.124 0l3.626 3.626A.793.793 0 1011.77 4.65L8.136 1.016a2.375 2.375 0 00-3.357 0L1.146 4.65a.792.792 0 000 1.116z"/></svg>
+                            </span>
+                        </div>
+
+                        <div class="creator-lms-accordion-body">
+                            <?php 
+                            foreach( $items[$filter] as $index => $item ) : ?>
+                                
+                                <label for="<?php echo $filter.$index; ?>" class="creator-lms-checkbox" >
+                                    <input type="checkbox" name="creator-lms-filter-checkbox" value="" data-type="<?php echo $filter; ?>" data-slug="<?php echo 'category' === $filter || 'tag' === $filter ?  $item->slug : $item['slug']; ?>" id="<?php echo $filter.$index; ?>" aria-required="true" aria-labelledby="creator-lms-<?php echo $filter.$index; ?>-filter-label">
+
+                                    <span class="creator-lms-checkbox-text">
+                                        <span class="checkedbox" aria-hidden="false" id="creator-lms-<?php echo $filter.$index; ?>-filter-label" tabindex="0" data-target="<?php echo $filter.$index; ?>">
+                                            <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
+                                        </span>
+                                    <?php  
+                                        if( 'category' === $filter || 'tag' === $filter ) {
+                                            echo $item->name;
+                                        }else{
+                                            echo $item['name'];
+                                        }
+                                        ?>
+                                    </span>
+                                </label>
+                                
+                            <?php 
+                            endforeach;
+                            ?>
+                        </div>
+                    </div>
+                <?php 
+                }
+            } 
+        } else { 
+            ?>
+            <div class="no-filter">
+                <?php echo __('No filters available.', 'ohmylms'); ?>
+            </div>
+            <?php 
+        } 
+    ?>
+</div>

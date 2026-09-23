@@ -1,0 +1,51 @@
+<?php
+/**
+ * CreatorLMS Offer Button Block (PHP registration)
+ *
+ * @package OMLMS\Blocks\Blocks
+ */
+
+namespace OMLMS\Blocks\Blocks;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+class OfferButtonBlock {
+    public static function register() {
+        register_block_type( 'creator-lms/offer-button', [
+            'attributes'      => [
+                'action'        => [ 'type' => 'string', 'default' => 'accept' ],
+                'text'          => [ 'type' => 'string', 'default' => 'Accept Offer' ],
+                'background'    => [ 'type' => 'string', 'default' => '#0073aa' ],
+                'color'         => [ 'type' => 'string', 'default' => '#fff' ],
+                'border'        => [ 'type' => 'string', 'default' => '' ],
+                'padding'       => [ 'type' => 'string', 'default' => '12px 24px' ],
+                'margin'        => [ 'type' => 'string', 'default' => '' ],
+                'font_size'     => [ 'type' => 'string', 'default' => '16px' ],
+                'font_weight'   => [ 'type' => 'string', 'default' => '' ],
+                'border_radius' => [ 'type' => 'string', 'default' => '4px' ],
+                'width'         => [ 'type' => 'string', 'default' => '' ],
+                'height'        => [ 'type' => 'string', 'default' => '' ],
+                'class'         => [ 'type' => 'string', 'default' => '' ],
+                'id'            => [ 'type' => 'string', 'default' => '' ],
+                'style'         => [ 'type' => 'string', 'default' => '' ],
+            ],
+            'render_callback' => [ __CLASS__, 'render' ],
+            'editor_script' => 'creator-lms-blocks-editor',
+			'editor_style' => 'creator-lms-blocks-editor',
+			'style' => 'creator-lms-blocks-frontend',
+        ] );
+    }
+
+    public static function render( $atts ) {
+        // Use the pro shortcode handler for output
+        if ( class_exists( '\OMLMS\Shortcodes\ShortCodeOfferButton' ) ) {
+            ob_start();
+            \OMLMS\Shortcodes\ShortCodeOfferButton::output( $atts );
+            return ob_get_clean();
+        }
+        return '<div class="creator-lms-offer-button-missing">Offer Button not available.</div>';
+    }
+}
+
+// Register on init
+add_action( 'init', [ '\OMLMS\Blocks\Blocks\OfferButtonBlock', 'register' ] );

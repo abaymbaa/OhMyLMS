@@ -1,0 +1,35 @@
+<?php
+// Disabled unless OMLMS_ENABLED_MODULES contains 'examples'.
+add_action('ohmylms_register_extensions', static function () {
+    ohmylms_register_extension_settings('example-benefit', [
+        'contexts'=>['membership'],
+        'schema'=>['type'=>'object','properties'=>['benefit'=>['type'=>'string','maxLength'=>200]]],
+    ]);
+    ohmylms_register_question_type('example-number', [
+        'label'=>'Example number',
+        'editor'=>['schema'=>['type'=>'object','properties'=>['expected'=>['type'=>'number']], 'required'=>['expected']]],
+        'render'=>static function($question,$attempt) {
+            printf('<label>Number <input type="number" step="any" name="attempt[%d][quiz_question][%d][]"></label>', (int)$attempt['id'], (int)$question['id']);
+        },
+        'validate'=>static function($answer){return is_array($answer) && (count($answer)===0 || (count($answer)===1 && (reset($answer)==='' || is_numeric(reset($answer)))));},
+        'grade'=>static function($answer,$question){$settings=$question->get_settings();$correct=count($answer)===1&&is_numeric(reset($answer))&&isset($settings['expected'])&&(float)reset($answer)===(float)$settings['expected'];return ['correct'=>$correct,'fraction'=>$correct?1:0,'manual'=>false];},
+    ]);
+    ohmylms_register_lesson_type('example-reading', [
+        'label'=>'Example reading','editor'=>['format'=>'wordpress-content'],
+        'render'=>static function($lesson){echo '<article class="ohmylms-reading">'.wpautop(wp_kses_post($lesson->get_description())).'</article>';},
+    ]);
+    ohmylms_register_activity('example-reveal', [
+        'label'=>'Example reveal','render'=>static function($data){echo '<details><summary>'.esc_html($data['prompt']??'Reveal').'</summary><p>'.esc_html($data['answer']??'').'</p></details>';},
+    ]);
+    ohmylms_register_layout('example-frame', [
+        'label'=>'Example frame','contexts'=>['course','lesson','quiz'],
+        'render'=>static function($args){$templates=['course'=>'content-single-course.php','lesson'=>'single-lesson/content-lesson.php','quiz'=>'single-lesson/quiz-form.php'];echo '<section class="ohmylms-example-frame">';omlms_get_template($templates[$args['context']], $args);echo '</section>';},
+    ]);
+    ohmylms_register_checkout_field('example-reference', [
+        'label'=>'Order reference','type'=>'text','required'=>false,
+        'schema'=>['type'=>'string','maxLength'=>100],
+    ]);
+});
+add_action('ohmylms_enqueue_extension_scripts', static function($sdk){
+    wp_enqueue_script('ohmylms-example-module', plugins_url('modules/examples/editor.js', OHMYLMS_FILE), [$sdk], OHMYLMS_VERSION, true);
+});

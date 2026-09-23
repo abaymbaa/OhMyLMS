@@ -1,0 +1,103 @@
+.creator-lms-page {
+    .creator-lms-header {
+        background-color: #000D2C;
+        padding: 17px 0;
+    }
+
+    .creator-lms-header-wrapper {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .creator-lms-header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .brand-logo {
+            display: block;
+            padding: 7px 0;
+
+            img {
+                display: block;
+            }
+        }
+
+        .search-box {
+            position: relative;
+
+            svg {
+                position: absolute;
+                top: 9px;
+                left: 14px;
+            }
+
+            input[type="search"] {
+                border-radius: 10px;
+                border: 1px solid #000D2C;
+                background: #122143;
+                padding: 7px 14px 7px 42px;
+                width: 300px;
+                color: #ffffffab;
+                font-size: 15px;
+                font-weight: 400;
+                line-height: 1;
+                box-shadow: none;
+                outline: none;
+
+                &:focus {
+                    border-color: var(--creator-lms-primary-color);
+                }
+            }
+        }
+    }
+
+    .creator-lms-header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .creator-lms-notification {
+            a {
+                position: relative;
+                top: 2px;
+                display: block;
+                padding: 3px;
+
+                svg {
+                    display: block;
+                }
+
+                .notification-count {
+                    background: #FF6F6F;
+                    position: absolute;
+                    top: -7px;
+                    right: -4px;
+                    color: #FFF;
+                    font-size: 11px;
+                    font-weight: 600;
+                    line-height: 10px;
+                    display: block;
+                    padding: 5px 4px;
+                    border-radius: 100px;
+                }
+            }
+        }
+        
+        .creator-lms-user-avatar {
+            width: 36px;
+            height: 36px;
+            display: block;
+            border-radius: 100%;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+
+}

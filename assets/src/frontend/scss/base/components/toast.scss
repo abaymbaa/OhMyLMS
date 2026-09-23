@@ -1,0 +1,178 @@
+
+.creator-lms-page {
+    #creator-lms-show-toast {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .creator-lms-toast {
+        position: fixed;
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 15px 24px;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        max-width: 410px;
+        width: max-content;
+        border-radius: 14px;
+        border: 1px solid #19AA32;
+        background: #F1FFF3;
+        opacity: 0;
+        visibility: hidden;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .creator-lms-toast-content {
+            display: flex;
+            align-items: center;
+            flex-flow: row wrap;
+            gap: 10px;
+        }
+
+        .creator-lms-message {
+            color: #19AA32;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            width: calc(100% - 34px);
+            position: relative;
+            padding-left: 33px;
+
+            &::before {
+                content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjUgMjUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iIzE5QUEzMiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTIuNjkyLjY5NGM2LjYyNyAwIDEyIDUuMzc0IDEyIDEycy01LjM3MyAxMi0xMiAxMmMtNi42MjYgMC0xMi01LjM3My0xMi0xMiAwLTYuNjI2IDUuMzc0LTEyIDEyLTEyek0xMC4yIDE2LjU5MmwtMi45MzctMi45NGExLjI4OSAxLjI4OSAwIDAxMC0xLjgxOWMuNS0uNSAxLjMyLS40OTcgMS44MTggMGwyLjA3IDIuMDczIDUuMTUzLTUuMTUyYTEuMjkgMS4yOSAwIDAxMS44MTggMGMuNTAxLjUuNSAxLjMxOCAwIDEuODE4bC02LjA2MyA2LjA2M2ExLjI4OSAxLjI4OSAwIDAxLTEuODU5LS4wNDN6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=");
+                position: absolute;
+                left: 0;
+                top: 1px;
+                width: 24px;
+                height: auto;
+                line-height: 1;
+            }
+        }
+
+        .creator-lms-close {
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            display: inline-block;
+            padding: 0px 5px 3px;
+            border: none;
+            transform: translateX(5px);
+            margin: 0;
+        }
+
+        &.toast-warning {
+            background-color: #FEF9F0;
+            border-color: #FFC845;
+
+            .creator-lms-message {
+                color: var(--creator-lms-heading-color);
+
+                &::before {
+                    content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0ZGQzg0NSIgZD0iTTEyIDI0QzUuNDA5IDI0IDAgMTguNTkxIDAgMTJTNS40MDkgMCAxMiAwczEyIDUuNDA5IDEyIDEyLTUuNDA5IDEyLTEyIDEyem0xLjQwNi0xNy42MjVjMC0uNzc1LS42My0xLjQwNi0xLjQwNi0xLjQwNi0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDZ2Ny4wMzFjMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNlY2LjM3NXpNMTIgMTYuMjE5Yy0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDYgMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNiAwLS43NzUtLjYzLTEuNDA2LTEuNDA2LTEuNDA2eiIvPjwvc3ZnPg==");
+                }
+            }
+
+            .creator-lms-close path {
+                stroke: var(--creator-lms-heading-color);
+            }
+        }
+
+        &.toast-danger {
+            background-color: #FFF1F1;
+            border-color: #F85656;
+
+            .creator-lms-message {
+                color: var(--creator-lms-heading-color);
+
+                &::before {
+                    content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0Y4NTY1NiIgZD0iTTEyIDI0QzUuNDA5IDI0IDAgMTguNTkxIDAgMTJTNS40MDkgMCAxMiAwczEyIDUuNDA5IDEyIDEyLTUuNDA5IDEyLTEyIDEyem0xLjQwNi0xNy42MjVjMC0uNzc1LS42My0xLjQwNi0xLjQwNi0xLjQwNi0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDZ2Ny4wMzFjMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNlY2LjM3NXpNMTIgMTYuMjE5Yy0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDYgMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNiAwLS43NzUtLjYzLTEuNDA2LTEuNDA2LTEuNDA2eiIvPjwvc3ZnPg==");
+                }
+            }
+
+            .creator-lms-close path {
+                stroke: var(--creator-lms-heading-color);
+            }
+
+        }
+
+        .omlms-error {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+    }
+
+}
+
+.admin-bar #creator-lms-toast {
+    top: 60px;
+}
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .creator-lms-toast {
+        width: 350px;
+        border-radius: 8px;
+        padding: 10px 20px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-message {
+        font-size: 14px;
+        line-height: 1.2;
+        padding-left: 28px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-message::before {
+        width: 21px;
+        top: -2px;
+    }
+    .creator-lms-page .creator-lms-toast.toast-warning .creator-lms-message::before {
+        top: -2px;
+        width: 18px;
+        transform: translateX(-2px);
+    }
+    .creator-lms-page .creator-lms-toast.toast-danger .creator-lms-message::before {
+        width: 16px;
+    }
+
+    .creator-lms-page .creator-lms-toast .creator-lms-close svg {
+        width: 12px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-close {
+        padding: 2px 5px 2px;
+    }
+
+}
+
+@media screen and (max-width: 575px) {
+    .creator-lms-page .creator-lms-toast {
+        max-width: 340px;
+        padding: 8px 12px;
+        right: 10px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-close svg {
+        width: 10px;
+    }
+
+}
+
+@media screen and (max-width: 425px) {
+    .creator-lms-page .creator-lms-toast {
+        max-width: 280px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-message {
+        font-size: 12px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-message::before {
+        width: 16px;
+        top: -1px;
+    }
+    .creator-lms-page .creator-lms-toast .creator-lms-message {
+        padding-left: 23px;
+    }
+
+}

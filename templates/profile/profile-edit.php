@@ -1,0 +1,514 @@
+<?php
+/**
+ * Template for displaying profile edit of student profile
+ *
+ * This template can be overridden by copying it to yourtheme/creator-lms/profile/profile-edit.php.
+ *
+ * @package OMLMS\Templates
+ * @version  1.0.0
+ * @global \OMLMS\Data\Student $student
+ */
+
+defined( 'ABSPATH' ) || exit();
+do_action( 'creator_lms_before_edit_account_form' );
+
+?>
+
+<div class="creator-lms-student-profile-tab-content student-profile student-profile-edit">
+	<h4 class="profile-tab-title">
+		<?php echo __( 'Edit Profile', 'ohmylms' ); ?>
+	</h4>
+
+	<div class="creator-lms-profile-cover-area">
+		<div class="creator-lms-profile-cover" tabindex="0">
+			<figure>
+				<img src="<?php echo $student->get_cover_image(); ?>" alt="creator lms profile cover" id="student-cover-image">
+			</figure>
+
+            <div class="hoverlay" tabindex="0">
+                <label for="cover_image_input" role="button" aria-label="Edit" class="cover-action-btn cover-edit" tabindex="0">
+                    <input type="file" id="cover_image_input" style="display: none;" accept="image/*">
+                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/edit-icon.php'); ?>
+                    <?php echo __( 'Edit', 'ohmylms' ); ?>
+                </label>
+
+                <button tabindex="0" type="button" aria-label="Delete" class="cover-action-btn cover-delete" id="cover-image-delete" style="<?php echo $student->has_cover_image() ? 'display: flex;' : 'display: none;' ?>">
+                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/delete-icon.php'); ?>
+                    <?php echo __( 'Delete', 'ohmylms' ); ?>
+                </button>
+            </div>
+
+			<div class="creator-lms-profile-avatar" tabindex="0">
+				<figure>
+					<?php
+					$student_profile_photo = $student->get_profile_image();
+					if ($student_profile_photo) {
+						echo '<img class="student-profile-photo" src="'.esc_url($student_profile_photo).'" alt="Student Profile Photo" id="student-profile-photo">';
+					}else {
+						echo creator_lms_get_initials($student->get_first_name(), $student->get_last_name());
+					}
+					?>
+				</figure>
+
+                <label for="profile_photo_input" class="edit-avatar" tabindex="0">
+                    <input type="file" id="profile_photo_input" style="display: none;" accept="image/*">
+                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/camera-icon.php'); ?>
+                    <small><?php echo __( 'Recomanded size 400 x 400 px', 'ohmylms' ); ?></small>
+                </label>
+			</div>
+		</div>
+
+        <form action="" method="post">
+            <?php do_action( 'creator_lms_edit_account_form_start' ); ?>
+
+            <div class="creator-lms-student-basic-info">
+                <h6 class="account-title">
+                    <?php echo __( 'Account', 'ohmylms' ); ?>
+                </h6>
+
+                <div class="creator-lms-form-wrapper">
+                    <div class="creator-lms-form-group firstname half-width">
+                        <label>
+                            <?php echo __( 'First Name', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="first_name" placeholder="<?php echo esc_attr( 'Enter first name', 'ohmylms' ); ?>" value="<?php echo $student->get_first_name(); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group lastname half-width">
+                        <label>
+                            <?php echo __( 'Last Name', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="last_name" placeholder="<?php echo esc_attr( 'Enter last name', 'ohmylms' ); ?>" value="<?php echo $student->get_last_name(); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group display-name">
+                        <label>
+                            <?php echo __( 'Display Name', 'ohmylms' ); ?>
+                            <span class="required">*</span>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="display_name" placeholder="<?php echo __('Enter your display name', 'ohmylms'); ?>" value="<?php echo $student->get_display_name(); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group email">
+                        <label>
+                            <?php echo __( 'Email', 'ohmylms' ); ?>
+                            <span class="required">*</span>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="email" name="email" placeholder="<?php echo __('Enter your email address', 'ohmylms'); ?>" value="<?php echo $student->get_email(); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group address-line1">
+                        <label>
+                            <?php echo __( 'Address', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="address" placeholder="<?php echo esc_attr( 'Street address, P. O. box', 'ohmylms' ); ?>" value="<?php echo $student->get_address(); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group phone half-width">
+                        <label>
+                            <?php echo __( 'Phone Number', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="phone" placeholder="<?php echo esc_attr__( 'Phone number', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_phone() ); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group whatsapp half-width">
+                        <label>
+                            <?php echo __( 'WhatsApp', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <input type="text" name="whatsapp" placeholder="<?php echo esc_attr__( 'WhatsApp number', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_whatsapp() ); ?>">
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group country">
+                        <label>
+                            <?php echo __( 'Country', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <select name="country">
+                                <option value=""><?php echo __( '— Select country —', 'ohmylms' ); ?></option>
+                                <?php
+                                $student_country = $student->get_country();
+                                foreach ( creator_lms_get_countries() as $country ) {
+                                    printf(
+                                        '<option value="%s"%s>%s</option>',
+                                        esc_attr( $country['code'] ),
+                                        selected( $student_country, $country['code'], false ),
+                                        esc_html( $country['title'] )
+                                    );
+                                }
+                                ?>
+                            </select>
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group bio" id="bio">
+                        <label>
+                            <?php echo __( 'Headline/Bio', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <textarea name="bio" id=""><?php echo $student->get_bio(); ?></textarea>
+                        </span>
+                    </div>
+
+                    <div class="creator-lms-form-group interests">
+                        <label>
+                            <?php echo __( 'Learning Interests', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-input-wrapper">
+                            <textarea name="interests" id=""><?php echo $student->get_interest(); ?></textarea>
+                        </span>
+                    </div>
+
+                    <!-- Skills Section -->
+                    <div class="creator-lms-form-group skills-section" id="skills">
+                        <label>
+                            <?php echo __( 'Skills', 'ohmylms' ); ?>
+                        </label>
+                        <div class="creator-lms-dynamic-fields" id="skills-container">
+                            <?php 
+                            $skills = $student->get_skills(); // We'll need to implement this method
+                            if (!empty($skills) && is_array($skills)) {
+                                foreach ($skills as $index => $skill) {
+                                    ?>
+                                    <div class="creator-lms-dynamic-field-row">
+                                        <span class="creator-lms-input-wrapper">
+                                            <input type="text" name="skills[]" placeholder="<?php echo esc_attr( 'Enter a skill', 'ohmylms' ); ?>" value="<?php echo esc_attr($skill); ?>">
+                                        </span>
+                                        <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove skill', 'ohmylms'); ?>">×</button>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                ?>
+                                <div class="creator-lms-dynamic-field-row">
+                                    <span class="creator-lms-input-wrapper">
+                                        <input type="text" name="skills[]" placeholder="<?php echo esc_attr( 'Enter a skill', 'ohmylms' ); ?>">
+                                    </span>
+                                    <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove skill', 'ohmylms'); ?>">×</button>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                        </div>
+                        <button type="button" class="creator-lms-button creator-lms-add-field" data-target="skills-container" data-template="skills-template">
+                            <?php echo __( 'Add Another Skill', 'ohmylms' ); ?>
+                        </button>
+                    </div>
+
+                    <!-- Links Section -->
+                    <div class="creator-lms-form-group links-section"  id="social-links">
+                        <label>
+                            <?php echo __( 'Social Links', 'ohmylms' ); ?>
+                        </label>
+                        <div class="creator-lms-dynamic-fields" id="links-container">
+                            <?php 
+                            $links = $student->get_social_links(); // We'll need to implement this method
+                            if (!empty($links) && is_array($links)) {
+                                foreach ($links as $index => $link) {
+                                    ?>
+                                    <div class="creator-lms-dynamic-field-row creator-lms-link-row">
+                                        <span class="creator-lms-input-wrapper creator-lms-link-label">
+                                            <input type="text" name="link_labels[]" placeholder="<?php echo esc_attr( 'Label (e.g., LinkedIn, Facebook)', 'ohmylms' ); ?>" value="<?php echo esc_attr($link['label'] ?? ''); ?>">
+                                        </span>
+                                        <span class="creator-lms-input-wrapper creator-lms-link-url">
+                                            <input type="url" name="link_urls[]" placeholder="<?php echo esc_attr( 'https://example.com', 'ohmylms' ); ?>" value="<?php echo esc_attr($link['url'] ?? ''); ?>">
+                                        </span>
+                                        <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove link', 'ohmylms'); ?>">×</button>
+                                    </div>
+                                    <?php
+                                }
+                            } else {
+                                ?>
+                                <div class="creator-lms-dynamic-field-row creator-lms-link-row">
+                                    <span class="creator-lms-input-wrapper creator-lms-link-label">
+                                        <input type="text" name="link_labels[]" placeholder="<?php echo esc_attr( 'Label (e.g., LinkedIn, Facebook)', 'ohmylms' ); ?>">
+                                    </span>
+                                    <span class="creator-lms-input-wrapper creator-lms-link-url">
+                                        <input type="url" name="link_urls[]" placeholder="<?php echo esc_attr( 'https://example.com', 'ohmylms' ); ?>">
+                                    </span>
+                                    <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove link', 'ohmylms'); ?>">×</button>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                        </div>
+                        <button type="button" class="creator-lms-button creator-lms-add-field" data-target="links-container" data-template="links-template">
+                            <?php echo __( 'Add Another Link', 'ohmylms' ); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="creator-lms-student-account">
+                <h6 class="account-title">
+                    <?php echo __( 'Password', 'ohmylms' ); ?>
+                </h6>
+
+                <div class="creator-lms-form-wrapper">
+                    <!-- current password -->
+                    <div class="creator-lms-form-group password">
+                        <label for="current-password">
+                            <?php echo __( 'Current Password', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-password-show">
+                            <input class="creator-lms-input-text password" type="password" name="password_current" id="current-password">
+
+                            <label class="show-password-icon" tabindex="0">
+                                <input type="checkbox" name="show-password-checkbox" class="show-password-checkbox" aria-required="true" aria-hidden="true">
+                                
+                                <span class="show-password" aria-label="Toggle password visibility">
+                                    <span class="eye-on">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon2.php');
+                                        ?>
+                                    </span>
+
+                                    <span class="eye-off">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-off-icon.php');
+                                        ?>
+                                    </span>
+                                </span>
+                            </label>
+                        </span>
+                    </div>
+
+                    <!-- new password -->
+                    <div class="creator-lms-form-group new-password">
+                        <label for="new-password">
+                            <?php echo __( 'New Password', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-password-show">
+                            <input class="creator-lms-input-text password" type="password" name="password1" id="new-password">
+
+                            <label class="show-password-icon" tabindex="0">
+                                <input type="checkbox" name="show-password-checkbox" class="show-password-checkbox" aria-required="true" aria-hidden="true">
+                                
+                                <span class="show-password" aria-label="Toggle password visibility">
+                                    <span class="eye-on">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon2.php');
+                                        ?>
+                                    </span>
+
+                                    <span class="eye-off">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-off-icon.php');
+                                        ?>
+                                    </span>
+                                </span>
+                            </label>
+                        </span>
+                    </div>
+
+                    <!-- confirm password -->
+                    <div class="creator-lms-form-group confirm-password">
+                        <label for="confirm-password">
+                            <?php echo __( 'Confirm Password', 'ohmylms' ); ?>
+                        </label>
+
+                        <span class="creator-lms-password-show">
+                            <input class="creator-lms-input-text password" type="password" name="password2" id="confirm-password">
+
+                            <label class="show-password-icon" tabindex="0">
+                                <input type="checkbox" name="show-password-checkbox" class="show-password-checkbox" aria-required="true" aria-hidden="true">
+                                
+                                <span class="show-password" aria-label="Toggle password visibility">
+                                    <span class="eye-on">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon2.php');
+                                        ?>
+                                    </span>
+
+                                    <span class="eye-off">
+                                        <?php
+                                            include(CREATOR_LMS_DIR . '/assets/images/icon/eye-off-icon.php');
+                                        ?>
+                                    </span>
+                                </span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- <div class="creator-lms-password-strength">
+                    <ul>
+                        <li class="password-strength matched">
+                            <?php //echo __( 'Password strength: weak.', 'ohmylms' ); ?>
+                        </li>
+
+                        <li class="password-characters">
+                            <?php //echo __( 'Password least 8-12 characters long.', 'ohmylms' ); ?>
+                        </li>
+
+                        <li class="password-number">
+                            <?php //echo __( 'Contains a number or symbol.', 'ohmylms' ); ?>
+                        </li>
+
+                        <li class="password-case">
+                            <?php //echo __( 'Uppercase letters (A-Z); Lowercase letters (a-z).', 'ohmylms' ); ?>
+                        </li>
+                    </ul>
+                </div> -->
+            </div>
+
+            <?php wp_nonce_field( 'save_account_details', 'save-account-details-nonce' ); ?>
+
+            <input type="hidden" name="action" value="save_account_details">
+
+            <?php omlms_get_template( 'global/form-submit.php' ); ?>
+
+            <?php do_action( 'creator_lms_edit_account_form_end' ); ?>
+        </form>
+
+	</div>
+</div>
+
+<?php do_action( 'creator_lms_after_edit_account_form' ); ?>
+
+<!-- Hidden templates for dynamic fields -->
+<script type="text/template" id="skills-template">
+    <div class="creator-lms-dynamic-field-row">
+        <span class="creator-lms-input-wrapper">
+            <input type="text" name="skills[]" placeholder="<?php echo esc_attr( 'Enter a skill', 'ohmylms' ); ?>">
+        </span>
+        <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove skill', 'ohmylms'); ?>">×</button>
+    </div>
+</script>
+
+<script type="text/template" id="links-template">
+    <div class="creator-lms-dynamic-field-row creator-lms-link-row">
+        <span class="creator-lms-input-wrapper creator-lms-link-label">
+            <input type="text" name="link_labels[]" placeholder="<?php echo esc_attr( 'Label (e.g., LinkedIn, Facebook)', 'ohmylms' ); ?>">
+        </span>
+        <span class="creator-lms-input-wrapper creator-lms-link-url">
+            <input type="url" name="link_urls[]" placeholder="<?php echo esc_attr( 'https://example.com', 'ohmylms' ); ?>">
+        </span>
+        <button type="button" class="creator-lms-remove-field" aria-label="<?php echo esc_attr__('Remove link', 'ohmylms'); ?>">×</button>
+    </div>
+</script>
+
+<style>
+/* Styles for dynamic fields */
+.creator-lms-dynamic-fields {
+    margin-bottom: 10px;
+}
+
+.creator-lms-dynamic-field-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.creator-lms-link-row .creator-lms-input-wrapper {
+    flex: 1;
+}
+
+.creator-lms-link-label {
+    flex: 0 0 30% !important;
+}
+
+.creator-lms-link-url {
+    flex: 1 !important;
+}
+
+.creator-lms-remove-field {
+    background: #f1f1f1;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.creator-lms-remove-field:hover {
+    background: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.creator-lms-add-field {
+    margin-top: 10px;
+}
+
+.skills-section .creator-lms-input-wrapper,
+.links-section .creator-lms-input-wrapper {
+    flex: 1;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add field functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('creator-lms-add-field')) {
+            e.preventDefault();
+            
+            const targetId = e.target.getAttribute('data-target');
+            const templateId = e.target.getAttribute('data-template');
+            const container = document.getElementById(targetId);
+            const template = document.getElementById(templateId);
+            
+            if (container && template) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = template.innerHTML.trim();
+                const newField = tempDiv.firstChild;
+                container.appendChild(newField);
+            }
+        }
+    });
+    
+    // Remove field functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('creator-lms-remove-field')) {
+            e.preventDefault();
+            
+            const fieldRow = e.target.closest('.creator-lms-dynamic-field-row');
+            const container = fieldRow.parentNode;
+            
+            // Don't remove if it's the last field
+            if (container.children.length > 1) {
+                fieldRow.remove();
+            } else {
+                // Clear the inputs instead of removing the row
+                const inputs = fieldRow.querySelectorAll('input');
+                inputs.forEach(input => input.value = '');
+            }
+        }
+    });
+});
+</script>

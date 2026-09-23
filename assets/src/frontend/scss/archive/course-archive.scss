@@ -1,0 +1,126 @@
+.creator-lms-page {
+	.site-main > * {
+		margin: 0;
+	}
+
+	.site-main,
+	main#content {
+		max-width: 100%!important;
+		width: 100%!important;
+		padding: 0!important;
+		margin: 0!important;
+		padding-inline-start: 0 !important;
+		padding-inline-end: 0 !important;
+	}
+	
+	.creator-lms-courses {
+		background-color: #F9FAFD;
+		padding: 90px 0 100px;
+		margin: 0;
+
+		.creator-lms-courses-header {
+			margin: 0 0 62px;
+		}
+
+		.courses-section-title {
+			color: var(--creator-lms-heading-color);
+			font-size: 40px;
+			font-weight: 700;
+			line-height: 1.25;
+			text-align: center;
+			margin: 0;
+			padding: 0;
+		}
+
+		//-----if filter is enabled-----
+		.creator-lms-filter-enabled {
+			display: flex;
+			flex-flow: row wrap;
+			align-items: flex-start;
+			gap: 30px;
+
+			.creator-lms-course-main {
+				width: calc(100% - 337px);
+			}
+		}
+
+	}
+
+}
+
+@media screen and (max-width: 1199px) {
+	.creator-lms-page .creator-lms-courses {
+		padding: 70px 0 80px;
+	}
+
+	.creator-lms-page .creator-lms-courses .creator-lms-courses-header {
+		margin-bottom: 44px;
+	}
+	.creator-lms-page .creator-lms-courses .courses-section-title {
+		font-size: 36px;
+	}
+
+	.creator-lms-page .creator-lms-courses .creator-lms-filter-enabled {
+		gap: 24px;
+	}
+	.creator-lms-page .creator-lms-courses .creator-lms-filter-enabled .creator-lms-course-main {
+		width: calc(100% - 291px);
+	}
+
+}
+
+@media screen and (max-width: 991px) {
+	.creator-lms-page .creator-lms-courses {
+        padding: 50px 0 60px;
+    }
+
+	.creator-lms-page .creator-lms-courses .creator-lms-filter-enabled .creator-lms-course-main {
+        width: 100%;
+    }
+
+	.creator-lms-page .creator-lms-courses .creator-lms-filter-enabled:before {
+		content: "";
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #0000004f;
+		z-index: 99;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
+	}
+	.creator-lms-page .creator-lms-courses .creator-lms-filter-enabled.open-sidebar:before {
+		opacity: 1;
+		visibility: visible;
+	}
+
+}
+
+@media screen and (max-width: 767px) {
+	.creator-lms-page .creator-lms-courses .courses-section-title {
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 575px) {
+	.creator-lms-page .creator-lms-courses .creator-lms-courses-header {
+        margin-bottom: 34px;
+    }
+	.creator-lms-page .creator-lms-courses .courses-section-title {
+        font-size: 26px;
+    }
+
+}
+
+@import "slick.min";
+@import "course-filter";
+@import "course-category-type-button";
+@import "course-search-sort";
+@import "course-card";
+@import "course-grid-style2";
+@import "course-grid-style3";
+@import "course-grid-style4";
+@import "course-loadmore";
+@import "course-popup";

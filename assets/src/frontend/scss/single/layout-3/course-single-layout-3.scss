@@ -1,0 +1,46 @@
+.single.creator-lms-page {
+    .creator-lms-courses-single-layout3 {
+        background-color: #fff;
+
+        .creator-lms-content-wrapper {
+            gap: 30px;
+        }
+
+        .creator-lms-content {
+            width: calc(100% - 410px);
+        }
+        
+        .creator-lms-sidebar {
+            width: 380px;
+        }
+    }
+}
+
+@import './header';
+@import './content-style';
+@import './sidebar-widget';
+
+
+@media screen and (max-width: 1199px) {
+    .single.creator-lms-page .creator-lms-courses-single-layout3 .creator-lms-content {
+        width: calc(100% - 380px);
+    }
+    .single.creator-lms-page .creator-lms-courses-single-layout3 .creator-lms-sidebar {
+        width: 350px;
+    }
+    
+}
+
+@media screen and (max-width: 991px) {
+    .single.creator-lms-page .creator-lms-courses-single-layout3 .creator-lms-content-wrapper {
+        gap: 10px;
+    }
+    .single.creator-lms-page .creator-lms-courses-single-layout3 .creator-lms-content {
+        width: 100%;
+    }
+    .single.creator-lms-page .creator-lms-courses-single-layout3 .creator-lms-sidebar {
+        width: 100%;
+    }
+    
+    
+}

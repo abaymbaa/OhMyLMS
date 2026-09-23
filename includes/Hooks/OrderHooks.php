@@ -1,0 +1,171 @@
+<?php
+
+namespace OMLMS\Hooks;
+
+use OMLMS\Abstracts\HookHandler;
+
+class OrderHooks extends HookHandler {
+
+	public function register_hooks() {
+		add_action( 'creator_lms_order_refunded', array( $this, 'cancel_student_enrollment' ), 10, 2 );
+		add_action( 'creator_lms_rest_delete_order', array( $this, 'rest_delete_order' ), 10 );
+		add_action( 'creator_lms_update_order_status_to_completed', array( $this, 'after_payment_completed' ), 10 );
+		add_action( 'creator_lms_payment_completed', array( $this, 'after_payment_completed' ), 10 );
+	}
+
+
+	/**
+	 * Cancel student enrollment when an order is refunded.
+	 *
+	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
+	 * @param \CodeRex\Ecommerce\Data\Order       $order  The order object.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cancel_student_enrollment( $refund, $order ) {
+		if ( $order->get_meta( '_omlms_refund_processed' ) ) {
+			return;
+		}
+
+		$order_total    = omlms_format_decimal( $order->get_total(), omlms_get_price_decimals() );
+		$total_refunded = omlms_format_decimal( abs( $refund->get_total() ), omlms_get_price_decimals() );
+		$is_full_refund = ( $total_refunded === $order_total );
+
+		if ( ! $is_full_refund ) {
+			$accumulated = 0;
+			foreach ( $order->get_refunds() as $single_refund ) {
+				$accumulated += (float) omlms_format_decimal(
+					get_post_meta( $single_refund->ID, '_refund_amount', true ),
+					omlms_get_price_decimals()
+				);
+			}
+			$is_full_refund = ( omlms_format_decimal( $accumulated, omlms_get_price_decimals() ) === $order_total );
+		}
+
+		if ( ! $is_full_refund ) {
+			return;
+		}
+
+		$order->update_meta_data( '_omlms_refund_processed', 1 );
+		$order->save();
+
+		try {
+			$refund->cancel_student_enrollment( $order );
+
+			$subscription_id = get_post_meta( $order->get_id(), '_subscription_id', true );
+			$subscription_id = $subscription_id ? $subscription_id : get_post_meta( $order->get_id(), '_subscription_renewal_id', true );
+
+			if ( $subscription_id ) {
+				$subscription_id = absint( $subscription_id );
+				$subscription    = ecommerce_get_subscription( $subscription_id );
+				if ( $subscription ) {
+					\CodeRex\Ecommerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
+				}
+			}
+		} catch ( \Exception $e ) {
+			$order->delete_meta_data( '_omlms_refund_processed' );
+			$order->save();
+			error_log( 'CreatorLMS: refund cancellation failed for order #' . $order->get_id() . ': ' . $e->getMessage() );
+		}
+	}
+
+
+	/**
+	 * Delete order.
+	 *
+	 * @param int $order_id The order ID.
+	 *
+	 * @since 1.0.0
+	 */
+	public function rest_delete_order( $order_id ) {
+		global $wpdb;
+		// Get all order items for this order
+		$order_items = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT order_item_id FROM {$wpdb->prefix}omlms_order_items WHERE order_id = %d",
+				$order_id
+			)
+		);
+
+		if ( ! empty( $order_items ) ) {
+			// Delete order item meta
+			$wpdb->query(
+				"DELETE FROM {$wpdb->prefix}omlms_order_itemmeta WHERE order_item_id IN (" . implode( ',', array_map( 'absint', $order_items ) ) . ')'
+			);
+
+			// Delete order items
+			$wpdb->delete(
+				$wpdb->prefix . 'omlms_order_items',
+				array( 'order_id' => $order_id ),
+				array( '%d' )
+			);
+		}
+		
+		$subscription_id = get_post_meta( $order_id, '_subscription_id', true );
+		$subscription_id = $subscription_id ? $subscription_id : get_post_meta( $order_id, '_subscription_renewal_id', true );
+		if ( $subscription_id ) {
+			$subscription_id = absint( $subscription_id );
+			$subscription = ecommerce_get_subscription( $subscription_id );
+
+			// Validate subscription existence and post type.
+			if ( ! $subscription ) {
+				return;
+			}
+			// Mark the subscription as cancelled.
+			\CodeRex\Ecommerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
+		}
+	}
+
+
+	/**
+	 * After payment completed.
+	 *
+	 * @param int $order_id The order ID.
+	 *
+	 * @since 1.0.0
+	 */	public function after_payment_completed( $order ) {
+		if ( ! is_object( $order ) ) {
+			$order_id = absint( $order );
+			$order    = ecommerce_get_order( $order_id );
+		}
+
+		if ( ! is_object( $order ) ) {
+			return;
+		}
+
+		// Check any pending enrollment for this order. 
+		// To check pending enrollment, we will check in omlms_user_enrollment table with status 'pending' for this order id.
+		global $wpdb;
+		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$enroll_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );	
+		if ( ! empty( $enroll_data ) ) {
+			foreach ( $enroll_data as $enroll ) {
+				$rows = $wpdb->update(
+					$table_name,
+					array( 'status' => 'enrolled' ),
+					array( 'id' => $enroll['id'], 'status' => 'pending' ),
+					array( '%s' ),
+					array( '%d', '%s' )
+				);
+				if ( $rows > 0 ) {
+					do_action( 'creator_lms_after_enrolled_student', $order->get_id(), $enroll['user_id'] );
+				}
+			}
+		}
+
+		// for omlms_user_membership as well, check pending membership for this order.
+		if( ! creator_lms_is_pro() ) {
+			return;
+		}
+		$table_name  = $wpdb->prefix . 'omlms_user_membership';
+		$membership_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );	
+		if ( ! empty( $membership_data ) ) {
+			// update the status to 'enrolled' for each membership using query.
+			foreach ( $membership_data as $membership ) {
+				$student_id = $membership['user_id'];
+				$membership_data_instance = new \OMLMS\DataStores\StudentStore();
+				$membership_data_instance->update_membership_enrollment_status( $student_id, $order->get_id(), 'enrolled' );
+			}
+		}
+	}
+}

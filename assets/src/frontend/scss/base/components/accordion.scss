@@ -1,0 +1,115 @@
+.creator-lms-default-accordion {
+    .creator-lms-accordion-item {
+        border-radius: 14px;
+        border: 1px solid #E9E4F2;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .creator-lms-accordion-head {
+        padding: 21px 24px;
+        cursor: pointer;
+    }
+
+    .creator-lms-accordion-title {
+        color: #111827;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.3;
+        position: relative;
+        padding-right: 35px;
+        margin: 0;
+        display: block;
+
+        svg {
+            transition: all 0.3s ease;
+            display: block;
+            position: absolute;
+            right: 0;
+            top: 7px;
+        }
+    }
+
+    .creator-lms-accordion-body {
+        display: none;
+        padding: 0 24px 22px;
+
+        p {
+            color: #3F4654;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.75;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 40px;
+
+            li {
+                line-height: 1.2;
+                margin-bottom: 10px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            a {
+                overflow: hidden;
+                color: var(--creator-lms-primary-color);
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 1.5;
+                text-decoration: underline;
+                text-decoration-color: var(--creator-lms-primary-color);
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    // ---when accordion is expanded---
+    .creator-lms-accordion-item.active {
+        background: #fff;
+        border-color: transparent;
+        box-shadow: 0px 1px 2px 0px #DBDDE1;
+
+        .creator-lms-accordion-title svg {
+            transform: rotate(-180deg);
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-default-accordion .creator-lms-accordion-item {
+        border-radius: 10px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-head {
+        padding: 16px 18px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-title {
+        font-size: 14px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-title::before {
+        width: 12px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-body p {
+        font-size: 14px;
+    }
+
+    .creator-lms-default-accordion .creator-lms-accordion-body ul {
+        padding-left: 30px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-body ul li {
+        margin-bottom: 4px;
+    }
+    .creator-lms-default-accordion .creator-lms-accordion-body ul a {
+        font-size: 14px;
+    }
+}

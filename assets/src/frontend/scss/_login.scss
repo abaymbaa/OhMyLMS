@@ -1,0 +1,64 @@
+.creator-lms-page {
+    .creator-lms-user-login-wrapper {
+        height: 100vh;
+        min-height: 410px;
+        padding: 5% 15px 30px;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        .creator-lms-form-signup,
+        .creator-lms-form-login {
+            width: 100%;
+            max-width: 635px;
+            
+        }
+
+        .creator-lms-form-signup {
+            display: none;
+
+            .privacy-policy-row {
+                a {
+                    color: var(--creator-lms-primary-color);
+                    text-decoration: underline;
+                    transition: color 0.3s ease;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.omlms-email-pending-notice {
+    text-align: center;
+    padding: 32px 24px;
+    max-width: 635px;
+    margin: 0 auto;
+
+    .omlms-email-pending-icon {
+        display: block;
+        margin-bottom: 16px;
+
+        svg {
+            margin: 0 auto;
+        }
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #162031;
+        margin: 0 0 12px;
+    }
+
+    p {
+        font-size: 15px;
+        color: #4B5563;
+        line-height: 1.6;
+        margin: 0;
+    }
+}

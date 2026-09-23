@@ -1,0 +1,32 @@
+{
+  "name": "ohmylms/ohmylms",
+  "description": "Unified, extensible WordPress learning management system.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.4",
+    "woocommerce/action-scheduler": "3.9.3",
+    "dompdf/dompdf": "^3.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "OMLMS\\": "includes/"
+    },
+    "classmap": [
+      "packages"
+    ],
+    "exclude-from-classmap": [
+      "includes/OMLMS.php"
+    ]
+  },
+  "config": {
+    "platform-check": false,
+    "allow-plugins": false,
+    "platform": {
+      "php": "7.4.33"
+    }
+  },
+  "scripts": {
+    "test": "php tests/unit.php"
+  }
+}

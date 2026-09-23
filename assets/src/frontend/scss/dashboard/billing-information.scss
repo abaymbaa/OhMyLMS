@@ -1,0 +1,58 @@
+.creator-lms-page {
+    .creator-lms-student-profile {
+        .student-billing {
+            .creator-lms-billing-box {
+                border-radius: 8px;
+                background-color: #FFF;
+                box-shadow: 0px 1px 4px 0px #D3D6DD;
+                padding: 24px 30px;
+
+                display: flex;
+                flex-flow: row wrap;
+                gap: 20px;
+                row-gap: 24px;
+            }
+
+            .creator-lms-form-group {
+                margin-bottom: 0;
+            }
+
+        }
+
+        .creator-lms-form-submit {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
+
+            .creator-lms-button {
+                background-color: var(--creator-lms-primary-color);
+                color: #fff;
+                padding: 9px 20px 10px;
+
+                &:hover {
+                    background-color: transparent;
+                    color: var(--creator-lms-primary-color);
+                }
+
+                &.cancel {
+                    background-color: transparent;
+                    color: var(--creator-lms-heading-color);
+                    border-color: #DCDFE4;
+
+                    &:hover {
+                        background-color: #0000000f;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .creator-lms-student-profile .creator-lms-form-submit {
+        margin-top: 22px;
+    }
+}

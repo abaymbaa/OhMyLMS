@@ -1,0 +1,149 @@
+[
+    {
+      "key": "card",
+      "name": "Card",
+      "description": "Accept major credit and debit cards worldwide.",
+      "supportedCurrencies": ["usd", "eur", "gbp", "inr", "aud", "cad", "pln", "brl", "mxn", "cny"],
+      "defaultSelected": true
+    },
+    {
+      "key": "ach_credit_transfer",
+      "name": "ACH Credit Transfer",
+      "description": "US bank transfer method, suitable for one-time or recurring payments.",
+      "supportedCurrencies": ["usd"],
+      "defaultSelected": false
+    },
+    {
+      "key": "affirm",
+      "name": "Affirm",
+      "description": "Buy-now-pay-later service popular in the US and Canada.",
+      "supportedCurrencies": ["usd", "cad"],
+      "defaultSelected": false
+    },
+    {
+      "key": "afterpay_clearpay",
+      "name": "Afterpay / Clearpay",
+      "description": "Buy-now-pay-later available in Australia, New Zealand, UK, US.",
+      "supportedCurrencies": ["aud", "nzd", "gbp", "usd"],
+      "defaultSelected": false
+    },
+    {
+      "key": "alipay",
+      "name": "Alipay",
+      "description": "Popular digital wallet in China.",
+      "supportedCurrencies": ["cny"],
+      "defaultSelected": false
+    },
+    {
+      "key": "bacs_debit",
+      "name": "BACS Direct Debit",
+      "description": "UK bank debit method for recurring payments.",
+      "supportedCurrencies": ["gbp"],
+      "defaultSelected": false
+    },
+    {
+      "key": "bancontact",
+      "name": "Bancontact",
+      "description": "Popular payment method in Belgium using bank credentials.",
+      "supportedCurrencies": ["eur"],
+      "defaultSelected": false
+    },
+    {
+      "key": "becs_debit",
+      "name": "BECS Direct Debit",
+      "description": "Australian bank debit payment method.",
+      "supportedCurrencies": ["aud"],
+      "defaultSelected": false
+    },
+    {
+      "key": "blik",
+      "name": "BLIK",
+      "description": "Popular mobile payment method in Poland.",
+      "supportedCurrencies": ["pln"],
+      "defaultSelected": false
+    },
+    {
+      "key": "boleto",
+      "name": "Boleto Bancário",
+      "description": "Payment slip widely used in Brazil.",
+      "supportedCurrencies": ["brl"],
+      "defaultSelected": false
+    },
+    {
+      "key": "canada_pad",
+      "name": "Canada PADs",
+      "description": "Pre-Authorized Debits for Canadian bank accounts.",
+      "supportedCurrencies": ["cad"],
+      "defaultSelected": false
+    },
+    {
+      "key": "cashapp",
+      "name": "Cash App Pay",
+      "description": "Popular US app allowing payments via digital wallet.",
+      "supportedCurrencies": ["usd"],
+      "defaultSelected": false
+    },
+    {
+      "key": "eps",
+      "name": "EPS",
+      "description": "Austria-based bank transfer method using online banking.",
+      "supportedCurrencies": ["eur"],
+      "defaultSelected": false
+    },
+    {
+      "key": "ideal",
+      "name": "iDEAL",
+      "description": "Popular Dutch bank transfer method.",
+      "supportedCurrencies": ["eur"],
+      "defaultSelected": false
+    },
+    {
+      "key": "klarna",
+      "name": "Klarna",
+      "description": "Buy-now-pay-later with financing options, mostly in Europe and US.",
+      "supportedCurrencies": ["eur", "gbp", "usd"],
+      "defaultSelected": false
+    },
+    {
+      "key": "multibanco",
+      "name": "Multibanco",
+      "description": "Portuguese online bank payment system.",
+      "supportedCurrencies": ["eur"],
+      "defaultSelected": false
+    },
+    {
+      "key": "oxxo",
+      "name": "OXXO",
+      "description": "Popular cash payment method in Mexico.",
+      "supportedCurrencies": ["mxn"],
+      "defaultSelected": false
+    },
+    {
+      "key": "p24",
+      "name": "Przelewy24",
+      "description": "Popular online bank transfer method in Poland.",
+      "supportedCurrencies": ["pln"],
+      "defaultSelected": false
+    },
+    {
+      "key": "sepa_debit",
+      "name": "SEPA Direct Debit",
+      "description": "Bank debit payment method for Eurozone countries.",
+      "supportedCurrencies": ["eur"],
+      "defaultSelected": false
+    },
+    {
+      "key": "upi",
+      "name": "UPI",
+      "description": "India’s Unified Payments Interface for instant bank transfers.",
+      "supportedCurrencies": ["inr"],
+      "defaultSelected": false
+    },
+    {
+      "key": "wechat_pay",
+      "name": "WeChat Pay",
+      "description": "Popular digital wallet in China.",
+      "supportedCurrencies": ["cny"],
+      "defaultSelected": false
+    }
+  ] 

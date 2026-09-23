@@ -1,0 +1,173 @@
+.creator-lms-page {
+    .creator-lms-student-profile {
+        .student-membership {
+            @media screen and (min-width: 1400px) {
+                padding: 40px 55px;
+            }
+
+            .creator-lms-dashboard-table {
+                .dashboard-table-tr {
+                    .dashboard-table-td {
+                        &.membership-id {
+                            width: 65px;
+                        }
+                        
+                        &.membership-plan {
+                            max-width: 230px;
+                            width: 50%;
+                        }
+
+                        &.expiration {
+                            width: 115px;
+                        }
+
+                        &.billing {
+                            width: 100px;
+                        }
+
+                        sub {
+                            bottom: 1px;
+                            vertical-align: baseline;
+                            position: relative;
+                        }
+
+                        &.action {
+                            width: 44px;
+
+                            .cancel {
+                                display: inline-block;
+                                padding: 2px 4px;
+
+                                &:focus {
+                                    outline: 1px dotted #000;
+                                }
+                            }
+
+                            svg {
+                                display: block;
+                                width: 18px;
+                                height: auto;
+                            }
+                        }
+                        
+                    }
+                }
+
+                .dashboard-table-body {
+                    .dashboard-table-tr {
+                        &:last-child {
+                            border-bottom: 0;
+                            padding-bottom: 8px;
+                        }
+
+                        .dashboard-table-td {
+                            &.membership-id {
+                                color: var(--creator-lms-primary-color);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .my-membership-table {
+                margin-bottom: 25px;
+            }
+
+            .past-invoice-title {
+                color: var(--creator-lms-heading-color);
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.2;
+                margin-bottom: 20px;
+                letter-spacing: 0;
+            }
+
+            .past-invoice-table {
+                .dashboard-table-tr .dashboard-table-td.method {
+                    width: 160px;
+                }
+                .dashboard-table-tr .dashboard-table-td.price {
+                    width: 99px;
+                }
+                .dashboard-table-tr .dashboard-table-td.status {
+                    width: 95px;
+                }
+                .dashboard-table-tr .dashboard-table-td.action {
+                    width: 44px;
+                }
+            }
+
+            .no-course-data {
+                box-shadow: none;
+                border-radius: 0;
+                background-color: transparent;
+                padding-bottom: 25px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-student-profile .student-membership .creator-lms-dashboard-table .dashboard-table-tr .dashboard-table-td.membership-plan {
+        max-width: 140px;
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .creator-lms-page .past-invoice-table .dashboard-table-tr > .dashboard-table-td.status,
+    .creator-lms-page .past-invoice-table .dashboard-table-tr > .dashboard-table-td.price,
+    .creator-lms-page .past-invoice-table .dashboard-table-tr > .dashboard-table-td.date,
+    .creator-lms-page .my-membership-table .dashboard-table-tr > .dashboard-table-td.membership-id,
+    .creator-lms-page .my-membership-table .dashboard-table-tr > .dashboard-table-td.expiration,
+    .creator-lms-page .my-membership-table .dashboard-table-tr > .dashboard-table-td.billing  {
+        display: none;
+    }
+   
+    .creator-lms-page .past-invoice-table .dashboard-table-tr .dashboard-table-td.action,
+    .creator-lms-page .my-membership-table .dashboard-table-tr .dashboard-table-td.action {
+        width: 100px;
+        margin-left: auto;
+        text-align: right;
+    }
+    
+    .creator-lms-page .past-invoice-table .dashboard-table-mobile-td .dashboard-table-td.status,
+    .creator-lms-page .past-invoice-table .dashboard-table-mobile-td .dashboard-table-td.price,
+    .creator-lms-page .past-invoice-table .dashboard-table-mobile-td .dashboard-table-td.date,
+    .creator-lms-page .my-membership-table .dashboard-table-mobile-td .dashboard-table-td.membership-id,
+    .creator-lms-page .my-membership-table .dashboard-table-mobile-td .dashboard-table-td.expiration,
+    .creator-lms-page .my-membership-table .dashboard-table-mobile-td .dashboard-table-td.billing {
+        width: 100%!important;
+    }
+
+    .creator-lms-page .past-invoice-table .dashboard-table-mobile-td .dashboard-table-td,
+    .creator-lms-page .my-membership-table .dashboard-table-mobile-td .dashboard-table-td {
+        align-items: center;
+    }
+
+    .creator-lms-page .creator-lms-student-profile .student-membership .creator-lms-dashboard-table .dashboard-table-tr .dashboard-table-td.action .creator-lms-button {
+        padding: 7px 12px 8px;
+    }
+
+    .creator-lms-page .creator-lms-student-profile .student-membership .no-course-data {
+        padding-bottom: 5px;
+    }
+
+}
+
+@media screen and (max-width: 424px) {
+    .creator-lms-page .creator-lms-student-profile .student-membership .creator-lms-dashboard-table .dashboard-table-tr .dashboard-table-td.membership-plan {
+        max-width: 140px;
+        width: 44%;
+    }
+
+    .creator-lms-page .creator-lms-student-profile .student-membership .past-invoice-table .dashboard-table-tr .dashboard-table-td.method {
+        width: 110px;
+    }
+
+    .creator-lms-page .past-invoice-table .dashboard-table-mobile-td .dashboard-table-td::before,
+    .creator-lms-page .my-membership-table .dashboard-table-mobile-td .dashboard-table-td::before {
+        width: 67px;
+    }
+    
+}

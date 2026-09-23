@@ -1,0 +1,21 @@
+
+<?php
+/**
+ * The template for displaying fill in the blank question
+ *
+ * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/fill-in-the-blank.php.
+ *
+ * @package OMLMS\Templates
+ * @version  1.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+?>
+
+<?php foreach ($question['questions'] as $option){ ?>
+	<div class="answer-type-text fillin-blanks">
+		<input type="text" class="omlms-text-input" data-question-id="<?php echo $option['question_id']; ?>" name="attempt[<?php echo $attempt['id']; ?>][quiz_question][<?php echo $option['question_id'] ?>][]" placeholder="<?php echo esc_attr( 'Type your answer here ...', 'ohmylms' ); ?>">
+	</div>
+<?php } ?>

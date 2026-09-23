@@ -1,0 +1,57 @@
+.theme-bricks.creator-lms-page {
+    display: block;
+    height: 100%;
+}
+
+.theme-bricks.creator-lms-page section:where(:not(.bricks-shape-divider)) {
+    display: block;
+}
+
+.theme-bricks.creator-lms-page section > div:where(:not(.bricks-shape-divider)) {
+    display: block;
+}
+
+.theme-bricks.creator-lms-page #brx-content.wordpress {
+    width: 100%;
+    height: 100%;
+}
+
+.theme-bricks.creator-lms-page .creator-lms {
+    height: 100%;
+}
+
+.theme-bricks.creator-lms-page .creator-lms-checkout-form-outer {
+    height: 100%;
+    background-color: #F9FAFD;
+}
+
+.theme-bricks.creator-lms-page .creator-lms-checkout-form-outer .creator-lms-container {
+    height: 100%;
+}
+
+.theme-bricks.creator-lms-page .creator-lms-checkout-form-wrapper {
+    height: 100%;
+}
+
+
+.theme-bricks.creator-lms-page .creator-lms-checkout-coupon .apply-coupon {
+    text-align: left;
+}
+
+.theme-bricks.creator-lms-page .creator-lms-checkout-coupon .apply-coupon-btn {
+    text-align: center;
+}
+.theme-bricks.creator-lms-page .creator-lms-order-review-table-wrapper table .creator-lms-course-info-wrapper .creator-lms-course-thumbnail {
+    width: 80px;
+}
+
+/* -----membership page----- */
+.theme-bricks.creator-lms-page .creator-lms-membership {
+    height: 100%;
+}
+
+@media screen and (max-width: 991px) {
+    .theme-bricks.creator-lms-page .creator-lms-checkout-form-outer {
+        background: #fff;
+    }
+}

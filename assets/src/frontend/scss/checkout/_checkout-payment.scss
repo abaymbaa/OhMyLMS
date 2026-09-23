@@ -1,0 +1,218 @@
+.creator-lms-page {
+    .creator-lms-checkout-payment {
+        .creator-lms-payment-methods {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 13px;
+            display: flex;
+            flex-flow: column;
+            gap: 13px;
+        }
+
+        .creator-lms-payment-method-wrapper {
+            border-radius: 12px;
+            background: #FFF;
+            margin-bottom: 40px;
+        }
+
+        .creator-lms-single-payment {
+            padding: 11px 12px 11px;
+            margin: 0;
+            border-radius: 6px;
+            border: 0.4px solid rgba(200, 210, 233, 0.50);
+            background: #F4F5F7;
+            transition: all 0.3s ease;
+
+            &.selected {
+                border-color: var(--creator-lms-primary-color);
+                background-color: #fff;
+            }
+
+            .creator-lms-radiobtn {
+                .creator-lms-radiobtn-text {
+                    color: var(--creator-lms-heading-color);
+                    font-size: 16px;
+                    font-weight: 500;
+                    line-height: 1;
+                    text-transform: capitalize;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .radiobox {
+                        top: 50%;
+                        display: flex;
+                        flex-flow: column;
+                        align-items: center;
+                        justify-content: center;
+                        transform: translateY(-50%);
+
+                        svg {
+                            display: block;
+                            line-height: 1;
+                            opacity: 0;
+                            transition: all 0.3s ease;
+                            width: 10px;
+                            height: auto;
+                        }
+
+                        &:before {
+                            top: calc(50% - 3px);
+                            display: none;
+                        }
+                    }
+                }
+
+                input[type=radio]:checked + .creator-lms-radiobtn-text .radiobox svg {
+                    opacity: 1;
+                }
+            }
+
+			.payment_box {
+				margin-top: 12px;
+				display: none;
+
+                p {
+                    font-size: 14px;
+                    line-height: 1.5;
+                    margin-bottom: 12px;
+                    color: var(--creator-lms-body-text-color);
+
+                    a {
+                        color: var(--creator-lms-primary-color);
+                        text-decoration: none;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+			}
+
+            &.payment_method_stripe {
+                padding: 9px 12px 9px;
+            }
+        }
+
+        .no-payment-method-text {
+            color: #DD2001;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.56;
+            font-style: italic;
+            padding: 17px 22px 16px;
+        }
+
+        .creator-lms-tnc-wrapper {
+            margin-top: 12px;
+
+            p {
+                margin: 0;
+            }
+
+            .creator-lms-checkbox-text {
+                padding-left: 0;
+
+                .checkedbox:before {
+                    height: 14px;
+                }
+
+                a {
+                    color: var(--creator-lms-primary-color);
+                    outline: none!important;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+
+                    &:focus {
+                        outline: 1px dotted var(--creator-lms-heading-color)!important;
+                    }
+                }
+            }
+
+            .creator-lms-checkbox-text .checkedbox {
+                display: none;
+            }
+
+        }
+
+        .creator-lms-place-order-button {
+            color: #FFF!important;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+            background-color: var(--creator-lms-primary-color)!important;
+            padding: 16px 24px;
+            text-transform: none;
+            letter-spacing: 0;
+            border-radius: 8px;
+            border-color: var(--creator-lms-primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+
+            @media screen and (max-width: 1199px) {
+                border-radius: 8px;
+            }
+
+            .creator-lms-loader {
+                border-color: #ffffff;
+                border-top-color: var(--creator-lms-primary-color);
+                width: 14px;
+                height: 14px;
+                transition: all 0.3s ease;
+            }
+
+            &:hover {
+                background-color: transparent!important;
+                color: var(--creator-lms-primary-color)!important;
+
+                .creator-lms-loader {
+                    border-color: var(--creator-lms-primary-color);
+                    border-top-color: #ffffff;
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+        font-size: 15px;
+        padding: 14px 18px;
+    }
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button .creator-lms-loader {
+        width: 12px;
+        height: 12px;
+    }
+
+    .creator-lms-page .creator-lms-checkout-payment .no-payment-method-text,
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment {
+        padding: 13px 15px 13px;
+    }
+
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text {
+        font-size: 14px;
+    }
+
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+        top: calc(50% - 2px);
+    }
+}
+
+@media screen and (max-width: 991px) {
+    
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-payment-method-wrapper {
+        margin-bottom: 14px;
+    }
+
+    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+        display: none;
+    }
+    
+}

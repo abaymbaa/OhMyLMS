@@ -1,0 +1,17 @@
+.theme-hello-elementor.creator-lms-page .site-main {
+    max-width: 100%;
+    padding: 0;
+}
+
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=text]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=date]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=email]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=number]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=password]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=search]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=tel]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper input[type=url]:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper select:focus,
+.theme-hello-elementor.creator-lms-page .creator-lms-checkout-form-wrapper textarea:focus {
+    border-color: #ebebef;
+}

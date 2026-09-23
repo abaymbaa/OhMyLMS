@@ -1,0 +1,74 @@
+.theme-betheme.creator-lms-page ul {
+    list-style: disc;
+}
+.theme-betheme.creator-lms-page #Content {
+    padding-top: 0;
+}
+.theme-betheme.creator-lms-page #Content .section_wrapper, 
+.theme-betheme.creator-lms-page #Content .container {
+    max-width: 100%!important;
+    padding: 0!important;
+}
+.theme-betheme.creator-lms-page #Content .the_content_wrapper {
+    margin: 0;
+    width: 100%;
+}
+
+.theme-betheme.creator-lms-page table tr:first-child td {
+    box-shadow: none;
+}
+.theme-betheme.creator-lms-page table th {
+    background: transparent;
+    box-shadow: none;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-checkout-coupon .apply-coupon {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.theme-betheme.creator-lms-page input[type="date"]:focus, 
+.theme-betheme.creator-lms-page input[type="email"]:focus, 
+.theme-betheme.creator-lms-page input[type="number"]:focus, 
+.theme-betheme.creator-lms-page input[type="password"]:focus, 
+.theme-betheme.creator-lms-page input[type="search"]:focus, 
+.theme-betheme.creator-lms-page input[type="tel"]:focus, 
+.theme-betheme.creator-lms-page input[type="text"]:focus, 
+.theme-betheme.creator-lms-page input[type="url"]:focus, 
+.theme-betheme.creator-lms-page select:focus, 
+.theme-betheme.creator-lms-page textarea:focus {
+    color: var(--creator-lms-body-text-color);
+    background-color: transparent;
+    border-color: #EBEBEF;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment {
+    margin: 0;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-wysiwyg-content blockquote {
+    display: block;
+    float: none;
+    top: inherit;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-course-details-tab .creator-lms-course-tab-nav .slick-arrow {
+    top: -3px;
+    overflow: visible;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-course-reviews-form #respond .comment-form .form-submit {
+    margin-top: 20px;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-breadcrumb ul {
+    list-style: none;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-table .creator-lms-head .creator-lms-th:not(:first-child) {
+    padding: 16px 8px;
+}
+
+.theme-betheme.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab li a {
+    padding-right: 13px;
+}
