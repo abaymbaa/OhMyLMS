@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php do_action( 'creator_lms_signup_form_start' ); ?>
 
 	<?php echo ( $message ) ? wpautop( wptexturize( $message ) ) : ''; // @codingStandardsIgnoreLine ?>
+	<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?><div data-ohmylms-registration-fields style="display:contents"><?php endif; ?>
 
 	<div class="creator-lms-form-row creator-lms-form-names-row">
 		<p class="creator-lms-form-row row-first-name">
@@ -121,6 +122,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 	</p>
 
+	<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?></div><?php endif; ?>
 	<?php do_action( 'creator_lms_signup_form' ); ?>
 
 	<p class="creator-lms-form-row privacy-policy-row">
@@ -148,9 +150,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<input type="hidden" name="action" value="creator_lms_signup">
 		<input type="hidden" name="redirect_to" value="<?php echo esc_url( $redirect_to ); ?>" />
 
+		<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?><span data-ohmylms-registration-submit style="display:contents"><?php endif; ?>
 		<button type="submit" class="creator-lms-button creator-lms-form-signup-submit" name="signup" value="<?php esc_attr_e( 'Sign Up', 'ohmylms' ); ?>" disabled>
 			<?php esc_html_e( 'Sign Up', 'ohmylms' ); ?>
 		</button>
+		<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?></span><?php endif; ?>
 	</p>
 
 	<p class="creator-lms-form-row dont-have-account">

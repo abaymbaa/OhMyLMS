@@ -1,4 +1,4 @@
-# Acceptance status — 2026-09-23
+# Acceptance status — 2026-09-24
 
 **Not released to the math site.** This is a tested source-recovery/extension foundation, not completion of every approved release gate.
 
@@ -20,6 +20,18 @@ Checkout fixes: extension metadata now persists after the order has an ID; both 
 The original lesson editor also reproduced a ProseMirror duplicate-plugin exception. The source build now adapts the duplicate state-module exports to share one instance. The original assets remain unchanged for baseline comparison.
 
 The student template rendered block-theme headers after `wp_head`, too late for WordPress's module import map. Header/footer blocks are now prepared before `wp_head`; the student page passes without the unresolved interactivity-module error. The closing body tag is also corrected.
+
+## Quiz-first increment
+
+Seventeen named React quiz/question components now build from `assets/src/features/quizzes/`. The quiz editor, loading/saving hook, API client and shared choice-options editor have authored source. Other extracted JSX components retain compatibility dependencies. Custom question changes now persist in the parent quiz, fixing a browser-detected store synchronization bug. See QUIZ-SOURCE.md for exact scope and remaining work.
+
+The complete nine-scenario browser suite passed after integration. The expanded quiz scenario then passed after the choice-options rewrite: all nine built-in editors render, choice answers and custom numeric settings survive saving/reopening, and option add/remove/minimum behavior works. Ten JavaScript tests in total have passed (the original nine plus the new immutable reorder test); the 60 PHP integration checks remain passing. This is not exhaustive interaction coverage of every question type.
+
+## Course increment
+
+Twenty-five named course React components now build from `assets/src/features/courses/`, including the course list, creation dialog, editor/curriculum, settings/pricing tabs, community/funnel views and publishing preview. Authored hooks and API/model modules now handle course loading and saving. Chapter writes are awaited, partial saves are reported, creation failures permit retry, and late save responses preserve newer edits. See COURSE-SOURCE.md for the distinction between authored modules and reconstructed components that retain shared runtime dependencies.
+
+The new browser scenarios cover course creation/failure/retry, adding a second chapter, editing title/description/chapter name, saving/reopening with lesson relationships, pricing/settings navigation, publishing, and simulated chapter-write failure/retry. Four new JavaScript tests pass, bringing the full JavaScript suite to 14. The 60 isolated PHP checks remain passing. This is not full course-system acceptance or a math-site release.
 
 ## Remaining release gates
 

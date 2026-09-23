@@ -8,7 +8,10 @@ The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working s
 - `assets/src/recovered/modules/`: 831 extracted Webpack factories. Vendor-bundle modules are under `dist/vendors/`.
 - `assets/src/recovered/application/`: 238 ordered fragments of factory 1841, including named screens and membership files.
 - `assets/src/extensions/`: authored React components, registry, API client, error boundaries and editor integrations.
-- `assets/src/features/`: incrementally converted feature logic, starting with membership validation.
+- `assets/src/features/`: membership validation and 17 quiz/question React components, including an authored quiz hook/API client and choice-options editor. See QUIZ-SOURCE.md for the compatibility boundaries and tested coverage.
+- `tools/quiz-adapters.mjs`: checked integration of native quiz components into the recovered runtime.
+- `assets/src/features/courses/`: 25 course components, authored editor/create/settings views, load/save and integration hooks, API client and model helpers. See COURSE-SOURCE.md for tested scope and compatibility boundaries.
+- `tools/course-adapters.mjs`: checked integration of native course components into the recovered runtime.
 - `tools/application-adapters.mjs`: checked AST integration points. Missing/changed patterns fail the build.
 - `tools/vendor-adapters.mjs`: makes the two installed ProseMirror state export formats share the editor's existing CommonJS instance. The original duplicated generators caused `Adding different instances of a keyed plugin (plugin$)` in both original and recovered lesson screens. The parity build retains the untouched factories; the adapted build repairs the duplication rather than suppressing its error.
 - `build/`: generated output; never edit it.

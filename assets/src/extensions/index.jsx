@@ -7,9 +7,13 @@ import {QuestionEditor} from './QuestionEditor';
 import {LessonEditor} from './LessonEditor';
 import {wrapScreen,extensionPage} from './ScreenExtensions';
 import {validateMembership} from '../features/memberships/validateMembership.mjs';
+import {quizComponents} from '../features/quizzes';
+import {courseComponents} from '../features/courses';
+import {studentComponents} from '../features/students';
+import {mountRegistration} from '../features/students/mountRegistration';
 const registry=createRegistry();
 const roots=new WeakMap();
-const publicApi={...registry,api,validateMembership,
+const publicApi={...registry,api,validateMembership,quizComponents,courseComponents,studentComponents,
  extendRoutes(routes){
    return [...routes.map(route=>route.path==='*'?route:{...route,element:wrapScreen(route.element,route.path,registry)}),...registry.list('admin-page').map(entry=>({path:`/extensions/${entry.id}`,element:extensionPage(entry)}))];
  },
@@ -43,7 +47,7 @@ const publicApi={...registry,api,validateMembership,
 };
 window.ohmylms={...(window.ohmylms||{}),extensions:Object.freeze(publicApi)};
 window.dispatchEvent(new CustomEvent('ohmylms:extensions-ready',{detail:publicApi}));
-function mountSlots(){document.querySelectorAll('[data-ohmylms-slot]').forEach(element=>{
+function mountSlots(){mountRegistration();document.querySelectorAll('[data-ohmylms-slot]').forEach(element=>{
  let context={};try{context=JSON.parse(element.dataset.ohmylmsContext||'{}');}catch{return;}
  publicApi.mount(element,element.dataset.ohmylmsSlot,context,element.dataset.ohmylmsKind||'slot');
 });}
