@@ -10,6 +10,7 @@ The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working s
 - `assets/src/extensions/`: authored React components, registry, API client, error boundaries and editor integrations.
 - `assets/src/features/`: membership validation and 17 quiz/question React components, including an authored quiz hook/API client and choice-options editor. See QUIZ-SOURCE.md for the compatibility boundaries and tested coverage.
 - `tools/quiz-adapters.mjs`: checked integration of native quiz components into the recovered runtime.
+- `assets/src/features/quiz-reports/`: ten editable report, grading and question-result components, integrated by `tools/quiz-report-adapters.mjs`. See the feature README for compatibility boundaries and validation.
 - `assets/src/features/courses/`: 25 course components, authored editor/create/settings views, load/save and integration hooks, API client and model helpers. See COURSE-SOURCE.md for tested scope and compatibility boundaries.
 - `tools/course-adapters.mjs`: checked integration of native course components into the recovered runtime.
 - `tools/application-adapters.mjs`: checked AST integration points. Missing/changed patterns fail the build.

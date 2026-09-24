@@ -10,6 +10,7 @@ import {adaptQuizzes} from './quiz-adapters.mjs';
 import {adaptCourses} from './course-adapters.mjs';
 import {adaptStudents} from './student-adapters.mjs';
 import {adaptGamification} from './gamification-adapters.mjs';
+import {adaptQuizReports} from './quiz-report-adapters.mjs';
 import {adaptLearning} from './learning-adapters.mjs';
 import {adaptMemberships} from './membership-adapters.mjs';
 const traverse=traverseModule.default||traverseModule;
@@ -40,6 +41,7 @@ for(const asset of manifest.assets){
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Student adapters:',adaptStudents(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Gamification adapters:',adaptGamification(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Learning adapters:',adaptLearning(ast));
+    if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Quiz report adapters:',adaptQuizReports(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Membership adapters:',adaptMemberships(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/vendors/vendors.js')console.log('Vendor adapters:',adaptVendors(ast));
     const result=generate(ast,{sourceMaps:true,comments:true,compact:false},sources);

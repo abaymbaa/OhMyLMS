@@ -13,7 +13,7 @@ The source build now uses 17 named React components from `assets/src/features/qu
 
 `components.json` maps each component to its original factory-1841 binding and compatibility dependencies. `tools/quiz-adapters.mjs` replaces the original component definitions during production builds and requires all 17 integration points. Lazy runtime dependencies preserve initialization order. Webpack builds the native modules into the SDK with WordPress-provided React and embedded source maps. The old compiled application is not a build input.
 
-These files are reconstructed source, not recovered original JSX. The authored editor and hook coexist with reconstructed components that still depend on shared controls, stores, helpers, and some minified local names. The question option-row control, rich-text/media controls, student quiz runner and reports remain in recovered source. This is not a claim that the entire quiz subsystem is independently modularized.
+These files are reconstructed source, not recovered original JSX. The authored editor and hook coexist with reconstructed components that still depend on shared controls, stores, helpers, and some minified local names. The question option-row control, rich-text/media controls and student quiz runner remain in recovered source. Quiz reports and grading now have ten editable JSX modules in `assets/src/features/quiz-reports/`, integrated by `tools/quiz-report-adapters.mjs`; see that directory's README for scope and validation. This is not a claim that the entire quiz subsystem is independently modularized.
 
 ## Verification
 
