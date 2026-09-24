@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {parse} from '@babel/parser';
 import generatorModule from '@babel/generator';
 import {transformSync} from '@babel/core';
+import {normalizeQuizReport} from '../../assets/src/features/quiz-reports/model.mjs';
 
 const generate = generatorModule.default || generatorModule;
 const source = 'assets/src/recovered/';
@@ -18,7 +19,7 @@ for (const statement of ast.program.body) {
 }
 const rows = JSON.parse(fs.readFileSync('assets/src/features/quiz-reports/components.json'));
 const compiled = new Map(rows.map(row => {
-  const input = fs.readFileSync('assets/src/features/quiz-reports/' + row.file, 'utf8').replace(/^import .*;$/m, '').replace('export function', 'function');
+  const input = fs.readFileSync('assets/src/features/quiz-reports/' + row.file, 'utf8').replace(/^import .*;$/gm, '').replace('export function', 'function');
   return [row.name, transformSync(input, {configFile: false, babelrc: false, presets: [['@babel/preset-react', {runtime: 'classic', pragma: 'React.createElement'}]]}).code];
 }));
 const plain = value => JSON.parse(JSON.stringify(value, (key, item) => typeof item === 'function' ? '[callback]' : item));
@@ -34,7 +35,7 @@ function harness(states = []) {
   const React = {Fragment: 'Fragment', createElement: (type, props, ...children) => ({type, props: props || {}, children})};
   const controls = new Proxy({}, {get: (_, name) => String(name)});
   const globals = {
-    React, console, window: {location: {reload() { globals.reloaded = true; }}},
+    React, console, normalizeQuizReport, window: {location: {reload() { globals.reloaded = true; }}},
     I: controls, b: {__: text => text}, HG() {}, Ge: text => text,
     g: {memo: fn => fn, useState(initial) { const index = cursor++; return [index in states ? states[index] : initial, value => updates.set(index, value)]; }, useEffect: fn => effects.push(fn), useMemo: fn => fn(), useCallback: fn => fn},
     f: {g: () => ({id: '987', quizId: '123'}), Zp: () => target => navigations.push(target)},
@@ -87,6 +88,8 @@ test('report preserves filtering, pagination, grade navigation, and request cont
   const tree = h.render('QuizReport');
   assert.deepEqual(plain(tree), plain(h.render('QuizReport', {}, true)));
   const table = find(tree, 'Table');
+  find(tree, 'Cm').props.onChange('student 11');
+  assert.equal(h.updates.get(1), 1, 'Searching from page two resets pagination');
   assert.deepEqual(plain(table.props.dataSource), submissions.slice(10));
   const action = table.props.columns.at(-1).render(null, submissions[0]);
   action.props.onClick();
@@ -118,7 +121,7 @@ test('grading preserves attempt loading, edited payload, success reload and fail
   h.globals.response = attempt;
   h.effects[0](); await new Promise(resolve => setImmediate(resolve));
   assert.equal(h.requests[0].path, '/creator-lms/v1/quiz/987/report/123');
-  assert.equal(h.updates.get(0), attempt);
+  assert.deepEqual(h.updates.get(0), normalizeQuizReport(attempt));
   await find(tree, 'ButtonWP').props.onClick();
   assert.deepEqual(JSON.parse(h.requests[1].body), edited);
   assert.equal(h.requests[1].method, 'POST');
@@ -127,4 +130,22 @@ test('grading preserves attempt loading, edited payload, success reload and fail
   h.globals.l = () => async () => ({status: 'error'});
   await find(h.render('QuizGrading'), 'ButtonWP').props.onClick();
   assert.equal(h.globals.reloaded, false);
+});
+
+test('live REST ID types produce checked answers and correct result badges without mutating the payload', () => {
+  const source = {...attempt, report: {status: 'in-review', questions: [question('single-choice'), question('multiple-choice'), {...question('reorder'), given_answer: [1,2]}, {...question('matching'), given_answer: {'1':1}}]}};
+  const before = JSON.stringify(source);
+  const normalized = normalizeQuizReport(source);
+  const h = harness();
+  const single = h.render('SingleChoiceResult', {data: normalized.report.questions[0], index: 0});
+  assert.equal(find(single, 'RadioWP').props.selected, '1');
+  assert.match(find(single, 'div').props.className, /omlms-correct$/);
+  const multiple = h.render('MultipleChoiceResult', {data: normalized.report.questions[1], index: 0});
+  assert.match(find(multiple, 'div').props.className, /omlms-correct$/);
+  for (const [name,index] of [['ReorderResult',2], ['MatchingResult',3]]) {
+    assert.equal(find(h.render(name, {data: normalized.report.questions[index], index}), 'p$').props.isCorrect, true);
+  }
+  assert.equal(JSON.stringify(source), before);
+  assert.equal(normalized.report.status, 'in-review');
+  assert.equal(normalized.report.questions[0].id, source.report.questions[0].id, 'Question IDs stay unchanged for grade writes');
 });

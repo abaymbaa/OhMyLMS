@@ -144,7 +144,8 @@ export function createQuizReport(readRuntime) {
         }
       }];
     return <Controls.ContainerWP><Controls.SpacerWP marginY={5}><div><Controls.FlexWP align={"center"} justify={"space-between"} gap={2}><Controls.CardWP isBorderless={!0}><Controls.FlexWP justify={"center"} align={"center"} gap={2}><Controls.SpacerWP padding={2} marginBottom={0}><Controls.FlexWP justify={"center"} align={"center"} gap={2}><RouterLinks.Link to={"/quizzes"}><Controls.FlexWP justify={"flex-start"} align={"center"} gap={1}><BackIcon />{(0, I18n.__)("Quiz /", "ohmylms")}</Controls.FlexWP></RouterLinks.Link><Controls.TextWP as={"span"}>{(0, I18n.__)("Result", "ohmylms")}</Controls.TextWP></Controls.FlexWP></Controls.SpacerWP></Controls.FlexWP></Controls.CardWP><Controls.CardWP isBorderless={!0}><Controls.SpacerWP padding={2} marginBottom={0}><SearchInput placeholder={(0, I18n.__)("Search Submission", "ohmylms")} onChange={function (e) {
-                  setSearch(e.toLowerCase());
+                setSearch(e.toLowerCase());
+                setPage(1);
                 }} /></Controls.SpacerWP></Controls.CardWP></Controls.FlexWP><Controls.CardWP isBorderless={!0}><Controls.SpacerWP padding={5} marginTop={4}><Table.A columns={columns} rowKey={"quiz_attempt_id"} dataSource={filteredSubmissions.slice((page - 1) * perPage, page * perPage)} loading={loading} pagination={!1} locale={{
                 emptyText: <EmptyState icon={<EmptyIcon />} title={(0, I18n.__)("No submission yet!", "ohmylms")} />
               }} />{filteredSubmissions.length > perPage && <Pagination total={filteredSubmissions.length} currentPage={page} onPageChange={onPageChange} perPage={perPage} />}</Controls.SpacerWP></Controls.CardWP></div></Controls.SpacerWP></Controls.ContainerWP>;

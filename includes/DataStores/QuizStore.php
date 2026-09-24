@@ -580,6 +580,10 @@ class QuizStore extends DataStore {
 		}
 		$report['questions'] 		= $questions;
 		$report['quiz_attempt_id']	= $attempt_id;
+		$report['status'] = $wpdb->get_var($wpdb->prepare(
+			"SELECT status FROM {$wpdb->prefix}omlms_quiz_attempts WHERE id = %d AND quiz_id = %d",
+			$attempt_id, $quiz->get_id()
+		));
 		$report['total_achieved_marks'] = $total_marks;
 		return $report;
 	}

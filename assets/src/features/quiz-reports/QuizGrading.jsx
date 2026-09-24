@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import {createElement} from "@wordpress/element";
+import {normalizeQuizReport} from './model.mjs';
 export function createQuizGrading(readRuntime) {
   return function QuizGrading() {
     const {
@@ -55,7 +56,7 @@ export function createQuizGrading(readRuntime) {
                 }
                 t = [];
               case 2:
-                setAttempt(t), e.n = 4;
+                setAttempt(normalizeQuizReport(t)), e.n = 4;
                 break;
               case 3:
                 e.p = 3, n = e.v, console.error(n);

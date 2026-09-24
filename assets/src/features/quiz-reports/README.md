@@ -29,4 +29,7 @@ Validation: `npm run build`, `npm run lint`, and `npm test`. The quiz report tes
 rendered element trees with the baseline for all nine question types and check report
 filtering/pagination, navigation, API paths, immutable marks edits, save payloads and
 success/failed-response reload behavior. They use mocked controls and API requests;
-live WordPress rendering and backend persistence require separate browser validation.
+Live WordPress rendering and backend persistence were subsequently tested on xyz.local;
+see `docs/QUIZ-REPORT-INTEGRATION.md` for the results and repeatable fixture workflow.
+That integration found and fixed search pagination, missing attempt status, and mixed
+numeric/string answer IDs (`model.mjs`). Do not regenerate over these fixes.
