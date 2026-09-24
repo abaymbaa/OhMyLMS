@@ -32,20 +32,24 @@ export function createStudentList(readRuntime){
     setConfirmation(null);setSelected([]);
    }
   }
-  function sort(_pagination,_filters,sorter){
+  function sort(field){
    const fields={student_name:'name',student_email:'email'};
-   students.updateQuery({orderby:fields[sorter.field]||sorter.field||'registration_date',order:sorter.order==='ascend'?'ASC':'DESC'});
+   const orderby=fields[field]||field;
+   setSelected([]);
+   students.updateQuery({orderby,order:students.query.orderby===orderby&&students.query.order==='ASC'?'DESC':'ASC'});
   }
+  // The shared table only sorts locally and does not emit onChange.
+  const sortableColumns=columns.map(column=>column.sorter?{...column,sorter:false,title:<button type="button" onClick={()=>sort(column.dataIndex)} style={{border:0,padding:0,background:'transparent',font:'inherit',color:'inherit',cursor:'pointer'}}>{column.title}</button>}:column);
   return <Fragment>{contextHolder}<Controls.ContainerWP><Header title={__('All Students','ohmylms')} showAddButton={false}/>
    {students.error&&<div role="alert">{students.error} <button type="button" onClick={students.reload}>{__('Retry','ohmylms')}</button></div>}
    <Card isBorderless minHeight="calc(100vh - 200px)"><Controls.SpacerWP padding={5}>
-    {selected.length?<BulkActions items={selected} setItems={setSelected} bulksActions={[{label:__('Block','ohmylms'),value:'block',action:()=>setConfirmation({ids:selected,blocked:true})}]}/>:
+    {selected.length?<BulkActions key={selected.join(',')} items={selected} setItems={setSelected} bulksActions={[{label:__('Block','ohmylms'),value:'block',action:()=>setConfirmation({ids:selected,blocked:true})}]}/>:
      <Filters handleSearch={search=>{setSelected([]);students.updateQuery({search});}} searchPlaceholder={__('Search Students','ohmylms')}
       handleFilterByDays={value=>students.updateQuery({dateFilter:Array.isArray(value)?value.map(day=>date()(day).format('YYYY-MM-DD')):value})}
       filterByDays={students.query.dateFilter} filterByDaysOptions={dateOptions} categories={[]} currentPage={students.query.page} totalItems={students.total}
       showFilterByPriceType={false} showFilterByCategory={false} showFilterByStatus={false}/>}
-    <Table rowKey="user_id" columns={columns} dataSource={students.students} rowSelection={{selectedRowKeys:selected,onChange:setSelected}}
-     pagination={false} loading={students.loading} onChange={sort} className="student-listing-table" locale={{emptyText:<Empty icon={<EmptyIcon/>} title={__('No Students yet!','ohmylms')} description={__('Students with enrollments will appear here.','ohmylms')}/>}}/>
+    <Table rowKey="user_id" columns={sortableColumns} dataSource={students.students} rowSelection={{selectedRowKeys:selected,onChange:setSelected}}
+     pagination={false} loading={students.loading} className="student-listing-table" locale={{emptyText:<Empty icon={<EmptyIcon/>} title={__('No Students yet!','ohmylms')} description={__('Students with enrollments will appear here.','ohmylms')}/>}}/>
     {!students.loading&&students.total>students.query.perPage&&<Pagination total={students.total} currentPage={students.query.page} perPage={students.query.perPage}
      onPageChange={page=>{setSelected([]);students.updateQuery({page});}}/>}
    </Controls.SpacerWP></Card>

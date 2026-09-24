@@ -1,4 +1,4 @@
-import {createElement,createPortal,useEffect,useRef,useState} from '@wordpress/element';
+import {createElement,createPortal,Fragment,useEffect,useRef,useState} from '@wordpress/element';
 import {__} from '@wordpress/i18n';
 import {submitRegistration,registrationRedirect} from './registration-api.mjs';
 
@@ -41,18 +41,18 @@ export function RegistrationForm({form,countries,submitHost,noticeHost,icons,ini
   const id='signup-'+name.replace('_','-');
   return <p className={`creator-lms-form-row row-${name.replace('_','-')}`}><span className="creator-lms-input-wrapper">
    <label htmlFor={id} className="creator-lms-input-label">{label}{required&&<span className="required" aria-hidden="true"> *</span>}</label>
-   <input type={type} name={name} id={id} className={`creator-lms-input-text ${name}`} value={values[name]||''} onChange={update} required={required} aria-required={required}/>
+   <input type={type} name={name} id={id} className={`creator-lms-input-text ${name}`} value={values[name]||''} onChange={update} required={required} aria-required={required} pattern={type==='email'?'^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$':undefined}/>
   </span></p>;
  }
- return <>
+ return <Fragment>
   {error&&<p role="alert" className="omlms-registration-error">{error}</p>}
   <div className="creator-lms-form-row creator-lms-form-names-row">{field('first_name',__('First Name','ohmylms'),'text',true)}{field('last_name',__('Last Name','ohmylms'),'text',true)}</div>
   {field('email',__('Email','ohmylms'),'email',true)}
   <p className="creator-lms-form-row row-password"><span className="creator-lms-input-wrapper"><label htmlFor="signup-password" className="creator-lms-input-label">{__('Password','ohmylms')} <span className="required" aria-hidden="true">*</span></label>
    <span className="creator-lms-password-show"><input id="signup-password" name="password" type={visible?'text':'password'} className="creator-lms-input-text password" required aria-required="true" minLength={8} autoComplete="new-password" value={values.password||''} onChange={update}/>
-    <label className="show-password-icon"><input type="checkbox" name="show-password-checkbox" className="show-password-checkbox" checked={visible} onChange={event=>setVisible(event.target.checked)} aria-label={__('Show password','ohmylms')}/>
-     <span className="show-password"><span className="eye-on" dangerouslySetInnerHTML={{__html:icons.on}}/><span className="eye-off" dangerouslySetInnerHTML={{__html:icons.off}}/></span>
-    </label>
+    <button type="button" className="show-password-icon" style={{border:0,padding:0,background:'transparent'}} aria-label={__('Show password','ohmylms')} aria-pressed={visible} onClickCapture={event=>{event.preventDefault();event.stopPropagation();setVisible(current=>!current);}}>
+     <span className="show-password" aria-hidden="true"><span className="eye-on" style={{display:visible?'block':'none'}} dangerouslySetInnerHTML={{__html:icons.on}}/><span className="eye-off" style={{display:visible?'none':'block'}} dangerouslySetInnerHTML={{__html:icons.off}}/></span>
+    </button>
    </span>
   </span></p>
   {field('phone',__('Phone Number','ohmylms'))}
@@ -61,5 +61,5 @@ export function RegistrationForm({form,countries,submitHost,noticeHost,icons,ini
   </span></p>
   {createPortal(<button type="submit" className="creator-lms-button creator-lms-form-signup-submit" name="signup" value={__('Sign Up','ohmylms')} disabled={!accepted||busy} aria-busy={busy}>{busy?__('Signing up…','ohmylms'):__('Sign Up','ohmylms')}</button>,submitHost)}
   {pending&&createPortal(<div className="omlms-email-pending-notice" role="status"><h3>{__('Check your inbox!','ohmylms')}</h3><p>{pending}</p></div>,noticeHost)}
- </>;
+ </Fragment>;
 }

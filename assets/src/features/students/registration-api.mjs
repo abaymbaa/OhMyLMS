@@ -7,5 +7,6 @@ export async function submitRegistration(url,formData,fetch=globalThis.fetch){
  return result;
 }
 export function registrationRedirect(value,origin){
+ if(typeof value!=='string'||!value.trim())return null;
  try{const target=new URL(value,origin);return target.origin===new URL(origin).origin?target.href:null;}catch{return null;}
 }
