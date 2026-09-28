@@ -2,10 +2,10 @@
  * OrderNotes component (replaces recovered binding fQ).
  * Displays order notes timeline and handles adding new notes.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderNotes(readRuntime) {
-  return function OrderNotes({notes = [], order}) {
+  return function OrderNotes({ notes = [], order }) {
     const {
       Ge: decodeEntities,
       I: Controls,
@@ -16,7 +16,7 @@ export function createOrderNotes(readRuntime) {
       b: I18n,
       g: ReactHooks,
       q: ExperimentalScrollable,
-      y: WordPressData
+      y: WordPressData,
     } = readRuntime();
 
     const [noteContent, setNoteContent] = ReactHooks.useState('');
@@ -24,7 +24,7 @@ export function createOrderNotes(readRuntime) {
     const [isOpen, setIsOpen] = ReactHooks.useState(true);
 
     const dispatch = WordPressData.useDispatch(StoreModule.default);
-    const {setOrderNote, saveOrderNote, fetchOrder} = dispatch;
+    const { setOrderNote, saveOrderNote, fetchOrder } = dispatch;
 
     const handleAddNote = async () => {
       if (submitting || !noteContent.trim() || !order) return;
@@ -50,7 +50,7 @@ export function createOrderNotes(readRuntime) {
           </Controls.HeadingWP>
           <Controls.ButtonWP size="small" onClick={() => setIsOpen(!isOpen)}>
             <svg
-              style={{transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)'}}
+              style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
               width="12"
               height="6"
               fill="none"
@@ -66,7 +66,7 @@ export function createOrderNotes(readRuntime) {
             {notes && notes.length > 0 && (
               <React.Fragment>
                 <Controls.SpacerWP marginTop={6} marginBottom={0} />
-                <ExperimentalScrollable.__experimentalScrollable style={{maxHeight: 500}}>
+                <ExperimentalScrollable.__experimentalScrollable style={{ maxHeight: 500 }}>
                   {notes.map((note, index) => (
                     <div key={index}>
                       <Controls.SpacerWP
@@ -77,15 +77,10 @@ export function createOrderNotes(readRuntime) {
                         <Controls.CardWP
                           isBorderless={true}
                           variant="muted"
-                          style={{borderRadius: '7px'}}
+                          style={{ borderRadius: '7px' }}
                         >
                           <Controls.SpacerWP marginBottom={0} padding={4}>
-                            <Controls.TextWP
-                              variant="muted"
-                              color="#000D25"
-                              weight={400}
-                              size={13}
-                            >
+                            <Controls.TextWP variant="muted" color="#000D25" weight={400} size={13}>
                               {decodeEntities(note.content)}
                             </Controls.TextWP>
                           </Controls.SpacerWP>
@@ -108,15 +103,15 @@ export function createOrderNotes(readRuntime) {
                 rows={3}
                 value={noteContent}
                 placeholder="Add a note"
-                onChange={val => {
+                onChange={(val) => {
                   setNoteContent(val);
                   setOrderNote(val);
                 }}
-                style={{marginBottom: '10px'}}
+                style={{ marginBottom: '10px' }}
               />
               <Controls.ButtonWP
                 variant="primary"
-                style={{marginRight: '10px'}}
+                style={{ marginRight: '10px' }}
                 onClick={handleAddNote}
                 loading={submitting}
                 iconPosition="end"

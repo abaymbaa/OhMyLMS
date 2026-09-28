@@ -45,8 +45,45 @@ Twelve named React components now build from `assets/src/features/emails/`. They
 
 Focused source and adapter tests cover the conversion boundary. Existing smoke coverage reaches email settings through the Settings route; complete save/reload, delivery, responsive email-client rendering and permission acceptance remain release gates.
 
+## General Settings increment
+
+Nineteen named React components now build from `assets/src/features/settings/`. They cover the Settings route and its general, branding, account/privacy, permalink, advanced, design, payment, currency, tax and migration panels. Email Settings is deliberately excluded and remains in `assets/src/features/emails/`; the existing Gamification and Webhooks modules remain separate. The checked settings adapter requires all 19 factory bindings during production builds while retaining existing stores, REST behavior, shared controls, permissions and Pro gating.
+
+Focused source and adapter tests cover the conversion boundary. Existing route smoke coverage reaches `/settings`; complete save/reload, gateway configuration, migration, responsive and permissions acceptance remain release gates.
+
+## Integrations / Add-ons increment
+
+Seven named React components now build from `assets/src/features/integrations/`. They cover the Add-ons route, integration cards, category filtering and search, enable toggles, the configuration shell, and the Zoom, AI Model, Google Meet and Google Sign-In settings panels. The checked integration adapter requires all seven factory bindings during production builds while retaining the existing WordPress store, REST endpoints, shared controls, entitlement checks and server-provided integration manifest.
+
+Focused source and adapter tests cover the conversion boundary. Existing route smoke coverage reaches `/integrations`; complete provider credential save/reload, OAuth redirects, dependency handling and permissions acceptance remain release gates.
+
+## Webhooks increment
+
+Four named React components now build from `assets/src/features/webhooks/`. They cover the webhook list, search and status filtering, selection and bulk actions, pagination, deletion, the details form, event-aware payload field mapping, and the two-step create/edit modal. The checked webhook adapter requires all four factory bindings during production builds while retaining the existing WordPress store, REST endpoints, shared controls, entitlement checks and Webhooks integration toggle.
+
+Focused source and adapter tests cover the conversion boundary. Existing route smoke coverage reaches `/webhooks`; complete create/edit/delete persistence, outgoing delivery, retry/error handling, responsive and permissions acceptance remain release gates.
+
+## Categories and Tags increment
+
+Three named React components now build from `assets/src/features/taxonomies/`: the Categories route, Tags route and their shared create/edit modal. They cover loading, search, selection, course counts, category hierarchy, single and bulk deletion, and empty states. The checked taxonomy adapter replaces both anonymous route functions and the shared modal while retaining the existing REST endpoints, shared controls and category store synchronization.
+
+Focused source and adapter tests cover the conversion boundary. Complete create/edit/delete persistence, hierarchy edge cases, responsive and permissions acceptance remain release gates.
+
+## Setup Wizard increment
+
+Eleven named React components now build from `assets/src/features/setup/`. They cover welcome, experience selection, preferences, niche, LMS migration, SCORM import, course-import routing, completion, the wizard controller, wrapper and route shell. The checked setup adapter requires every factory binding while retaining the existing stores, REST requests, shared controls, migration endpoints and router behavior.
+
+Focused source and adapter tests cover the conversion boundary. Complete fresh-install onboarding, each migration provider, SCORM upload, skip/resume behavior, responsive and failure-recovery browser acceptance remain release gates.
+
+## AI Course Outline Generator increment
+
+Eighteen named React components now build from `assets/src/features/ai-course-outline/`. They cover prompt templates and carousel controls, AI request and credit handling, course-outline preview, chapter and lesson navigation, preview actions, modal state, course creation and the Pro-gated route shell. The checked AI course adapter requires every factory binding while retaining the existing AI service requests, settings, integrations, stores, course endpoint and router behavior.
+
+Focused source and adapter tests cover the conversion boundary. Complete generation/regeneration, malformed AI responses, credit exhaustion, course creation, provider differences, responsive and permission browser acceptance remain release gates.
+
 ## Remaining release gates
 
+- The standalone License and Free vs Pro admin modules are intentionally retired. Adapted builds remove both routes and their component implementations; the recovered snapshot retains them only as immutable provenance for parity verification.
 - Convert remaining reconstructed shared scopes into independent named modules. Editable fragments are not the final maintainability goal.
 - Verify original JavaScript dependency versions and restore missing licence notices from verified provenance. Original package manifest/source map were absent.
 - Complete original-vs-rebuilt visual/end-to-end comparisons for every authoring, student, restriction and checkout path, including every built-in question editor. API/grading tests are not full browser coverage.

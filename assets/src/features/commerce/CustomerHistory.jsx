@@ -2,16 +2,11 @@
  * CustomerHistory component (replaces recovered binding RQ).
  * Displays customer order metrics: total orders, total revenue, average order value.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createCustomerHistory(readRuntime) {
-  return function CustomerHistory({order}) {
-    const {
-      I: Controls,
-      React,
-      b: I18n,
-      g: ReactHooks
-    } = readRuntime();
+  return function CustomerHistory({ order }) {
+    const { I: Controls, React, b: I18n, g: ReactHooks } = readRuntime();
 
     const [isOpen, setIsOpen] = ReactHooks.useState(true);
 
@@ -23,7 +18,7 @@ export function createCustomerHistory(readRuntime) {
           </Controls.HeadingWP>
           <Controls.ButtonWP size="small" onClick={() => setIsOpen(!isOpen)}>
             <svg
-              style={{transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)'}}
+              style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
               width="12"
               height="6"
               fill="none"
@@ -42,24 +37,24 @@ export function createCustomerHistory(readRuntime) {
                 <Controls.TextWP as="p" color="#7A8B9A" size={16} weight={500} lineHeight={1.5}>
                   {I18n.__('Total orders', 'ohmylms')}
                   <span
-                    style={{color: '#000D25', display: 'block'}}
-                    dangerouslySetInnerHTML={{__html: order.total_orders}}
+                    style={{ color: '#000D25', display: 'block' }}
+                    dangerouslySetInnerHTML={{ __html: order.total_orders }}
                   />
                 </Controls.TextWP>
                 <Controls.SpacerWP marginBottom={2} />
                 <Controls.TextWP as="p" size={16} weight={500} color="#7A8B9A">
                   {I18n.__('Total Revenue', 'ohmylms')}
                   <span
-                    style={{color: '#000D25', display: 'block'}}
-                    dangerouslySetInnerHTML={{__html: order.total_revenue}}
+                    style={{ color: '#000D25', display: 'block' }}
+                    dangerouslySetInnerHTML={{ __html: order.total_revenue }}
                   />
                 </Controls.TextWP>
                 <Controls.SpacerWP marginBottom={2} />
                 <Controls.TextWP as="p" color="#7A8B9A" size={16} weight={500} lineHeight={1.5}>
                   {I18n.__('Average order value', 'ohmylms')}
                   <span
-                    style={{color: '#000D25', display: 'block'}}
-                    dangerouslySetInnerHTML={{__html: order.aov}}
+                    style={{ color: '#000D25', display: 'block' }}
+                    dangerouslySetInnerHTML={{ __html: order.aov }}
                   />
                 </Controls.TextWP>
               </React.Fragment>

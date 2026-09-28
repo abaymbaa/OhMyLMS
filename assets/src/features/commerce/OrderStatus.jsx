@@ -2,10 +2,10 @@
  * OrderStatus component (replaces recovered binding EQ).
  * Displays order action card for updating order status.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderStatus(readRuntime) {
-  return function OrderStatus({order, status}) {
+  return function OrderStatus({ order, status }) {
     const {
       I: Controls,
       React,
@@ -13,11 +13,11 @@ export function createOrderStatus(readRuntime) {
       b: I18n,
       g: ReactHooks,
       vn: SelectControl,
-      y: WordPressData
+      y: WordPressData,
     } = readRuntime();
 
     const dispatch = WordPressData.useDispatch(StoreModule.default);
-    const {updateOrder, fetchOrder, showNotification, updateOrderState} = dispatch;
+    const { updateOrder, fetchOrder, showNotification, updateOrderState } = dispatch;
 
     const [loading, setLoading] = ReactHooks.useState(false);
     const [isOpen, setIsOpen] = ReactHooks.useState(true);
@@ -40,18 +40,18 @@ export function createOrderStatus(readRuntime) {
     const statusOptions = ReactHooks.useMemo(() => {
       const options = [];
       if (order?.status !== 'refunded') {
-        options.push({value: 'completed', label: I18n.__('Completed', 'ohmylms')});
+        options.push({ value: 'completed', label: I18n.__('Completed', 'ohmylms') });
       }
       if (Number(order?.total || 0) !== 0) {
         options.push(
-          {value: 'pending', label: I18n.__('Pending', 'ohmylms')},
-          {value: 'on-hold', label: I18n.__('On Hold', 'ohmylms')},
-          {value: 'processing', label: I18n.__('Processing', 'ohmylms')}
+          { value: 'pending', label: I18n.__('Pending', 'ohmylms') },
+          { value: 'on-hold', label: I18n.__('On Hold', 'ohmylms') },
+          { value: 'processing', label: I18n.__('Processing', 'ohmylms') },
         );
       }
-      options.push({value: 'cancelled', label: I18n.__('Cancelled', 'ohmylms')});
+      options.push({ value: 'cancelled', label: I18n.__('Cancelled', 'ohmylms') });
       if (Number(order?.total || 0) !== 0) {
-        options.push({value: 'refunded', label: I18n.__('Refunded', 'ohmylms')});
+        options.push({ value: 'refunded', label: I18n.__('Refunded', 'ohmylms') });
       }
       return options;
     }, [order?.status, order?.total, I18n]);
@@ -64,7 +64,7 @@ export function createOrderStatus(readRuntime) {
           </Controls.HeadingWP>
           <Controls.ButtonWP size="small" onClick={() => setIsOpen(!isOpen)}>
             <svg
-              style={{transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)'}}
+              style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
               width="12"
               height="6"
               fill="none"
@@ -79,10 +79,10 @@ export function createOrderStatus(readRuntime) {
           <React.Fragment>
             <Controls.SpacerWP marginTop={6} marginBottom={0} />
             <Controls.FlexWP gap={2} justify="start" align="center">
-              <Controls.FlexItemWP style={{width: 'calc(100% - 53px)'}}>
+              <Controls.FlexItemWP style={{ width: 'calc(100% - 53px)' }}>
                 <SelectControl.A
                   value={status}
-                  onChange={val => updateOrderState({status: val})}
+                  onChange={(val) => updateOrderState({ status: val })}
                   options={statusOptions}
                 />
               </Controls.FlexItemWP>
@@ -93,11 +93,11 @@ export function createOrderStatus(readRuntime) {
                 style={{
                   height: '40px',
                   width: '53px',
-                  backgroundColor: '#6e42d34d'
+                  backgroundColor: '#6e42d34d',
                 }}
               >
                 <svg
-                  style={{margin: '0 auto'}}
+                  style={{ margin: '0 auto' }}
                   width="7"
                   height="12"
                   fill="none"

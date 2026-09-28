@@ -2,15 +2,11 @@
  * OrderGeneral component (replaces recovered binding PQ).
  * Displays order general information (assigned student details).
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderGeneral(readRuntime) {
-  return function OrderGeneral({student_name, student_email, student_id}) {
-    const {
-      I: Controls,
-      React,
-      b: I18n
-    } = readRuntime();
+  return function OrderGeneral({ student_name, student_email, student_id }) {
+    const { I: Controls, React, b: I18n } = readRuntime();
 
     return (
       <React.Fragment>
@@ -25,12 +21,17 @@ export function createOrderGeneral(readRuntime) {
               size={14}
               weight={500}
               color="#000D21"
-              style={{width: '100px'}}
+              style={{ width: '100px' }}
             >
               {I18n.__('Student: ', 'ohmylms')}
             </Controls.TextWP>
-            <Controls.FlexWP align="center" justify="flex-start" gap={2} style={{width: 'calc(100% - 112px)'}}>
-              <Controls.FlexItemWP style={{width: 'calc(100% - 53px)'}}>
+            <Controls.FlexWP
+              align="center"
+              justify="flex-start"
+              gap={2}
+              style={{ width: 'calc(100% - 112px)' }}
+            >
+              <Controls.FlexItemWP style={{ width: 'calc(100% - 53px)' }}>
                 <Controls.TextWP as="p" size={14} weight={500} color="#000D21">
                   {student_name && student_id && student_email
                     ? `${student_name} (#${student_id} – ${student_email})`

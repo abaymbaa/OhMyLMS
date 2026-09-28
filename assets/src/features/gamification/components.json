@@ -3,51 +3,19 @@
     "binding": "x5",
     "name": "GamificationPage",
     "file": "GamificationPage.jsx",
-    "dependencies": [
-      "HG",
-      "R5",
-      "React"
-    ]
+    "dependencies": ["HG", "R5", "React"]
   },
   {
     "binding": "S5",
     "name": "GamificationSettings",
     "file": "GamificationSettings.jsx",
-    "dependencies": [
-      "E3",
-      "E5",
-      "I",
-      "N2",
-      "React",
-      "S2",
-      "b",
-      "c5",
-      "f",
-      "g",
-      "w5",
-      "z"
-    ]
+    "dependencies": ["E3", "E5", "I", "N2", "React", "S2", "b", "c5", "f", "g", "w5", "z"]
   },
   {
     "binding": "E2",
     "name": "LeaderboardSettings",
     "file": "LeaderboardSettings.jsx",
-    "dependencies": [
-      "I",
-      "L",
-      "React",
-      "T",
-      "_2",
-      "b",
-      "b2",
-      "g",
-      "g2",
-      "h2",
-      "l",
-      "p2",
-      "y",
-      "z"
-    ]
+    "dependencies": ["I", "L", "React", "T", "_2", "b", "b2", "g", "g2", "h2", "l", "p2", "y", "z"]
   },
   {
     "binding": "F2",
@@ -76,32 +44,13 @@
     "binding": "B2",
     "name": "BadgeImageField",
     "file": "BadgeImageField.jsx",
-    "dependencies": [
-      "D2",
-      "FK",
-      "I",
-      "M",
-      "React",
-      "Tt",
-      "W2",
-      "b",
-      "g",
-      "hu",
-      "z2"
-    ]
+    "dependencies": ["D2", "FK", "I", "M", "React", "Tt", "W2", "b", "g", "hu", "z2"]
   },
   {
     "binding": "G2",
     "name": "AchievementRules",
     "file": "AchievementRules.jsx",
-    "dependencies": [
-      "I",
-      "React",
-      "V2",
-      "We",
-      "b",
-      "lf"
-    ]
+    "dependencies": ["I", "React", "V2", "We", "b", "lf"]
   },
   {
     "binding": "o3",
@@ -161,22 +110,7 @@
     "binding": "w3",
     "name": "BadgeSettings",
     "file": "BadgeSettings.jsx",
-    "dependencies": [
-      "He",
-      "I",
-      "L",
-      "React",
-      "T",
-      "b",
-      "b3",
-      "f3",
-      "g",
-      "l",
-      "v3",
-      "y",
-      "y3",
-      "z"
-    ]
+    "dependencies": ["He", "I", "L", "React", "T", "b", "b3", "f3", "g", "l", "v3", "y", "y3", "z"]
   },
   {
     "binding": "B3",

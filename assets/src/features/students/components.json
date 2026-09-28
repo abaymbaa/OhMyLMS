@@ -38,18 +38,7 @@
     "binding": "X8",
     "name": "StudentNameCell",
     "file": "StudentNameCell.jsx",
-    "dependencies": [
-      "I",
-      "JU",
-      "React",
-      "UG",
-      "aN",
-      "b",
-      "f",
-      "g",
-      "v",
-      "vG"
-    ]
+    "dependencies": ["I", "JU", "React", "UG", "aN", "b", "f", "g", "v", "vG"]
   },
   {
     "binding": "UZ",

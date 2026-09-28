@@ -1,5 +1,5 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import {createElement} from "@wordpress/element";
+import { createElement } from '@wordpress/element';
 export function createMembershipPricing(readRuntime) {
   return function MembershipPricing(props) {
     const {
@@ -10,7 +10,7 @@ export function createMembershipPricing(readRuntime) {
       Z7,
       _n,
       b: I18n,
-      y: WordPressData
+      y: WordPressData,
     } = readRuntime();
     var t,
       n,
@@ -22,36 +22,102 @@ export function createMembershipPricing(readRuntime) {
       i = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getMemberships();
       }, []),
-      updateMembershipPlan = (0, WordPressData.useDispatch)(StoreModule.default).updateMembershipPlan,
-      c = 0 < (null == i ? void 0 : i.length) ? null === (t = i[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n ? void 0 : n.currency,
+      updateMembershipPlan = (0, WordPressData.useDispatch)(
+        StoreModule.default,
+      ).updateMembershipPlan,
+      c =
+        0 < (null == i ? void 0 : i.length)
+          ? null === (t = i[0]) || void 0 === t
+            ? void 0
+            : t.currency
+          : null === (n = window) ||
+              void 0 === n ||
+              null === (n = n.creator_lms_params) ||
+              void 0 === n
+            ? void 0
+            : n.currency,
       u = function (e, t) {
-        updateMembershipPlan(e, t), validate(Z7(Z7({}, o), {}, $7({}, e, t)));
+        (updateMembershipPlan(e, t), validate(Z7(Z7({}, o), {}, $7({}, e, t))));
       },
-      s = [{
-        value: "year",
-        label: (0, I18n.__)("Every Year", "ohmylms")
-      }, {
-        value: "month",
-        label: (0, I18n.__)("Every Month", "ohmylms")
-      }, {
-        value: "week",
-        label: (0, I18n.__)("Every week", "ohmylms")
-      }, {
-        value: "day",
-        label: (0, I18n.__)("Every day", "ohmylms")
-      }, {
-        value: "one_time",
-        label: (0, I18n.__)("One Time", "ohmylms")
-      }];
-    return <React.Fragment><Controls.SpacerWP padding={4}><Controls.FlexWP gap={8} align={"flex-start"} justify={"flex-start"}><Controls.FlexItemWP isBlock={!0}><Controls.HeadingWP level={"4"}>{(0, I18n.__)("Subscription price (".concat(c, ")"), "ohmylms")}</Controls.HeadingWP><Controls.TextWP as={"p"}>{(0, I18n.__)("Choose the subscription price, billing interval and period.", "ohmylms")}</Controls.TextWP></Controls.FlexItemWP><Controls.FlexItemWP isBlock={!0}><Controls.FlexWP direction={"column"} justify={"flex-end"} align={"flex-end"}><Controls.FlexWP justify={"flex-end"} align={"flex-start"}><Controls.InputNumberWP className={"omlms-subscription-price-input"} prefix={c} type={"number"} placeholder={(0, I18n.__)("e.g. 5.90", "ohmylms")} value={null == o ? void 0 : o.regular_price} onChange={function (e) {
-                  var t = e;
-                  /^\d*\.?\d*$/.test(t) && u("regular_price", t);
-                }} onKeyDown={function (e) {
-                  "-" !== e.key && "+" !== e.key && "e" !== e.key || e.preventDefault();
-                }} onBlur={function () {
-                  (null == o ? void 0 : o.regular_price) < 0 && u("regular_price", "0");
-                }} min={0} max={99999999} /><_n placeholder={(0, I18n.__)("Select period", "ohmylms")} options={s} value={null == o ? void 0 : o.subscription_period} onChange={function (e) {
-                  return u("subscription_period", e);
-                }} customClass={"omlms-subscription-period-select"} /></Controls.FlexWP>{(null == errors ? void 0 : errors.price) && <Controls.TextWP as={"p"} size={"13px"} color={"#FF4955"} align={"right"}>{errors.price}</Controls.TextWP>}</Controls.FlexWP></Controls.FlexItemWP></Controls.FlexWP></Controls.SpacerWP></React.Fragment>;
+      s = [
+        {
+          value: 'year',
+          label: (0, I18n.__)('Every Year', 'ohmylms'),
+        },
+        {
+          value: 'month',
+          label: (0, I18n.__)('Every Month', 'ohmylms'),
+        },
+        {
+          value: 'week',
+          label: (0, I18n.__)('Every week', 'ohmylms'),
+        },
+        {
+          value: 'day',
+          label: (0, I18n.__)('Every day', 'ohmylms'),
+        },
+        {
+          value: 'one_time',
+          label: (0, I18n.__)('One Time', 'ohmylms'),
+        },
+      ];
+    return (
+      <React.Fragment>
+        <Controls.SpacerWP padding={4}>
+          <Controls.FlexWP gap={8} align={'flex-start'} justify={'flex-start'}>
+            <Controls.FlexItemWP isBlock={!0}>
+              <Controls.HeadingWP level={'4'}>
+                {(0, I18n.__)('Subscription price ('.concat(c, ')'), 'ohmylms')}
+              </Controls.HeadingWP>
+              <Controls.TextWP as={'p'}>
+                {(0, I18n.__)(
+                  'Choose the subscription price, billing interval and period.',
+                  'ohmylms',
+                )}
+              </Controls.TextWP>
+            </Controls.FlexItemWP>
+            <Controls.FlexItemWP isBlock={!0}>
+              <Controls.FlexWP direction={'column'} justify={'flex-end'} align={'flex-end'}>
+                <Controls.FlexWP justify={'flex-end'} align={'flex-start'}>
+                  <Controls.InputNumberWP
+                    className={'omlms-subscription-price-input'}
+                    prefix={c}
+                    type={'number'}
+                    placeholder={(0, I18n.__)('e.g. 5.90', 'ohmylms')}
+                    value={null == o ? void 0 : o.regular_price}
+                    onChange={function (e) {
+                      var t = e;
+                      /^\d*\.?\d*$/.test(t) && u('regular_price', t);
+                    }}
+                    onKeyDown={function (e) {
+                      ('-' !== e.key && '+' !== e.key && 'e' !== e.key) || e.preventDefault();
+                    }}
+                    onBlur={function () {
+                      (null == o ? void 0 : o.regular_price) < 0 && u('regular_price', '0');
+                    }}
+                    min={0}
+                    max={99999999}
+                  />
+                  <_n
+                    placeholder={(0, I18n.__)('Select period', 'ohmylms')}
+                    options={s}
+                    value={null == o ? void 0 : o.subscription_period}
+                    onChange={function (e) {
+                      return u('subscription_period', e);
+                    }}
+                    customClass={'omlms-subscription-period-select'}
+                  />
+                </Controls.FlexWP>
+                {(null == errors ? void 0 : errors.price) && (
+                  <Controls.TextWP as={'p'} size={'13px'} color={'#FF4955'} align={'right'}>
+                    {errors.price}
+                  </Controls.TextWP>
+                )}
+              </Controls.FlexWP>
+            </Controls.FlexItemWP>
+          </Controls.FlexWP>
+        </Controls.SpacerWP>
+      </React.Fragment>
+    );
   };
 }

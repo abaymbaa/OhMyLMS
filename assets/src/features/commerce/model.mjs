@@ -8,7 +8,7 @@
  * @param {Function} [__=t=>t] - i18n translation helper.
  * @returns {Object} Map of field name to error message.
  */
-export function validateCoupon(coupon, __ = t => t) {
+export function validateCoupon(coupon, __ = (t) => t) {
   const errors = {};
   if (!coupon || typeof coupon !== 'object') {
     errors.title = __('Coupon title is required.', 'ohmylms');
@@ -41,7 +41,10 @@ export function validateCoupon(coupon, __ = t => t) {
   }
 
   for (const field of ['usage_limit', 'usage_limit_per_user']) {
-    if (coupon[field] !== undefined && (!Number.isInteger(Number(coupon[field])) || Number(coupon[field]) <= 0)) {
+    if (
+      coupon[field] !== undefined &&
+      (!Number.isInteger(Number(coupon[field])) || Number(coupon[field]) <= 0)
+    ) {
       errors[field] = __('Usage limit must be a positive whole number.', 'ohmylms');
     }
   }
@@ -73,13 +76,16 @@ export function generateCouponCode(length = 8) {
  * @param {Function} [__=t=>t]
  * @returns {{ valid: boolean, error?: string }}
  */
-export function validateRefund(refund, maxAmount, __ = t => t) {
+export function validateRefund(refund, maxAmount, __ = (t) => t) {
   const amount = Number(refund?.amount);
   if (!Number.isFinite(amount) || amount <= 0) {
     return { valid: false, error: __('Refund amount must be greater than 0.', 'ohmylms') };
   }
   if (!Number.isFinite(maxAmount) || amount > maxAmount) {
-    return { valid: false, error: __('Refund amount cannot exceed remaining order total.', 'ohmylms') };
+    return {
+      valid: false,
+      error: __('Refund amount cannot exceed remaining order total.', 'ohmylms'),
+    };
   }
   const reason = (refund?.reason || '').trim();
   if (!reason) {

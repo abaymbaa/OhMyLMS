@@ -2,7 +2,7 @@
  * OrderList component (replaces recovered binding ZY).
  * Displays order management table, filters, pagination, and bulk delete operations.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderList(readRuntime) {
   return function OrderList() {
@@ -34,16 +34,31 @@ export function createOrderList(readRuntime) {
       vn: SelectControl,
       xq: isCustomDateRange,
       y: WordPressData,
-      z: Notifications
+      z: Notifications,
     } = readRuntime();
 
     const dispatch = WordPressData.useDispatch(StoreModule.default);
-    const notificationMessage = WordPressData.useSelect(select => select(StoreModule.default).getNotificationMessage(), []);
-    const notificationStatus = WordPressData.useSelect(select => select(StoreModule.default).getNotificationStatus(), []);
-    const ordersPagination = WordPressData.useSelect(select => select(StoreModule.default).selectOrdersPagination(), []);
+    const notificationMessage = WordPressData.useSelect(
+      (select) => select(StoreModule.default).getNotificationMessage(),
+      [],
+    );
+    const notificationStatus = WordPressData.useSelect(
+      (select) => select(StoreModule.default).getNotificationStatus(),
+      [],
+    );
+    const ordersPagination = WordPressData.useSelect(
+      (select) => select(StoreModule.default).selectOrdersPagination(),
+      [],
+    );
     const totalOrders = ordersPagination?.totalOrders || 0;
-    const orders = WordPressData.useSelect(select => select(StoreModule.default).selectOrders(), []);
-    const currency = WordPressData.useSelect(select => select(StoreModule.default).getCurrency(), []);
+    const orders = WordPressData.useSelect(
+      (select) => select(StoreModule.default).selectOrders(),
+      [],
+    );
+    const currency = WordPressData.useSelect(
+      (select) => select(StoreModule.default).getCurrency(),
+      [],
+    );
 
     const [loading, setLoading] = ReactHooks.useState(true);
     const [selectedRowKeys, setSelectedRowKeys] = ReactHooks.useState([]);
@@ -56,72 +71,87 @@ export function createOrderList(readRuntime) {
     const [, setHoveredRowId] = ReactHooks.useState(null);
     const [dateFilter, setDateFilter] = ReactHooks.useState('all');
     const [paymentMethodFilter, setPaymentMethodFilter] = ReactHooks.useState('');
-    const [sorting, setSorting] = ReactHooks.useState({field:'date', order:'DESC'});
+    const [sorting, setSorting] = ReactHooks.useState({ field: 'date', order: 'DESC' });
 
     const notifications = Notifications.A();
     const openNotification = notifications.openNotificationWithIcon;
     const contextHolder = notifications.contextHolder;
     const navigate = Router.Zp();
 
-    const handleSearch = ReactHooks.useCallback(value => {
+    const handleSearch = ReactHooks.useCallback((value) => {
       setSearchTerm(value);
       setCurrentPage(1);
     }, []);
 
-    const handleStatusFilter = ReactHooks.useCallback(value => {
+    const handleStatusFilter = ReactHooks.useCallback((value) => {
       setStatusFilter(value);
       setCurrentPage(1);
     }, []);
 
-    const handleDateFilter = ReactHooks.useCallback(value => {
+    const handleDateFilter = ReactHooks.useCallback((value) => {
       setDateFilter(value);
       setCurrentPage(1);
     }, []);
 
-    const handlePaymentFilter = ReactHooks.useCallback(value => {
+    const handlePaymentFilter = ReactHooks.useCallback((value) => {
       setPaymentMethodFilter(value);
       setCurrentPage(1);
     }, []);
 
-    const handlePageChange = ReactHooks.useCallback(page => {
+    const handlePageChange = ReactHooks.useCallback((page) => {
       setCurrentPage(page);
       setSelectedRowKeys([]);
     }, []);
 
-    const handleEditOrder = ReactHooks.useCallback(id => {
-      navigate(`/order-edit/${id}`);
-    }, [navigate]);
+    const handleEditOrder = ReactHooks.useCallback(
+      (id) => {
+        navigate(`/order-edit/${id}`);
+      },
+      [navigate],
+    );
 
-    const fetchOrdersList = ReactHooks.useCallback(async (orderby = sorting.field, order = sorting.order) => {
-      setLoading(true);
-      const params = {
-        offset: (currentPage - 1) * perPage,
-        order,
-        page: currentPage,
-        per_page: perPage,
-        search: searchTerm,
-        orderby,
-        post_status: statusFilter,
-        date_filter: dateFilter,
-        payment_method: paymentMethodFilter
-      };
+    const fetchOrdersList = ReactHooks.useCallback(
+      async (orderby = sorting.field, order = sorting.order) => {
+        setLoading(true);
+        const params = {
+          offset: (currentPage - 1) * perPage,
+          order,
+          page: currentPage,
+          per_page: perPage,
+          search: searchTerm,
+          orderby,
+          post_status: statusFilter,
+          date_filter: dateFilter,
+          payment_method: paymentMethodFilter,
+        };
 
-      if (isCustomDateRange(dateFilter)) {
-        params.date_filter = 'custom';
-        params.start_date = moment()(dateFilter[0]).format('YYYY-MM-DD');
-        params.end_date = moment()(dateFilter[1]).format('YYYY-MM-DD');
-      }
+        if (isCustomDateRange(dateFilter)) {
+          params.date_filter = 'custom';
+          params.start_date = moment()(dateFilter[0]).format('YYYY-MM-DD');
+          params.end_date = moment()(dateFilter[1]).format('YYYY-MM-DD');
+        }
 
-      try {
-        await dispatch.fetchOrders(params);
-      } catch (error) {
-        openNotification('error', error?.message || I18n.__('Could not load orders.', 'ohmylms'));
-      } finally {
-        setLoading(false);
-      }
-    }, [currentPage, perPage, searchTerm, statusFilter, dateFilter, paymentMethodFilter, sorting, dispatch]);
+        try {
+          await dispatch.fetchOrders(params);
+        } catch (error) {
+          openNotification('error', error?.message || I18n.__('Could not load orders.', 'ohmylms'));
+        } finally {
+          setLoading(false);
+        }
+      },
+      [
+        currentPage,
+        perPage,
+        searchTerm,
+        statusFilter,
+        dateFilter,
+        paymentMethodFilter,
+        sorting,
+        dispatch,
+      ],
+    );
 
-    const openDeleteSingle = ReactHooks.useCallback(id => {
+    const openDeleteSingle = ReactHooks.useCallback((id) => {
       setIsDeleteModalOpen(true);
       setTargetDeleteId(id);
     }, []);
@@ -141,46 +171,61 @@ export function createOrderList(readRuntime) {
       setIsDeleteModalOpen(false);
     }, [dispatch, selectedRowKeys, targetDeleteId, fetchOrdersList]);
 
-    const handleTableChange = ReactHooks.useCallback((pagination, filters, sorter) => {
-      const fieldMap = {student_email: 'student_name', name: 'title'};
-      const field = fieldMap[sorter.field] || sorter.field || 'date';
-      const order = sorter.order === 'ascend' ? 'ASC' : 'DESC';
-      setCurrentPage(1);
-      setSorting({field, order});
-    }, [fetchOrdersList]);
+    const handleTableChange = ReactHooks.useCallback(
+      (pagination, filters, sorter) => {
+        const fieldMap = { student_email: 'student_name', name: 'title' };
+        const field = fieldMap[sorter.field] || sorter.field || 'date';
+        const order = sorter.order === 'ascend' ? 'ASC' : 'DESC';
+        setCurrentPage(1);
+        setSorting({ field, order });
+      },
+      [fetchOrdersList],
+    );
 
-    const bulkActions = ReactHooks.useMemo(() => [
-      {
-        label: I18n.__('Delete', 'ohmylms'),
-        value: 'delete',
-        action: () => setIsDeleteModalOpen(true)
-      }
-    ], []);
+    const bulkActions = ReactHooks.useMemo(
+      () => [
+        {
+          label: I18n.__('Delete', 'ohmylms'),
+          value: 'delete',
+          action: () => setIsDeleteModalOpen(true),
+        },
+      ],
+      [],
+    );
 
-    const paymentOptions = ReactHooks.useMemo(() => [
-      {value: '', label: I18n.__('All Payment Method', 'ohmylms')},
-      {value: 'stripe', label: I18n.__('Stripe', 'ohmylms')},
-      {value: 'paypal', label: I18n.__('PayPal', 'ohmylms')},
-      {value: 'offline', label: I18n.__('Offline', 'ohmylms')},
-      {value: 'mollie', label: I18n.__('Mollie', 'ohmylms')},
-      {value: 'razorpay', label: I18n.__('Razorpay', 'ohmylms')},
-      {value: 'authorize_net', label: I18n.__('Authorize.Net', 'ohmylms')}
-    ], []);
+    const paymentOptions = ReactHooks.useMemo(
+      () => [
+        { value: '', label: I18n.__('All Payment Method', 'ohmylms') },
+        { value: 'stripe', label: I18n.__('Stripe', 'ohmylms') },
+        { value: 'paypal', label: I18n.__('PayPal', 'ohmylms') },
+        { value: 'offline', label: I18n.__('Offline', 'ohmylms') },
+        { value: 'mollie', label: I18n.__('Mollie', 'ohmylms') },
+        { value: 'razorpay', label: I18n.__('Razorpay', 'ohmylms') },
+        { value: 'authorize_net', label: I18n.__('Authorize.Net', 'ohmylms') },
+      ],
+      [],
+    );
 
-    const statusOptions = ReactHooks.useMemo(() => [
-      {value: 'any', label: I18n.__('All Status', 'ohmylms')},
-      {value: 'omlms-completed', label: I18n.__('Completed', 'ohmylms')},
-      {value: 'omlms-pending', label: I18n.__('Pending', 'ohmylms')},
-      {value: 'omlms-on-hold', label: I18n.__('On Hold', 'ohmylms')},
-      {value: 'omlms-processing', label: I18n.__('Processing', 'ohmylms')},
-      {value: 'omlms-cancelled', label: I18n.__('Cancelled', 'ohmylms')},
-      {value: 'omlms-refunded', label: I18n.__('Refunded', 'ohmylms')}
-    ], []);
+    const statusOptions = ReactHooks.useMemo(
+      () => [
+        { value: 'any', label: I18n.__('All Status', 'ohmylms') },
+        { value: 'omlms-completed', label: I18n.__('Completed', 'ohmylms') },
+        { value: 'omlms-pending', label: I18n.__('Pending', 'ohmylms') },
+        { value: 'omlms-on-hold', label: I18n.__('On Hold', 'ohmylms') },
+        { value: 'omlms-processing', label: I18n.__('Processing', 'ohmylms') },
+        { value: 'omlms-cancelled', label: I18n.__('Cancelled', 'ohmylms') },
+        { value: 'omlms-refunded', label: I18n.__('Refunded', 'ohmylms') },
+      ],
+      [],
+    );
 
-    const rowSelection = ReactHooks.useMemo(() => ({
-      selectedRowKeys,
-      onChange: setSelectedRowKeys
-    }), [selectedRowKeys]);
+    const rowSelection = ReactHooks.useMemo(
+      () => ({
+        selectedRowKeys,
+        onChange: setSelectedRowKeys,
+      }),
+      [selectedRowKeys],
+    );
 
     const columns = [
       {
@@ -188,43 +233,37 @@ export function createOrderList(readRuntime) {
         dataIndex: 'id',
         key: 'id',
         sorter: true,
-        render: id => (
-          <RouterLink.Link to={`/order-edit/${id}`}>
-            #{id || '#'}
-          </RouterLink.Link>
-        )
+        render: (id) => <RouterLink.Link to={`/order-edit/${id}`}>#{id || '#'}</RouterLink.Link>,
       },
       {
         title: I18n.__('Date', 'ohmylms'),
         dataIndex: 'date_created',
         key: 'date_created',
         sorter: true,
-        render: date => formatDateTime(date) || '-'
+        render: (date) => formatDateTime(date) || '-',
       },
       {
         title: I18n.__('Student', 'ohmylms'),
         dataIndex: 'student_email',
         key: 'student_email',
         sorter: true,
-        render: email => <span>{email || '-'}</span>
+        render: (email) => <span>{email || '-'}</span>,
       },
       {
         title: I18n.__('Payment Method', 'ohmylms'),
         dataIndex: 'payment_method',
         key: 'payment_method',
-        render: method => (
-          <span style={{textTransform: 'capitalize'}}>
+        render: (method) => (
+          <span style={{ textTransform: 'capitalize' }}>
             {method === 'offline_payment' ? 'Offline' : method || '-'}
           </span>
-        )
+        ),
       },
       {
         title: I18n.__('Purchased By', 'ohmylms'),
         dataIndex: 'purchased_by',
         key: 'purchased_by',
-        render: purchaser => (
-          <span style={{textTransform: 'capitalize'}}>{purchaser}</span>
-        )
+        render: (purchaser) => <span style={{ textTransform: 'capitalize' }}>{purchaser}</span>,
       },
       {
         title: I18n.__('Subscription Relationship', 'ohmylms'),
@@ -234,7 +273,7 @@ export function createOrderList(readRuntime) {
           if (record?.is_renewal_order) return 'Renewal order';
           if (record?.is_parent_order) return 'Parent order';
           return '-';
-        }
+        },
       },
       {
         title: I18n.__('Total', 'ohmylms'),
@@ -262,16 +301,14 @@ export function createOrderList(readRuntime) {
               </React.Fragment>
             );
           }
-          return (
-            <span dangerouslySetInnerHTML={{__html: record?.formattedTotal}} />
-          );
-        }
+          return <span dangerouslySetInnerHTML={{ __html: record?.formattedTotal }} />;
+        },
       },
       {
         title: I18n.__('Status', 'ohmylms'),
         dataIndex: 'status',
         key: 'status',
-        render: status => {
+        render: (status) => {
           let variant = 'default';
           switch (status) {
             case 'completed':
@@ -295,12 +332,12 @@ export function createOrderList(readRuntime) {
             <Controls.BadgeWP
               isBorderLess={true}
               variant={variant}
-              style={{textTransform: 'capitalize'}}
+              style={{ textTransform: 'capitalize' }}
             >
               {status}
             </Controls.BadgeWP>
           );
-        }
+        },
       },
       {
         title: I18n.__('Action', 'ohmylms'),
@@ -313,19 +350,19 @@ export function createOrderList(readRuntime) {
                 title: I18n.__('View', 'ohmylms'),
                 key: 'view',
                 onClick: () => handleEditOrder(record?.id),
-                icon: <ViewIcon />
+                icon: <ViewIcon />,
               },
               {
                 title: I18n.__('Delete', 'ohmylms'),
                 key: 'delete',
                 onClick: () => openDeleteSingle(record?.id),
-                icon: <DeleteIcon />
-              }
+                icon: <DeleteIcon />,
+              },
             ]}
             icon={<IconWrapper.Icon icon={MenuIcon.A} />}
           />
-        )
-      }
+        ),
+      },
     ];
 
     ReactHooks.useEffect(() => {
@@ -385,7 +422,7 @@ export function createOrderList(readRuntime) {
                     <Controls.FlexItemWP>
                       <DateFilter
                         placeholder={I18n.__('Filter By Days', 'ohmylms')}
-                        onChange={val => {
+                        onChange={(val) => {
                           if (val !== 'custom_range') handleDateFilter(val);
                         }}
                         onRangeChange={handleDateFilter}
@@ -402,7 +439,7 @@ export function createOrderList(readRuntime) {
                 pagination={false}
                 loading={loading}
                 onChange={handleTableChange}
-                onRowMouseEnter={record => setHoveredRowId(record?.id)}
+                onRowMouseEnter={(record) => setHoveredRowId(record?.id)}
                 onRowMouseLeave={() => setHoveredRowId(null)}
                 locale={{
                   emptyText: (
@@ -410,7 +447,7 @@ export function createOrderList(readRuntime) {
                       icon={<EmptyIcon />}
                       title={I18n.__('No Order yet!', 'ohmylms')}
                     />
-                  )
+                  ),
                 }}
               />
               {!loading && Number(totalOrders) > perPage && (

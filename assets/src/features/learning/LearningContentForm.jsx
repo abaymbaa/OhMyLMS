@@ -1,15 +1,8 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import {createElement} from "@wordpress/element";
+import { createElement } from '@wordpress/element';
 export function createLearningContentForm(readRuntime) {
   return function LearningContentForm(props) {
-    const {
-      Cr: LearningMediaField,
-      G,
-      Ge,
-      I: Controls,
-      React,
-      ne
-    } = readRuntime();
+    const { Cr: LearningMediaField, G, Ge, I: Controls, React, ne } = readRuntime();
     var titleName = props.titleName,
       titleValue = props.titleValue,
       titlePlaceholder = props.titlePlaceholder,
@@ -22,9 +15,9 @@ export function createLearningContentForm(readRuntime) {
       onUploadComplete = props.onUploadComplete,
       onRemoveMedia = props.onRemoveMedia,
       align = props.align,
-      p = void 0 === align ? "left" : align,
+      p = void 0 === align ? 'left' : align,
       mediaType = props.mediaType,
-      v = void 0 === mediaType ? "image_video" : mediaType,
+      v = void 0 === mediaType ? 'image_video' : mediaType,
       audioSrc = props.audioSrc,
       mediaId = props.mediaId,
       onExternalUploadComplete = props.onExternalUploadComplete,
@@ -38,33 +31,103 @@ export function createLearningContentForm(readRuntime) {
       autofocus = props.autofocus,
       O = void 0 === autofocus || autofocus,
       editorFor = props.editorFor;
-    return <div className={"common-entity-form omlms-".concat(p)}>{("image_video" === v || "image" === v) && <React.Fragment><LearningMediaField src={imageSrc} videoSrc={videoSrc} limit={2} type={"image_video" === v ? "both" : v} supportedTypes={[".jpg", ".jpeg", ".png", ".mp4", ".mov", ".webp"]} onUploadComplete={onUploadComplete} onRemoveMedia={onRemoveMedia} align={p} mediaId={mediaId} onExternalUploadComplete={_} /></React.Fragment>}{"video" === v && <LearningMediaField src={imageSrc} videoSrc={videoSrc} limit={2} type={"both"} supportedTypes={[".jpg", ".jpeg", ".png", ".webp"]} onUploadComplete={onUploadComplete} onRemoveMedia={onRemoveMedia} align={"left"} fileType={"video"} mediaId={mediaId} onExternalUploadComplete={_} />}{"audio" === v && <LearningMediaField audioSrc={audioSrc} limit={2} type={"both"} supportedTypes={[".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"]} onUploadComplete={onUploadComplete} onRemoveMedia={onRemoveMedia} align={"left"} fileType={"audio"} mediaId={mediaId} onExternalUploadComplete={_} />}<Controls.SpacerWP marginBottom={4} /><div className={"omlms-title-input-wrapper omlms-course-title"}><Controls.InputWP type={"text"} value={Ge("Untitled" !== titleValue ? titleValue : "")} onChange={onInputChange} placeholder={titlePlaceholder} name={titleName} autoFocus={!0} style={{
-          fontSize: 26,
-          fontWeight: "500",
-          border: "none",
-          background: "transparent",
-          padding: 0,
-          textAlign: "left",
-          lineHeight: 1.2,
-          boxShadow: "none"
-        }} />{("assignment" !== editorFor || !["video", "audio"].includes(v)) && <G showImageGenerator={!1} showTextGenerator={!0} aiFor={editorFor} aiContent={"title"} handleAcceptResponse={function (e) {
-          onInputChange({
-            target: {
-              name: titleName,
-              value: e
-            }
-          });
-        }} />}</div>{React.createElement(ne, {
-        onContentChange: function (e) {
-          onContentChange(e);
-        },
-        placeholder: descriptionPlaceholder,
-        content: content,
-        commandsConfig: E,
-        showAddButton: R,
-        showTextAlign: C,
-        autofocus: O,
-        editorFor: editorFor
-      })}</div>;
+    return (
+      <div className={'common-entity-form omlms-'.concat(p)}>
+        {('image_video' === v || 'image' === v) && (
+          <React.Fragment>
+            <LearningMediaField
+              src={imageSrc}
+              videoSrc={videoSrc}
+              limit={2}
+              type={'image_video' === v ? 'both' : v}
+              supportedTypes={['.jpg', '.jpeg', '.png', '.mp4', '.mov', '.webp']}
+              onUploadComplete={onUploadComplete}
+              onRemoveMedia={onRemoveMedia}
+              align={p}
+              mediaId={mediaId}
+              onExternalUploadComplete={_}
+            />
+          </React.Fragment>
+        )}
+        {'video' === v && (
+          <LearningMediaField
+            src={imageSrc}
+            videoSrc={videoSrc}
+            limit={2}
+            type={'both'}
+            supportedTypes={['.jpg', '.jpeg', '.png', '.webp']}
+            onUploadComplete={onUploadComplete}
+            onRemoveMedia={onRemoveMedia}
+            align={'left'}
+            fileType={'video'}
+            mediaId={mediaId}
+            onExternalUploadComplete={_}
+          />
+        )}
+        {'audio' === v && (
+          <LearningMediaField
+            audioSrc={audioSrc}
+            limit={2}
+            type={'both'}
+            supportedTypes={['.mp3', '.wav', '.aac', '.flac', '.ogg', '.m4a']}
+            onUploadComplete={onUploadComplete}
+            onRemoveMedia={onRemoveMedia}
+            align={'left'}
+            fileType={'audio'}
+            mediaId={mediaId}
+            onExternalUploadComplete={_}
+          />
+        )}
+        <Controls.SpacerWP marginBottom={4} />
+        <div className={'omlms-title-input-wrapper omlms-course-title'}>
+          <Controls.InputWP
+            type={'text'}
+            value={Ge('Untitled' !== titleValue ? titleValue : '')}
+            onChange={onInputChange}
+            placeholder={titlePlaceholder}
+            name={titleName}
+            autoFocus={!0}
+            style={{
+              fontSize: 26,
+              fontWeight: '500',
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              textAlign: 'left',
+              lineHeight: 1.2,
+              boxShadow: 'none',
+            }}
+          />
+          {('assignment' !== editorFor || !['video', 'audio'].includes(v)) && (
+            <G
+              showImageGenerator={!1}
+              showTextGenerator={!0}
+              aiFor={editorFor}
+              aiContent={'title'}
+              handleAcceptResponse={function (e) {
+                onInputChange({
+                  target: {
+                    name: titleName,
+                    value: e,
+                  },
+                });
+              }}
+            />
+          )}
+        </div>
+        {React.createElement(ne, {
+          onContentChange: function (e) {
+            onContentChange(e);
+          },
+          placeholder: descriptionPlaceholder,
+          content: content,
+          commandsConfig: E,
+          showAddButton: R,
+          showTextAlign: C,
+          autofocus: O,
+          editorFor: editorFor,
+        })}
+      </div>
+    );
   };
 }

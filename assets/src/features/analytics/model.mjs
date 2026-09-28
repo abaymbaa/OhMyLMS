@@ -17,7 +17,7 @@ export function loadDashboard(apiFetch, actions, filter, formatDate, onError = c
   actions.setDashboardLoader(true);
   const done = (async () => {
     try {
-      const data = await apiFetch({path: dashboardPath(filter, formatDate)});
+      const data = await apiFetch({ path: dashboardPath(filter, formatDate) });
       if (active) {
         actions.setDashboardOverview(data);
         actions.setDashboardAll(data);
@@ -28,5 +28,10 @@ export function loadDashboard(apiFetch, actions, filter, formatDate, onError = c
       if (active) actions.setDashboardLoader(false);
     }
   })();
-  return {done, cancel() {active = false;}};
+  return {
+    done,
+    cancel() {
+      active = false;
+    },
+  };
 }

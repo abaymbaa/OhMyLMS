@@ -2,17 +2,11 @@
  * OrderHeader component (replaces recovered binding XY).
  * Displays order title, ID, payment method, transaction link, and creation date.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderHeader(readRuntime) {
-  return function OrderHeader({order, status}) {
-    const {
-      Ge: decodeEntities,
-      I: Controls,
-      JY: formatOrderDate,
-      React,
-      b: I18n
-    } = readRuntime();
+  return function OrderHeader({ order, status }) {
+    const { Ge: decodeEntities, I: Controls, JY: formatOrderDate, React, b: I18n } = readRuntime();
 
     if (!order) return null;
 
@@ -24,14 +18,13 @@ export function createOrderHeader(readRuntime) {
         <Controls.FlexWP gap={2} justify="start" align="center">
           <Controls.BadgeWP isBorderLess={true}>
             <Controls.TextWP>
-              {I18n.__('Payment via', 'ohmylms')}{' '}
-              {decodeEntities(order.payment_method_title)}&nbsp;
+              {I18n.__('Payment via', 'ohmylms')} {decodeEntities(order.payment_method_title)}&nbsp;
               {order.transaction_id && order.transaction_url && (
                 <Controls.ButtonWP
                   href={order.transaction_url}
                   target="_blank"
                   variant="link"
-                  style={{textDecoration: 'none'}}
+                  style={{ textDecoration: 'none' }}
                 >
                   ({order.transaction_id})
                 </Controls.ButtonWP>

@@ -2,10 +2,10 @@
  * SubscriptionStatus component (replaces recovered binding KQ).
  * Controls subscription status dropdown and update action.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createSubscriptionStatus(readRuntime) {
-  return function SubscriptionStatus({subscription, status}) {
+  return function SubscriptionStatus({ subscription, status }) {
     const {
       I: Controls,
       React,
@@ -13,11 +13,12 @@ export function createSubscriptionStatus(readRuntime) {
       b: I18n,
       g: ReactHooks,
       vn: SelectControl,
-      y: WordPressData
+      y: WordPressData,
     } = readRuntime();
 
     const dispatch = WordPressData.useDispatch(StoreModule.default);
-    const {updateSubscription, fetchSubscription, showNotification, updateSubscriptionState} = dispatch;
+    const { updateSubscription, fetchSubscription, showNotification, updateSubscriptionState } =
+      dispatch;
 
     const [loading, setLoading] = ReactHooks.useState(false);
     const [isOpen, setIsOpen] = ReactHooks.useState(true);
@@ -38,12 +39,12 @@ export function createSubscriptionStatus(readRuntime) {
     };
 
     const statusOptions = [
-      {value: 'pending', label: I18n.__('Pending', 'ohmylms')},
-      {value: 'active', label: I18n.__('Active', 'ohmylms')},
-      {value: 'on-hold', label: I18n.__('On-hold', 'ohmylms')},
-      {value: 'pending-cancel', label: I18n.__('Pending cancel', 'ohmylms')},
-      {value: 'cancelled', label: I18n.__('Cancelled', 'ohmylms')},
-      {value: 'expired', label: I18n.__('Expired', 'ohmylms')}
+      { value: 'pending', label: I18n.__('Pending', 'ohmylms') },
+      { value: 'active', label: I18n.__('Active', 'ohmylms') },
+      { value: 'on-hold', label: I18n.__('On-hold', 'ohmylms') },
+      { value: 'pending-cancel', label: I18n.__('Pending cancel', 'ohmylms') },
+      { value: 'cancelled', label: I18n.__('Cancelled', 'ohmylms') },
+      { value: 'expired', label: I18n.__('Expired', 'ohmylms') },
     ];
 
     return (
@@ -54,7 +55,7 @@ export function createSubscriptionStatus(readRuntime) {
           </Controls.HeadingWP>
           <Controls.ButtonWP size="small" onClick={() => setIsOpen(!isOpen)}>
             <svg
-              style={{transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)'}}
+              style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
               width="12"
               height="6"
               fill="none"
@@ -69,10 +70,10 @@ export function createSubscriptionStatus(readRuntime) {
           <React.Fragment>
             <Controls.SpacerWP marginTop={6} marginBottom={0} />
             <Controls.FlexWP gap={2} justify="start" align="center">
-              <Controls.FlexItemWP style={{width: 'calc(100% - 53px)'}}>
+              <Controls.FlexItemWP style={{ width: 'calc(100% - 53px)' }}>
                 <SelectControl.A
                   defaultValue={status}
-                  onChange={val => updateSubscriptionState({status: val})}
+                  onChange={(val) => updateSubscriptionState({ status: val })}
                   options={statusOptions}
                 />
               </Controls.FlexItemWP>
@@ -83,11 +84,11 @@ export function createSubscriptionStatus(readRuntime) {
                 style={{
                   height: '40px',
                   width: '53px',
-                  backgroundColor: '#6e42d34d'
+                  backgroundColor: '#6e42d34d',
                 }}
               >
                 <svg
-                  style={{margin: '0 auto'}}
+                  style={{ margin: '0 auto' }}
                   width="7"
                   height="12"
                   fill="none"

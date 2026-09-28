@@ -12,7 +12,15 @@ test('orders retain custom-date filters and sort criteria when returning to page
  const states=[false,[],false,3,10,'Learner','any',null,null,['2026-09-01','2026-09-25'],'offline',{field:'date',order:'DESC'}];
  const h=harness(states);const tree=h.render('OrderList');for(const effect of h.effects)effect();await flush();
  const request=h.requests.find(r=>r.action==='fetchOrders').args[0];assert.equal(request.offset,20);assert.equal(request.start_date,'2026-09-01');assert.equal(request.end_date,'2026-09-25');assert.equal(request.date_filter,'custom');
- find(tree,'Table').props.onChange({}, {}, {field:'name',order:'ascend'});assert.equal(h.updates.get(3),1);assert.deepEqual(plain(h.updates.get(12)),{field:'title',order:'ASC'});
+ find(tree,'Table').props.onChange({}, {}, {field:'name',order:'ascend'});
+ // Apply state updates and inspect the next request rather than a private hook index.
+ for(const [index,value] of h.updates)states[index]=typeof value==='function'?value(states[index]):value;
+ h.effects.length=0;h.requests.length=0;
+ h.render('OrderList');for(const effect of h.effects)effect();await flush();
+ const sorted=h.requests.find(r=>r.action==='fetchOrders').args[0];
+ assert.equal(sorted.page,1);assert.equal(sorted.offset,0);
+ assert.equal(sorted.orderby,'title');assert.equal(sorted.order,'ASC');
+ assert.equal(sorted.start_date,'2026-09-01');assert.equal(sorted.end_date,'2026-09-25');assert.equal(sorted.date_filter,'custom');
 });
 test('subscription status retains pending cancellation and failed saves release loading',async()=>{
  const h=harness();h.globals.actions={updateSubscription:async()=>{throw Error('offline');},showNotification(){}};const tree=h.render('SubscriptionStatus',props);

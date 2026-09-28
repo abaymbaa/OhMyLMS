@@ -2,10 +2,10 @@
  * OrderDetails component (replaces recovered binding FQ).
  * Full edit view for an order (/order-edit/:id).
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createOrderDetails(readRuntime) {
-  return function OrderDetails({id = null}) {
+  return function OrderDetails({ id = null }) {
     const {
       CQ: CustomerProfile,
       EQ: OrderStatus,
@@ -26,12 +26,12 @@ export function createOrderDetails(readRuntime) {
       g: ReactHooks,
       kQ: RelatedOrders,
       y: WordPressData,
-      z: Notifications
+      z: Notifications,
     } = readRuntime();
 
     const navigate = Router.Zp();
-    const order = WordPressData.useSelect(select => select(StoreModule.default).getOrder(), [id]);
-    const {fetchOrder} = WordPressData.useDispatch(StoreModule.default);
+    const order = WordPressData.useSelect((select) => select(StoreModule.default).getOrder(), [id]);
+    const { fetchOrder } = WordPressData.useDispatch(StoreModule.default);
 
     const [loading, setLoading] = ReactHooks.useState(true);
     const [notFound, setNotFound] = ReactHooks.useState(false);
@@ -39,8 +39,14 @@ export function createOrderDetails(readRuntime) {
     const notifications = Notifications.A();
     const openNotification = notifications.openNotificationWithIcon;
     const contextHolder = notifications.contextHolder;
-    const notificationMessage = WordPressData.useSelect(select => select(StoreModule.default).getNotificationMessage(), []);
-    const notificationStatus = WordPressData.useSelect(select => select(StoreModule.default).getNotificationStatus(), []);
+    const notificationMessage = WordPressData.useSelect(
+      (select) => select(StoreModule.default).getNotificationMessage(),
+      [],
+    );
+    const notificationStatus = WordPressData.useSelect(
+      (select) => select(StoreModule.default).getNotificationStatus(),
+      [],
+    );
 
     ReactHooks.useEffect(() => {
       if (!loading && notificationMessage) {
@@ -105,16 +111,28 @@ export function createOrderDetails(readRuntime) {
         <Controls.CardWP isBorderless={true}>
           <Controls.SpacerWP padding={6} marginBottom={0}>
             <Controls.FlexWP className="omlms-order-details" justify="start" align="start" gap={3}>
-              <Controls.FlexItemWP className="omlms-order-details-left" style={{width: 'calc(70% - 12px)'}}>
+              <Controls.FlexItemWP
+                className="omlms-order-details-left"
+                style={{ width: 'calc(70% - 12px)' }}
+              >
                 <Controls.CardWP isBorderless={true} variant="secondary">
                   <Controls.SpacerWP padding={4} marginBottom={0}>
                     <OrderHeader order={order} status={order.status} />
                   </Controls.SpacerWP>
                 </Controls.CardWP>
                 <Controls.SpacerWP marginBottom={3} />
-                <Controls.FlexWP justify="space-between" align="stretch" gap={3} className="omlms-order-details-general-billing">
+                <Controls.FlexWP
+                  justify="space-between"
+                  align="stretch"
+                  gap={3}
+                  className="omlms-order-details-general-billing"
+                >
                   <Controls.FlexBlockWP>
-                    <Controls.CardWP isBorderless={true} variant="secondary" style={{height: '100%'}}>
+                    <Controls.CardWP
+                      isBorderless={true}
+                      variant="secondary"
+                      style={{ height: '100%' }}
+                    >
                       <Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}>
                         <OrderGeneral
                           student_name={decodeEntities(order.student_name)}
@@ -125,7 +143,11 @@ export function createOrderDetails(readRuntime) {
                     </Controls.CardWP>
                   </Controls.FlexBlockWP>
                   <Controls.FlexBlockWP>
-                    <Controls.CardWP isBorderless={true} variant="secondary" style={{height: '100%'}}>
+                    <Controls.CardWP
+                      isBorderless={true}
+                      variant="secondary"
+                      style={{ height: '100%' }}
+                    >
                       <Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}>
                         <OrderBilling
                           order={order}
@@ -161,7 +183,7 @@ export function createOrderDetails(readRuntime) {
                   </Controls.CardWP>
                 )}
               </Controls.FlexItemWP>
-              <Controls.FlexItemWP className="omlms-order-details-right" style={{width: '30%'}}>
+              <Controls.FlexItemWP className="omlms-order-details-right" style={{ width: '30%' }}>
                 <Controls.CardWP isBorderless={true} variant="secondary">
                   <Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}>
                     <OrderStatus status={order.status} order={order} />

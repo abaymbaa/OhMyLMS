@@ -47,21 +47,7 @@
     "binding": "qc",
     "name": "QuestionList",
     "file": "QuestionList.jsx",
-    "dependencies": [
-      "Bc",
-      "Ec",
-      "Gc",
-      "I",
-      "Lc",
-      "React",
-      "T",
-      "Uc",
-      "Vc",
-      "b",
-      "g",
-      "uc",
-      "y"
-    ]
+    "dependencies": ["Bc", "Ec", "Gc", "I", "Lc", "React", "T", "Uc", "Vc", "b", "g", "uc", "y"]
   },
   {
     "binding": "Fu",
@@ -97,24 +83,13 @@
     "binding": "bs",
     "name": "QuestionSettings",
     "file": "QuestionSettings.jsx",
-    "dependencies": [
-      "Ku",
-      "React",
-      "T",
-      "y",
-      "ys"
-    ]
+    "dependencies": ["Ku", "React", "T", "y", "ys"]
   },
   {
     "binding": "tp",
     "name": "QuizSettings",
     "file": "QuizSettings.jsx",
-    "dependencies": [
-      "I",
-      "React",
-      "Xm",
-      "b"
-    ]
+    "dependencies": ["I", "React", "Xm", "b"]
   },
   {
     "binding": "Jm",
@@ -147,103 +122,55 @@
     "binding": "Bs",
     "name": "ChoiceOptionsEditor",
     "file": "ChoiceOptionsEditor.jsx",
-    "dependencies": [
-      "As",
-      "Ds",
-      "Fs",
-      "React",
-      "T",
-      "Ts",
-      "b",
-      "g",
-      "xs",
-      "y"
-    ]
+    "dependencies": ["As", "Ds", "Fs", "React", "T", "Ts", "b", "g", "xs", "y"]
   },
   {
     "binding": "cd",
     "name": "TextAnswerEditor",
     "file": "TextAnswerEditor.jsx",
-    "dependencies": [
-      "React",
-      "b",
-      "ld"
-    ]
+    "dependencies": ["React", "b", "ld"]
   },
   {
     "binding": "Vs",
     "name": "MultipleChoiceEditor",
     "file": "MultipleChoiceEditor.jsx",
-    "dependencies": [
-      "Ls",
-      "React"
-    ]
+    "dependencies": ["Ls", "React"]
   },
   {
     "binding": "Ys",
     "name": "SingleChoiceEditor",
     "file": "SingleChoiceEditor.jsx",
-    "dependencies": [
-      "Ls",
-      "React"
-    ]
+    "dependencies": ["Ls", "React"]
   },
   {
     "binding": "td",
     "name": "TrueFalseEditor",
     "file": "TrueFalseEditor.jsx",
-    "dependencies": [
-      "I",
-      "React",
-      "T",
-      "V",
-      "Xs",
-      "b",
-      "y"
-    ]
+    "dependencies": ["I", "React", "T", "V", "Xs", "b", "y"]
   },
   {
     "binding": "sd",
     "name": "ShortTextEditor",
     "file": "ShortTextEditor.jsx",
-    "dependencies": [
-      "React",
-      "ud"
-    ]
+    "dependencies": ["React", "ud"]
   },
   {
     "binding": "wd",
     "name": "LongTextEditor",
     "file": "LongTextEditor.jsx",
-    "dependencies": [
-      "React",
-      "ud"
-    ]
+    "dependencies": ["React", "ud"]
   },
   {
     "binding": "Pd",
     "name": "StatementEditor",
     "file": "StatementEditor.jsx",
-    "dependencies": [
-      "L",
-      "React",
-      "T",
-      "y"
-    ]
+    "dependencies": ["L", "React", "T", "y"]
   },
   {
     "binding": "Dd",
     "name": "FillInTheBlankEditor",
     "file": "FillInTheBlankEditor.jsx",
-    "dependencies": [
-      "Fd",
-      "I",
-      "L",
-      "React",
-      "T",
-      "b",
-      "y"
-    ]
+    "dependencies": ["Fd", "I", "L", "React", "T", "b", "y"]
   },
   {
     "binding": "tm",

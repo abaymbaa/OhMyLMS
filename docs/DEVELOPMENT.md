@@ -2,6 +2,8 @@
 
 The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working site.
 
+For component conventions, factory contracts and the feature development workflow, read [REACT-DEVELOPMENT.md](REACT-DEVELOPMENT.md). Run `npm run check` before delivering source changes.
+
 ## Source layout
 
 - `assets/src/recovered/manifest.json`: original SHA-256/size, asset-to-source and numeric module mappings.
@@ -14,8 +16,15 @@ The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working s
 - `assets/src/features/courses/`: 25 course components, authored editor/create/settings views, load/save and integration hooks, API client and model helpers. See COURSE-SOURCE.md for tested scope and compatibility boundaries.
 - `tools/course-adapters.mjs`: checked integration of native course components into the recovered runtime.
 - `tools/application-adapters.mjs`: checked AST integration points. Missing/changed patterns fail the build.
+- Adapted application builds strip the retired `/license` and `/free-vs-pro` routes and their component implementations. Their recovered fragments remain untouched solely for parity/provenance checks.
 - `assets/src/features/certificates/`: 13 editable certificate list, template, editor, design-control and preview React components integrated by `tools/certificate-adapters.mjs`.
 - `assets/src/features/emails/`: 12 editable notification-template settings, personalization, editor, field and responsive-preview React components integrated by `tools/email-adapters.mjs`.
+- `assets/src/features/settings/`: 19 editable General Settings route, design, account/privacy, permalink, advanced, payment and migration React components integrated by `tools/settings-adapters.mjs`. Email Settings remains in its dedicated feature.
+- `assets/src/features/integrations/`: seven editable Add-ons route, card, configuration and provider settings React components integrated by `tools/integration-adapters.mjs`.
+- `assets/src/features/webhooks/`: four editable webhook list, details, field-mapping and editor-modal React components integrated by `tools/webhook-adapters.mjs`.
+- `assets/src/features/taxonomies/`: editable Categories and Tags routes plus their shared taxonomy modal, integrated by `tools/taxonomy-adapters.mjs`.
+- `assets/src/features/setup/`: eleven editable Setup Wizard step, migration/import, controller and route components integrated by `tools/setup-adapters.mjs`.
+- `assets/src/features/ai-course-outline/`: eighteen editable prompt-template, generator, outline-preview and route components integrated by `tools/ai-course-adapters.mjs`.
 - `tools/vendor-adapters.mjs`: makes the two installed ProseMirror state export formats share the editor's existing CommonJS instance. The original duplicated generators caused `Adding different instances of a keyed plugin (plugin$)` in both original and recovered lesson screens. The parity build retains the untouched factories; the adapted build repairs the duplication rather than suppressing its error.
 - `build/`: generated output; never edit it.
 

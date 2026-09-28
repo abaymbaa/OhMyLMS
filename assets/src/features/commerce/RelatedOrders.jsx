@@ -2,17 +2,17 @@
  * RelatedOrders component (replaces recovered binding kQ).
  * Displays related orders table (linked subscriptions, renewal orders, parent orders).
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createRelatedOrders(readRuntime) {
-  return function RelatedOrders({relatedOrders = []}) {
+  return function RelatedOrders({ relatedOrders = [] }) {
     const {
       Ge: decodeEntities,
       I: Controls,
       OQ: formatPrice,
       React,
       VY: formatDateTime,
-      b: I18n
+      b: I18n,
     } = readRuntime();
 
     if (!Array.isArray(relatedOrders) || relatedOrders.length === 0) {
@@ -49,7 +49,7 @@ export function createRelatedOrders(readRuntime) {
               #{record.id}
             </Controls.TextWP>
           );
-        }
+        },
       },
       {
         title: I18n.__('Relationship', 'ohmylms'),
@@ -58,17 +58,17 @@ export function createRelatedOrders(readRuntime) {
           <Controls.TextWP as="span" color="#7A8B9A" weight={400} size={14}>
             {decodeEntities(record.relationship)}
           </Controls.TextWP>
-        )
+        ),
       },
       {
         title: I18n.__('Date', 'ohmylms'),
         key: 'date',
         dataIndex: 'date',
-        render: date => (
+        render: (date) => (
           <Controls.TextWP as="span" color="#7A8B9A" weight={400} size={14}>
             {formatDateTime(date) || I18n.__('N/A', 'ohmylms')}
           </Controls.TextWP>
-        )
+        ),
       },
       {
         title: I18n.__('Status', 'ohmylms'),
@@ -77,7 +77,7 @@ export function createRelatedOrders(readRuntime) {
           <Controls.TextWP as="span" color="#7A8B9A" weight={400} size={14}>
             {record.status}
           </Controls.TextWP>
-        )
+        ),
       },
       {
         title: I18n.__('Total', 'ohmylms'),
@@ -88,10 +88,10 @@ export function createRelatedOrders(readRuntime) {
             color="#000D25"
             weight={500}
             size={14}
-            dangerouslySetInnerHTML={{__html: formatPrice(record.total)}}
+            dangerouslySetInnerHTML={{ __html: formatPrice(record.total) }}
           />
-        )
-      }
+        ),
+      },
     ];
 
     return (

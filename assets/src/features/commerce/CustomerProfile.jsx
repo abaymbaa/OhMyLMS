@@ -2,21 +2,11 @@
  * CustomerProfile component (replaces recovered binding CQ).
  * Displays student profile card, avatar, email, and link to report.
  */
-import {createElement} from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 
 export function createCustomerProfile(readRuntime) {
-  return function CustomerProfile({
-    student_name,
-    student_email,
-    student_id,
-    student_image
-  }) {
-    const {
-      I: Controls,
-      React,
-      b: I18n,
-      g: ReactHooks
-    } = readRuntime();
+  return function CustomerProfile({ student_name, student_email, student_id, student_image }) {
+    const { I: Controls, React, b: I18n, g: ReactHooks } = readRuntime();
 
     const [isOpen, setIsOpen] = ReactHooks.useState(true);
 
@@ -28,7 +18,7 @@ export function createCustomerProfile(readRuntime) {
           </Controls.HeadingWP>
           <Controls.ButtonWP size="small" onClick={() => setIsOpen(!isOpen)}>
             <svg
-              style={{transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)'}}
+              style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}
               width="12"
               height="6"
               fill="none"
@@ -48,16 +38,16 @@ export function createCustomerProfile(readRuntime) {
               align="center"
               className="customer-profile-avater"
             >
-              <Controls.FlexItemWP style={{width: 'calc(100% - 128px)'}}>
+              <Controls.FlexItemWP style={{ width: 'calc(100% - 128px)' }}>
                 <Controls.FlexWP gap={5} align="center" justify="flex-start">
                   <Controls.AvatarWP src={student_image} size={48} shape="circle" />
-                  <Controls.FlexItemWP style={{width: 'calc(100% - 68px)'}}>
+                  <Controls.FlexItemWP style={{ width: 'calc(100% - 68px)' }}>
                     <Controls.TextWP
                       as="p"
                       size={14}
                       weight={600}
                       color="#000D25"
-                      style={{wordWrap: 'break-word'}}
+                      style={{ wordWrap: 'break-word' }}
                     >
                       {student_name}
                     </Controls.TextWP>
@@ -67,17 +57,17 @@ export function createCustomerProfile(readRuntime) {
                       size={12}
                       weight={500}
                       color="#7A8B9A"
-                      style={{textDecoration: 'underline'}}
+                      style={{ textDecoration: 'underline' }}
                     >
                       {student_email}
                     </Controls.ButtonWP>
                   </Controls.FlexItemWP>
                 </Controls.FlexWP>
               </Controls.FlexItemWP>
-              <Controls.FlexItemWP style={{textAlign: 'center'}}>
+              <Controls.FlexItemWP style={{ textAlign: 'center' }}>
                 <Controls.ButtonWP
                   variant="secondary"
-                  style={{backgroundColor: '#fff'}}
+                  style={{ backgroundColor: '#fff' }}
                   href={`/wp-admin/admin.php?page=creator-lms#/students/${student_id}/report`}
                   rel="noopener noreferrer"
                 >

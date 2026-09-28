@@ -52,46 +52,19 @@
     "binding": "mG",
     "name": "EarningsSummaryCards",
     "file": "EarningsSummaryCards.jsx",
-    "dependencies": [
-      "I",
-      "Mt",
-      "React",
-      "V",
-      "_",
-      "b"
-    ]
+    "dependencies": ["I", "Mt", "React", "V", "_", "b"]
   },
   {
     "binding": "wG",
     "name": "DashboardStats",
     "file": "DashboardStats.jsx",
-    "dependencies": [
-      "I",
-      "L",
-      "Mt",
-      "React",
-      "V",
-      "b",
-      "f"
-    ]
+    "dependencies": ["I", "L", "Mt", "React", "V", "b", "f"]
   },
   {
     "binding": "MG",
     "name": "TopCoursePerformance",
     "file": "TopCoursePerformance.jsx",
-    "dependencies": [
-      "EG",
-      "Ge",
-      "I",
-      "PG",
-      "React",
-      "SG",
-      "_",
-      "b",
-      "f",
-      "jG",
-      "lf"
-    ]
+    "dependencies": ["EG", "Ge", "I", "PG", "React", "SG", "_", "b", "f", "jG", "lf"]
   },
   {
     "binding": "_G",
@@ -123,23 +96,13 @@
     "binding": "fG",
     "name": "AnalyticsLinkIcon",
     "file": "AnalyticsLinkIcon.jsx",
-    "dependencies": [
-      "React"
-    ]
+    "dependencies": ["React"]
   },
   {
     "binding": "LG",
     "name": "CourseImportDialog",
     "file": "CourseImportDialog.jsx",
-    "dependencies": [
-      "DG",
-      "I",
-      "React",
-      "WG",
-      "b",
-      "g",
-      "zG"
-    ]
+    "dependencies": ["DG", "I", "React", "WG", "b", "g", "zG"]
   },
   {
     "binding": "bq",
@@ -182,27 +145,13 @@
     "binding": "vU",
     "name": "ReportMetricCard",
     "file": "ReportMetricCard.jsx",
-    "dependencies": [
-      "I",
-      "React"
-    ]
+    "dependencies": ["I", "React"]
   },
   {
     "binding": "LU",
     "name": "EarningsChart",
     "file": "EarningsChart.jsx",
-    "dependencies": [
-      "BU",
-      "DU",
-      "FU",
-      "NU",
-      "React",
-      "T",
-      "_",
-      "b",
-      "g",
-      "y"
-    ]
+    "dependencies": ["BU", "DU", "FU", "NU", "React", "T", "_", "b", "g", "y"]
   },
   {
     "binding": "lq",
@@ -242,49 +191,25 @@
     "binding": "XU",
     "name": "ReportStudentCell",
     "file": "ReportStudentCell.jsx",
-    "dependencies": [
-      "Ge",
-      "I",
-      "JU",
-      "L",
-      "PG",
-      "React",
-      "v",
-      "vG"
-    ]
+    "dependencies": ["Ge", "I", "JU", "L", "PG", "React", "v", "vG"]
   },
   {
     "binding": "GU",
     "name": "StudentReminderDialog",
     "file": "StudentReminderDialog.jsx",
-    "dependencies": [
-      "I",
-      "M",
-      "React",
-      "b",
-      "g"
-    ]
+    "dependencies": ["I", "M", "React", "b", "g"]
   },
   {
     "binding": "QU",
     "name": "AnalyticsDateFilter",
     "file": "AnalyticsDateFilter.jsx",
-    "dependencies": [
-      "I",
-      "React",
-      "b",
-      "g",
-      "qU"
-    ]
+    "dependencies": ["I", "React", "b", "g", "qU"]
   },
   {
     "binding": "Wq",
     "name": "EarningsReportPage",
     "file": "EarningsReportPage.jsx",
-    "dependencies": [
-      "Dq",
-      "React"
-    ]
+    "dependencies": ["Dq", "React"]
   },
   {
     "binding": "Nq",
@@ -325,18 +250,6 @@
     "binding": "Sq",
     "name": "TransactionHistory",
     "file": "TransactionHistory.jsx",
-    "dependencies": [
-      "Eq",
-      "I",
-      "L",
-      "React",
-      "ZU",
-      "b",
-      "df",
-      "g",
-      "sN",
-      "uf",
-      "vn"
-    ]
+    "dependencies": ["Eq", "I", "L", "React", "ZU", "b", "df", "g", "sN", "uf", "vn"]
   }
 ]
