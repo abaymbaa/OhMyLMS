@@ -17,10 +17,12 @@ import {membershipComponents} from '../features/memberships';
 import {communityComponents} from '../features/communities';
 import {analyticsComponents} from '../features/analytics';
 import {commerceComponents} from '../features/commerce';
+import {certificateComponents} from '../features/certificates';
+import {emailComponents} from '../features/emails';
 import {mountRegistration} from '../features/students/mountRegistration';
 const registry=createRegistry();
 const roots=new WeakMap();
-const publicApi={...registry,api,validateMembership,quizReportComponents,quizComponents,courseComponents,studentComponents,gamificationComponents,learningComponents,membershipComponents,communityComponents,analyticsComponents,commerceComponents,
+const publicApi={...registry,api,validateMembership,quizReportComponents,quizComponents,courseComponents,studentComponents,gamificationComponents,learningComponents,membershipComponents,communityComponents,analyticsComponents,commerceComponents,certificateComponents,emailComponents,
  extendRoutes(routes){
    return [...routes.map(route=>route.path==='*'?route:{...route,element:wrapScreen(route.element,route.path,registry)}),...registry.list('admin-page').map(entry=>({path:`/extensions/${entry.id}`,element:extensionPage(entry)}))];
  },

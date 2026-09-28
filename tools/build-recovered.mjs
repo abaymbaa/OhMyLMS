@@ -16,6 +16,8 @@ import {adaptMemberships} from './membership-adapters.mjs';
 import {adaptCommunities} from './community-adapters.mjs';
 import {adaptAnalytics} from './analytics-adapters.mjs';
 import {adaptCommerce} from './commerce-adapters.mjs';
+import {adaptCertificates} from './certificate-adapters.mjs';
+import {adaptEmails} from './email-adapters.mjs';
 const traverse=traverseModule.default||traverseModule;
 const generate=generatorModule.default||generatorModule;
 const root=path.resolve(import.meta.dirname,'..');
@@ -49,6 +51,8 @@ for(const asset of manifest.assets){
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Community adapters:',adaptCommunities(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Analytics adapters:',adaptAnalytics(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Commerce adapters:',adaptCommerce(ast));
+    if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Certificate adapters:',adaptCertificates(ast));
+    if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Email adapters:',adaptEmails(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/vendors/vendors.js')console.log('Vendor adapters:',adaptVendors(ast));
     const result=generate(ast,{sourceMaps:true,comments:true,compact:false},sources);
     fs.writeFileSync(destination,result.code+'\n//# sourceMappingURL='+path.basename(destination)+'.map\n');

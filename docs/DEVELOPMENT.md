@@ -14,6 +14,8 @@ The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working s
 - `assets/src/features/courses/`: 25 course components, authored editor/create/settings views, load/save and integration hooks, API client and model helpers. See COURSE-SOURCE.md for tested scope and compatibility boundaries.
 - `tools/course-adapters.mjs`: checked integration of native course components into the recovered runtime.
 - `tools/application-adapters.mjs`: checked AST integration points. Missing/changed patterns fail the build.
+- `assets/src/features/certificates/`: 13 editable certificate list, template, editor, design-control and preview React components integrated by `tools/certificate-adapters.mjs`.
+- `assets/src/features/emails/`: 12 editable notification-template settings, personalization, editor, field and responsive-preview React components integrated by `tools/email-adapters.mjs`.
 - `tools/vendor-adapters.mjs`: makes the two installed ProseMirror state export formats share the editor's existing CommonJS instance. The original duplicated generators caused `Adding different instances of a keyed plugin (plugin$)` in both original and recovered lesson screens. The parity build retains the untouched factories; the adapted build repairs the duplication rather than suppressing its error.
 - `build/`: generated output; never edit it.
 

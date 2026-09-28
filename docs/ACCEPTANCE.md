@@ -33,6 +33,18 @@ Twenty-five named course React components now build from `assets/src/features/co
 
 The new browser scenarios cover course creation/failure/retry, adding a second chapter, editing title/description/chapter name, saving/reopening with lesson relationships, pricing/settings navigation, publishing, and simulated chapter-write failure/retry. Four new JavaScript tests pass, bringing the full JavaScript suite to 14. The 60 isolated PHP checks remain passing. This is not full course-system acceptance or a math-site release.
 
+## Certificate increment
+
+Thirteen named React components now build from `assets/src/features/certificates/`. They cover the certificate list, row actions, filtering, bulk deletion, template selection, editor route, header and persistence controls, design fields, preview, image fields and course assignment. The checked certificate adapter requires all 13 factory bindings during production builds. The existing WordPress store, REST endpoints, shared controls, HTML-to-image/PDF helpers, templates, permissions and Pro gating remain in place.
+
+Focused source and adapter tests pass, all source parses, the production build integrates all 13 replacements, and 142 generated artifacts are byte-identical across two builds. Existing route smoke coverage includes `/certificates`; complete certificate creation/editing/publishing/PDF browser acceptance remains a release gate.
+
+## Email settings and templates increment
+
+Twelve named React components now build from `assets/src/features/emails/`. They cover administrator/student notification lists, enable toggles, branding and sender personalization, the individual template editor, editable subject/body/footer fields, responsive controls and template-specific HTML previews. The checked email adapter requires all 12 factory bindings during production builds. Existing WordPress store and REST behavior remains unchanged.
+
+Focused source and adapter tests cover the conversion boundary. Existing smoke coverage reaches email settings through the Settings route; complete save/reload, delivery, responsive email-client rendering and permission acceptance remain release gates.
+
 ## Remaining release gates
 
 - Convert remaining reconstructed shared scopes into independent named modules. Editable fragments are not the final maintainability goal.
