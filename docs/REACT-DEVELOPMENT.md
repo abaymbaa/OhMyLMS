@@ -43,3 +43,5 @@ npm run check
 `check` runs formatting, contracts, the parity/behavior tests and the production build. For release work, also run `npm run test:reproducible` and the relevant browser suite on the isolated test site described in `DEVELOPMENT.md`. Browser tests require `OMLMS_TEST_CREDENTIALS`; they are not part of the default check.
 
 Source assets still require `OMLMS_SOURCE_ASSETS`. A successful build alone does not enable them on a site. Much of the converted UI still relies on recovered stores, controls and transpiler helpers; migrate those boundaries incrementally with behavior coverage.
+
+The adapted vendor build shares WordPress's preferences store and keyboard-shortcut exports, with their script handles declared as dependencies by `SourceAssets`. The connection-status label helper uses the provider's string values without importing the unused collaboration provider and its second Yjs runtime. These adaptations live in `tools/vendor-adapters.mjs`; recovered baseline files stay unchanged for parity checks.

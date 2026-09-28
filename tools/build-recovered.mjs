@@ -5,7 +5,7 @@ import {parse} from '@babel/parser';
 import traverseModule from '@babel/traverse';
 import generatorModule from '@babel/generator';
 import {adaptApplication} from './application-adapters.mjs';
-import {adaptVendors} from './vendor-adapters.mjs';
+import {adaptVendors, adaptConnectionStatus} from './vendor-adapters.mjs';
 import {adaptQuizzes} from './quiz-adapters.mjs';
 import {adaptCourses} from './course-adapters.mjs';
 import {adaptStudents} from './student-adapters.mjs';
@@ -66,6 +66,7 @@ for(const asset of manifest.assets){
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Setup adapters:',adaptSetup(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('AI course adapters:',adaptAiCourse(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/vendors/vendors.js')console.log('Vendor adapters:',adaptVendors(ast));
+    if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/creatorlms.js')console.log('Connection adapter:',adaptConnectionStatus(ast));
     const result=generate(ast,{sourceMaps:true,comments:true,compact:false},sources);
     fs.writeFileSync(destination,result.code+'\n//# sourceMappingURL='+path.basename(destination)+'.map\n');
     fs.writeFileSync(destination+'.map',JSON.stringify(result.map));

@@ -25,6 +25,9 @@ final class SourceAssets {
         wp_enqueue_script('ohmylms-extension-sdk', plugins_url('build/sdk/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge(Registry::manifest(), ['settings'=>Settings::manifest()]));
         $scripts = wp_scripts();
+        if (isset($scripts->registered['creator-lms-vendor'])) {
+            $scripts->registered['creator-lms-vendor']->deps = array_values(array_unique(array_merge($scripts->registered['creator-lms-vendor']->deps, ['wp-preferences', 'wp-keyboard-shortcuts'])));
+        }
         $before = $scripts->queue;
         do_action('ohmylms_enqueue_extension_scripts', 'ohmylms-extension-sdk');
         if (isset($scripts->registered['creator-lms'])) {
