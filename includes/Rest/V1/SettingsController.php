@@ -296,6 +296,7 @@ class SettingsController extends RestController {
 			'creatorlms_paypal_settings',
 			'creatorlms_mollie_settings',
 			'creatorlms_razorpay_settings',
+			'creatorlms_qpay_settings',
 			'creatorlms_authorize_net_settings',
 			'creator_lms_currency',
 			'creator_lms_currency_pos',

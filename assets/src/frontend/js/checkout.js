@@ -244,6 +244,10 @@
 				}
 				let that = this;
 				var selectedGateway = Checkout.selectedPaymentMethod;
+                var gatewayHandler = window.PaymentGatewayHandlers && window.PaymentGatewayHandlers[form.find('input[name="payment_method"]:checked').val()];
+                if (gatewayHandler && gatewayHandler.resume && gatewayHandler.resume(form)) { return false; }
+                if (gatewayHandler) { form.addClass('processing'); }
+
 				if (selectedGateway && 'payment_method_stripe' === selectedGateway) {
 					return;
 				}
@@ -255,11 +259,24 @@
 					url: omlms_checkout_params.ajax_url,
 					data: form.serialize(),
 					dataType: 'json',
+                    error: function () {
+                        if (gatewayHandler) {
+                            form.removeClass('processing');
+                            form.find('.creator-lms-place-order-button').prop('disabled', false);
+                            form.find('.creator-lms-loader').hide();
+                        }
+                    },
 					success: function success(response) {
 						$('.omlms-notices-wrapper').empty();
 						form.removeClass('processing');
 						form.find('.creator-lms-place-order-button .creator-lms-loader').hide();
 						form.find('.creator-lms-place-order-button').prop('disabled', true);
+
+                        if (response.payment_status === 'pending') {
+                            form.find('.creator-lms-place-order-button').prop('disabled', false);
+                            if (gatewayHandler && gatewayHandler.open) { gatewayHandler.open(response, form); }
+                            return;
+                        }
 						if (response.success || 'success' === response.result) {
 							window.location.href = response.redirect;
 							$(that).find('.creator-lms-place-order-button .creator-lms-loader').hide();

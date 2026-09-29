@@ -423,6 +423,20 @@ class Checkout {
                 }
 
                 // Handle WP_Error result
+                // QPay errors must retain the pending order: a timed-out invoice request
+                // may already exist remotely. Keep its browser capability for safe resume.
+                if ( 'qpay' === ( $posted_data['payment_method'] ?? '' ) && is_wp_error( $result ) ) {
+                    $token = get_post_meta( $order_id, '_qpay_browser_token', true );
+                    if ( ! $token ) {
+                        $token = wp_generate_password( 48, false, false );
+                        update_post_meta( $order_id, '_qpay_browser_token', $token );
+                    }
+                    $result = array(
+                        'result' => 'success', 'payment_status' => 'pending', 'payment_method' => 'qpay',
+                        'order_id' => $order_id, 'payment_token' => $token,
+                        'payment_error' => $result->get_error_message(),
+                    );
+                }
                 if ( is_wp_error( $result ) ) {
                     $message = __( 'Failed to process order due to payment.', 'ohmylms' );
                     omlmse_add_notice( $result->get_error_message() ?: $message, 'error', array() );
@@ -447,7 +461,10 @@ class Checkout {
                     ! empty( $result[ 'redirect' ] )
                 );
 
-                do_action( 'ecommerce_after_payment_completed', $order, $result );
+                $payment_pending = is_array( $result ) && 'pending' === ( $result['payment_status'] ?? '' );
+                if ( ! $payment_pending ) {
+                    do_action( 'ecommerce_after_payment_completed', $order, $result );
+                }
 
                 // Only trigger order creation hook after confirmed payment or for free orders
                 // Check if payment requires external redirect ( like Mollie, PayPal, etc. )
@@ -467,7 +484,7 @@ class Checkout {
 				
 				$is_razorpay = isset($result['payment_method']) && $result['payment_method'] === 'razorpay';
 				
-				if( $is_razorpay ) {
+				if( $is_razorpay || $payment_pending ) {
 					$payment_confirmed = false; // Razorpay requires webhook confirmation, so we don't confirm payment here
 				}
 				
@@ -527,12 +544,24 @@ class Checkout {
                     $order->set_total( 0 );
                     $order->save();
                 }
-                do_action( 'creator_lms_after_checkout_process', $order );
+                if ( ! $payment_pending ) {
+                    do_action( 'creator_lms_after_checkout_process', $order );
+                }
                 update_post_meta( $order_id, '_student_ip_address', $user_ip );
                 update_post_meta( $order_id, '_student_user_agent', $user_agent );
 
+                if ( $payment_pending && 'qpay' === ( $result['payment_method'] ?? '' ) ) {
+                    update_post_meta( $order_id, '_qpay_checkout_ready', 1 );
+                    // Finish an early verified callback even if the buyer closes the browser.
+                    // This reads local verification only and never polls QPay's API.
+                    \CodeRex\Ecommerce\Gateways\QPay\PaymentService::settle(
+                        $order_id,
+                        ecommerce()->gateways()->get_payment_gateways()['qpay']
+                    );
+                }
+
                 // Check for funnel processing after successful payment
-                $funnel_result = $this->maybe_process_funnel( $order_id, $posted_data, $result );
+                $funnel_result = $payment_pending ? array() : $this->maybe_process_funnel( $order_id, $posted_data, $result );
 
                 if ( isset( $funnel_result[ 'result' ] ) && 'success' === $funnel_result[ 'result' ] ) {
                     $funnel_result[ 'order_id' ] = $order_id;
@@ -544,7 +573,9 @@ class Checkout {
                 }
 
                 $result = apply_filters( 'creator_lms_checkout_process_result', $result, $order_id, $posted_data );
-                \omlms_empty_cart();
+                if ( ! $payment_pending ) {
+                    \omlms_empty_cart();
+                }
 
                 // Send JSON response if we have a valid result ( success or redirect )
                 // This ensures payment gateway redirects work even if error notices were added

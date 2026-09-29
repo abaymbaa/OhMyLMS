@@ -58,6 +58,7 @@ class Gateways extends SettingsPage {
 			'GatewayPaypal',
 			'GatewayMollie',
 			'GatewayRazorPay',
+			\CodeRex\Ecommerce\Gateways\QPay\GatewayQPay::class,
 		);
 
 		$load_gateways = apply_filters( 'creatorlms_payment_gateways', $load_gateways );

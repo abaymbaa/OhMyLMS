@@ -125,9 +125,10 @@ try {
     verify_extension($order_id>0,'Order fixture failed');
     do_action('creator_lms_checkout_order_created',$order);
     verify_extension(get_post_meta($order_id,'_ohmylms_extension_fields',true)['example-reference']==='Saved after ID','Checkout metadata hook lost fields before ID assigned');
-    add_filter('pre_option_creatorlms_qpay_settings',static function(){return ['testmode'=>'yes','test_client_id'=>'fixture','test_client_secret'=>'fixture','invoice_code'=>'fixture'];});
-    $gateway=new GatewayQPay();
-    QPayAPI::clear_tokens();
+    $qpay_settings=['enabled'=>'yes','testmode'=>'yes','test_client_id'=>'fixture','test_client_secret'=>'fixture','invoice_code'=>'fixture'];
+    add_filter('pre_option_creatorlms_qpay_settings',static function()use($qpay_settings){return $qpay_settings;});
+    $gateway=new \CodeRex\Ecommerce\Gateways\QPay\GatewayQPay();
+    \CodeRex\Ecommerce\Gateways\QPay\QPayAPI::settings_changed($qpay_settings,$qpay_settings);
     $payment_mode='unpaid';$payment_requests=0;
     $mock=static function($pre,$args,$url)use(&$payment_mode,&$payment_requests){
         if(strpos($url,'https://merchant-sandbox.qpay.mn/')!==0)return $pre;
@@ -136,8 +137,8 @@ try {
         elseif(strpos($url,'/payment/check')!==false){
             if($payment_mode==='failure')return new WP_Error('mock_payment_failure','Mock network failure');
             $amount=['unpaid'=>0,'partial'=>1,'paid'=>100][$payment_mode];
-            $body=['count'=>$amount?1:0,'paid_amount'=>$amount,'rows'=>$amount?[['payment_id'=>'fixture-payment']]:[]];
-        }else $body=['invoice_id'=>'fixture-invoice','qr_text'=>'fixture-qr','urls'=>[]];
+            $body=['count'=>$amount?1:0,'paid_amount'=>$amount,'rows'=>$amount?[['payment_id'=>'fixture-payment','payment_status'=>'PAID','payment_amount'=>(string)$amount,'payment_currency'=>'MNT']]:[]];
+        }else $body=['invoice_id'=>'fixture-invoice','qr_image'=>'aGVsbG8=','urls'=>[]];
         return ['response'=>['code'=>200,'message'=>'OK'],'headers'=>[],'body'=>wp_json_encode($body),'cookies'=>[]];
     };
     add_filter('pre_http_request',$mock,PHP_INT_MAX,3);
@@ -145,16 +146,18 @@ try {
         $payment=$gateway->process_payment($order_id);
         verify_extension($payment['result']==='success'&&$payment['qpay_invoice_id']==='fixture-invoice','Mock invoice failed');
         $request=new WP_REST_Request('POST');$request->set_param('order_id',$order_id);
+        $request->set_param('qpay_token',get_post_meta($order_id,'_qpay_callback_token',true));
+        update_post_meta($order_id,'_qpay_checkout_ready',1);
         foreach(['unpaid','partial','failure'] as $payment_mode){
             $callback=$gateway->handle_callback($request);
             verify_extension(!in_array(ecommerce_get_order($order_id)->get_status(),['completed','processing'],true),"$payment_mode payment incorrectly completed order");
-            if($payment_mode==='failure')verify_extension($callback->get_status()===500,'Payment failure was hidden');
+            if($payment_mode==='failure')verify_extension($callback->get_status()===503,'Payment failure was hidden');
         }
         $payment_mode='paid';$callback=$gateway->handle_callback($request);
         verify_extension($callback->get_status()===200&&in_array(ecommerce_get_order($order_id)->get_status(),['completed','processing'],true),'Verified full payment failed');
         $requests_before=$payment_requests;$callback=$gateway->handle_callback($request);
         verify_extension($callback->get_status()===200&&$requests_before===$payment_requests,'Duplicate callback repeated payment processing');
-    } finally {remove_filter('pre_http_request',$mock,PHP_INT_MAX);QPayAPI::clear_tokens();}
+    } finally {remove_filter('pre_http_request',$mock,PHP_INT_MAX);\CodeRex\Ecommerce\Gateways\QPay\QPayAPI::settings_changed($qpay_settings,$qpay_settings);}
     echo "$checks isolated extension integration checks passed.\n";
 } finally {
     wp_set_current_user($admin->ID);

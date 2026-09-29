@@ -21,6 +21,7 @@ unset($ohmylms_active);
 define('OHMYLMS_FILE', __FILE__);
 define('OHMYLMS_DIR', __DIR__);
 define('OHMYLMS_VERSION', '1.2.20');
+define('OHMYLMS_NATIVE_QPAY', true);
 define('OMLMS_FILE', __FILE__);
 define('CREATOR_LMS_VERSION', OHMYLMS_VERSION);
 define('CREATOR_LMS_DIR', __DIR__);

@@ -58,7 +58,7 @@ class FrontendAssets extends Assets {
 				'src'       => self::get_asset_url( 'assets/dist/frontend/checkout' . $suffix . '.js' ),
 				'deps'      => array(  'wp-i18n', 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => CREATOR_LMS_VERSION . '-' . filemtime( CREATOR_LMS_DIR . '/assets/dist/frontend/checkout.js' ),
 			),
 			'omlms-tax-calculation' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/tax-calculation' . $suffix . '.js' ),

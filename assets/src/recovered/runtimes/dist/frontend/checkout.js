@@ -106,6 +106,9 @@
         r.preventDefault(), e(".omlms-notices-wrapper").empty(), e(this).find(".creator-lms-place-order-button .creator-lms-loader").show(), e(this).find(".creator-lms-place-order-button").prop("disabled", !0);
         var o = e(this);
         if (o.find('button[type="submit"]'), o.is(".processing")) return o.find(".creator-lms-place-order-button .creator-lms-loader").hide(), o.find(".creator-lms-place-order-button").prop("disabled", !0), !1;
+        var gatewayHandler = window.PaymentGatewayHandlers && window.PaymentGatewayHandlers[o.find('input[name="payment_method"]:checked').val()];
+        if (gatewayHandler && gatewayHandler.resume && gatewayHandler.resume(o)) return false;
+        if (gatewayHandler) o.addClass('processing');
         var a = this,
           s = t.selectedPaymentMethod;
         s && "payment_method_stripe" === s || s && "payment_method_razorpay" === s || e.ajax({
@@ -113,7 +116,21 @@
           url: omlms_checkout_params.ajax_url,
           data: o.serialize(),
           dataType: "json",
+          error: function () {
+            if (gatewayHandler) {
+              o.removeClass('processing');
+              o.find('.creator-lms-place-order-button').prop('disabled', false);
+              o.find('.creator-lms-loader').hide();
+            }
+          },
           success: function (r) {
+            if (r.payment_status === 'pending') {
+              o.removeClass('processing');
+              o.find('.creator-lms-place-order-button .creator-lms-loader').hide();
+              o.find('.creator-lms-place-order-button').prop('disabled', false);
+              if (gatewayHandler && gatewayHandler.open) gatewayHandler.open(r, o);
+              return;
+            }
             e(".omlms-notices-wrapper").empty(), o.removeClass("processing"), o.find(".creator-lms-place-order-button .creator-lms-loader").hide(), o.find(".creator-lms-place-order-button").prop("disabled", !0), r.success || "success" === r.result ? (window.location.href = r.redirect, e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").prop("disabled", !1)) : (e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").prop("disabled", !1)), r.message && (t.submit_error(o, r.message), e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").removeAttr("disabled"));
           }
         });
