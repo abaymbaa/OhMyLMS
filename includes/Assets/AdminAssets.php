@@ -49,7 +49,7 @@ class AdminAssets extends Assets {
 			'creator-lms'      => array(
 				'src'       => self::get_asset_url( 'assets/dist/admin/creatorlms' . $suffix . '.js' ),
 				'deps'      => array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-api-fetch', 'creator-lms-vendor', 'creator-lms-chartjs', 'creator-lms-editor', 'creator-lms-emotion' ),
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => CREATOR_LMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/dist/admin/creatorlms' . $suffix . '.js' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_creator-lms' ),
 			)

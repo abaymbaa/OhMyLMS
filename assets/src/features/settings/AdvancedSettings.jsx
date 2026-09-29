@@ -202,7 +202,7 @@ export function createAdvancedSettings(readRuntime) {
                       fontWeight: 600,
                     }}
                   >
-                    {(0, I18n.__)('Remove CreatorLMS Transient cache', 'ohmylms')}
+                    {(0, I18n.__)('Remove OhMyLMS Transient cache', 'ohmylms')}
                   </h3>
                   <p
                     style={{
@@ -212,7 +212,7 @@ export function createAdvancedSettings(readRuntime) {
                     }}
                   >
                     {(0, I18n.__)(
-                      'Click the button below to delete all CreatorLMS transient cache. This can help resolve certain issues with cached data.',
+                      'Click the button below to delete all OhMyLMS transient cache. This can help resolve certain issues with cached data.',
                       'ohmylms',
                     )}
                   </p>

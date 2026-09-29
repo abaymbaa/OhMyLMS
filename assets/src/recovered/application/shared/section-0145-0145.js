@@ -441,13 +441,13 @@ var fJ = function (e) {
       fontSize: "16px",
       fontWeight: 600
     }
-  }, (0, b.__)("Remove CreatorLMS Transient cache", "ohmylms")), React.createElement("p", {
+  }, (0, b.__)("Remove OhMyLMS Transient cache", "ohmylms")), React.createElement("p", {
     style: {
       marginTop: "8px",
       color: "#687784",
       fontSize: "14px"
     }
-  }, (0, b.__)("Click the button below to delete all CreatorLMS transient cache. This can help resolve certain issues with cached data.", "ohmylms")), React.createElement(I.ButtonWP, {
+  }, (0, b.__)("Click the button below to delete all OhMyLMS transient cache. This can help resolve certain issues with cached data.", "ohmylms")), React.createElement(I.ButtonWP, {
     variant: "primary",
     danger: !0,
     onClick: _,
