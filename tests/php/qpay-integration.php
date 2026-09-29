@@ -69,7 +69,11 @@ try {
     qcheck( $gateway->can_read_order( $order, $result['payment_token'] ), 'Correct capability rejected' );
     wp_set_current_user( $admin->ID ); qcheck( $gateway->can_read_order( $order ), 'Owner access rejected' );
     $before = count( $calls ); PaymentService::settle( $id, $gateway );
-    qcheck( count( $calls ) === $before, 'Browser polling called QPay' );
+    qcheck( count( $calls ) === $before, 'Local settlement unexpectedly called QPay' );
+    PaymentService::settle( $id, $gateway, 'poll' );
+    qcheck( count( $calls ) > $before, 'Automatic polling did not verify with QPay' );
+    $before = count( $calls ); PaymentService::settle( $id, $gateway, 'poll' );
+    qcheck( count( $calls ) === $before, 'Automatic polling ignored its shared rate limit' );
     $callback = new WP_REST_Request( 'GET' ); $callback->set_param( 'order_id', $id );
     qcheck( 403 === $gateway->handle_callback( $callback )->get_status(), 'Missing callback token accepted' );
     $callback->set_param( 'qpay_token', get_post_meta( $id, '_qpay_callback_token', true ) );
@@ -94,6 +98,12 @@ try {
     $snapshot = $events;
     $gateway->handle_callback( $callback ); PaymentService::settle( $id, $gateway );
     qcheck( $events === $snapshot && 1 === $events['creator_lms_checkout_after_create_order'], 'Duplicate completion events' );
+    $auto = qorder(); $gateway->process_payment( $auto->get_id() );
+    update_post_meta( $auto->get_id(), '_qpay_checkout_ready', 1 );
+    qcheck( 'paid' === PaymentService::settle( $auto->get_id(), $gateway, 'poll' )['status'], 'Paid invoice did not complete without callback' );
+    $snapshot = $events; $before = count( $calls );
+    PaymentService::settle( $auto->get_id(), $gateway, 'poll' );
+    qcheck( $events === $snapshot && count( $calls ) === $before, 'Completed polling repeated verification or fulfillment' );
     // Separate DB connection holds the lock, exactly as a concurrent worker would.
     $other = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
     $key = 'omlms_qpay_' . md5( $wpdb->prefix . ':' . $id );

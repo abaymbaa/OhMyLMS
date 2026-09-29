@@ -19,7 +19,7 @@ class SettingsHook
         }
 
         $pages['membership'] = array(
-            'name'    => _x( 'cr-all-membership', 'Page slug', 'creator-lms' ),
+            'name'    => _x( 'ohmylms-all-membership', 'Page slug', 'creator-lms' ),
             'title'   => _x( 'All Membership', 'Page title', 'creator-lms' ),
             'content' => '<!-- wp:shortcode -->[creator_lms_membership_plan]<!-- /wp:shortcode -->',
         );

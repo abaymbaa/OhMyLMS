@@ -15,7 +15,7 @@ function omlms_get_page_id( $page ) {
 	$page_id = apply_filters( 'creator_lms_get_' . $page . '_page_id', get_option( 'creator_lms_' . $page . '_page_id' ) );
 	if( 'course' === $page ) {
 		$page_slug = get_post_field( 'post_name', $page_id );
-		if( 'cr-all-courses' !== $page_slug) {
+		if( ! in_array( $page_slug, array( 'cr-all-courses', 'ohmylms-all-courses' ), true ) ) {
 			return -1;
 		}
 	}

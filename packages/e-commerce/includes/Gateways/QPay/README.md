@@ -23,9 +23,10 @@ otherwise deactivate the old add-on before enabling native QPay.
   New invoices add a separate random `qpay_token`. Historical URLs still work.
   A callback is only a notification: the server verifies the stored invoice via
   QPay before completing the order.
-- Browser AJAX `omlms_qpay_check_payment` polls local state only. It requires the
+- Browser AJAX `omlms_qpay_check_payment` verifies with QPay at most once every
+  ten seconds per pending order, including across browser tabs. It requires the
   checkout nonce and either ownership or `payment_token`. `omlms_qpay_resume`
-  reopens the same invoice. Closing the dialog pauses polling; five minutes of
+  verifies immediately and reopens the same invoice if unpaid. Closing the dialog pauses polling; five minutes of
   waiting does not cancel or expire the invoice. A session-storage resume button
   survives reloads in the same tab. Form contents are not stored.
 - Verification sums unique PAID MNT payment rows for the stored invoice and
@@ -51,11 +52,12 @@ the order number (`sender_invoice_no`) in the QPay merchant system before closin
 an unpaid order and asking the buyer to start a new purchase. A received payment
 must be reconciled before an administrator cancels or edits its order.
 
-QPay's Merchant documentation specifies callback-triggered verification. There
-is no recurring QPay API polling job. See
+Callbacks trigger immediate verification; open checkout dialogs also verify
+automatically so local sites and missed callbacks can recover. There is no
+background polling job after the dialog closes. See
 [Merchant V2 documentation](https://developer.qpay.mn/mn/docs/merchant?version=2.0.0).
-The callback must be publicly reachable over HTTPS for provider testing.
-`math.local` alone is not a public callback endpoint.
+Testing callback delivery requires a publicly reachable HTTPS URL. Local sites
+can confirm payments through browser polling or explicit Check/Resume actions.
 
 ## Verification
 

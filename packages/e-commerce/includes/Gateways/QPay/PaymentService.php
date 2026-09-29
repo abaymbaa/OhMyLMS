@@ -77,6 +77,13 @@ class PaymentService {
             }
             if ( ! $invoice ) { return array( 'status' => 'pending' ); }
             $details = get_post_meta( $order_id, '_qpay_verified_payment', true );
+            // The order lock makes this limit shared across tabs and concurrent requests.
+            // Callbacks and explicit recovery checks can still verify immediately.
+            if ( 'poll' === $verify ) {
+                $last_check = (int) get_post_meta( $order_id, '_qpay_last_poll_check', true );
+                $verify = ! $details && time() - $last_check >= 10;
+                if ( $verify ) { update_post_meta( $order_id, '_qpay_last_poll_check', time() ); }
+            }
             if ( $verify ) {
                 $api = $gateway->api_for_order( $order_id );
                 if ( is_wp_error( $api ) ) { return $api; }

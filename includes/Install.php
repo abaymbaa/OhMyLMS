@@ -579,13 +579,13 @@ class Install {
 			'creator_lms_default_pages',
 			array(
 				'course'   => array(
-					'name'    => _x( 'cr-all-courses', 'Page slug', 'ohmylms' ),
+					'name'    => _x( 'ohmylms-all-courses', 'Page slug', 'ohmylms' ),
 					'title'   => _x( 'All Course', 'Page title', 'ohmylms' ),
 					'content' => '',
 				),
 				'checkout' => array(
-					'name'    => _x( 'cr-checkout', 'Page slug', 'ohmylms' ),
-					'title'   => _x( 'CR Checkout', 'Page title', 'ohmylms' ),
+					'name'    => _x( 'ohmylms-checkout', 'Page slug', 'ohmylms' ),
+					'title'   => _x( 'OhMy Checkout', 'Page title', 'ohmylms' ),
 					'content' => '<!-- wp:shortcode -->[creator_lms_checkout]<!-- /wp:shortcode -->',
 					'template' => 'omlms-checkout',
 				),
@@ -900,7 +900,7 @@ public static function bundled_create_pages() {
 			'creator_lms_pro_default_pages',
 			array(
 				'membership' => array(
-					'name'    => _x( 'cr-all-membership', 'Page slug', 'creator-lms' ),
+					'name'    => _x( 'ohmylms-all-membership', 'Page slug', 'creator-lms' ),
 					'title'   => _x( 'All Membership', 'Page title', 'creator-lms' ),
 					'content' => '',
 				),

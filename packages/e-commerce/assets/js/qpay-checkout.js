@@ -35,7 +35,7 @@
         $('<p class="omlms-qpay-bank-label"></p>').text(i18n.banks).appendTo(modal);
         $('<div class="omlms-qpay-banks"></div>').appendTo(modal);
         $('<p class="omlms-qpay-status" role="status" aria-live="polite"></p>').appendTo(modal);
-        $('<button type="button" class="omlms-qpay-check"></button>').text(i18n.check).on('click', poll).appendTo(modal);
+        $('<button type="button" class="omlms-qpay-check"></button>').text(i18n.check).on('click', resumeAttempt).appendTo(modal);
         modal.on('cancel', function (event) { event.preventDefault(); close(); });
         modal.appendTo(document.body);
     }

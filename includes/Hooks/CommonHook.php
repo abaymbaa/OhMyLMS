@@ -1141,7 +1141,7 @@ class CommonHook extends HookHandler {
 		if ( ! $post ) {
 			return $title;
 		}
-		$slugs = array( 'cr-all-courses', 'cr-all-membership', 'cr-checkout', 'cr-checkout-2', 'my-profile' );
+		$slugs = array( 'cr-all-courses', 'cr-all-membership', 'cr-checkout', 'cr-checkout-2', 'ohmylms-all-courses', 'ohmylms-all-membership', 'ohmylms-checkout', 'my-profile' );
 		if ( isset( $post->post_name ) && in_array( $post->post_name, $slugs, true ) ) {
 			$title = '';
 		}

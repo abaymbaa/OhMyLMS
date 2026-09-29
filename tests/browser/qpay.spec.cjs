@@ -75,6 +75,21 @@ test('unpaid polling timeout pauses checking without reporting an expired invoic
   await expect(page.getByRole('button',{name:'Resume checking',exact:true})).toBeEnabled();
 });
 
+test('explicit payment check recovers a paid invoice without a callback',async({page})=>{
+  const {calls}=await setup(page);
+  await page.getByRole('button',{name:'Place order'}).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.route('http://qpay.test/admin-ajax.php',async route=>{
+    const data=new URLSearchParams(route.request().postData());
+    if(data.get('action')!=='omlms_qpay_resume') { await route.fallback(); return; }
+    expect(data.get('payment_token')).toBe('test-capability');
+    await route.fulfill({json:{success:true,data:{status:'paid',redirect_url:'http://qpay.test/thanks'}}});
+  });
+  await page.getByRole('button',{name:'Resume checking',exact:true}).click();
+  await expect(page).toHaveURL('http://qpay.test/thanks');
+  expect(calls.checkout).toBe(1);
+});
+
 test('other gateways still follow their redirect response',async({page})=>{
   await setup(page);
   await page.evaluate(()=>{document.querySelector('[name="payment_method"]').value='offline';});

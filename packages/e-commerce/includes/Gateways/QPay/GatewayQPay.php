@@ -295,16 +295,17 @@ class GatewayQPay extends PaymentGateway {
     }
 
     public function ajax_check_payment() {
-        // Poll local state only. QPay requires verification after a callback, not repeated API polling.
+        // Verify directly as a fallback when callbacks cannot reach the site.
         $id = $this->ajax_order();
-        $result = PaymentService::settle( $id, $this );
+        $result = PaymentService::settle( $id, $this, 'poll' );
         $this->clear_paid_cart( $id, $result );
         $this->send_ajax_result( $result );
     }
 
     public function ajax_resume() {
         $id = $this->ajax_order();
-        $state = PaymentService::settle( $id, $this );
+        // Explicit customer recovery also works when the provider callback was delayed or unreachable.
+        $state = PaymentService::settle( $id, $this, true );
         $this->clear_paid_cart( $id, $state );
         if ( is_wp_error( $state ) || 'paid' === $state['status'] ) { $this->send_ajax_result( $state ); return; }
         $this->send_ajax_result( $this->process_payment( $id ) );

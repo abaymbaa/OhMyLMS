@@ -472,13 +472,13 @@ class SettingsController extends RestController {
 			'creator_lms_default_pages',
 			array(
 				'course'            => array(
-					'name'    => _x( 'cr-all-courses', 'Page slug', 'ohmylms' ),
+					'name'    => _x( 'ohmylms-all-courses', 'Page slug', 'ohmylms' ),
 					'title'   => _x( 'All Course', 'Page title', 'ohmylms' ),
 					'content' => '',
 				),
 				'checkout'          => array(
-					'name'     => _x( 'cr-checkout', 'Page slug', 'ohmylms' ),
-					'title'    => _x( 'CR Checkout', 'Page title', 'ohmylms' ),
+					'name'     => _x( 'ohmylms-checkout', 'Page slug', 'ohmylms' ),
+					'title'    => _x( 'OhMy Checkout', 'Page title', 'ohmylms' ),
 					'content'  => '<!-- wp:shortcode -->[creator_lms_checkout]<!-- /wp:shortcode -->',
 					'template' => 'omlms-checkout',
 				),
