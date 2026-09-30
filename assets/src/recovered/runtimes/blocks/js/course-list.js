@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Course List Block
+ * OhMyLMS Course List Block
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
@@ -31,7 +31,7 @@
   const layoutStyleOptions = [{
     label: __('Layout 1', 'ohmylms'),
     value: 'grid-style1'
-  }, ...(window.creator_lms_blocks && window.creator_lms_blocks.is_pro_active ? [{
+  }, {
     label: __('Layout 2', 'ohmylms'),
     value: 'grid-style2'
   }, {
@@ -40,7 +40,7 @@
   }, {
     label: __('Layout 4', 'ohmylms'),
     value: 'grid-style4'
-  }] : [])];
+  }];
   const columnOptions = [{
     label: __('1 Column', 'ohmylms'),
     value: '1'
@@ -617,7 +617,7 @@
     }
   };
   registerBlockType('creator-lms/course-list', {
-    title: __('CreatorLMS Course List', 'ohmylms'),
+    title: __('OhMyLMS Course List', 'ohmylms'),
     description: __('Display a list of courses with customizable styling options.', 'ohmylms'),
     icon: 'index-card',
     category: 'creator-lms',
@@ -646,20 +646,6 @@
       var safeSetAttributes = function (newAttributes) {
         setAttributes(newAttributes);
       };
-
-      // Check if pro is active and current layout style is available
-      var isProActive = window.creator_lms_blocks && window.creator_lms_blocks.is_pro_active;
-      var currentLayoutStyle = attributes.layoutStyle || attributesData?.layoutStyle?.default;
-
-      // If pro is not active and current layout is 3 or 4, reset to layout 1
-      if (!isProActive && (currentLayoutStyle === 'grid-style3' || currentLayoutStyle === 'grid-style4')) {
-        attributes.layoutStyle = 'grid-style1';
-        safeSetAttributes({
-          layoutStyle: 'grid-style1',
-          isEnableCategory: 'no',
-          courseRows: []
-        });
-      }
 
       // Initialize courseRows if layout 3 or 4 is selected and courseRows is empty
       if ((attributes.layoutStyle === 'grid-style3' || attributes.layoutStyle === 'grid-style4') && (!attributes.courseRows || attributes.courseRows.length === 0)) {
@@ -1784,7 +1770,7 @@
       return [inspectorControls,
       // Wrapped so any CSS scoped to `.wp-block-creator-lms-course-list` (WordPress
       // only ever attaches that class via useBlockProps(), which this block doesn't use)
-      // has something to match, consistent with the other CreatorLMS blocks.
+      // has something to match, consistent with the other OhMyLMS blocks.
       createElement('div', {
         className: 'wp-block-creator-lms-course-list'
       }, serverSideRender)];

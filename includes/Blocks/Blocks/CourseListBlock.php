@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * CourseListBlock
  *
- * Registers the CreatorLMS Course List Gutenberg block.
+ * Registers the OhMyLMS Course List Gutenberg block.
  *
  * @since 1.0.0
  */

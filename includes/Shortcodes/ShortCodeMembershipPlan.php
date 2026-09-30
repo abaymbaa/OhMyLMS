@@ -53,41 +53,33 @@ class ShortCodeMembershipPlan {
 		<section class="creator-lms-membership">
 			<div class="creator-lms-container">
 				<?php
-				if ( creator_lms_is_pro() ) {
-					do_action( 'creator_lms_membership_section_header' );
+				do_action( 'creator_lms_membership_section_header' );
 
-					$query = new \WP_Query(
-						array(
-							'post_type'      => CREATOR_LMS_MEMBERSHIP_CPT,
-							'posts_per_page' => 10,
-						)
-					);
+				$query = new \WP_Query(
+					array(
+						'post_type'      => CREATOR_LMS_MEMBERSHIP_CPT,
+						'posts_per_page' => 10,
+					)
+				);
 
-					if ( $query->have_posts() ) {
-						do_action( 'creator_lms_before_membership_loop' );
+				if ( $query->have_posts() ) {
+					do_action( 'creator_lms_before_membership_loop' );
 
-						creator_lms_membership_loop_start();
+					creator_lms_membership_loop_start();
 
-						while ( $query->have_posts() ) {
-							$query->the_post();
-							omlms_get_template_part( 'content', 'membership' );
-						}
-
-						creator_lms_membership_loop_end();
-
-						do_action( 'creator_lms_after_membership_loop' );
-					} else {
-						do_action( 'creator_lms_no_membership' );
+					while ( $query->have_posts() ) {
+						$query->the_post();
+						omlms_get_template_part( 'content', 'membership' );
 					}
 
-					wp_reset_postdata();
+					creator_lms_membership_loop_end();
+
+					do_action( 'creator_lms_after_membership_loop' );
 				} else {
-					?>
-					<div class="pro-membership-message">
-						<h2><?php echo esc_html__( 'No Membership Yet', 'ohmylms' ); ?></h2>
-					</div>
-					<?php
+					do_action( 'creator_lms_no_membership' );
 				}
+
+				wp_reset_postdata();
 				?>
 			</div>
 		</section>

@@ -1,7 +1,7 @@
 const path=require('node:path');
 const DependencyExtractionWebpackPlugin=require('@wordpress/dependency-extraction-webpack-plugin');
 module.exports={
- entry:{'extensions':path.resolve(__dirname,'assets/src/extensions/index.jsx')},
+ entry:{'extensions':path.resolve(__dirname,'assets/src/extensions/index.jsx'),'schools':path.resolve(__dirname,'assets/src/features/schools/index.jsx')},
  output:{path:path.resolve(__dirname,'build/sdk'),filename:'[name].js',clean:false},
  devtool:'source-map',
  resolve:{extensions:['.js','.jsx','.mjs']},

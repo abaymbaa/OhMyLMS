@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class GoogleAuthService
  */
 class GoogleAuthService {
+    private static $link_user_id = 0;
 
 	const OPTION_KEY        = 'creatorlms_google_oauth';
 	const STATE_TRANSIENT   = 'omlms_lms_google_state_';
@@ -105,7 +106,9 @@ class GoogleAuthService {
 		}
 
 		$state = wp_generate_password( 32, false );
-		set_transient( self::STATE_TRANSIENT . $state, $redirect_to !== '' ? $redirect_to : '1', self::STATE_TTL );
+		// Bind this authorization attempt to the browser that started it.
+		setcookie( 'omlms_google_state', $state, array( 'expires' => time() + self::STATE_TTL, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
+		set_transient( self::STATE_TRANSIENT . $state, array( 'redirect_to' => $redirect_to, 'link_user_id' => get_current_user_id() ), self::STATE_TTL );
 
 		$args = array(
 			'client_id'     => $settings['client_id'],
@@ -128,18 +131,26 @@ class GoogleAuthService {
 	 *                       missing/expired/already used.
 	 */
 	public static function consume_state( $state ) {
-		if ( empty( $state ) ) {
+		self::$link_user_id = 0;
+		if ( empty( $state ) || empty( $_COOKIE['omlms_google_state'] ) || ! hash_equals( (string) $_COOKIE['omlms_google_state'], (string) $state ) ) {
 			return false;
 		}
 
 		$key   = self::STATE_TRANSIENT . $state;
 		$value = get_transient( $key );
 		delete_transient( $key );
+		setcookie( 'omlms_google_state', '', array( 'expires' => time() - HOUR_IN_SECONDS, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
 
 		if ( false === $value ) {
 			return false;
 		}
 
+		if ( is_array( $value ) ) {
+			$link_user = (int) ( $value['link_user_id'] ?? 0 );
+			if ( $link_user && (int) wp_validate_auth_cookie( '', 'logged_in' ) !== $link_user ) { return false; }
+			self::$link_user_id = $link_user;
+			return (string) ( $value['redirect_to'] ?? '' );
+		}
 		return '1' === $value ? '' : $value;
 	}
 
@@ -220,21 +231,39 @@ class GoogleAuthService {
 	 * @return WP_User|WP_Error
 	 */
 	public static function find_or_create_user( array $profile ) {
-		$email = sanitize_email( $profile['email'] );
+		$email = sanitize_email( $profile['email'] ?? '' );
+		$subject = sanitize_text_field( $profile['sub'] ?? '' );
+		if ( ! $subject || empty( $profile['email_verified'] ) ) {
+			return new WP_Error( 'google_identity_invalid', __( 'Google did not return a verified identity.', 'ohmylms' ) );
+		}
 
 		if ( ! is_email( $email ) ) {
 			return new WP_Error( 'google_invalid_email', __( 'Google did not return a valid email address.', 'ohmylms' ) );
 		}
 
-		$user = get_user_by( 'email', $email );
+		$linked = get_users( array( 'meta_key' => self::META_GOOGLE_ID, 'meta_value' => $subject, 'number' => 2 ) );
+		if ( count( $linked ) > 1 ) {
+			return new WP_Error( 'google_identity_conflict', __( 'This Google identity needs administrator review.', 'ohmylms' ) );
+		}
+		$user = $linked ? $linked[0] : get_user_by( 'email', $email );
+		if ( self::$link_user_id && ( ! $user || (int) $user->ID !== self::$link_user_id ) ) {
+			return new WP_Error( 'google_link_mismatch', __( 'Choose the Google account with the same email as your signed-in account.', 'ohmylms' ) );
+		}
+		if ( $user && 'yes' === get_user_meta( $user->ID, '_omlms_banned_student', true ) ) {
+			return new WP_Error( 'google_account_disabled', __( 'This account is disabled.', 'ohmylms' ) );
+		}
+		if ( $user && ! $linked ) {
+			// An email match alone must never sign in to, overwrite, or reclaim an account.
+			if ( ( get_current_user_id() !== (int) $user->ID && self::$link_user_id !== (int) $user->ID ) || get_user_meta( $user->ID, self::META_GOOGLE_ID, true ) ) {
+				return new WP_Error( 'google_link_required', __( 'Sign in to your existing account first, then connect Google from the learning portal.', 'ohmylms' ) );
+			}
+		}
 
 		if ( ! $user ) {
 			$user = self::create_user( $email, $profile );
 			if ( is_wp_error( $user ) ) {
 				return $user;
 			}
-		} else {
-			self::reclaim_unverified_account( $user, $profile );
 		}
 
 		if ( ! empty( $profile['sub'] ) ) {
@@ -242,38 +271,6 @@ class GoogleAuthService {
 		}
 
 		return $user;
-	}
-
-	/**
-	 * Guard against account-hijacking-by-email: matching an existing user by
-	 * email alone is not proof the current visitor owns that account. The
-	 * first time a not-yet-linked, never-verified account is reached via
-	 * Google, reclaim it: rotate the password (invalidating whoever set it)
-	 * and mark the email verified. Never touches name/email/avatar — an
-	 * existing account's own data is never altered by a Google login.
-	 *
-	 * @param WP_User $user    The matched existing user.
-	 * @param array   $profile Google userinfo payload.
-	 * @return void
-	 */
-	private static function reclaim_unverified_account( WP_User $user, array $profile ) {
-		$existing_google_id = get_user_meta( $user->ID, self::META_GOOGLE_ID, true );
-		if ( ! empty( $profile['sub'] ) && $existing_google_id === $profile['sub'] ) {
-			return; // Already linked to this exact Google identity — trusted returning user.
-		}
-
-		if ( EmailVerificationService::is_verified( $user->ID ) ) {
-			return; // Ownership of this email was already proven (or verification isn't required on this site).
-		}
-
-		wp_set_password( wp_generate_password( 24, true, true ), $user->ID );
-		update_user_meta( $user->ID, EmailVerificationService::META_VERIFIED, 'yes' );
-
-		wp_mail(
-			$user->user_email,
-			__( 'Your account password was reset', 'ohmylms' ),
-			__( 'Someone signed in to your account using this email address via Google. As a security precaution, your password was reset. If this was you, you can keep using Google to sign in. If not, please contact support immediately.', 'ohmylms' )
-		);
 	}
 
 	/**

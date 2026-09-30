@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Offer Button Block JS (IIFE style, global wp)
+ * OhMyLMS Offer Button Block JS (IIFE style, global wp)
  *
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 (function() {
     'use strict';
@@ -35,7 +35,7 @@
     };
 
     registerBlockType('creator-lms/offer-button', {
-        title: __('Offer Button', 'ohmylms'),
+        title: __('OhMyLMS Offer Button', 'ohmylms'),
         icon: 'button',
         category: 'creator-lms',
         attributes: attributesData,

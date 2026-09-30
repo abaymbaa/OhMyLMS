@@ -30,7 +30,13 @@ if ( ! empty( $redirect_to ) ) {
 
 	<?php if ( isset( $_GET['google_error'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 		<p class="creator-lms-form-row creator-lms-notice creator-lms-notice-error">
-			<?php esc_html_e( "We couldn't sign you in with Google. Please try again.", 'ohmylms' ); ?>
+			<?php
+			if ( 'google_link_required' === sanitize_key( wp_unslash( $_GET['google_error'] ) ) ) {
+				esc_html_e( 'Sign in with your existing account first, then choose Connect Google in the OhMyLMS school and family portal.', 'ohmylms' );
+			} else {
+				esc_html_e( "We couldn't sign you in with Google. Please try again.", 'ohmylms' );
+			}
+			?>
 		</p>
 	<?php endif; ?>
 

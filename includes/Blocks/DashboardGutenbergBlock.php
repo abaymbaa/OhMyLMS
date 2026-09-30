@@ -2,7 +2,7 @@
 /**
  * Dashboard Block
  *
- * Gutenberg block for CreatorLMS student dashboard functionality
+ * Gutenberg block for OhMyLMS student dashboard functionality
  *
  * @package OMLMS\Blocks
  * @since 1.0.0

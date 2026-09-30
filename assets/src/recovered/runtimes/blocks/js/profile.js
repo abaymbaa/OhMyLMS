@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Profile Block
+ * OhMyLMS Profile Block
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
@@ -331,8 +331,8 @@
     value: 900
   }];
   registerBlockType('creator-lms/profile', {
-    title: __('CreatorLMS Profile', 'ohmylms'),
-    description: __('Display the CreatorLMS student profile page with customizable styling options.', 'ohmylms'),
+    title: __('OhMyLMS Profile', 'ohmylms'),
+    description: __('Display the OhMyLMS student profile page with customizable styling options.', 'ohmylms'),
     icon: 'admin-users',
     category: 'creator-lms',
     keywords: [__('profile', 'ohmylms'), __('student', 'ohmylms'), __('account', 'ohmylms'), __('my profile', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],

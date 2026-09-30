@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Blocks Frontend JavaScript
+ * OhMyLMS Blocks Frontend JavaScript
  *
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function ($) {

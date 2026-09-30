@@ -240,7 +240,7 @@ class Leaderboard {
         $quiz_ids = $course->get_quiz_ids();
 
         if ( empty( $quiz_ids ) ) {
-            return $students;
+            return array();
         }
 
         // Prepare quiz IDs for SQL IN clause
@@ -251,25 +251,30 @@ class Leaderboard {
         }
         $student_ids_sql = implode( ',', array_map( 'intval', $student_ids ) );
 
-        // Get highest total for each student per quiz
+        // Normalize each completed attempt using its saved possible marks, then
+        // average attempts per quiz. Missing quizzes contribute zero below.
         $results = $wpdb->get_results(
-            "SELECT student_id, quiz_id, MAX(total) as max_total
-            FROM {$wpdb->prefix}omlms_quiz_attempts
-            WHERE quiz_id IN ($quiz_ids_sql)
-            AND student_id IN ($student_ids_sql)
-            AND status = 'completed'
-            GROUP BY student_id, quiz_id"
+            $wpdb->prepare(
+                "SELECT a.student_id, a.quiz_id,
+                    AVG(LEAST(100, GREATEST(0, 100.0 * a.total / marks.possible))) AS average_percent
+                FROM {$wpdb->prefix}omlms_quiz_attempts a
+                INNER JOIN (
+                    SELECT quiz_attempt_id, SUM(question_marks) AS possible
+                    FROM {$wpdb->prefix}omlms_quiz_attempts_answers
+                    GROUP BY quiz_attempt_id
+                ) marks ON marks.quiz_attempt_id = a.id
+                WHERE a.quiz_id IN ($quiz_ids_sql)
+                AND a.student_id IN ($student_ids_sql)
+                AND a.course_id = %d AND a.status = 'completed' AND marks.possible > 0
+                GROUP BY a.student_id, a.quiz_id",
+                $course_id
+            )
         );
-
-        // Aggregate highest scores per student
-        $student_scores = [];
+        $student_scores = array();
         foreach ( $results as $row ) {
-            if ( ! isset( $student_scores[ $row->student_id ] ) ) {
-                $student_scores[ $row->student_id ] = 0;
-            }
-            $student_scores[ $row->student_id ] += (int) $row->max_total;
+            $student_scores[ $row->student_id ] = ( $student_scores[ $row->student_id ] ?? 0 )
+                + (float) $row->average_percent / count( array_unique( $quiz_ids ) );
         }
-
         // Attach score to students
         foreach ( $students as &$student ) {
             $sid = isset( $student['student_id'] ) ? $student['student_id'] : ( $student['ID'] ?? null );
@@ -288,7 +293,7 @@ class Leaderboard {
         $threshold = self::get_threshold();
         if ( $threshold > 0 ) {
             $students = array_filter( $students, function( $student ) use ( $threshold ) {
-                return isset($student['completion_rate']) && self::maybe_met_threshold( $student['completion_rate'] );
+                return isset($student['highest_quiz_score']) && self::maybe_met_threshold( $student['highest_quiz_score'] );
             });
             $students = array_values($students); // reindex array
         }
@@ -303,6 +308,12 @@ class Leaderboard {
      * @since 1.0.0
      */
     public static function get_students_by_fastest_time( $students ) {
+        $students = array_values( array_filter( $students, function ( $student ) {
+            return ! empty( $student['is_completed'] )
+                && isset( $student['completion_duration'] )
+                && $student['completion_duration'] >= 0
+                && $student['completion_duration'] < PHP_INT_MAX;
+        } ) );
         usort(
             $students,
             function ( $a, $b ) {
@@ -313,13 +324,6 @@ class Leaderboard {
         $limit = self::get_students_number();
         $students = array_slice( $students, 0, $limit );
 
-        $threshold = self::get_threshold();
-        if ( $threshold > 0 ) {
-            $students = array_filter( $students, function( $student ) use ( $threshold ) {
-                return isset($student['completion_rate']) && self::maybe_met_threshold( $student['completion_rate'] );
-            });
-            $students = array_values($students); // reindex array
-        }
         return $students;
     }
 

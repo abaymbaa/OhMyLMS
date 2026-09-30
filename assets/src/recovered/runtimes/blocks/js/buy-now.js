@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Buy Now Block (IIFE style)
+ * OhMyLMS Buy Now Block (IIFE style)
  *
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
@@ -93,7 +93,7 @@
     });
   }
   registerBlockType('creator-lms/buy-now', {
-    title: __('Buy Now Button', 'ohmylms'),
+    title: __('OhMyLMS Buy Now Button', 'ohmylms'),
     icon: 'cart',
     category: 'creator-lms',
     attributes: attributesData,

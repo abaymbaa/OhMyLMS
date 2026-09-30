@@ -2,7 +2,7 @@
 /**
  * Blocks Manager
  *
- * Manages all Gutenberg blocks for CreatorLMS
+ * Manages all Gutenberg blocks for OhMyLMS
  *
  * @package OMLMS\Blocks
  * @since 1.0.0
@@ -82,10 +82,7 @@ class BlocksManager {
 			   \OMLMS\Blocks\Blocks\OfferButtonBlock::register();
 		   }
 
-		   // Pro feature: only register when Pro is active and its license is valid.
-		   if ( creator_lms_is_pro_license() ) {
-			   new \OMLMS\Blocks\Blocks\MembershipListBlock();
-		   }
+		   new \OMLMS\Blocks\Blocks\MembershipListBlock();
 	}
 
 	/**
@@ -105,16 +102,16 @@ class BlocksManager {
 	   }
 
 	/**
-	 * Register CreatorLMS block category
+	 * Register OhMyLMS block category
 	 *
 	 * @param array $categories Existing block categories
 	 * @return array Updated block categories
 	 */
 	public function register_block_category( $categories ) {
-		// Add CreatorLMS category at the beginning
+		// Add OhMyLMS category at the beginning
 		array_unshift( $categories, array(
 			'slug'  => 'creator-lms',
-			'title' => esc_html__( 'CreatorLMS', 'ohmylms' ),
+			'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
 			'icon'  => 'graduation-cap',
 		) );
 
@@ -173,7 +170,7 @@ class BlocksManager {
 			CREATOR_LMS_VERSION
 		);
 		
-		// Enqueue main CreatorLMS styles in editor for ServerSideRender checkout styling
+		// Enqueue main OhMyLMS styles in editor for ServerSideRender checkout styling
 		wp_enqueue_style(
 			'creator-lms-main-editor',
 			CREATOR_LMS_URL . '/assets/css/style.css',
@@ -236,15 +233,6 @@ class BlocksManager {
 			true
 		);
 
-		// Localize course list block script
-		wp_localize_script(
-			'creator-lms-course-list-block',
-			'creator_lms_blocks',
-			array(
-				'is_pro_active' => creator_lms_is_pro_license()
-			)
-		);
-
 		// Buy Now block
 		wp_enqueue_script(
 			'creator-lms-buy-now-block',
@@ -263,16 +251,14 @@ class BlocksManager {
 			true
 		);
 
-		// Membership List block (pro feature; script is only useful if the block was registered)
-		if ( creator_lms_is_pro_license() ) {
-			wp_enqueue_script(
-				'creator-lms-membership-list-block',
-				CREATOR_LMS_URL . "/assets/blocks/js/membership-list{$suffix}.js",
-				array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-				CREATOR_LMS_VERSION,
-				true
-			);
-		}
+		// Membership List block
+		wp_enqueue_script(
+			'creator-lms-membership-list-block',
+			CREATOR_LMS_URL . "/assets/blocks/js/membership-list{$suffix}.js",
+			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
+			CREATOR_LMS_VERSION,
+			true
+		);
 
 		// Add more blocks here as needed
 	}

@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Membership List Block
+ * OhMyLMS Membership List Block
  *
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function() {
@@ -21,7 +21,7 @@
 	};
 
 	registerBlockType('creator-lms/membership-list', {
-		title: __('CreatorLMS Membership List', 'ohmylms'),
+		title: __('OhMyLMS Membership List', 'ohmylms'),
 		description: __('Display membership plans on any page or post.', 'ohmylms'),
 		icon: 'id',
 		category: 'creator-lms',

@@ -1,7 +1,7 @@
 /**
- * CreatorLMS My Courses Block
+ * OhMyLMS My Courses Block
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
@@ -218,8 +218,8 @@
     value: 900
   }];
   registerBlockType('creator-lms/my-courses', {
-    title: __('CreatorLMS My Courses', 'ohmylms'),
-    description: __('Display the CreatorLMS student my courses page with course management functionality.', 'ohmylms'),
+    title: __('OhMyLMS My Courses', 'ohmylms'),
+    description: __('Display the OhMyLMS student my courses page with course management functionality.', 'ohmylms'),
     icon: 'book',
     category: 'creator-lms',
     keywords: [__('my courses', 'ohmylms'), __('courses', 'ohmylms'), __('student', 'ohmylms'), __('enrolled', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],

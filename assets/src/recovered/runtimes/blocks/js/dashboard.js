@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Dashboard Block
+ * OhMyLMS Dashboard Block
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
@@ -177,8 +177,8 @@
     value: 900
   }];
   registerBlockType('creator-lms/dashboard', {
-    title: __('CreatorLMS Dashboard', 'ohmylms'),
-    description: __('Display the CreatorLMS student dashboard with customizable styling options.', 'ohmylms'),
+    title: __('OhMyLMS Dashboard', 'ohmylms'),
+    description: __('Display the OhMyLMS student dashboard with customizable styling options.', 'ohmylms'),
     icon: 'dashboard',
     category: 'creator-lms',
     keywords: [__('dashboard', 'ohmylms'), __('student', 'ohmylms'), __('profile', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],

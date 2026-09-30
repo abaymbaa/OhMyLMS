@@ -1,16 +1,16 @@
 /**
- * CreatorLMS Gutenberg Blocks Main File
+ * OhMyLMS Gutenberg Blocks Main File
  * 
  * This file loads all individual block scripts
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function () {
   'use strict';
 
   // The block editor canvas (WP 5.9+) renders inside an <iframe>, so:
-  // 1) the frontend body classes CreatorLMS's CSS is scoped under
+  // 1) the frontend body classes OhMyLMS's CSS is scoped under
   //    (creator-lms-page, creator-lms-checkout, etc. - added via the
   //    `body_class` filter, which only ever runs on real page loads) never
   //    reach it, and
@@ -54,7 +54,7 @@
 
   // Initialize blocks when DOM is ready
   wp.domReady(function () {
-    console.info('CreatorLMS Blocks Loaded');
+    console.info('OhMyLMS Blocks Loaded');
     syncEditorAssets();
     if (window.wp && wp.data && wp.data.subscribe) {
       var timeoutId;

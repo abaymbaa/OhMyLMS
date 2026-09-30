@@ -2,7 +2,7 @@
 /**
  * Profile Block
  *
- * Gutenberg block for CreatorLMS student profile functionality
+ * Gutenberg block for OhMyLMS student profile functionality
  *
  * @package OMLMS\Blocks
  * @since 1.2.5

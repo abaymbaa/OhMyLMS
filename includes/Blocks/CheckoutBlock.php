@@ -2,7 +2,7 @@
 /**
  * Checkout Block
  *
- * Gutenberg block for CreatorLMS checkout functionality
+ * Gutenberg block for OhMyLMS checkout functionality
  *
  * @package OMLMS\Blocks
  * @since 1.0.0

@@ -9,9 +9,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * MembershipListBlock
  *
- * Registers the CreatorLMS Membership List Gutenberg block. Wraps
- * [creator_lms_membership_plan]. Pro feature: only instantiated by
- * BlocksManager when creator_lms_is_pro_license() is true.
+ * Registers the OhMyLMS Membership List Gutenberg block. Wraps
+ * [creator_lms_membership_plan]. Available with all OhMyLMS blocks.
  *
  * @since 1.0.0
  */

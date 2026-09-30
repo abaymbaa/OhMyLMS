@@ -1,7 +1,7 @@
 /**
- * CreatorLMS Checkout Block
+ * OhMyLMS Checkout Block
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  */
 
 (function() {
@@ -168,8 +168,8 @@
 	// Layout Type
 	layoutType: { type: 'string', default: '' }	};
 		registerBlockType('creator-lms/checkout', {
-		title: __('CreatorLMS Checkout', 'ohmylms'),
-		description: __('Display the CreatorLMS checkout form with customizable styling options.', 'ohmylms'),
+		title: __('OhMyLMS Checkout', 'ohmylms'),
+		description: __('Display the OhMyLMS checkout form with customizable styling options.', 'ohmylms'),
 		icon: 'cart',
 		category: 'creator-lms',
 		keywords: [

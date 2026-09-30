@@ -17,4 +17,5 @@ add_action('init',['OMLMS\\Extensions\\Bootstrap','init'],5);
 \OMLMS\Extensions\CheckoutFields::init();
 \OMLMS\Extensions\Slots::init();
 \OMLMS\Extensions\Authoring::init();
+\OMLMS\Schools\Bootstrap::init();
 add_action('plugins_loaded', ['OMLMS\\Extensions\\Modules','load']);

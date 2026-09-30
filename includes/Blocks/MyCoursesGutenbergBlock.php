@@ -2,7 +2,7 @@
 /**
  * My Courses Block
  *
- * Gutenberg block for CreatorLMS student my courses functionality
+ * Gutenberg block for OhMyLMS student my courses functionality
  *
  * @package OMLMS\Blocks
  * @since 1.2.5

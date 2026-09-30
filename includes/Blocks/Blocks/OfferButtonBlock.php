@@ -1,6 +1,6 @@
 <?php
 /**
- * CreatorLMS Offer Button Block (PHP registration)
+ * OhMyLMS Offer Button Block (PHP registration)
  *
  * @package OMLMS\Blocks\Blocks
  */
