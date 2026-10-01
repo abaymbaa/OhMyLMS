@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 export function PeopleTabs({ active = 'students', studentsUrl, canListUsers = true, onChange }) {
   const studentUrl =
     studentsUrl ||
-    `admin.php?page=${new URLSearchParams(window.location.search).get('page') || 'ohmylms'}#/students`;
+    `admin.php?page=${new URLSearchParams(window.location.search).get('page') || 'ohmylms'}#/accounthub`;
   return (
     <nav className="ohmylms-people-tabs" aria-label={__('Students and schools', 'ohmylms')}>
       {[

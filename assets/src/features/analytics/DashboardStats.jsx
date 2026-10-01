@@ -221,7 +221,7 @@ export function createDashboardStats(readRuntime) {
                       <Controls.ButtonWP
                         variant={'secondary'}
                         onClick={function () {
-                          u('/students');
+                          u('/accounthub');
                         }}
                       >
                         {(0, I18n.__)('Go to all students', 'ohmylms')}

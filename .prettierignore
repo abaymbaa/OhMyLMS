@@ -3,5 +3,8 @@ build/
 vendor/
 packages/
 assets/dist/
-assets/src/recovered/
+assets/src/application/
+assets/src/modules/
+assets/src/runtimes/
+assets/src/static/
 assets/src/features/commerce-reference/

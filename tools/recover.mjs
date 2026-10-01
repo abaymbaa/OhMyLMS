@@ -8,7 +8,7 @@ import * as t from '@babel/types';
 const traverse = traverseModule.default || traverseModule;
 const generate = generatorModule.default || generatorModule;
 const root = path.resolve(import.meta.dirname, '..');
-const target = path.join(root, 'assets/src/recovered');
+const target = path.join(root, 'assets/src');
 if (fs.existsSync(path.join(target, 'manifest.json'))) throw new Error('Source already recovered; refusing to overwrite editable modules.');
 const walk = dir => fs.readdirSync(dir, {withFileTypes:true}).flatMap(e => e.isDirectory() ? walk(path.join(dir,e.name)) : [path.join(dir,e.name)]);
 const write = (name, data) => {const dest=path.join(target,name); fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,data);};

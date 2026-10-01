@@ -8,7 +8,7 @@ import {transformSync} from '@babel/core';
 import {validateCommunity} from '../../assets/src/features/communities/model.mjs';
 
 const generate = generatorModule.default || generatorModule;
-const source = 'assets/src/recovered/';
+const source = 'assets/src/';
 const manifest = JSON.parse(fs.readFileSync(source + 'manifest.json'));
 const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/ohmylms.js').factories.find(f => f.id === '1841');
 const ast = parse(factory.fragments.map(file => fs.readFileSync(source + file, 'utf8')).join('\n'));

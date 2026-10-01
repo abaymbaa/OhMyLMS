@@ -6,7 +6,7 @@ import generatorModule from '@babel/generator';
 import {adaptApplication} from '../../tools/application-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 
 test('recovered application source has no license or comparison modules',()=>{
  const manifest=JSON.parse(fs.readFileSync(sourceRoot+'manifest.json'));

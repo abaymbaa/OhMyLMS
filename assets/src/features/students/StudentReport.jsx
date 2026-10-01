@@ -240,7 +240,7 @@ export function createStudentReport(readRuntime) {
           </Controls.SurfaceWP>
         ))
       ) : (
-        <Router.C5 to={'/students'} />
+        <Router.C5 to={'/accounthub'} />
       )
     );
   };

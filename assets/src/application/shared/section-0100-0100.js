@@ -373,7 +373,7 @@ const _G = function (e) {
     }), h().createElement(I.ButtonWP, {
       variant: "secondary",
       onClick: function () {
-        u("/students");
+        u("/accounthub");
       }
     }, (0, b.__)("Go to all students", "ohmylms")))))), h().createElement(I.FlexBlockWP, null, ohmylms_params.is_communities_enabled ? h().createElement(I.CardWP, {
       style: {

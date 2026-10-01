@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-const root=path.resolve(import.meta.dirname,'..'),source=path.join(root,'assets/src/recovered');
+const root=path.resolve(import.meta.dirname,'..'),source=path.join(root,'assets/src');
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json'),'utf8'));
 const seen=new Set(manifest.assets.map(a=>a.output));
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()&&!['src'].includes(e.name)?walk(path.join(d,e.name)):e.isFile()?[path.join(d,e.name)]:[]);

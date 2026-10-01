@@ -9,7 +9,7 @@ const traverse=traverseModule.default||traverseModule;
 const generate=generatorModule.default||generatorModule;
 
 export function loadApplication(root){
- const source=path.join(root,'assets/src/recovered');
+ const source=path.join(root,'assets/src');
  const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
  const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/ohmylms.js').factories.find(item=>item.id==='1841');
  const ast=parse(factory.fragments.map(file=>fs.readFileSync(path.join(source,file),'utf8')).join('\n'));

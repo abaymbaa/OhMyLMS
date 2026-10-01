@@ -43,13 +43,13 @@ final class Views {
         if (($_GET['page'] ?? '') !== 'ohmylms-schools' || !current_user_can('manage_options')) { return; }
         $tab = sanitize_key($_GET['tab'] ?? 'schools');
         if (!in_array($tab, ['students', 'teachers', 'parents', 'users', 'classes', 'schools'], true)) { $tab = 'schools'; }
-        wp_safe_redirect(admin_url('admin.php?page=' . OHMYLMS_SLUG) . '#/students' . ($tab === 'students' ? '' : '?tab=' . $tab));
+        wp_safe_redirect(admin_url('admin.php?page=' . OHMYLMS_SLUG) . '#/accounthub' . ($tab === 'students' ? '' : '?tab=' . $tab));
         exit;
     }
     public static function menu() {
         if (($_GET['page'] ?? '') === 'ohmylms-schools') {
             add_filter('parent_file', function () { return OHMYLMS_SLUG; });
-            add_filter('submenu_file', function () { return 'admin.php?page=' . OHMYLMS_SLUG . '#/students'; });
+            add_filter('submenu_file', function () { return 'admin.php?page=' . OHMYLMS_SLUG . '#/accounthub'; });
         }
         add_submenu_page(null, __('Students', 'ohmylms'), __('Students', 'ohmylms'), 'read', 'ohmylms-schools', function () { echo '<div class="wrap"><hr class="wp-header-end">' . self::render('admin-management') . '</div>'; });
     }
@@ -62,7 +62,7 @@ final class Views {
             $config = ['api' => rest_url('ohmylms/v1/school/'), 'nonce' => wp_create_nonce('wp_rest'), 'loggedIn' => is_user_logged_in(), 'loginUrl' => wp_login_url(self::portal_url()), 'logoutUrl' => wp_logout_url(self::portal_url()), 'portalUrl' => self::portal_url(), 'googleUrl' => \OhMyLMS\Services\GoogleAuthService::is_configured() ? add_query_arg('redirect_to', self::portal_url(), rest_url('ohmylms/v1/auth/google')) : ''];
             if (is_admin()) {
                 $config['usersUrl'] = current_user_can('create_users') ? admin_url('user-new.php') : '';
-                $config['studentsUrl'] = current_user_can('manage_options') ? admin_url('admin.php?page=' . OHMYLMS_SLUG . '#/students') : '';
+                $config['studentsUrl'] = current_user_can('manage_options') ? admin_url('admin.php?page=' . OHMYLMS_SLUG . '#/accounthub') : '';
             }
             if ($config['googleUrl'] && is_user_logged_in()) { $config['googleUrl'] = add_query_arg('_wpnonce', wp_create_nonce('wp_rest'), $config['googleUrl']); }
             wp_add_inline_script('ohmylms-schools', 'window.ohmylmsSchools=' . wp_json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';', 'before');

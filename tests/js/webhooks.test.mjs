@@ -7,7 +7,7 @@ import {adaptWebhooks} from '../../tools/webhook-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
 const featureRoot='assets/src/features/webhooks/';
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=['WebhookDetails','WebhookDataMapping','WebhookEditorModal','WebhooksPage'];
 

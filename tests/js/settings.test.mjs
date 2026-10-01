@@ -7,7 +7,7 @@ import {adaptSettings} from '../../tools/settings-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
 const featureRoot='assets/src/features/settings/';
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=[
  'SettingsPage','GeneralSettings','GeneralSettingsFields','SettingsActionBar','BrandingSettings',

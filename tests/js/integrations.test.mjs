@@ -7,7 +7,7 @@ import {adaptIntegrations} from '../../tools/integration-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
 const featureRoot='assets/src/features/integrations/';
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=[
  'IntegrationCard','ZoomSettings','AiModelSettings','GoogleMeetSettings',

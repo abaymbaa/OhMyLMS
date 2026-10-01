@@ -7,7 +7,7 @@ import {adaptAiCourse} from '../../tools/ai-course-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
 const featureRoot='assets/src/features/ai-course-outline/';
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=['CarouselArrow','PromptCarouselNavigation','PromptTemplateCard','PromptTemplateSlider','PromptTemplateToggleIcon','PromptTemplates','AiPreviewHeader','AiCourseSummary','AiOutlineItem','AiLessonList','AiChapterItem','AiChapterList','AiCourseOutline','AiAcceptIcon','AiPreviewActions','AiCoursePreview','AiCourseGenerator','AiCourseGeneratorPage'];
 

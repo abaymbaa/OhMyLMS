@@ -6,7 +6,7 @@ import { parse } from '@babel/parser';
 import generatorModule from '@babel/generator';
 import { adaptConnectionStatus, adaptVendors } from '../../tools/vendor-adapters.mjs';
 const generate = generatorModule.default || generatorModule;
-const factory = (folder, id) => fs.readFileSync(new URL(`../../assets/src/recovered/modules/dist/${folder}/0-${id}.js`, import.meta.url), 'utf8').trim().replace(/;$/, '');
+const factory = (folder, id) => fs.readFileSync(new URL(`../../assets/src/modules/dist/${folder}/0-${id}.js`, import.meta.url), 'utf8').trim().replace(/;$/, '');
 
 test('connection labels preserve behavior without importing collaboration or Yjs', () => {
   const ast = parse(`({45644:${factory('admin/ohmylms',45644)}})`);

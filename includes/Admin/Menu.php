@@ -65,7 +65,7 @@ class Menu {
 			$submenu[ $slug ][] = array( esc_attr__( 'Coupon', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/coupons' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Orders', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/orders' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Subscriptions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/subscriptions' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Account Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/students' );
+			$submenu[ $slug ][] = array( esc_attr__( 'Account Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/accounthub' );
 			if( apply_filters( 'ohmylms_show_gamification_menu', false ) ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}

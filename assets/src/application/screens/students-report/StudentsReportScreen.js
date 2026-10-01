@@ -164,6 +164,6 @@ var UZ = function () {
     marginBottom: 0,
     paddingBottom: 5
   }))) : h().createElement(f.C5, {
-    to: "/students"
+    to: "/accounthub"
   });
 };

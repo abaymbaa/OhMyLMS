@@ -77193,7 +77193,7 @@
             }), h().createElement(I.ButtonWP, {
               variant: "secondary",
               onClick: function () {
-                u("/students");
+                u("/accounthub");
               }
             }, (0, b.__)("Go to all students", "ohmylms")))))), h().createElement(I.FlexBlockWP, null, ohmylms_params.is_communities_enabled ? h().createElement(I.CardWP, {
               style: {
@@ -89565,7 +89565,7 @@
             marginBottom: 0,
             paddingBottom: 5
           }))) : h().createElement(f.C5, {
-            to: "/students"
+            to: "/accounthub"
           });
         };
         // Reconstructed application fragment. Assembled in manifest order within factory 1841.
@@ -131598,7 +131598,7 @@
             path: "/memberships",
             element: J8
           }, {
-            path: "/students",
+            path: "/accounthub",
             element: s9
           }, {
             path: "/communities",

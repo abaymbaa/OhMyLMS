@@ -27,7 +27,7 @@ import {adaptAiCourse} from './ai-course-adapters.mjs';
 const traverse=traverseModule.default||traverseModule;
 const generate=generatorModule.default||generatorModule;
 const root=path.resolve(import.meta.dirname,'..');
-const sourceRoot=path.join(root,'assets/src/recovered');
+const sourceRoot=path.join(root,'assets/src');
 const manifest=JSON.parse(fs.readFileSync(path.join(sourceRoot,'manifest.json'),'utf8'));
 const outputRoot=path.resolve(process.env.OHMYLMS_BUILD_DIR || path.join(root,process.argv.includes('--parity')?'build/parity':'build'));
 const hashes={};
@@ -73,5 +73,5 @@ for(const asset of manifest.assets){
   }
   hashes[asset.output]=crypto.createHash('sha256').update(fs.readFileSync(destination)).digest('hex');
 }
-fs.writeFileSync(path.join(outputRoot,'recovered-assets.json'),JSON.stringify(hashes,null,2)+'\n');
-console.log(`Built ${Object.keys(hashes).length} assets solely from checked-in recovered source.`);
+fs.writeFileSync(path.join(outputRoot,'asset-hashes.json'),JSON.stringify(hashes,null,2)+'\n');
+console.log(`Built ${Object.keys(hashes).length} assets solely from checked-in source.`);

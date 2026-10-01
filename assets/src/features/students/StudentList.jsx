@@ -307,7 +307,7 @@ export function createStudentList(readRuntime) {
             window.history.pushState(
               null,
               '',
-              `#/students${next === 'students' ? '' : `?tab=${next}`}`,
+              `#/accounthub${next === 'students' ? '' : `?tab=${next}`}`,
             );
             setTab(next);
           }}

@@ -6,7 +6,7 @@ import {parse} from '@babel/parser';
 import traverseModule from '@babel/traverse';
 import crypto from 'node:crypto';
 const root=path.resolve(import.meta.dirname,'../..');
-const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/src/recovered/manifest.json'),'utf8'));
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/src/manifest.json'),'utf8'));
 const ignore=new Set(['start','end','loc','extra','leadingComments','trailingComments','innerComments','comments','tokens']);
 const canonical=text=>{
  const ast=parse(text,{sourceType:'unambiguous',allowReturnOutsideFunction:true});
@@ -28,7 +28,7 @@ test('reassembled assets preserve the shipped program AST',()=>{
 });
 test('every factory has editable source and generated maps embed source',()=>{
  assert.ok(manifest.modules.length>800);
- for(const module of manifest.modules) assert.ok(fs.existsSync(path.join(root,'assets/src/recovered',module.source)),module.source);
+ for(const module of manifest.modules) assert.ok(fs.existsSync(path.join(root,'assets/src',module.source)),module.source);
  const map=JSON.parse(fs.readFileSync(path.join(root,'build/parity/assets/dist/admin/ohmylms.js.map'),'utf8'));
  assert.ok(map.sources.length>10);
  assert.equal(map.sources.length,map.sourcesContent.length);

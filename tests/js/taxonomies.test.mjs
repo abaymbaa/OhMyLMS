@@ -7,7 +7,7 @@ import {adaptTaxonomies} from '../../tools/taxonomy-adapters.mjs';
 
 const generate=generatorModule.default||generatorModule;
 const featureRoot='assets/src/features/taxonomies/';
-const sourceRoot='assets/src/recovered/';
+const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=['TaxonomyModal','CategoriesPage','TagsPage'];
 

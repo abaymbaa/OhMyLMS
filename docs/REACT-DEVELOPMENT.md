@@ -25,7 +25,7 @@ To replace an existing recovered component:
 3. Use the feature's existing adapter. Ordinary top-level bindings use `tools/component-adapter.mjs`; its `declarations` option permits function declarations. Integrations, taxonomies and webhooks retain specialized adapters for object members, routes and wrappers.
 4. Add behavior tests for the affected API/model and browser coverage for user-visible interactions.
 
-For a new child component, use normal imports and props; no recovered binding or manifest entry is needed. For an entirely new feature, prefer the extension registry described in `EXTENSIONS.md`. If it must replace recovered functionality, add its adapter to `tools/build-recovered.mjs` and expose its registry in `assets/src/extensions/index.jsx`.
+For a new child component, use normal imports and props; no recovered binding or manifest entry is needed. For an entirely new feature, prefer the extension registry described in `EXTENSIONS.md`. If it must replace recovered functionality, add its adapter to `tools/build-assets.mjs` and expose its registry in `assets/src/extensions/index.jsx`.
 
 Do not rerun the one-time `extract-*`, `recover` or `split-admin` tools over authored changes. Never edit `build/` by hand. `commerce-reference/` is reference material and is excluded from formatting, as is `recovered/`.
 
