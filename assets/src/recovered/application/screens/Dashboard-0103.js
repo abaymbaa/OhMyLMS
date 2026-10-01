@@ -5,7 +5,7 @@ const fU = function () {
     t = (0, z.A)(),
     n = t.openNotificationWithIcon,
     r = t.contextHolder,
-    a = (0, L.useIsPro)(),
+    a = true,
     o = (0, y.useSelect)(function (e) {
       return e(T.default).getNotificationMessage();
     }, []),
@@ -31,7 +31,7 @@ const fU = function () {
     C = x[0],
     P = x[1],
     O = ((0, g.useCallback)(function () {
-      a ? u(!0) : e.setIsProModalOpen(!0);
+      u(!0);
     }, [a]), function () {
       var t = dU(cU().m(function t(n) {
         var r, a;
@@ -76,9 +76,7 @@ const fU = function () {
         return e.apply(this, arguments);
       };
     }();
-  return (0, g.useCallback)(function () {
-    window.open(L.pricingPageLink, "_blank");
-  }, []), (0, g.useEffect)(function () {
+  return (0, g.useEffect)(function () {
     o && n(i, o);
   }, [o]), (0, g.useEffect)(function () {
     var e = function (e) {

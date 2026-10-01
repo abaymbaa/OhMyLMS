@@ -10,7 +10,7 @@ export function createTextAnswerEditor(readRuntime) {
           : message;
     return (
       <React.Fragment>
-        <div className={'omlms-quiz-warning'}>
+        <div className={'ohmylms-quiz-warning'}>
           <ld.A />
           {n}
         </div>

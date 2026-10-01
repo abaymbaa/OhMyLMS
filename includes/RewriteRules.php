@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -25,7 +25,7 @@ class RewriteRules {
      * @since 1.0.0
      */
     public function add_rewrite_rules( \WP_Rewrite $wp_rewrite ) {
-        $permalink_settings = omlms_get_permalink_structure();
+        $permalink_settings = ohmylms_get_permalink_structure();
         $course_base        = $permalink_settings['course_base'];
         $lesson_base        = $permalink_settings['lesson_base'];
         $quiz_base          = $permalink_settings['quiz_base'];
@@ -35,11 +35,11 @@ class RewriteRules {
         $assignment_base    = !empty( $permalink_settings['assignment_base'] ) ? $permalink_settings['assignment_base'] : 'assignments';
 
         $rules = [];
-        $rules["{$course_base}/([^/]+)/{$lesson_base}/([^/]+)/?$"] = 'index.php?post_type=omlms-lesson&name=$matches[2]';
-        $rules["{$course_base}/([^/]+)/{$quiz_base}/([^/]+)/?$"] = 'index.php?post_type=omlms-quiz&name=$matches[2]';    
-        $rules["{$course_base}/([^/]+)/{$assignment_base}/([^/]+)/?$"] = 'index.php?post_type=omlms-assignment&name=$matches[2]';    
-        $rules["{$course_base}/([^/]+)/sessions/([^/]+)/?$"] = 'index.php?post_type=omlms-session&name=$matches[2]';    
-        $rules["{$membership_base}/([^/]+)/?$"] = 'index.php?post_type=omlms-membership&name=$matches[1]';
+        $rules["{$course_base}/([^/]+)/{$lesson_base}/([^/]+)/?$"] = 'index.php?post_type=ohmylms-lesson&name=$matches[2]';
+        $rules["{$course_base}/([^/]+)/{$quiz_base}/([^/]+)/?$"] = 'index.php?post_type=ohmylms-quiz&name=$matches[2]';    
+        $rules["{$course_base}/([^/]+)/{$assignment_base}/([^/]+)/?$"] = 'index.php?post_type=ohmylms-assignment&name=$matches[2]';    
+        $rules["{$course_base}/([^/]+)/sessions/([^/]+)/?$"] = 'index.php?post_type=ohmylms-session&name=$matches[2]';    
+        $rules["{$membership_base}/([^/]+)/?$"] = 'index.php?post_type=ohmylms-membership&name=$matches[1]';
         $rules["{$category_base}/([^/]+)/?$"] = 'index.php?course-category=$matches[1]';
         $rules["{$tag_base}/([^/]+)/?$"] = 'index.php?course-tag=$matches[1]';
 
@@ -57,13 +57,13 @@ class RewriteRules {
      * @since 1.0.0
      */
     public function change_content_single_url( $post_link, $post ) {
-        $permalink_settings = omlms_get_permalink_structure();
+        $permalink_settings = ohmylms_get_permalink_structure();
         if( !isset( $permalink_settings['assignment_base'] ) ) {
             $permalink_settings['assignment_base'] = 'assignments';
         }
         $structure = '';
-        if ( 'omlms-lesson' === $post->post_type ) {
-            $course_id = creator_lms_get_course_by_content_id( $post->ID );
+        if ( 'ohmylms-lesson' === $post->post_type ) {
+            $course_id = ohmylms_get_course_by_content_id( $post->ID );
             $course    = get_post( $course_id );
             $structure = ( ! empty( $permalink_settings['course_base'] ) && ! empty( $permalink_settings['lesson_base'] ) )
                 ? home_url( '/' . $permalink_settings['course_base'] . '/{course}/' . $permalink_settings['lesson_base'] . '/{lesson}' )
@@ -73,8 +73,8 @@ class RewriteRules {
                 array( $course ? $course->post_name : '', $post->post_name ),
                 $structure
             );
-        } elseif ( 'omlms-quiz' === $post->post_type ) {
-            $course_id = creator_lms_get_course_by_content_id( $post->ID );
+        } elseif ( 'ohmylms-quiz' === $post->post_type ) {
+            $course_id = ohmylms_get_course_by_content_id( $post->ID );
             $course    = get_post( $course_id );
             $structure = ( ! empty( $permalink_settings['course_base'] ) && ! empty( $permalink_settings['quiz_base'] ) )
                 ? home_url( '/' . $permalink_settings['course_base'] . '/{course}/' . $permalink_settings['quiz_base'] . '/{quiz}' )
@@ -84,8 +84,8 @@ class RewriteRules {
                 array( $course ? $course->post_name : '', $post->post_name ),
                 $structure
             );
-        } elseif ( 'omlms-assignment' === $post->post_type ) {
-            $course_id = creator_lms_get_course_by_content_id( $post->ID );
+        } elseif ( 'ohmylms-assignment' === $post->post_type ) {
+            $course_id = ohmylms_get_course_by_content_id( $post->ID );
             $course    = get_post( $course_id );
             $structure = ( ! empty( $permalink_settings['course_base'] ) && ! empty( $permalink_settings['assignment_base'] ) )
                 ? home_url( '/' . $permalink_settings['course_base'] . '/{course}/' . $permalink_settings['assignment_base'] .'/{assignment}' )

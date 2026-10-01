@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\Abstracts\DataStore;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\Abstracts\DataStore;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class DataStores
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class DataStores {
@@ -49,19 +49,19 @@ class DataStores {
 	 * @since 1.0.0
 	 */
 	private $stores = array(
-		'membership' => 'OMLMS\\DataStores\\MembershipStore',
- 'assignment' => 'OMLMS\\DataStores\\AssignmentStore',
- 'session' => 'OMLMS\\DataStores\\SessionStore',
- 'order'       => 'OMLMS\DataStores\OrderStore',
-		'course'      => 'OMLMS\DataStores\CourseStore',
-		'chapter'     => 'OMLMS\DataStores\ChapterStore',
-		'quiz'        => 'OMLMS\DataStores\QuizStore',
-		'lesson'      => 'OMLMS\DataStores\LessonStore',
-		'question'    => 'OMLMS\DataStores\QuestionStore',
-		'student'     => 'OMLMS\DataStores\StudentStore',
-		'certificate' => 'OMLMS\DataStores\CertificateStore',
-		'attempt' 	  => 'OMLMS\DataStores\AttemptStore',
-		'webhook'     => 'OMLMS\DataStores\WebhookStore',
+		'membership' => 'OhMyLMS\\DataStores\\MembershipStore',
+ 'assignment' => 'OhMyLMS\\DataStores\\AssignmentStore',
+ 'session' => 'OhMyLMS\\DataStores\\SessionStore',
+ 'order'       => 'OhMyLMS\DataStores\OrderStore',
+		'course'      => 'OhMyLMS\DataStores\CourseStore',
+		'chapter'     => 'OhMyLMS\DataStores\ChapterStore',
+		'quiz'        => 'OhMyLMS\DataStores\QuizStore',
+		'lesson'      => 'OhMyLMS\DataStores\LessonStore',
+		'question'    => 'OhMyLMS\DataStores\QuestionStore',
+		'student'     => 'OhMyLMS\DataStores\StudentStore',
+		'certificate' => 'OhMyLMS\DataStores\CertificateStore',
+		'attempt' 	  => 'OhMyLMS\DataStores\AttemptStore',
+		'webhook'     => 'OhMyLMS\DataStores\WebhookStore',
 	);
 
 
@@ -75,7 +75,7 @@ class DataStores {
 	 * @since 1.0.0
 	 */
 	public function __construct( $object_type ) {
-		$this->stores      = apply_filters( 'creator_lms_data_stores', $this->stores );
+		$this->stores      = apply_filters( 'ohmylms_data_stores', $this->stores );
 		$this->object_type = $object_type;
 
 		if ( ! array_key_exists( $object_type, $this->stores ) ) {

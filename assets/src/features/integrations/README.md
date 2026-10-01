@@ -13,7 +13,7 @@ Edit the JSX files in this directory and run `npm run build` from the plugin roo
 
 `components.json` records the seven original factory-1841 bindings and their runtime dependencies. `tools/integration-adapters.mjs` replaces every implementation during the adapted build and fails when a binding is missing. The recovered fragments remain the parity baseline; do not rerun the one-time extractor over authored changes.
 
-The existing WordPress data store, REST endpoints, shared controls, entitlement checks, Pro modal and server-provided integration manifest remain in place. Source activation remains controlled by `OMLMS_SOURCE_ASSETS`; building does not change site configuration.
+The existing WordPress data store, REST endpoints, shared controls, entitlement checks, Pro modal and server-provided integration manifest remain in place. Source activation remains controlled by `OHMYLMS_SOURCE_ASSETS`; building does not change site configuration.
 
 ## Validation
 

@@ -30,10 +30,7 @@ export function createMembershipPricing(readRuntime) {
           ? null === (t = i[0]) || void 0 === t
             ? void 0
             : t.currency
-          : null === (n = window) ||
-              void 0 === n ||
-              null === (n = n.creator_lms_params) ||
-              void 0 === n
+          : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n
             ? void 0
             : n.currency,
       u = function (e, t) {
@@ -80,7 +77,7 @@ export function createMembershipPricing(readRuntime) {
               <Controls.FlexWP direction={'column'} justify={'flex-end'} align={'flex-end'}>
                 <Controls.FlexWP justify={'flex-end'} align={'flex-start'}>
                   <Controls.InputNumberWP
-                    className={'omlms-subscription-price-input'}
+                    className={'ohmylms-subscription-price-input'}
                     prefix={c}
                     type={'number'}
                     placeholder={(0, I18n.__)('e.g. 5.90', 'ohmylms')}
@@ -105,7 +102,7 @@ export function createMembershipPricing(readRuntime) {
                     onChange={function (e) {
                       return u('subscription_period', e);
                     }}
-                    customClass={'omlms-subscription-period-select'}
+                    customClass={'ohmylms-subscription-period-select'}
                   />
                 </Controls.FlexWP>
                 {(null == errors ? void 0 : errors.price) && (

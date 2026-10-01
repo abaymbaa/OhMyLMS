@@ -50,7 +50,7 @@ export function createEarningsSummaryCards(readRuntime) {
                             {e.label}
                           </Controls.TextWP>
                           {e.tooltip && (
-                            <V.A text={e.tooltip} className={'omlms-tooltip'} placement={'top'}>
+                            <V.A text={e.tooltip} className={'ohmylms-tooltip'} placement={'top'}>
                               <React.Fragment>
                                 <Mt.A />
                               </React.Fragment>
@@ -63,7 +63,7 @@ export function createEarningsSummaryCards(readRuntime) {
                             fontWeight: '500',
                             lineHeight: 1,
                           }}
-                          className={'omlms-card-value'}
+                          className={'ohmylms-card-value'}
                         >
                           {e.value}
                         </span>

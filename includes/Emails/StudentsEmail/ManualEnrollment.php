@@ -1,13 +1,13 @@
 <?php
 
-namespace OMLMS\Emails\StudentsEmail;
+namespace OhMyLMS\Emails\StudentsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 
 class ManualEnrollment {
 
 	public function __construct() {
-		add_action( 'creator_lms_manual_enrollment_by_email', array( $this, 'trigger' ), 10, 5 );
+		add_action( 'ohmylms_manual_enrollment_by_email', array( $this, 'trigger' ), 10, 5 );
 	}
 
 	public function basic_settings(): array {
@@ -37,7 +37,7 @@ class ManualEnrollment {
 	 * @return string
 	 */
 	private function get_profile_url() {
-		return omlms_get_page_permalink( 'student_profile' );
+		return ohmylms_get_page_permalink( 'student_profile' );
 	}
 
 
@@ -47,7 +47,7 @@ class ManualEnrollment {
 			return;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -59,7 +59,7 @@ class ManualEnrollment {
 		$subject = str_replace( '[course_name]', $course->get_name(), $subject );
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/manual-enrollment',
 			array(
 				'student_name'   => $user->display_name,
@@ -78,8 +78,8 @@ class ManualEnrollment {
 		$html_body = str_replace( '[student_name]', esc_html( $user->display_name ), $html_body );
 		$html_body = str_replace( '[course_name]', esc_html( $course->get_name() ), $html_body );
 
-		$sender_name  = $email_settings['creator_lms_email_sender_name'];
-		$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+		$sender_name  = $email_settings['ohmylms_email_sender_name'];
+		$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 		$headers      = array(
 			'MIME-Version: 1.0',
 			'Content-Type: text/html; charset=UTF-8',

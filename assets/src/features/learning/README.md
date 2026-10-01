@@ -29,7 +29,7 @@ LessonContent also retains the custom lesson-editor extension hook. Do not overw
 it by rerunning the one-time extraction script. Recovered files are the parity baseline;
 make ongoing edits in this directory instead.
 
-Source builds are used when OMLMS_SOURCE_ASSETS is enabled. Building alone does not
+Source builds are used when OHMYLMS_SOURCE_ASSETS is enabled. Building alone does not
 change that site configuration.
 
 ## Validation
@@ -39,6 +39,6 @@ change that site configuration.
 - `npm run build`
 - `npm run test:browser -- tests/browser/learning.spec.cjs`
 
-Browser tests use OMLMS_TEST_CREDENTIALS and the isolated WordPress test server. They
+Browser tests use OHMYLMS_TEST_CREDENTIALS and the isolated WordPress test server. They
 serve workspace bundles, check all three lists, save and reload real lesson/assignment
 fixtures, verify custom lesson rendering, and check grading with a mocked report API.

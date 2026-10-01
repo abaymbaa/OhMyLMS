@@ -1,12 +1,12 @@
 <?php
 
-namespace OMLMS\WPBakery\Elements;
+namespace OhMyLMS\WPBakery\Elements;
 
 
 /**
  * WPBakery Course List Element
  *
- * @package OMLMS\WPBakery\Elements
+ * @package OhMyLMS\WPBakery\Elements
  * @since 1.0.0
  */
 
@@ -25,7 +25,7 @@ class CourseListElement {
 		$this->register_element();
 
 		// Add filter to decode param_group data
-		add_filter( 'shortcode_atts_creator_lms_course_list', array( $this, 'decode_course_rows' ), 10, 3 );
+		add_filter( 'shortcode_atts_ohmylms_course_list', array( $this, 'decode_course_rows' ), 10, 3 );
 		
 		// Disable WPBakery shortcode caching for real-time preview updates
 		add_filter( 'vc_shortcode_content_filter_after', array( $this, 'disable_cache_for_preview' ), 10, 2 );
@@ -39,7 +39,7 @@ class CourseListElement {
 	 * @return string Modified output.
 	 */
 	public function disable_cache_for_preview( $output, $shortcode ) {
-		if ( 'creator_lms_course_list' === $shortcode ) {
+		if ( 'ohmylms_course_list' === $shortcode ) {
 			// Add a timestamp to force cache bypass in editor
 			if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 				$output .= '<!-- vc-no-cache:' . time() . ' -->';
@@ -64,23 +64,17 @@ class CourseListElement {
 	       }
 	       // Fallback to global options if not set in shortcode/element
 	       if ( empty( $out['layout'] ) ) {
-		       $out['layout'] = get_option( 'creator_lms_archive_page_layout', 'grid' );
+		       $out['layout'] = get_option( 'ohmylms_archive_page_layout', 'grid' );
 	       }
 	       if ( empty( $out['layout_style'] ) ) {
-		       $out['layout_style'] = get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' );
+		       $out['layout_style'] = get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
 	       }
 		   
-		   // Convert Layout 3/4 to Layout 1 if pro is not active
-		   if ( isset( $out['layout_style'] ) && in_array( $out['layout_style'], array( 'grid-style3', 'grid-style4' ) ) ) {
-			   if ( ! function_exists( 'creator_lms_is_pro_license' ) || ! creator_lms_is_pro_license() ) {
-				   $out['layout_style'] = 'grid-style1';
-			   }
-		   }
 	       if ( empty( $out['posts_per_page'] ) ) {
-		       $out['posts_per_page'] = get_option( 'creator_lms_archive_page_per_page', 10 );
+		       $out['posts_per_page'] = get_option( 'ohmylms_archive_page_per_page', 10 );
 	       }
 	       if ( empty( $out['show_filter'] ) ) {
-		       $out['show_filter'] = get_option( 'creator_lms_archive_page_filter_is_enabled', 'no' );
+		       $out['show_filter'] = get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' );
 	       }
 	       // Course rows (for carousel/grid-style3/4)
 	       if ( isset( $atts['course_rows'] ) && is_string( $atts['course_rows'] ) && ! empty( $atts['course_rows'] ) ) {
@@ -89,7 +83,7 @@ class CourseListElement {
 			       $out['course_rows'] = $decoded;
 		       }
 	       } elseif ( empty( $out['course_rows'] ) ) {
-		       $out['course_rows'] = get_option( 'creator_lms_archive_page_row', [] );
+		       $out['course_rows'] = get_option( 'ohmylms_archive_page_row', [] );
 	       }
 
 	       // Filter out show_filter, show_search, show_sort for Layout 3 and 4
@@ -113,7 +107,7 @@ class CourseListElement {
 	       }
 
 		   // Build layout style options based on pro license
-		   $is_pro_active = function_exists( 'creator_lms_is_pro_license' ) && creator_lms_is_pro_license();
+		   $is_pro_active = true;
 		   
 		   $layout_style_options = array(
 			   __( 'Layout 1', 'ohmylms' ) => 'grid-style1',
@@ -137,7 +131,7 @@ class CourseListElement {
 						       __( 'Grid', 'ohmylms' ) => 'grid',
 						       __( 'List', 'ohmylms' ) => 'list',
 					       ),
-					       'std'         => get_option( 'creator_lms_archive_page_layout', 'grid' ),
+					       'std'         => get_option( 'ohmylms_archive_page_layout', 'grid' ),
 					       'description' => __( 'Choose layout type', 'ohmylms' ),
 					       'admin_label' => true,
 				       ),
@@ -147,7 +141,7 @@ class CourseListElement {
 					       'heading'     => __( 'Layout Style', 'ohmylms' ),
 					       'param_name'  => 'layout_style',
 					       'value'       => $layout_style_options,
-					       'std'         => get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' ),
+					       'std'         => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
 					       'description' => __( 'Choose layout style', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout',
@@ -167,7 +161,7 @@ class CourseListElement {
 						       __( '3 Columns', 'ohmylms' ) => '3',
 						       __( '4 Columns', 'ohmylms' ) => '4',
 					       ),
-					       'std'         => get_option( 'creator_lms_archive_page_columns', '3' ),
+					       'std'         => get_option( 'ohmylms_archive_page_columns', '3' ),
 					       'description' => __( 'Number of columns per row', 'ohmylms' ),
 			       'dependency'  => array(
 					       'element' => 'layout',
@@ -181,7 +175,7 @@ class CourseListElement {
 					       'heading'     => __( 'Show Filter', 'ohmylms' ),
 					       'param_name'  => 'show_filter',
 					       'value'       => array(__( 'Enable', 'ohmylms' ) => 'yes' ),
-					       'std'         => get_option( 'creator_lms_archive_page_filter_is_enabled', 'no' ),
+					       'std'         => get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' ),
 					       'description' => __( 'Show course filter (Layout 1/2, Grid only)', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout_style',
@@ -193,7 +187,7 @@ class CourseListElement {
 					       'heading'     => __( 'Show Search', 'ohmylms' ),
 					       'param_name'  => 'show_search',
 					       'value'       => array(__( 'Enable', 'ohmylms' ) => 'yes' ),
-					       'std'         => get_option( 'creator_lms_archive_page_search_is_enabled', 'no' ),
+					       'std'         => get_option( 'ohmylms_archive_page_search_is_enabled', 'no' ),
 					       'description' => __( 'Show course search (Layout 1/2, Grid only)', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout_style',
@@ -205,7 +199,7 @@ class CourseListElement {
 				       'heading'     => __( 'Show Sort', 'ohmylms' ),
 				       'param_name'  => 'show_sort',
 				       'value'       => array(__( 'Enable', 'ohmylms' ) => 'yes' ),
-				       'std'         => get_option( 'creator_lms_archive_page_sorting_is_enabled', 'no' ),
+				       'std'         => get_option( 'ohmylms_archive_page_sorting_is_enabled', 'no' ),
 				       'description' => __( 'Show course sorting (Layout 1/2, Grid only)', 'ohmylms' ),
 				       'dependency'  => array(
 					       'element' => 'layout_style',
@@ -217,7 +211,7 @@ class CourseListElement {
 					       'heading'     => __( 'Show Category', 'ohmylms' ),
 					       'param_name'  => 'is_enable_category',
 					       'value'       => array(__( 'Enable', 'ohmylms' ) => 'yes' ),
-					       'std'         => get_option( 'creator_lms_archive_page_category_is_enabled', 'no' ),
+					       'std'         => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ),
 					       'description' => __( 'Show course category (Layout 3/4, Grid only, Pro)', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout_style',
@@ -231,7 +225,7 @@ class CourseListElement {
 					       'type'        => 'param_group',
 					       'heading'     => __( 'Course Rows', 'ohmylms' ),
 					       'param_name'  => 'course_rows',
-						   'std'         => get_option( 'creator_lms_archive_page_course_rows', '' ),
+						   'std'         => get_option( 'ohmylms_archive_page_course_rows', '' ),
 					       'description' => __( 'Add custom rows for Layout 3/4 (Pro)', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout_style',
@@ -361,7 +355,7 @@ class CourseListElement {
 						   'type'        => 'textfield',
 						   'heading'     => __( 'Courses Per Page', 'ohmylms' ),
 						   'param_name'  => 'posts_per_page',
-						   'std'         => get_option( 'creator_lms_archive_page_per_page', 10 ),
+						   'std'         => get_option( 'ohmylms_archive_page_per_page', 10 ),
 						   'value'       => '10',
 						   'description' => __( 'Number of courses to display per page', 'ohmylms' ),
 					   )
@@ -376,7 +370,7 @@ class CourseListElement {
 				   array(
 					   'type'        => 'custom_markup',
 					   'param_name'  => 'pro_notice_dummy',
-					   'value'       => __( '<div style="padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; color: #1565c0; font-size: 13px; line-height: 1.6; margin-top: 10px;"><strong>Pro Feature</strong><br>Layout 3 and Layout 4 require CreatorLMS Pro. <a href="https://coderex.co/creatorlms-pro/" target="_blank" style="color: #1565c0; text-decoration: underline;">Upgrade to Pro</a> to unlock carousel layouts and advanced features.</div>', 'ohmylms' ),
+					   'value'       => __( '<div style="padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; color: #1565c0; font-size: 13px; line-height: 1.6; margin-top: 10px;"><strong>Pro Feature</strong><br>Layout 3 and Layout 4 require OhMyLMS Pro. <a href="https://coderex.co/ohmylms-pro/" target="_blank" style="color: #1565c0; text-decoration: underline;">Upgrade to Pro</a> to unlock carousel layouts and advanced features.</div>', 'ohmylms' ),
 					   'dependency'  => array(
 						   'element' => 'layout',
 						   'value'   => array('grid'),
@@ -398,7 +392,7 @@ class CourseListElement {
 					   array(
 						   'type'        => 'custom_markup',
 						   'param_name'  => 'posts_per_page_pro_notice',
-						   'value'       => __( '<div style="padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; color: #1565c0; font-size: 13px; line-height: 1.6; margin-top: 10px;"><strong>Pro Feature</strong><br>"Courses Per Page" customization requires CreatorLMS Pro. <a href="https://coderex.co/creatorlms-pro/" target="_blank" style="color: #1565c0; text-decoration: underline;">Upgrade to Pro</a> to control the number of courses displayed per page.</div>', 'ohmylms' ),
+						   'value'       => __( '<div style="padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; color: #1565c0; font-size: 13px; line-height: 1.6; margin-top: 10px;"><strong>Pro Feature</strong><br>"Courses Per Page" customization requires OhMyLMS Pro. <a href="https://coderex.co/ohmylms-pro/" target="_blank" style="color: #1565c0; text-decoration: underline;">Upgrade to Pro</a> to control the number of courses displayed per page.</div>', 'ohmylms' ),
 					   )
 				   ) );
 			   }
@@ -407,9 +401,9 @@ class CourseListElement {
 		   vc_map(
 			   array(
 				   'name'        => __( 'Course List', 'ohmylms' ),
-				   'base'        => 'creator_lms_course_list',
-				   'icon'        => 'icon-wpb-creatorlms',
-				   'category'    => __( 'CreatorLMS', 'ohmylms' ),
+				   'base'        => 'ohmylms_course_list',
+				   'icon'        => 'icon-wpb-ohmylms',
+				   'category'    => __( 'OhMyLMS', 'ohmylms' ),
 				   'description' => __( 'Display a list of courses', 'ohmylms' ),
 				   'front_enqueue_js' => true,
 				   'js_view'         => 'VcColumnView',
@@ -419,38 +413,38 @@ class CourseListElement {
        }
 
 	    /**
-		* Sync WPBakery element settings to main CreatorLMS options after save
+		* Sync WPBakery element settings to main OhMyLMS options after save
 		*
 		* @param array $atts The user defined shortcode attributes.
 		*/
        public static function sync_settings_to_options( $atts ) {
 	       if ( isset( $atts['layout'] ) ) {
-		       update_option( 'creator_lms_archive_page_layout', $atts['layout'] );
+		       update_option( 'ohmylms_archive_page_layout', $atts['layout'] );
 	       }
 	       if ( isset( $atts['layout_style'] ) ) {
-		       update_option( 'creator_lms_archive_page_layout_style', $atts['layout_style'] );
+		       update_option( 'ohmylms_archive_page_layout_style', $atts['layout_style'] );
 	       }
 	       // Only allow changing posts_per_page if pro is active
-	       if ( isset( $atts['posts_per_page'] ) && ( function_exists( 'creator_lms_is_pro_license' ) && creator_lms_is_pro_license() ) ) {
-		       update_option( 'creator_lms_archive_page_per_page', $atts['posts_per_page'] );
+	       if ( isset( $atts['posts_per_page'] ) && true ) {
+		       update_option( 'ohmylms_archive_page_per_page', $atts['posts_per_page'] );
 	       }
 	       if ( isset( $atts['show_filter'] ) ) {
-		       update_option( 'creator_lms_archive_page_filter_is_enabled', $atts['show_filter'] );
+		       update_option( 'ohmylms_archive_page_filter_is_enabled', $atts['show_filter'] );
 	       }
 	       if ( isset( $atts['show_search'] ) ) {
-		       update_option( 'creator_lms_archive_page_search_is_enabled', $atts['show_search'] );
+		       update_option( 'ohmylms_archive_page_search_is_enabled', $atts['show_search'] );
 	       }
 	       if ( isset( $atts['show_sort'] ) ) {
-		       update_option( 'creator_lms_archive_page_sorting_is_enabled', $atts['show_sort'] );
+		       update_option( 'ohmylms_archive_page_sorting_is_enabled', $atts['show_sort'] );
 	       }
 	       if ( isset( $atts['is_enable_category'] ) ) {
-		       update_option( 'creator_lms_archive_page_category_is_enabled', $atts['is_enable_category'] );
+		       update_option( 'ohmylms_archive_page_category_is_enabled', $atts['is_enable_category'] );
 	       }
 	       if ( isset( $atts['columns'] ) ) {
-		       update_option( 'creator_lms_archive_page_columns', $atts['columns'] );
+		       update_option( 'ohmylms_archive_page_columns', $atts['columns'] );
 	       }
 	       if ( isset( $atts['course_rows'] ) && is_array( $atts['course_rows'] ) ) {
-		       update_option( 'creator_lms_archive_page_row', $atts['course_rows'] );
+		       update_option( 'ohmylms_archive_page_row', $atts['course_rows'] );
 	       }
        }
 }

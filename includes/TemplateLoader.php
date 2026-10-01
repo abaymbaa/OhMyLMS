@@ -1,11 +1,11 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
 /**
  * Class TemplateLoader
  *
- * @package CreatorLms
+ * @package OhMyLMS
  * @since 1.0.0
  */
 class TemplateLoader {
@@ -28,7 +28,7 @@ class TemplateLoader {
 	public static function init(): void {
 		add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ) );
 		add_filter( 'template_include', array( __CLASS__, 'load_template' ), 999 );
-	add_filter('creatorlms_get_template', [__CLASS__, 'handle_relocated_templates'], 10, 5);
+	add_filter('ohmylms_get_template', [__CLASS__, 'handle_relocated_templates'], 10, 5);
 }
 
 	/**
@@ -49,7 +49,7 @@ class TemplateLoader {
 			$template     = locate_template( $search_files );
 
 			if ( ! $template ) {
-				$template = CREATOR_LMS_PATH . '/templates/' . $default_file;
+				$template = OHMYLMS_PATH . '/templates/' . $default_file;
 			}
 		}
 		return $template;
@@ -63,16 +63,16 @@ class TemplateLoader {
 	 * @since 1.0.0
 	 */
 	private static function get_template_loader_default_file(): string {
-		if ( is_singular( CREATOR_LMS_COURSE_CPT ) ) {
+		if ( is_singular( OHMYLMS_COURSE_CPT ) ) {
 			$default_file = 'single-course.php';
 
-		} elseif ( is_singular( CREATOR_LMS_LESSON_CPT ) || omlms_is_content_page() ) {
+		} elseif ( is_singular( OHMYLMS_LESSON_CPT ) || ohmylms_is_content_page() ) {
 			$default_file = 'single-lesson.php';
 
-		} elseif ( omlms_is_courses_page() || omlms_is_course_category() || omlms_is_course_taxonomy() ) {
+		} elseif ( ohmylms_is_courses_page() || ohmylms_is_course_category() || ohmylms_is_course_taxonomy() ) {
 			$default_file = 'archive-course.php';
 
-		} elseif ( omlms_is_membership_page() ) {
+		} elseif ( ohmylms_is_membership_page() ) {
 			$default_file = 'archive-membership.php';
 
 		} else {
@@ -90,7 +90,7 @@ class TemplateLoader {
 	 * @since 1.0.0
 	 */
 	private static function get_template_loader_files( $default_file ) {
-		$templates = apply_filters( 'creator_lms_template_loader_files', array(), $default_file );
+		$templates = apply_filters( 'ohmylms_template_loader_files', array(), $default_file );
 
 		if ( is_page_template() ) {
 			$page_template = get_page_template_slug();
@@ -103,7 +103,7 @@ class TemplateLoader {
 			}
 		}
 
-		if ( is_singular( CREATOR_LMS_COURSE_CPT ) ) {
+		if ( is_singular( OHMYLMS_COURSE_CPT ) ) {
 			$object       = get_queried_object();
 			$name_decoded = urldecode( $object->post_name );
 			if ( $name_decoded !== $object->post_name ) {
@@ -114,9 +114,9 @@ class TemplateLoader {
 
 		$templates[] = $default_file;
 		if ( isset( $cs_default ) ) {
-			$templates[] = omlms_template_path() . $cs_default;
+			$templates[] = ohmylms_template_path() . $cs_default;
 		}
-		$templates[] = omlms_template_path() . $default_file;
+		$templates[] = ohmylms_template_path() . $default_file;
 
 		return array_unique( $templates );
 	}
@@ -131,14 +131,14 @@ class TemplateLoader {
 			return $q;
 		}
 
-		if ( is_page( omlms_get_page_id( 'course' ) ) ) {
-			$q->set( 'post_type', CREATOR_LMS_COURSE_CPT );
+		if ( is_page( ohmylms_get_page_id( 'course' ) ) ) {
+			$q->set( 'post_type', OHMYLMS_COURSE_CPT );
 			$q->set( 'posts_per_page', 6 );
 			$q->set( 'page_id', '' );
 			return $q;
 		}
-		if ( is_page( omlms_get_page_id( 'membership' ) ) ) {
-			$q->set( 'post_type', CREATOR_LMS_MEMBERSHIP_CPT );
+		if ( is_page( ohmylms_get_page_id( 'membership' ) ) ) {
+			$q->set( 'post_type', OHMYLMS_MEMBERSHIP_CPT );
 			$q->set( 'posts_per_page', 10 );
 			$q->set( 'page_id', '' );
 			return $q;
@@ -152,12 +152,12 @@ public static function handle_relocated_templates ( $template, $template_name, $
             return $template;
         }
 
-        $creatorlms_pro_path     = CREATORLMS_PRO_DIR;
+        $ohmylms_pro_path     = OHMYLMS_PRO_DIR;
         $template_file           = basename( $template_name );
 
         if (!isset(self::$relocated_templates[$template_file])) return $template;
-        return $creatorlms_pro_path . '/templates/' . self::$relocated_templates[ $template_file ] . $template_file;
+        return $ohmylms_pro_path . '/templates/' . self::$relocated_templates[ $template_file ] . $template_file;
     }
 }
 
-add_action( 'init', array( 'OMLMS\TemplateLoader', 'init' ) );
+add_action( 'init', array( 'OhMyLMS\TemplateLoader', 'init' ) );

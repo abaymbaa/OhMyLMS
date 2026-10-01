@@ -22,12 +22,12 @@ class GatewayRazorPay extends PaymentGateway {
      */
     public function __construct() {
         $this->id                   = 'razorpay';
-        $gateway_settings_key       = 'creatorlms_' . $this->id . '_settings';
+        $gateway_settings_key       = 'ohmylms_' . $this->id . '_settings';
         $this->settings             = get_option( $gateway_settings_key, array() );
-        $this->title                = $this->get_setting( 'title', __( 'Razorpay', 'creator-lms' ) );
-        $this->description          = $this->get_setting( 'instruction', __( 'Pay via Razorpay; accepts various payment methods.', 'creator-lms' ) );
+        $this->title                = $this->get_setting( 'title', __( 'Razorpay', 'ohmylms' ) );
+        $this->description          = $this->get_setting( 'instruction', __( 'Pay via Razorpay; accepts various payment methods.', 'ohmylms' ) );
         $this->has_fields           = true;
-        $this->order_button_text    = __( 'Place payment', 'creator-lms' );
+        $this->order_button_text    = __( 'Place payment', 'ohmylms' );
         $this->enabled              = $this->get_setting( 'enabled', 'no' );
         $this->testmode             = $this->get_setting( 'testmode', 'no' );
         $this->publishable_key      = 'yes' === $this->testmode ? $this->get_setting( 'test_publishable_key', '' ) : $this->get_setting( 'live_publishable_key', '' );
@@ -40,14 +40,14 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Actions & Filters
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
-        add_action( 'wp_ajax_omlms_razorpay_verify_payment', array( $this, 'ajax_verify_payment_handler' ) );
-        add_action( 'wp_ajax_nopriv_omlms_razorpay_verify_payment', array( $this, 'ajax_verify_payment_handler' ) );
+        add_action( 'wp_ajax_ohmylms_razorpay_verify_payment', array( $this, 'ajax_verify_payment_handler' ) );
+        add_action( 'wp_ajax_nopriv_ohmylms_razorpay_verify_payment', array( $this, 'ajax_verify_payment_handler' ) );
         add_action( 'rest_api_init', array( $this, 'register_webhook_routes' ) );
-        add_action( 'creator_lms_after_membership_object_save', array( $this, 'sync_membership_plan_to_razorpay' ), 10, 2 );
+        add_action( 'ohmylms_after_membership_object_save', array( $this, 'sync_membership_plan_to_razorpay' ), 10, 2 );
         
         // Admin hooks
-        add_filter( 'manage_omlms-subscription_posts_columns', array( $this, 'add_subscription_admin_columns' ) );
-        add_action( 'manage_omlms-subscription_posts_custom_column', array( $this, 'render_subscription_admin_columns' ), 10, 2 );
+        add_filter( 'manage_ohmylms-subscription_posts_columns', array( $this, 'add_subscription_admin_columns' ) );
+        add_action( 'manage_ohmylms-subscription_posts_custom_column', array( $this, 'render_subscription_admin_columns' ), 10, 2 );
         
         // Add admin action to create Razorpay plans for memberships
         add_action( 'admin_init', array( $this, 'maybe_create_membership_plans' ) );
@@ -67,56 +67,56 @@ class GatewayRazorPay extends PaymentGateway {
     public function init_form_fields() {
         $this->form_fields = array(
             'enabled'              => array(
-                'title'   => __( 'Enable/Disable', 'creator-lms' ),
+                'title'   => __( 'Enable/Disable', 'ohmylms' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable Razorpay Payment Gateway', 'creator-lms' ),
+                'label'   => __( 'Enable Razorpay Payment Gateway', 'ohmylms' ),
                 'default' => 'no',
             ),
             'title'                => array(
-                'title'       => __( 'Title', 'creator-lms' ),
+                'title'       => __( 'Title', 'ohmylms' ),
                 'type'        => 'text',
-                'description' => __( 'This controls the title which the user sees during checkout.', 'creator-lms' ),
-                'default'     => __( 'Razorpay', 'creator-lms' ),
+                'description' => __( 'This controls the title which the user sees during checkout.', 'ohmylms' ),
+                'default'     => __( 'Razorpay', 'ohmylms' ),
                 'desc_tip'    => true,
             ),
             'description'          => array(
-                'title'       => __( 'Description', 'creator-lms' ),
+                'title'       => __( 'Description', 'ohmylms' ),
                 'type'        => 'textarea',
-                'description' => __( 'This controls the description which the user sees during checkout.', 'creator-lms' ),
-                'default'     => __( 'Pay via Razorpay; accepts various payment methods.', 'creator-lms' ),
+                'description' => __( 'This controls the description which the user sees during checkout.', 'ohmylms' ),
+                'default'     => __( 'Pay via Razorpay; accepts various payment methods.', 'ohmylms' ),
             ),
             'testmode'             => array(
-                'title'       => __( 'Test mode', 'creator-lms' ),
+                'title'       => __( 'Test mode', 'ohmylms' ),
                 'type'        => 'checkbox',
-                'label'       => __( 'Enable Test Mode', 'creator-lms' ),
+                'label'       => __( 'Enable Test Mode', 'ohmylms' ),
                 'default'     => 'yes',
-                'description' => __( 'Place the payment gateway in test mode using test API keys.', 'creator-lms' ),
+                'description' => __( 'Place the payment gateway in test mode using test API keys.', 'ohmylms' ),
             ),
             'test_publishable_key' => array(
-                'title'       => __( 'Test Key ID', 'creator-lms' ),
+                'title'       => __( 'Test Key ID', 'ohmylms' ),
                 'type'        => 'text',
-                'description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ),
+                'description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'test_secret_key'      => array(
-                'title'       => __( 'Test Key Secret', 'creator-lms' ),
+                'title'       => __( 'Test Key Secret', 'ohmylms' ),
                 'type'        => 'text',
-                'description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ),
+                'description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'live_publishable_key' => array(
-                'title'       => __( 'Live Key ID', 'creator-lms' ),
+                'title'       => __( 'Live Key ID', 'ohmylms' ),
                 'type'        => 'text',
-                'description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ),
+                'description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'live_secret_key'      => array(
-                'title'       => __( 'Live Key Secret', 'creator-lms' ),
+                'title'       => __( 'Live Key Secret', 'ohmylms' ),
                 'type'        => 'text',
-                'description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ),
+                'description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
@@ -131,24 +131,24 @@ class GatewayRazorPay extends PaymentGateway {
     public function get_settings() {
         $fields = array(
             array(
-                'title' => __( 'Title', 'creator-lms' ),
-                'short_description' => __( 'Enter the title that will appear for Razorpay payment during checkout.', 'creator-lms' ),
+                'title' => __( 'Title', 'ohmylms' ),
+                'short_description' => __( 'Enter the title that will appear for Razorpay payment during checkout.', 'ohmylms' ),
                 'input_type' => 'text',
-                'default_value' => __( 'Razorpay', 'creator-lms' ),
+                'default_value' => __( 'Razorpay', 'ohmylms' ),
                 'option_name' => 'title',
                 'value' => $this->title
             ),
             array(
-                'title' => __( 'Instruction', 'creator-lms' ),
-                'short_description' => __( 'Provide detailed instructions on how students should complete Razorpay payment.', 'creator-lms' ),
+                'title' => __( 'Instruction', 'ohmylms' ),
+                'short_description' => __( 'Provide detailed instructions on how students should complete Razorpay payment.', 'ohmylms' ),
                 'input_type' => 'textarea',
-                'default_value' => __( 'Pay with Razorpay.', 'creator-lms' ),
+                'default_value' => __( 'Pay with Razorpay.', 'ohmylms' ),
                 'option_name' => 'instruction',
                 'value' => $this->description
             ),
             array(
-                'title' => __( 'Test Mode', 'creator-lms' ),
-                'short_description' => __( 'Place the payment gateway in test mode using test API keys.', 'creator-lms' ),
+                'title' => __( 'Test Mode', 'ohmylms' ),
+                'short_description' => __( 'Place the payment gateway in test mode using test API keys.', 'ohmylms' ),
                 'input_type' => 'switch',
                 'default_value' => 'no',
                 'option_name' => 'testmode',
@@ -159,8 +159,8 @@ class GatewayRazorPay extends PaymentGateway {
                 )
             ),
             array(
-                'title' => __( 'Test Key ID', 'creator-lms' ),
-                'short_description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Test Key ID', 'creator-lms' ) . '</a>',
+                'title' => __( 'Test Key ID', 'ohmylms' ),
+                'short_description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Test Key ID', 'ohmylms' ) . '</a>',
                 'input_type' => 'text',
                 'default_value' => '',
                 'value' => $this->get_setting( 'test_publishable_key', '' ),
@@ -172,8 +172,8 @@ class GatewayRazorPay extends PaymentGateway {
                 )
             ),
             array(
-                'title' => __( 'Test Key Secret', 'creator-lms' ),
-                'short_description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Test Key Secret', 'creator-lms' ) . '</a>',
+                'title' => __( 'Test Key Secret', 'ohmylms' ),
+                'short_description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Test Key Secret', 'ohmylms' ) . '</a>',
                 'input_type' => 'text',
                 'default_value' => '',
                 'value' => $this->get_setting( 'test_secret_key', '' ),
@@ -185,8 +185,8 @@ class GatewayRazorPay extends PaymentGateway {
                 )
             ),
             array(
-                'title' => __( 'Live Key ID', 'creator-lms' ),
-                'short_description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Live Key ID', 'creator-lms' ) . '</a>',
+                'title' => __( 'Live Key ID', 'ohmylms' ),
+                'short_description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Live Key ID', 'ohmylms' ) . '</a>',
                 'input_type' => 'text',
                 'default_value' => '',
                 'option_name' => 'live_publishable_key',
@@ -198,8 +198,8 @@ class GatewayRazorPay extends PaymentGateway {
                 )
             ),
             array(
-                'title' => __( 'Live Key Secret', 'creator-lms' ),
-                'short_description' => __( 'Get your API keys from your Razorpay account.', 'creator-lms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Live Key Secret', 'creator-lms' ) . '</a>',
+                'title' => __( 'Live Key Secret', 'ohmylms' ),
+                'short_description' => __( 'Get your API keys from your Razorpay account.', 'ohmylms' ) . ' <a href="https://razorpay.com/docs/payments/dashboard/account-settings/api-keys/" target="_blank">' . __( 'How to find your Live Key Secret', 'ohmylms' ) . '</a>',
                 'input_type' => 'text',
                 'default_value' => '',
                 'option_name' => 'live_secret_key',
@@ -214,8 +214,8 @@ class GatewayRazorPay extends PaymentGateway {
 
         $gateway_settings = array(
             'id' => 'razorpay',
-            'title' => __( 'Razorpay', 'creator-lms' ),
-            'description' => __( 'Razorpay Payment Gateway', 'creator-lms' ),
+            'title' => __( 'Razorpay', 'ohmylms' ),
+            'description' => __( 'Razorpay Payment Gateway', 'ohmylms' ),
             'icon' => '<svg width="43" height="43" fill="none" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg"><rect width="43" height="43" fill="#3395FF" rx="21.5"/><path fill="#fff" d="M13.5 18l7.5 7.5L31.5 15"/></svg>',
             'has_config' => true,
             'subscription_support' => false,
@@ -235,7 +235,7 @@ class GatewayRazorPay extends PaymentGateway {
         $description = $this->get_description();
 
         if ( 'yes' === $this->testmode ) {
-            $description .= ' ' . __( "\n\nTEST MODE ENABLED. You are using Razorpay in test mode.", 'creator-lms' );
+            $description .= ' ' . __( "\n\nTEST MODE ENABLED. You are using Razorpay in test mode.", 'ohmylms' );
         }
         
         if ( $description ) {
@@ -244,12 +244,12 @@ class GatewayRazorPay extends PaymentGateway {
 
         ?>
         <div id="razorpay-payment-form-container">
-            <!-- <p><?php esc_html_e( 'Click "Place payment" to proceed with Razorpay payment.', 'creator-lms' ); ?></p> -->
+            <!-- <p><?php esc_html_e( 'Click "Place payment" to proceed with Razorpay payment.', 'ohmylms' ); ?></p> -->
             <div id="razorpay-error-message" role="alert" style="color: red;"></div>
         </div>
         <?php
 
-        do_action( 'creator_lms_razorpay_payment_fields', $this->id );
+        do_action( 'ohmylms_razorpay_payment_fields', $this->id );
     }
 
     /**
@@ -258,7 +258,7 @@ class GatewayRazorPay extends PaymentGateway {
      * @return void
      */
     public function payment_scripts() {
-        if ( ! is_creator_lms_checkout() ) {
+        if ( ! is_ohmylms_checkout() ) {
             return;
         }
 
@@ -274,35 +274,35 @@ class GatewayRazorPay extends PaymentGateway {
         wp_enqueue_script( 'razorpay-checkout-sdk', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true );
 
         // Define custom script path and version
-        $script_path = CREATOR_LMS_URL . '/packages/e-commerce/assets/js/razorpay-checkout.js';
-        $script_version = CREATOR_LMS_VERSION;
+        $script_path = OHMYLMS_URL . '/packages/e-commerce/assets/js/razorpay-checkout.js';
+        $script_version = OHMYLMS_VERSION;
 
         // Register custom checkout script
-        wp_register_script( 'omlms-razorpay-checkout', $script_path, array( 'jquery', 'razorpay-checkout-sdk' ), $script_version, true );
+        wp_register_script( 'ohmylms-razorpay-checkout', $script_path, array( 'jquery', 'razorpay-checkout-sdk' ), $script_version, true );
 
         // Prepare parameters for localization
-        $currency = get_omlms_currency();
+        $currency = get_ohmylms_currency();
         $is_subscription = isset( $_GET['membership_id'] ) ? true : false;
 
         $razorpay_params = array(
             'key_id'                   => $this->publishable_key,
             'ajax_url'                 => admin_url( 'admin-ajax.php' ),
-            'checkout_nonce'           => wp_create_nonce( 'omlms_razorpay_checkout_nonce' ),
-            'verify_payment_nonce'     => wp_create_nonce( 'omlms_razorpay_verify_payment_nonce' ),
-            'verify_payment_action'    => 'omlms_razorpay_verify_payment',
+            'checkout_nonce'           => wp_create_nonce( 'ohmylms_razorpay_checkout_nonce' ),
+            'verify_payment_nonce'     => wp_create_nonce( 'ohmylms_razorpay_verify_payment_nonce' ),
+            'verify_payment_action'    => 'ohmylms_razorpay_verify_payment',
             'currency'                 => $currency,
             'is_subscription'          => $is_subscription,
             'store_name'               => get_bloginfo( 'name' ),
-            'error_prefix'             => __( 'Payment error: ', 'creator-lms' ),
-            'data_error_msg'           => __( 'Unable to retrieve order data. Please try again.', 'creator-lms' ),
-            'checkout_initiated_error' => __( 'Razorpay checkout could not be initiated.', 'creator-lms' ),
+            'error_prefix'             => __( 'Payment error: ', 'ohmylms' ),
+            'data_error_msg'           => __( 'Unable to retrieve order data. Please try again.', 'ohmylms' ),
+            'checkout_initiated_error' => __( 'Razorpay checkout could not be initiated.', 'ohmylms' ),
         );
 
         // Localize the script with parameters
-        wp_localize_script( 'omlms-razorpay-checkout', 'omlms_razorpay_params', $razorpay_params );
+        wp_localize_script( 'ohmylms-razorpay-checkout', 'ohmylms_razorpay_params', $razorpay_params );
 
         // Enqueue the custom script
-        wp_enqueue_script( 'omlms-razorpay-checkout' );
+        wp_enqueue_script( 'ohmylms-razorpay-checkout' );
     }
 
     /**
@@ -321,7 +321,7 @@ class GatewayRazorPay extends PaymentGateway {
             error_log( "Razorpay Error: Could not retrieve order object for order ID: {$order_id}" );
             return array(
                 'result'  => 'failure',
-                'message' => __( 'Order data could not be found. Please contact support.', 'creator-lms' ),
+                'message' => __( 'Order data could not be found. Please contact support.', 'ohmylms' ),
             );
         }
 
@@ -364,7 +364,7 @@ class GatewayRazorPay extends PaymentGateway {
             error_log( "Razorpay Error: Amount in smallest unit is zero or less for order ID: {$order_id}, Amount: {$amount_in_smallest_unit}" );
             return array(
                 'result'  => 'failure',
-                'message' => __( 'Invalid payment amount. Please contact support.', 'creator-lms' ),
+                'message' => __( 'Invalid payment amount. Please contact support.', 'ohmylms' ),
             );
         }
 
@@ -378,7 +378,7 @@ class GatewayRazorPay extends PaymentGateway {
                 'order_id'       => (string) $order_id,
                 'customer_email' => $order->get_email(),
                 'customer_name'  => $order->get_student_name() ?? '',
-                'plugin'         => 'CreatorLMS',
+                'plugin'         => 'OhMyLMS',
             ),
         );
         // Create Razorpay order
@@ -387,10 +387,10 @@ class GatewayRazorPay extends PaymentGateway {
         if ( is_wp_error( $razorpay_order ) ) {
             $error_message = $razorpay_order->get_error_message();
             error_log( "Razorpay API Error creating order for WP Order ID {$order_id}: " . $error_message );
-            $order->add_order_note( sprintf( __( 'Razorpay order creation failed: %s', 'creator-lms' ), $error_message ) );
+            $order->add_order_note( sprintf( __( 'Razorpay order creation failed: %s', 'ohmylms' ), $error_message ) );
             return array(
                 'result'  => 'failure',
-                'message' => sprintf( __( 'Could not initiate payment with Razorpay. %s', 'creator-lms' ), $error_message ),
+                'message' => sprintf( __( 'Could not initiate payment with Razorpay. %s', 'ohmylms' ), $error_message ),
             );
         }
 
@@ -398,7 +398,7 @@ class GatewayRazorPay extends PaymentGateway {
             error_log( "Razorpay Error: No order ID returned for WP Order ID {$order_id}" );
             return array(
                 'result'  => 'failure',
-                'message' => __( 'Razorpay order ID missing. Please try again.', 'creator-lms' ),
+                'message' => __( 'Razorpay order ID missing. Please try again.', 'ohmylms' ),
             );
         }
 
@@ -408,7 +408,7 @@ class GatewayRazorPay extends PaymentGateway {
         update_post_meta( $order_id, '_razorpay_order_id', $razorpay_order_id );
         update_post_meta( $order_id, '_has_subscription', $is_subscription ? 'yes' : 'no' );
         
-        $order->add_order_note( sprintf( __( 'Razorpay order created. Order ID: %s', 'creator-lms' ), $razorpay_order_id ) );
+        $order->add_order_note( sprintf( __( 'Razorpay order created. Order ID: %s', 'ohmylms' ), $razorpay_order_id ) );
 
         // Get prefill data
         $prefill_contact = '';
@@ -426,7 +426,7 @@ class GatewayRazorPay extends PaymentGateway {
             'currency'            => $order_currency,
             'order_id'            => $order_id,
             'name'                => get_bloginfo( 'name' ),
-            'description'         => sprintf( __( 'Order #%s', 'creator-lms' ), $order->get_id() ),
+            'description'         => sprintf( __( 'Order #%s', 'ohmylms' ), $order->get_id() ),
             'prefill_name'        => $order->get_student_name(),
             'prefill_email'       => $order->get_email(),
             'prefill_contact'     => $prefill_contact,
@@ -460,14 +460,14 @@ class GatewayRazorPay extends PaymentGateway {
             if ( ! $original_order ) {
                 return array(
                     'result'  => 'failure',
-                    'message' => __( 'Original order not found for Razorpay recurring payment.', 'creator-lms' ),
+                    'message' => __( 'Original order not found for Razorpay recurring payment.', 'ohmylms' ),
                 );
             }
 
             if ( ! $renewal_order ) {
                 return array(
                     'result'  => 'failure',
-                    'message' => __( 'Renewal order not found for Razorpay recurring payment.', 'creator-lms' ),
+                    'message' => __( 'Renewal order not found for Razorpay recurring payment.', 'ohmylms' ),
                 );
             }
 
@@ -486,7 +486,7 @@ class GatewayRazorPay extends PaymentGateway {
                 update_post_meta( $renewal_order_id, '_payment_method_title', $this->title );
                 
                 $renewal_order->add_order_note( sprintf(
-                    __( 'Renewal order created. Linked to Razorpay Subscription ID: %s. Payment will be processed automatically by Razorpay.', 'creator-lms' ),
+                    __( 'Renewal order created. Linked to Razorpay Subscription ID: %s. Payment will be processed automatically by Razorpay.', 'ohmylms' ),
                     $razorpay_subscription_id
                 ) );
                 
@@ -494,7 +494,7 @@ class GatewayRazorPay extends PaymentGateway {
                     'result'              => 'success',
                     'transaction_id'      => $razorpay_subscription_id,
                     'order_id'            => $renewal_order_id,
-                    'message'             => __( 'Renewal order created. Razorpay Subscriptions will handle automatic payment.', 'creator-lms' ),
+                    'message'             => __( 'Renewal order created. Razorpay Subscriptions will handle automatic payment.', 'ohmylms' ),
                 );
             }
 
@@ -511,7 +511,7 @@ class GatewayRazorPay extends PaymentGateway {
             if ( $amount_in_smallest_unit <= 0 ) {
                 return array(
                     'result'  => 'failure',
-                    'message' => __( 'Invalid payment amount for recurring payment.', 'creator-lms' ),
+                    'message' => __( 'Invalid payment amount for recurring payment.', 'ohmylms' ),
                 );
             }
 
@@ -519,7 +519,7 @@ class GatewayRazorPay extends PaymentGateway {
             $payment_link_data = array(
                 'amount'            => $amount_in_smallest_unit,
                 'currency'          => $order_currency,
-                'description'       => sprintf( __( 'Subscription Renewal - Order #%s', 'creator-lms' ), $renewal_order_id ),
+                'description'       => sprintf( __( 'Subscription Renewal - Order #%s', 'ohmylms' ), $renewal_order_id ),
                 'customer'          => array(
                     'name'    => $renewal_order->get_student_name() ?? '',
                     'email'   => $renewal_order->get_email(),
@@ -536,7 +536,7 @@ class GatewayRazorPay extends PaymentGateway {
                     'parent_order_id'    => (string) $original_order_id,
                     'student_id'         => (string) $student_id,
                     'payment_type'       => 'renewal',
-                    'plugin'             => 'CreatorLMS/Renewal',
+                    'plugin'             => 'OhMyLMS/Renewal',
                 ),
                 'callback_url'      => home_url( '/' ),
                 'callback_method'   => 'get',
@@ -547,7 +547,7 @@ class GatewayRazorPay extends PaymentGateway {
             if ( is_wp_error( $payment_link ) ) {
                 $error_message = $payment_link->get_error_message();
                 $renewal_order->add_order_note( sprintf(
-                    __( 'Razorpay payment link creation failed: %s', 'creator-lms' ),
+                    __( 'Razorpay payment link creation failed: %s', 'ohmylms' ),
                     $error_message
                 ) );
                 
@@ -574,7 +574,7 @@ class GatewayRazorPay extends PaymentGateway {
 
             // Add order note
             $renewal_order->add_order_note( sprintf(
-                __( 'Razorpay renewal payment link created and sent to customer. Payment Link ID: %s, Amount: %s %s. Customer will receive email from Razorpay with payment link.', 'creator-lms' ),
+                __( 'Razorpay renewal payment link created and sent to customer. Payment Link ID: %s, Amount: %s %s. Customer will receive email from Razorpay with payment link.', 'ohmylms' ),
                 $payment_link_id,
                 number_format( $amount, 2 ),
                 $order_currency
@@ -587,14 +587,14 @@ class GatewayRazorPay extends PaymentGateway {
                 'transaction_id'      => $payment_link_id,
                 'order_id'            => $renewal_order_id,
                 'payment_link_url'    => $payment_link_url,
-                'message'             => __( 'Renewal payment link created. Razorpay will email customer with payment link.', 'creator-lms' ),
+                'message'             => __( 'Renewal payment link created. Razorpay will email customer with payment link.', 'ohmylms' ),
             );
 
         } catch ( \Exception $e ) {
             
             if ( ! empty( $renewal_order ) && method_exists( $renewal_order, 'add_order_note' ) ) {
                 $renewal_order->add_order_note( sprintf(
-                    __( 'Razorpay recurring payment exception: %s', 'creator-lms' ),
+                    __( 'Razorpay recurring payment exception: %s', 'ohmylms' ),
                     $e->getMessage()
                 ) );
             }
@@ -619,24 +619,24 @@ class GatewayRazorPay extends PaymentGateway {
         $order = null;
         if ( function_exists( 'ecommerce_get_order' ) ) {
             $order = ecommerce_get_order( $order_id );
-        } elseif ( function_exists( 'omlms_get_order' ) ) {
-            $order = omlms_get_order( $order_id );
+        } elseif ( function_exists( 'ohmylms_get_order' ) ) {
+            $order = ohmylms_get_order( $order_id );
         }
 
         if ( ! $order ) {
             error_log( "Razorpay Subscription Error: Could not retrieve order object for order ID: {$order_id}" );
-            if ( function_exists( 'omlmse_add_notice' ) ) {
-                omlmse_add_notice( __( 'Order data could not be found for subscription. Please contact support.', 'creator-lms' ), 'error' );
+            if ( function_exists( 'ohmylmse_add_notice' ) ) {
+                ohmylmse_add_notice( __( 'Order data could not be found for subscription. Please contact support.', 'ohmylms' ), 'error' );
             }
-            return array( 'result' => 'failure', 'message' => __( 'Order data could not be found for subscription.', 'creator-lms' ) );
+            return array( 'result' => 'failure', 'message' => __( 'Order data could not be found for subscription.', 'ohmylms' ) );
         }
 
         if ( empty( $membership_id ) || ! is_numeric( $membership_id ) || $membership_id <= 0 ) {
             error_log( "Razorpay Subscription Error: Invalid Membership ID '{$membership_id}' for order ID: {$order_id}" );
-            if ( function_exists( 'omlmse_add_notice' ) ) {
-                omlmse_add_notice( __( 'Invalid membership data provided. Please contact support.', 'creator-lms' ), 'error' );
+            if ( function_exists( 'ohmylmse_add_notice' ) ) {
+                ohmylmse_add_notice( __( 'Invalid membership data provided. Please contact support.', 'ohmylms' ), 'error' );
             }
-            return array( 'result' => 'failure', 'message' => __( 'Invalid membership data.', 'creator-lms' ) );
+            return array( 'result' => 'failure', 'message' => __( 'Invalid membership data.', 'ohmylms' ) );
         }
 
         $student_id = $order->get_student_id();
@@ -644,12 +644,12 @@ class GatewayRazorPay extends PaymentGateway {
         // Check for duplicate active subscriptions
         if ( $this->has_active_subscription( $student_id, $membership_id ) ) {
             error_log( "Razorpay Subscription Error: Student {$student_id} already has an active subscription for membership {$membership_id}" );
-            if ( function_exists( 'omlmse_add_notice' ) ) {
-                omlmse_add_notice( __( 'You already have an active subscription for this membership.', 'creator-lms' ), 'error' );
+            if ( function_exists( 'ohmylmse_add_notice' ) ) {
+                ohmylmse_add_notice( __( 'You already have an active subscription for this membership.', 'ohmylms' ), 'error' );
             }
             return array( 
                 'result' => 'failure', 
-                'message' => __( 'You already have an active subscription for this membership.', 'creator-lms' ) 
+                'message' => __( 'You already have an active subscription for this membership.', 'ohmylms' ) 
             );
         }
 
@@ -658,8 +658,8 @@ class GatewayRazorPay extends PaymentGateway {
         
         // Get membership object to access signup fee
         $membership = null;
-        if ( function_exists( 'omlms_get_membership' ) ) {
-            $membership = omlms_get_membership( $membership_id );
+        if ( function_exists( 'ohmylms_get_membership' ) ) {
+            $membership = ohmylms_get_membership( $membership_id );
         }
 
         if ( empty( $razorpay_plan_id ) ) {
@@ -676,7 +676,7 @@ class GatewayRazorPay extends PaymentGateway {
                 
                 if ( empty( $razorpay_plan_id ) ) {
                     $error_message = sprintf(
-                        __( 'Failed to create Razorpay plan for membership "%s". Please ensure: 1) Gateway is enabled, 2) API credentials are valid, 3) Membership has valid pricing. Check error logs for details.', 'creator-lms' ),
+                        __( 'Failed to create Razorpay plan for membership "%s". Please ensure: 1) Gateway is enabled, 2) API credentials are valid, 3) Membership has valid pricing. Check error logs for details.', 'ohmylms' ),
                         get_the_title( $membership_id )
                     );
                     error_log( "Razorpay Plan Creation Failed for Membership ID {$membership_id}. Gateway enabled: {$this->enabled}, Has credentials: " . ( ! empty( $this->publishable_key ) && ! empty( $this->secret_key ) ? 'yes' : 'no' ) );
@@ -688,10 +688,10 @@ class GatewayRazorPay extends PaymentGateway {
                 $membership_edit_link = admin_url( 'post.php?post=' . $membership_id . '&action=edit' );
                 
                 // User-friendly error message
-                $user_message = __( 'Unable to process subscription payment. The Razorpay plan could not be created automatically. Please contact site administrator.', 'creator-lms' );
+                $user_message = __( 'Unable to process subscription payment. The Razorpay plan could not be created automatically. Please contact site administrator.', 'ohmylms' );
                 
-                if ( function_exists( 'omlmse_add_notice' ) ) {
-                    omlmse_add_notice( $user_message, 'error' );
+                if ( function_exists( 'ohmylmse_add_notice' ) ) {
+                    ohmylmse_add_notice( $user_message, 'error' );
                 }
                 return array( 'result' => 'failure', 'message' => $user_message );
             }
@@ -706,7 +706,7 @@ class GatewayRazorPay extends PaymentGateway {
                 'membership_id'      => (string) $membership_id,
                 'customer_email'     => $order->get_email(),
                 'customer_id'        => (string) $student_id,
-                'plugin'             => 'CreatorLMS/Ecommerce (Subscription)',
+                'plugin'             => 'OhMyLMS/Ecommerce (Subscription)',
             ),
         );
         
@@ -738,13 +738,13 @@ class GatewayRazorPay extends PaymentGateway {
         $razorpay_subscription = RazorpayAPI::create_subscription( $payload );
 
         if ( is_wp_error( $razorpay_subscription ) || empty( $razorpay_subscription['id'] ) ) {
-            $error_message = is_wp_error( $razorpay_subscription ) ? $razorpay_subscription->get_error_message() : __( 'Razorpay Subscription ID missing.', 'creator-lms' );
-            if ( function_exists( 'omlmse_add_notice' ) ) {
-                omlmse_add_notice( sprintf(__( 'Error creating Razorpay subscription: %s', 'creator-lms' ), $error_message ), 'error' );
+            $error_message = is_wp_error( $razorpay_subscription ) ? $razorpay_subscription->get_error_message() : __( 'Razorpay Subscription ID missing.', 'ohmylms' );
+            if ( function_exists( 'ohmylmse_add_notice' ) ) {
+                ohmylmse_add_notice( sprintf(__( 'Error creating Razorpay subscription: %s', 'ohmylms' ), $error_message ), 'error' );
             }
             return array(
                 'result'  => 'failure',
-                'message' => sprintf(__( 'Could not initiate subscription with Razorpay. %s', 'creator-lms' ), $error_message),
+                'message' => sprintf(__( 'Could not initiate subscription with Razorpay. %s', 'ohmylms' ), $error_message),
             );
         }
 
@@ -790,7 +790,7 @@ class GatewayRazorPay extends PaymentGateway {
                 update_post_meta( $order_id, '_subscription_id', $subscription_id );
                 
                 $order->add_order_note( sprintf(
-                    __( 'Subscription #%1$d created (pending). Razorpay Subscription ID: %2$s. Awaiting first payment.', 'creator-lms' ),
+                    __( 'Subscription #%1$d created (pending). Razorpay Subscription ID: %2$s. Awaiting first payment.', 'ohmylms' ),
                     $subscription_id,
                     $razorpay_subscription_id
                 ) );
@@ -798,7 +798,7 @@ class GatewayRazorPay extends PaymentGateway {
         }
 
         $order->add_order_note( sprintf(
-            __( 'Razorpay subscription created. Subscription ID: %s. Customer will complete payment in modal.', 'creator-lms' ),
+            __( 'Razorpay subscription created. Subscription ID: %s. Customer will complete payment in modal.', 'ohmylms' ),
             $razorpay_subscription_id
         ) );
 
@@ -818,7 +818,7 @@ class GatewayRazorPay extends PaymentGateway {
             'currency'                 => $order->get_currency(),
             'order_id'                 => $order_id,
             'name'                     => get_bloginfo( 'name' ),
-            'description'              => sprintf( __( 'Subscription for Order #%s', 'creator-lms' ), $order->get_id() ),
+            'description'              => sprintf( __( 'Subscription for Order #%s', 'ohmylms' ), $order->get_id() ),
             'prefill_name'             => $order->get_student_name(),
             'prefill_email'            => $order->get_email(),
             'prefill_contact'          => $prefill_contact,
@@ -877,7 +877,7 @@ class GatewayRazorPay extends PaymentGateway {
 
         if ( ! $order ) {
             error_log( "Razorpay Refund Error: Could not retrieve order object for order ID: {$order_id}" );
-            return new \WP_Error( 'invalid_order', __( 'Invalid order ID.', 'creator-lms' ) );
+            return new \WP_Error( 'invalid_order', __( 'Invalid order ID.', 'ohmylms' ) );
         }
 
         // Get the Razorpay payment ID from order meta
@@ -885,7 +885,7 @@ class GatewayRazorPay extends PaymentGateway {
 
         if ( empty( $razorpay_payment_id ) ) {
             error_log( "Razorpay Refund Error: No payment ID found for order ID: {$order_id}" );
-            return new \WP_Error( 'no_payment_id', __( 'No Razorpay payment ID found for this order.', 'creator-lms' ) );
+            return new \WP_Error( 'no_payment_id', __( 'No Razorpay payment ID found for this order.', 'ohmylms' ) );
         }
 
         // If no amount specified, refund the full amount
@@ -895,12 +895,12 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Validate amount
         if ( $amount <= 0 ) {
-            return new \WP_Error( 'invalid_amount', __( 'Refund amount must be greater than zero.', 'creator-lms' ) );
+            return new \WP_Error( 'invalid_amount', __( 'Refund amount must be greater than zero.', 'ohmylms' ) );
         }
 
         // Check if amount exceeds order total
         if ( $amount > $order->get_total() ) {
-            return new \WP_Error( 'invalid_amount', __( 'Refund amount cannot exceed the order total.', 'creator-lms' ) );
+            return new \WP_Error( 'invalid_amount', __( 'Refund amount cannot exceed the order total.', 'ohmylms' ) );
         }
 
         $order_currency = strtoupper( $order->get_currency() );
@@ -926,14 +926,14 @@ class GatewayRazorPay extends PaymentGateway {
         if ( is_wp_error( $refund_response ) ) {
             $error_message = $refund_response->get_error_message();
             error_log( "Razorpay Refund Error for Order ID {$order_id}: " . $error_message );
-            $order->add_order_note( sprintf( __( 'Razorpay refund failed: %s', 'creator-lms' ), $error_message ) );
+            $order->add_order_note( sprintf( __( 'Razorpay refund failed: %s', 'ohmylms' ), $error_message ) );
             return new \WP_Error( 'refund_failed', $error_message );
         }
 
         // Check if refund was successful
         if ( empty( $refund_response['id'] ) ) {
             error_log( "Razorpay Refund Error: No refund ID returned for Order ID {$order_id}" );
-            return new \WP_Error( 'refund_failed', __( 'Refund request failed. No refund ID returned.', 'creator-lms' ) );
+            return new \WP_Error( 'refund_failed', __( 'Refund request failed. No refund ID returned.', 'ohmylms' ) );
         }
 
         $refund_id = $refund_response['id'];
@@ -958,7 +958,7 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Add order note
         $note_message = sprintf(
-            __( 'Razorpay refund processed. Refund ID: %1$s, Amount: %2$s %3$s, Status: %4$s', 'creator-lms' ),
+            __( 'Razorpay refund processed. Refund ID: %1$s, Amount: %2$s %3$s, Status: %4$s', 'ohmylms' ),
             $refund_id,
             $amount,
             $order_currency,
@@ -966,7 +966,7 @@ class GatewayRazorPay extends PaymentGateway {
         );
 
         if ( ! empty( $reason ) ) {
-            $note_message .= sprintf( __( ', Reason: %s', 'creator-lms' ), $reason );
+            $note_message .= sprintf( __( ', Reason: %s', 'ohmylms' ), $reason );
         }
 
         $order->add_order_note( $note_message );
@@ -988,7 +988,7 @@ class GatewayRazorPay extends PaymentGateway {
      */
     public function handle_order_deletion( $post_id, $post = null ) {
         // Check if this is an order post type
-        if ( get_post_type( $post_id ) !== 'omlms-order' ) {
+        if ( get_post_type( $post_id ) !== 'ohmylms-order' ) {
             return;
         }
         
@@ -1037,7 +1037,7 @@ class GatewayRazorPay extends PaymentGateway {
         
         // Find and cancel the WordPress subscription
         $subscription_args = array(
-            'post_type'      => 'omlms-subscription',
+            'post_type'      => 'ohmylms-subscription',
             'meta_query'     => array(
                 array(
                     'key'     => '_razorpay_subscription_id',
@@ -1065,7 +1065,7 @@ class GatewayRazorPay extends PaymentGateway {
             if ( $order ) {
                 $order->add_order_note(
                     sprintf(
-                        __( 'Razorpay subscription cancelled. Subscription ID: %s, Reason: %s', 'creator-lms' ),
+                        __( 'Razorpay subscription cancelled. Subscription ID: %s, Reason: %s', 'ohmylms' ),
                         $razorpay_subscription_id,
                         $reason
                     )
@@ -1084,7 +1084,7 @@ class GatewayRazorPay extends PaymentGateway {
      * AJAX handler for verifying Razorpay payment.
      */
     public function ajax_verify_payment_handler() {
-        check_ajax_referer( 'omlms_razorpay_verify_payment_nonce', 'nonce' );
+        check_ajax_referer( 'ohmylms_razorpay_verify_payment_nonce', 'nonce' );
 
         $wp_order_id             = isset( $_POST['wp_order_id'] ) ? absint( $_POST['wp_order_id'] ) : 0;
         $razorpay_payment_id     = isset( $_POST['razorpay_payment_id'] ) ? sanitize_text_field( wp_unslash( $_POST['razorpay_payment_id'] ) ) : '';
@@ -1094,13 +1094,13 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Verify we have minimum required data
         if ( ! $wp_order_id || ! $razorpay_payment_id || ! $razorpay_signature ) {
-            wp_send_json_error( array( 'message' => __( 'Missing payment data for verification.', 'creator-lms' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing payment data for verification.', 'ohmylms' ) ) );
             return;
         }
 
         // Verify we have either order_id or subscription_id
         if ( ! $razorpay_order_id && ! $razorpay_subscription_id ) {
-            wp_send_json_error( array( 'message' => __( 'Missing order or subscription ID for verification.', 'creator-lms' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing order or subscription ID for verification.', 'ohmylms' ) ) );
             return;
         }
 
@@ -1128,20 +1128,20 @@ class GatewayRazorPay extends PaymentGateway {
                 ? "Invalid signature for subscription payment: WP Order {$wp_order_id}, Subscription {$razorpay_subscription_id}"
                 : "Invalid signature for order payment: WP Order {$wp_order_id}, Razorpay Order {$razorpay_order_id}";
             error_log( "Razorpay Verification Failed: {$error_msg}" );
-            wp_send_json_error( array( 'message' => __( 'Payment verification failed. Invalid signature.', 'creator-lms' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Payment verification failed. Invalid signature.', 'ohmylms' ) ) );
             return;
         }
 
         $order = null;
         if ( function_exists( 'ecommerce_get_order' ) ) {
             $order = ecommerce_get_order( $wp_order_id );
-        } elseif ( function_exists( 'omlms_get_order' ) ) {
-            $order = omlms_get_order( $wp_order_id );
+        } elseif ( function_exists( 'ohmylms_get_order' ) ) {
+            $order = ohmylms_get_order( $wp_order_id );
         }
 
         if ( ! $order ) {
             error_log( "Razorpay Verification Failed: Could not retrieve order object for WP Order ID {$wp_order_id}" );
-            wp_send_json_error( array( 'message' => __( 'Order not found.', 'creator-lms' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Order not found.', 'ohmylms' ) ) );
             return;
         }
 
@@ -1151,17 +1151,17 @@ class GatewayRazorPay extends PaymentGateway {
         if ( is_wp_error( $payment_details ) || empty( $payment_details['id'] ) ) {
             $error_msg = is_wp_error( $payment_details ) ? $payment_details->get_error_message() : 'Unknown error';
             error_log( "Razorpay Verification: Error fetching payment details for {$razorpay_payment_id}. Error: {$error_msg}" );
-            $order->add_order_note( sprintf( __( 'Razorpay: Error fetching payment details for %s. Error: %s', 'creator-lms' ), $razorpay_payment_id, $error_msg ) );
-            wp_send_json_error( array( 'message' => __( 'Could not confirm payment status with Razorpay.', 'creator-lms' ) ) );
+            $order->add_order_note( sprintf( __( 'Razorpay: Error fetching payment details for %s. Error: %s', 'ohmylms' ), $razorpay_payment_id, $error_msg ) );
+            wp_send_json_error( array( 'message' => __( 'Could not confirm payment status with Razorpay.', 'ohmylms' ) ) );
             return;
         }
 
         // Check payment status - for auto-capture, it should be 'captured'.
         // If using manual capture, it might be 'authorized', then you'd capture it.
         if ( strtolower( $payment_details['status'] ) !== 'captured' && strtolower( $payment_details['status'] ) !== 'authorized' ) {
-            $status_error_msg = sprintf( __( 'Razorpay: Payment %s not captured or authorized. Status: %s', 'creator-lms' ), $razorpay_payment_id, $payment_details['status'] );
+            $status_error_msg = sprintf( __( 'Razorpay: Payment %s not captured or authorized. Status: %s', 'ohmylms' ), $razorpay_payment_id, $payment_details['status'] );
             $order->add_order_note( $status_error_msg );
-            wp_send_json_error( array( 'message' => __( 'Payment not successfully captured by Razorpay.', 'creator-lms' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Payment not successfully captured by Razorpay.', 'ohmylms' ) ) );
             return;
         }
 
@@ -1170,14 +1170,14 @@ class GatewayRazorPay extends PaymentGateway {
             $expected_amount_smallest_unit = $this->get_amount_in_smallest_unit( $order->get_total(), $order->get_currency() );
             if ( absint( $payment_details['amount'] ) < absint( $expected_amount_smallest_unit ) ) {
                 $amount_mismatch_msg = sprintf(
-                    __( 'Razorpay: Payment amount mismatch for %s. Expected: %s, Got: %s %s.', 'creator-lms' ),
+                    __( 'Razorpay: Payment amount mismatch for %s. Expected: %s, Got: %s %s.', 'ohmylms' ),
                     $razorpay_payment_id,
                     $expected_amount_smallest_unit,
                     $payment_details['amount'],
                     $payment_details['currency']
                 );
                 $order->add_order_note( $amount_mismatch_msg );
-                wp_send_json_error( array( 'message' => __( 'Payment amount mismatch.', 'creator-lms' ) ) );
+                wp_send_json_error( array( 'message' => __( 'Payment amount mismatch.', 'ohmylms' ) ) );
                 return;
             }
         }
@@ -1188,20 +1188,20 @@ class GatewayRazorPay extends PaymentGateway {
             $order->payment_complete( $razorpay_payment_id );
         } else {
             // Fallback if payment_complete doesn't exist on order object
-            $order->update_status( 'completed', __( 'Payment received via Razorpay.', 'creator-lms' ) );
+            $order->update_status( 'completed', __( 'Payment received via Razorpay.', 'ohmylms' ) );
         }
 
         // Add order note based on payment type
         if ( $razorpay_subscription_id ) {
             $order->add_order_note( sprintf( 
-                __( 'Razorpay subscription payment successful. Payment ID: %s, Subscription ID: %s, Signature: %s', 'creator-lms' ), 
+                __( 'Razorpay subscription payment successful. Payment ID: %s, Subscription ID: %s, Signature: %s', 'ohmylms' ), 
                 $razorpay_payment_id, 
                 $razorpay_subscription_id, 
                 $razorpay_signature 
             ) );
         } else {
             $order->add_order_note( sprintf( 
-                __( 'Razorpay payment successful. Payment ID: %s, Order ID: %s, Signature: %s', 'creator-lms' ), 
+                __( 'Razorpay payment successful. Payment ID: %s, Order ID: %s, Signature: %s', 'ohmylms' ), 
                 $razorpay_payment_id, 
                 $razorpay_order_id, 
                 $razorpay_signature 
@@ -1287,14 +1287,14 @@ class GatewayRazorPay extends PaymentGateway {
                 \CodeRex\Ecommerce\SubscriptionManager::mark_subscription_active( $subscription_id );
                 \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                     $subscription_id,
-                    sprintf( __( 'Initial subscription payment received. Payment ID: %s', 'creator-lms' ), $razorpay_payment_id )
+                    sprintf( __( 'Initial subscription payment received. Payment ID: %s', 'ohmylms' ), $razorpay_payment_id )
                 );
                 
                 // Update last payment date
                 update_post_meta( $subscription_id, '_last_payment_date', current_time( 'mysql' ) );
                 
                 $order->add_order_note( sprintf( 
-                    __( 'Razorpay: Subscription #%1$d activated with payment ID %2$s', 'creator-lms' ), 
+                    __( 'Razorpay: Subscription #%1$d activated with payment ID %2$s', 'ohmylms' ), 
                     $subscription_id,
                     $razorpay_payment_id 
                 ) );
@@ -1303,7 +1303,7 @@ class GatewayRazorPay extends PaymentGateway {
                 $this->send_subscription_confirmation_email( $order, $subscription_id, $razorpay_payment_id );
             } else {
                 $order->add_order_note( sprintf( 
-                    __( 'Razorpay: Initial payment for subscription %s confirmed. WordPress subscription not found.', 'creator-lms' ), 
+                    __( 'Razorpay: Initial payment for subscription %s confirmed. WordPress subscription not found.', 'ohmylms' ), 
                     $razorpay_subscription_id 
                 ) );
             }
@@ -1312,10 +1312,10 @@ class GatewayRazorPay extends PaymentGateway {
         $return_url = '';
         if ( method_exists( $this, 'get_return_url' ) && is_callable( array( $this, 'get_return_url' ) ) ) {
             $return_url = $this->get_return_url( $order );
-        } else if ( function_exists( 'omlms_get_page_url' ) ) {
-            $return_url = omlms_get_page_url( 'thank_you' );
+        } else if ( function_exists( 'ohmylms_get_page_url' ) ) {
+            $return_url = ohmylms_get_page_url( 'thank_you' );
         } else {
-            $thank_you_page_id = get_option( 'creator_lms_thank_you_page_id' );
+            $thank_you_page_id = get_option( 'ohmylms_thank_you_page_id' );
             if ( $thank_you_page_id ) {
                 $return_url = get_permalink( $thank_you_page_id );
             } else {
@@ -1323,9 +1323,9 @@ class GatewayRazorPay extends PaymentGateway {
             }
         }
 
-        do_action( 'creator_lms_checkout_after_create_order', $order, [] );
+        do_action( 'ohmylms_checkout_after_create_order', $order, [] );
 
-        wp_send_json_success( array( 'message' => __( 'Payment verified successfully.', 'creator-lms' ), 'redirect_url' => $return_url ) );
+        wp_send_json_success( array( 'message' => __( 'Payment verified successfully.', 'ohmylms' ), 'redirect_url' => $return_url ) );
         wp_die(); // this is required to terminate immediately and return a proper response
     }
 
@@ -1378,46 +1378,46 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Email subject
         $subject = sprintf( 
-            __( 'Action Required: Complete Your Subscription Renewal Payment - Order #%s', 'creator-lms' ), 
+            __( 'Action Required: Complete Your Subscription Renewal Payment - Order #%s', 'ohmylms' ), 
             $renewal_order_id 
         );
 
         // Email body
         $message = sprintf(
-            __( 'Hi %s,', 'creator-lms' ) . "\n\n",
+            __( 'Hi %s,', 'ohmylms' ) . "\n\n",
             $customer_name
         );
         
-        $message .= __( 'Your subscription is ready for renewal. To continue enjoying uninterrupted access, please complete your payment.', 'creator-lms' ) . "\n\n";
+        $message .= __( 'Your subscription is ready for renewal. To continue enjoying uninterrupted access, please complete your payment.', 'ohmylms' ) . "\n\n";
         
         $message .= sprintf(
-            __( 'Order Number: #%s', 'creator-lms' ) . "\n",
+            __( 'Order Number: #%s', 'ohmylms' ) . "\n",
             $renewal_order_id
         );
         
         $message .= sprintf(
-            __( 'Amount Due: %s %s', 'creator-lms' ) . "\n\n",
+            __( 'Amount Due: %s %s', 'ohmylms' ) . "\n\n",
             number_format( $amount, 2 ),
             $currency
         );
         
         if ( ! empty( $payment_link_url ) ) {
-            $message .= __( 'To complete your payment, please click the link below:', 'creator-lms' ) . "\n";
+            $message .= __( 'To complete your payment, please click the link below:', 'ohmylms' ) . "\n";
             $message .= $payment_link_url . "\n\n";
-            $message .= __( 'This is a secure payment link from Razorpay. You can pay using various payment methods including cards, UPI, net banking, and wallets.', 'creator-lms' ) . "\n\n";
+            $message .= __( 'This is a secure payment link from Razorpay. You can pay using various payment methods including cards, UPI, net banking, and wallets.', 'ohmylms' ) . "\n\n";
         } else {
             $message .= sprintf(
-                __( 'Razorpay Order ID: %s', 'creator-lms' ) . "\n\n",
+                __( 'Razorpay Order ID: %s', 'ohmylms' ) . "\n\n",
                 $razorpay_order_id
             );
-            $message .= __( 'A payment request has been created. You should receive a payment link from Razorpay shortly, or you can contact our support team for assistance.', 'creator-lms' ) . "\n\n";
+            $message .= __( 'A payment request has been created. You should receive a payment link from Razorpay shortly, or you can contact our support team for assistance.', 'ohmylms' ) . "\n\n";
         }
         
-        $message .= __( 'If you have any questions, please contact our support team.', 'creator-lms' ) . "\n\n";
+        $message .= __( 'If you have any questions, please contact our support team.', 'ohmylms' ) . "\n\n";
         
         $message .= sprintf(
-            __( 'Thank you for your continued subscription!', 'creator-lms' ) . "\n\n" .
-            __( 'Best regards,', 'creator-lms' ) . "\n" .
+            __( 'Thank you for your continued subscription!', 'ohmylms' ) . "\n\n" .
+            __( 'Best regards,', 'ohmylms' ) . "\n" .
             '%s',
             get_bloginfo( 'name' )
         );
@@ -1430,7 +1430,7 @@ class GatewayRazorPay extends PaymentGateway {
         
         if ( $email_sent ) {
             $renewal_order->add_order_note( sprintf(
-                __( 'Renewal payment notification sent to customer email: %s%s', 'creator-lms' ),
+                __( 'Renewal payment notification sent to customer email: %s%s', 'ohmylms' ),
                 $customer_email,
                 ! empty( $payment_link_url ) ? ' (with payment link)' : ''
             ) );
@@ -1442,7 +1442,7 @@ class GatewayRazorPay extends PaymentGateway {
             error_log( "Razorpay: Email Body: {$message}" );
             
             $renewal_order->add_order_note( sprintf(
-                __( 'Failed to send renewal payment notification email to customer. Email would have been sent to: %s (Check error log for details)', 'creator-lms' ),
+                __( 'Failed to send renewal payment notification email to customer. Email would have been sent to: %s (Check error log for details)', 'ohmylms' ),
                 $customer_email
             ) );
         }
@@ -1454,7 +1454,7 @@ class GatewayRazorPay extends PaymentGateway {
      * Register webhook routes for Razorpay events.
      */
     public function register_webhook_routes() {
-        register_rest_route( 'creator-lms/v1', '/razorpay/webhook', array(
+        register_rest_route( 'ohmylms/v1', '/razorpay/webhook', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'handle_webhook' ),
             'permission_callback' => '__return_true',
@@ -1578,7 +1578,7 @@ class GatewayRazorPay extends PaymentGateway {
         }
 
         $order->payment_complete( $payment_id );
-        $order->add_order_note( sprintf( __( 'Razorpay payment captured via webhook. Payment ID: %s', 'creator-lms' ), $payment_id ) );
+        $order->add_order_note( sprintf( __( 'Razorpay payment captured via webhook. Payment ID: %s', 'ohmylms' ), $payment_id ) );
     }
 
     /**
@@ -1602,7 +1602,7 @@ class GatewayRazorPay extends PaymentGateway {
             ? $payload['payment']['entity']['error_description'] 
             : 'Payment failed';
 
-        $order->update_status( 'failed', sprintf( __( 'Razorpay payment failed: %s', 'creator-lms' ), $error_description ) );
+        $order->update_status( 'failed', sprintf( __( 'Razorpay payment failed: %s', 'ohmylms' ), $error_description ) );
     }
 
     /**
@@ -1621,7 +1621,7 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Find subscription with this Razorpay subscription ID
         $subscriptions = get_posts( array(
-            'post_type'   => 'omlms-subscription',
+            'post_type'   => 'ohmylms-subscription',
             'meta_key'    => '_razorpay_subscription_id',
             'meta_value'  => $razorpay_subscription_id,
             'post_status' => 'any',
@@ -1672,7 +1672,7 @@ class GatewayRazorPay extends PaymentGateway {
                 // Complete the payment
                 $order->payment_complete( $payment_id );
                 $order->add_order_note( sprintf(
-                    __( 'Razorpay initial subscription payment received via webhook. Payment ID: %s', 'creator-lms' ),
+                    __( 'Razorpay initial subscription payment received via webhook. Payment ID: %s', 'ohmylms' ),
                     $payment_id
                 ) );
             }
@@ -1682,7 +1682,7 @@ class GatewayRazorPay extends PaymentGateway {
                 \CodeRex\Ecommerce\SubscriptionManager::mark_subscription_active( $subscription_id );
                 \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                     $subscription_id,
-                    sprintf( __( 'Initial subscription payment received. Payment ID: %s', 'creator-lms' ), $payment_id )
+                    sprintf( __( 'Initial subscription payment received. Payment ID: %s', 'ohmylms' ), $payment_id )
                 );
             }
 
@@ -1706,7 +1706,7 @@ class GatewayRazorPay extends PaymentGateway {
                 error_log( 'Razorpay Webhook: Failed to create renewal order - ' . $renewal_result->get_error_message() );
                 \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                     $subscription_id,
-                    sprintf( __( 'Renewal payment received (Payment ID: %1$s) but order creation failed: %2$s', 'creator-lms' ), $payment_id, $renewal_result->get_error_message() )
+                    sprintf( __( 'Renewal payment received (Payment ID: %1$s) but order creation failed: %2$s', 'ohmylms' ), $payment_id, $renewal_result->get_error_message() )
                 );
                 return;
             }
@@ -1715,7 +1715,7 @@ class GatewayRazorPay extends PaymentGateway {
             update_post_meta( $subscription_id, '_last_payment_date', current_time( 'mysql' ) );
 
             // Trigger action for external integrations
-            do_action( 'creator_lms_razorpay_subscription_renewal_received', $subscription_id, $payment_id, $payment_entity, $renewal_result );
+            do_action( 'ohmylms_razorpay_subscription_renewal_received', $subscription_id, $payment_id, $payment_entity, $renewal_result );
         }
     }
 
@@ -1735,7 +1735,7 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Find subscription with this Razorpay subscription ID
         $subscriptions = get_posts( array(
-            'post_type'   => 'omlms-subscription',
+            'post_type'   => 'ohmylms-subscription',
             'meta_key'    => '_razorpay_subscription_id',
             'meta_value'  => $razorpay_subscription_id,
             'post_status' => 'any',
@@ -1749,17 +1749,17 @@ class GatewayRazorPay extends PaymentGateway {
 
         $subscription_id = $subscriptions[0]->ID;
 
-        // Map Razorpay status to CreatorLMS subscription status
+        // Map Razorpay status to OhMyLMS subscription status
         $status_map = array(
-            'created'     => 'creatorlms-pending',
-            'authenticated' => 'creatorlms-pending',
-            'active'      => 'creatorlms-active',
-            'pending'     => 'creatorlms-pending',
-            'halted'      => 'creatorlms-on-hold',
-            'cancelled'   => 'creatorlms-cancelled',
-            'completed'   => 'creatorlms-expired',
-            'expired'     => 'creatorlms-expired',
-            'paused'      => 'creatorlms-on-hold',
+            'created'     => 'ohmylms-pending',
+            'authenticated' => 'ohmylms-pending',
+            'active'      => 'ohmylms-active',
+            'pending'     => 'ohmylms-pending',
+            'halted'      => 'ohmylms-on-hold',
+            'cancelled'   => 'ohmylms-cancelled',
+            'completed'   => 'ohmylms-expired',
+            'expired'     => 'ohmylms-expired',
+            'paused'      => 'ohmylms-on-hold',
         );
 
         $new_status = isset( $status_map[ $razorpay_status ] ) ? $status_map[ $razorpay_status ] : '';
@@ -1776,7 +1776,7 @@ class GatewayRazorPay extends PaymentGateway {
                 \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                     $subscription_id,
                     sprintf(
-                        __( 'Razorpay subscription status changed to %s (Event: %s)', 'creator-lms' ),
+                        __( 'Razorpay subscription status changed to %s (Event: %s)', 'ohmylms' ),
                         $razorpay_status,
                         $event_type
                     )
@@ -1789,13 +1789,13 @@ class GatewayRazorPay extends PaymentGateway {
                     $original_order_id = get_post_meta( $subscription_id, '_original_order_id', true );
 
                     if ( $membership_id && $student_id && $original_order_id ) {
-                        if ( function_exists( 'omlms_get_membership' ) && creator_lms_is_pro() ) {
-                            $membership = omlms_get_membership( $membership_id );
+                        if ( function_exists( 'ohmylms_get_membership' ) && ohmylms_is_pro() ) {
+                            $membership = ohmylms_get_membership( $membership_id );
                             if ( $membership && method_exists( $membership, 'cancel_enrollment' ) ) {
                                 $membership->cancel_enrollment( $student_id, $original_order_id );
                                 \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                                     $subscription_id,
-                                    __( 'Membership access revoked due to subscription cancellation.', 'creator-lms' )
+                                    __( 'Membership access revoked due to subscription cancellation.', 'ohmylms' )
                                 );
                             }
                         }
@@ -1810,7 +1810,7 @@ class GatewayRazorPay extends PaymentGateway {
             $order = ecommerce_get_order( $original_order_id );
             if ( $order ) {
                 $order->add_order_note( sprintf(
-                    __( 'Razorpay subscription status changed: %s (Event: %s)', 'creator-lms' ),
+                    __( 'Razorpay subscription status changed: %s (Event: %s)', 'ohmylms' ),
                     $razorpay_status,
                     $event_type
                 ) );
@@ -1840,17 +1840,17 @@ class GatewayRazorPay extends PaymentGateway {
         }
 
         $site_name = get_bloginfo( 'name' );
-        $subject = sprintf( __( 'Subscription Activated - %s', 'creator-lms' ), $site_name );
+        $subject = sprintf( __( 'Subscription Activated - %s', 'ohmylms' ), $site_name );
         
         $message = sprintf(
-            __( 'Hello %s,', 'creator-lms' ) . "\n\n" .
-            __( 'Thank you for your payment! Your subscription has been successfully activated.', 'creator-lms' ) . "\n\n" .
-            __( 'Payment Details:', 'creator-lms' ) . "\n" .
-            __( 'Order #%s', 'creator-lms' ) . "\n" .
-            __( 'Subscription #%s', 'creator-lms' ) . "\n" .
-            __( 'Payment ID: %s', 'creator-lms' ) . "\n\n" .
-            __( 'Click here to return to your account:', 'creator-lms' ) . "\n%s\n\n" .
-            __( 'Thank you for your business!', 'creator-lms' ) . "\n" .
+            __( 'Hello %s,', 'ohmylms' ) . "\n\n" .
+            __( 'Thank you for your payment! Your subscription has been successfully activated.', 'ohmylms' ) . "\n\n" .
+            __( 'Payment Details:', 'ohmylms' ) . "\n" .
+            __( 'Order #%s', 'ohmylms' ) . "\n" .
+            __( 'Subscription #%s', 'ohmylms' ) . "\n" .
+            __( 'Payment ID: %s', 'ohmylms' ) . "\n\n" .
+            __( 'Click here to return to your account:', 'ohmylms' ) . "\n%s\n\n" .
+            __( 'Thank you for your business!', 'ohmylms' ) . "\n" .
             $site_name,
             $customer_name,
             $order->get_id(),
@@ -1865,7 +1865,7 @@ class GatewayRazorPay extends PaymentGateway {
         $sent = wp_mail( $customer_email, $subject, $message, $headers );
         
         if ( $sent ) {
-            $order->add_order_note( __( 'Subscription confirmation email sent to customer with return link.', 'creator-lms' ) );
+            $order->add_order_note( __( 'Subscription confirmation email sent to customer with return link.', 'ohmylms' ) );
         } else {
             error_log( sprintf( 'Razorpay: Failed to send confirmation email to %s', $customer_email ) );
         }
@@ -1891,7 +1891,7 @@ class GatewayRazorPay extends PaymentGateway {
         if ( ! $original_order_id || ! $student_id || ! $membership_id ) {
             return new \WP_Error(
                 'missing_subscription_data',
-                __( 'Missing critical subscription data (order, student, or membership ID).', 'creator-lms' )
+                __( 'Missing critical subscription data (order, student, or membership ID).', 'ohmylms' )
             );
         }
         
@@ -1900,7 +1900,7 @@ class GatewayRazorPay extends PaymentGateway {
         if ( ! $original_order ) {
             return new \WP_Error(
                 'original_order_not_found',
-                sprintf( __( 'Original order #%d not found.', 'creator-lms' ), $original_order_id )
+                sprintf( __( 'Original order #%d not found.', 'ohmylms' ), $original_order_id )
             );
         }
         
@@ -1931,7 +1931,7 @@ class GatewayRazorPay extends PaymentGateway {
             $renewal_order->set_address( $original_order->get_address() );
             $renewal_order->set_country( $original_order->get_country() );
             $renewal_order->set_parent_id( $original_order_id );
-            $renewal_order->set_order_version( defined( 'CREATOR_LMS_VERSION' ) ? CREATOR_LMS_VERSION : '1.0.0' );
+            $renewal_order->set_order_version( defined( 'OHMYLMS_VERSION' ) ? OHMYLMS_VERSION : '1.0.0' );
             
             // Add order items from original order
             foreach ( $original_order->get_items( 'line_item' ) as $item ) {
@@ -1941,12 +1941,12 @@ class GatewayRazorPay extends PaymentGateway {
                 }
                 
                 $membership = get_post( $membership_id );
-                if ( ! $membership || $membership->post_type !== 'omlms-membership' ) {
+                if ( ! $membership || $membership->post_type !== 'ohmylms-membership' ) {
                     continue;
                 }
                 
-                if ( creator_lms_is_pro() ) {
-                    $product = omlms_get_membership( $product_id );
+                if ( ohmylms_is_pro() ) {
+                    $product = ohmylms_get_membership( $product_id );
                 } else {
                     $product = null;
                 }
@@ -1968,7 +1968,7 @@ class GatewayRazorPay extends PaymentGateway {
             $renewal_order_id = $renewal_order->save();
             
             if ( ! $renewal_order_id ) {
-                throw new \Exception( __( 'Failed to save renewal order.', 'creator-lms' ) );
+                throw new \Exception( __( 'Failed to save renewal order.', 'ohmylms' ) );
             }
             
             // Store payment metadata
@@ -1988,7 +1988,7 @@ class GatewayRazorPay extends PaymentGateway {
             $renewal_order->payment_complete( $payment_id );
             $renewal_order->add_order_note(
                 sprintf(
-                    __( 'Renewal order created and completed via Razorpay webhook. Payment ID: %s', 'creator-lms' ),
+                    __( 'Renewal order created and completed via Razorpay webhook. Payment ID: %s', 'ohmylms' ),
                     $payment_id
                 )
             );
@@ -1999,7 +1999,7 @@ class GatewayRazorPay extends PaymentGateway {
             // Add note to subscription
             \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                 $subscription_id,
-                sprintf( __( 'Renewal order #%1$d created and completed. Payment ID: %2$s', 'creator-lms' ), $renewal_order_id, $payment_id )
+                sprintf( __( 'Renewal order #%1$d created and completed. Payment ID: %2$s', 'ohmylms' ), $renewal_order_id, $payment_id )
             );
             
             // Calculate and update next payment date
@@ -2021,13 +2021,13 @@ class GatewayRazorPay extends PaymentGateway {
                     delete_post_meta( $subscription_id, '_schedule_next_payment_date' );
                     \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                         $subscription_id,
-                        __( 'Final renewal completed. Subscription will remain active until end date.', 'creator-lms' )
+                        __( 'Final renewal completed. Subscription will remain active until end date.', 'ohmylms' )
                     );
                 } else {
                     update_post_meta( $subscription_id, '_schedule_next_payment_date', $new_next_payment_date );
                     \CodeRex\Ecommerce\SubscriptionManager::add_subscription_note(
                         $subscription_id,
-                        sprintf( __( 'Next payment date updated to %s.', 'creator-lms' ), $new_next_payment_date )
+                        sprintf( __( 'Next payment date updated to %s.', 'ohmylms' ), $new_next_payment_date )
                     );
                 }
             } catch ( \Exception $e ) {
@@ -2038,14 +2038,14 @@ class GatewayRazorPay extends PaymentGateway {
             \CodeRex\Ecommerce\SubscriptionManager::mark_subscription_active( $subscription_id );
             
             // Fire completion hook
-            do_action( 'creatorlms_subscription_renewal_payment_completed', $subscription_id, $total_with_tax, $payment_id );
+            do_action( 'ohmylms_subscription_renewal_payment_completed', $subscription_id, $total_with_tax, $payment_id );
             
             return $renewal_order_id;
             
         } catch ( \Exception $e ) {
             return new \WP_Error(
                 'renewal_order_creation_failed',
-                sprintf( __( 'Failed to create renewal order: %s', 'creator-lms' ), $e->getMessage() )
+                sprintf( __( 'Failed to create renewal order: %s', 'ohmylms' ), $e->getMessage() )
             );
         }
     }
@@ -2146,10 +2146,10 @@ class GatewayRazorPay extends PaymentGateway {
         // Get currency
         // Note: For Razorpay subscriptions, most Indian accounts only support INR
         // International currencies (USD, EUR, etc.) require international Razorpay account
-        $currency = get_omlms_currency();
+        $currency = get_ohmylms_currency();
         
         // Allow admin to override currency for Razorpay subscriptions
-        $razorpay_subscription_currency = apply_filters( 'creatorlms_razorpay_subscription_currency', $currency, $membership_id );
+        $razorpay_subscription_currency = apply_filters( 'ohmylms_razorpay_subscription_currency', $currency, $membership_id );
         
         if ( ! empty( $razorpay_subscription_currency ) ) {
             $currency = $razorpay_subscription_currency;
@@ -2166,7 +2166,7 @@ class GatewayRazorPay extends PaymentGateway {
             'Razorpay: Creating plan for Membership ID %d with currency: %s (Site currency: %s)',
             $membership_id,
             $currency,
-            get_omlms_currency()
+            get_ohmylms_currency()
         ) );
         $plan_name = sprintf(
             '%s - %s',
@@ -2185,7 +2185,7 @@ class GatewayRazorPay extends PaymentGateway {
             ),
             'notes'    => array(
                 'membership_id' => (string) $membership_id,
-                'plugin'        => 'CreatorLMS',
+                'plugin'        => 'OhMyLMS',
             ),
         );
 
@@ -2300,15 +2300,15 @@ class GatewayRazorPay extends PaymentGateway {
      */
     public static function get_subscription_status_label( $status ) {
         $labels = array(
-            'created'       => __( 'Created', 'creator-lms' ),
-            'authenticated' => __( 'Authenticated', 'creator-lms' ),
-            'active'        => __( 'Active', 'creator-lms' ),
-            'pending'       => __( 'Pending', 'creator-lms' ),
-            'halted'        => __( 'On Hold', 'creator-lms' ),
-            'cancelled'     => __( 'Cancelled', 'creator-lms' ),
-            'completed'     => __( 'Completed', 'creator-lms' ),
-            'expired'       => __( 'Expired', 'creator-lms' ),
-            'paused'        => __( 'Paused', 'creator-lms' ),
+            'created'       => __( 'Created', 'ohmylms' ),
+            'authenticated' => __( 'Authenticated', 'ohmylms' ),
+            'active'        => __( 'Active', 'ohmylms' ),
+            'pending'       => __( 'Pending', 'ohmylms' ),
+            'halted'        => __( 'On Hold', 'ohmylms' ),
+            'cancelled'     => __( 'Cancelled', 'ohmylms' ),
+            'completed'     => __( 'Completed', 'ohmylms' ),
+            'expired'       => __( 'Expired', 'ohmylms' ),
+            'paused'        => __( 'Paused', 'ohmylms' ),
         );
 
         return isset( $labels[ $status ] ) ? $labels[ $status ] : ucfirst( $status );
@@ -2326,7 +2326,7 @@ class GatewayRazorPay extends PaymentGateway {
         foreach ( $columns as $key => $value ) {
             $new_columns[ $key ] = $value;
             if ( 'title' === $key ) {
-                $new_columns['razorpay_subscription_id'] = __( 'Razorpay Subscription', 'creator-lms' );
+                $new_columns['razorpay_subscription_id'] = __( 'Razorpay Subscription', 'ohmylms' );
             }
         }
         return $new_columns;
@@ -2390,12 +2390,12 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Security nonce check
         if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'razorpay_create_plans' ) ) {
-            wp_die( __( 'Security check failed', 'creator-lms' ) );
+            wp_die( __( 'Security check failed', 'ohmylms' ) );
         }
 
         // Get all memberships
         $memberships = get_posts( array(
-            'post_type'      => 'omlms-membership',
+            'post_type'      => 'ohmylms-membership',
             'posts_per_page' => -1,
             'post_status'    => 'publish',
         ) );
@@ -2405,11 +2405,11 @@ class GatewayRazorPay extends PaymentGateway {
         $errors = array();
 
         foreach ( $memberships as $membership_post ) {
-            if ( ! function_exists( 'omlms_get_membership' ) ) {
+            if ( ! function_exists( 'ohmylms_get_membership' ) ) {
                 continue;
             }
 
-            $membership = omlms_get_membership( $membership_post->ID );
+            $membership = ohmylms_get_membership( $membership_post->ID );
             if ( ! $membership ) {
                 continue;
             }
@@ -2439,7 +2439,7 @@ class GatewayRazorPay extends PaymentGateway {
                 $created++;
             } else {
                 $errors[] = sprintf(
-                    __( 'Failed to create plan for: %s (ID: %d)', 'creator-lms' ),
+                    __( 'Failed to create plan for: %s (ID: %d)', 'ohmylms' ),
                     $membership->get_name(),
                     $membership_post->ID
                 );
@@ -2448,15 +2448,15 @@ class GatewayRazorPay extends PaymentGateway {
 
         // Show results
         $message = sprintf(
-            __( 'Razorpay Plan Creation Complete: %d created, %d skipped.', 'creator-lms' ),
+            __( 'Razorpay Plan Creation Complete: %d created, %d skipped.', 'ohmylms' ),
             $created,
             $skipped
         );
 
         if ( ! empty( $errors ) ) {
-            $message .= '<br><br><strong>' . __( 'Errors:', 'creator-lms' ) . '</strong><br>' . implode( '<br>', $errors );
+            $message .= '<br><br><strong>' . __( 'Errors:', 'ohmylms' ) . '</strong><br>' . implode( '<br>', $errors );
         }
 
-        wp_die( $message, __( 'Razorpay Plan Creation', 'creator-lms' ), array( 'back_link' => true ) );
+        wp_die( $message, __( 'Razorpay Plan Creation', 'ohmylms' ), array( 'back_link' => true ) );
     }
 }

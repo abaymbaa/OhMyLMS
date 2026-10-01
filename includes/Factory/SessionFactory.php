@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Session;
+use OhMyLMS\Data\Session;
 
 class SessionFactory {
 
@@ -29,7 +29,7 @@ class SessionFactory {
      */
     private function get_session_id( $session ) {
         global $post;
-        if ( false === $session && isset( $post, $post->ID ) && 'omlms-session' === get_post_type( $post->ID ) ) {
+        if ( false === $session && isset( $post, $post->ID ) && 'ohmylms-session' === get_post_type( $post->ID ) ) {
             return absint( $post->ID );
         } elseif ( is_numeric( $session ) ) {
             return $this->is_session_exist( $session ) ? $session : false;
@@ -54,7 +54,7 @@ class SessionFactory {
             return false;
         }
         $session = get_post( $session_id );
-        if ( $session && 'omlms-session' === get_post_type( $session_id ) ) {
+        if ( $session && 'ohmylms-session' === get_post_type( $session_id ) ) {
             return true;
         } else {
             return false;

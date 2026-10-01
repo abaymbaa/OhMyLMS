@@ -10,7 +10,7 @@ var KH = function (e) {
       return e(T.default).getCourseChapters();
     }, [r]),
     i = (0, y.useSelect)(function (e) {
-      return e("creator-lms/store").getCourseChaptersContent();
+      return e("ohmylms/store").getCourseChaptersContent();
     }, [r]),
     l = function (e) {
       return (0, g.useMemo)(function () {
@@ -153,7 +153,7 @@ var KH = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.ContainerWP, null, React.createElement(I.SpacerWP, {
     paddingY: 6,
     marginBottom: 0,
-    className: "omlms-course-preview"
+    className: "ohmylms-course-preview"
   }, React.createElement(I.CardWP, {
     variant: "secondary",
     isBorderless: !0
@@ -163,7 +163,7 @@ var KH = function (e) {
   }, React.createElement(I.FlexWP, {
     gap: 5,
     align: "flex-start",
-    className: "omlms-course-preview-wrapper"
+    className: "ohmylms-course-preview-wrapper"
   }, React.createElement(I.CardWP, {
     style: {
       flex: "5"
@@ -191,7 +191,7 @@ var KH = function (e) {
   }), React.createElement(I.FlexWP, {
     gap: 0,
     direction: "column",
-    className: "omlms-review-summery-list"
+    className: "ohmylms-review-summery-list"
   }, _.map(function (e, t) {
     return React.createElement("div", {
       key: null == e ? void 0 : e.id
@@ -310,7 +310,7 @@ var KH = function (e) {
       }
     }, e.label));
   })))), "future" === (null == a ? void 0 : a.status) && React.createElement("div", {
-    className: "omlms-course-publish-status"
+    className: "ohmylms-course-publish-status"
   }, React.createElement("p", null, (0, b.__)("Your course is scheduled for publishing on ", "ohmylms"), React.createElement("strong", null, sn()(null == a || null === (t = a.post_date) || void 0 === t ? void 0 : t.date).format("MMMM D, YYYY [at] h:mm A"))))))))))));
 };
 

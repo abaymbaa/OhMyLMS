@@ -24,12 +24,12 @@
       default: 'full'
     }
   };
-  registerBlockType('creator-lms/membership-list', {
+  registerBlockType('ohmylms/membership-list', {
     title: __('OhMyLMS Membership List', 'ohmylms'),
     description: __('Display membership plans on any page or post.', 'ohmylms'),
     icon: 'id',
-    category: 'creator-lms',
-    keywords: [__('membership', 'ohmylms'), __('plan', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],
+    category: 'ohmylms',
+    keywords: [__('membership', 'ohmylms'), __('plan', 'ohmylms'), __('ohmylms', 'ohmylms'), __('ohmylms', 'ohmylms')],
     supports: {
       align: true,
       html: false
@@ -52,12 +52,12 @@
         }
       })));
       var serverSideRender = createElement(ServerSideRender, {
-        block: 'creator-lms/membership-list',
+        block: 'ohmylms/membership-list',
         attributes: attributes,
         httpMethod: 'POST'
       });
       return [inspectorControls, createElement('div', {
-        className: 'wp-block-creator-lms-membership-list'
+        className: 'wp-block-ohmylms-membership-list'
       }, serverSideRender)];
     },
     save: function () {

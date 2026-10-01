@@ -22,7 +22,7 @@ export function createCourseAccess(readRuntime) {
         <Controls.FlexWP
           justify={'space-between'}
           align={'flex-start'}
-          className={'omlms-course-access-section'}
+          className={'ohmylms-course-access-section'}
         >
           <Controls.FlexItemWP
             style={{

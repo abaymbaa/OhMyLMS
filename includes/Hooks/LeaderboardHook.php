@@ -2,17 +2,17 @@
 /**
  * Hook for Course
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Engagement\Leaderboard;
+use OhMyLMS\Engagement\Leaderboard;
 
 class LeaderboardHook
 {
     public function register_hooks(){
-        add_filter('creator_lms_leaderboard_students', array( $this, 'filter_leaderboard_students' ), 10, 2 );
+        add_filter('ohmylms_leaderboard_students', array( $this, 'filter_leaderboard_students' ), 10, 2 );
     }
 
     /**

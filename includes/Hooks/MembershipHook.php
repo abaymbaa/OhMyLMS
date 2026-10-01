@@ -2,30 +2,30 @@
 /**
  * Hook for Membership
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Data\Membership;
+use OhMyLMS\Data\Membership;
 use function CodeRex\Ecommerce\ecommerce;
 class MembershipHook
 {
     public function register_hooks(){
-        // add_action('creator_lms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );
-        add_action('creator_lms_after_order_details', array( __CLASS__, 'display_order_details' ), 10, 1 );
-        add_action( 'creatorlms_recurring_subscription_totals', array( __CLASS__, 'get_recurring_subscription_totals' ) );
-        add_action('creator_lms_after_thankyou_table', array( $this, 'show_subscription_info' ), 10, 2 );
-        add_filter('creatorlms_thankyou_text', array( $this, 'membership_thankyou_text' ), 10, 3 );;
+        // add_action('ohmylms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );
+        add_action('ohmylms_after_order_details', array( __CLASS__, 'display_order_details' ), 10, 1 );
+        add_action( 'ohmylms_recurring_subscription_totals', array( __CLASS__, 'get_recurring_subscription_totals' ) );
+        add_action('ohmylms_after_thankyou_table', array( $this, 'show_subscription_info' ), 10, 2 );
+        add_filter('ohmylms_thankyou_text', array( $this, 'membership_thankyou_text' ), 10, 3 );;
 
 
-        add_action('creator_lms_rest_after_adding_products_on_membership', array( $this, 'enroll_courses' ), 10, 2 );
-        add_filter('creator_lms_checkout_course_price_html', array( $this, 'membership_price_html' ), 10, 3 );
-        add_filter('creator_lms_cart_item_subtotal', array( $this, 'membership_cart_subtaotal' ), 10, 4 );
-        add_filter('creator_lms_cart_item_price', array( $this, 'membership_cart_item_price' ), 10, 4 );
-        add_filter('creator_lms_cart_item_line_total', array( $this, 'membership_discounted_prices' ), 10, 4 );
-        add_filter('creator_lms_cart_discounted_price', array( $this, 'membership_discounted_prices' ), 10, 4 );
-        add_filter('creator_lms_order_item_subtotal', array( $this, 'membership_order_item_subtotal' ), 10, 4 );
+        add_action('ohmylms_rest_after_adding_products_on_membership', array( $this, 'enroll_courses' ), 10, 2 );
+        add_filter('ohmylms_checkout_course_price_html', array( $this, 'membership_price_html' ), 10, 3 );
+        add_filter('ohmylms_cart_item_subtotal', array( $this, 'membership_cart_subtaotal' ), 10, 4 );
+        add_filter('ohmylms_cart_item_price', array( $this, 'membership_cart_item_price' ), 10, 4 );
+        add_filter('ohmylms_cart_item_line_total', array( $this, 'membership_discounted_prices' ), 10, 4 );
+        add_filter('ohmylms_cart_discounted_price', array( $this, 'membership_discounted_prices' ), 10, 4 );
+        add_filter('ohmylms_order_item_subtotal', array( $this, 'membership_order_item_subtotal' ), 10, 4 );
     }
 
 
@@ -45,7 +45,7 @@ class MembershipHook
             return;
         }
         
-        omlms_get_template(
+        ohmylms_get_template(
             'templates/checkout/recurring-totals',
             array(
                 'membership' => $membership,
@@ -70,7 +70,7 @@ class MembershipHook
         }
         foreach ( $items as $item ) {
             $id = $item->get_course_id();
-            $membership = omlms_get_membership($id);
+            $membership = ohmylms_get_membership($id);
             if( !$membership ){
                 continue;
             }
@@ -80,7 +80,7 @@ class MembershipHook
                 if( 'one_time' === $billing_period ) {
                     continue;
                 }
-                omlms_get_template(
+                ohmylms_get_template(
                     'templates/checkout/recurring-totals',
                     array(
                         'membership' => $membership,
@@ -120,7 +120,7 @@ class MembershipHook
             ));
             $price = isset($tax_data['total_with_tax']) ? $tax_data['total_with_tax'] : $price;
         }
-        $price_html = omlms_price($price) . ' / ' . $billing_period;
+        $price_html = ohmylms_price($price) . ' / ' . $billing_period;
         $now        = current_time('timestamp');
 
         switch ($billing_period) {
@@ -140,7 +140,7 @@ class MembershipHook
         }
         $renewal_date = date_i18n(get_option('date_format'), $renewal);
         
-        omlms_get_template(
+        ohmylms_get_template(
             'templates/checkout/recurring-subscription-totals',
             array(
                 'membership'        => $membership,
@@ -173,7 +173,7 @@ class MembershipHook
             return $thankyou_text;
         }
         $membership_id 	= $subscription->get_membership_id();
-	    $membership 	= function_exists( 'omlms_get_membership' ) ? omlms_get_membership( $membership_id ) : null;
+	    $membership 	= function_exists( 'ohmylms_get_membership' ) ? ohmylms_get_membership( $membership_id ) : null;
         if( !$membership ) {
             return;
         }
@@ -203,7 +203,7 @@ class MembershipHook
             return;
         }
         $membership_id 	= $subscription->get_membership_id();
-	    $membership 	= function_exists( 'omlms_get_membership' ) ? omlms_get_membership( $membership_id ) : null;
+	    $membership 	= function_exists( 'ohmylms_get_membership' ) ? ohmylms_get_membership( $membership_id ) : null;
         if( !$membership ) {
             return;
         }
@@ -213,7 +213,7 @@ class MembershipHook
             return;
         }
 
-        omlms_get_template(
+        ohmylms_get_template(
             'templates/checkout/subscription-info',
             array(
                 'subscription' => $subscription,
@@ -236,8 +236,8 @@ class MembershipHook
     public function enroll_courses( $products, $membership_id ) {
         global $wpdb;
         
-        $enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
-        $membership_table = $wpdb->prefix . 'omlms_user_membership';
+        $enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
+        $membership_table = $wpdb->prefix . 'ohmylms_user_membership';
     
         // Get all students associated with the membership
         $students = $wpdb->get_col(
@@ -297,16 +297,16 @@ class MembershipHook
      * @since 1.0.0
      */
     public function membership_price_html( $price_html, $course_price, $membership ) {
-        if ( !is_object($membership) || !($membership instanceof \OMLMS\Data\Membership) ) {
+        if ( !is_object($membership) || !($membership instanceof \OhMyLMS\Data\Membership) ) {
             return $price_html;
         }
         // Get the signup fee from the membership object
         $signup_fee = method_exists($membership, 'get_sign_up_fee') ? floatval($membership->get_sign_up_fee()) : 0;
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-        $price_html = omlms_price($course_price);
+        $price_html = ohmylms_price($course_price);
         if ($signup_fee > 0) {
             // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-            $price_html .= ' <small style="font-weight: normal;">and a ' . omlms_price($signup_fee) . ' sign-up fee</small>';
+            $price_html .= ' <small style="font-weight: normal;">and a ' . ohmylms_price($signup_fee) . ' sign-up fee</small>';
         }
         return $price_html;
     }
@@ -322,7 +322,7 @@ class MembershipHook
      * @since 1.0.0
      */
     public function membership_subtotal_price_html( $cart_subtotal_html, $cart_subtotal, $membership ) {
-        if ( !is_object($membership) || !($membership instanceof \OMLMS\Data\Membership) ) {
+        if ( !is_object($membership) || !($membership instanceof \OhMyLMS\Data\Membership) ) {
             return $price_html;
         }
         $signup_fee = method_exists($membership, 'get_sign_up_fee') ? floatval($membership->get_sign_up_fee()) : 0;
@@ -330,7 +330,7 @@ class MembershipHook
             // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
             $new_subtotal = floatval($cart_subtotal) + $signup_fee;
             // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-            return omlms_price($new_subtotal);
+            return ohmylms_price($new_subtotal);
         }
         return $cart_subtotal;
     }

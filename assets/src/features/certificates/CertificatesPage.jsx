@@ -4,7 +4,7 @@ export function createCertificatesPage(readRuntime) {
   return function CertificatesPage() {
     const { HG, React, gte } = readRuntime();
     return (
-      HG('creator-lms', 'certificates'),
+      HG('ohmylms', 'certificates'),
       (<React.Fragment>{React.createElement(gte, null)}</React.Fragment>)
     );
   };

@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Quiz post type to connect with topics
@@ -71,6 +71,6 @@ class QuizPostType {
 			'publicly_queryable'  => true,
 			'capability_type'     => 'post',
 		);
-		register_post_type( 'omlms-quiz', $args );
+		register_post_type( 'ohmylms-quiz', $args );
 	}
 }

@@ -3,12 +3,10 @@ import { createElement } from '@wordpress/element';
 export function createAiCourseGeneratorPage(readRuntime) {
   return function AiCourseGeneratorPage() {
     const { L: Entitlements, React, f: Router, qae: MemoAiCourseGenerator } = readRuntime();
-    return (0, Entitlements.useIsPro)() ? (
+    return (
       <React.Fragment>
         <MemoAiCourseGenerator />
       </React.Fragment>
-    ) : (
-      <Router.C5 to={'/'} />
     );
   };
 }

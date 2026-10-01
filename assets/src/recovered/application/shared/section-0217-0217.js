@@ -124,16 +124,16 @@ var kne = function (e) {
     }((0, g.useState)(!1), 2),
     p = d[0],
     f = d[1],
-    v = [].concat(Cne(null !== (t = window) && void 0 !== t && null !== (t = t.creator_lms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
+    v = [].concat(Cne(null !== (t = window) && void 0 !== t && null !== (t = t.ohmylms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
       label: (0, b.__)("Tutor LMS", "ohmylms"),
       value: "tutorLMS"
-    }] : []), Cne(null !== (n = window) && void 0 !== n && null !== (n = n.creator_lms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
+    }] : []), Cne(null !== (n = window) && void 0 !== n && null !== (n = n.ohmylms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
       label: (0, b.__)("LearnDash", "ohmylms"),
       value: "learnDash"
-    }] : []), Cne(null !== (r = window) && void 0 !== r && null !== (r = r.creator_lms_params) && void 0 !== r && r.is_learnpress_active ? [{
+    }] : []), Cne(null !== (r = window) && void 0 !== r && null !== (r = r.ohmylms_params) && void 0 !== r && r.is_learnpress_active ? [{
       label: (0, b.__)("LearnPress", "ohmylms"),
       value: "learnPress"
-    }] : []), Cne(null !== (a = window) && void 0 !== a && null !== (a = a.creator_lms_params) && void 0 !== a && a.is_masterstudy_active ? [{
+    }] : []), Cne(null !== (a = window) && void 0 !== a && null !== (a = a.ohmylms_params) && void 0 !== a && a.is_masterstudy_active ? [{
       label: (0, b.__)("MasterStudy LMS", "ohmylms"),
       value: "masterStudy"
     }] : [])),
@@ -159,7 +159,7 @@ var kne = function (e) {
               return e.a(2, null);
             case 2:
               return e.n = 3, m({
-                path: "/creator-lms/v1/certificates/",
+                path: "/ohmylms/v1/certificates/",
                 method: "POST",
                 data: {
                   name: "Certificate Template ".concat(c.certificate),
@@ -189,7 +189,7 @@ var kne = function (e) {
             case 1:
               return y = e.v, b = {
                 optin: {
-                  creatorlms_allow_tracking: null != c && c.isOptEnabled ? "yes" : "no"
+                  ohmylms_allow_tracking: null != c && c.isOptEnabled ? "yes" : "no"
                 },
                 language: null !== (t = c.language) && void 0 !== t ? t : "en_US",
                 certificate: c.certificate,
@@ -197,20 +197,20 @@ var kne = function (e) {
                 niche: c.niche ? [c.niche] : [],
                 level: c.level,
                 design: {
-                  creator_lms_archive_page_layout: null !== (n = c.archive_page_layout) && void 0 !== n ? n : null === (r = s.creator_lms_archive_page_layout) || void 0 === r ? void 0 : r.value,
-                  creator_lms_columns_per_row: c.courses_per_row || (null === (a = s.creator_lms_columns_per_row) || void 0 === a ? void 0 : a.value) || 4,
-                  creator_lms_courses_per_page: c.courses_per_page || (null === (o = s.creator_lms_courses_per_page) || void 0 === o ? void 0 : o.value) || 10
+                  ohmylms_archive_page_layout: null !== (n = c.archive_page_layout) && void 0 !== n ? n : null === (r = s.ohmylms_archive_page_layout) || void 0 === r ? void 0 : r.value,
+                  ohmylms_columns_per_row: c.courses_per_row || (null === (a = s.ohmylms_columns_per_row) || void 0 === a ? void 0 : a.value) || 4,
+                  ohmylms_courses_per_page: c.courses_per_page || (null === (o = s.ohmylms_courses_per_page) || void 0 === o ? void 0 : o.value) || 10
                 },
                 currency: {
-                  creator_lms_currency: null !== (i = c.currency) && void 0 !== i ? i : null == u || null === (d = u.creator_lms_currency) || void 0 === d ? void 0 : d.value,
-                  creator_lms_currency_pos: (null == u || null === (m = u.creator_lms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
-                  creator_lms_price_thousand_sep: (null == u || null === (p = u.creator_lms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
-                  creator_lms_price_decimal_sep: (null == u || null === (f = u.creator_lms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
-                  creator_lms_price_num_decimals: (null == u || null === (v = u.creator_lms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
+                  ohmylms_currency: null !== (i = c.currency) && void 0 !== i ? i : null == u || null === (d = u.ohmylms_currency) || void 0 === d ? void 0 : d.value,
+                  ohmylms_currency_pos: (null == u || null === (m = u.ohmylms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
+                  ohmylms_price_thousand_sep: (null == u || null === (p = u.ohmylms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
+                  ohmylms_price_decimal_sep: (null == u || null === (f = u.ohmylms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
+                  ohmylms_price_num_decimals: (null == u || null === (v = u.ohmylms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
                 },
                 contact: {
-                  email: null != c && c.isOptEnabled ? null === (g = window.creator_lms_params) || void 0 === g ? void 0 : g.admin_email : "",
-                  name: null != c && c.isOptEnabled ? null === (h = window.creator_lms_params) || void 0 === h ? void 0 : h.admin_name : ""
+                  email: null != c && c.isOptEnabled ? null === (g = window.ohmylms_params) || void 0 === g ? void 0 : g.admin_email : "",
+                  name: null != c && c.isOptEnabled ? null === (h = window.ohmylms_params) || void 0 === h ? void 0 : h.admin_name : ""
                 },
                 wizard_data: c
               }, e.n = 2, l.saveSetup(b);
@@ -251,11 +251,11 @@ var kne = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, r = une[t].data, e.n = 2, m({
-                path: "/creator-lms/v1/setup-wizard/import-course",
+                path: "/ohmylms/v1/setup-wizard/import-course",
                 method: "POST",
                 data: r,
                 headers: {
-                  nonce: window.creator_lms_params.setup_wizard_nonce
+                  nonce: window.ohmylms_params.setup_wizard_nonce
                 }
               });
             case 2:
@@ -313,27 +313,27 @@ var kne = function (e) {
             case 1:
               return y = e.v, b = {
                 optin: {
-                  creatorlms_allow_tracking: null != c && c.isOptEnabled ? "yes" : "no"
+                  ohmylms_allow_tracking: null != c && c.isOptEnabled ? "yes" : "no"
                 },
                 language: null !== (t = c.language) && void 0 !== t ? t : "en_US",
                 certificate: c.certificate,
                 certificate_id: y,
                 level: c.level,
                 design: {
-                  creator_lms_archive_page_layout: null !== (n = c.archive_page_layout) && void 0 !== n ? n : null === (r = s.creator_lms_archive_page_layout) || void 0 === r ? void 0 : r.value,
-                  creator_lms_columns_per_row: c.courses_per_row || (null === (a = s.creator_lms_columns_per_row) || void 0 === a ? void 0 : a.value) || 4,
-                  creator_lms_courses_per_page: c.courses_per_page || (null === (o = s.creator_lms_courses_per_page) || void 0 === o ? void 0 : o.value) || 10
+                  ohmylms_archive_page_layout: null !== (n = c.archive_page_layout) && void 0 !== n ? n : null === (r = s.ohmylms_archive_page_layout) || void 0 === r ? void 0 : r.value,
+                  ohmylms_columns_per_row: c.courses_per_row || (null === (a = s.ohmylms_columns_per_row) || void 0 === a ? void 0 : a.value) || 4,
+                  ohmylms_courses_per_page: c.courses_per_page || (null === (o = s.ohmylms_courses_per_page) || void 0 === o ? void 0 : o.value) || 10
                 },
                 currency: {
-                  creator_lms_currency: null !== (i = c.currency) && void 0 !== i ? i : null == u || null === (d = u.creator_lms_currency) || void 0 === d ? void 0 : d.value,
-                  creator_lms_currency_pos: (null == u || null === (m = u.creator_lms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
-                  creator_lms_price_thousand_sep: (null == u || null === (p = u.creator_lms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
-                  creator_lms_price_decimal_sep: (null == u || null === (f = u.creator_lms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
-                  creator_lms_price_num_decimals: (null == u || null === (v = u.creator_lms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
+                  ohmylms_currency: null !== (i = c.currency) && void 0 !== i ? i : null == u || null === (d = u.ohmylms_currency) || void 0 === d ? void 0 : d.value,
+                  ohmylms_currency_pos: (null == u || null === (m = u.ohmylms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
+                  ohmylms_price_thousand_sep: (null == u || null === (p = u.ohmylms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
+                  ohmylms_price_decimal_sep: (null == u || null === (f = u.ohmylms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
+                  ohmylms_price_num_decimals: (null == u || null === (v = u.ohmylms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
                 },
                 contact: {
-                  email: null != c && c.isOptEnabled ? null === (g = window.creator_lms_params) || void 0 === g ? void 0 : g.admin_email : "",
-                  name: null != c && c.isOptEnabled ? null === (h = window.creator_lms_params) || void 0 === h ? void 0 : h.admin_name : ""
+                  email: null != c && c.isOptEnabled ? null === (g = window.ohmylms_params) || void 0 === g ? void 0 : g.admin_email : "",
+                  name: null != c && c.isOptEnabled ? null === (h = window.ohmylms_params) || void 0 === h ? void 0 : h.admin_name : ""
                 },
                 wizard_data: c
               }, e.n = 2, l.saveSetup(b);
@@ -381,11 +381,11 @@ var kne = function (e) {
       return null == i ? void 0 : i("niche");
     }
   }), React.createElement(I.ContainerWP, null, React.createElement("div", {
-    className: "omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper"
+    className: "ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper"
   }, React.createElement("div", {
-    className: "omlms-setup-wizard__container"
+    className: "ohmylms-setup-wizard__container"
   }, React.createElement("div", {
-    className: "omlms-setup-wizard__header"
+    className: "ohmylms-setup-wizard__header"
   }, React.createElement(I.HeadingWP, {
     as: "h2",
     color: "#000d25",
@@ -429,7 +429,7 @@ var kne = function (e) {
       });
     },
     options: C,
-    className: "omlms-setup-wizard-niche-options"
+    className: "ohmylms-setup-wizard-niche-options"
   }), React.createElement(I.TextWP, {
     as: "p",
     size: "12",

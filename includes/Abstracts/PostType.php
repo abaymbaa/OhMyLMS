@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -55,6 +55,6 @@ abstract class PostType {
 		}
 		$args = $this->get_args();
 		register_post_type( $this->post_type, $args );
-		do_action( 'creator_lms_after_register_post_type_' . $this->post_type );
+		do_action( 'ohmylms_after_register_post_type_' . $this->post_type );
 	}
 }

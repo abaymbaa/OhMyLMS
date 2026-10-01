@@ -71,7 +71,7 @@ class Order {
 	 * @since 1.0.0
 	 */
 	public function get_order_items(){
-		$items = get_post_meta( $this->id, 'omlms_order_items', true );
+		$items = get_post_meta( $this->id, 'ohmylms_order_items', true );
 		if ( is_array( $items ) ) {
 			return $items;
 		}
@@ -114,7 +114,7 @@ class Order {
 	 * @since 1.0.0
 	 */
 	public function get_order_discount(): float {
-		return (float) get_post_meta( $this->id, 'omlms_order_discount', true );
+		return (float) get_post_meta( $this->id, 'ohmylms_order_discount', true );
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Order {
 		$order_id = wp_insert_post(
 			array(
 				'post_title'  => 'Order #',
-				'post_type'   => 'omlms-order',
+				'post_type'   => 'ohmylms-order',
 				'post_status' => 'publish',
 				'meta_input'  => array(),
 			)
@@ -148,12 +148,12 @@ class Order {
 			)
 		);
 
-		update_post_meta( $order_id, 'omlms_order_status', 'draft' );
-		update_post_meta( $order_id, 'omlms_order_number', $order_title );
-		update_post_meta( $order_id, 'omlms_order_items', $cart_data );
-		update_post_meta( $order_id, 'omlms_order_discount', 0 );
-		update_post_meta( $order_id, 'omlms_order_payment_method', $posted_data['payment_method'] );
-		update_post_meta( $order_id, 'omlms_order_owner', get_current_user_id() );
+		update_post_meta( $order_id, 'ohmylms_order_status', 'draft' );
+		update_post_meta( $order_id, 'ohmylms_order_number', $order_title );
+		update_post_meta( $order_id, 'ohmylms_order_items', $cart_data );
+		update_post_meta( $order_id, 'ohmylms_order_discount', 0 );
+		update_post_meta( $order_id, 'ohmylms_order_payment_method', $posted_data['payment_method'] );
+		update_post_meta( $order_id, 'ohmylms_order_owner', get_current_user_id() );
 
 		( new Order( $order_id ) )->save_billing_details( $posted_data );
 
@@ -169,7 +169,7 @@ class Order {
 	 */
 	private function save_billing_details( $posted_data ): void {
 		foreach ( $posted_data as $index => $billing_field ) {
-			$this->update_order_meta( 'omlms_billing_' . $index, $billing_field );
+			$this->update_order_meta( 'ohmylms_billing_' . $index, $billing_field );
 		}
 	}
 
@@ -187,7 +187,7 @@ class Order {
 			);
 		}
 
-		update_post_meta( $this->id, 'omlms_order_status', $status );
+		update_post_meta( $this->id, 'ohmylms_order_status', $status );
 		return array(
 			'status'  => 'success',
 			'message' => __( 'Order status updated', 'ohmylms' ),
@@ -200,7 +200,7 @@ class Order {
 	 * @since 1.0.0
 	 */
 	public function get_order_status() {
-		return get_post_meta( $this->id, 'omlms_order_status', true );
+		return get_post_meta( $this->id, 'ohmylms_order_status', true );
 	}
 
 	/**
@@ -209,7 +209,7 @@ class Order {
 	 * @since 1.0.0
 	 */
 	public function get_order_payment_method() {
-		return get_post_meta( $this->id, 'omlms_order_payment_method', true );
+		return get_post_meta( $this->id, 'ohmylms_order_payment_method', true );
 	}
 
 	/**
@@ -243,8 +243,8 @@ class Order {
 	 * @since 1.0.0
 	 */
 	public function save_order_payment( $payment_method, $payment_type, $payment_details ) {
-		$this->update_order_meta( 'omlms_order_payment_method', $payment_method );
-		$this->update_order_meta( 'omlms_order_payment_type', $payment_type );
-		$this->update_order_meta( 'omlms_order_payment_details', $payment_details );
+		$this->update_order_meta( 'ohmylms_order_payment_method', $payment_method );
+		$this->update_order_meta( 'ohmylms_order_payment_type', $payment_type );
+		$this->update_order_meta( 'ohmylms_order_payment_details', $payment_details );
 	}
 }

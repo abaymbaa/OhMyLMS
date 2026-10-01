@@ -16,7 +16,7 @@ export function createQuizQuestionResults(readRuntime) {
       setData = props.setData;
     return (
       <React.Fragment>
-        <Controls.FlexWP direction={'column'} gap={5} className={'omlms-report-content'}>
+        <Controls.FlexWP direction={'column'} gap={5} className={'ohmylms-report-content'}>
           {data.map(function (e, t) {
             var a,
               o = null == e || null === (a = e.settings) || void 0 === a ? void 0 : a.type;

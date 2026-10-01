@@ -1,9 +1,9 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Assignment;
-use OMLMS\DataException;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Assignment;
+use OhMyLMS\DataException;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -52,10 +52,10 @@ class AssignmentController extends RestController {
 	 */
 	public function check_assignment_read_permission( $request ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
-		return $this->check_object_permission( $request, 'read', 'omlms-assignment' );
+		return $this->check_object_permission( $request, 'read', 'ohmylms-assignment' );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class AssignmentController extends RestController {
 	 * @return true|\WP_Error
 	 */
 	public function check_assignment_edit_permission( $request ) {
-		return $this->check_object_permission( $request, 'edit', 'omlms-assignment' );
+		return $this->check_object_permission( $request, 'edit', 'ohmylms-assignment' );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class AssignmentController extends RestController {
 	 * @return true|\WP_Error
 	 */
 	public function check_assignment_delete_permission( $request ) {
-		return $this->check_object_permission( $request, 'delete', 'omlms-assignment' );
+		return $this->check_object_permission( $request, 'delete', 'ohmylms-assignment' );
 	}
 
 
@@ -124,7 +124,7 @@ class AssignmentController extends RestController {
 			array(
 				'args' => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the assignment.', 'creator-lms' ),
+						'description' => __( 'Unique identifier for the assignment.', 'ohmylms' ),
 						'type'        => 'integer',
 					),
 				),
@@ -154,7 +154,7 @@ class AssignmentController extends RestController {
 			array(
 				'args' => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the assignment.', 'creator-lms' ),
+						'description' => __( 'Unique identifier for the assignment.', 'ohmylms' ),
 						'type'        => 'integer',
 					),
 				),
@@ -221,7 +221,7 @@ class AssignmentController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_ASSIGNMENT_CPT,
+			'post_type'           => OHMYLMS_ASSIGNMENT_CPT,
 			'post_status'         => isset($request['post_status']) ? sanitize_text_field($request['post_status']) : array('draft', 'publish', 'future'),
 		);
 
@@ -242,7 +242,7 @@ class AssignmentController extends RestController {
 			$args['post_status'] = array('draft', 'publish', 'future');
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_assignment_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_assignment_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -339,7 +339,7 @@ class AssignmentController extends RestController {
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with error name.
-			return new WP_Error( 'creator_lms_rest_assignment_exists', sprintf( __( 'Cannot create existing %s.', 'creator-lms' ), 'Assignment' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_assignment_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Assignment' ), array( 'status' => 400 ) );
 		}
 		try {
 			$assignment_id = $this->save_assignment( $request );
@@ -354,7 +354,7 @@ class AssignmentController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_assignment', $post, $request, true );
+			do_action( 'ohmylms_rest_insert_assignment', $post, $request, true );
 
 			$request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response( $post, $request );
@@ -379,8 +379,8 @@ class AssignmentController extends RestController {
 
 		$post_id = (int) $request['id'];
 
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_ASSIGNMENT_CPT ) {
-			return new WP_Error( 'creator_lms_rest_assignment_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_ASSIGNMENT_CPT ) {
+			return new WP_Error( 'ohmylms_rest_assignment_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -409,7 +409,7 @@ class AssignmentController extends RestController {
 	public function trash_bulk( $request ) {
 		$assignment_ids = $request->get_param('assignment_ids');
 		if( is_array($assignment_ids) ){
-			$assignment_ids = $this->filter_allowed_post_ids( $assignment_ids, 'delete', 'omlms-assignment' );
+			$assignment_ids = $this->filter_allowed_post_ids( $assignment_ids, 'delete', 'ohmylms-assignment' );
 
 			if ( is_wp_error( $assignment_ids ) ) {
 				return $assignment_ids;
@@ -417,7 +417,7 @@ class AssignmentController extends RestController {
 
 			foreach( $assignment_ids as $assignment_id ){
 				wp_trash_post($assignment_id);
-				do_action( 'creator_lms_rest_delete_assignment', $assignment_id );
+				do_action( 'ohmylms_rest_delete_assignment', $assignment_id );
 			}
 			return new \WP_REST_Response(['message' => 'Deleted Successfully'], 200);
 		}
@@ -438,7 +438,7 @@ class AssignmentController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$assignment = omlms_get_assignment( $post );
+		$assignment = ohmylms_get_assignment( $post );
 
 		// Save assignment meta fields.
 		$assignment = $this->set_assignment_meta( $assignment, $request );
@@ -452,7 +452,7 @@ class AssignmentController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_assignment_meta_updated', $assignment );
+		do_action( 'ohmylms_rest_assignment_meta_updated', $assignment );
 
 		return true;
 	}
@@ -471,7 +471,7 @@ class AssignmentController extends RestController {
 	protected function set_assignment_cover_image( $assignment, $attachment_id ) {
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_assignment_invalid_cover_image_id', sprintf( __( '#%s is an invalid image ID.', 'creator-lms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_assignment_invalid_cover_image_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$assignment->set_cover_image_id( $attachment_id );
@@ -492,7 +492,7 @@ class AssignmentController extends RestController {
 
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_assignment_invalid_thumbnail_id', sprintf( __( '#%s is an invalid image ID.', 'creator-lms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_assignment_invalid_thumbnail_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$assignment->set_thumbnail_id( $attachment_id );
@@ -512,7 +512,7 @@ class AssignmentController extends RestController {
 	protected function set_assignment_video_id( $assignment, $attachment_id ) {
 		if ( ! wp_attachment_is( 'video', $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_assignment_invalid_video_id', sprintf( __( '#%s is an invalid image ID.', 'creator-lms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_assignment_invalid_video_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$assignment->set_video_id( $attachment_id );
@@ -532,7 +532,7 @@ class AssignmentController extends RestController {
 	protected function set_assignment_audio_id( $assignment, $attachment_id ) {
 		if ( ! wp_attachment_is( 'audio', $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_assignment_invalid_audio_id', sprintf( __( '#%s is an invalid image ID.', 'creator-lms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_assignment_invalid_audio_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$assignment->set_audio_id( $attachment_id );
@@ -629,8 +629,8 @@ class AssignmentController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_ASSIGNMENT_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_assignment_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_assignment_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data     = $this->prepare_item_for_response( $post, $request );
@@ -652,11 +652,11 @@ class AssignmentController extends RestController {
 	public function get_assignment_report( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_ASSIGNMENT_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_assignment_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_assignment_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
-		$assignemnt = omlms_get_assignment( $post->ID );
+		$assignemnt = ohmylms_get_assignment( $post->ID );
 
 		$report   = $assignemnt->get_report();
 		$response = rest_ensure_response( $report );
@@ -673,21 +673,21 @@ class AssignmentController extends RestController {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['user_id'];
 		$post       = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_ASSIGNMENT_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$assignment     = omlms_get_assignment( $post->ID );
+		$assignment     = ohmylms_get_assignment( $post->ID );
 		$get_assignment_title = $assignment->get_assignment_title();
 		$report   = $assignment->get_assignment_attempts( $attempt_id );
 		$data     = array(
 			'report' => $report,
 		);
-		$course_id = creator_lms_get_course_by_content_id( $post->ID );
+		$course_id = ohmylms_get_course_by_content_id( $post->ID );
 		$pass_marks = get_post_meta( $post->ID, '_maximum_pass_points', true );
 		$total_marks = get_post_meta( $post->ID, '_total_points', true );
 
 		
-		$course = omlms_get_course($course_id);
+		$course = ohmylms_get_course($course_id);
 		if( $course ){
 			$data['additional_data'] = [
 				'course_id' => $course->get_id(),
@@ -710,21 +710,21 @@ class AssignmentController extends RestController {
 		$attempt_id = (int) $request['user_id'];
 		
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_ASSIGNMENT_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$get_data = $request->get_json_params();
 		
-		$quiz		= omlms_get_assignment( $post->ID );
+		$quiz		= ohmylms_get_assignment( $post->ID );
 		$pass_marks = get_post_meta( $post->ID, '_maximum_pass_points', true );
-		$course_id = creator_lms_get_course_by_content_id( $post->ID );
+		$course_id = ohmylms_get_course_by_content_id( $post->ID );
 		$previous_completion_rate = 0;
 		if( isset($get_data[0]['score'],$get_data[0]['status']) ){
 			if( $get_data[0]['score'] >= $pass_marks ){
 				$get_data[0]['status'] = 'passed';
 				
-				$student = new \OMLMS\Data\Student( $attempt_id );
+				$student = new \OhMyLMS\Data\Student( $attempt_id );
 				if( $student ){
 					$previous_completion_rate = $student->get_over_all_completion_rate( $course_id );
 					$student->complete_lesson( $post->ID, $course_id );
@@ -744,7 +744,7 @@ class AssignmentController extends RestController {
 		
 		$total_marks = get_post_meta( $post->ID, '_total_points', true );
 		
-		$course = omlms_get_course($course_id);
+		$course = ohmylms_get_course($course_id);
 		$data['additional_data'] = [
 			'course_id' => $course->get_id(),
 			'course_name' => $course->get_name()
@@ -756,26 +756,26 @@ class AssignmentController extends RestController {
 
 		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
 		
-		do_action( 'creator_lms_after_assignment_review', $post->ID, $course_id, $attempt_id, $get_data[0]['status'] );
+		do_action( 'ohmylms_after_assignment_review', $post->ID, $course_id, $attempt_id, $get_data[0]['status'] );
 
-		if( class_exists( '\OMLMS\Engagement\Leaderboard' ) ){
-			$avg_marks = \OMLMS\Engagement\Leaderboard::get_student_avg_assignment_marks( $attempt_id, $post->ID );
-			do_action( 'creator_lms_pro_after_assignment_review', $post->ID, $course_id, $attempt_id, $avg_marks );
+		if( class_exists( '\OhMyLMS\Engagement\Leaderboard' ) ){
+			$avg_marks = \OhMyLMS\Engagement\Leaderboard::get_student_avg_assignment_marks( $attempt_id, $post->ID );
+			do_action( 'ohmylms_pro_after_assignment_review', $post->ID, $course_id, $attempt_id, $avg_marks );
 		}
-		$student = new \OMLMS\Data\Student( $attempt_id );
+		$student = new \OhMyLMS\Data\Student( $attempt_id );
 		$maybe_course_completion = $student && $student->is_course_completed( $course_id ) ? 'yes' : 'no';
 		
 		if( $maybe_course_completion === 'yes' ){
-			do_action( 'creator_lms_student_completed_course_after_reviewing_assignment', $attempt_id, $course_id );
+			do_action( 'ohmylms_student_completed_course_after_reviewing_assignment', $attempt_id, $course_id );
 		}
 
 		$completion_rate = $student->get_over_all_completion_rate( $course_id );
 		if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 ) {
 			global $wpdb;
-			$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 			$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $attempt_id, $course_id ), ARRAY_A );
 			if ( isset( $enroll_data['order_id'] ) ) {
-				do_action( 'creator_lms_course_completed', $attempt_id, $course_id, $enroll_data['order_id'] );
+				do_action( 'ohmylms_course_completed', $attempt_id, $course_id, $enroll_data['order_id'] );
 			}
 		}
 
@@ -793,30 +793,30 @@ class AssignmentController extends RestController {
 	public function delete_item( $request ) {
 		$assignment_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 		if ( ! $assignment_id ) {
-			return new WP_Error( 'creator_lms_rest_assignment_empty_id', __( 'ID is required.', 'creator-lms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_assignment_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$assignment = omlms_get_assignment( $assignment_id );
+		$assignment = ohmylms_get_assignment( $assignment_id );
 
 		if ( ! ( $assignment instanceof Assignment ) ) {
-			return new WP_Error( 'creator_lms_rest_assignment_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_assignment_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$assignment->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_assignment' action hook.
+		 * Executes the 'ohmylms_rest_delete_assignment' action hook.
 		 * This hook is triggered when a assignment is being deleted via the REST API.
 		 *
 		 * @param array $request The request array.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_assignment', $assignment_id );
+		do_action( 'ohmylms_rest_delete_assignment', $assignment_id );
 
 		$response = array(
 			'id'      => $assignment_id,
 			'status'  => 'success',
-			'message' => __( 'Assignment has been deleted successfully.', 'creator-lms' ),
+			'message' => __( 'Assignment has been deleted successfully.', 'ohmylms' ),
 		);
 		return rest_ensure_response( $response );
 	}
@@ -845,7 +845,7 @@ class AssignmentController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$assignment = omlms_get_assignment( $id );
+			$assignment = ohmylms_get_assignment( $id );
 		} else {
 			$assignment = new Assignment();
 		}
@@ -881,10 +881,10 @@ class AssignmentController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_assignment_data( $assignment ) {
-		$course_id = creator_lms_get_course_by_content_id( $assignment->get_id() );
+		$course_id = ohmylms_get_course_by_content_id( $assignment->get_id() );
 		$courses = [];
 		if( $course_id ){
-			$course = omlms_get_course( $course_id );
+			$course = ohmylms_get_course( $course_id );
 			if( $course ) {
 				$courses['id'] = $course_id;
 				$courses['course_name'] = $course->get_name();
@@ -938,7 +938,7 @@ class AssignmentController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$assignment = omlms_get_assignment( $post->ID );
+		$assignment = ohmylms_get_assignment( $post->ID );
 		$data       = $this->get_assignment_data( $assignment );
 		$response   = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $assignment, $request ) );
@@ -954,7 +954,7 @@ class AssignmentController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_assignment', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_assignment', $response, $post, $request );
 	}
 
 
@@ -1045,7 +1045,7 @@ class AssignmentController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_ASSIGNMENT_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_ASSIGNMENT_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -1076,7 +1076,7 @@ class AssignmentController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}

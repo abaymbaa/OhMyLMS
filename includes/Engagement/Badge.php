@@ -4,17 +4,17 @@
  * 
  * This class handles the Badge system settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
-use OMLMS\Engagement\Achievements;
+use OhMyLMS\Engagement\Achievements;
 
 class Badge {
 
 
     public static function get_badges() {
-        return get_option( 'creator_lms_badges', array() );
+        return get_option( 'ohmylms_badges', array() );
     }
     
     /**
@@ -23,8 +23,8 @@ class Badge {
      * @return array
      */
     public static function get_rules() {
-        $settings = get_option( 'creator_lms_badge_settings', array() );
-        return apply_filters( 'creator_lms_badge_settings', $settings );
+        $settings = get_option( 'ohmylms_badge_settings', array() );
+        return apply_filters( 'ohmylms_badge_settings', $settings );
     }
 
     /**
@@ -82,7 +82,7 @@ class Badge {
                             }
                         }
                         if( isset( $settings['dataValue'], $settings['compareData'], $settings['compareSign'] ) && 'completed_courses' === $settings['dataValue'] ) {
-                            $student = new \OMLMS\Data\Student( get_current_user_id() );
+                            $student = new \OhMyLMS\Data\Student( get_current_user_id() );
                             if( ! $student ) {
                                 $all_rules_met = false;
                                 break;
@@ -133,7 +133,7 @@ class Badge {
         $response = Achievements::insert_achievement( $data );
         if( $response ) {
             set_transient( 'badge_added_for_user_' . $user_id, true, 60 );
-            do_action( 'creator_lms_after_badge_added', $user_id, $badge_id, $type );
+            do_action( 'ohmylms_after_badge_added', $user_id, $badge_id, $type );
         }
         return true;
     }
@@ -154,7 +154,7 @@ class Badge {
 
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
         // Query to get unique badge IDs for the user
         $query = $wpdb->prepare(

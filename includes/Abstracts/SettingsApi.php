@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * In the future, we plan to restructure it so that all settings pages (SettingsPage) can extend this class.
  * This will help in limiting the duplication of code between SettingsApi and SettingsPage.
  *
- * @package OMLMS\Abstracts
+ * @package OhMyLMS\Abstracts
  * @since 1.0.0
  */
 abstract class SettingsApi {
@@ -22,7 +22,7 @@ abstract class SettingsApi {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	public string $plugin_id = 'creatorlms_';
+	public string $plugin_id = 'ohmylms_';
 
 	/**
 	 * ID of the class extending the settings API. Used in option names.
@@ -132,8 +132,8 @@ abstract class SettingsApi {
 
 			if ( method_exists( $this, 'generate_' . $type . '_html' ) ) {
 				$html .= $this->{'generate_' . $type . '_html'}( $k, $v );
-			} elseif ( has_filter( 'creator_lms_generate_' . $type . '_html' ) ) {
-				$html .= apply_filters( 'creator_lms_generate_' . $type . '_html', '', $k, $v, $this );
+			} elseif ( has_filter( 'ohmylms_generate_' . $type . '_html' ) ) {
+				$html .= apply_filters( 'ohmylms_generate_' . $type . '_html', '', $k, $v, $this );
 			} else {
 				$html .= $this->generate_text_html( $k, $v );
 			}
@@ -154,7 +154,7 @@ abstract class SettingsApi {
 	 * @since 1.0.0
 	 */
 	public function get_form_fields() {
-		return apply_filters( 'creator_lms_settings_api_form_fields_' . $this->id, array_map( array( $this, 'set_defaults' ), $this->form_fields ) );
+		return apply_filters( 'ohmylms_settings_api_form_fields_' . $this->id, array_map( array( $this, 'set_defaults' ), $this->form_fields ) );
 	}
 
 
@@ -276,7 +276,7 @@ abstract class SettingsApi {
 			$this->init_settings();
 		}
 		$this->settings[ $key ] = $value;
-		return update_option( $this->get_option_key(), apply_filters( 'creator_lms_settings_api_sanitized_fields_' . $this->id, $this->settings ), 'yes' );
+		return update_option( $this->get_option_key(), apply_filters( 'ohmylms_settings_api_sanitized_fields_' . $this->id, $this->settings ), 'yes' );
 	}
 
 	/**
@@ -301,8 +301,8 @@ abstract class SettingsApi {
 		}
 
 		$option_key = $this->get_option_key();
-		do_action( 'creator_lms_update_option', array( 'id' => $option_key ) );
-		return update_option( $option_key, apply_filters( 'creator_lms_settings_api_sanitized_fields_' . $this->id, $this->settings ), 'yes' );
+		do_action( 'ohmylms_update_option', array( 'id' => $option_key ) );
+		return update_option( $option_key, apply_filters( 'ohmylms_settings_api_sanitized_fields_' . $this->id, $this->settings ), 'yes' );
 	}
 
 
@@ -360,7 +360,7 @@ abstract class SettingsApi {
 			$tip = '';
 		}
 
-		return $tip ? omlms_help_tip( $tip ) : '';
+		return $tip ? ohmylms_help_tip( $tip ) : '';
 	}
 
 
@@ -496,7 +496,7 @@ abstract class SettingsApi {
 			<td class="forminp">
 				<fieldset>
 					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<input class="omlms_input_price input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" value="<?php echo esc_attr( omlms_format_localized_price( $this->get_option( $key ) ) ); ?>" placeholder="<?php echo esc_attr( $data['placeholder'] ); ?>" <?php disabled( $data['disabled'], true ); ?> <?php echo $this->get_custom_attribute_html( $data ); // WPCS: XSS ok. ?> />
+					<input class="ohmylms_input_price input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" value="<?php echo esc_attr( ohmylms_format_localized_price( $this->get_option( $key ) ) ); ?>" placeholder="<?php echo esc_attr( $data['placeholder'] ); ?>" <?php disabled( $data['disabled'], true ); ?> <?php echo $this->get_custom_attribute_html( $data ); // WPCS: XSS ok. ?> />
 					<?php echo $this->get_description_html( $data ); // WPCS: XSS ok. ?>
 				</fieldset>
 			</td>
@@ -539,7 +539,7 @@ abstract class SettingsApi {
 			<td class="forminp">
 				<fieldset>
 					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<input class="omlms_input_decimal input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" value="<?php echo esc_attr( omlms_format_localized_price( $this->get_option( $key ) ) ); ?>" placeholder="<?php echo esc_attr( $data['placeholder'] ); ?>" <?php disabled( $data['disabled'], true ); ?> <?php echo $this->get_custom_attribute_html( $data ); // WPCS: XSS ok. ?> />
+					<input class="ohmylms_input_decimal input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" value="<?php echo esc_attr( ohmylms_format_localized_price( $this->get_option( $key ) ) ); ?>" placeholder="<?php echo esc_attr( $data['placeholder'] ); ?>" <?php disabled( $data['disabled'], true ); ?> <?php echo $this->get_custom_attribute_html( $data ); // WPCS: XSS ok. ?> />
 					<?php echo $this->get_description_html( $data ); // WPCS: XSS ok. ?>
 				</fieldset>
 			</td>
@@ -870,7 +870,7 @@ abstract class SettingsApi {
 	 */
 	public function validate_price_field( $key, $value ) {
 		$value = is_null( $value ) ? '' : $value;
-		return ( '' === $value ) ? '' : omlms_format_decimal( trim( stripslashes( $value ) ) );
+		return ( '' === $value ) ? '' : ohmylms_format_decimal( trim( stripslashes( $value ) ) );
 	}
 
 	/**
@@ -884,7 +884,7 @@ abstract class SettingsApi {
 	 */
 	public function validate_decimal_field( $key, $value ) {
 		$value = is_null( $value ) ? '' : $value;
-		return ( '' === $value ) ? '' : omlms_format_decimal( trim( stripslashes( $value ) ) );
+		return ( '' === $value ) ? '' : ohmylms_format_decimal( trim( stripslashes( $value ) ) );
 	}
 
 	/**
@@ -947,7 +947,7 @@ abstract class SettingsApi {
 	 */
 	public function validate_select_field( $key, $value ) {
 		$value = is_null( $value ) ? '' : $value;
-		return omlms_clean( stripslashes( $value ) );
+		return ohmylms_clean( stripslashes( $value ) );
 	}
 
 
@@ -959,6 +959,6 @@ abstract class SettingsApi {
 	 * @return string|array
 	 */
 	public function validate_multiselect_field( $key, $value ) {
-		return is_array( $value ) ? array_map( 'omlms_clean', array_map( 'stripslashes', $value ) ) : '';
+		return is_array( $value ) ? array_map( 'ohmylms_clean', array_map( 'stripslashes', $value ) ) : '';
 	}
 }

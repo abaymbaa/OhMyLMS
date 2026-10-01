@@ -43,7 +43,7 @@ export function createZoomSettings(readRuntime) {
                         (t.p = 0),
                         (t.n = 1),
                         l()({
-                          path: '/creatorlms/v1/zoom/settings/credentials',
+                          path: '/ohmylms/v1/zoom/settings/credentials',
                           method: 'GET',
                         })
                       );
@@ -118,7 +118,7 @@ export function createZoomSettings(readRuntime) {
                         (e.p = 2),
                         (e.n = 3),
                         l()({
-                          path: '/creatorlms/v1/zoom/settings/credentials',
+                          path: '/ohmylms/v1/zoom/settings/credentials',
                           method: 'POST',
                           data: a,
                         })

@@ -1,16 +1,16 @@
 /**
- * CreatorLMS Video Progress Tracker
+ * OhMyLMS Video Progress Tracker
  * 
  * Tracks video watch progress for YouTube, Vimeo, and self-hosted videos
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  * @since 1.1.0
  */
 
 (function($) {
     'use strict';
 
-    const CreatorLMSVideoTracker = {
+    const OhMyLMSVideoTracker = {
         // Configuration
         config: {
             saveInterval: 10000, // Save progress every 10 seconds
@@ -47,8 +47,8 @@
             }
             
             // Get completion threshold from localized data
-            if (typeof omlms_frontend_params !== 'undefined' && omlms_frontend_params.video_completion_threshold) {
-                this.config.completionThreshold = parseInt(omlms_frontend_params.video_completion_threshold, 10);
+            if (typeof ohmylms_frontend_params !== 'undefined' && ohmylms_frontend_params.video_completion_threshold) {
+                this.config.completionThreshold = parseInt(ohmylms_frontend_params.video_completion_threshold, 10);
             }
 
             // Get lesson and course IDs
@@ -61,7 +61,7 @@
             }
 
             // Check if user is logged in
-            if (!omlms_frontend_params.current_student_id) {
+            if (!ohmylms_frontend_params.current_student_id) {
                 return;
             }
 
@@ -86,7 +86,7 @@
         detectAndInitializePlayer() {
             
             // Check for custom video player container first
-            const customPlayer = $('.omlms-custom-video-player');
+            const customPlayer = $('.ohmylms-custom-video-player');
             if (customPlayer.length) {
                 this.initCustomPlayer(customPlayer[0]);
                 return;
@@ -107,7 +107,7 @@
             }
 
             // Check for HTML5 video
-            const html5Video = $('video.the-video, .creator-lms-video-player video');
+            const html5Video = $('video.the-video, .ohmylms-video-player video');
             if (html5Video.length) {
                 this.initHTML5Player(html5Video[0]);
                 return;
@@ -116,7 +116,7 @@
 
         /**
          * Initialize tracking for custom video player
-         * Uses the CreatorLMSVideoPlayer instance and its platformHandler
+         * Uses the OhMyLMSVideoPlayer instance and its platformHandler
          */
         initCustomPlayer(container) {
             const videoUrl = $(container).attr('data-video-url');
@@ -130,9 +130,9 @@
             const isVimeo = videoUrl.includes('vimeo.com');
             
             
-            // Wait for the CreatorLMSVideoPlayer instance to be created AND duration to be available
+            // Wait for the OhMyLMSVideoPlayer instance to be created AND duration to be available
             const checkInterval = setInterval(async () => {
-                const playerInstance = $(container).data('creatorLMSVideoPlayer');
+                const playerInstance = $(container).data('ohMyLMSVideoPlayer');
                 
                 if (playerInstance && playerInstance.platformHandler && playerInstance.platformHandler.isReady) {
                     // Also check if duration is available before initializing
@@ -192,10 +192,10 @@
                 // Update UI to show resume position (including handle)
                 setTimeout(() => {
                     if (playerInstance.controls) {
-                        playerInstance.controls.find('.omlms-current-time').text(playerInstance.formatTime(resumePosition));
+                        playerInstance.controls.find('.ohmylms-current-time').text(playerInstance.formatTime(resumePosition));
                         const percentForBar = (resumePosition / this.state.totalDuration) * 100;
-                        playerInstance.controls.find('.omlms-progress-filled').css('width', percentForBar + '%');
-                        playerInstance.controls.find('.omlms-progress-handle').css('left', percentForBar + '%');
+                        playerInstance.controls.find('.ohmylms-progress-filled').css('width', percentForBar + '%');
+                        playerInstance.controls.find('.ohmylms-progress-handle').css('left', percentForBar + '%');
                     }
                 }, 100);
             }
@@ -274,7 +274,7 @@
         setupYouTubePlayer(iframe) {
             // Ensure iframe has an ID
             if (!iframe.id) {
-                iframe.id = 'omlms-youtube-player-' + this.state.lessonId;
+                iframe.id = 'ohmylms-youtube-player-' + this.state.lessonId;
             }
 
             // Enable JS API in iframe src if not already enabled
@@ -612,17 +612,17 @@
          */
         loadProgress() {
             // Guard on required state instead of hasInitialized to allow loading during init
-            if (!this.state.lessonId || typeof omlms_frontend_params === 'undefined' || !omlms_frontend_params.ajax_url) {
+            if (!this.state.lessonId || typeof ohmylms_frontend_params === 'undefined' || !ohmylms_frontend_params.ajax_url) {
                 return Promise.resolve(null);
             }
 
             return new Promise((resolve, reject) => {
                 $.ajax({
-                    url: omlms_frontend_params.ajax_url,
+                    url: ohmylms_frontend_params.ajax_url,
                     type: 'POST',
                     data: {
-                        action: 'creator_lms_get_video_progress',
-                        nonce: omlms_frontend_params.video_progress_nonce,
+                        action: 'ohmylms_get_video_progress',
+                        nonce: ohmylms_frontend_params.video_progress_nonce,
                         lesson_id: this.state.lessonId,
                     },
                     success: (response) => {
@@ -656,11 +656,11 @@
             }
 
             $.ajax({
-                url: omlms_frontend_params.ajax_url,
+                url: ohmylms_frontend_params.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'creator_lms_save_video_progress',
-                    nonce: omlms_frontend_params.video_progress_nonce,
+                    action: 'ohmylms_save_video_progress',
+                    nonce: ohmylms_frontend_params.video_progress_nonce,
                     lesson_id: this.state.lessonId,
                     course_id: this.state.courseId,
                     watched_duration: watchedDuration,
@@ -671,7 +671,7 @@
                     if (response.success) {
                         // Trigger custom event for lesson completion
                         if (response.data.progress && response.data.progress.is_completed) {
-                            $(document).trigger('creatorlms:video:completed', {
+                            $(document).trigger('ohmylms:video:completed', {
                                 lessonId: this.state.lessonId,
                                 courseId: this.state.courseId,
                             });
@@ -691,16 +691,16 @@
          * Clear video progress from database
          */
         clearProgress() {
-            if (!this.state.lessonId || typeof omlms_frontend_params === 'undefined' || !omlms_frontend_params.ajax_url) {
+            if (!this.state.lessonId || typeof ohmylms_frontend_params === 'undefined' || !ohmylms_frontend_params.ajax_url) {
                 return;
             }
 
             $.ajax({
-                url: omlms_frontend_params.ajax_url,
+                url: ohmylms_frontend_params.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'creator_lms_clear_video_progress',
-                    nonce: omlms_frontend_params.video_progress_nonce,
+                    action: 'ohmylms_clear_video_progress',
+                    nonce: ohmylms_frontend_params.video_progress_nonce,
                     lesson_id: this.state.lessonId,
                 },
                 success: (response) => {
@@ -755,8 +755,8 @@
          */
         isLessonPage() {
             return $('body').hasClass('single-lesson') || 
-                   $('body').hasClass('single-omlms-lesson') || 
-                   $('.creator-lms-lesson-content-body').length > 0;
+                   $('body').hasClass('single-ohmylms-lesson') || 
+                   $('.ohmylms-lesson-content-body').length > 0;
         },
 
         /**
@@ -773,8 +773,8 @@
             if (match) return parseInt(match[1]);
 
             // Try to get from global variable if available
-            if (typeof creatorlms_lesson_id !== 'undefined') {
-                return parseInt(creatorlms_lesson_id);
+            if (typeof ohmylms_lesson_id !== 'undefined') {
+                return parseInt(ohmylms_lesson_id);
             }
 
             return 0;
@@ -789,12 +789,12 @@
             if (courseId) return parseInt(courseId);
 
             // Try to get from global variable if available
-            if (typeof creatorlms_course_id !== 'undefined') {
-                return parseInt(creatorlms_course_id);
+            if (typeof ohmylms_course_id !== 'undefined') {
+                return parseInt(ohmylms_course_id);
             }
 
             // Try to extract from page elements
-            const courseLink = $('.omlms-course-link').attr('href');
+            const courseLink = $('.ohmylms-course-link').attr('href');
             if (courseLink) {
                 const match = courseLink.match(/post=(\d+)/);
                 if (match) return parseInt(match[1]);
@@ -806,7 +806,7 @@
 
     // Initialize on document ready
     $(document).ready(function() {
-        CreatorLMSVideoTracker.init();
+        OhMyLMSVideoTracker.init();
     });
 
 })(jQuery);

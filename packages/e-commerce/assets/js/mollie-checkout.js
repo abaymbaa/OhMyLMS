@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
      */
 
     // Ensure Mollie parameters are available from wp_localize_script
-    if (!window.omlms_mollie_params || !window.omlms_mollie_params.profile_id) {
+    if (!window.ohmylms_mollie_params || !window.ohmylms_mollie_params.profile_id) {
         console.error('Mollie Profile ID or parameters not found. Mollie Components cannot be initialized.');
         // Optionally, display a user-facing error message on the checkout page
         // For example: $('#mollie-payment-methods-container').prepend('<p style="color:red;">Mollie payment processing is currently unavailable. Please contact support.</p>');
@@ -17,8 +17,8 @@ jQuery(document).ready(function($) {
     }
 
     // Initialize Mollie with Profile ID and other settings
-    const mollie = Mollie(omlms_mollie_params.profile_id, {
-        locale: omlms_mollie_params.locale,
+    const mollie = Mollie(ohmylms_mollie_params.profile_id, {
+        locale: ohmylms_mollie_params.locale,
         testmode: true
     });
 
@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
     let cardComponent;
     let activeComponentName = null; // Tracks the currently active/mounted component ('card', etc.)
 
-    const $checkoutForm = $('form.creator-lms-checkout-form');
+    const $checkoutForm = $('form.ohmylms-checkout-form');
     const $paymentMethodsContainer = $('#mollie-payment-methods-container'); // Container for all Mollie payment method options
 
     // Fields that should be required when Mollie is selected
@@ -173,9 +173,9 @@ jQuery(document).ready(function($) {
             // No component mounting needed
             mountCardComponent();
         } else if (selectedMethod === 'ideal') {
-            if (!omlms_mollie_params.profile_id) {
+            if (!ohmylms_mollie_params.profile_id) {
                 console.error('Mollie Profile ID not available. Cannot process iDEAL payment.');
-                $('#mollie-ideal-component-errors').html('<p style="color:red;">' + omlms_mollie_params.error_messages.generic_error + '</p>');
+                $('#mollie-ideal-component-errors').html('<p style="color:red;">' + ohmylms_mollie_params.error_messages.generic_error + '</p>');
                 return;
             }
             mountIdealComponent();
@@ -224,7 +224,7 @@ jQuery(document).ready(function($) {
                     
                     if (error) {
                         console.error('Mollie token creation error:', error);
-                        $('#mollie-card-component-errors').text(omlms_mollie_params.error_messages.mollie_error + ' ' + error.message);
+                        $('#mollie-card-component-errors').text(ohmylms_mollie_params.error_messages.mollie_error + ' ' + error.message);
                         $checkoutForm.find('button[type="submit"]').prop('disabled', false).removeClass('processing');
                         return;
                     }
@@ -235,15 +235,15 @@ jQuery(document).ready(function($) {
                     }
                 } catch (e) {
                     console.error('Mollie general error during tokenization:', e);
-                    $('#mollie-card-component-errors').text(e.message || omlms_mollie_params.error_messages.generic_error);
+                    $('#mollie-card-component-errors').text(e.message || ohmylms_mollie_params.error_messages.generic_error);
                     $checkoutForm.find('button[type="submit"]').prop('disabled', false).removeClass('processing');
                     return;
                 }
             }
         });
     } else {
-        if (omlms_mollie_params && omlms_mollie_params.checkout_form_selector) {
-            console.warn('Mollie Checkout: Checkout form with selector "' + omlms_mollie_params.checkout_form_selector + '" not found on this page.');
+        if (ohmylms_mollie_params && ohmylms_mollie_params.checkout_form_selector) {
+            console.warn('Mollie Checkout: Checkout form with selector "' + ohmylms_mollie_params.checkout_form_selector + '" not found on this page.');
         } else {
             console.warn('Mollie Checkout: Checkout form selector not provided or found.');
         }

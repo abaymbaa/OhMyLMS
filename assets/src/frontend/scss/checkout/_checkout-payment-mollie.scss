@@ -1,6 +1,6 @@
 // Mollie Payment Gateway Styles for Checkout Page
-.creator-lms-page {
-    .creator-lms-checkout-payment {
+.ohmylms-page {
+    .ohmylms-checkout-payment {
         
         // Mollie payment methods container (nested inside payment_box)
         .mollie-payment-methods-container {
@@ -24,8 +24,8 @@
 
                     &:checked + .mollie-method-label {
                         &::before {
-                            background-color: var(--creator-lms-primary-color);
-                            border-color: var(--creator-lms-primary-color);
+                            background-color: var(--ohmylms-primary-color);
+                            border-color: var(--ohmylms-primary-color);
                         }
                         
                         &::after {
@@ -49,7 +49,7 @@
                     cursor: pointer;
                     position: relative;
                     padding-left: 36px;
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.5;
@@ -110,7 +110,7 @@
                     }
                     
                     .mollie-method-name {
-                        color: var(--creator-lms-heading-color);
+                        color: var(--ohmylms-heading-color);
                         font-size: 14px;
                         font-weight: 400;
                         line-height: 1.5;
@@ -129,7 +129,7 @@
             
             label {
                 display: block;
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 13px;
                 font-weight: 500;
                 margin-bottom: 8px;
@@ -143,7 +143,7 @@
                 border-radius: 6px;
                 border: 1px solid rgba(200, 210, 233, 0.50);
                 background-color: #F4F5F7;
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 14px;
                 cursor: pointer;
                 appearance: none;
@@ -157,12 +157,12 @@
                 
                 &:focus {
                     outline: none;
-                    border-color: var(--creator-lms-primary-color);
+                    border-color: var(--ohmylms-primary-color);
                     background-color: #2a2a2a;
                 }
                 
                 &:hover {
-                    border-color: var(--creator-lms-primary-color);
+                    border-color: var(--ohmylms-primary-color);
                 }
             }
         }
@@ -183,7 +183,7 @@
                 
                 label {
                     display: block;
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 13px;
                     font-weight: 500;
                     margin-bottom: 6px;
@@ -200,11 +200,11 @@
                     overflow: hidden;
                     
                     &:hover {
-                        border-color: var(--creator-lms-primary-color);
+                        border-color: var(--ohmylms-primary-color);
                     }
                     
                     &:focus-within {
-                        border-color: var(--creator-lms-primary-color);
+                        border-color: var(--ohmylms-primary-color);
                     }
                 }
             }
@@ -221,7 +221,7 @@
 
 // Responsive styles for Mollie payment methods
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-checkout-payment {
+    .ohmylms-page .ohmylms-checkout-payment {
         .mollie-payment-methods-container {
             gap: 6px;
             
@@ -257,7 +257,7 @@
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-checkout-payment {
+    .ohmylms-page .ohmylms-checkout-payment {
         .mollie-payment-methods-container {
             gap: 5px;
             
@@ -301,7 +301,7 @@
 
 // Dark mode support (optional)
 @media (prefers-color-scheme: dark) {
-    .creator-lms-page .creator-lms-checkout-payment {
+    .ohmylms-page .ohmylms-checkout-payment {
         .mollie-payment-methods-container {
             .mollie-payment-method-item {
                 .mollie-method-label {

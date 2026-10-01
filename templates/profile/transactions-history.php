@@ -2,9 +2,9 @@
 /**
  * Template for displaying transactions history of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/transactions-history.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/transactions-history.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -13,12 +13,12 @@ defined( 'ABSPATH' ) || exit();
 
 ?>
 
-<div class="creator-lms-student-profile-tab-content student-transaction-history">
+<div class="ohmylms-student-profile-tab-content student-transaction-history">
 	<h4 class="profile-tab-title">
 		<?php echo __( 'Your Orders', 'ohmylms' ); ?>
 	</h4>
 
-	<div class="creator-lms-dashboard-table">
+	<div class="ohmylms-dashboard-table">
 		<div class="dashboard-table-head">
 			<div class="dashboard-table-tr">
 				<div class="dashboard-table-td order-id">
@@ -58,9 +58,9 @@ defined( 'ABSPATH' ) || exit();
 						$item  = $items[0] ?? null;
 						if ( $item ) {
 							$course_id 	= $item->get_course_id();
-							$course 	= omlms_get_course( $course_id );
+							$course 	= ohmylms_get_course( $course_id );
 							if(!$course) {
-								$course 	= creator_lms_is_pro() ? omlms_get_membership( $course_id ) : '';
+								$course 	= ohmylms_is_pro() ? ohmylms_get_membership( $course_id ) : '';
 								
 								if(!$course){
 									continue;
@@ -95,13 +95,13 @@ defined( 'ABSPATH' ) || exit();
 							<div class="dashboard-table-td price">
 								<?php
 									if ( $course ) {
-										echo omlms_price($order->get_total());
+										echo ohmylms_price($order->get_total());
 									}
 								?>
 							</div>
 
 							<div class="dashboard-table-td date">
-								<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( omlms_format_datetime( $order->get_date_created() ) ); ?></time>
+								<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( ohmylms_format_datetime( $order->get_date_created() ) ); ?></time>
 							</div>
 
 							<div class="dashboard-table-td status">
@@ -128,13 +128,13 @@ defined( 'ABSPATH' ) || exit();
 								<div class="dashboard-table-td price" data-title="Price: ">
 									<?php
 										if ( $course ) {
-											echo omlms_price($order->get_formatted_order_total());
+											echo ohmylms_price($order->get_formatted_order_total());
 										}
 									?>
 								</div>
 
 								<div class="dashboard-table-td date" data-title="Date: ">
-									<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( omlms_format_datetime( $order->get_date_created() ) ); ?></time>
+									<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( ohmylms_format_datetime( $order->get_date_created() ) ); ?></time>
 								</div>
 							</div>
 
@@ -144,7 +144,7 @@ defined( 'ABSPATH' ) || exit();
 				}else{
 					?>
 					<div class="no-course-data">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 						<p>
 							<?php echo __( 'No Order Found.', 'ohmylms' ); ?>
 						</p>
@@ -156,19 +156,19 @@ defined( 'ABSPATH' ) || exit();
 
 		<!-- <?php if( $student_orders->total > 0 ) { ?>
 			<div class="dashboard-table-foot">
-				<div class="creator-lms-table-pagination">
+				<div class="ohmylms-table-pagination">
 					<strong>
 						<?php echo $student_orders->total; ?>
 					</strong> items
 
-					<a class="previous-page" aria-label="Previous page" title="Previous Page" href="<?php echo esc_url( omlms_get_endpoint_url( 'transactions-history', $current_page - 1 ) ); ?>">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/arrow-left-icon.php'); ?>
+					<a class="previous-page" aria-label="Previous page" title="Previous Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page - 1 ) ); ?>">
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-left-icon.php'); ?>
 					</a>
 
 					<input type="number" name="current-page-number" id="current-page-number" min="1" max="<?php echo $student_orders->max_num_pages; ?>" value="1" class="current-page-number">
 
-					<a class="next-page" aria-label="Next page" title="Next Page" href="<?php echo esc_url( omlms_get_endpoint_url( 'transactions-history', $current_page + 1 ) ); ?>">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/arrow-right-icon.php'); ?>
+					<a class="next-page" aria-label="Next page" title="Next Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page + 1 ) ); ?>">
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-right-icon.php'); ?>
 					</a>
 
 					of <strong>

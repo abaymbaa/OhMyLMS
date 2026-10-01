@@ -1,6 +1,6 @@
 "use strict";
 
-(globalThis.webpackChunkcreator_lms = globalThis.webpackChunkcreator_lms || []).push([[655], {
+(globalThis.webpackChunkohmylms = globalThis.webpackChunkohmylms || []).push([[655], {
   4655: (e, t, o) => {
     o.r(t), o.d(t, {
       default: () => l

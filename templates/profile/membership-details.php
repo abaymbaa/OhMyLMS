@@ -2,9 +2,9 @@
 /**
  * Template for displaying membership of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/membership-details.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/membership-details.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -12,8 +12,8 @@ defined( 'ABSPATH' ) || exit();
 
 ?>
 
-<div class="creator-lms-student-profile-tab-content student-membership">
-	<div class="creator-lms-membership-invoice">
+<div class="ohmylms-student-profile-tab-content student-membership">
+	<div class="ohmylms-membership-invoice">
 		<nav class="invoice-breadcrumb">
 			<ul>
 				<li>
@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit();
 			</div>
 		</div>
 
-		<div class="creator-lms-dashboard-table membership-invoice-table">
+		<div class="ohmylms-dashboard-table membership-invoice-table">
 			<div class="dashboard-table-head">
 				<div class="dashboard-table-tr">
 					<div class="dashboard-table-td membership-item">

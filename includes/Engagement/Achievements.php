@@ -4,9 +4,9 @@
  * 
  * This class handles the achievements system settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
 class Achievements {
     
@@ -19,7 +19,7 @@ class Achievements {
     */
     public static function insert_achievement( $data ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
         if( !is_array($data) || empty($data) ) {
             return false;
         }
@@ -59,7 +59,7 @@ class Achievements {
      */
     public static function achievement_exists( $user_id, $type, $course_id = null, $membership_id = null, $content_id = null, $badge_id = '', $level_id = '', $reason = '' ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
         // Base conditions that always apply
         $where_clauses = [ 'user_id = %d', 'type = %s', 'status = %s' ];

@@ -1,16 +1,16 @@
-.creator-lms-page {
-    .creator-lms-carousel-outer {
+.ohmylms-page {
+    .ohmylms-carousel-outer {
         position: relative;
     }
 
     //-----when layout style-4----
     .grid-style4 {
-        .creator-lms-course-carousel-single .course-carousel-title {
+        .ohmylms-course-carousel-single .course-carousel-title {
             margin: 0 0 39px;
             padding-right: 140px;
         }
 
-        .creator-lms-course-cards {
+        .ohmylms-course-cards {
             display: flex;
             overflow: hidden;
             position: relative;
@@ -28,11 +28,11 @@
                 .course-info {
                     padding: 20px 20px 14px;
 
-                    .creator-lms-loop-course-title {
+                    .ohmylms-loop-course-title {
                         margin: 0 0 7px;
 
                         &:hover {
-                            color: var(--creator-lms-heading-color);
+                            color: var(--ohmylms-heading-color);
                         }
                     }
 
@@ -58,7 +58,7 @@
                             margin: 0 0 10px;
                         }
 
-                        .creator-lms-loop-course-description {
+                        .ohmylms-loop-course-description {
                             margin-bottom: 10px;
                         }
                     }
@@ -88,7 +88,7 @@
 
             }
 
-            &.creator-lms-initialized {
+            &.ohmylms-initialized {
                 overflow: visible;
 
                 .course-card {
@@ -125,7 +125,7 @@
                 }
     
                 &:hover {
-                    background-color: var(--creator-lms-primary-color, #6E42D3);
+                    background-color: var(--ohmylms-primary-color, #6E42D3);
                     box-shadow: -4px 0px 10px rgba(221, 223, 231, 0.96);
     
                     path {
@@ -148,64 +148,64 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .grid-style4 .creator-lms-course-carousel-single .course-carousel-title {
+    .ohmylms-page .grid-style4 .ohmylms-course-carousel-single .course-carousel-title {
         margin: 0 0 27px;
         padding-right: 120px;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow {
         width: 44px;
         height: 44px;
         top: -66px;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow.slick-prev {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow.slick-prev {
         right: 54px;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow svg {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow svg {
         height: 16px;
     }
     
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .grid-style4 .creator-lms-course-carousel-single .course-carousel-title {
+    .ohmylms-page .grid-style4 .ohmylms-course-carousel-single .course-carousel-title {
         padding-right: 110px;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow {
         width: 40px;
         height: 40px;
         top: -62px;
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow svg {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow svg {
         height: 14px;
     }
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .course-card .course-info .course-meta {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .course-card .course-info .course-meta {
         margin: auto 0 0;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-carousel-single {
+    .ohmylms-page .grid-style4 .ohmylms-course-carousel-single {
         margin-bottom: 70px;
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-carousel-single:last-child {
+    .ohmylms-page .grid-style4 .ohmylms-course-carousel-single:last-child {
         margin-bottom: 42px;
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-carousel-single .course-carousel-title {
+    .ohmylms-page .grid-style4 .ohmylms-course-carousel-single .course-carousel-title {
         padding-right: 0;
         margin: 0 0 20px;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow.slick-prev  {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow.slick-prev  {
         right: calc(50% + 25px);
         top: 100%;
         transform: translateX(50%);
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-arrow.slick-next {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-arrow.slick-next {
         right: calc(50% - 25px);
         top: 100%;
         transform: translateX(50%);
@@ -214,23 +214,23 @@
 
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-list {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-list {
         margin: 0 -8px;
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .slick-slide {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .slick-slide {
         margin: 0 8px;
     }
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link figure {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link figure {
         height: 160px!important;
     }
 
-    .creator-lms-page .grid-style4 .creator-lms-course-cards .course-card .course-info {
+    .ohmylms-page .grid-style4 .ohmylms-course-cards .course-card .course-info {
         height: calc(100% - 160px)!important;
     }
 }
 
 // @media screen and (max-width: 425px) {
-//     .creator-lms-page .grid-style4 .creator-lms-course-carousel-single .course-carousel-title {
+//     .ohmylms-page .grid-style4 .ohmylms-course-carousel-single .course-carousel-title {
 //         margin-left: auto;
 //         margin-right: auto;
 //     }

@@ -5,7 +5,7 @@
  *
  * A custom DateTime class for the e-commerce module that handles UTC offsets and localizes dates.
  *
- * @package CreatorLms
+ * @package OhMyLMS
  * @link https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/includes/class-wc-datetime.php
  */
 

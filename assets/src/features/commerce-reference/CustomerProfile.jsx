@@ -70,6 +70,6 @@ export function createCustomerProfile(readRuntime) {
             textAlign: "center"
           }}><Controls.ButtonWP variant={"secondary"} style={{
               backgroundColor: "#fff"
-            }} href={"/wp-admin/admin.php?page=creator-lms#/students/".concat(r, "/report")} rel={"noopener noreferrer"}>{(0, I18n.__)("View profile", "ohmylms")}</Controls.ButtonWP><br /></Controls.FlexItemWP></Controls.FlexWP></React.Fragment>}</React.Fragment>;
+            }} href={"/wp-admin/admin.php?page=ohmylms#/students/".concat(r, "/report")} rel={"noopener noreferrer"}>{(0, I18n.__)("View profile", "ohmylms")}</Controls.ButtonWP><br /></Controls.FlexItemWP></Controls.FlexWP></React.Fragment>}</React.Fragment>;
   };
 }

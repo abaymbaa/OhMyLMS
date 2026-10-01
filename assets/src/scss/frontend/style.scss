@@ -12,19 +12,19 @@
 	text-align: center;
 	margin-bottom: 30px;
 }
-.creator-lms-course-cards {
+.ohmylms-course-cards {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 20px;
 	margin-bottom: 30px;
 }
 @media (max-width: 1024px) {
-	.creator-lms-course-cards {
+	.ohmylms-course-cards {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 @media (max-width: 768px) {
-	.creator-lms-course-cards {
+	.ohmylms-course-cards {
 		grid-template-columns: 1fr;
 	}
 }
@@ -36,14 +36,14 @@
 	display: flex;
 	flex-direction: column;
 }
-.creator-lms-loop-course-link {
+.ohmylms-loop-course-link {
 	font-size: 1.2rem;
 	font-weight: bold;
 	margin-bottom: 10px;
 	color: #333;
 	text-decoration: none;
 }
-.creator-lms-loop-course-link:hover {
+.ohmylms-loop-course-link:hover {
 	text-decoration: underline;
 }
 .course-info {

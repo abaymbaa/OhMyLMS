@@ -11,7 +11,7 @@ export function createCouponsPage(readRuntime) {
       b: I18n,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'coupons');
+    HG('ohmylms', 'coupons');
     var e = (0, Notifications.A)().contextHolder;
     return (
       <React.Fragment>

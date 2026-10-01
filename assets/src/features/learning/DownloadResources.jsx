@@ -19,7 +19,7 @@ export function createDownloadResources(readRuntime) {
       kn,
       y: WordPressData,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)();
+    var t = true;
     M().noConflict();
     var resources = props.resources,
       handleResources = props.handleResources,
@@ -38,30 +38,28 @@ export function createDownloadResources(readRuntime) {
       h = (0, ReactHooks.useCallback)(
         function () {
           var e;
-          t
-            ? ((e = wp.media({
-                title: 'Select or Upload Media',
-                button: {
-                  text: 'Use this media',
-                },
-                multiple: !0,
-              })).on('select', function () {
-                var t = e
-                  .state()
-                  .get('selection')
-                  .toJSON()
-                  .map(function (e) {
-                    return {
-                      id: e.id,
-                      url: e.url,
-                      name: e.filename,
-                      size: null == e ? void 0 : e.filesizeHumanReadable,
-                    };
-                  });
-                handleResources(t);
-              }),
-              e.open())
-            : v(!0);
+          ((e = wp.media({
+            title: 'Select or Upload Media',
+            button: {
+              text: 'Use this media',
+            },
+            multiple: !0,
+          })).on('select', function () {
+            var t = e
+              .state()
+              .get('selection')
+              .toJSON()
+              .map(function (e) {
+                return {
+                  id: e.id,
+                  url: e.url,
+                  name: e.filename,
+                  size: null == e ? void 0 : e.filesizeHumanReadable,
+                };
+              });
+            handleResources(t);
+          }),
+            e.open());
         },
         [t, i],
       );
@@ -70,14 +68,14 @@ export function createDownloadResources(readRuntime) {
         <Controls.SpacerWP
           marginBottom={0}
           padding={4}
-          className={'omlms-lesson-settings-resources'}
+          className={'ohmylms-lesson-settings-resources'}
         >
           <Controls.FlexWP gap={3} align={'center'} justify={'flex-start'}>
             <Controls.HeadingWP level={4}>
               {(0, I18n.__)('Download Resources', 'ohmylms')}
             </Controls.HeadingWP>
             {tooltipText && (
-              <Controls.TooltipWP title={tooltipText} className={'omlms-tooltip'}>
+              <Controls.TooltipWP title={tooltipText} className={'ohmylms-tooltip'}>
                 <React.Fragment>
                   <Mt.A />
                 </React.Fragment>
@@ -92,8 +90,8 @@ export function createDownloadResources(readRuntime) {
                   variant={'secondary'}
                   icon={<Tn />}
                   onClick={h}
-                  className={'omlms-lesson-settings-resources-upload-button'}
-                  aria-disabled={t ? 'false' : 'true'}
+                  className={'ohmylms-lesson-settings-resources-upload-button'}
+                  aria-disabled={'false'}
                   style={{
                     cursor: 'pointer',
                   }}
@@ -116,7 +114,7 @@ export function createDownloadResources(readRuntime) {
                             gap={3}
                             align={'center'}
                             justify={'flex-start'}
-                            className={'omlms-single-resource-info'}
+                            className={'ohmylms-single-resource-info'}
                           >
                             <Controls.CardWP className={'resource-icon'}>
                               <Controls.FlexWP

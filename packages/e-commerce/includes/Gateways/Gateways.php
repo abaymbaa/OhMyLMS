@@ -2,7 +2,7 @@
 
 namespace CodeRex\Ecommerce\Gateways;
 
-use OMLMS\Abstracts\SettingsPage;
+use OhMyLMS\Abstracts\SettingsPage;
 
 require_once plugin_dir_path( __FILE__ ) . 'Razorpay/GatewayRazorPay.php';
 
@@ -61,9 +61,9 @@ class Gateways extends SettingsPage {
 			\CodeRex\Ecommerce\Gateways\QPay\GatewayQPay::class,
 		);
 
-		$load_gateways = apply_filters( 'creatorlms_payment_gateways', $load_gateways );
+		$load_gateways = apply_filters( 'ohmylms_payment_gateways', $load_gateways );
 		// Get sort order option.
-		$ordering  = (array) get_option( 'creator_lms_gateway_order' );
+		$ordering  = (array) get_option( 'ohmylms_gateway_order' );
 		$order_end = 999;
 
 		foreach ( $load_gateways as $gateway ) {
@@ -175,8 +175,8 @@ class Gateways extends SettingsPage {
 
 		$current_gateway = false;
 
-		if ( OMLMS()->session ) {
-			$current = OMLMS()->session->get( 'chosen_payment_method' );
+		if ( ohmylms()->session ) {
+			$current = ohmylms()->session->get( 'chosen_payment_method' );
 			if ( $current && isset( $gateways[ $current ] ) ) {
 				$current_gateway = $gateways[ $current ];
 			}

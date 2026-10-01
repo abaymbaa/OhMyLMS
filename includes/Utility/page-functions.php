@@ -1,7 +1,7 @@
 <?php
 
-use OMLMS\Data\Lesson;
-use OMLMS\Data\Quiz;
+use OhMyLMS\Data\Lesson;
+use OhMyLMS\Data\Quiz;
 
 /**
  * Get page ID by page name.
@@ -10,12 +10,12 @@ use OMLMS\Data\Quiz;
  * @return int
  * @since 1.0.0
  */
-function omlms_get_page_id( $page ) {
+function ohmylms_get_page_id( $page ) {
 
-	$page_id = apply_filters( 'creator_lms_get_' . $page . '_page_id', get_option( 'creator_lms_' . $page . '_page_id' ) );
+	$page_id = apply_filters( 'ohmylms_get_' . $page . '_page_id', get_option( 'ohmylms_' . $page . '_page_id' ) );
 	if( 'course' === $page ) {
 		$page_slug = get_post_field( 'post_name', $page_id );
-		if( ! in_array( $page_slug, array( 'cr-all-courses', 'ohmylms-all-courses' ), true ) ) {
+		if( ! in_array( $page_slug, array( 'ohmylms-all-courses', 'ohmylms-all-courses' ), true ) ) {
 			return -1;
 		}
 	}
@@ -30,8 +30,8 @@ function omlms_get_page_id( $page ) {
  * @return false|string|null
  * @since 1.0.0
  */
-function omlms_get_page_url( $page ) {
-	$id = omlms_get_page_id( $page );
+function ohmylms_get_page_url( $page ) {
+	$id = ohmylms_get_page_id( $page );
 
 	if ( $id ) {
 		return get_permalink( $id );
@@ -52,7 +52,7 @@ function omlms_get_page_url( $page ) {
  *
  * @return string
  */
-function omlms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
+function ohmylms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 	if ( ! $permalink ) {
 		$permalink = get_permalink();
 	}
@@ -60,7 +60,7 @@ function omlms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 	// Map endpoint to options.
 	$query_vars = \CodeRex\Ecommerce\ecommerce()->query->get_query_vars();
 	$endpoint   = ! empty( $query_vars[ $endpoint ] ) ? $query_vars[ $endpoint ] : $endpoint;
-	$value      = ( get_option( 'creator_lms_myprofile_edit_address_endpoint', 'edit-address' ) === $endpoint ) ? creator_lms_edit_address_i18n( $value ) : $value;
+	$value      = ( get_option( 'ohmylms_myprofile_edit_address_endpoint', 'edit-address' ) === $endpoint ) ? ohmylms_edit_address_i18n( $value ) : $value;
 
 	if ( get_option( 'permalink_structure' ) ) {
 		if ( strstr( $permalink, '?' ) ) {
@@ -82,7 +82,7 @@ function omlms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 		$url = add_query_arg( $endpoint, $value, $permalink );
 	}
 
-	return apply_filters( 'creator_lms_get_endpoint_url', $url, $endpoint, $value, $permalink );
+	return apply_filters( 'ohmylms_get_endpoint_url', $url, $endpoint, $value, $permalink );
 }
 
 
@@ -93,20 +93,20 @@ function omlms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
  * @param string|bool $fallback Fallback URL if page is not set. Defaults to home URL. @since 3.4.0.
  * @return string
  */
-function omlms_get_page_permalink( $page, $fallback = null ) {
-	$page_id   = omlms_get_page_id( $page );
+function ohmylms_get_page_permalink( $page, $fallback = null ) {
+	$page_id   = ohmylms_get_page_id( $page );
 	$permalink = 0 < $page_id ? get_permalink( $page_id ) : '';
 	if ( ! $permalink ) {
 		$permalink = is_null( $fallback ) ? get_home_url() : $fallback;
 	}
 
-	return apply_filters( 'creator_lms_get_' . $page . '_page_permalink', $permalink );
+	return apply_filters( 'ohmylms_get_' . $page . '_page_permalink', $permalink );
 }
 
 
 
-function omlms_get_next_content_permalink( $current_lesson ) {
-	$next_lesson = omlms_get_next_content( $current_lesson );
+function ohmylms_get_next_content_permalink( $current_lesson ) {
+	$next_lesson = ohmylms_get_next_content( $current_lesson );
 	if ( $next_lesson ) {
 		return get_permalink( $next_lesson['id'] );
 	}
@@ -115,16 +115,16 @@ function omlms_get_next_content_permalink( $current_lesson ) {
 
 
 
-function omlms_get_next_content( $current_lesson_id ) {
-	$course_id = creator_lms_get_course_by_content_id( $current_lesson_id );
-	$course    = omlms_get_course( $course_id );
+function ohmylms_get_next_content( $current_lesson_id ) {
+	$course_id = ohmylms_get_course_by_content_id( $current_lesson_id );
+	$course    = ohmylms_get_course( $course_id );
 	if ( $course ) {
 		$lessons = $course->get_lessons();
 		foreach ( $lessons as $index => $l ) {
 			if ( $l['type'] === 'quiz' ) {
 				$lesson = new Quiz( $l['id'] );
 			} elseif ( $l['type'] === 'assignment' ) {
-				$lesson = creator_lms_is_pro() ? new OMLMS\Data\Assignment( $l['id'] ) : null;
+				$lesson = ohmylms_is_pro() ? new OhMyLMS\Data\Assignment( $l['id'] ) : null;
 			} else {
 				$lesson = new Lesson( $l['id'] );
 			}
@@ -138,16 +138,16 @@ function omlms_get_next_content( $current_lesson_id ) {
 }
 
 
-function omlms_get_prev_content( $current_lesson_id ) {
-	$course_id = creator_lms_get_course_by_content_id( $current_lesson_id );
-	$course    = omlms_get_course( $course_id );
+function ohmylms_get_prev_content( $current_lesson_id ) {
+	$course_id = ohmylms_get_course_by_content_id( $current_lesson_id );
+	$course    = ohmylms_get_course( $course_id );
 	if ( $course ) {
 		$lessons = $course->get_lessons();
 		foreach ( $lessons as $index => $l ) {
 			if ( $l['type'] === 'quiz' ) {
 				$lesson = new Quiz( $l['id'] );
 			} elseif ( $l['type'] === 'assignment' ) {
-				$lesson = creator_lms_is_pro() ? new OMLMS\Data\Assignment( $l['id'] ) : null;
+				$lesson = ohmylms_is_pro() ? new OhMyLMS\Data\Assignment( $l['id'] ) : null;
 			} else {
 				$lesson = new Lesson( $l['id'] );
 			}
@@ -166,8 +166,8 @@ function omlms_get_prev_content( $current_lesson_id ) {
  * @return bool
  * @since 1.0.0
  */
-function is_creator_lms_student_dashboard() {
-	return is_page( omlms_get_page_id( 'student_dashboard' ) );
+function is_ohmylms_student_dashboard() {
+	return is_page( ohmylms_get_page_id( 'student_dashboard' ) );
 }
 
 /**
@@ -176,8 +176,8 @@ function is_creator_lms_student_dashboard() {
  * @return bool
  * @since 1.0.0
  */
-function is_creator_lms_student_profile() {
-	return is_page( omlms_get_page_id( 'student_profile' ) );
+function is_ohmylms_student_profile() {
+	return is_page( ohmylms_get_page_id( 'student_profile' ) );
 }
 
 /**
@@ -186,6 +186,6 @@ function is_creator_lms_student_profile() {
  * @return bool
  * @since 1.0.0
  */
-function is_creator_lms_student_courses() {
-	return is_page( omlms_get_page_id( 'student_courses' ) );
+function is_ohmylms_student_courses() {
+	return is_page( ohmylms_get_page_id( 'student_courses' ) );
 }

@@ -12,7 +12,7 @@ export function createReportStudentCell(readRuntime) {
       v,
       vG: AnalyticsLinkIcon,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)(),
+    var t = true,
       n = props.studentData,
       r = props.isHover,
       a = void 0 !== r && r;
@@ -47,7 +47,7 @@ export function createReportStudentCell(readRuntime) {
               <JU />
             )}
           </PG>
-          <div className={'omlms-student-info'}>
+          <div className={'ohmylms-student-info'}>
             <Controls.HeadingWP level={4} className={'student-name'}>
               {Ge(null == n ? void 0 : n.name)}
             </Controls.HeadingWP>
@@ -56,7 +56,7 @@ export function createReportStudentCell(readRuntime) {
                 <React.Fragment>
                   <v.Link
                     disabled={!t}
-                    to={t ? '/students/'.concat(null == n ? void 0 : n.student_id, '/report') : '#'}
+                    to={'/students/'.concat(null == n ? void 0 : n.student_id, '/report')}
                     className={'student-analytics-link'}
                   >
                     <AnalyticsLinkIcon />

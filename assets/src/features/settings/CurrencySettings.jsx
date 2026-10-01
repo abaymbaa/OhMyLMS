@@ -99,7 +99,7 @@ export function createCurrencySettings(readRuntime) {
                         p.setLoadingSetting(!0),
                         (e.n = 1),
                         l()({
-                          path: 'creator-lms/v1/settings/currency',
+                          path: 'ohmylms/v1/settings/currency',
                         })
                       );
                     case 1:
@@ -139,7 +139,7 @@ export function createCurrencySettings(readRuntime) {
                 if (0 === e.n)
                   return (
                     (r = Object.entries(
-                      null == m || null === (n = m.creator_lms_currency) || void 0 === n
+                      null == m || null === (n = m.ohmylms_currency) || void 0 === n
                         ? void 0
                         : n.options,
                     ).map(function (e) {
@@ -192,13 +192,13 @@ export function createCurrencySettings(readRuntime) {
                 )}
                 placeholder={(0, I18n.__)('Type to Select Currency', 'ohmylms')}
                 data={h(
-                  null == m || null === (t = m.creator_lms_currency) || void 0 === t
+                  null == m || null === (t = m.ohmylms_currency) || void 0 === t
                     ? void 0
                     : t.options,
                 )}
                 notFoundMessage={(0, I18n.__)('Nothing Found', 'ohmylms')}
                 onChange={function (e) {
-                  return _('creator_lms_currency', e.value);
+                  return _('ohmylms_currency', e.value);
                 }}
                 staticSearch={!1}
                 value={[
@@ -207,10 +207,10 @@ export function createCurrencySettings(readRuntime) {
                       <span
                         dangerouslySetInnerHTML={{
                           __html:
-                            null == m || null === (n = m.creator_lms_currency) || void 0 === n
+                            null == m || null === (n = m.ohmylms_currency) || void 0 === n
                               ? void 0
                               : n.options[
-                                  null == m || null === (r = m.creator_lms_currency) || void 0 === r
+                                  null == m || null === (r = m.ohmylms_currency) || void 0 === r
                                     ? void 0
                                     : r.value
                                 ],
@@ -218,13 +218,13 @@ export function createCurrencySettings(readRuntime) {
                       />
                     ),
                     value:
-                      null == m || null === (a = m.creator_lms_currency) || void 0 === a
+                      null == m || null === (a = m.ohmylms_currency) || void 0 === a
                         ? void 0
                         : a.value,
                   },
                 ]}
                 defaultOptions={h(
-                  null == m || null === (o = m.creator_lms_currency) || void 0 === o
+                  null == m || null === (o = m.ohmylms_currency) || void 0 === o
                     ? void 0
                     : o.options,
                 )}
@@ -243,17 +243,17 @@ export function createCurrencySettings(readRuntime) {
                 )}
                 placeholder={(0, I18n.__)('Type to Select Position', 'ohmylms')}
                 data={h(
-                  null == m || null === (i = m.creator_lms_currency_pos) || void 0 === i
+                  null == m || null === (i = m.ohmylms_currency_pos) || void 0 === i
                     ? void 0
                     : i.options,
                 )}
                 notFoundMessage={(0, I18n.__)('Nothing Found', 'ohmylms')}
                 isMultiple={!1}
                 onChange={function (e) {
-                  return _('creator_lms_currency_pos', e);
+                  return _('ohmylms_currency_pos', e);
                 }}
                 value={
-                  null == m || null === (c = m.creator_lms_currency_pos) || void 0 === c
+                  null == m || null === (c = m.ohmylms_currency_pos) || void 0 === c
                     ? void 0
                     : c.value
                 }
@@ -270,13 +270,13 @@ export function createCurrencySettings(readRuntime) {
                 inputType={'text'}
                 placeholder={(0, I18n.__)('Write Thousand Separator', 'ohmylms')}
                 value={
-                  (null == m || null === (u = m.creator_lms_price_thousand_sep) || void 0 === u
+                  (null == m || null === (u = m.ohmylms_price_thousand_sep) || void 0 === u
                     ? void 0
                     : u.value) || ''
                 }
-                className={'currency-single-settings omlms-separator-input-card'}
+                className={'currency-single-settings ohmylms-separator-input-card'}
                 onChange={function (e) {
-                  return _('creator_lms_price_thousand_sep', e);
+                  return _('ohmylms_price_thousand_sep', e);
                 }}
                 headerFontSize={'16px'}
               />
@@ -289,13 +289,13 @@ export function createCurrencySettings(readRuntime) {
                 )}
                 inputType={'text'}
                 value={
-                  (null == m || null === (s = m.creator_lms_price_decimal_sep) || void 0 === s
+                  (null == m || null === (s = m.ohmylms_price_decimal_sep) || void 0 === s
                     ? void 0
                     : s.value) || ''
                 }
-                className={'currency-single-settings omlms-separator-input-card'}
+                className={'currency-single-settings ohmylms-separator-input-card'}
                 onChange={function (e) {
-                  return _('creator_lms_price_decimal_sep', e);
+                  return _('ohmylms_price_decimal_sep', e);
                 }}
                 headerFontSize={'16px'}
               />
@@ -310,12 +310,12 @@ export function createCurrencySettings(readRuntime) {
                 inputType={'number'}
                 showDivider={!1}
                 value={
-                  (null == m || null === (d = m.creator_lms_price_num_decimals) || void 0 === d
+                  (null == m || null === (d = m.ohmylms_price_num_decimals) || void 0 === d
                     ? void 0
                     : d.value) || ''
                 }
                 onChange={function (e) {
-                  return _('creator_lms_price_num_decimals', e);
+                  return _('ohmylms_price_num_decimals', e);
                 }}
                 spacerMarginBottom={0}
                 headerFontSize={'16px'}

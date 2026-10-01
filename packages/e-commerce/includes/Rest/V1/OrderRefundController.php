@@ -55,7 +55,7 @@ class OrderRefundController extends RestController {
 	 */
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
-			return new \WP_Error( 'creator_lms_rest_omlms_order_refund_exists', __( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms_order_refund_exists', __( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$order_data = get_post( (int) $request['order_id'] );
@@ -112,7 +112,7 @@ class OrderRefundController extends RestController {
 		 * @param /WP_REST_Request $request   Request object.
 		 * @param boolean         $creating  True when creating item, false when updating.
 		 */
-		do_action( 'creator_lms_rest_insert_omlms_order_refund', $post, $request, true );
+		do_action( 'ohmylms_rest_insert_ohmylms_order_refund', $post, $request, true );
 
 		$response = $this->prepare_item_for_response( $post, $request );
 		return rest_ensure_response( $response );
@@ -131,19 +131,19 @@ class OrderRefundController extends RestController {
 		$order = ecommerce_get_order( (int) $request['order_id'] );
 
 		if ( ! $order ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_order_id', __( 'Invalid order ID.', 'ohmylms' ), 404 );
+			return new \WP_Error( 'ohmylms_rest_invalid_order_id', __( 'Invalid order ID.', 'ohmylms' ), 404 );
 		}
 
 		$refund = new OrderRefund( $post->ID );
 
 		if ( ! $refund || $refund->get_parent_id() !== $order->get_id() ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_order_refund_id', __( 'Invalid order refund ID.', 'ohmylms' ), 404 );
+			return new \WP_Error( 'ohmylms_rest_invalid_order_refund_id', __( 'Invalid order refund ID.', 'ohmylms' ), 404 );
 		}
 
 		$data = array(
 			'id'           => $refund->get_id(),
 			'date_created' => ecommerce_rest_prepare_date_response( $refund->get_date_created() ),
-			'amount'       => omlms_format_decimal( $refund->get_amount(), omlms_get_price_decimals() ),
+			'amount'       => ohmylms_format_decimal( $refund->get_amount(), ohmylms_get_price_decimals() ),
 			'reason'       => $refund->get_reason(),
 		);
 

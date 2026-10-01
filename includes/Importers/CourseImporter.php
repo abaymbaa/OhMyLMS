@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Importers;
+namespace OhMyLMS\Importers;
 
 defined('ABSPATH') || exit;
 
@@ -34,18 +34,18 @@ class CourseImporter {
 
         // Validate the file upload.
         if (!isset($this->file['tmp_name']) || empty($this->file['tmp_name'])) {
-            return new \WP_Error('file_missing', __('No file uploaded.', 'creator-lms'));
+            return new \WP_Error('file_missing', __('No file uploaded.', 'ohmylms'));
         }
 
         // Check the file type.
         if ($this->file['type'] !== 'application/json') {
-            return new \WP_Error('invalid_file', __('Invalid file type. Please upload a JSON file.', 'creator-lms'));
+            return new \WP_Error('invalid_file', __('Invalid file type. Please upload a JSON file.', 'ohmylms'));
         }
 
         // Read the file contents.
         $json_data = file_get_contents($this->file['tmp_name']);
         if (!$json_data) {
-            return new \WP_Error('read_error', __('Unable to read the uploaded file.', 'creator-lms'));
+            return new \WP_Error('read_error', __('Unable to read the uploaded file.', 'ohmylms'));
         }
 
         // Decode the JSON data.
@@ -56,7 +56,7 @@ class CourseImporter {
 
                 // Validate the course data structure.
                 if (!$this->validate_course_data($course_data)) {
-                    return new \WP_Error('invalid_data', __('Invalid course data structure.', 'creator-lms'));
+                    return new \WP_Error('invalid_data', __('Invalid course data structure.', 'ohmylms'));
                 }
         
                 // Create the course post.
@@ -85,7 +85,7 @@ class CourseImporter {
         if ( ! empty( $course_ids ) ) {
             // Get source LMS from request or file metadata if available
             $source_lms = isset( $this->file['source_lms'] ) ? $this->file['source_lms'] : 'unknown';
-            do_action( 'creatorlms_import_completed', $source_lms, array( 'course_ids' => $course_ids, 'total_courses' => count( $course_ids ) ) );
+            do_action( 'ohmylms_import_completed', $source_lms, array( 'course_ids' => $course_ids, 'total_courses' => count( $course_ids ) ) );
         }
         
         return $course_ids;
@@ -113,7 +113,7 @@ class CourseImporter {
             'post_content' => $this->process_content_images($data['content'] ?? ''),
             'post_excerpt' => $data['excerpt'] ?? '',
             'post_status'  => $data['status'] ?? 'draft',
-            'post_type'    => CREATOR_LMS_COURSE_CPT,
+            'post_type'    => OHMYLMS_COURSE_CPT,
         ]);
 
         if (is_wp_error($course_id)) {
@@ -157,7 +157,7 @@ class CourseImporter {
                     ];
                     
                     // Register taxonomy for the course post type
-                    $taxonomy = register_taxonomy($term_data['taxonomy'], CREATOR_LMS_COURSE_CPT, $taxonomy_args);
+                    $taxonomy = register_taxonomy($term_data['taxonomy'], OHMYLMS_COURSE_CPT, $taxonomy_args);
                     
                     if (is_wp_error($taxonomy)) {
                         continue; // Skip this term if there was an error
@@ -216,7 +216,7 @@ class CourseImporter {
             'post_content' => $this->process_content_images($data['content'] ?? ''),
             'post_excerpt' => $data['excerpt'] ?? '',
             'post_status'  => $data['status'] ?? 'draft',
-            'post_type'    => CREATOR_LMS_CHAPTER_CPT,
+            'post_type'    => OHMYLMS_CHAPTER_CPT,
         ]);
 
         if (is_wp_error($chapter_id)) {
@@ -240,7 +240,7 @@ class CourseImporter {
         // Add to the chapter relationship table.
         global $wpdb;
         $wpdb->insert(
-            "{$wpdb->prefix}omlms_chapter_relationship",
+            "{$wpdb->prefix}ohmylms_chapter_relationship",
             [
                 'course_id'    => $course_id,
                 'chapter_id'   => $chapter_id,
@@ -292,7 +292,7 @@ class CourseImporter {
             }
         }
     
-        if ('omlms-quiz' === $data['type']) {
+        if ('ohmylms-quiz' === $data['type']) {
             $this->import_quiz_questions($content_id, $data['questions'] ?? []);
         }
         
@@ -300,11 +300,11 @@ class CourseImporter {
         global $wpdb;
         $content_type = isset($data['content_type']) ? $data['content_type'] : $data['type'];
         $wpdb->insert(
-            "{$wpdb->prefix}omlms_content_relationship",
+            "{$wpdb->prefix}ohmylms_content_relationship",
             [
                 'chapter_id'   => $chapter_id,
                 'content_id'   => $content_id,
-                'content_type' => str_replace("omlms-", "", $content_type),
+                'content_type' => str_replace("ohmylms-", "", $content_type),
                 'order_number' => $data['order_number'] ?? 0,
             ]
         );
@@ -455,7 +455,7 @@ class CourseImporter {
                 'post_title'   => $question['title'] ?? 'Question',
                 'post_content' => $this->process_content_images($question['content'] ?? ''),
                 'post_status'  => $question['status'] ?? 'publish',
-                'post_type'    => 'omlms-question',
+                'post_type'    => 'ohmylms-question',
             ]);
     
             if (is_wp_error($question_id)) {
@@ -476,20 +476,20 @@ class CourseImporter {
                 }
             }
     
-            // Insert the question-answer relationship into `omlms_question_answers` table
+            // Insert the question-answer relationship into `ohmylms_question_answers` table
             if (isset($question['answers']) && is_array($question['answers'])) {
                 foreach ($question['answers'] as $answer) {
-                    // Insert answer data into `omlms_question_answers`
+                    // Insert answer data into `ohmylms_question_answers`
                     $answer_data = [
                         'question_id' => $question_id,
                         'answer'      => $answer['answer'],
                         'is_correct'  => isset($answer['is_correct']) ? $answer['is_correct'] : 0,
                     ];
     
-                    $wpdb->insert("{$wpdb->prefix}omlms_question_answers", $answer_data);
+                    $wpdb->insert("{$wpdb->prefix}ohmylms_question_answers", $answer_data);
                     $answer_id = $wpdb->insert_id; // Get the last inserted answer ID
     
-                    // Save answer metadata into `omlms_question_answermeta`
+                    // Save answer metadata into `ohmylms_question_answermeta`
                     foreach ($answer['meta'] as $meta_key => $meta_value) {
                         $meta_data = [
                             'answer_id' => $answer_id,
@@ -497,14 +497,14 @@ class CourseImporter {
                             'meta_value'=> maybe_unserialize($meta_value),
                         ];
     
-                        $wpdb->insert("{$wpdb->prefix}omlms_question_answermeta", $meta_data);
+                        $wpdb->insert("{$wpdb->prefix}ohmylms_question_answermeta", $meta_data);
                     }
                 }
             }
     
             // Insert into the quiz-question relationship table
             $wpdb->insert(
-                "{$wpdb->prefix}omlms_quiz_questions_relationship",
+                "{$wpdb->prefix}ohmylms_quiz_questions_relationship",
                 [
                     'quiz_id'      => $quiz_id,
                     'question_id'  => $question_id,

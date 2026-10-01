@@ -8,7 +8,7 @@
  * @throws Exception
  * @since 1.0.0
  */
-function creatorlms_date_to_time( $date_string ) {
+function ohmylms_date_to_time( $date_string ) {
 	if ( 0 == $date_string ) {
 		return 0;
 	}
@@ -27,9 +27,9 @@ function creatorlms_date_to_time( $date_string ) {
  * @return false|int|mixed
  * @since 1.0.0
  */
-function creatorlms_add_time( $number_of_periods, $period, $from_timestamp ) {
+function ohmylms_add_time( $number_of_periods, $period, $from_timestamp ) {
 	if ( $number_of_periods > 0 ) {
-		$next_timestamp = creatorlms_strtotime( "+ {$number_of_periods} {$period}", $from_timestamp );
+		$next_timestamp = ohmylms_strtotime( "+ {$number_of_periods} {$period}", $from_timestamp );
 	} else {
 		$next_timestamp = $from_timestamp;
 	}
@@ -46,7 +46,7 @@ function creatorlms_add_time( $number_of_periods, $period, $from_timestamp ) {
  * @return false|int
  * @since 1.0.0
  */
-function creatorlms_strtotime( $time_string, $from_timestamp = null ) {
+function ohmylms_strtotime( $time_string, $from_timestamp = null ) {
 	$original_timezone = date_default_timezone_get();
 	date_default_timezone_set( 'UTC' );
 

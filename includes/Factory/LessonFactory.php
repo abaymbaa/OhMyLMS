@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Lesson;
+use OhMyLMS\Data\Lesson;
 /**
  * Class LessonFactory
  *
  * Factory class for creating and retrieving Lesson objects.
  *
- * @package OMLMS\Factory
+ * @package OhMyLMS\Factory
  * @since 1.0.0
  */
 class LessonFactory {
@@ -41,7 +41,7 @@ class LessonFactory {
 		global $post;
 
 		// Check if input is false and post is set
-		if ( false === $lesson && isset( $post, $post->ID ) && CREATOR_LMS_LESSON_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $lesson && isset( $post, $post->ID ) && OHMYLMS_LESSON_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		}
 
@@ -72,7 +72,7 @@ class LessonFactory {
 	 * Checks whether a lesson with the given ID exists.
 	 *
 	 * This method verifies that the lesson exists in the database and is of
-	 * the correct post type (`CREATOR_LMS_LESSON_CPT`).
+	 * the correct post type (`OHMYLMS_LESSON_CPT`).
 	 *
 	 * @param int $lesson_id The ID of the lesson to check.
 	 * @return bool Returns true if the lesson exists, otherwise false.
@@ -86,7 +86,7 @@ class LessonFactory {
 		$lesson = get_post( $lesson_id );
 
 		// Check if the post exists and the post type matches
-		if ( $lesson && CREATOR_LMS_LESSON_CPT === get_post_type( $lesson_id ) ) {
+		if ( $lesson && OHMYLMS_LESSON_CPT === get_post_type( $lesson_id ) ) {
 			return true;
 		} else {
 			return false;

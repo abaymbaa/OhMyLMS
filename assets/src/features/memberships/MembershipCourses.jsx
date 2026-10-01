@@ -62,10 +62,7 @@ export function createMembershipCourses(readRuntime) {
                           m(!0),
                           (e.n = 1),
                           l()({
-                            path: '/creator-lms/v1/courses?search='.concat(
-                              t,
-                              '&post_status=publish',
-                            ),
+                            path: '/ohmylms/v1/courses?search='.concat(t, '&post_status=publish'),
                             method: 'GET',
                             headers: {
                               'Content-Type': 'application/json',
@@ -159,7 +156,7 @@ export function createMembershipCourses(readRuntime) {
         u(t);
       }, []),
       (
-        <Controls.SpacerWP marginTop={4} className={'omlms-membership-plan-course-section'}>
+        <Controls.SpacerWP marginTop={4} className={'ohmylms-membership-plan-course-section'}>
           <Ea isBorderless={!0} variant={'secondary'}>
             <Controls.SpacerWP padding={6} margin={0}>
               <Controls.HeadingWP level={4}>{(0, I18n.__)('Course', 'ohmylms')}</Controls.HeadingWP>

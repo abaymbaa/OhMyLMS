@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -10,7 +10,7 @@ use WP_HTTP_Response;
 use WP_Query;
 
 /**
- * Controller for handling omlms-session REST API endpoints.
+ * Controller for handling ohmylms-session REST API endpoints.
  */
 class SessionController extends RestController {
 
@@ -41,10 +41,10 @@ class SessionController extends RestController {
      */
     public function check_session_read_permission( $request ) {
         if ( ! \current_user_can( 'edit_posts' ) ) {
-            return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
+            return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
         }
 
-        return $this->check_object_permission( $request, 'read', 'omlms-session' );
+        return $this->check_object_permission( $request, 'read', 'ohmylms-session' );
     }
 
     /**
@@ -57,7 +57,7 @@ class SessionController extends RestController {
      * @return true|\WP_Error
      */
     public function check_session_edit_permission( $request ) {
-        return $this->check_object_permission( $request, 'edit', 'omlms-session' );
+        return $this->check_object_permission( $request, 'edit', 'ohmylms-session' );
     }
 
     /**
@@ -70,7 +70,7 @@ class SessionController extends RestController {
      * @return true|\WP_Error
      */
     public function check_session_delete_permission( $request ) {
-        return $this->check_object_permission( $request, 'delete', 'omlms-session' );
+        return $this->check_object_permission( $request, 'delete', 'ohmylms-session' );
     }
 
     /**
@@ -102,7 +102,7 @@ class SessionController extends RestController {
             array(
                 'args' => array(
                     'id' => array(
-                        'description' => __( 'Unique identifier for the session.', 'creator-lms' ),
+                        'description' => __( 'Unique identifier for the session.', 'ohmylms' ),
                         'type'        => 'integer',
                     ),
                 ),
@@ -143,7 +143,7 @@ class SessionController extends RestController {
             'post__not_in'   => isset( $request['exclude'] ) ? array_map( 'intval', (array) $request['exclude'] ) : array(),
             'posts_per_page' => isset( $request['per_page'] ) ? intval( $request['per_page'] ) : 10,
             's'              => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-            'post_type'      => 'omlms-session',
+            'post_type'      => 'ohmylms-session',
             'post_status'    => isset($request['post_status']) ? sanitize_text_field($request['post_status']) : array('draft', 'publish', 'future'),
         );
 
@@ -155,7 +155,7 @@ class SessionController extends RestController {
             $args['date_query'][0]['after'] = sanitize_text_field( $request['after'] );
         }
 
-        $args = apply_filters( 'creator_lms_rest_omlms_session_query', $args, $request );
+        $args = apply_filters( 'ohmylms_rest_ohmylms_session_query', $args, $request );
         $query_args = $this->prepare_items_query( $args, $request );
 
         $posts_query  = new WP_Query();
@@ -168,7 +168,7 @@ class SessionController extends RestController {
             }
             
             // Check if session has a valid course_id
-            $course_id = creator_lms_get_course_by_content_id($post->ID);
+            $course_id = ohmylms_get_course_by_content_id($post->ID);
             if ( empty( $course_id ) ) {
                 continue; // Skip sessions without a valid course_id
             }
@@ -197,8 +197,8 @@ class SessionController extends RestController {
     public function get_item( $request ) {
         $id   = (int) $request['id'];
         $post = get_post( $id );
-        if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== 'omlms-session' ) {
-            return new WP_Error( 'creator_lms_rest_invalid_session_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+        if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== 'ohmylms-session' ) {
+            return new WP_Error( 'ohmylms_rest_invalid_session_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
         }
         $data     = $this->prepare_item_for_response( $post, $request );
         $response = rest_ensure_response( $data );
@@ -214,7 +214,7 @@ class SessionController extends RestController {
      */
     public function create_item( $request ) {
         if ( ! empty( $request['id'] ) ) {
-            return new WP_Error( 'creator_lms_rest_session_exists', sprintf( __( 'Cannot create existing %s.', 'creator-lms' ), 'Session' ), array( 'status' => 400 ) );
+            return new WP_Error( 'ohmylms_rest_session_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Session' ), array( 'status' => 400 ) );
         }
         $session_id = $this->save_session( $request );
         update_post_meta( $session_id, '_content_type', $request['content_type']);
@@ -226,14 +226,14 @@ class SessionController extends RestController {
         $this->update_custom_meta_fields( $session_id, $request );
 
         $post = get_post( $session_id );
-        do_action( 'creator_lms_rest_insert_session', $post, $request, true );
+        do_action( 'ohmylms_rest_insert_session', $post, $request, true );
         $request->set_param( 'context', 'edit' );
-        do_action( "creatorlms_{$request['platform']}_session_created", $post, $request );
+        do_action( "ohmylms_{$request['platform']}_session_created", $post, $request );
         $maybe_create_session = get_post_meta( $session_id, "_is_{$request['platform']}_session_created", true );
 
         if ( $maybe_create_session !== 'yes' ) {
             // Return with error that session is not created because API key is not configured or API key has not the permission to create a session.
-            $response = new WP_Error( 'creator_lms_rest_session_not_created', __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", 'ohmylms' ), array( 'status' => 500 ) );
+            $response = new WP_Error( 'ohmylms_rest_session_not_created', __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", 'ohmylms' ), array( 'status' => 500 ) );
             return $response;
         }
 
@@ -273,8 +273,8 @@ class SessionController extends RestController {
      */
     public function update_item( $request ) {
         $post_id = (int) $request['id'];
-        if ( empty( $post_id ) || get_post_type( $post_id ) !== 'omlms-session' ) {
-            return new WP_Error( 'creator_lms_rest_session_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+        if ( empty( $post_id ) || get_post_type( $post_id ) !== 'ohmylms-session' ) {
+            return new WP_Error( 'ohmylms_rest_session_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
         }
         
         $session_id = $this->update_session( $request );
@@ -290,11 +290,11 @@ class SessionController extends RestController {
         $this->update_post_meta_fields( $post, $request );
         $this->update_custom_meta_fields( $session_id, $request );
         $request->set_param( 'context', 'edit' );
-        do_action( "creatorlms_{$request['platform']}_session_updated", $post, $request );
+        do_action( "ohmylms_{$request['platform']}_session_updated", $post, $request );
         $maybe_create_zoom_session = get_post_meta( $session_id, "_is_{$request['platform']}_session_created", true );
         if ( $maybe_create_zoom_session !== 'yes' ) {
             // Return with error that Zoom session is not created because API key is not configured or API key has not the permission to create a session.
-            $response = new WP_Error( "creator_lms_rest_{$request['platform']}_session_not_created", __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", "ohmylms" ), array( 'status' => 500 ) );
+            $response = new WP_Error( "ohmylms_rest_{$request['platform']}_session_not_created", __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", "ohmylms" ), array( 'status' => 500 ) );
             return $response;
         }
         $response = $this->prepare_item_for_response( $post, $request );
@@ -328,15 +328,15 @@ class SessionController extends RestController {
     public function delete_item( $request ) {
         $session_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
         if ( ! $session_id ) {
-            return new WP_Error( 'creator_lms_rest_session_empty_id', __( 'ID is required.', 'creator-lms' ), array( 'status' => 400 ) );
+            return new WP_Error( 'ohmylms_rest_session_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
         }
         wp_delete_post( $session_id, true );
-        do_action( 'creator_lms_rest_delete_session', $session_id );
-        do_action( "creatorlms_{$request['platform']}_session_deleted", $session_id, $request );
+        do_action( 'ohmylms_rest_delete_session', $session_id );
+        do_action( "ohmylms_{$request['platform']}_session_deleted", $session_id, $request );
         $response = array(
             'id'      => $session_id,
             'status'  => 'success',
-            'message' => __( 'Session has been deleted successfully.', 'creator-lms' ),
+            'message' => __( 'Session has been deleted successfully.', 'ohmylms' ),
         );
         return rest_ensure_response( $response );
     }
@@ -370,7 +370,7 @@ class SessionController extends RestController {
         $id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
         $postarr = array(
             'ID'           => $id,
-            'post_type'    => 'omlms-session',
+            'post_type'    => 'ohmylms-session',
             'post_title'   => isset( $request['topic'] ) ? wp_filter_post_kses( $request['topic'] ) : '',
             'post_content' => isset( $request['agenda'] ) ? wp_filter_post_kses( $request['agenda'] ) : '',
             'post_status'  => isset( $request['status'] ) ? $request['status'] : 'publish',
@@ -485,9 +485,9 @@ class SessionController extends RestController {
             $meeting_data = get_post_meta( $post->ID, '_googlemeet_event_data', true );
         }
         
-        $course_id      = creator_lms_get_course_by_content_id($post->ID);
+        $course_id      = ohmylms_get_course_by_content_id($post->ID);
         $course_title   = get_the_title($course_id);
-        $chapter_id     = creator_lms_get_chapter_id_by_content_id($post->ID);
+        $chapter_id     = ohmylms_get_chapter_id_by_content_id($post->ID);
         $start_date     = get_post_meta( $post->ID, '_start_date', true );
         $duration       = get_post_meta( $post->ID, '_duration', true );
         $timezone       = get_post_meta( $post->ID, '_timezone', true );
@@ -621,7 +621,7 @@ class SessionController extends RestController {
     protected function prepare_items_query( $prepared_args = array(), $request = null ) {
         global $wp;
         $valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
-        $post_type_obj = get_post_type_object( 'omlms-session' );
+        $post_type_obj = get_post_type_object( 'ohmylms-session' );
         if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
             $valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
         }

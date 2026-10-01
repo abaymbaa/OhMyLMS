@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Membership;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Membership;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class CourseStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class MembershipStore extends DataStore {
@@ -30,12 +30,12 @@ class MembershipStore extends DataStore {
 
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_membership_data',
+				'ohmylms_new_membership_data',
 				array(
-					'post_type'     => CREATOR_LMS_MEMBERSHIP_CPT,
+					'post_type'     => OHMYLMS_MEMBERSHIP_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => $membership->get_status() ? $membership->get_status() : 'publish',
-					'post_title'    => $membership->get_name() ? $membership->get_name() : __( 'Untitled', 'creator-lms' ),
+					'post_title'    => $membership->get_name() ? $membership->get_name() : __( 'Untitled', 'ohmylms' ),
 					'post_content'  => $membership->get_description(),
 					'post_name'     => $membership->get_slug( 'edit' )
 				)
@@ -58,7 +58,7 @@ class MembershipStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_after_creating_new_membership', $id, $membership );
+			do_action( 'ohmylms_after_creating_new_membership', $id, $membership );
 		}
 	}
 
@@ -73,9 +73,9 @@ class MembershipStore extends DataStore {
 	 */
 	public function read( &$membership ) {
 		$post_object = get_post( $membership->get_id() );
-		if ( ! $membership->get_id() || ! $post_object || CREATOR_LMS_MEMBERSHIP_CPT !== $post_object->post_type ) {
+		if ( ! $membership->get_id() || ! $post_object || OHMYLMS_MEMBERSHIP_CPT !== $post_object->post_type ) {
 			return;
-			// throw new \Exception( __( 'Invalid membership.', 'creator-lms' ) );
+			// throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );
 		}
 
 		$membership->set_props(
@@ -111,7 +111,7 @@ class MembershipStore extends DataStore {
 			'post_title'   => $membership->get_name( 'edit' ),
 			'post_status'  => $membership->get_status( 'edit' ) ? $membership->get_status( 'edit' ) : 'publish',
 			'post_name'    => sanitize_title( $membership->get_name() ),
-			'post_type'    => CREATOR_LMS_MEMBERSHIP_CPT,
+			'post_type'    => OHMYLMS_MEMBERSHIP_CPT,
 		);
 		wp_update_post( array_merge( array( 'ID' => $membership->get_id() ), $post_data ) );
 
@@ -125,7 +125,7 @@ class MembershipStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_update_membership', $membership->get_id(), $membership );
+		do_action( 'ohmylms_update_membership', $membership->get_id(), $membership );
 	}
 
 
@@ -168,7 +168,7 @@ class MembershipStore extends DataStore {
 
 			$membership_price_props = array( '_regular_price', '_sale_price' );
 			if ( in_array( $meta_key, $membership_price_props ) ) {
-				$value = omlms_format_decimal( $value );
+				$value = ohmylms_format_decimal( $value );
 				
 				if ( $membership->is_on_sale( 'edit' ) ) {
 					update_post_meta( $membership->get_id(), '_price', $membership->get_sale_price( 'edit' ) );
@@ -204,7 +204,7 @@ class MembershipStore extends DataStore {
 				 *
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_deleting_a_membership' );
+				do_action( 'ohmylms_after_deleting_a_membership' );
 			}
 		}
 	}
@@ -257,7 +257,7 @@ class MembershipStore extends DataStore {
 		$user_id = get_current_user_id();
 
 		// Prepare the query
-		$table_name = $wpdb->prefix . 'omlms_user_membership';
+		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 		$query      = $wpdb->prepare( "SELECT membership_id FROM $table_name WHERE user_id = %d AND `status` = %s AND membership_id = %d", $user_id, 'enrolled', $membership->get_id() );
 		// Execute the query and return the result
 		$result = $wpdb->get_row( $query, ARRAY_A );
@@ -273,7 +273,7 @@ class MembershipStore extends DataStore {
 		global $wpdb;
 
 		// Table name
-		$table_name = $wpdb->prefix . 'omlms_user_membership';
+		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
 		// Prepare the query to count rows
 		$query = $wpdb->prepare(
@@ -297,7 +297,7 @@ class MembershipStore extends DataStore {
 		global $wpdb;
 
 		// Table where the membership statuses are stored
-		$table_name = $wpdb->prefix . 'omlms_user_membership';
+		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
 		// Get the current user ID
 		$user_id = get_current_user_id();
@@ -322,7 +322,7 @@ class MembershipStore extends DataStore {
 		// Check if the update was successful
 		if ( $result !== false ) {
 			// Log the status change or trigger an action hook
-			do_action( 'creator_lms_membership_status_updated', $membership->get_id(), $new_status, $user_id );
+			do_action( 'ohmylms_membership_status_updated', $membership->get_id(), $new_status, $user_id );
 
 			return true;
 		}
@@ -334,8 +334,8 @@ class MembershipStore extends DataStore {
 	public function cancel_enrollment( &$membership, $student_id, $order_id ) {
 		global $wpdb;
 		$user_id = $student_id;
-		$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
-    	$membership_table = $wpdb->prefix . 'omlms_user_membership';
+		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
+    	$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
 		$products = $membership->get_products();
 
 		if (!empty($products)) {

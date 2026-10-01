@@ -2,9 +2,9 @@
 /**
  * Membership Loop Description
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/membership-loop/descriptions.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/membership-loop/descriptions.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

@@ -2,13 +2,13 @@
 /**
  * Bricks Manager
  *
- * Manages all Bricks elements for CreatorLMS
+ * Manages all Bricks elements for OhMyLMS
  *
- * @package OMLMS\Bricks
+ * @package OhMyLMS\Bricks
  * @since 1.0.0
  */
 
-namespace OMLMS\Bricks;
+namespace OhMyLMS\Bricks;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -45,7 +45,7 @@ class BricksManager {
 	}
 
 	/**
-	 * Initialize and register CreatorLMS elements for Bricks
+	 * Initialize and register OhMyLMS elements for Bricks
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -55,45 +55,43 @@ class BricksManager {
 		// Define elements to register
 		$elements = array(
 			array(
-				'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/CourseListElement.php',
-				'class' => '\OMLMS\Bricks\Elements\CourseListElement',
+				'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/CourseListElement.php',
+				'class' => '\OhMyLMS\Bricks\Elements\CourseListElement',
 			)
 		);
 
-		// Add pro elements if license is active
-		if ( creator_lms_is_pro_license() ) {
+		// Buy now and offer button elements
 			$elements[] = array(
-				'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/BuyNowElement.php',
-				'class' => '\OMLMS\Bricks\Elements\BuyNowElement',
+				'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/BuyNowElement.php',
+				'class' => '\OhMyLMS\Bricks\Elements\BuyNowElement',
 			);
 			$elements[] = array(
-				'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/OfferButtonElement.php',
-				'class' => '\OMLMS\Bricks\Elements\OfferButtonElement',
+				'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/OfferButtonElement.php',
+				'class' => '\OhMyLMS\Bricks\Elements\OfferButtonElement',
 			);
-		}
 
 		$elements[] = array(
-			'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/CheckoutElement.php',
-			'class' => '\OMLMS\Bricks\Elements\CheckoutElement',
+			'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/CheckoutElement.php',
+			'class' => '\OhMyLMS\Bricks\Elements\CheckoutElement',
 		);
 
 		$elements[] = array(
-			'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/MyCoursesElement.php',
-			'class' => '\OMLMS\Bricks\Elements\MyCoursesElement',
+			'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/MyCoursesElement.php',
+			'class' => '\OhMyLMS\Bricks\Elements\MyCoursesElement',
 		);
 
 		$elements[] = array(
-			'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/DashboardElement.php',
-			'class' => '\OMLMS\Bricks\Elements\DashboardElement',
+			'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/DashboardElement.php',
+			'class' => '\OhMyLMS\Bricks\Elements\DashboardElement',
 		);
 
 		$elements[] = array(
-			'file'  => CREATOR_LMS_PATH . '/includes/Bricks/Elements/ProfileElement.php',
-			'class' => '\OMLMS\Bricks\Elements\ProfileElement',
+			'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/ProfileElement.php',
+			'class' => '\OhMyLMS\Bricks\Elements\ProfileElement',
 		);
 
 		// Allow filtering of elements
-		$elements = apply_filters( 'creator_lms/bricks_elements', $elements );
+		$elements = apply_filters( 'ohmylms/bricks_elements', $elements );
 		// Register elements with Bricks
 		if ( class_exists( '\Bricks\Elements' ) ) {
 			foreach ( $elements as $element ) {
@@ -108,14 +106,14 @@ class BricksManager {
 	}
 
 	/**
-	 * Add CreatorLMS category to Bricks elements
+	 * Add OhMyLMS category to Bricks elements
 	 *
 	 * @param array $categories Existing categories
 	 * @return array Modified categories
 	 */
 	public function add_element_category( $categories ) {
-		$categories['creator-lms'] = array(
-			'title' => esc_html__( 'CreatorLMS', 'ohmylms' ),
+		$categories['ohmylms'] = array(
+			'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
 			'icon'  => 'ti-crown',
 		);
 
@@ -129,27 +127,27 @@ class BricksManager {
 	 */
 	public function enqueue_frontend_assets() {
 		// wp_enqueue_style(
-		// 	'creator-lms-bricks-elements',
-		// 	CREATOR_LMS_URL . '/assets/css/bricks-elements.css',
+		// 	'ohmylms-bricks-elements',
+		// 	OHMYLMS_URL . '/assets/css/bricks-elements.css',
 		// 	array(),
-		// 	CREATOR_LMS_VERSION
+		// 	OHMYLMS_VERSION
 		// );
 
 		// wp_enqueue_script(
-		// 	'creator-lms-bricks-elements',
-		// 	CREATOR_LMS_URL . '/assets/js/bricks-elements.js',
+		// 	'ohmylms-bricks-elements',
+		// 	OHMYLMS_URL . '/assets/js/bricks-elements.js',
 		// 	array( 'jquery' ),
-		// 	CREATOR_LMS_VERSION,
+		// 	OHMYLMS_VERSION,
 		// 	true
 		// );
 
 		// Localize script for AJAX
 		wp_localize_script(
-			'creator-lms-bricks-elements',
-			'creatorLmsBricks',
+			'ohmylms-bricks-elements',
+			'ohMyLmsBricks',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'creator_lms_bricks_nonce' ),
+				'nonce'   => wp_create_nonce( 'ohmylms_bricks_nonce' ),
 			)
 		);
 	}

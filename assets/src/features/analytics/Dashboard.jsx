@@ -28,7 +28,7 @@ export function createDashboard(readRuntime) {
       t = (0, Notifications.A)(),
       n = t.openNotificationWithIcon,
       r = t.contextHolder,
-      a = (0, Entitlements.useIsPro)(),
+      a = true,
       o = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getNotificationMessage();
       }, []),
@@ -56,7 +56,7 @@ export function createDashboard(readRuntime) {
       O =
         ((0, ReactHooks.useCallback)(
           function () {
-            a ? u(!0) : e.setIsProModalOpen(!0);
+            u(!0);
           },
           [a],
         ),
@@ -116,9 +116,6 @@ export function createDashboard(readRuntime) {
         };
       })();
     return (
-      (0, ReactHooks.useCallback)(function () {
-        window.open(Entitlements.pricingPageLink, '_blank');
-      }, []),
       (0, ReactHooks.useEffect)(
         function () {
           o && n(i, o);

@@ -71,9 +71,9 @@ var Di = function (e) {
       null == n || n(r.format("YYYY-MM-DDTHH:mm:ss"));
     };
   return React.createElement("div", {
-    className: "omlms-lcm-datetime"
+    className: "ohmylms-lcm-datetime"
   }, React.createElement("input", {
-    className: "omlms-lcm-input omlms-lcm-datetime__day",
+    className: "ohmylms-lcm-input ohmylms-lcm-datetime__day",
     value: c,
     placeholder: "DD",
     maxLength: 2,
@@ -90,7 +90,7 @@ var Di = function (e) {
       }
     }
   }), React.createElement("div", {
-    className: "omlms-lcm-datetime__month"
+    className: "ohmylms-lcm-datetime__month"
   }, React.createElement(Ai, {
     value: i ? o.month() : void 0,
     onChange: function (e) {
@@ -100,7 +100,7 @@ var Di = function (e) {
     placeholder: (0, b.__)("Month", "ohmylms"),
     disabled: a
   })), React.createElement("input", {
-    className: "omlms-lcm-input omlms-lcm-datetime__year",
+    className: "ohmylms-lcm-input ohmylms-lcm-datetime__year",
     value: d,
     placeholder: "YYYY",
     maxLength: 4,
@@ -114,7 +114,7 @@ var Di = function (e) {
       isNaN(e) || 4 !== String(d).length ? m(i ? String(o.year()) : "") : (m(String(e)), f(p().year(e)));
     }
   }), React.createElement("input", {
-    className: "omlms-lcm-input omlms-lcm-datetime__time",
+    className: "ohmylms-lcm-input ohmylms-lcm-datetime__time",
     type: "time",
     value: i ? o.format("HH:mm") : "",
     disabled: a,
@@ -141,7 +141,7 @@ var zi = function (e) {
     d = e.suffix,
     m = void 0 === d ? null : d;
   return React.createElement("div", {
-    className: "omlms-lcm-input"
+    className: "ohmylms-lcm-input"
   }, s, React.createElement("input", {
     type: a,
     value: null != t ? t : "",
@@ -214,11 +214,11 @@ var Hi = function (e) {
     u = c[0],
     s = c[1];
   return React.createElement("div", {
-    className: "omlms-lcm-password"
+    className: "ohmylms-lcm-password"
   }, React.createElement("div", {
-    className: "omlms-rec-toggle-row"
+    className: "ohmylms-rec-toggle-row"
   }, React.createElement("span", {
-    className: "omlms-rec-toggle-row__label"
+    className: "ohmylms-rec-toggle-row__label"
   }, (0, b.__)("Meeting Password", "ohmylms")), React.createElement(vo, {
     checked: i,
     onChange: function (e) {
@@ -227,7 +227,7 @@ var Hi = function (e) {
     disabled: a,
     ariaLabel: (0, b.__)("Meeting Password", "ohmylms")
   })), i && React.createElement("div", {
-    className: "omlms-lcm-password__input"
+    className: "ohmylms-lcm-password__input"
   }, React.createElement(Bi, {
     type: u ? "text" : "password",
     value: t,
@@ -243,7 +243,7 @@ var Hi = function (e) {
         });
       },
       ariaLabel: (0, b.__)("Toggle password visibility", "ohmylms"),
-      className: "omlms-lcm-password__eye"
+      className: "ohmylms-lcm-password__eye"
     })
   })));
 };
@@ -345,21 +345,21 @@ var Zi = function (e) {
     i = void 0 !== o && o,
     l = Qi();
   return React.createElement("div", {
-    className: "omlms-lcm-attach"
+    className: "ohmylms-lcm-attach"
   }, n.length > 0 && React.createElement("ul", {
-    className: "omlms-lcm-attach__list"
+    className: "ohmylms-lcm-attach__list"
   }, n.map(function (e) {
     return React.createElement("li", {
       key: e.id,
-      className: "omlms-lcm-attach__item"
+      className: "ohmylms-lcm-attach__item"
     }, React.createElement(po, {
       name: "paperclip",
       size: 15
     }), React.createElement("span", {
-      className: "omlms-lcm-attach__name",
+      className: "ohmylms-lcm-attach__name",
       title: e.name
     }, e.name), e.size && React.createElement("span", {
-      className: "omlms-lcm-attach__size"
+      className: "ohmylms-lcm-attach__size"
     }, e.size), React.createElement(fi, {
       icon: "close",
       size: 15,
@@ -367,7 +367,7 @@ var Zi = function (e) {
         return null == a ? void 0 : a(e.id);
       },
       ariaLabel: (0, b.__)("Remove attachment", "ohmylms"),
-      className: "omlms-lcm-attach__remove"
+      className: "ohmylms-lcm-attach__remove"
     }));
   })), React.createElement(mi, {
     variant: "ghost",
@@ -455,10 +455,10 @@ var Ji = function (e) {
     d = s[0],
     m = s[1];
   return React.createElement("div", {
-    className: "omlms-lcm-group".concat(d ? " is-open" : "")
+    className: "ohmylms-lcm-group".concat(d ? " is-open" : "")
   }, React.createElement("button", {
     type: "button",
-    className: "omlms-lcm-group__head",
+    className: "ohmylms-lcm-group__head",
     onClick: function () {
       return c && m(function (e) {
         return !e;
@@ -467,17 +467,17 @@ var Ji = function (e) {
     disabled: !c,
     "aria-expanded": d
   }, React.createElement("span", {
-    className: "omlms-lcm-group__titlewrap"
+    className: "ohmylms-lcm-group__titlewrap"
   }, React.createElement("span", {
-    className: "omlms-lcm-group__title"
+    className: "ohmylms-lcm-group__title"
   }, t), n && React.createElement("span", {
-    className: "omlms-lcm-group__badge omlms-lcm-group__badge--".concat(a)
+    className: "ohmylms-lcm-group__badge ohmylms-lcm-group__badge--".concat(a)
   }, n)), c && React.createElement(po, {
     name: "chevron-down",
     size: 18,
-    className: "omlms-lcm-group__chevron"
+    className: "ohmylms-lcm-group__chevron"
   })), d && React.createElement("div", {
-    className: "omlms-lcm-group__body"
+    className: "ohmylms-lcm-group__body"
   }, u));
 };
 
@@ -516,12 +516,12 @@ var tl = function (e) {
     w = e.disabled,
     E = void 0 !== w && w;
   return React.createElement("div", {
-    className: "omlms-lcm-settings-panel"
+    className: "ohmylms-lcm-settings-panel"
   }, React.createElement("div", {
-    className: "omlms-lcm-settings-panel__header"
+    className: "ohmylms-lcm-settings-panel__header"
   }, React.createElement(mi, {
     variant: "text",
-    className: "omlms-lcm-settings-panel__back",
+    className: "ohmylms-lcm-settings-panel__back",
     onClick: _,
     icon: React.createElement(po, {
       name: "arrow-left",
@@ -531,7 +531,7 @@ var tl = function (e) {
     title: (0, b.__)("Schedule", "ohmylms"),
     defaultOpen: !0
   }, React.createElement("div", {
-    className: "omlms-lcm-field"
+    className: "ohmylms-lcm-field"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("The timezone the meeting time is scheduled in.", "ohmylms")
   }, (0, b.__)("Timezone", "ohmylms")), React.createElement(Ai, {
@@ -544,7 +544,7 @@ var tl = function (e) {
     placeholder: (0, b.__)("Select timezone", "ohmylms"),
     disabled: E
   })), React.createElement("div", {
-    className: "omlms-lcm-field"
+    className: "ohmylms-lcm-field"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("When the live class starts.", "ohmylms")
   }, (0, b.__)("Date & Time", "ohmylms")), React.createElement(Wi, {
@@ -554,7 +554,7 @@ var tl = function (e) {
     },
     disabled: E
   })), React.createElement("div", {
-    className: "omlms-lcm-field omlms-lcm-field--last"
+    className: "ohmylms-lcm-field ohmylms-lcm-field--last"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("How long the meeting is scheduled to run.", "ohmylms")
   }, (0, b.__)("Meeting Duration (minutes)", "ohmylms")), React.createElement(Ti, {
@@ -568,7 +568,7 @@ var tl = function (e) {
     title: (0, b.__)("In-meeting options", "ohmylms"),
     defaultOpen: !1
   }, React.createElement("div", {
-    className: "omlms-lcm-toggles"
+    className: "ohmylms-lcm-toggles"
   }, React.createElement(Gi, {
     value: o,
     onChange: function (e) {
@@ -721,12 +721,12 @@ var ol = function (e) {
       };
     }
   }, [t, o, i]), t ? React.createElement("div", {
-    className: "omlms-lcm-overlay",
+    className: "ohmylms-lcm-overlay",
     onMouseDown: function (e) {
       e.target !== e.currentTarget || o || null == i || i();
     }
   }, React.createElement("div", {
-    className: "omlms-lcm-modal".concat(w ? " is-panel-open" : ""),
+    className: "ohmylms-lcm-modal".concat(w ? " is-panel-open" : ""),
     role: "dialog",
     "aria-modal": "true"
   }, React.createElement(gi, {
@@ -744,11 +744,11 @@ var ol = function (e) {
     saveDisabled: m,
     saveLabel: s
   }), r ? React.createElement("div", {
-    className: "omlms-lcm-loading"
+    className: "ohmylms-lcm-loading"
   }, React.createElement(ho, {
     size: 40
   })) : React.createElement("div", {
-    className: "omlms-lcm-body"
+    className: "ohmylms-lcm-body"
   }, React.createElement(xi, f), React.createElement(b, rl({}, h, {
     onBack: function () {
       return E(!1);
@@ -786,12 +786,12 @@ var cl = function (e) {
     v = e.disabled,
     g = void 0 !== v && v;
   return React.createElement("div", {
-    className: "omlms-lcm-settings-panel"
+    className: "ohmylms-lcm-settings-panel"
   }, React.createElement("div", {
-    className: "omlms-lcm-settings-panel__header"
+    className: "ohmylms-lcm-settings-panel__header"
   }, React.createElement(mi, {
     variant: "text",
-    className: "omlms-lcm-settings-panel__back",
+    className: "ohmylms-lcm-settings-panel__back",
     onClick: f,
     icon: React.createElement(po, {
       name: "arrow-left",
@@ -801,7 +801,7 @@ var cl = function (e) {
     title: (0, b.__)("Schedule", "ohmylms"),
     defaultOpen: !0
   }, React.createElement("div", {
-    className: "omlms-lcm-field"
+    className: "ohmylms-lcm-field"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("The timezone the meeting time is scheduled in.", "ohmylms")
   }, (0, b.__)("Timezone", "ohmylms")), React.createElement(Ai, {
@@ -814,7 +814,7 @@ var cl = function (e) {
     placeholder: (0, b.__)("Select timezone", "ohmylms"),
     disabled: g
   })), React.createElement("div", {
-    className: "omlms-lcm-field"
+    className: "ohmylms-lcm-field"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("When the live class starts.", "ohmylms")
   }, (0, b.__)("Start Date & Time", "ohmylms")), React.createElement(Wi, {
@@ -824,7 +824,7 @@ var cl = function (e) {
     },
     disabled: g
   })), React.createElement("div", {
-    className: "omlms-lcm-field omlms-lcm-field--last"
+    className: "ohmylms-lcm-field ohmylms-lcm-field--last"
   }, React.createElement(Pi, {
     tooltip: (0, b.__)("How long the meeting is scheduled to run. The end time is calculated from this.", "ohmylms")
   }, (0, b.__)("Meeting Duration (minutes)", "ohmylms")), React.createElement(Ti, {

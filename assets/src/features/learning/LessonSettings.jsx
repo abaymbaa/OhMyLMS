@@ -34,7 +34,7 @@ export function createLessonSettings(readRuntime) {
       i,
       c,
       u,
-      s = (0, Entitlements.useIsPro)(),
+      s = true,
       lesson = props.lesson,
       chapterId = props.chapterId,
       setOpenModal = props.setOpenModal,
@@ -116,7 +116,7 @@ export function createLessonSettings(readRuntime) {
                         (t = c.length > 0 && void 0 !== c[0] ? c[0] : ''),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/chapters/'
+                          path: '/ohmylms/v1/chapters/'
                             .concat(chapterId, '/search-contents?term=')
                             .concat(t),
                           method: 'GET',
@@ -346,7 +346,7 @@ export function createLessonSettings(readRuntime) {
         )}
         <DripSettings
           onChange={function () {
-            if (s) {
+            {
               var e = !lesson.drip_settings.enable;
               S.setLesson(
                 Qn(
@@ -366,10 +366,10 @@ export function createLessonSettings(readRuntime) {
                   },
                 ),
               );
-            } else E(!0);
+            }
           }}
           onDripFeedTypeChange={function (e) {
-            if (s) {
+            {
               var t,
                 n,
                 r = Qn(
@@ -407,7 +407,7 @@ export function createLessonSettings(readRuntime) {
                   },
                 ),
               );
-            } else S.setIsProModalOpen(!0);
+            }
           }}
           handleDripDatePickerChange={function (e, t) {
             S.setLesson(
@@ -541,7 +541,7 @@ export function createLessonSettings(readRuntime) {
                 'Are you sure you want to delete this lesson?',
                 'ohmylms',
               )}
-              className={'omlms-lesson-settings-delete-button'}
+              className={'ohmylms-lesson-settings-delete-button'}
             />
           </Controls.SpacerWP>
         )}

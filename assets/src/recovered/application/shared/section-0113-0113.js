@@ -555,7 +555,7 @@ function VY(e) {
     r = function () {
       var e,
         t = new Date(),
-        n = (null === (e = window) || void 0 === e || null === (e = e.creator_lms_params) || void 0 === e ? void 0 : e.gtm_offset) || 0,
+        n = (null === (e = window) || void 0 === e || null === (e = e.ohmylms_params) || void 0 === e ? void 0 : e.gtm_offset) || 0,
         r = -t.getTimezoneOffset() / 60;
       if (n == r) return t;
       var a = 60 * (n - r) * 60 * 1e3;

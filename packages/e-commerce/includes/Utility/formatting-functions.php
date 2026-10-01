@@ -129,10 +129,10 @@ function ecommerce_format_coupon_code( $code ) {
 function ecommerce_string_to_datetime( $time_string ) {
 	// Strings are defined in local WP timezone. Convert to UTC.
 	if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $time_string, $date_bits ) ) {
-		$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : omlms_timezone_offset();
+		$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : ohmylms_timezone_offset();
 		$timestamp = gmmktime( $date_bits[4], $date_bits[5], $date_bits[6], $date_bits[2], $date_bits[3], $date_bits[1] ) - $offset;
 	} else {
-		$timestamp = omlms_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', omlms_string_to_timestamp( $time_string ) ) ) );
+		$timestamp = ohmylms_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', ohmylms_string_to_timestamp( $time_string ) ) ) );
 	}
 	$datetime = new \CodeRex\Ecommerce\EcommerceDateTime( "@{$timestamp}", new DateTimeZone( 'UTC' ) );
 
@@ -141,7 +141,7 @@ function ecommerce_string_to_datetime( $time_string ) {
 	if ( ! empty( $timezone_string ) ) {
 		$datetime->setTimezone( new \DateTimeZone( $timezone_string ) );
 	} else {
-		$datetime->set_utc_offset( omlms_timezone_offset() );
+		$datetime->set_utc_offset( ohmylms_timezone_offset() );
 	}
 
 	return $datetime;

@@ -1,12 +1,12 @@
 <?php 
 
-namespace OMLMS\Integrations\AIModel\Includes;
+namespace OhMyLMS\Integrations\AIModel\Includes;
 
 
 class Hooks {
     
     public function __construct() {
-        add_filter( 'creatorlms_integrations', array($this, 'add_ai_model') );
+        add_filter( 'ohmylms_integrations', array($this, 'add_ai_model') );
     }
 
 
@@ -20,13 +20,12 @@ class Hooks {
     public function add_ai_model( $integrations ) {
         $integrations['ai_model'] = array(
             'label' => __('AI Suite', 'ohmylms'),
-            'icon' => CREATORLMS_PRO_URL.'/includes/Integrations/AIModel/Assets/Images/ai-model-icon.svg',
+            'icon' => OHMYLMS_PRO_URL.'/includes/Integrations/AIModel/Assets/Images/ai-model-icon.svg',
             'description' => __('Enable AI-driven features and enhancements for a personalized learning experience.', 'ohmylms'),
             'categories'  => array('ai-model'),
             'hasSettings' => true,
-            'class'       => 'OMLMS\Integrations\AIModel',
-            'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('ai_model'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('ai_model'),
+            'class'       => 'OhMyLMS\Integrations\AIModel',
+            'is_valid'    => true,
         );
         return $integrations;
     }
@@ -38,7 +37,7 @@ class Hooks {
      * @since 1.0.0
      */
     public function register_session_menu( $should_show ) {
-        $integrations = get_option('creatorlms_integrations');
+        $integrations = get_option('ohmylms_integrations');
         $zoom_enabled = isset($integrations['zoom']['is_enable']) && $integrations['zoom']['is_enable'];
         $meet_enabled = isset($integrations['google_meet']['is_enable']) && $integrations['google_meet']['is_enable'];
         if ( $zoom_enabled || $meet_enabled ) {

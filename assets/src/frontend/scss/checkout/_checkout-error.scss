@@ -1,16 +1,16 @@
-.creator-lms-page {
+.ohmylms-page {
 
-    .omlms-notices-wrapper {
+    .ohmylms-notices-wrapper {
         background-color: #FCE8E8;
 
-        .omlms-NoticeGroup {
+        .ohmylms-NoticeGroup {
             max-width: 1230px;
             width: 100%;
             margin: 0 auto;
             padding: 28px 15px;
         }
 
-        ul.omlms-error {
+        ul.ohmylms-error {
             list-style: none;
             position: relative;
             padding: 0 0 0 84px;
@@ -35,7 +35,7 @@
             }
 
             li {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 15px;
                 font-weight: 400;
                 line-height: 1.2;
@@ -67,7 +67,7 @@
             }
         }
 
-        .omlms-message {
+        .ohmylms-message {
             color: #fff;
             font-size: 15px;
             font-weight: 500;
@@ -86,17 +86,17 @@
             }
         }
 
-        .omlms-success {
+        .ohmylms-success {
             background-color: #35BD4C;
 
-            .omlms-NoticeGroup {
+            .ohmylms-NoticeGroup {
                 padding: 13px 10px;
                 
             }
         }
 
         .single-error {
-            ul.omlms-error {
+            ul.ohmylms-error {
                 padding-left: 70px;
 
                 li::before {
@@ -106,7 +106,7 @@
         }
 
         .more-then-two-error {
-            ul.omlms-error:before {
+            ul.ohmylms-error:before {
                 top: 0;
                 transform: translateY(0);
             }
@@ -118,31 +118,31 @@
 
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .omlms-notices-wrapper ul.omlms-error:before {
+    .ohmylms-page .ohmylms-notices-wrapper ul.ohmylms-error:before {
         height: 40px;
         width: 40px;
         background-size: 19px 19px;
     }
 
-    .creator-lms-page .omlms-notices-wrapper ul.omlms-error {
+    .ohmylms-page .ohmylms-notices-wrapper ul.ohmylms-error {
         padding-left: 66px;
     }
-    .creator-lms-page .omlms-notices-wrapper ul.omlms-error li {
+    .ohmylms-page .ohmylms-notices-wrapper ul.ohmylms-error li {
         font-size: 14px;
     }
 
-    .creator-lms-page .omlms-notices-wrapper ul.omlms-error.only-one-error {
+    .ohmylms-page .ohmylms-notices-wrapper ul.ohmylms-error.only-one-error {
         padding: 0 0 0 53px;
     }
 
-    .creator-lms-page .omlms-notices-wrapper .single-error ul.omlms-error {
+    .ohmylms-page .ohmylms-notices-wrapper .single-error ul.ohmylms-error {
         padding-left: 54px;
     }
 
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .omlms-notices-wrapper .omlms-NoticeGroup {
+    .ohmylms-page .ohmylms-notices-wrapper .ohmylms-NoticeGroup {
         padding: 16px 15px;
     }
 

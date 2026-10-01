@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_Error;
@@ -107,7 +107,7 @@ class EngagementController extends RestController {
         }
         $group_id = $request['group_id'];
         $function_name = 'get_'.$group_id.'_default_settings';
-        $settings = get_option( 'creator_lms_'.$group_id.'_settings' ); 
+        $settings = get_option( 'ohmylms_'.$group_id.'_settings' ); 
         return rest_ensure_response( $settings );
     }
 
@@ -130,14 +130,14 @@ class EngagementController extends RestController {
 
         $settings = $request->get_json_params();
         $group_id = $request['group_id'];
-        update_option( 'creator_lms_'.$group_id.'_settings', $settings );
+        update_option( 'ohmylms_'.$group_id.'_settings', $settings );
         if( 'level' === $group_id ) {
             $levels = isset( $settings['levels'] ) ? $settings['levels'] : array();
-            update_option( 'creator_lms_levels', $levels );
+            update_option( 'ohmylms_levels', $levels );
         }
 
         if( 'point' === $group_id ) {
-            do_action( 'creatorlms_point_settings_updated', $settings );
+            do_action( 'ohmylms_point_settings_updated', $settings );
         }
         
         return rest_ensure_response(
@@ -157,7 +157,7 @@ class EngagementController extends RestController {
      * @since 1.0.0
      */
     public function get_badges( WP_REST_Request $request ) {
-        $badges = get_option( 'creator_lms_badges', array() );
+        $badges = get_option( 'ohmylms_badges', array() );
         return rest_ensure_response( $badges );
     }
 
@@ -179,7 +179,7 @@ class EngagementController extends RestController {
                 array( 'status' => 400 )
             );
         }
-        $existing_badges = get_option( 'creator_lms_badges', array() );
+        $existing_badges = get_option( 'ohmylms_badges', array() );
         $is_exist = false;
         foreach( $existing_badges as $key=>$badge ) {
             if( isset($badge['slug']) && ($new_badge['slug'] === $badge['slug']) ) {
@@ -196,7 +196,7 @@ class EngagementController extends RestController {
             array_push( $existing_badges, $new_badge );
         }
 
-        update_option( 'creator_lms_badges', $existing_badges );
+        update_option( 'ohmylms_badges', $existing_badges );
         return rest_ensure_response(
             array(
                 'success' => true,
@@ -243,7 +243,7 @@ class EngagementController extends RestController {
             );
         }
 
-        update_option( 'creator_lms_badges', $badges );
+        update_option( 'ohmylms_badges', $badges );
 
         
         return rest_ensure_response(
@@ -265,7 +265,7 @@ class EngagementController extends RestController {
      * @since 1.0.0
      */
     public function get_levels( WP_REST_Request $request ) {
-        $levels = get_option( 'creator_lms_levels', array() );
+        $levels = get_option( 'ohmylms_levels', array() );
         return rest_ensure_response( $levels );
     }
 
@@ -287,7 +287,7 @@ class EngagementController extends RestController {
                 array( 'status' => 400 )
             );
         }
-        $existing_levels = get_option( 'creator_lms_levels', array() );
+        $existing_levels = get_option( 'ohmylms_levels', array() );
         $is_exist = false;
         foreach( $existing_levels as $key=>$level ) {
             if( isset( $new_level['slug'] ) && $new_level['slug'] === $level['slug'] ) {
@@ -303,7 +303,7 @@ class EngagementController extends RestController {
             
             array_push( $existing_levels, $new_level );
         }
-        update_option( 'creator_lms_levels', $existing_levels );
+        update_option( 'ohmylms_levels', $existing_levels );
         return rest_ensure_response(
             array(
                 'success' => true,
@@ -330,7 +330,7 @@ class EngagementController extends RestController {
             );
         }
 
-        update_option( 'creator_lms_levels', $levels );
+        update_option( 'ohmylms_levels', $levels );
 
         
         return rest_ensure_response(

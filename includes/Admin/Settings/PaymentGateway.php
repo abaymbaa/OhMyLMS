@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * Payment gateway settings class.
@@ -44,7 +44,7 @@ class PaymentGateway extends Settings {
 
 		foreach ($gateways as $gateway) {
 			$gateway_id = $gateway['id'];
-			$settings_key = "creatorlms_{$gateway_id}_settings";
+			$settings_key = "ohmylms_{$gateway_id}_settings";
 		
 			$gateway_settings = $gateway['settings_fields'] ?? array();
 			$default_settings = array(

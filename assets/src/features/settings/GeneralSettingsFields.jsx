@@ -99,7 +99,7 @@ export function createGeneralSettingsFields(readRuntime) {
       };
     return (
       <React.Fragment>
-        <div className={'omlms-settings-general-card-wrapper'}>
+        <div className={'ohmylms-settings-general-card-wrapper'}>
           <Controls.CardWP isBorderless={!0}>
             <Controls.SpacerWP paddingY={4} paddingX={2} marginTop={0} marginBottom={4}>
               <Nm
@@ -112,10 +112,10 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_course_page_id', e);
+                  return i('ohmylms_course_page_id', e);
                 }}
                 staticSearch={!1}
-                value={c('creator_lms_course_page_id')}
+                value={c('ohmylms_course_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}
@@ -133,10 +133,10 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_checkout_page_id', e);
+                  return i('ohmylms_checkout_page_id', e);
                 }}
                 staticSearch={!1}
-                value={c('creator_lms_checkout_page_id')}
+                value={c('ohmylms_checkout_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}
@@ -154,9 +154,9 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_student_dashboard_page_id', e);
+                  return i('ohmylms_student_dashboard_page_id', e);
                 }}
-                value={c('creator_lms_student_dashboard_page_id')}
+                value={c('ohmylms_student_dashboard_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}
@@ -174,9 +174,9 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_student_courses_page_id', e);
+                  return i('ohmylms_student_courses_page_id', e);
                 }}
-                value={c('creator_lms_student_courses_page_id')}
+                value={c('ohmylms_student_courses_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}
@@ -194,9 +194,9 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_student_profile_page_id', e);
+                  return i('ohmylms_student_profile_page_id', e);
                 }}
-                value={c('creator_lms_student_profile_page_id')}
+                value={c('ohmylms_student_profile_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}
@@ -214,9 +214,9 @@ export function createGeneralSettingsFields(readRuntime) {
                 data={n}
                 setData={r}
                 onChange={function (e) {
-                  return i('creator_lms_terms_page_id', e);
+                  return i('ohmylms_terms_page_id', e);
                 }}
-                value={c('creator_lms_terms_page_id')}
+                value={c('ohmylms_terms_page_id')}
                 defaultOptions={n}
                 loadOptions={l}
                 isClearable={!1}

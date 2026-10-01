@@ -4,11 +4,11 @@
  *
  * Manages all Gutenberg blocks for OhMyLMS
  *
- * @package OMLMS\Blocks
+ * @package OhMyLMS\Blocks
  * @since 1.0.0
  */
 
-namespace OMLMS\Blocks;
+namespace OhMyLMS\Blocks;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -76,13 +76,13 @@ class BlocksManager {
 		   new DashboardGutenbergBlock();
 		   new ProfileGutenbergBlock();
 		   new MyCoursesGutenbergBlock();
-		   new \OMLMS\Blocks\Blocks\CourseListBlock();
-		   \OMLMS\Blocks\Blocks\BuyNowBlock::register();
-		   if ( class_exists( '\OMLMS\Blocks\Blocks\OfferButtonBlock' ) ) {
-			   \OMLMS\Blocks\Blocks\OfferButtonBlock::register();
+		   new \OhMyLMS\Blocks\Blocks\CourseListBlock();
+		   \OhMyLMS\Blocks\Blocks\BuyNowBlock::register();
+		   if ( class_exists( '\OhMyLMS\Blocks\Blocks\OfferButtonBlock' ) ) {
+			   \OhMyLMS\Blocks\Blocks\OfferButtonBlock::register();
 		   }
 
-		   new \OMLMS\Blocks\Blocks\MembershipListBlock();
+		   new \OhMyLMS\Blocks\Blocks\MembershipListBlock();
 	}
 
 	/**
@@ -91,14 +91,14 @@ class BlocksManager {
 	 * @return void
 	 */
 	   private function include_blocks() {
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/CheckoutBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/Blocks/CourseListBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/Blocks/BuyNowBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/Blocks/OfferButtonBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/DashboardGutenbergBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/ProfileGutenbergBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/MyCoursesGutenbergBlock.php';
-		   require_once CREATOR_LMS_PATH . '/includes/Blocks/Blocks/MembershipListBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/CheckoutBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/CourseListBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/BuyNowBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/OfferButtonBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/DashboardGutenbergBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/ProfileGutenbergBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/MyCoursesGutenbergBlock.php';
+		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/MembershipListBlock.php';
 	   }
 
 	/**
@@ -110,7 +110,7 @@ class BlocksManager {
 	public function register_block_category( $categories ) {
 		// Add OhMyLMS category at the beginning
 		array_unshift( $categories, array(
-			'slug'  => 'creator-lms',
+			'slug'  => 'ohmylms',
 			'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
 			'icon'  => 'graduation-cap',
 		) );
@@ -126,10 +126,10 @@ class BlocksManager {
 	public function enqueue_block_editor_assets() {
 		// Enqueue main blocks script
 		wp_enqueue_script(
-			'creator-lms-blocks-editor',
-			CREATOR_LMS_URL . '/assets/js/blocks.js',
+			'ohmylms-blocks-editor',
+			OHMYLMS_URL . '/assets/js/blocks.js',
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
@@ -138,8 +138,8 @@ class BlocksManager {
 		
 		// Enqueue slick.js for carousel functionality in editor
 		wp_enqueue_script(
-			'omlms-slick-editor',
-			CREATOR_LMS_URL . '/assets/dist/frontend/slick.js',
+			'ohmylms-slick-editor',
+			OHMYLMS_URL . '/assets/dist/frontend/slick.js',
 			array( 'jquery' ),
 			'1.8.1',
 			true
@@ -147,35 +147,35 @@ class BlocksManager {
 		
 		// Enqueue frontend script for slick initialization in editor
 		wp_enqueue_script(
-			'omlms-frontend-editor',
-			CREATOR_LMS_URL . '/assets/dist/frontend/creator-lms.js',
-			array( 'jquery', 'omlms-slick-editor' ),
-			CREATOR_LMS_VERSION,
+			'ohmylms-frontend-editor',
+			OHMYLMS_URL . '/assets/dist/frontend/ohmylms.js',
+			array( 'jquery', 'ohmylms-slick-editor' ),
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Enqueue block editor styles
 		wp_enqueue_style(
-			'creator-lms-blocks-editor',
-			CREATOR_LMS_URL . '/assets/blocks/css/blocks-editor.css',
+			'ohmylms-blocks-editor',
+			OHMYLMS_URL . '/assets/blocks/css/blocks-editor.css',
 			array( 'wp-edit-blocks' ),
-			CREATOR_LMS_VERSION
+			OHMYLMS_VERSION
 		);
 
         // Enqueue frontend styles
 		wp_enqueue_style(
-			'creator-lms-blocks-frontend',
-			CREATOR_LMS_URL . '/assets/blocks/css/blocks-frontend.css',
+			'ohmylms-blocks-frontend',
+			OHMYLMS_URL . '/assets/blocks/css/blocks-frontend.css',
 			array(),
-			CREATOR_LMS_VERSION
+			OHMYLMS_VERSION
 		);
 		
 		// Enqueue main OhMyLMS styles in editor for ServerSideRender checkout styling
 		wp_enqueue_style(
-			'creator-lms-main-editor',
-			CREATOR_LMS_URL . '/assets/css/style.css',
+			'ohmylms-main-editor',
+			OHMYLMS_URL . '/assets/css/style.css',
 			array(),
-			CREATOR_LMS_VERSION
+			OHMYLMS_VERSION
 		);
 		
 	}
@@ -190,73 +190,73 @@ class BlocksManager {
 		
 		// Checkout block
 		wp_enqueue_script(
-			'creator-lms-checkout-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/checkout{$suffix}.js",
+			'ohmylms-checkout-block',
+			OHMYLMS_URL . "/assets/blocks/js/checkout{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Dashboard block
 		wp_enqueue_script(
-			'creator-lms-dashboard-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/dashboard{$suffix}.js",
+			'ohmylms-dashboard-block',
+			OHMYLMS_URL . "/assets/blocks/js/dashboard{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Profile block
 		wp_enqueue_script(
-			'creator-lms-profile-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/profile{$suffix}.js",
+			'ohmylms-profile-block',
+			OHMYLMS_URL . "/assets/blocks/js/profile{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// My Courses block
 		wp_enqueue_script(
-			'creator-lms-my-courses-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/my-courses{$suffix}.js",
+			'ohmylms-my-courses-block',
+			OHMYLMS_URL . "/assets/blocks/js/my-courses{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Course List block
 		wp_enqueue_script(
-			'creator-lms-course-list-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/course-list{$suffix}.js",
+			'ohmylms-course-list-block',
+			OHMYLMS_URL . "/assets/blocks/js/course-list{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Buy Now block
 		wp_enqueue_script(
-			'creator-lms-buy-now-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/buy-now{$suffix}.js",
+			'ohmylms-buy-now-block',
+			OHMYLMS_URL . "/assets/blocks/js/buy-now{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Offer Button block
 		wp_enqueue_script(
-			'creator-lms-offer-button-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/offer-button{$suffix}.js",
+			'ohmylms-offer-button-block',
+			OHMYLMS_URL . "/assets/blocks/js/offer-button{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
 		// Membership List block
 		wp_enqueue_script(
-			'creator-lms-membership-list-block',
-			CREATOR_LMS_URL . "/assets/blocks/js/membership-list{$suffix}.js",
+			'ohmylms-membership-list-block',
+			OHMYLMS_URL . "/assets/blocks/js/membership-list{$suffix}.js",
 			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 
@@ -278,43 +278,43 @@ class BlocksManager {
 	 * @return void
 	 */
 	public function enqueue_frontend_assets() {
-		$creator_lms_blocks = array(
-			'creator-lms/dashboard',
-			'creator-lms/my-courses',
-			'creator-lms/checkout',
-			'creator-lms/profile',
-			'creator-lms/course-list',
-			'creator-lms/buy-now',
-			'creator-lms/offer-button',
-			'creator-lms/membership-list',
+		$ohmylms_blocks = array(
+			'ohmylms/dashboard',
+			'ohmylms/my-courses',
+			'ohmylms/checkout',
+			'ohmylms/profile',
+			'ohmylms/course-list',
+			'ohmylms/buy-now',
+			'ohmylms/offer-button',
+			'ohmylms/membership-list',
 		);
 
-		$has_creator_lms_block = false;
-		foreach ( $creator_lms_blocks as $block_name ) {
+		$has_ohmylms_block = false;
+		foreach ( $ohmylms_blocks as $block_name ) {
 			if ( has_block( $block_name ) ) {
-				$has_creator_lms_block = true;
+				$has_ohmylms_block = true;
 				break;
 			}
 		}
 
-		if ( ! $has_creator_lms_block ) {
+		if ( ! $has_ohmylms_block ) {
 			return;
 		}
 
 		// Enqueue frontend styles
 		wp_enqueue_style(
-			'creator-lms-blocks-frontend',
-			CREATOR_LMS_URL . '/assets/blocks/css/blocks-frontend.css',
+			'ohmylms-blocks-frontend',
+			OHMYLMS_URL . '/assets/blocks/css/blocks-frontend.css',
 			array(),
-			CREATOR_LMS_VERSION
+			OHMYLMS_VERSION
 		);
 
 		// Enqueue frontend script
 		wp_enqueue_script(
-			'creator-lms-blocks-frontend',
-			CREATOR_LMS_URL . '/assets/blocks/js/blocks-frontend.js',
+			'ohmylms-blocks-frontend',
+			OHMYLMS_URL . '/assets/blocks/js/blocks-frontend.js',
 			array( 'jquery' ),
-			CREATOR_LMS_VERSION,
+			OHMYLMS_VERSION,
 			true
 		);
 	}

@@ -32,11 +32,11 @@ var uZ = function (e) {
     fill: "#F4F5F7",
     rx: "8"
   }), React.createElement("path", {
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     d: "M16.6 24.75c0 .413-.352.75-.782.75h-4.69C9.398 25.5 8 24.157 8 22.5v-12c0-1.658 1.4-3 3.127-3h10.946c1.728 0 3.128 1.342 3.128 3v6c0 .413-.352.75-.782.75-.43 0-.782-.337-.782-.75v-6c0-.825-.704-1.5-1.564-1.5H11.127c-.86 0-1.563.675-1.563 1.5v12c0 .825.703 1.5 1.563 1.5h4.691c.43 0 .782.337.782.75zM21.268 12c0-.412-.352-.75-.782-.75h-7.795c-.43 0-.782.338-.782.75s.352.75.782.75h7.795c.43 0 .782-.338.782-.75zm-1.564 3.75c0-.412-.352-.75-.782-.75h-6.23c-.431 0-.783.338-.783.75 0 .413.352.75.782.75h6.231c.43 0 .782-.337.782-.75zm-7.013 3c-.43 0-.782.337-.782.75s.352.75.782.75h2.322c.43 0 .782-.337.782-.75s-.352-.75-.782-.75h-2.322zm13.065.968a.802.802 0 00-1.103 0l-4.136 3.967-1.79-1.717a.802.802 0 00-1.102 0 .726.726 0 000 1.057l2.345 2.25a.819.819 0 001.11 0l4.691-4.5a.726.726 0 000-1.057h-.015z"
   }))), React.createElement(I.FlexWP, {
     direction: "column",
-    className: "omlms-td-thumbnail-title"
+    className: "ohmylms-td-thumbnail-title"
   }, React.createElement(v.Link, {
     to: "/quiz-edit/".concat(null == t ? void 0 : t.id),
     title: null == t ? void 0 : t.name,
@@ -53,7 +53,7 @@ var uZ = function (e) {
     align: "center",
     justify: "flex-start",
     gap: 2,
-    className: "omlms-td-thumbnail-title-actions"
+    className: "ohmylms-td-thumbnail-title-actions"
   }, React.createElement(I.ButtonWP, {
     onClick: r,
     variant: "text",
@@ -140,15 +140,15 @@ var mZ = function (e) {
     y = n.slice(a),
     b = n.length > a;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-options-container ".concat(c)
+    className: "ohmylms-options-container ".concat(c)
   }, h.map(function (e, t) {
     return React.createElement("div", {
       key: t,
-      className: "omlms-option-item ".concat(s),
+      className: "ohmylms-option-item ".concat(s),
       title: Ge(e)
     }, Ge(e));
   }), b && React.createElement("div", {
-    className: "omlms-more-options-indicator omlms-option-item ".concat(m),
+    className: "ohmylms-more-options-indicator ohmylms-option-item ".concat(m),
     onMouseEnter: function () {
       return v(!0);
     },
@@ -158,16 +158,16 @@ var mZ = function (e) {
   }, React.createElement("span", null, "+", y.length), React.createElement(qt, {
     isVisible: f && b
   }, React.createElement("div", {
-    className: "omlms-options-popup"
+    className: "ohmylms-options-popup"
   }, i ? n.map(function (e, t) {
     return React.createElement("div", {
       key: t,
-      className: "omlms-popup-option-item ".concat(s)
+      className: "ohmylms-popup-option-item ".concat(s)
     }, Ge(e));
   }) : y.map(function (e, t) {
     return React.createElement("div", {
       key: t,
-      className: "omlms-popup-option-item ".concat(s)
+      className: "ohmylms-popup-option-item ".concat(s)
     }, Ge(e));
   }))))));
 };
@@ -483,7 +483,7 @@ var wZ = function () {
         for (;;) switch (e.n) {
           case 0:
             return e.n = 1, l()({
-              path: "/creator-lms/v1/courses"
+              path: "/ohmylms/v1/courses"
             });
           case 1:
             t = e.v, Y(t);
@@ -653,7 +653,7 @@ var wZ = function () {
     filterByStatus: F,
     filterByStatusOptions: se,
     formateCategory: !1,
-    className: "omlms-quiz-listing-filter-card"
+    className: "ohmylms-quiz-listing-filter-card"
   })), React.createElement(sN.A, {
     rowKey: "id",
     columns: me,

@@ -1,11 +1,11 @@
 <?php 
 
-namespace OMLMS\Integrations\Cohorts;
+namespace OhMyLMS\Integrations\Cohorts;
 
 if (!defined('ABSPATH')) exit;
 
-use OMLMS\Integrations\Cohorts\Includes\CohortReminderScheduler;
-use \OMLMS\Integrations\Cohorts\Includes\Hooks;
+use OhMyLMS\Integrations\Cohorts\Includes\CohortReminderScheduler;
+use \OhMyLMS\Integrations\Cohorts\Includes\Hooks;
 
 class Cohorts {
 

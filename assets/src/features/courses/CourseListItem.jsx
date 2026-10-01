@@ -35,7 +35,7 @@ export function createCourseListItem(readRuntime) {
         <Controls.FlexWP align={'start'} justify={'start'} gap={4}>
           <v.Link
             to={'/course-edit/'.concat(null == course ? void 0 : course.id)}
-            className={'omlms-td-thumbnail'}
+            className={'ohmylms-td-thumbnail'}
           >
             {null != course && course.image_src ? (
               <gG.A shape={'square'} src={course.image_src} size={100} />
@@ -47,7 +47,7 @@ export function createCourseListItem(readRuntime) {
               </span>
             )}
           </v.Link>
-          <Controls.FlexWP direction={'column'} className={'omlms-td-thumbnail-title'}>
+          <Controls.FlexWP direction={'column'} className={'ohmylms-td-thumbnail-title'}>
             <v.Link
               to={'/course-edit/'.concat(null == course ? void 0 : course.id)}
               title={null == course ? void 0 : course.name}
@@ -75,7 +75,7 @@ export function createCourseListItem(readRuntime) {
               align={'center'}
               justify={'flex-start'}
               gap={1}
-              className={'omlms-td-thumbnail-title-actions'}
+              className={'ohmylms-td-thumbnail-title-actions'}
             >
               <Controls.ButtonWP
                 onClick={a}

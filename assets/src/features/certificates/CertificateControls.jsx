@@ -16,7 +16,7 @@ export function createCertificateControls(readRuntime) {
       kL: MemoCertificateTextField,
       y: WordPressData,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)(),
+    var e = true,
       t = TL((0, ReactHooks.useState)(D('instructor_signature_img', 'src')), 2),
       n = t[0],
       r = t[1],
@@ -138,7 +138,7 @@ export function createCertificateControls(readRuntime) {
     var W = [
         {
           label: (0, I18n.__)('Document Color', 'ohmylms'),
-          colors: ['#FFFFFF', 'var(--omlms-primary-color)', '#F6F6F6', '#ED9702', '#000D21'],
+          colors: ['#FFFFFF', 'var(--ohmylms-primary-color)', '#F6F6F6', '#ED9702', '#000D21'],
         },
         {
           label: (0, I18n.__)('Default Color', 'ohmylms'),
@@ -176,10 +176,7 @@ export function createCertificateControls(readRuntime) {
           key: n,
           value: r,
         };
-        (!e && ['director_signature_text', 'instructor_signature_text'].includes(t)) ||
-        (!e && !t.includes('signature'))
-          ? N(!0)
-          : c.updateClassicData(a);
+        c.updateClassicData(a);
       };
     return (
       (0, ReactHooks.useEffect)(function () {
@@ -207,7 +204,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('title_text', 'style', 'color')}
                       value={s}
                       onValueChange={function (t) {
-                        e ? (d(t), z('title_text', 'content', t)) : N(!0);
+                        (d(t), z('title_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('title_text', 'style', {
@@ -231,7 +228,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('subtitle_text', 'style', 'color')}
                       value={p}
                       onValueChange={function (t) {
-                        e ? (f(t), z('subtitle_text', 'content', t)) : N(!0);
+                        (f(t), z('subtitle_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('subtitle_text', 'style', {
@@ -255,7 +252,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('description_text', 'style', 'color')}
                       value={h}
                       onValueChange={function (t) {
-                        e ? (_(t), z('description_text', 'content', t)) : N(!0);
+                        (_(t), z('description_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('description_text', 'style', {
@@ -301,7 +298,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('recognition_text', 'style', 'color')}
                       value={R}
                       onValueChange={function (t) {
-                        e ? (x(t), z('recognition_text', 'content', t)) : N(!0);
+                        (x(t), z('recognition_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('recognition_text', 'style', {
@@ -325,7 +322,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('instructor_signature_text', 'style', 'color')}
                       value={j}
                       onValueChange={function (t) {
-                        e ? (A(t), z('instructor_signature_text', 'content', t)) : N(!0);
+                        (A(t), z('instructor_signature_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('instructor_signature_text', 'style', {
@@ -349,7 +346,7 @@ export function createCertificateControls(readRuntime) {
                       color={D('director_signature_text', 'style', 'color')}
                       value={P}
                       onValueChange={function (t) {
-                        e ? (O(t), z('director_signature_text', 'content', t)) : N(!0);
+                        (O(t), z('director_signature_text', 'content', t));
                       }}
                       onColorChange={function (e) {
                         return z('director_signature_text', 'style', {

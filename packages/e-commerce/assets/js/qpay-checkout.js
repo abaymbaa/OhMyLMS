@@ -1,12 +1,12 @@
 /* Native QPay presentation. Checkout owns form submission; this handler owns pending payments. */
 (function ($) {
     'use strict';
-    if (typeof omlms_qpay_params === 'undefined') return;
-    var config = omlms_qpay_params, i18n = config.i18n;
+    if (typeof ohmylms_qpay_params === 'undefined') return;
+    var config = ohmylms_qpay_params, i18n = config.i18n;
     var attempt = null, form = null, modal = null, timer = null, generation = 0, started = 0, opener = null;
     var storageKey = 'ohmylms.qpay.' + location.pathname;
     function save() { try { sessionStorage.setItem(storageKey, JSON.stringify(attempt)); } catch (_) {} }
-    function clear() { attempt = null; try { sessionStorage.removeItem(storageKey); } catch (_) {} $('.omlms-qpay-resume').remove(); }
+    function clear() { attempt = null; try { sessionStorage.removeItem(storageKey); } catch (_) {} $('.ohmylms-qpay-resume').remove(); }
     function fingerprint($form) {
         var fields = JSON.stringify($form.serializeArray().filter(function (field) {
             return !/nonce|password|card|secret|_wp_http_referer/i.test(field.name);
@@ -19,23 +19,23 @@
     function unlock() {
         if (form) {
             form.removeClass('processing');
-            form.find('.creator-lms-place-order-button').prop('disabled', false);
-            form.find('.creator-lms-loader').hide();
+            form.find('.ohmylms-place-order-button').prop('disabled', false);
+            form.find('.ohmylms-loader').hide();
         }
     }
     function stop() { clearTimeout(timer); generation++; }
     function close() { stop(); modal[0].close(); unlock(); if (opener) opener.focus(); }
-    function status(message) { modal.find('.omlms-qpay-status').text(message); }
+    function status(message) { modal.find('.ohmylms-qpay-status').text(message); }
     function build() {
         if (modal) return;
-        modal = $('<dialog class="omlms-qpay-modal" aria-labelledby="omlms-qpay-title"></dialog>');
-        $('<h2 id="omlms-qpay-title"></h2>').text(i18n.title).appendTo(modal);
-        $('<button type="button" class="omlms-qpay-close"></button>').text(i18n.close).on('click', close).appendTo(modal);
-        $('<img class="omlms-qpay-qr" alt="QPay QR">').appendTo(modal);
-        $('<p class="omlms-qpay-bank-label"></p>').text(i18n.banks).appendTo(modal);
-        $('<div class="omlms-qpay-banks"></div>').appendTo(modal);
-        $('<p class="omlms-qpay-status" role="status" aria-live="polite"></p>').appendTo(modal);
-        $('<button type="button" class="omlms-qpay-check"></button>').text(i18n.check).on('click', resumeAttempt).appendTo(modal);
+        modal = $('<dialog class="ohmylms-qpay-modal" aria-labelledby="ohmylms-qpay-title"></dialog>');
+        $('<h2 id="ohmylms-qpay-title"></h2>').text(i18n.title).appendTo(modal);
+        $('<button type="button" class="ohmylms-qpay-close"></button>').text(i18n.close).on('click', close).appendTo(modal);
+        $('<img class="ohmylms-qpay-qr" alt="QPay QR">').appendTo(modal);
+        $('<p class="ohmylms-qpay-bank-label"></p>').text(i18n.banks).appendTo(modal);
+        $('<div class="ohmylms-qpay-banks"></div>').appendTo(modal);
+        $('<p class="ohmylms-qpay-status" role="status" aria-live="polite"></p>').appendTo(modal);
+        $('<button type="button" class="ohmylms-qpay-check"></button>').text(i18n.check).on('click', resumeAttempt).appendTo(modal);
         modal.on('cancel', function (event) { event.preventDefault(); close(); });
         modal.appendTo(document.body);
     }
@@ -47,13 +47,13 @@
     function render(data) {
         build();
         var image = typeof data.qr_image === 'string' ? data.qr_image.replace(/^data:image\/png;base64,/, '') : '';
-        modal.find('.omlms-qpay-qr').toggle(!!image).attr('src', image && /^[A-Za-z0-9+/=\r\n]+$/.test(image) ? 'data:image/png;base64,' + image : '');
-        var banks = modal.find('.omlms-qpay-banks').empty();
+        modal.find('.ohmylms-qpay-qr').toggle(!!image).attr('src', image && /^[A-Za-z0-9+/=\r\n]+$/.test(image) ? 'data:image/png;base64,' + image : '');
+        var banks = modal.find('.ohmylms-qpay-banks').empty();
         (Array.isArray(data.urls) ? data.urls : []).forEach(function (bank) {
             if (!bank || !validBankLink(bank.link)) return;
-            $('<a class="omlms-qpay-bank"></a>').attr({href: bank.link, rel: 'noopener noreferrer'}).text(bank.description || bank.name || 'Bank').appendTo(banks);
+            $('<a class="ohmylms-qpay-bank"></a>').attr({href: bank.link, rel: 'noopener noreferrer'}).text(bank.description || bank.name || 'Bank').appendTo(banks);
         });
-        modal.find('.omlms-qpay-bank-label').toggle(banks.children().length > 0);
+        modal.find('.ohmylms-qpay-bank-label').toggle(banks.children().length > 0);
         opener = document.activeElement;
         if (!modal[0].open) modal[0].showModal();
         status(data.payment_error || i18n.waiting);
@@ -74,7 +74,7 @@
         function tick() {
             if (!attempt || generation !== current || !modal[0].open) return;
             if (Date.now() - started > 300000) { status(i18n.paused); return; }
-            request('omlms_qpay_check_payment').done(function (response) {
+            request('ohmylms_qpay_check_payment').done(function (response) {
                 if (generation !== current) return;
                 if (response.success && response.data.status === 'paid') { paid(response.data); return; }
                 status(response.success ? i18n.waiting : (response.data.message || i18n.error));
@@ -88,15 +88,15 @@
         tick();
     }
     function banner() {
-        if ($('.omlms-qpay-resume').length) return;
-        $('<button type="button" class="omlms-qpay-resume"></button>').text(i18n.resume).on('click', resumeAttempt)
-            .insertBefore('#creator-lms-checkout-form');
+        if ($('.ohmylms-qpay-resume').length) return;
+        $('<button type="button" class="ohmylms-qpay-resume"></button>').text(i18n.resume).on('click', resumeAttempt)
+            .insertBefore('#ohmylms-checkout-form');
     }
     function resumeAttempt() {
         if (!attempt) return;
         render(attempt); stop();
         var current = generation;
-        request('omlms_qpay_resume').done(function (response) {
+        request('ohmylms_qpay_resume').done(function (response) {
             if (generation !== current) return;
             if (!response.success) { status(response.data.message || i18n.error); return; }
             if (response.data.status === 'paid') { paid(response.data); return; }
@@ -119,7 +119,7 @@
         }
     });
     $(function () {
-        form = $('#creator-lms-checkout-form');
+        form = $('#ohmylms-checkout-form');
         try { attempt = JSON.parse(sessionStorage.getItem(storageKey)); } catch (_) {}
         if (attempt && attempt.order_id && attempt.payment_token) banner(); else attempt = null;
     });

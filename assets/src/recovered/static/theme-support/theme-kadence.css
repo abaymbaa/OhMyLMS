@@ -1,36 +1,36 @@
-.theme-kadence.creator-lms-page .content-area {
+.theme-kadence.ohmylms-page .content-area {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-.theme-kadence.creator-lms-page .content-area .site-container {
+.theme-kadence.ohmylms-page .content-area .site-container {
     max-width: 100%;
     padding: 0;
 }
 
-.theme-kadence.creator-lms-page .content-area .entry.single-entry {
+.theme-kadence.ohmylms-page .content-area .entry.single-entry {
     box-shadow: none;
 }
 
-.theme-kadence.creator-lms-page .content-area .entry-content-wrap {
+.theme-kadence.ohmylms-page .content-area .entry-content-wrap {
     padding: 0;
 }
 
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="text"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="email"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="url"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="password"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="search"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="number"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="tel"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="range"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="date"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="month"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="week"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="time"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="datetime"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="datetime-local"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper input[type="color"]:focus,
-.theme-kadence.creator-lms-page .creator-lms-checkout-form-wrapper textarea:focus {
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="text"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="email"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="url"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="password"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="search"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="number"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="tel"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="range"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="date"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="month"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="week"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="time"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="datetime"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="datetime-local"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper input[type="color"]:focus,
+.theme-kadence.ohmylms-page .ohmylms-checkout-form-wrapper textarea:focus {
     border-color: #ebebef;
 }

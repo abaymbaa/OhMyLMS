@@ -4,21 +4,21 @@
  *
  * Handles CRUD operations for WP Fusion triggers
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes\Rest;
+namespace OhMyLMS\Integrations\WPFusion\Includes\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use OMLMS\Integrations\WPFusion\Includes\WPFusionMigration;
+use OhMyLMS\Integrations\WPFusion\Includes\WPFusionMigration;
 
 /**
  * Class WPFusionTriggersController
  *
- * @package OMLMS\Integrations\WPFusion\Includes\Rest
+ * @package OhMyLMS\Integrations\WPFusion\Includes\Rest
  * @since 1.0.0
  */
 class WPFusionTriggersController {
@@ -42,7 +42,7 @@ class WPFusionTriggersController {
      *
      * @var string
      */
-    protected $namespace = 'creatorlms/v1';
+    protected $namespace = 'ohmylms/v1';
 
     /**
      * Get instance
@@ -405,7 +405,7 @@ class WPFusionTriggersController {
     }
 
     /**
-     * Get available CreatorLMS events
+     * Get available OhMyLMS events
      *
      * @since 1.0.0
      *
@@ -416,27 +416,27 @@ class WPFusionTriggersController {
     public function get_events( WP_REST_Request $request ) {
         $events = array(
             array(
-                'value' => 'creator_lms_course_completed',
+                'value' => 'ohmylms_course_completed',
                 'label' => __( 'Course Completed', 'ohmylms' ),
             ),
             array(
-                'value' => 'creator_lms_lesson_completed',
+                'value' => 'ohmylms_lesson_completed',
                 'label' => __( 'Lesson Completed', 'ohmylms' ),
             ),
             array(
-                'value' => 'creator_lms_manual_student_enrollment',
+                'value' => 'ohmylms_manual_student_enrollment',
                 'label' => __( 'Student Enrolled', 'ohmylms' ),
             ),
             array(
-                'value' => 'creator_lms_quiz_submission',
+                'value' => 'ohmylms_quiz_submission',
                 'label' => __( 'Quiz Submitted', 'ohmylms' ),
             ),
             array(
-                'value' => 'creator_lms_after_assignment_submitted',
+                'value' => 'ohmylms_after_assignment_submitted',
                 'label' => __( 'Assignment Submitted', 'ohmylms' ),
             ),
             array(
-                'value' => 'creator_lms_quiz_result',
+                'value' => 'ohmylms_quiz_result',
                 'label' => __( 'Quiz Result', 'ohmylms' ),
             ),
         );
@@ -499,7 +499,7 @@ class WPFusionTriggersController {
                 'required'    => true,
             ),
             'trigger_event' => array(
-                'description' => __( 'CreatorLMS Event', 'ohmylms' ),
+                'description' => __( 'OhMyLMS Event', 'ohmylms' ),
                 'type'        => 'string',
                 'required'    => true,
             ),

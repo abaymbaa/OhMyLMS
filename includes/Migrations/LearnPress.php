@@ -1,18 +1,18 @@
 <?php
 /**
  * @access public
- * @package OMLMS\Migrations
+ * @package OhMyLMS\Migrations
  *
- * @author CreatorLms
+ * @author OhMyLMS
  * @since 1.0.0
  */
-namespace OMLMS\Migrations;
+namespace OhMyLMS\Migrations;
 
 /**
  * Migration class for LearnPress.
  * This class is responsible for migrating LearnPress courses to OhMyLMS.
  *
- * @author CreatorLms
+ * @author OhMyLMS
  * @since 1.0.0
  */
 class LearnPress {
@@ -82,7 +82,7 @@ class LearnPress {
 			'post_excerpt'  => isset( $this->lp_course['post_excerpt'] ) ? sanitize_text_field( $this->lp_course['post_excerpt'] ) : '',
 			'post_status'   => 'draft',
 			'post_author'   => isset( $this->lp_course['post_author'] ) ? intval( $this->lp_course['post_author'] ) : get_current_user_id(),
-			'post_type'     => 'omlms-course', // Custom post type for OhMyLMS course
+			'post_type'     => 'ohmylms-course', // Custom post type for OhMyLMS course
 			'post_date'     => isset( $this->lp_course['post_date'], $this->lp_course['post_status'] ) && 'future' === $this->lp_course['post_status'] ? gmdate( 'Y-m-d H:i:s', strtotime( $this->lp_course['post_date'] ) ) : current_datetime()->format( 'Y-m-d H:i:s' ),
 			'post_password' => isset( $this->lp_course['post_password'] ) ? $this->lp_course['post_password'] : '',
 		);
@@ -235,13 +235,13 @@ class LearnPress {
 		// Get course categories
 		$categories = wp_get_post_terms( $this->lp_course_id, 'course_category', array( 'fields' => 'ids' ) );
 		if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
-			wp_set_post_terms( $new_course_id, $categories, 'omlms-course-category' );
+			wp_set_post_terms( $new_course_id, $categories, 'ohmylms-course-category' );
 		}
 
 		// Get course tags
 		$tags = wp_get_post_terms( $this->lp_course_id, 'course_tag', array( 'fields' => 'ids' ) );
 		if ( ! is_wp_error( $tags ) && ! empty( $tags ) ) {
-			wp_set_post_terms( $new_course_id, $tags, 'omlms-course-tag' );
+			wp_set_post_terms( $new_course_id, $tags, 'ohmylms-course-tag' );
 		}
 	}
 
@@ -298,7 +298,7 @@ class LearnPress {
 				'post_content' => wp_kses_post( $section_description ),
 				'post_status'  => 'publish',
 				'post_author'  => $author_id,
-				'post_type'    => 'omlms-chapter',
+				'post_type'    => 'ohmylms-chapter',
 			);
 
 			// Insert the new chapter
@@ -310,7 +310,7 @@ class LearnPress {
 
 			// Insert the chapter-course relationship into the custom table
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_chapter_relationship',
+				$wpdb->prefix . 'ohmylms_chapter_relationship',
 				array(
 					'course_id'    => $new_course_id,
 					'chapter_id'   => $new_chapter_id,
@@ -390,7 +390,7 @@ class LearnPress {
 			'post_excerpt' => sanitize_text_field( $lesson->post_excerpt ),
 			'post_status'  => 'publish',
 			'post_author'  => $lesson->post_author,
-			'post_type'    => 'omlms-lesson',
+			'post_type'    => 'ohmylms-lesson',
 		);
 
 		// Insert the new lesson
@@ -411,7 +411,7 @@ class LearnPress {
 
 		// Insert the lesson-content relationship into the custom table
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_content_relationship',
+			$wpdb->prefix . 'ohmylms_content_relationship',
 			array(
 				'chapter_id'   => $new_chapter_id,
 				'content_id'   => $new_lesson_id,
@@ -474,7 +474,7 @@ class LearnPress {
 			'post_excerpt' => sanitize_text_field( $quiz->post_excerpt ),
 			'post_status'  => 'publish',
 			'post_author'  => $quiz->post_author,
-			'post_type'    => 'omlms-quiz',
+			'post_type'    => 'ohmylms-quiz',
 		);
 
 		// Insert the new quiz
@@ -486,7 +486,7 @@ class LearnPress {
 
 		// Insert the quiz-content relationship into the custom table
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_content_relationship',
+			$wpdb->prefix . 'ohmylms_content_relationship',
 			array(
 				'chapter_id'   => $new_chapter_id,
 				'content_id'   => $new_quiz_id,
@@ -603,11 +603,6 @@ class LearnPress {
 
 			// Get question type
 			$question_type = get_post_meta( $old_question_id, '_lp_type', true );
-			$pro_types = array( 'fill_in_blanks' );
-			
-			if( !creator_lms_is_pro_license() && in_array( $question_type, $pro_types, true ) ) {
-				continue;
-			}
 
 			$mapped_type = $this->map_question_type( $question_type );
 
@@ -617,7 +612,7 @@ class LearnPress {
 				'post_content' => wp_kses_post( $question_post->post_content ),
 				'post_status'  => 'publish',
 				'post_author'  => $question_post->post_author,
-				'post_type'    => 'omlms-question',
+				'post_type'    => 'ohmylms-question',
 			);
 
 			$new_question_id = wp_insert_post( $new_question_data );
@@ -632,7 +627,7 @@ class LearnPress {
 
 			// Insert question-quiz relationship
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_quiz_questions_relationship',
+				$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
 				array(
 					'quiz_id'      => $new_quiz_id,
 					'question_id'  => $new_question_id,
@@ -732,7 +727,7 @@ class LearnPress {
 
 			// Insert answer
 			$wpdb->insert(
-				"{$wpdb->prefix}omlms_question_answers",
+				"{$wpdb->prefix}ohmylms_question_answers",
 				array(
 					'question_id'  => $new_question_id,
 					'answer'       => wp_kses_post( $answer_text ),
@@ -782,7 +777,7 @@ class LearnPress {
 
 			// Enroll student in the new course
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_course_enrollment',
+				$wpdb->prefix . 'ohmylms_course_enrollment',
 				array(
 					'user_id'   => $user_id,
 					'course_id' => $new_course_id,

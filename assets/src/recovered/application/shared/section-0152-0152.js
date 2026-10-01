@@ -62,7 +62,7 @@ var C1 = function (e) {
         for (;;) switch (e.p = e.n) {
           case 0:
             return e.p = 0, p.setLoadingSetting(!0), e.n = 1, l()({
-              path: "creator-lms/v1/settings/currency"
+              path: "ohmylms/v1/settings/currency"
             });
           case 1:
             t = e.v, p.setCurrencySettings(t), n = {}, null == t || t.forEach(function (e) {
@@ -82,7 +82,7 @@ var C1 = function (e) {
       var e = S1(_1().m(function e(t) {
         var n, r, a, o;
         return _1().w(function (e) {
-          for (;;) if (0 === e.n) return r = Object.entries(null == m || null === (n = m.creator_lms_currency) || void 0 === n ? void 0 : n.options).map(function (e) {
+          for (;;) if (0 === e.n) return r = Object.entries(null == m || null === (n = m.ohmylms_currency) || void 0 === n ? void 0 : n.options).map(function (e) {
             var t = R1(e, 2),
               n = t[0];
             return {
@@ -120,21 +120,21 @@ var C1 = function (e) {
     title: (0, b.__)("Currency", "ohmylms"),
     tooltip: (0, b.__)("Select your preferred currency. It's listed with associated countries for easy selection", "ohmylms"),
     placeholder: (0, b.__)("Type to Select Currency", "ohmylms"),
-    data: h(null == m || null === (t = m.creator_lms_currency) || void 0 === t ? void 0 : t.options),
+    data: h(null == m || null === (t = m.ohmylms_currency) || void 0 === t ? void 0 : t.options),
     notFoundMessage: (0, b.__)("Nothing Found", "ohmylms"),
     onChange: function (e) {
-      return _("creator_lms_currency", e.value);
+      return _("ohmylms_currency", e.value);
     },
     staticSearch: !1,
     value: [{
       label: React.createElement("span", {
         dangerouslySetInnerHTML: {
-          __html: null == m || null === (n = m.creator_lms_currency) || void 0 === n ? void 0 : n.options[null == m || null === (r = m.creator_lms_currency) || void 0 === r ? void 0 : r.value]
+          __html: null == m || null === (n = m.ohmylms_currency) || void 0 === n ? void 0 : n.options[null == m || null === (r = m.ohmylms_currency) || void 0 === r ? void 0 : r.value]
         }
       }),
-      value: null == m || null === (a = m.creator_lms_currency) || void 0 === a ? void 0 : a.value
+      value: null == m || null === (a = m.ohmylms_currency) || void 0 === a ? void 0 : a.value
     }],
-    defaultOptions: h(null == m || null === (o = m.creator_lms_currency) || void 0 === o ? void 0 : o.options),
+    defaultOptions: h(null == m || null === (o = m.ohmylms_currency) || void 0 === o ? void 0 : o.options),
     loadOptions: E,
     isClearable: !1,
     isSearchable: !0,
@@ -145,13 +145,13 @@ var C1 = function (e) {
     title: (0, b.__)("Currency Position", "ohmylms"),
     tooltip: (0, b.__)("Choose where the currency symbol appears relative to the price.", "ohmylms"),
     placeholder: (0, b.__)("Type to Select Position", "ohmylms"),
-    data: h(null == m || null === (i = m.creator_lms_currency_pos) || void 0 === i ? void 0 : i.options),
+    data: h(null == m || null === (i = m.ohmylms_currency_pos) || void 0 === i ? void 0 : i.options),
     notFoundMessage: (0, b.__)("Nothing Found", "ohmylms"),
     isMultiple: !1,
     onChange: function (e) {
-      return _("creator_lms_currency_pos", e);
+      return _("ohmylms_currency_pos", e);
     },
-    value: null == m || null === (c = m.creator_lms_currency_pos) || void 0 === c ? void 0 : c.value,
+    value: null == m || null === (c = m.ohmylms_currency_pos) || void 0 === c ? void 0 : c.value,
     staticSearch: !0,
     showSearch: !1,
     headerFontSize: "16px"
@@ -160,10 +160,10 @@ var C1 = function (e) {
     tooltip: (0, b.__)("This sets the thousands separator of displayed prices.", "ohmylms"),
     inputType: "text",
     placeholder: (0, b.__)("Write Thousand Separator", "ohmylms"),
-    value: (null == m || null === (u = m.creator_lms_price_thousand_sep) || void 0 === u ? void 0 : u.value) || "",
-    className: "currency-single-settings omlms-separator-input-card",
+    value: (null == m || null === (u = m.ohmylms_price_thousand_sep) || void 0 === u ? void 0 : u.value) || "",
+    className: "currency-single-settings ohmylms-separator-input-card",
     onChange: function (e) {
-      return _("creator_lms_price_thousand_sep", e);
+      return _("ohmylms_price_thousand_sep", e);
     },
     headerFontSize: "16px"
   }), React.createElement(Pf, {
@@ -171,10 +171,10 @@ var C1 = function (e) {
     placeholder: (0, b.__)("Write Decimal Separator", "ohmylms"),
     tooltip: (0, b.__)("This sets the decimal separator of displayed prices.", "ohmylms"),
     inputType: "text",
-    value: (null == m || null === (s = m.creator_lms_price_decimal_sep) || void 0 === s ? void 0 : s.value) || "",
-    className: "currency-single-settings omlms-separator-input-card",
+    value: (null == m || null === (s = m.ohmylms_price_decimal_sep) || void 0 === s ? void 0 : s.value) || "",
+    className: "currency-single-settings ohmylms-separator-input-card",
     onChange: function (e) {
-      return _("creator_lms_price_decimal_sep", e);
+      return _("ohmylms_price_decimal_sep", e);
     },
     headerFontSize: "16px"
   }), React.createElement(Pf, {
@@ -184,9 +184,9 @@ var C1 = function (e) {
     placeholder: "2",
     inputType: "number",
     showDivider: !1,
-    value: (null == m || null === (d = m.creator_lms_price_num_decimals) || void 0 === d ? void 0 : d.value) || "",
+    value: (null == m || null === (d = m.ohmylms_price_num_decimals) || void 0 === d ? void 0 : d.value) || "",
     onChange: function (e) {
-      return _("creator_lms_price_num_decimals", e);
+      return _("ohmylms_price_num_decimals", e);
     },
     spacerMarginBottom: 0,
     headerFontSize: "16px"
@@ -451,8 +451,8 @@ var z1 = function (e) {
     v = (0, y.useDispatch)(T.default),
     h = (0, z.A)(),
     _ = (h.openNotificationWithIcon, h.contextHolder),
-    w = (null == f || null === (t = f.creator_lms_countries) || void 0 === t ? void 0 : t.value) || [],
-    E = (null == f || null === (n = f.creator_lms_states) || void 0 === n ? void 0 : n.value) || {},
+    w = (null == f || null === (t = f.ohmylms_countries) || void 0 === t ? void 0 : t.value) || [],
+    E = (null == f || null === (n = f.ohmylms_states) || void 0 === n ? void 0 : n.value) || {},
     S = N1((0, g.useState)({
       country: "",
       state: "",
@@ -481,7 +481,7 @@ var z1 = function (e) {
           return r;
         });
         return v.updateTaxSettings({
-          creator_lms_new_tax_rates: {
+          ohmylms_new_tax_rates: {
             value: a
           }
         }), a;
@@ -493,13 +493,13 @@ var z1 = function (e) {
         for (;;) switch (e.p = e.n) {
           case 0:
             return e.p = 0, v.setLoadingSetting(!0), e.n = 1, l()({
-              path: "creator-lms/v1/settings/tax"
+              path: "ohmylms/v1/settings/tax"
             });
           case 1:
             t = e.v, v.setTaxSettings(t), n = t.find(function (e) {
-              return "creator_lms_existing_tax_rates" === e.id;
+              return "ohmylms_existing_tax_rates" === e.id;
             }), r = t.find(function (e) {
-              return "creator_lms_new_tax_rates" === e.id;
+              return "ohmylms_new_tax_rates" === e.id;
             }), null != n && n.value && Array.isArray(n.value) && C(n.value), null != r && r.value && Array.isArray(r.value) && j(r.value), v.setLoadingSetting(!1), e.n = 3;
             break;
           case 2:
@@ -515,8 +515,8 @@ var z1 = function (e) {
     F();
   }, [F]), (0, g.useEffect)(function () {
     var e, t;
-    null != f && null !== (e = f.creator_lms_existing_tax_rates) && void 0 !== e && e.value && Array.isArray(f.creator_lms_existing_tax_rates.value) && C(f.creator_lms_existing_tax_rates.value), null != f && null !== (t = f.creator_lms_new_tax_rates) && void 0 !== t && t.value && Array.isArray(f.creator_lms_new_tax_rates.value) && j(f.creator_lms_new_tax_rates.value);
-  }, [null == f || null === (r = f.creator_lms_existing_tax_rates) || void 0 === r ? void 0 : r.value, null == f || null === (a = f.creator_lms_new_tax_rates) || void 0 === a ? void 0 : a.value]), React.createElement(React.Fragment, null, _, React.createElement(I.CardWP, {
+    null != f && null !== (e = f.ohmylms_existing_tax_rates) && void 0 !== e && e.value && Array.isArray(f.ohmylms_existing_tax_rates.value) && C(f.ohmylms_existing_tax_rates.value), null != f && null !== (t = f.ohmylms_new_tax_rates) && void 0 !== t && t.value && Array.isArray(f.ohmylms_new_tax_rates.value) && j(f.ohmylms_new_tax_rates.value);
+  }, [null == f || null === (r = f.ohmylms_existing_tax_rates) || void 0 === r ? void 0 : r.value, null == f || null === (a = f.ohmylms_new_tax_rates) || void 0 === a ? void 0 : a.value]), React.createElement(React.Fragment, null, _, React.createElement(I.CardWP, {
     isBorderless: !0
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0,
@@ -528,11 +528,11 @@ var z1 = function (e) {
   }, React.createElement(Kt, {
     title: (0, b.__)("Enable Tax Calculations", "ohmylms"),
     description: (0, b.__)("When taxes are enabled, rates are applied based on the customer’s address entered at checkout.", "ohmylms"),
-    isChecked: "yes" === (null == f || null === (o = f.creator_lms_tax_enabled) || void 0 === o ? void 0 : o.value),
+    isChecked: "yes" === (null == f || null === (o = f.ohmylms_tax_enabled) || void 0 === o ? void 0 : o.value),
     onChange: function (e) {
-      return A("creator_lms_tax_enabled", e ? "yes" : "no");
+      return A("ohmylms_tax_enabled", e ? "yes" : "no");
     },
-    customClass: "omlms-tax-enable-switcher",
+    customClass: "ohmylms-tax-enable-switcher",
     isDefaultStyle: !0,
     align: "flex-start",
     conditionalChild: React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
@@ -550,18 +550,18 @@ var z1 = function (e) {
     }, React.createElement(Pf, {
       title: (0, b.__)("Tax Label", "ohmylms"),
       description: (0, b.__)('Label to display for tax (e.g., "VAT", "GST", "Sales Tax").', "ohmylms"),
-      value: (null == f || null === (i = f.creator_lms_tax_label) || void 0 === i ? void 0 : i.value) || "Tax",
+      value: (null == f || null === (i = f.ohmylms_tax_label) || void 0 === i ? void 0 : i.value) || "Tax",
       onChange: function (e) {
-        return A("creator_lms_tax_label", e);
+        return A("ohmylms_tax_label", e);
       },
       placeholder: (0, b.__)("Tax", "ohmylms"),
       headerFontSize: "16px"
     }), React.createElement(Nm, {
       title: (0, b.__)("Prices Include Tax", "ohmylms"),
       description: (0, b.__)("This controls if entered prices include tax or not.", "ohmylms"),
-      value: (null == f || null === (c = f.creator_lms_prices_include_tax) || void 0 === c ? void 0 : c.value) || "no",
+      value: (null == f || null === (c = f.ohmylms_prices_include_tax) || void 0 === c ? void 0 : c.value) || "no",
       onChange: function (e) {
-        return A("creator_lms_prices_include_tax", e);
+        return A("ohmylms_prices_include_tax", e);
       },
       staticSearch: !0,
       headerFontSize: "16px",
@@ -583,20 +583,20 @@ var z1 = function (e) {
     }, React.createElement(Kt, {
       title: (0, b.__)("Enable EU VAT", "ohmylms"),
       description: (0, b.__)("When this is checked, VAT taxes will be calculated for any customers who are located in the European Union. The plugin comes with the current standard VAT rate for each EU country. You can change these as required in the Tax Rates section below.", "ohmylms"),
-      isChecked: "yes" === (null == f || null === (u = f.creator_lms_eu_vat_enabled) || void 0 === u ? void 0 : u.value),
+      isChecked: "yes" === (null == f || null === (u = f.ohmylms_eu_vat_enabled) || void 0 === u ? void 0 : u.value),
       onChange: function (e) {
-        return A("creator_lms_eu_vat_enabled", e ? "yes" : "no");
+        return A("ohmylms_eu_vat_enabled", e ? "yes" : "no");
       },
       headerFontSize: "16px",
       isDefaultStyle: !0,
       align: "flex-start",
       variant: "secondary"
-    }), "yes" === (null == f || null === (s = f.creator_lms_eu_vat_enabled) || void 0 === s ? void 0 : s.value) && React.createElement(React.Fragment, null, React.createElement(Kt, {
+    }), "yes" === (null == f || null === (s = f.ohmylms_eu_vat_enabled) || void 0 === s ? void 0 : s.value) && React.createElement(React.Fragment, null, React.createElement(Kt, {
       title: (0, b.__)("Disable VAT Number Validation", "ohmylms"),
       description: (0, b.__)("When this option is checked, the VAT number will not be validated by VIES online service.", "ohmylms"),
-      isChecked: "yes" === (null == f || null === (d = f.creator_lms_disable_vat_validation) || void 0 === d ? void 0 : d.value),
+      isChecked: "yes" === (null == f || null === (d = f.ohmylms_disable_vat_validation) || void 0 === d ? void 0 : d.value),
       onChange: function (e) {
-        return A("creator_lms_disable_vat_validation", e ? "yes" : "no");
+        return A("ohmylms_disable_vat_validation", e ? "yes" : "no");
       },
       headerFontSize: "16px",
       isDefaultStyle: !0,
@@ -605,9 +605,9 @@ var z1 = function (e) {
     }), React.createElement(Pf, {
       title: (0, b.__)("VAT Number Field Label", "ohmylms"),
       description: (0, b.__)("The label that appears at checkout for the VAT number field.", "ohmylms"),
-      value: (null == f || null === (m = f.creator_lms_vat_number_label) || void 0 === m ? void 0 : m.value) || "",
+      value: (null == f || null === (m = f.ohmylms_vat_number_label) || void 0 === m ? void 0 : m.value) || "",
       onChange: function (e) {
-        return A("creator_lms_vat_number_label", e);
+        return A("ohmylms_vat_number_label", e);
       },
       placeholder: (0, b.__)("VAT Number", "ohmylms"),
       headerFontSize: "16px"
@@ -631,36 +631,36 @@ var z1 = function (e) {
     }, (0, b.__)("Configure tax rates for different countries and regions. You can add multiple tax rates for different locations.", "ohmylms")), React.createElement(I.SpacerWP, {
       marginBottom: 4
     }), React.createElement("div", {
-      className: "omlms-table-wrapper omlms-tax-table",
+      className: "ohmylms-table-wrapper ohmylms-tax-table",
       style: {
         position: "relative"
       }
     }, React.createElement("table", {
-      className: "omlms-table"
+      className: "ohmylms-table"
     }, React.createElement("thead", {
-      className: "omlms-table-thead"
+      className: "ohmylms-table-thead"
     }, React.createElement("tr", {
-      className: "omlms-table-header-row"
+      className: "ohmylms-table-header-row"
     }, React.createElement("th", {
-      className: "omlms-th tax-country"
+      className: "ohmylms-th tax-country"
     }, (0, b.__)("Country", "ohmylms")), React.createElement("th", {
-      className: "omlms-th tax-state-code"
+      className: "ohmylms-th tax-state-code"
     }, (0, b.__)("State Code", "ohmylms")), React.createElement("th", {
-      className: "omlms-th tax-country-wide"
+      className: "ohmylms-th tax-country-wide"
     }, (0, b.__)("Country Wide", "ohmylms")), React.createElement("th", {
-      className: "omlms-th tax-rate"
+      className: "ohmylms-th tax-rate"
     }, (0, b.__)("Rate", "ohmylms")), React.createElement("th", {
-      className: "omlms-th tax-action"
+      className: "ohmylms-th tax-action"
     }, React.createElement("div", {
       className: "tax-action"
     })))), React.createElement("tbody", {
-      className: "omlms-table-tbody"
+      className: "ohmylms-table-tbody"
     }, k.map(function (e) {
       return React.createElement("tr", {
         key: e.id,
-        className: "omlms-tr tax-rate-form"
+        className: "ohmylms-tr tax-rate-form"
       }, React.createElement("td", {
-        className: "omlms-td tax-country"
+        className: "ohmylms-td tax-country"
       }, React.createElement("select", {
         value: e.country,
         onChange: function (t) {
@@ -675,7 +675,7 @@ var z1 = function (e) {
           value: e.value
         }, e.label);
       }))), React.createElement("td", {
-        className: "omlms-td tax-state-code"
+        className: "ohmylms-td tax-state-code"
       }, React.createElement(I.TooltipWP, {
         text: null != e && e.countryWide ? (0, b.__)('To enable on specific state, deselect "Apply to whole country"', "ohmylms") : (0, b.__)("Select a state", "ohmylms"),
         className: "tax-state-code"
@@ -696,7 +696,7 @@ var z1 = function (e) {
           value: e.value
         }, e.label);
       })))), React.createElement("td", {
-        className: "omlms-td tax-country-wide"
+        className: "ohmylms-td tax-country-wide"
       }, React.createElement("label", {
         className: "tax-rate-checkbox-label tax-country-wide"
       }, React.createElement("input", {
@@ -709,7 +709,7 @@ var z1 = function (e) {
       }), React.createElement("span", {
         className: e.country ? "" : "tax-rate-checkbox-disabled"
       }, (0, b.__)("Apply to whole country", "ohmylms")))), React.createElement("td", {
-        className: "omlms-td tax-rate"
+        className: "ohmylms-td tax-rate"
       }, React.createElement(I.InputNumberWP, {
         value: e.rate,
         onChange: function (t) {
@@ -725,7 +725,7 @@ var z1 = function (e) {
         suffix: "%",
         className: "tax-rate"
       })), React.createElement("td", {
-        className: "omlms-td tax-action"
+        className: "ohmylms-td tax-action"
       }, React.createElement("div", {
         className: "tax-rate-remove-container tax-action"
       }, React.createElement(I.ButtonWP, {
@@ -737,7 +737,7 @@ var z1 = function (e) {
               return e.id !== t;
             });
             return v.updateTaxSettings({
-              creator_lms_new_tax_rates: {
+              ohmylms_new_tax_rates: {
                 value: n
               }
             }), n;
@@ -788,7 +788,7 @@ var z1 = function (e) {
               return e.id !== t;
             });
             return v.updateTaxSettings({
-              creator_lms_existing_tax_rates: {
+              ohmylms_existing_tax_rates: {
                 value: n
               }
             }), n;
@@ -829,7 +829,7 @@ var z1 = function (e) {
             }();
           }(t), [e]);
           return v.updateTaxSettings({
-            creator_lms_new_tax_rates: {
+            ohmylms_new_tax_rates: {
               value: n
             }
           }), n;
@@ -842,9 +842,9 @@ var z1 = function (e) {
       title: (0, b.__)("Fallback Tax Rate", "ohmylms"),
       description: (0, b.__)("Customers not in a specific rate will be charged this tax rate. Enter a percentage, such as 6.5 for 6.5%.", "ohmylms"),
       inputType: "number",
-      value: (null == f || null === (p = f.creator_lms_fallback_tax_rate) || void 0 === p ? void 0 : p.value) || "",
+      value: (null == f || null === (p = f.ohmylms_fallback_tax_rate) || void 0 === p ? void 0 : p.value) || "",
       onChange: function (e) {
-        return A("creator_lms_fallback_tax_rate", e);
+        return A("ohmylms_fallback_tax_rate", e);
       },
       placeholder: "0.00",
       min: "0",

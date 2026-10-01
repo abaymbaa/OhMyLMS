@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Pagination
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/duration.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/duration.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

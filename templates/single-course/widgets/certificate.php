@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/certificate.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 
 if( !$student ){
     return;
@@ -38,7 +38,7 @@ if( $student->get_over_all_completion_rate($course->get_id()) == 100 ){
 ?>
 
 <!-- certificate widget -->
-<div class="creator-lms-sidebar-widget with-gray-color creator-lms-widget-certificate">
+<div class="ohmylms-sidebar-widget with-gray-color ohmylms-widget-certificate">
     <h3 class="sidebar-widget-title"><?php echo __( 'Certificate', 'ohmylms' ); ?></h3>
     <p class="sidebar-widget-description">
         <?php echo __( 'Score 100% of total points to earn your Course Certificate.', 'ohmylms' ); ?>
@@ -47,7 +47,7 @@ if( $student->get_over_all_completion_rate($course->get_id()) == 100 ){
     <div class="certificate-box">
         <span class="lock-icon">
             <?php
-            include(CREATOR_LMS_DIR . '/assets/images/icon/certificate-lock-icon.php');
+            include(OHMYLMS_DIR . '/assets/images/icon/certificate-lock-icon.php');
             ?>
         </span>
 
@@ -60,19 +60,19 @@ if( $student->get_over_all_completion_rate($course->get_id()) == 100 ){
         <ul class="certificate-logo">
             <li class="singneture">
                 <?php
-                include(CREATOR_LMS_DIR . '/assets/images/icon/certificate-signature.php');
+                include(OHMYLMS_DIR . '/assets/images/icon/certificate-signature.php');
                 ?>
             </li>
 
-            <li class="creator-lms-logo">
+            <li class="ohmylms-logo">
                 <?php
-                include(CREATOR_LMS_DIR . '/assets/images/icon/certificate-creator-lms-logo.php');
+                include(OHMYLMS_DIR . '/assets/images/icon/certificate-ohmylms-logo.php');
                 ?>
             </li>
 
             <li class="barcode-logo">
                 <?php
-                include(CREATOR_LMS_DIR . '/assets/images/icon/certificate-barcode-icon.php');
+                include(OHMYLMS_DIR . '/assets/images/icon/certificate-barcode-icon.php');
                 ?>
             </li>
         </ul>

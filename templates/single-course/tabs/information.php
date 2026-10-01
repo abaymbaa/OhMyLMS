@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/tabs/information.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -17,20 +17,20 @@ $course_id = $course->get_id();
 $chapters = $course->get_chapters('objects');
 $lessons = $course->get_lessons('objects');
 
-$single_course_layout = get_option('creator_lms_single_course_page_layout','layout_1');
-$chapter_classs = 'creator-lms-chapter-layout-1';
+$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
+$chapter_classs = 'ohmylms-chapter-layout-1';
 
 if( 'layout_2' === $single_course_layout ) {
-	$chapter_classs = 'creator-lms-chapter-layout-2';
+	$chapter_classs = 'ohmylms-chapter-layout-2';
 }
 
 ?>
 
-<div class="creator-lms-course-chapters <?php echo $chapter_classs; ?>">
+<div class="ohmylms-course-chapters <?php echo $chapter_classs; ?>">
 	<?php if( 'layout_2' === $single_course_layout && count($chapters) > 0 ) { ?>
 		<div class="chapters-header">
 			<div class="chapters-header-left">
-				<h2 class="creator-lms-content-section-title chapter-header-title">
+				<h2 class="ohmylms-content-section-title chapter-header-title">
 					<?php echo __( 'Course content', 'ohmylms' ); ?>
 				</h2>
 
@@ -60,21 +60,21 @@ if( 'layout_2' === $single_course_layout ) {
 						}
 
 						//----total time----
-						if( creator_lms_format_duration($course->get_duration()) ) {
+						if( ohmylms_format_duration($course->get_duration()) ) {
 							echo ' • ';
-							echo creator_lms_format_duration($course->get_duration()).' '.__('total time', 'ohmylms');
+							echo ohmylms_format_duration($course->get_duration()).' '.__('total time', 'ohmylms');
 						}
 					?>
 				</span>
 			</div>
 
 			<div class="chapters-header-right">
-				<div class="creator-lms-chapter-toggle">
-					<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="creator-lms-chapters">
+				<div class="ohmylms-chapter-toggle">
+					<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="ohmylms-chapters">
 						<?php echo __( 'Expand all chapters', 'ohmylms' ); ?>
 					</button>
 
-					<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="creator-lms-chapters" style="display: none;">
+					<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="ohmylms-chapters" style="display: none;">
 						<?php echo __( 'Collapse all chapters', 'ohmylms' ); ?>
 					</button>
 				</div>
@@ -84,7 +84,7 @@ if( 'layout_2' === $single_course_layout ) {
 
 	<?php
 	foreach ( $chapters as $chapter ) {
-        if (\OMLMS\Extensions\Layouts::render('chapter',$chapter->get_id(),$course->get_id(),['chapter'=>$chapter,'course'=>$course])) continue;
+        if (\OhMyLMS\Extensions\Layouts::render('chapter',$chapter->get_id(),$course->get_id(),['chapter'=>$chapter,'course'=>$course])) continue;
 
 		$chapter_id 			= $chapter->get_id();
 		$chapter_title 			= $chapter->get_name();
@@ -93,7 +93,7 @@ if( 'layout_2' === $single_course_layout ) {
 
 		$chapter_lesson_titles 	= array();?>
 
-		<div class="creator-lms-single-chapter">
+		<div class="ohmylms-single-chapter">
 			<?php if( 'layout_1' === $single_course_layout ) { ?>
 				<div class="chapter-title-wrapper">
 					<h2 class="chapter-title">
@@ -104,7 +104,7 @@ if( 'layout_2' === $single_course_layout ) {
 
 					<?php
 						if( $chapter->get_description() ) {
-							echo '<div class="creator-lms-wysiwyg-content">'.$chapter->get_description().'</div>';
+							echo '<div class="ohmylms-wysiwyg-content">'.$chapter->get_description().'</div>';
 						}
 					?>
 				</div>
@@ -140,11 +140,11 @@ if( 'layout_2' === $single_course_layout ) {
 				</h3>
 			<?php } ?>
 
-			<ul class="creator-lms-chapter-content-list <?php echo 'layout_1' === $single_course_layout && count($chapter_lessons) > 2 ? 'enabled-readmore' : '' ?>">
+			<ul class="ohmylms-chapter-content-list <?php echo 'layout_1' === $single_course_layout && count($chapter_lessons) > 2 ? 'enabled-readmore' : '' ?>">
 				<?php
 					//----add chapter description in the li item for layout 2----
 					if( 'layout_2' === $single_course_layout && $chapter->get_description()) {
-						echo '<div class="creator-lms-wysiwyg-content">'.$chapter->get_description().'</div>';
+						echo '<div class="ohmylms-wysiwyg-content">'.$chapter->get_description().'</div>';
 					}
 
 					foreach ( $chapter_lessons as $index => $lesson ) {
@@ -155,7 +155,7 @@ if( 'layout_2' === $single_course_layout ) {
 						$lesson_title = $lesson->get_name();
 						$type = $lesson->get_type();
 						$current_student_id = get_current_user_id();
-						$student = $current_student_id ? new \OMLMS\Data\Student( $current_student_id ) : null;
+						$student = $current_student_id ? new \OhMyLMS\Data\Student( $current_student_id ) : null;
 						$maybe_enrolled = $student ? $student->maybe_enrolled( $course_id ) : false;
 						$content_type = get_post_meta( $lesson_id, '_content_type', true );
 						$preview_mode = get_post_meta( $lesson_id, '_preview_enable', true );
@@ -189,27 +189,27 @@ if( 'layout_2' === $single_course_layout ) {
 							$type = $content_type;
 						}
 
-						if( 'assignment' === $type && !creator_lms_is_pro() ){
+						if( 'assignment' === $type && !ohmylms_is_pro() ){
 							continue;
 						}
 
 						?>
 
-						<li class="creator-lms-chapter-content-list-item type-<?php echo $type; ?><?php echo !$maybe_enrolled ? ' lesson-locked' : ''; ?>">
+						<li class="ohmylms-chapter-content-list-item type-<?php echo $type; ?><?php echo !$maybe_enrolled ? ' lesson-locked' : ''; ?>">
 							<span class="icon">
-								<?php include(CREATOR_LMS_DIR . '/assets/images/icon/'.$icon); ?>
+								<?php include(OHMYLMS_DIR . '/assets/images/icon/'.$icon); ?>
 							</span>
 							<span class="lesson-title-row">
 								<?php
 									if (function_exists('apply_filters')) {
-										$is_lesson_locked = apply_filters('creator_lms_is_lesson_locked', false, $lesson_id, $course_id, $current_student_id);
+										$is_lesson_locked = apply_filters('ohmylms_is_lesson_locked', false, $lesson_id, $course_id, $current_student_id);
 										$unlock_date = '';
 										$is_sequential_lock = false;
 										if ( $is_lesson_locked ) {
-											$unlock_date = apply_filters('creator_lms_lesson_unlock_date', '', $lesson_id, $course_id, $current_student_id);
+											$unlock_date = apply_filters('ohmylms_lesson_unlock_date', '', $lesson_id, $course_id, $current_student_id);
 											// Determine if this lock is from sequential mode (no date = sequential, date = drip).
 											if ( ! $unlock_date ) {
-												$is_sequential_lock = apply_filters( 'creator_lms_is_lesson_sequentially_locked', false, $lesson_id, $course_id, $current_student_id );
+												$is_sequential_lock = apply_filters( 'ohmylms_is_lesson_sequentially_locked', false, $lesson_id, $course_id, $current_student_id );
 											}
 										}
 									} else {
@@ -251,7 +251,7 @@ if( 'layout_2' === $single_course_layout ) {
 
 								if ( $show_lock && !$preview_mode ) { ?>
 									<span class="lock-icon">
-										<?php include(CREATOR_LMS_DIR . '/assets/images/icon/lock-icon.php'); ?>
+										<?php include(OHMYLMS_DIR . '/assets/images/icon/lock-icon.php'); ?>
 									</span>
 								<?php } ?>
 							</span>
@@ -268,7 +268,7 @@ if( 'layout_2' === $single_course_layout ) {
 						<?php echo __( 'See more lesson items', 'ohmylms' ); ?>
 					</span>
 
-					<svg width="12" height="6" fill="none" viewBox="0 0 12 6" xmlns="http://www.w3.org/2000/svg"><path fill="var(--creator-lms-primary-color)" stroke="var(--creator-lms-primary-color)" stroke-width=".4" d="M10.5.375a.75.75 0 00-.533.217L6.532 4.035a.75.75 0 01-1.065 0L2.032.592A.753.753 0 10.967 1.657l3.442 3.435a2.295 2.295 0 003.18 0l3.443-3.435a.748.748 0 00-.245-1.226.75.75 0 00-.288-.056z"/></svg>
+					<svg width="12" height="6" fill="none" viewBox="0 0 12 6" xmlns="http://www.w3.org/2000/svg"><path fill="var(--ohmylms-primary-color)" stroke="var(--ohmylms-primary-color)" stroke-width=".4" d="M10.5.375a.75.75 0 00-.533.217L6.532 4.035a.75.75 0 01-1.065 0L2.032.592A.753.753 0 10.967 1.657l3.442 3.435a2.295 2.295 0 003.18 0l3.443-3.435a.748.748 0 00-.245-1.226.75.75 0 00-.288-.056z"/></svg>
 				</button>
 			<?php } ?>
 		</div>
@@ -281,7 +281,7 @@ if( 'layout_2' === $single_course_layout ) {
 		$additional_chapters = count($chapters) - 5;
 		$more_section_text = __( 'More Sections', 'ohmylms' );
 
-		echo '<button type="button" class="show-more-chapter">' . $additional_chapters . ' ' . $more_section_text . '<svg width="12" height="7" fill="none" viewBox="0 0 12 7" xmlns="http://www.w3.org/2000/svg"><path fill="var(--creator-lms-primary-color)" d="M11.59.841a.832.832 0 00-1.184 0L6.59 4.658a.833.833 0 01-1.184 0L1.59.84A.833.833 0 10.406 2.016l3.825 3.825a2.5 2.5 0 003.534 0l3.825-3.825a.833.833 0 000-1.175z"/></svg></button>';
+		echo '<button type="button" class="show-more-chapter">' . $additional_chapters . ' ' . $more_section_text . '<svg width="12" height="7" fill="none" viewBox="0 0 12 7" xmlns="http://www.w3.org/2000/svg"><path fill="var(--ohmylms-primary-color)" d="M11.59.841a.832.832 0 00-1.184 0L6.59 4.658a.833.833 0 01-1.184 0L1.59.84A.833.833 0 10.406 2.016l3.825 3.825a2.5 2.5 0 003.534 0l3.825-3.825a.833.833 0 000-1.175z"/></svg></button>';
 	}
 
 	?>

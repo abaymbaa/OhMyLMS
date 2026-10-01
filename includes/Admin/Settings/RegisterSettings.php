@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * RegisterSettings class.
@@ -36,8 +36,8 @@ class RegisterSettings {
 
 		$this->obj = $obj;
 
-		add_filter( 'creator_lms_settings_groups', array( $this, 'register_settings_groups' ) );
-		add_filter( 'creator_lms_settings-' . $this->obj->get_id(), array( $this, 'register_settings' ) );
+		add_filter( 'ohmylms_settings_groups', array( $this, 'register_settings_groups' ) );
+		add_filter( 'ohmylms_settings-' . $this->obj->get_id(), array( $this, 'register_settings' ) );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var Ste = function () {
-  HG("creator-lms", "certificates");
+  HG("ohmylms", "certificates");
   var e = (0, f.g)().id,
     t = (0, y.useDispatch)(T.default),
     n = function (e, t) {

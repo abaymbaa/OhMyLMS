@@ -4,11 +4,11 @@
  * 
  * This class handles the level system settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
-use OMLMS\Engagement\Achievements;
+use OhMyLMS\Engagement\Achievements;
 
 class Level {
     
@@ -18,8 +18,8 @@ class Level {
      * @return array
      */
     public static function get_rules() {
-        $settings = get_option( 'creator_lms_level_settings', array() );
-        return apply_filters( 'creator_lms_level_settings', $settings );
+        $settings = get_option( 'ohmylms_level_settings', array() );
+        return apply_filters( 'ohmylms_level_settings', $settings );
     }
 
     /**
@@ -29,7 +29,7 @@ class Level {
      * @since 1.0.0
      */
     public static function get_levels() {
-        return get_option( 'creator_lms_levels', array() );
+        return get_option( 'ohmylms_levels', array() );
     }
 
     /**
@@ -144,7 +144,7 @@ class Level {
         $response = Achievements::insert_achievement( $data );
         if( $response ) {
             set_transient( 'level_added_for_user_' . $user_id, true, 60 );
-            do_action( 'creator_lms_after_level_added', $user_id, $level_id, $type );
+            do_action( 'ohmylms_after_level_added', $user_id, $level_id, $type );
         }
 
         return true;
@@ -168,7 +168,7 @@ class Level {
             return false; // No user logged in
         }
         
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
         
         // Get all user's level achievements
         $level_achievements = $wpdb->get_results( $wpdb->prepare(
@@ -185,7 +185,7 @@ class Level {
         }
         
         // Get all levels to find the level details and determine highest level
-        $levels = get_option( 'creator_lms_levels', array() );
+        $levels = get_option( 'ohmylms_levels', array() );
         if ( empty( $levels ) || ! is_array( $levels ) ) {
             return false;
         }
@@ -253,7 +253,7 @@ class Level {
         $current_level_data = self::get_current_level_of_a_user();
         
         // Get all levels and sort them by minimum points requirement
-        $levels = get_option( 'creator_lms_levels', array() );
+        $levels = get_option( 'ohmylms_levels', array() );
         
         if ( empty( $levels ) || ! is_array( $levels ) ) {
             return false; // No levels configured
@@ -363,7 +363,7 @@ class Level {
                         break;
                         
                     case 'completed_courses':
-                        $student = new \OMLMS\Data\Student( $user_id );
+                        $student = new \OhMyLMS\Data\Student( $user_id );
                         if ( $student ) {
                             $current_value = $student->get_completed_course_count();
                         }
@@ -425,7 +425,7 @@ class Level {
                             break;
                             
                         case 'completed_courses':
-                            $student = new \OMLMS\Data\Student( $user_id );
+                            $student = new \OhMyLMS\Data\Student( $user_id );
                             if ( $student ) {
                                 $completed_courses = $student->get_completed_course_count();
                                 $rule_summary['current'] = $completed_courses;
@@ -469,7 +469,7 @@ class Level {
     public static function get_all_levels_of_a_user( $user_id ) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
         $query = $wpdb->prepare(
             "
@@ -510,7 +510,7 @@ class Level {
      */
     public static function get_total_points( $user_id ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
         $total_points = $wpdb->get_var( $wpdb->prepare(
             "SELECT SUM(points) FROM {$table_name} WHERE user_id = %d AND status = 'active'",
             $user_id

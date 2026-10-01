@@ -13,11 +13,11 @@
         a = t('select[name="state"], input[name="state"]').val(),
         n = t('input[name="vat_number"]').val();
       t.ajax({
-        url: omlms_tax_calculation_params.ajax_url,
+        url: ohmylms_tax_calculation_params.ajax_url,
         type: "POST",
         data: {
-          action: "creator_lms_calculate_tax",
-          nonce: omlms_tax_calculation_params.nonce,
+          action: "ohmylms_calculate_tax",
+          nonce: ohmylms_tax_calculation_params.nonce,
           country: e,
           state: a || "",
           vat_number: n || ""
@@ -36,11 +36,11 @@
         n = document.querySelector("#state_field"),
         c = e;
       c || (c = t("#country").val()), c && t.ajax({
-        url: omlms_tax_calculation_params.ajax_url,
+        url: ohmylms_tax_calculation_params.ajax_url,
         type: "POST",
         data: {
-          action: "creator_lms_get_states_by_country",
-          nonce: omlms_tax_calculation_params.nonce,
+          action: "ohmylms_get_states_by_country",
+          nonce: ohmylms_tax_calculation_params.nonce,
           country_code: c
         },
         success: function (e) {
@@ -55,19 +55,19 @@
               var l = t("<select>", {
                 id: "state",
                 name: "state",
-                class: "creator-lms-input-select creator-lms-input-text",
+                class: "ohmylms-input-select ohmylms-input-text",
                 html: u.join("")
               });
-              c.replaceWith(l), r.addClass("creator-lms-folded"), s.css("display", "inline");
+              c.replaceWith(l), r.addClass("ohmylms-folded"), s.css("display", "inline");
             }
           } else if (!c.is("input")) {
             var o = t("<input>", {
               type: "text",
               id: "state",
               name: "state",
-              class: "creator-lms-input-text"
+              class: "ohmylms-input-text"
             });
-            c.replaceWith(o), r.removeClass("creator-lms-folded validate-required"), s.css("display", "none");
+            c.replaceWith(o), r.removeClass("ohmylms-folded validate-required"), s.css("display", "none");
           }
         },
         error: function (t, e, a) {}

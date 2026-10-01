@@ -107,8 +107,8 @@ export function createAiCoursePreview(readRuntime) {
         <React.Fragment>
           <Controls.ModalWP
             __experimentalHideHeader={!0}
-            className={'omlms-ai-course-preview-modal '.concat(
-              a ? 'omlms-ai-course-preview-modal--creating' : '',
+            className={'ohmylms-ai-course-preview-modal '.concat(
+              a ? 'ohmylms-ai-course-preview-modal--creating' : '',
             )}
             size={'fill'}
             style={{
@@ -138,7 +138,7 @@ export function createAiCoursePreview(readRuntime) {
                 direction={'column'}
                 gap={6}
                 ref={_}
-                className={'omlms-ai-course-preview-content'}
+                className={'ohmylms-ai-course-preview-content'}
               >
                 <MemoAiPreviewHeader
                   onClose={function () {

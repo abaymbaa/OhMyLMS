@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Loop Difficulty Level
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/difficulty-level.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/difficulty-level.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

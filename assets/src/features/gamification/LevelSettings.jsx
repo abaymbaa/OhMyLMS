@@ -19,7 +19,7 @@ export function createLevelSettings(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)(),
+    var e = true,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = o5(
         (0, ReactHooks.useState)({
@@ -78,7 +78,7 @@ export function createLevelSettings(readRuntime) {
                       h(!0),
                       (e.n = 1),
                       l()({
-                        path: 'creator-lms/v1/engagement/settings/level',
+                        path: 'ohmylms/v1/engagement/settings/level',
                       })
                     );
                   case 1:
@@ -93,7 +93,7 @@ export function createLevelSettings(readRuntime) {
           return e.apply(this, arguments);
         };
       })();
-      e && t();
+      t();
     }, []),
       (0, ReactHooks.useEffect)(
         function () {
@@ -110,7 +110,7 @@ export function createLevelSettings(readRuntime) {
               for (;;)
                 switch ((n.p = n.n)) {
                   case 0:
-                    if (e) {
+                    {
                       n.n = 1;
                       break;
                     }
@@ -124,7 +124,7 @@ export function createLevelSettings(readRuntime) {
                       0 < i.length && (a.levels = i),
                       (n.n = 3),
                       l()({
-                        path: '/creator-lms/v1/engagement/settings/level',
+                        path: '/ohmylms/v1/engagement/settings/level',
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -178,12 +178,7 @@ export function createLevelSettings(readRuntime) {
       ) : (
         <React.Fragment>
           {contextHolder}
-          <Controls.ProOverlayWP
-            title={(0, I18n.__)(
-              'Level is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.',
-              'ohmylms',
-            )}
-          />
+
           <Controls.CardWP isBorderless={!0} variant={'secondary'}>
             <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>
               <Controls.FlexWP

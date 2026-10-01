@@ -1,10 +1,10 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 /** Opt-in asset switch. The shipped build stays active until acceptance passes. */
 final class SourceAssets {
     public static function init() {
-        if (!defined('OMLMS_SOURCE_ASSETS') || !OMLMS_SOURCE_ASSETS) { return; }
+        if (!defined('OHMYLMS_SOURCE_ASSETS') || !OHMYLMS_SOURCE_ASSETS) { return; }
         add_filter('script_loader_src', [__CLASS__, 'url'], 20);
         add_filter('style_loader_src', [__CLASS__, 'url'], 20);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue'], 11);
@@ -25,13 +25,13 @@ final class SourceAssets {
         wp_enqueue_script('ohmylms-extension-sdk', plugins_url('build/sdk/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge(Registry::manifest(), ['settings'=>Settings::manifest()]));
         $scripts = wp_scripts();
-        if (isset($scripts->registered['creator-lms-vendor'])) {
-            $scripts->registered['creator-lms-vendor']->deps = array_values(array_unique(array_merge($scripts->registered['creator-lms-vendor']->deps, ['wp-preferences', 'wp-keyboard-shortcuts'])));
+        if (isset($scripts->registered['ohmylms-vendor'])) {
+            $scripts->registered['ohmylms-vendor']->deps = array_values(array_unique(array_merge($scripts->registered['ohmylms-vendor']->deps, ['wp-preferences', 'wp-keyboard-shortcuts'])));
         }
         $before = $scripts->queue;
         do_action('ohmylms_enqueue_extension_scripts', 'ohmylms-extension-sdk');
-        if (isset($scripts->registered['creator-lms'])) {
-            $scripts->registered['creator-lms']->deps = array_values(array_unique(array_merge($scripts->registered['creator-lms']->deps, ['ohmylms-extension-sdk'], array_diff($scripts->queue, $before))));
+        if (isset($scripts->registered['ohmylms'])) {
+            $scripts->registered['ohmylms']->deps = array_values(array_unique(array_merge($scripts->registered['ohmylms']->deps, ['ohmylms-extension-sdk'], array_diff($scripts->queue, $before))));
         }
     }
 }

@@ -672,12 +672,12 @@ const iZ = function () {
     padding: 6,
     marginBottom: 0
   }, h().createElement(I.FlexWP, {
-    className: "omlms-subscription-details",
+    className: "ohmylms-subscription-details",
     justify: "start",
     align: "start",
     gap: 3
   }, h().createElement(I.FlexItemWP, {
-    className: "omlms-subscription-details-left",
+    className: "ohmylms-subscription-details-left",
     style: {
       width: "calc(70% - 12px)"
     }
@@ -692,7 +692,7 @@ const iZ = function () {
     isBorderLess: !0,
     variant: "secondary"
   }, h().createElement(I.TextWP, null, (0, b.__)("Linked to Order ", "ohmylms"), h().createElement(I.ButtonWP, {
-    href: "/wp-admin/admin.php?page=creator-lms#/order-edit/".concat(null == d ? void 0 : d.original_order_id),
+    href: "/wp-admin/admin.php?page=ohmylms#/order-edit/".concat(null == d ? void 0 : d.original_order_id),
     variant: "link",
     style: {
       textDecoration: "none"
@@ -776,7 +776,7 @@ const iZ = function () {
   }, h().createElement(kQ, {
     relatedOrders: null == d ? void 0 : d.related_orders
   })))), h().createElement(I.FlexItemWP, {
-    className: "omlms-subscription-details-right",
+    className: "ohmylms-subscription-details-right",
     style: {
       width: "30%"
     }

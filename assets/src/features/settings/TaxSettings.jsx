@@ -43,10 +43,8 @@ export function createTaxSettings(readRuntime) {
       h = (0, Notifications.A)(),
       _ = (h.openNotificationWithIcon, h.contextHolder),
       w =
-        (null == f || null === (t = f.creator_lms_countries) || void 0 === t ? void 0 : t.value) ||
-        [],
-      E =
-        (null == f || null === (n = f.creator_lms_states) || void 0 === n ? void 0 : n.value) || {},
+        (null == f || null === (t = f.ohmylms_countries) || void 0 === t ? void 0 : t.value) || [],
+      E = (null == f || null === (n = f.ohmylms_states) || void 0 === n ? void 0 : n.value) || {},
       S = N1(
         (0, ReactHooks.useState)({
           country: '',
@@ -86,7 +84,7 @@ export function createTaxSettings(readRuntime) {
           });
           return (
             v.updateTaxSettings({
-              creator_lms_new_tax_rates: {
+              ohmylms_new_tax_rates: {
                 value: a,
               },
             }),
@@ -108,17 +106,17 @@ export function createTaxSettings(readRuntime) {
                         v.setLoadingSetting(!0),
                         (e.n = 1),
                         l()({
-                          path: 'creator-lms/v1/settings/tax',
+                          path: 'ohmylms/v1/settings/tax',
                         })
                       );
                     case 1:
                       ((t = e.v),
                         v.setTaxSettings(t),
                         (n = t.find(function (e) {
-                          return 'creator_lms_existing_tax_rates' === e.id;
+                          return 'ohmylms_existing_tax_rates' === e.id;
                         })),
                         (r = t.find(function (e) {
-                          return 'creator_lms_new_tax_rates' === e.id;
+                          return 'ohmylms_new_tax_rates' === e.id;
                         })),
                         null != n && n.value && Array.isArray(n.value) && C(n.value),
                         null != r && r.value && Array.isArray(r.value) && j(r.value),
@@ -152,25 +150,23 @@ export function createTaxSettings(readRuntime) {
         function () {
           var e, t;
           (null != f &&
-            null !== (e = f.creator_lms_existing_tax_rates) &&
+            null !== (e = f.ohmylms_existing_tax_rates) &&
             void 0 !== e &&
             e.value &&
-            Array.isArray(f.creator_lms_existing_tax_rates.value) &&
-            C(f.creator_lms_existing_tax_rates.value),
+            Array.isArray(f.ohmylms_existing_tax_rates.value) &&
+            C(f.ohmylms_existing_tax_rates.value),
             null != f &&
-              null !== (t = f.creator_lms_new_tax_rates) &&
+              null !== (t = f.ohmylms_new_tax_rates) &&
               void 0 !== t &&
               t.value &&
-              Array.isArray(f.creator_lms_new_tax_rates.value) &&
-              j(f.creator_lms_new_tax_rates.value));
+              Array.isArray(f.ohmylms_new_tax_rates.value) &&
+              j(f.ohmylms_new_tax_rates.value));
         },
         [
-          null == f || null === (r = f.creator_lms_existing_tax_rates) || void 0 === r
+          null == f || null === (r = f.ohmylms_existing_tax_rates) || void 0 === r
             ? void 0
             : r.value,
-          null == f || null === (a = f.creator_lms_new_tax_rates) || void 0 === a
-            ? void 0
-            : a.value,
+          null == f || null === (a = f.ohmylms_new_tax_rates) || void 0 === a ? void 0 : a.value,
         ],
       ),
       (
@@ -187,14 +183,14 @@ export function createTaxSettings(readRuntime) {
                   )}
                   isChecked={
                     'yes' ===
-                    (null == f || null === (o = f.creator_lms_tax_enabled) || void 0 === o
+                    (null == f || null === (o = f.ohmylms_tax_enabled) || void 0 === o
                       ? void 0
                       : o.value)
                   }
                   onChange={function (e) {
-                    return A('creator_lms_tax_enabled', e ? 'yes' : 'no');
+                    return A('ohmylms_tax_enabled', e ? 'yes' : 'no');
                   }}
-                  customClass={'omlms-tax-enable-switcher'}
+                  customClass={'ohmylms-tax-enable-switcher'}
                   isDefaultStyle={!0}
                   align={'flex-start'}
                   conditionalChild={
@@ -219,12 +215,12 @@ export function createTaxSettings(readRuntime) {
                               'ohmylms',
                             )}
                             value={
-                              (null == f || null === (i = f.creator_lms_tax_label) || void 0 === i
+                              (null == f || null === (i = f.ohmylms_tax_label) || void 0 === i
                                 ? void 0
                                 : i.value) || 'Tax'
                             }
                             onChange={function (e) {
-                              return A('creator_lms_tax_label', e);
+                              return A('ohmylms_tax_label', e);
                             }}
                             placeholder={(0, I18n.__)('Tax', 'ohmylms')}
                             headerFontSize={'16px'}
@@ -237,13 +233,13 @@ export function createTaxSettings(readRuntime) {
                             )}
                             value={
                               (null == f ||
-                              null === (c = f.creator_lms_prices_include_tax) ||
+                              null === (c = f.ohmylms_prices_include_tax) ||
                               void 0 === c
                                 ? void 0
                                 : c.value) || 'no'
                             }
                             onChange={function (e) {
-                              return A('creator_lms_prices_include_tax', e);
+                              return A('ohmylms_prices_include_tax', e);
                             }}
                             staticSearch={!0}
                             headerFontSize={'16px'}
@@ -281,13 +277,13 @@ export function createTaxSettings(readRuntime) {
                               isChecked={
                                 'yes' ===
                                 (null == f ||
-                                null === (u = f.creator_lms_eu_vat_enabled) ||
+                                null === (u = f.ohmylms_eu_vat_enabled) ||
                                 void 0 === u
                                   ? void 0
                                   : u.value)
                               }
                               onChange={function (e) {
-                                return A('creator_lms_eu_vat_enabled', e ? 'yes' : 'no');
+                                return A('ohmylms_eu_vat_enabled', e ? 'yes' : 'no');
                               }}
                               headerFontSize={'16px'}
                               isDefaultStyle={!0}
@@ -295,9 +291,7 @@ export function createTaxSettings(readRuntime) {
                               variant={'secondary'}
                             />
                             {'yes' ===
-                              (null == f ||
-                              null === (s = f.creator_lms_eu_vat_enabled) ||
-                              void 0 === s
+                              (null == f || null === (s = f.ohmylms_eu_vat_enabled) || void 0 === s
                                 ? void 0
                                 : s.value) && (
                               <React.Fragment>
@@ -310,16 +304,13 @@ export function createTaxSettings(readRuntime) {
                                   isChecked={
                                     'yes' ===
                                     (null == f ||
-                                    null === (d = f.creator_lms_disable_vat_validation) ||
+                                    null === (d = f.ohmylms_disable_vat_validation) ||
                                     void 0 === d
                                       ? void 0
                                       : d.value)
                                   }
                                   onChange={function (e) {
-                                    return A(
-                                      'creator_lms_disable_vat_validation',
-                                      e ? 'yes' : 'no',
-                                    );
+                                    return A('ohmylms_disable_vat_validation', e ? 'yes' : 'no');
                                   }}
                                   headerFontSize={'16px'}
                                   isDefaultStyle={!0}
@@ -334,13 +325,13 @@ export function createTaxSettings(readRuntime) {
                                   )}
                                   value={
                                     (null == f ||
-                                    null === (m = f.creator_lms_vat_number_label) ||
+                                    null === (m = f.ohmylms_vat_number_label) ||
                                     void 0 === m
                                       ? void 0
                                       : m.value) || ''
                                   }
                                   onChange={function (e) {
-                                    return A('creator_lms_vat_number_label', e);
+                                    return A('ohmylms_vat_number_label', e);
                                   }}
                                   placeholder={(0, I18n.__)('VAT Number', 'ohmylms')}
                                   headerFontSize={'16px'}
@@ -373,36 +364,36 @@ export function createTaxSettings(readRuntime) {
                             </Controls.TextWP>
                             <Controls.SpacerWP marginBottom={4} />
                             <div
-                              className={'omlms-table-wrapper omlms-tax-table'}
+                              className={'ohmylms-table-wrapper ohmylms-tax-table'}
                               style={{
                                 position: 'relative',
                               }}
                             >
-                              <table className={'omlms-table'}>
-                                <thead className={'omlms-table-thead'}>
-                                  <tr className={'omlms-table-header-row'}>
-                                    <th className={'omlms-th tax-country'}>
+                              <table className={'ohmylms-table'}>
+                                <thead className={'ohmylms-table-thead'}>
+                                  <tr className={'ohmylms-table-header-row'}>
+                                    <th className={'ohmylms-th tax-country'}>
                                       {(0, I18n.__)('Country', 'ohmylms')}
                                     </th>
-                                    <th className={'omlms-th tax-state-code'}>
+                                    <th className={'ohmylms-th tax-state-code'}>
                                       {(0, I18n.__)('State Code', 'ohmylms')}
                                     </th>
-                                    <th className={'omlms-th tax-country-wide'}>
+                                    <th className={'ohmylms-th tax-country-wide'}>
                                       {(0, I18n.__)('Country Wide', 'ohmylms')}
                                     </th>
-                                    <th className={'omlms-th tax-rate'}>
+                                    <th className={'ohmylms-th tax-rate'}>
                                       {(0, I18n.__)('Rate', 'ohmylms')}
                                     </th>
-                                    <th className={'omlms-th tax-action'}>
+                                    <th className={'ohmylms-th tax-action'}>
                                       <div className={'tax-action'} />
                                     </th>
                                   </tr>
                                 </thead>
-                                <tbody className={'omlms-table-tbody'}>
+                                <tbody className={'ohmylms-table-tbody'}>
                                   {k.map(function (e) {
                                     return (
-                                      <tr key={e.id} className={'omlms-tr tax-rate-form'}>
-                                        <td className={'omlms-td tax-country'}>
+                                      <tr key={e.id} className={'ohmylms-tr tax-rate-form'}>
+                                        <td className={'ohmylms-td tax-country'}>
                                           <select
                                             value={e.country}
                                             onChange={function (t) {
@@ -422,7 +413,7 @@ export function createTaxSettings(readRuntime) {
                                             })}
                                           </select>
                                         </td>
-                                        <td className={'omlms-td tax-state-code'}>
+                                        <td className={'ohmylms-td tax-state-code'}>
                                           <Controls.TooltipWP
                                             text={
                                               null != e && e.countryWide
@@ -459,7 +450,7 @@ export function createTaxSettings(readRuntime) {
                                             </select>
                                           </Controls.TooltipWP>
                                         </td>
-                                        <td className={'omlms-td tax-country-wide'}>
+                                        <td className={'ohmylms-td tax-country-wide'}>
                                           <label
                                             className={'tax-rate-checkbox-label tax-country-wide'}
                                           >
@@ -481,7 +472,7 @@ export function createTaxSettings(readRuntime) {
                                             </span>
                                           </label>
                                         </td>
-                                        <td className={'omlms-td tax-rate'}>
+                                        <td className={'ohmylms-td tax-rate'}>
                                           <Controls.InputNumberWP
                                             value={e.rate}
                                             onChange={function (t) {
@@ -502,7 +493,7 @@ export function createTaxSettings(readRuntime) {
                                             className={'tax-rate'}
                                           />
                                         </td>
-                                        <td className={'omlms-td tax-action'}>
+                                        <td className={'ohmylms-td tax-action'}>
                                           <div className={'tax-rate-remove-container tax-action'}>
                                             <Controls.ButtonWP
                                               type={'link'}
@@ -516,7 +507,7 @@ export function createTaxSettings(readRuntime) {
                                                     });
                                                     return (
                                                       v.updateTaxSettings({
-                                                        creator_lms_new_tax_rates: {
+                                                        ohmylms_new_tax_rates: {
                                                           value: n,
                                                         },
                                                       }),
@@ -615,7 +606,7 @@ export function createTaxSettings(readRuntime) {
                                               });
                                               return (
                                                 v.updateTaxSettings({
-                                                  creator_lms_existing_tax_rates: {
+                                                  ohmylms_existing_tax_rates: {
                                                     value: n,
                                                   },
                                                 }),
@@ -685,7 +676,7 @@ export function createTaxSettings(readRuntime) {
                                     );
                                     return (
                                       v.updateTaxSettings({
-                                        creator_lms_new_tax_rates: {
+                                        ohmylms_new_tax_rates: {
                                           value: n,
                                         },
                                       }),
@@ -709,13 +700,13 @@ export function createTaxSettings(readRuntime) {
                                 inputType={'number'}
                                 value={
                                   (null == f ||
-                                  null === (p = f.creator_lms_fallback_tax_rate) ||
+                                  null === (p = f.ohmylms_fallback_tax_rate) ||
                                   void 0 === p
                                     ? void 0
                                     : p.value) || ''
                                 }
                                 onChange={function (e) {
-                                  return A('creator_lms_fallback_tax_rate', e);
+                                  return A('ohmylms_fallback_tax_rate', e);
                                 }}
                                 placeholder={'0.00'}
                                 min={'0'}

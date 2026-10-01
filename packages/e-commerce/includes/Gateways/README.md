@@ -8,15 +8,15 @@ All payment gateways extend the `PaymentGateway` abstract class, which provides 
 
 ### Using the get_setting() method
 
-Instead of using `get_option()` directly, payment gateways should use the `get_setting()` method which automatically handles the `creatorlms_{gateway_id}_settings` pattern.
+Instead of using `get_option()` directly, payment gateways should use the `get_setting()` method which automatically handles the `ohmylms_{gateway_id}_settings` pattern.
 
 #### Before (Old Pattern)
 ```php
 public function __construct() {
     $this->id = 'my_gateway';
-    $this->title = get_option('creator_lms_my_gateway_payment_gateway_title', __('My Gateway', 'ohmylms'));
-    $this->enabled = get_option('creator_lms_my_gateway_payment_gateway_enabled', 'no');
-    $this->testmode = 'yes' === get_option('creator_lms_my_gateway_payment_gateway_test_mode', 'no');
+    $this->title = get_option('ohmylms_my_gateway_payment_gateway_title', __('My Gateway', 'ohmylms'));
+    $this->enabled = get_option('ohmylms_my_gateway_payment_gateway_enabled', 'no');
+    $this->testmode = 'yes' === get_option('ohmylms_my_gateway_payment_gateway_test_mode', 'no');
 }
 ```
 
@@ -34,19 +34,19 @@ public function __construct() {
 
 The `get_setting()` method:
 
-1. First checks for the setting in `creatorlms_{gateway_id}_settings` option
+1. First checks for the setting in `ohmylms_{gateway_id}_settings` option
 2. Falls back to the default `get_option()` method if not found
 3. Returns the default value if neither exists
 
 ### Settings Structure
 
 Settings are stored in WordPress options with the pattern:
-- Option name: `creatorlms_{gateway_id}_settings`
+- Option name: `ohmylms_{gateway_id}_settings`
 - Value: An array containing all gateway settings
 
 Example for Stripe gateway:
 ```php
-// Option name: creatorlms_stripe_settings
+// Option name: ohmylms_stripe_settings
 // Value: array(
 //     'enabled' => 'yes',
 //     'test_mode' => 'no',
@@ -67,8 +67,8 @@ Example for Stripe gateway:
 
 When updating existing gateways:
 
-1. Replace `get_option('creator_lms_{gateway_id}_payment_gateway_{setting}', $default)` with `$this->get_setting('setting', $default)`
-2. Remove the `creator_lms_` and `_payment_gateway_` parts from the setting key
+1. Replace `get_option('ohmylms_{gateway_id}_payment_gateway_{setting}', $default)` with `$this->get_setting('setting', $default)`
+2. Remove the `ohmylms_` and `_payment_gateway_` parts from the setting key
 3. Update the `get_settings()` method to use the new field structure
 
 ### Example Implementation

@@ -32,13 +32,13 @@ $admin = get_user_by('login', 'admin');
 live_check($admin && user_can($admin, 'manage_options'), 'Admin unavailable');
 wp_set_current_user($admin->ID);
 if ($action === 'inspect') {
-    echo wp_json_encode(['site'=>home_url(), 'source_assets'=>defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS, 'plugin'=>OHMYLMS_DIR, 'tables'=>$wpdb->get_col('SHOW TABLES')]);
+    echo wp_json_encode(['site'=>home_url(), 'source_assets'=>defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS, 'plugin'=>OHMYLMS_DIR, 'tables'=>$wpdb->get_col('SHOW TABLES')]);
     exit;
 }
 if ($action === 'schema') {
     $created = [];
     foreach (['get_schema', 'bundled_get_schema'] as $method) {
-        $reflection = new ReflectionMethod(\OMLMS\Install::class, $method);
+        $reflection = new ReflectionMethod(\OhMyLMS\Install::class, $method);
         $schema = $reflection->invoke(null);
         foreach (explode(';', $schema) as $statement) {
             if (!preg_match('/CREATE TABLE\s+(\w+)/i', $statement, $match)) { continue; }
@@ -56,7 +56,7 @@ if ($action === 'create') {
     $state = ['marker'=>'quiz-react-'.wp_generate_password(8, false), 'posts'=>[], 'questions'=>[], 'attempts'=>[], 'student'=>0, 'enrollment'=>0];
     live_save($state);
     add_action('wp_insert_post', static function($id, $post, $update) use (&$state) {
-        if (!$update && in_array($post->post_type, ['omlms-courses','omlms-chapter','omlms-quiz','omlms-question'], true)) {
+        if (!$update && in_array($post->post_type, ['ohmylms-courses','ohmylms-chapter','ohmylms-quiz','ohmylms-question'], true)) {
             $state['posts'][] = $id;
             $state['posts'] = array_values(array_unique($state['posts']));
             update_post_meta($id, '_quiz_react_fixture', $state['marker']); live_save($state);
@@ -70,20 +70,20 @@ if ($action === 'create') {
         $state[$key] = $response->get_data()['id']; $state['posts'] = array_values(array_unique(array_merge($state['posts'], [$state[$key]])));
         update_post_meta($state[$key], '_quiz_react_fixture', $state['marker']); live_save($state);
     }
-    $state['chapter'] = wp_insert_post(['post_type'=>'omlms-chapter', 'post_title'=>'Quiz React Integration chapter', 'post_status'=>'draft']);
+    $state['chapter'] = wp_insert_post(['post_type'=>'ohmylms-chapter', 'post_title'=>'Quiz React Integration chapter', 'post_status'=>'draft']);
     $state['posts'] = array_values(array_unique(array_merge($state['posts'], [$state['chapter']]))); update_post_meta($state['chapter'], '_quiz_react_fixture', $state['marker']); live_save($state);
-    live_check($wpdb->insert($wpdb->prefix.'omlms_chapter_relationship', ['course_id'=>$state['course'], 'chapter_id'=>$state['chapter'], 'order_number'=>0]), 'Chapter relationship');
-    live_check($wpdb->insert($wpdb->prefix.'omlms_content_relationship', ['chapter_id'=>$state['chapter'], 'content_id'=>$state['quiz'], 'content_type'=>'quiz', 'order_number'=>0]), 'Quiz relationship');
+    live_check($wpdb->insert($wpdb->prefix.'ohmylms_chapter_relationship', ['course_id'=>$state['course'], 'chapter_id'=>$state['chapter'], 'order_number'=>0]), 'Chapter relationship');
+    live_check($wpdb->insert($wpdb->prefix.'ohmylms_content_relationship', ['chapter_id'=>$state['chapter'], 'content_id'=>$state['quiz'], 'content_type'=>'quiz', 'order_number'=>0]), 'Quiz relationship');
     live_check(live_request('PUT', 'quiz/'.$state['quiz'], ['settings'=>['allow_attempts'=>20, 'passing_grade'=>['enabled'=>true, 'value'=>70]]])->get_status() < 300, 'Quiz settings');
     foreach (['short-text','long-text','statement','fill-in-the-blank','single-choice','multiple-choice','true-false','reorder','matching'] as $index=>$type) {
         $response = live_request('POST', 'question', ['name'=>'Integration '.$type, 'status'=>'draft', 'settings'=>['type'=>$type, 'required'=>true, 'score'=>['enabled'=>true, 'value'=>10]]]);
         live_check($response->get_status() < 300, 'Create '.$type);
         $id = $response->get_data()['id']; $state['posts'] = array_values(array_unique(array_merge($state['posts'], [$id])));
         update_post_meta($id, '_quiz_react_fixture', $state['marker']); live_save($state);
-        live_check($wpdb->insert($wpdb->prefix.'omlms_quiz_questions_relationship', ['quiz_id'=>$state['quiz'], 'question_id'=>$id, 'order_number'=>$index]), 'Question relationship');
+        live_check($wpdb->insert($wpdb->prefix.'ohmylms_quiz_questions_relationship', ['quiz_id'=>$state['quiz'], 'question_id'=>$id, 'order_number'=>$index]), 'Question relationship');
         $options = [];
         foreach (['Answer A','Answer B'] as $number=>$answer) {
-            live_check($wpdb->insert($wpdb->prefix.'omlms_question_answers', ['question_id'=>$id, 'answer'=>$answer, 'order_number'=>$number+1, 'is_correct'=>$number===0 ? 1 : 0]), 'Answer option');
+            live_check($wpdb->insert($wpdb->prefix.'ohmylms_question_answers', ['question_id'=>$id, 'answer'=>$answer, 'order_number'=>$number+1, 'is_correct'=>$number===0 ? 1 : 0]), 'Answer option');
             $options[] = (int)$wpdb->insert_id;
         }
         $given = $index < 4 ? ['Fixture written response'] : [$options[0]];
@@ -91,14 +91,14 @@ if ($action === 'create') {
         if ($type === 'matching') { $given = [(string)$options[0]=>(string)$options[0], (string)$options[1]=>(string)$options[1]]; }
         $state['questions'][] = ['id'=>$id, 'type'=>$type, 'given'=>$given, 'marks'=>$index < 4 ? 0 : 10]; live_save($state);
     }
-    live_check($wpdb->insert($wpdb->prefix.'omlms_user_enrollment', ['user_id'=>$state['student'], 'course_id'=>$state['course'], 'status'=>'enrolled', 'progress'=>'running', 'start_date'=>current_time('mysql')]), 'Enrollment');
+    live_check($wpdb->insert($wpdb->prefix.'ohmylms_user_enrollment', ['user_id'=>$state['student'], 'course_id'=>$state['course'], 'status'=>'enrolled', 'progress'=>'running', 'start_date'=>current_time('mysql')]), 'Enrollment');
     $state['enrollment'] = (int)$wpdb->insert_id; live_save($state);
     for ($index=0; $index<12; $index++) {
         $date = sprintf('2026-09-%02d 10:00:00', $index+1);
-        live_check($wpdb->insert($wpdb->prefix.'omlms_quiz_attempts', ['quiz_id'=>$state['quiz'], 'course_id'=>$state['course'], 'student_id'=>$state['student'], 'total'=>50, 'status'=>'in-review', 'start_date'=>$date, 'end_date'=>$date]), 'Attempt');
+        live_check($wpdb->insert($wpdb->prefix.'ohmylms_quiz_attempts', ['quiz_id'=>$state['quiz'], 'course_id'=>$state['course'], 'student_id'=>$state['student'], 'total'=>50, 'status'=>'in-review', 'start_date'=>$date, 'end_date'=>$date]), 'Attempt');
         $attempt = (int)$wpdb->insert_id; $state['attempts'][] = $attempt; live_save($state);
         foreach ($state['questions'] as $question) {
-            live_check($wpdb->insert($wpdb->prefix.'omlms_quiz_attempts_answers', ['quiz_id'=>$state['quiz'], 'student_id'=>$state['student'], 'question_id'=>$question['id'], 'quiz_attempt_id'=>$attempt, 'given_answer'=>maybe_serialize($question['given']), 'question_marks'=>10, 'achive_mark'=>$question['marks'], 'is_correct'=>$question['marks'] > 0 ? 1 : 0]), 'Attempt answer');
+            live_check($wpdb->insert($wpdb->prefix.'ohmylms_quiz_attempts_answers', ['quiz_id'=>$state['quiz'], 'student_id'=>$state['student'], 'question_id'=>$question['id'], 'quiz_attempt_id'=>$attempt, 'given_answer'=>maybe_serialize($question['given']), 'question_marks'=>10, 'achive_mark'=>$question['marks'], 'is_correct'=>$question['marks'] > 0 ? 1 : 0]), 'Attempt answer');
         }
     }
     echo wp_json_encode(['quiz'=>$state['quiz'], 'attempts'=>$state['attempts'], 'student'=>$state['student'], 'types'=>array_column($state['questions'], 'type')]);
@@ -131,33 +131,33 @@ if ($action === 'verify') {
                 live_check((int)$question['achive_mark'] === $expected_mark, 'Persisted question marks mismatch');
             }
         }
-        $reports[] = ['attempt'=>$attempt, 'score'=>$data['score'], 'status'=>$data['report']['status'] ?? null, 'marks'=>array_column($data['report']['questions'], 'achive_mark'), 'db_status'=>$wpdb->get_var($wpdb->prepare("SELECT status FROM {$wpdb->prefix}omlms_quiz_attempts WHERE id=%d", $attempt))];
+        $reports[] = ['attempt'=>$attempt, 'score'=>$data['score'], 'status'=>$data['report']['status'] ?? null, 'marks'=>array_column($data['report']['questions'], 'achive_mark'), 'db_status'=>$wpdb->get_var($wpdb->prepare("SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d", $attempt))];
     }
     echo wp_json_encode(['permissions'=>$results, 'reports'=>$reports], JSON_PRETTY_PRINT); exit;
 }
 if ($action === 'cleanup') {
     foreach ($state['attempts'] as $attempt) {
-        $wpdb->delete($wpdb->prefix.'omlms_quiz_attempts_answers', ['quiz_attempt_id'=>$attempt]);
-        $wpdb->delete($wpdb->prefix.'omlms_quiz_attempts', ['id'=>$attempt]);
+        $wpdb->delete($wpdb->prefix.'ohmylms_quiz_attempts_answers', ['quiz_attempt_id'=>$attempt]);
+        $wpdb->delete($wpdb->prefix.'ohmylms_quiz_attempts', ['id'=>$attempt]);
     }
-    if ($state['enrollment']) { $wpdb->delete($wpdb->prefix.'omlms_user_progress', ['enrollment_id'=>$state['enrollment']]); $wpdb->delete($wpdb->prefix.'omlms_user_enrollment', ['id'=>$state['enrollment']]); }
-    if (!empty($state['quiz'])) { $wpdb->delete($wpdb->prefix.'omlms_quiz_questions_relationship', ['quiz_id'=>$state['quiz']]); $wpdb->delete($wpdb->prefix.'omlms_content_relationship', ['content_id'=>$state['quiz']]); }
-    if (!empty($state['course'])) { $wpdb->delete($wpdb->prefix.'omlms_chapter_relationship', ['course_id'=>$state['course']]); }
+    if ($state['enrollment']) { $wpdb->delete($wpdb->prefix.'ohmylms_user_progress', ['enrollment_id'=>$state['enrollment']]); $wpdb->delete($wpdb->prefix.'ohmylms_user_enrollment', ['id'=>$state['enrollment']]); }
+    if (!empty($state['quiz'])) { $wpdb->delete($wpdb->prefix.'ohmylms_quiz_questions_relationship', ['quiz_id'=>$state['quiz']]); $wpdb->delete($wpdb->prefix.'ohmylms_content_relationship', ['content_id'=>$state['quiz']]); }
+    if (!empty($state['course'])) { $wpdb->delete($wpdb->prefix.'ohmylms_chapter_relationship', ['course_id'=>$state['course']]); }
     foreach ($state['posts'] as $id) {
-        $answers = $wpdb->get_col($wpdb->prepare("SELECT id FROM {$wpdb->prefix}omlms_question_answers WHERE question_id=%d", $id));
-        foreach ($answers as $answer) { $wpdb->delete($wpdb->prefix.'omlms_question_answermeta', ['answer_id'=>$answer]); }
-        $wpdb->delete($wpdb->prefix.'omlms_question_answers', ['question_id'=>$id]); wp_delete_post($id, true);
+        $answers = $wpdb->get_col($wpdb->prepare("SELECT id FROM {$wpdb->prefix}ohmylms_question_answers WHERE question_id=%d", $id));
+        foreach ($answers as $answer) { $wpdb->delete($wpdb->prefix.'ohmylms_question_answermeta', ['answer_id'=>$answer]); }
+        $wpdb->delete($wpdb->prefix.'ohmylms_question_answers', ['question_id'=>$id]); wp_delete_post($id, true);
     }
     if ($state['student']) {
-        $wpdb->delete($wpdb->prefix.'omlms_user_achievement', ['user_id'=>$state['student']]);
-        $wpdb->delete($wpdb->prefix.'omlms_notifications', ['student_id'=>$state['student']]);
+        $wpdb->delete($wpdb->prefix.'ohmylms_user_achievement', ['user_id'=>$state['student']]);
+        $wpdb->delete($wpdb->prefix.'ohmylms_notifications', ['student_id'=>$state['student']]);
         require_once ABSPATH.'wp-admin/includes/user.php'; wp_delete_user($state['student']);
     }
     foreach ($state['posts'] as $id) { live_check(get_post($id) === null, 'Fixture post remains'); }
     live_check(!get_user_by('id', $state['student']), 'Fixture student remains');
     if (!empty($state['quiz'])) {
-        live_check((int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}omlms_quiz_attempts WHERE quiz_id=%d", $state['quiz'])) === 0, 'Fixture attempts remain');
-        live_check((int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}omlms_quiz_attempts_answers WHERE quiz_id=%d", $state['quiz'])) === 0, 'Fixture answers remain');
+        live_check((int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id=%d", $state['quiz'])) === 0, 'Fixture attempts remain');
+        live_check((int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_id=%d", $state['quiz'])) === 0, 'Fixture answers remain');
     }
     unlink($state_file); echo "Removed owned quiz report fixtures.\n"; exit;
 }

@@ -12,9 +12,9 @@
       selectedPaymentMethod: !1,
       isCheckoutLogin: !1,
       init: function () {
-        e(document.body).on("omlms_update_checkout", this.update_checkout), e(document.body).on("click", "a.showlogin", this.show_login_form).on("submit", "form.checkout_coupon", this.apply_coupon).on("click", ".creator-lms-remove-coupon", this.remove_coupon).on("submit", "#creator-lms-checkout-form", this.submit).on("submit", ".creator-lms-form-login", this.login).on("submit", ".creator-lms-form-signup", this.signup), this.$checkout_form.on("click", 'input[name="payment_method"]', this.payment_method_selected), e(".creator-lms-billing-fields .creator-lms-form-row, .creator-lms-billing-contact .creator-lms-form-row").each(function () {
+        e(document.body).on("ohmylms_update_checkout", this.update_checkout), e(document.body).on("click", "a.showlogin", this.show_login_form).on("submit", "form.checkout_coupon", this.apply_coupon).on("click", ".ohmylms-remove-coupon", this.remove_coupon).on("submit", "#ohmylms-checkout-form", this.submit).on("submit", ".ohmylms-form-login", this.login).on("submit", ".ohmylms-form-signup", this.signup), this.$checkout_form.on("click", 'input[name="payment_method"]', this.payment_method_selected), e(".ohmylms-billing-fields .ohmylms-form-row, .ohmylms-billing-contact .ohmylms-form-row").each(function () {
           var r = e(this).find("input, select");
-          r.length && (r.prop("required") || e(this).hasClass("validate-required")) && r.data("omlmsServerRequired", !0);
+          r.length && (r.prop("required") || e(this).hasClass("validate-required")) && r.data("ohmylmsServerRequired", !0);
         }), this.applyGatewayRequiredFields(), e("input#createaccount").on("change", this.toggle_create_account).trigger("change"), window.PayPalHandler && "function" == typeof window.PayPalHandler.capture_paypal_payment && window.PayPalHandler.capture_paypal_payment();
       },
       update_checkout: function () {},
@@ -24,21 +24,21 @@
         if (o.is(".processing")) return !1;
         if (o.find('input[name="coupon_code"]').val()) {
           var a = {
-            security: omlms_checkout_params.apply_coupon_nonce,
+            security: ohmylms_checkout_params.apply_coupon_nonce,
             coupon_code: o.find('input[name="coupon_code"]').val(),
-            action: "creator_lms_apply_coupon"
+            action: "ohmylms_apply_coupon"
           };
           return e.ajax({
             type: "POST",
-            url: omlms_checkout_params.ajax_url,
+            url: ohmylms_checkout_params.ajax_url,
             data: a,
             dataType: "json",
             success: function (r) {
-              if (e(".omlms-notices-wrapper").empty(), r && r.success && r.data.fragments) e.each(r.data.fragments, function (r, o) {
+              if (e(".ohmylms-notices-wrapper").empty(), r && r.success && r.data.fragments) e.each(r.data.fragments, function (r, o) {
                 t.fragments && t.fragments[r] === o || e(r).html(o);
               }), t.fragments = a.fragments;else {
                 var o = r.data.notice || r.data.message;
-                e(".omlms-notices-wrapper").html(o);
+                e(".ohmylms-notices-wrapper").html(o);
               }
             },
             error: function (e, r, t) {
@@ -51,13 +51,13 @@
         r.preventDefault();
         var o = e(this).data("coupon"),
           a = {
-            security: omlms_checkout_params.remove_coupon_nonce,
+            security: ohmylms_checkout_params.remove_coupon_nonce,
             coupon_code: o,
-            action: "creator_lms_remove_coupon"
+            action: "ohmylms_remove_coupon"
           };
         e.ajax({
           type: "POST",
-          url: omlms_checkout_params.ajax_url,
+          url: ohmylms_checkout_params.ajax_url,
           data: a,
           dataType: "json",
           success: function (r) {
@@ -69,18 +69,18 @@
         });
       },
       payment_method_selected: function (r) {
-        if (r.stopPropagation(), e(this).parents(".creator-lms-single-payment").addClass("selected").siblings().removeClass("selected"), e(".payment_methods input.input-radio").length > 1) {
-          var o = e(this).parents(".creator-lms-single-payment").find("div.payment_box." + e(this).attr("ID")),
+        if (r.stopPropagation(), e(this).parents(".ohmylms-single-payment").addClass("selected").siblings().removeClass("selected"), e(".payment_methods input.input-radio").length > 1) {
+          var o = e(this).parents(".ohmylms-single-payment").find("div.payment_box." + e(this).attr("ID")),
             a = e(this).is(":checked");
-          a && !o.is(":visible") && (e(this).parents(".creator-lms-single-payment").find("div.payment_box").filter(":visible").slideUp(), a && (e(this).parents(".creator-lms-single-payment").siblings().find("div.payment_box").slideUp(), o.slideDown()));
-        } else e(this).parents(".creator-lms-single-payment").siblings().find("div.payment_box").slideUp(), e(this).parents(".creator-lms-single-payment").find("div.payment_box").slideDown();
+          a && !o.is(":visible") && (e(this).parents(".ohmylms-single-payment").find("div.payment_box").filter(":visible").slideUp(), a && (e(this).parents(".ohmylms-single-payment").siblings().find("div.payment_box").slideUp(), o.slideDown()));
+        } else e(this).parents(".ohmylms-single-payment").siblings().find("div.payment_box").slideUp(), e(this).parents(".ohmylms-single-payment").find("div.payment_box").slideDown();
         e(this).data("order_button_text") ? e("#place_order").text(e(this).data("order_button_text")) : e("#place_order").text(e("#place_order").data("value"));
-        var s = e('.creator-lms-checkout-form input[name="payment_method"]:checked').attr("id");
+        var s = e('.ohmylms-checkout-form input[name="payment_method"]:checked').attr("id");
         s !== t.selectedPaymentMethod && e(document.body).trigger("payment_method_selected"), t.selectedPaymentMethod = s, t.applyGatewayRequiredFields();
       },
       applyGatewayRequiredFields: function () {
-        var r = (window.omlms_checkout_params || {}).gateway_required_fields || {},
-          o = (e('.creator-lms-checkout-form input[name="payment_method"]:checked').attr("id") || "").replace(/^payment_method_/, ""),
+        var r = (window.ohmylms_checkout_params || {}).gateway_required_fields || {},
+          o = (e('.ohmylms-checkout-form input[name="payment_method"]:checked').attr("id") || "").replace(/^payment_method_/, ""),
           a = r[o] || [],
           s = [];
         Object.keys(r).forEach(function (e) {
@@ -96,16 +96,16 @@
         if (o.length) {
           var a = o.find("input, select"),
             s = o.find("label");
-          if (a.length) return t ? (a.attr("required", "required").prop("required", !0), o.addClass("validate-required"), s.find(".optional").hide(), void (0 === s.find(".required").length && s.length && s.append(' <abbr class="required" title="required">*</abbr>'))) : void (a.data("omlmsServerRequired") || (a.removeAttr("required").prop("required", !1), o.removeClass("validate-required"), s.find(".optional").show(), s.find(".required").remove()));
+          if (a.length) return t ? (a.attr("required", "required").prop("required", !0), o.addClass("validate-required"), s.find(".optional").hide(), void (0 === s.find(".required").length && s.length && s.append(' <abbr class="required" title="required">*</abbr>'))) : void (a.data("ohmylmsServerRequired") || (a.removeAttr("required").prop("required", !1), o.removeClass("validate-required"), s.find(".optional").show(), s.find(".required").remove()));
         }
       },
       show_login_form: function () {
-        return e(this).closest(".creator-lms").find(".omlms-notices-wrapper").empty(), e(".creator-lms-form-login").slideToggle(), t.isCheckoutLogin = !t.isCheckoutLogin, !1;
+        return e(this).closest(".ohmylms").find(".ohmylms-notices-wrapper").empty(), e(".ohmylms-form-login").slideToggle(), t.isCheckoutLogin = !t.isCheckoutLogin, !1;
       },
       submit: function (r) {
-        r.preventDefault(), e(".omlms-notices-wrapper").empty(), e(this).find(".creator-lms-place-order-button .creator-lms-loader").show(), e(this).find(".creator-lms-place-order-button").prop("disabled", !0);
+        r.preventDefault(), e(".ohmylms-notices-wrapper").empty(), e(this).find(".ohmylms-place-order-button .ohmylms-loader").show(), e(this).find(".ohmylms-place-order-button").prop("disabled", !0);
         var o = e(this);
-        if (o.find('button[type="submit"]'), o.is(".processing")) return o.find(".creator-lms-place-order-button .creator-lms-loader").hide(), o.find(".creator-lms-place-order-button").prop("disabled", !0), !1;
+        if (o.find('button[type="submit"]'), o.is(".processing")) return o.find(".ohmylms-place-order-button .ohmylms-loader").hide(), o.find(".ohmylms-place-order-button").prop("disabled", !0), !1;
         var gatewayHandler = window.PaymentGatewayHandlers && window.PaymentGatewayHandlers[o.find('input[name="payment_method"]:checked').val()];
         if (gatewayHandler && gatewayHandler.resume && gatewayHandler.resume(o)) return false;
         if (gatewayHandler) o.addClass('processing');
@@ -113,25 +113,25 @@
           s = t.selectedPaymentMethod;
         s && "payment_method_stripe" === s || s && "payment_method_razorpay" === s || e.ajax({
           type: "POST",
-          url: omlms_checkout_params.ajax_url,
+          url: ohmylms_checkout_params.ajax_url,
           data: o.serialize(),
           dataType: "json",
           error: function () {
             if (gatewayHandler) {
               o.removeClass('processing');
-              o.find('.creator-lms-place-order-button').prop('disabled', false);
-              o.find('.creator-lms-loader').hide();
+              o.find('.ohmylms-place-order-button').prop('disabled', false);
+              o.find('.ohmylms-loader').hide();
             }
           },
           success: function (r) {
             if (r.payment_status === 'pending') {
               o.removeClass('processing');
-              o.find('.creator-lms-place-order-button .creator-lms-loader').hide();
-              o.find('.creator-lms-place-order-button').prop('disabled', false);
+              o.find('.ohmylms-place-order-button .ohmylms-loader').hide();
+              o.find('.ohmylms-place-order-button').prop('disabled', false);
               if (gatewayHandler && gatewayHandler.open) gatewayHandler.open(r, o);
               return;
             }
-            e(".omlms-notices-wrapper").empty(), o.removeClass("processing"), o.find(".creator-lms-place-order-button .creator-lms-loader").hide(), o.find(".creator-lms-place-order-button").prop("disabled", !0), r.success || "success" === r.result ? (window.location.href = r.redirect, e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").prop("disabled", !1)) : (e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").prop("disabled", !1)), r.message && (t.submit_error(o, r.message), e(a).find(".creator-lms-place-order-button .creator-lms-loader").hide(), e(a).find(".creator-lms-place-order-button").removeAttr("disabled"));
+            e(".ohmylms-notices-wrapper").empty(), o.removeClass("processing"), o.find(".ohmylms-place-order-button .ohmylms-loader").hide(), o.find(".ohmylms-place-order-button").prop("disabled", !0), r.success || "success" === r.result ? (window.location.href = r.redirect, e(a).find(".ohmylms-place-order-button .ohmylms-loader").hide(), e(a).find(".ohmylms-place-order-button").prop("disabled", !1)) : (e(a).find(".ohmylms-place-order-button .ohmylms-loader").hide(), e(a).find(".ohmylms-place-order-button").prop("disabled", !1)), r.message && (t.submit_error(o, r.message), e(a).find(".ohmylms-place-order-button .ohmylms-loader").hide(), e(a).find(".ohmylms-place-order-button").removeAttr("disabled"));
           }
         });
       },
@@ -144,7 +144,7 @@
           a = o.serialize() + "&isCheckoutLogin=" + encodeURIComponent(t.isCheckoutLogin);
         e.ajax({
           type: "POST",
-          url: omlms_checkout_params.ajax_url,
+          url: ohmylms_checkout_params.ajax_url,
           data: a,
           dataType: "json",
           success: function (e) {
@@ -160,11 +160,11 @@
         var a = e(this),
           s = a.find("#signup-password").val();
         if ((null == s ? void 0 : s.length) < 8) {
-          var c = '<div class="omlms-error-notices"><div class="omlms-NoticeGroup"><ul class="omlms-error" role="alert"><li>' + r("Password must be at least 8 characters long.", "ohmylms") + "</li></ul></div></div>";
+          var c = '<div class="ohmylms-error-notices"><div class="ohmylms-NoticeGroup"><ul class="ohmylms-error" role="alert"><li>' + r("Password must be at least 8 characters long.", "ohmylms") + "</li></ul></div></div>";
           t.submit_error(a, c);
         } else e.ajax({
           type: "POST",
-          url: omlms_checkout_params.ajax_url,
+          url: ohmylms_checkout_params.ajax_url,
           data: a.serialize(),
           dataType: "json",
           success: function (e) {
@@ -176,14 +176,14 @@
         });
       },
       submit_error: function (r, o) {
-        if (e(".omlms-notices-wrapper").empty(), e(".omlms-NoticeGroup-checkout, .omlms-error, .omlms-message, .is-error, .is-success").remove(), e(".omlms-notices-wrapper").prepend('<div class="creator-lms-checkout-notice">' + o + "</div>"), e(".omlms-NoticeGroup .omlms-error li").length > 0) {
-          var a = e(".omlms-NoticeGroup .omlms-error li").length;
-          1 == a ? e(".creator-lms-checkout-notice").addClass("single-error") : e(".creator-lms-checkout-notice").removeClass("single-error"), 2 < a ? e(".creator-lms-checkout-notice").addClass("more-then-two-error") : e(".creator-lms-checkout-notice").removeClass("more-then-two-error");
+        if (e(".ohmylms-notices-wrapper").empty(), e(".ohmylms-NoticeGroup-checkout, .ohmylms-error, .ohmylms-message, .is-error, .is-success").remove(), e(".ohmylms-notices-wrapper").prepend('<div class="ohmylms-checkout-notice">' + o + "</div>"), e(".ohmylms-NoticeGroup .ohmylms-error li").length > 0) {
+          var a = e(".ohmylms-NoticeGroup .ohmylms-error li").length;
+          1 == a ? e(".ohmylms-checkout-notice").addClass("single-error") : e(".ohmylms-checkout-notice").removeClass("single-error"), 2 < a ? e(".ohmylms-checkout-notice").addClass("more-then-two-error") : e(".ohmylms-checkout-notice").removeClass("more-then-two-error");
         }
         t.scroll_to_notices();
       },
       scroll_to_notices: function () {
-        var r = e(".omlms-NoticeGroup-updateOrderReview, .omlms-notices-wrapper");
+        var r = e(".ohmylms-NoticeGroup-updateOrderReview, .ohmylms-notices-wrapper");
         r.length || (r = e("form.checkout")), e.scroll_to_notices(r);
       }
     };
@@ -194,7 +194,7 @@
       o = r.get("token"),
       a = r.get("subscription_id"),
       s = r.get("ba_token"),
-      c = localStorage.getItem("omlms_paypal_order_id");
+      c = localStorage.getItem("ohmylms_paypal_order_id");
     function n(e) {
       e.fadeIn(200), setTimeout(function () {
         e.fadeOut(200);
@@ -206,10 +206,10 @@
         o = e(this).data("membership");
       e.ajax({
         type: "POST",
-        url: omlms_checkout_params.ajax_url,
+        url: ohmylms_checkout_params.ajax_url,
         data: {
-          action: "creator_lms_purchase_membership",
-          nonce: omlms_checkout_params.nonce,
+          action: "ohmylms_purchase_membership",
+          nonce: ohmylms_checkout_params.nonce,
           membership_id: o,
           plan: t
         },
@@ -220,22 +220,22 @@
           console.error(e.responseText);
         }
       });
-    }), e(document).on("click focus", ".creator-lms-input-text", function () {
-      e(this).parents(".creator-lms-form-row").addClass("creator-lms-folded");
+    }), e(document).on("click focus", ".ohmylms-input-text", function () {
+      e(this).parents(".ohmylms-form-row").addClass("ohmylms-folded");
     }), e(document).ready(function () {
-      e(".creator-lms-input-text").each(function () {
-        var r = e(this).parents(".creator-lms-form-row");
-        "" !== e(this).val().trim() ? r.addClass("creator-lms-folded") : r.removeClass("creator-lms-folded");
-      }), e(".creator-lms-input-text").each(function () {
-        var r = e(this).parents(".creator-lms-form-row");
-        "" !== e(this).val().trim() ? r.addClass("creator-lms-folded") : r.removeClass("creator-lms-folded");
+      e(".ohmylms-input-text").each(function () {
+        var r = e(this).parents(".ohmylms-form-row");
+        "" !== e(this).val().trim() ? r.addClass("ohmylms-folded") : r.removeClass("ohmylms-folded");
+      }), e(".ohmylms-input-text").each(function () {
+        var r = e(this).parents(".ohmylms-form-row");
+        "" !== e(this).val().trim() ? r.addClass("ohmylms-folded") : r.removeClass("ohmylms-folded");
       });
-    }), e(document).on("blur", ".creator-lms-input-text", function () {
-      "" === e(this).val() && e(this).parents(".creator-lms-form-row").removeClass("creator-lms-folded");
+    }), e(document).on("blur", ".ohmylms-input-text", function () {
+      "" === e(this).val() && e(this).parents(".ohmylms-form-row").removeClass("ohmylms-folded");
     }), e(document).on("click", ".order-review-toggle-head", function () {
-      e(this).toggleClass("active"), e(this).siblings(".creator-lms-order-review-table-wrapper").slideToggle();
-    }), e(document).on("keyup", ".creator-lms-checkout-coupon .apply-coupon", function () {
-      e(this).val().trim().length > 0 ? e(this).parents(".creator-lms-checkout-coupon").addClass("active") : e(this).parents(".creator-lms-checkout-coupon").removeClass("active");
+      e(this).toggleClass("active"), e(this).siblings(".ohmylms-order-review-table-wrapper").slideToggle();
+    }), e(document).on("keyup", ".ohmylms-checkout-coupon .apply-coupon", function () {
+      e(this).val().trim().length > 0 ? e(this).parents(".ohmylms-checkout-coupon").addClass("active") : e(this).parents(".ohmylms-checkout-coupon").removeClass("active");
     }), e(".thankyou-copy-order-id").on("click", function () {
       var r = e(this).closest("td"),
         t = r.find(".thankyou-order-id-text").text().trim(),

@@ -5,7 +5,7 @@ var B8 = function (e) {
     r = e.isFetch,
     a = e.setIsFetch,
     o = e.isLoading,
-    i = (0, L.useIsPro)(),
+    i = true,
     l = ((0, y.useDispatch)(T.default), (0, y.useSelect)(function (e) {
       return e(T.default).selectMembershipPlanData();
     }, [])),
@@ -48,7 +48,7 @@ var B8 = function (e) {
                   e.n = 4;
                   break;
                 }
-                if (i) {
+                {
                   e.n = 2;
                   break;
                 }
@@ -135,7 +135,7 @@ var B8 = function (e) {
     onRequestClose: P,
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0,
-    className: "omlms-full-height-modal",
+    className: "ohmylms-full-height-modal",
     size: "fill"
   }, o ? React.createElement(I.SkeletonWP, {
     rows: 10
@@ -145,7 +145,7 @@ var B8 = function (e) {
     onChange: function (e) {
       return h(e);
     },
-    className: "omlms-tab-has-custom-navigation"
+    className: "ohmylms-tab-has-custom-navigation"
   }), React.createElement(I.DividerWP, {
     marginStart: 4
   }), React.createElement(I.SpacerWP, {
@@ -157,12 +157,12 @@ var B8 = function (e) {
   }, React.createElement(I.ButtonWP, {
     variant: "secondary",
     onClick: P,
-    className: "omlms-membership-plan-cancel-button"
+    className: "ohmylms-membership-plan-cancel-button"
   }, (0, b.__)("Cancel", "ohmylms")), React.createElement(I.ButtonWP, {
     variant: "primary",
     onClick: O,
     disabled: A,
-    className: "omlms-membership-plan-save-button"
+    className: "ohmylms-membership-plan-save-button"
   }, "1" === v ? (0, b.__)("Next", "ohmylms") : (0, b.__)("Save", "ohmylms"))))), R && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: R,
     onClose: x

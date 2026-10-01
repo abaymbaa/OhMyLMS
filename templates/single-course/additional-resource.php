@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/duration.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -24,7 +24,7 @@ if ( !$course->get_download_resource() ) {
 ?>
 
 <li class="course-additional-resource">
-	<?php include(CREATOR_LMS_DIR . '/assets/images/icon/file-icon.php'); ?>
+	<?php include(OHMYLMS_DIR . '/assets/images/icon/file-icon.php'); ?>
 	<?php
 	echo sprintf(
 		_n( '%d Additional resource', '%d Additional resources', $course->get_additional_resource_count(), 'ohmylms' ),

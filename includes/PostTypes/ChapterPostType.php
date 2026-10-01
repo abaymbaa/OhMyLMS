@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Chapter post type to connect with topics
@@ -70,6 +70,6 @@ class ChapterPostType {
 			'publicly_queryable'  => true,
 			'capability_type'     => 'post',
 		);
-		register_post_type( 'omlms-chapter', $args );
+		register_post_type( 'ohmylms-chapter', $args );
 	}
 }

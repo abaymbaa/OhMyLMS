@@ -3,14 +3,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$base_color = $email_settings['creator_lms_email_base_color'] ?? 'var(--omlms-primary-color)';
-$email_bg_color = $email_settings['creator_lms_email_background_color'] ?? '#F4F5F7';
-$email_body_bg_color = $email_settings['creator_lms_email_body_background_color'] ?? '#ffffff';
-$email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?php echo $email_text_color; ?>';
+$base_color = $email_settings['ohmylms_email_base_color'] ?? 'var(--ohmylms-primary-color)';
+$email_bg_color = $email_settings['ohmylms_email_background_color'] ?? '#F4F5F7';
+$email_body_bg_color = $email_settings['ohmylms_email_body_background_color'] ?? '#ffffff';
+$email_text_color = $email_settings['ohmylms_email_body_text_color'] ?? '<?php echo $email_text_color; ?>';
 
 ?>
 
-<table class="creator-lms-order-items-table" style="width: 100%; border: 0; border-collapse: separate; border-radius: 0; background: transparent; margin: 0 0 20px">
+<table class="ohmylms-order-items-table" style="width: 100%; border: 0; border-collapse: separate; border-radius: 0; background: transparent; margin: 0 0 20px">
     <tr>
         <td style="border: 1px solid #EBECED; border-radius: 10px; overflow: hidden; background: transparent;">
             <table style="width: 100%; border: 0; border-collapse: collapse; border-radius: 0; background: transparent;">
@@ -43,7 +43,7 @@ $email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?p
                             </td>
 
                             <td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3; width: 110px;">
-                                <?php echo esc_html( wp_strip_all_tags( omlms_price( $item->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
+                                <?php echo esc_html( wp_strip_all_tags( ohmylms_price( $item->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -57,7 +57,7 @@ $email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?p
                         </th>
 
                         <td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
-                            <?php echo esc_html( wp_strip_all_tags( omlms_price( $order->get_cart_subtotal(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
+                            <?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_cart_subtotal(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
                         </td>
                     </tr>
                     <?php if ( $order->get_cart_discount() > 0 ) : ?>
@@ -68,7 +68,7 @@ $email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?p
                         </th>
 
                         <td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
-                            -<?php echo esc_html( wp_strip_all_tags( omlms_price( $order->get_cart_discount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
+                            -<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_cart_discount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
                         </td>
                     </tr>
 
@@ -82,7 +82,7 @@ $email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?p
                         </th>
 
                         <td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
-                            <?php echo esc_html( wp_strip_all_tags( omlms_price( $order->get_tax_amount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
+                            <?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_tax_amount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
                         </td>
                     </tr>
 
@@ -104,7 +104,7 @@ $email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '<?p
                         </th>
 
                         <td style="background: transparent; padding: 14px 20px; color: <?php echo $email_text_color; ?>; border: none; border-top: 1px solid #EBECED; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
-                            <?php echo esc_html( wp_strip_all_tags( omlms_price( $order->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
+                            <?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
                         </td>
                     </tr>
 

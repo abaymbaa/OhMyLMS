@@ -43,7 +43,7 @@ class TaxService {
 	 * @return bool
 	 */
 	public function is_tax_enabled() {
-		return get_option( 'creator_lms_tax_enabled', 'no' ) === 'yes';
+		return get_option( 'ohmylms_tax_enabled', 'no' ) === 'yes';
 	}
 
 	/**
@@ -52,7 +52,7 @@ class TaxService {
 	 * @return string
 	 */
 	public function get_tax_label() {
-		return get_option( 'creator_lms_tax_label', 'Tax' );
+		return get_option( 'ohmylms_tax_label', 'Tax' );
 	}
 
 	/**
@@ -61,7 +61,7 @@ class TaxService {
 	 * @return bool
 	 */
 	public function prices_include_tax() {
-		return get_option( 'creator_lms_prices_include_tax', 'no' ) === 'yes';
+		return get_option( 'ohmylms_prices_include_tax', 'no' ) === 'yes';
 	}
 
 	/**
@@ -70,7 +70,7 @@ class TaxService {
 	 * @return string
 	 */
 	public function get_tax_based_on() {
-		return get_option( 'creator_lms_tax_based_on', 'billing' );
+		return get_option( 'ohmylms_tax_based_on', 'billing' );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class TaxService {
 	 * @return bool
 	 */
 	public function is_eu_vat_enabled() {
-		return get_option( 'creator_lms_eu_vat_enabled', 'no' ) === 'yes';
+		return get_option( 'ohmylms_eu_vat_enabled', 'no' ) === 'yes';
 	}
 
 	/**
@@ -88,7 +88,7 @@ class TaxService {
 	 * @return bool
 	 */
 	public function is_vat_validation_disabled() {
-		return get_option( 'creator_lms_disable_vat_validation', 'no' ) === 'yes';
+		return get_option( 'ohmylms_disable_vat_validation', 'no' ) === 'yes';
 	}
 
 	/**
@@ -97,7 +97,7 @@ class TaxService {
 	 * @return string
 	 */
 	public function get_same_country_rule() {
-		return get_option( 'creator_lms_same_country_rule', 'charge_tax_unless_validated' );
+		return get_option( 'ohmylms_same_country_rule', 'charge_tax_unless_validated' );
 	}
 
 	/**
@@ -106,7 +106,7 @@ class TaxService {
 	 * @return string
 	 */
 	public function get_vat_number_label() {
-		return get_option( 'creator_lms_vat_number_label', 'VAT Number' );
+		return get_option( 'ohmylms_vat_number_label', 'VAT Number' );
 	}
 
 	/**
@@ -115,7 +115,7 @@ class TaxService {
 	 * @return float
 	 */
 	public function get_fallback_tax_rate() {
-		return floatval( get_option( 'creator_lms_fallback_tax_rate', '0.00' ) );
+		return floatval( get_option( 'ohmylms_fallback_tax_rate', '0.00' ) );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class TaxService {
 	 * @return string
 	 */
 	public function get_display_prices_inclusive_tax() {
-		return get_option( 'creator_lms_display_prices_inclusive_tax', 'including' );
+		return get_option( 'ohmylms_display_prices_inclusive_tax', 'including' );
 	}
 
 	/**
@@ -133,7 +133,7 @@ class TaxService {
 	 * @return array
 	 */
 	public function get_existing_tax_rates() {
-		$rates = get_option( 'creator_lms_existing_tax_rates', array() );
+		$rates = get_option( 'ohmylms_existing_tax_rates', array() );
 		return is_array( $rates ) ? $rates : array();
 	}
 
@@ -143,7 +143,7 @@ class TaxService {
 	 * @return array
 	 */
 	public function get_new_tax_rates() {
-		$rates = get_option( 'creator_lms_new_tax_rates', array() );
+		$rates = get_option( 'ohmylms_new_tax_rates', array() );
 		return is_array( $rates ) ? $rates : array();
 	}
 
@@ -153,7 +153,7 @@ class TaxService {
 	 * @return array
 	 */
 	public function get_tax_rates() {
-		$rates = get_option( 'creator_lms_tax_rates', array() );
+		$rates = get_option( 'ohmylms_tax_rates', array() );
 		return is_array( $rates ) ? $rates : array();
 	}
 
@@ -195,7 +195,7 @@ class TaxService {
 	 * @return array
 	 */
 	public function get_countries() {
-		$countries = get_option( 'creator_lms_countries', array() );
+		$countries = get_option( 'ohmylms_countries', array() );
 		return is_array( $countries ) ? $countries : array();
 	}
 
@@ -205,7 +205,7 @@ class TaxService {
 	 * @return array
 	 */
 	public function get_states() {
-		$states = get_option( 'creator_lms_states', array() );
+		$states = get_option( 'ohmylms_states', array() );
 		return is_array( $states ) ? $states : array();
 	}
 
@@ -356,7 +356,7 @@ class TaxService {
 	 */
 	private function get_eu_vat_rates(){
 		return apply_filters(
-			'creator_lms_vat_current_eu_vat_rates',
+			'ohmylms_vat_current_eu_vat_rates',
 			array(
 				'AT' => 20.0,
 				'BE' => 21.0,

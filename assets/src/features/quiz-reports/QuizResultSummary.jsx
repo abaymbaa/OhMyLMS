@@ -71,7 +71,7 @@ export function createQuizResultSummary(readRuntime) {
               </Controls.SpacerWP>
             </Controls.CardWP>
             <Controls.SpacerWP marginBottom={4} />
-            <div className={'omlms-report-final-result'}>
+            <div className={'ohmylms-report-final-result'}>
               <Controls.TextWP as={'p'} size={15}>
                 {(0, I18n.__)('Did student pass or fail? (optional)', 'ohmylms')}
               </Controls.TextWP>

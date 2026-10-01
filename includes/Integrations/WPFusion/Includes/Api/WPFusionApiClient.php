@@ -4,11 +4,11 @@
  * 
  * Handles all communication with WP Fusion REST API
  * 
- * @package OMLMS\Integrations\WPFusion\Includes\Api
+ * @package OhMyLMS\Integrations\WPFusion\Includes\Api
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes\Api;
+namespace OhMyLMS\Integrations\WPFusion\Includes\Api;
 
 defined( 'ABSPATH' ) || exit;
 

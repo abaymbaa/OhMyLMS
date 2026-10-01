@@ -105,7 +105,7 @@ var gm = function () {
       justify: "flex-start",
       gap: 4
     }, React.createElement(gc, {
-      className: "omlms-drag-icon"
+      className: "ohmylms-drag-icon"
     }), React.createElement(I.FlexBlockWP, null, React.createElement(I.CardWP, null, React.createElement(I.FlexWP, null, React.createElement(I.FlexBlockWP, null, React.createElement(qd, {
       id: null == a ? void 0 : a.id,
       value: null == a ? void 0 : a.answer,
@@ -199,7 +199,6 @@ var gm = function () {
     size: "small"
   }, (0, b.__)("Add Option", "ohmylms")));
 };
-
 const hm = (0, g.memo)(gm),
   ym = {
     name: "Matching",
@@ -214,7 +213,6 @@ const hm = (0, g.memo)(gm),
     },
     isPro: !0
   };
-
 var bm = function (e) {
     (0, y.dispatch)(T.default).registerQuiz(e);
   },
@@ -223,7 +221,6 @@ var bm = function (e) {
   },
   wm = n(75206),
   Em = ["placeholder", "onChange", "searchDelay"];
-
 function Sm() {
   return Sm = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -233,13 +230,11 @@ function Sm() {
     return e;
   }, Sm.apply(null, arguments);
 }
-
 function Rm(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var xm = function (e) {
   var t = e.placeholder,
     n = void 0 === t ? (0, b.__)("Search Course", "lms") : t,
@@ -312,11 +307,8 @@ var xm = function (e) {
     }
   }, a));
 };
-
 const Cm = (0, g.memo)(xm);
-
 var Pm = ["buttonText", "placeholder", "onSearch", "onChange", "options", "selectedOptions", "isMultiple", "allowAll", "allLevel", "onCheckAllChange", "notFoundMessage"];
-
 function Om(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -356,13 +348,11 @@ function Om(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function km(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var jm = function (e) {
   var t = e.buttonText,
     n = void 0 === t ? (0, b.__)("Select", "ohmylms") : t,
@@ -448,7 +438,7 @@ var jm = function (e) {
   }, [M, T]), (0, g.useEffect)(function () {
     j(u);
   }, [u]), React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-advanced-search-select-wrapper",
+    className: "ohmylms-advanced-search-select-wrapper",
     ref: M
   }, React.createElement(I.ButtonWP, {
     onClick: F,
@@ -460,7 +450,7 @@ var jm = function (e) {
     size: "lg"
   }, n), S && (0, wm.createPortal)(React.createElement("div", {
     ref: T,
-    className: "omlms-advanced-search-select ".concat(0 === k.length ? "omlms-no-search-items" : ""),
+    className: "ohmylms-advanced-search-select ".concat(0 === k.length ? "ohmylms-no-search-items" : ""),
     style: {
       position: "absolute",
       top: C.top,
@@ -473,20 +463,17 @@ var jm = function (e) {
     onChange: A,
     searchDelay: 0
   }), React.createElement("div", {
-    className: "omlms-advanced-search-select-items"
+    className: "ohmylms-advanced-search-select-items"
   }, p && k.length > 0 && k.length === u.length && React.createElement(I.CheckboxWP, {
     indeterminate: d.length < k.length && d.length > 0,
     onChange: N,
     checked: d.length === k.length
   }, v), 0 === k.length && React.createElement("p", {
-    className: "omlms-nothing-found"
+    className: "ohmylms-nothing-found"
   }, w))), document.body)));
 };
-
 const Am = (0, g.memo)(jm);
-
 var Mm = ["title", "description", "isItProFeature", "placeholder", "data", "setData", "notFoundMessage", "onChange", "allowClear", "headerFontSize", "staticSearch", "value", "tooltip", "showSearch", "padding", "advancedSelect", "showDivider", "align", "selectorWeight"];
-
 function Tm() {
   return Tm = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -496,15 +483,13 @@ function Tm() {
     return e;
   }, Tm.apply(null, arguments);
 }
-
 function Im(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Fm = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.title,
     r = e.description,
     a = e.isItProFeature,
@@ -663,12 +648,10 @@ var Fm = function (e) {
     color: "#EDF2FB"
   }))));
 };
-
 const Nm = (0, g.memo)(Fm);
-
 var Dm = ["className", "title", "description", "tooltip", "showDivider", "isItProFeature", "marginStart", "children", "variant", "align"],
   Wm = function (e) {
-    (0, L.useIsPro)();
+    true;
     var t = e.className,
       n = void 0 === t ? "" : t,
       r = e.title,
@@ -725,15 +708,12 @@ var Dm = ["className", "title", "description", "tooltip", "showDivider", "isItPr
       color: "#EDF2FB"
     }));
   };
-
 const zm = (0, g.memo)(Wm);
-
 function Bm(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Lm = function (e) {
   var t = e.handleChange,
     n = e.isChecked,
@@ -784,19 +764,19 @@ var Lm = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(zm, {
     title: (0, b.__)("Set Passing Grade", "ohmylms"),
     description: (0, b.__)("Define the minimum percentage a student must score to pass the quiz.", "ohmylms"),
-    className: "omlms-quiz-passing-grade-settings-card"
+    className: "ohmylms-quiz-passing-grade-settings-card"
   }, React.createElement(I.FlexWP, {
     direction: "column",
     gap: 2,
     justify: "flex-end",
     align: "flex-end",
-    className: "omlms-quiz-passing-grade-settings"
+    className: "ohmylms-quiz-passing-grade-settings"
   }, React.createElement(Bt.A, {
     checked: n,
     onChange: function (e) {
       return t("passing_grade", e, "enabled");
     },
-    className: "omlms-passing-grade-switch"
+    className: "ohmylms-passing-grade-switch"
   }), n && React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, null), React.createElement(I.InputNumberWP, {
     type: "number",
     min: 1,
@@ -809,7 +789,7 @@ var Lm = function (e) {
     style: {
       width: 100
     },
-    className: "omlms-passing-grade-input",
+    className: "ohmylms-passing-grade-input",
     onChange: function (e) {
       var n;
       /^\d*\.?\d*$/.test(e) && (o < (n = e) ? c((0, b.__)("Passing grade cannot be greater than the maximum score", "ohmylms")) : n < 1 && "" !== n ? c((0, b.__)("Passing grade cannot be less than 1", "ohmylms")) : (c(""), t("passing_grade", n, "value")));
@@ -823,9 +803,7 @@ var Lm = function (e) {
     }
   }, l)))));
 };
-
 const Vm = (0, g.memo)(Lm);
-
 function Hm(e) {
   return Hm = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -833,7 +811,6 @@ function Hm(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Hm(e);
 }
-
 function Gm(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -844,7 +821,6 @@ function Gm(e, t) {
   }
   return n;
 }
-
 function Um(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -856,7 +832,6 @@ function Um(e) {
   }
   return e;
 }
-
 function qm(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -877,7 +852,6 @@ function qm(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Ym(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -917,7 +891,6 @@ function Ym(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Qm(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

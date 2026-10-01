@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Gateways\Paypal;
+namespace OhMyLMS\Gateways\Paypal;
 
 // Exit if accessed directly in a non-WordPress environment
 if (!defined('ABSPATH')) {

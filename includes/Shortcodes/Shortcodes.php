@@ -2,11 +2,11 @@
 /**
  * Class Shortcodes
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,15 +17,15 @@ class Shortcodes {
 	 */
 	public static function init() {
 		$shortcodes = array(
- 'creator_lms_offer_button' => __CLASS__ . '::offer_button',
-			'creator_lms_checkout'        => __CLASS__ . '::checkout',
-			'creator_lms_membership_plan' => __CLASS__ . '::membership_plan',
-			'creator_lms_course_list'     => __CLASS__ . '::course_list',
-			'creator_lms_my_profile'      => __CLASS__ . '::my_profile',
-			'creator_lms_dashboard'       => __CLASS__ . '::dashboard',
-			'creator_lms_profile'         => __CLASS__ . '::profile',
-			'creator_lms_my_courses'      => __CLASS__ . '::my_courses',
-			'creator_lms_buy_now'         => __CLASS__ . '::buy_now',
+ 'ohmylms_offer_button' => __CLASS__ . '::offer_button',
+			'ohmylms_checkout'        => __CLASS__ . '::checkout',
+			'ohmylms_membership_plan' => __CLASS__ . '::membership_plan',
+			'ohmylms_course_list'     => __CLASS__ . '::course_list',
+			'ohmylms_my_profile'      => __CLASS__ . '::my_profile',
+			'ohmylms_dashboard'       => __CLASS__ . '::dashboard',
+			'ohmylms_profile'         => __CLASS__ . '::profile',
+			'ohmylms_my_courses'      => __CLASS__ . '::my_courses',
+			'ohmylms_buy_now'         => __CLASS__ . '::buy_now',
 		);
 		foreach ( $shortcodes as $shortcode => $callback ) {
 			add_shortcode( apply_filters( "{$shortcode}_shortcode_tag", $shortcode ), $callback );
@@ -39,7 +39,7 @@ class Shortcodes {
 	 * @return false|string
 	 */
 	public static function buy_now( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeBuyNow', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeBuyNow', 'output' ), $atts );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Shortcodes {
 		$callback,
 		$atts = array(),
 		$wrapper = array(
-			'class'  => 'creator-lms',
+			'class'  => 'ohmylms',
 			'before' => null,
 			'after'  => null,
 		)
@@ -78,8 +78,8 @@ class Shortcodes {
 	 */
 	public static function checkout( $atts ) {
 		ob_start();
-		echo '<div class="creator-lms">';
-		\OMLMS\Shortcodes\ShortCodeCheckout::output( $atts );
+		echo '<div class="ohmylms">';
+		\OhMyLMS\Shortcodes\ShortCodeCheckout::output( $atts );
 		echo '</div>';
 		return ob_get_clean();
 	}
@@ -92,7 +92,7 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function membership_plan( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeMembershipPlan', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMembershipPlan', 'output' ), $atts );
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function course_list( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortcodeCourseList', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortcodeCourseList', 'output' ), $atts );
 	}
 
 
@@ -115,7 +115,7 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function my_profile( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeMyProfile', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyProfile', 'output' ), $atts );
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function dashboard( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeDashboard', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeDashboard', 'output' ), $atts );
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function profile( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeProfile', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeProfile', 'output' ), $atts );
 	}
 
 	/**
@@ -148,10 +148,10 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function my_courses( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeMyCourses', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyCourses', 'output' ), $atts );
 	}
 
 public static function offer_button( $atts ) {
-		return self::shortcode_wrapper( array( 'OMLMS\Shortcodes\ShortCodeOfferButton', 'output' ), $atts );
+		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeOfferButton', 'output' ), $atts );
 	}
 }

@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Get student object by student ID.
  *
  * @param int $student_id The student ID.
- * @return \OMLMS\Data\Student|false Returns a Student object if successful, otherwise false.
+ * @return \OhMyLMS\Data\Student|false Returns a Student object if successful, otherwise false.
  * @since 1.0.0
  */
-function omlms_get_student( $student_id ) {
-	return OMLMS()->student_factory->get_student($student_id);
+function ohmylms_get_student( $student_id ) {
+	return ohmylms()->student_factory->get_student($student_id);
 }

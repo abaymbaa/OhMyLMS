@@ -75,7 +75,7 @@ export function createSetupPreferences(readRuntime) {
                       return (
                         (e.n = 3),
                         m({
-                          path: '/creator-lms/v1/certificates/',
+                          path: '/ohmylms/v1/certificates/',
                           method: 'POST',
                           data: {
                             name: 'Certificate Template '.concat(_.certificate),
@@ -126,11 +126,11 @@ export function createSetupPreferences(readRuntime) {
                         (r = une[t].data),
                         (e.n = 2),
                         m({
-                          path: '/creator-lms/v1/setup-wizard/import-course',
+                          path: '/ohmylms/v1/setup-wizard/import-course',
                           method: 'POST',
                           data: r,
                           headers: {
-                            nonce: window.creator_lms_params.setup_wizard_nonce,
+                            nonce: window.ohmylms_params.setup_wizard_nonce,
                           },
                         })
                       );
@@ -175,7 +175,7 @@ export function createSetupPreferences(readRuntime) {
                         (s = e.v),
                         (d = {
                           optin: {
-                            creatorlms_allow_tracking: null != _ && _.isOptEnabled ? 'yes' : 'no',
+                            ohmylms_allow_tracking: null != _ && _.isOptEnabled ? 'yes' : 'no',
                           },
                           language: null !== (t = _.language) && void 0 !== t ? t : 'en_US',
                           certificate: _.certificate,
@@ -183,33 +183,31 @@ export function createSetupPreferences(readRuntime) {
                           niche: _.niche ? [_.niche] : [],
                           level: _.level,
                           currency: {
-                            creator_lms_currency:
+                            ohmylms_currency:
                               null !== (n = _.currency) && void 0 !== n
                                 ? n
-                                : null == w || null === (r = w.creator_lms_currency) || void 0 === r
+                                : null == w || null === (r = w.ohmylms_currency) || void 0 === r
                                   ? void 0
                                   : r.value,
-                            creator_lms_currency_pos:
-                              (null == w ||
-                              null === (a = w.creator_lms_currency_pos) ||
-                              void 0 === a
+                            ohmylms_currency_pos:
+                              (null == w || null === (a = w.ohmylms_currency_pos) || void 0 === a
                                 ? void 0
                                 : a.value) || 'left',
-                            creator_lms_price_thousand_sep:
+                            ohmylms_price_thousand_sep:
                               (null == w ||
-                              null === (o = w.creator_lms_price_thousand_sep) ||
+                              null === (o = w.ohmylms_price_thousand_sep) ||
                               void 0 === o
                                 ? void 0
                                 : o.value) || ',',
-                            creator_lms_price_decimal_sep:
+                            ohmylms_price_decimal_sep:
                               (null == w ||
-                              null === (i = w.creator_lms_price_decimal_sep) ||
+                              null === (i = w.ohmylms_price_decimal_sep) ||
                               void 0 === i
                                 ? void 0
                                 : i.value) || '.',
-                            creator_lms_price_num_decimals:
+                            ohmylms_price_num_decimals:
                               (null == w ||
-                              null === (l = w.creator_lms_price_num_decimals) ||
+                              null === (l = w.ohmylms_price_num_decimals) ||
                               void 0 === l
                                 ? void 0
                                 : l.value) || '2',
@@ -217,13 +215,13 @@ export function createSetupPreferences(readRuntime) {
                           contact: {
                             email:
                               null != _ && _.isOptEnabled
-                                ? null === (c = window.creator_lms_params) || void 0 === c
+                                ? null === (c = window.ohmylms_params) || void 0 === c
                                   ? void 0
                                   : c.admin_email
                                 : '',
                             name:
                               null != _ && _.isOptEnabled
-                                ? null === (u = window.creator_lms_params) || void 0 === u
+                                ? null === (u = window.ohmylms_params) || void 0 === u
                                   ? void 0
                                   : u.admin_name
                                 : '',
@@ -271,20 +269,20 @@ export function createSetupPreferences(readRuntime) {
                         (e.p = 0),
                         (r = {
                           optin: {
-                            creatorlms_allow_tracking: null != _ && _.isOptEnabled ? 'yes' : 'no',
+                            ohmylms_allow_tracking: null != _ && _.isOptEnabled ? 'yes' : 'no',
                           },
                           niche: _.niche ? [_.niche] : [],
                           level: _.level,
                           contact: {
                             email:
                               null != _ && _.isOptEnabled
-                                ? null === (t = window.creator_lms_params) || void 0 === t
+                                ? null === (t = window.ohmylms_params) || void 0 === t
                                   ? void 0
                                   : t.admin_email
                                 : '',
                             name:
                               null != _ && _.isOptEnabled
-                                ? null === (n = window.creator_lms_params) || void 0 === n
+                                ? null === (n = window.ohmylms_params) || void 0 === n
                                   ? void 0
                                   : n.admin_name
                                 : '',
@@ -470,7 +468,7 @@ export function createSetupPreferences(readRuntime) {
                 if (0 === e.n)
                   return (
                     (r = Object.entries(
-                      null == w || null === (n = w.creator_lms_currency) || void 0 === n
+                      null == w || null === (n = w.ohmylms_currency) || void 0 === n
                         ? void 0
                         : n.options,
                     ).map(function (e) {
@@ -511,9 +509,8 @@ export function createSetupPreferences(readRuntime) {
         (null != _ && _.archive_page_layout) ||
           h.setSetupWizardData({
             archive_page_layout:
-              (null === (e = E.creator_lms_archive_page_layout) || void 0 === e
-                ? void 0
-                : e.value) || 'grid',
+              (null === (e = E.ohmylms_archive_page_layout) || void 0 === e ? void 0 : e.value) ||
+              'grid',
           });
       }, []),
       (
@@ -534,16 +531,16 @@ export function createSetupPreferences(readRuntime) {
           <Controls.ContainerWP>
             <div
               className={
-                'omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper omlms-preference-screen-wrapper'
+                'ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper ohmylms-preference-screen-wrapper'
               }
             >
               <div
-                className={'omlms-setup-wizard__container'}
+                className={'ohmylms-setup-wizard__container'}
                 style={{
                   gap: '0',
                 }}
               >
-                <div className={'omlms-setup-wizard__header'}>
+                <div className={'ohmylms-setup-wizard__header'}>
                   <Controls.HeadingWP
                     as={'h2'}
                     color={'#000d25'}
@@ -634,19 +631,19 @@ export function createSetupPreferences(readRuntime) {
                                         null !==
                                           (t =
                                             null == w ||
-                                            null === (n = w.creator_lms_currency) ||
+                                            null === (n = w.ohmylms_currency) ||
                                             void 0 === n
                                               ? void 0
                                               : n.options[null == _ ? void 0 : _.currency]) &&
                                         void 0 !== t
                                           ? t
                                           : null == w ||
-                                              null === (r = w.creator_lms_currency) ||
+                                              null === (r = w.ohmylms_currency) ||
                                               void 0 === r
                                             ? void 0
                                             : r.options[
                                                 null == w ||
-                                                null === (a = w.creator_lms_currency) ||
+                                                null === (a = w.ohmylms_currency) ||
                                                 void 0 === a
                                                   ? void 0
                                                   : a.value
@@ -657,16 +654,14 @@ export function createSetupPreferences(readRuntime) {
                                 value:
                                   null !== (o = null == _ ? void 0 : _.currency) && void 0 !== o
                                     ? o
-                                    : null == w ||
-                                        null === (i = w.creator_lms_currency) ||
-                                        void 0 === i
+                                    : null == w || null === (i = w.ohmylms_currency) || void 0 === i
                                       ? void 0
                                       : i.value,
                               },
                             ]}
                             defaultOptions={
                               ((p =
-                                null == w || null === (l = w.creator_lms_currency) || void 0 === l
+                                null == w || null === (l = w.ohmylms_currency) || void 0 === l
                                   ? void 0
                                   : l.options),
                               p
@@ -728,8 +723,7 @@ export function createSetupPreferences(readRuntime) {
                                   null !== (c = null == _ ? void 0 : _.archive_page_layout) &&
                                   void 0 !== c
                                     ? c
-                                    : null === (u = E.creator_lms_archive_page_layout) ||
-                                        void 0 === u
+                                    : null === (u = E.ohmylms_archive_page_layout) || void 0 === u
                                       ? void 0
                                       : u.value
                                 }
@@ -760,7 +754,7 @@ export function createSetupPreferences(readRuntime) {
                                 null !== (s = null == _ ? void 0 : _.courses_per_row) &&
                                 void 0 !== s
                                   ? s
-                                  : null === (d = E.creator_lms_columns_per_row) || void 0 === d
+                                  : null === (d = E.ohmylms_columns_per_row) || void 0 === d
                                     ? void 0
                                     : d.value,
                             })}

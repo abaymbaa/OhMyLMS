@@ -1,4 +1,4 @@
-.creator-lms-single-course-layout-2 {
+.ohmylms-single-course-layout-2 {
     position: relative;
 
     .layout-2-overlay {
@@ -10,24 +10,24 @@
         background-color: #F9FAFD;
     }
 
-    .creator-lms-single-course {
+    .ohmylms-single-course {
         position: relative;
         z-index: 1;
     }
 
-    .creator-lms-course-header {
+    .ohmylms-course-header {
         padding-bottom: 60px;
         background-color: #f9fafd;
 
-        .creator-lms-feature-image-wrapper {
+        .ohmylms-feature-image-wrapper {
             display: none;
         }
 
-        .creator-lms-course-title {
+        .ohmylms-course-title {
             font-size: 30px;
         }
 
-        .creator-lms-course-meta {
+        .ohmylms-course-meta {
             margin: 20px 0 0 0;
         }
 
@@ -64,15 +64,15 @@
 
                 strong {
                     font-weight: 500;
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                 }
             }
         }
         
     }
 
-    .creator-lms-sidebar-widget .course-rating,
-    .creator-lms-course-header .course-rating {
+    .ohmylms-sidebar-widget .course-rating,
+    .ohmylms-course-header .course-rating {
 
         .total-ratings {
             display: block;
@@ -135,69 +135,69 @@
         }
     }
 
-    .creator-lms-sidebar {
+    .ohmylms-sidebar {
         width: 480px;
     }
-    .creator-lms-content {
+    .ohmylms-content {
         width: calc(100% - 540px);
     }
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-single-course-layout-2 .creator-lms-content {
+    .ohmylms-single-course-layout-2 .ohmylms-content {
         width: calc(100% - 480px);
     }
-    .creator-lms-single-course-layout-2 .creator-lms-sidebar {
+    .ohmylms-single-course-layout-2 .ohmylms-sidebar {
         width: 420px;
     }
     
 }
 
 @media screen and (max-width: 1024px) {
-    .creator-lms-single-course-layout-2 .creator-lms-sidebar {
+    .ohmylms-single-course-layout-2 .ohmylms-sidebar {
         width: 360px;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-content {
+    .ohmylms-single-course-layout-2 .ohmylms-content {
         width: calc(100% - 390px);
     }
-    .creator-lms-single-course-layout-2 .creator-lms-course-header {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header {
         padding-bottom: 50px;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-course-header .creator-lms-course-title {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header .ohmylms-course-title {
         font-size: 26px;
     }
     
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-single-course-layout-2 .creator-lms-content {
+    .ohmylms-single-course-layout-2 .ohmylms-content {
         width: 100%;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-sidebar {
+    .ohmylms-single-course-layout-2 .ohmylms-sidebar {
         width: 100%;
     }
 
-    .creator-lms-single-course-layout-2 .creator-lms-course-header .creator-lms-feature-image-wrapper {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header .ohmylms-feature-image-wrapper {
         display: block;
     }
 
-    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-sidebar .creator-lms-feature-image-wrapper {
+    .ohmylms-page .ohmylms-single-course-layout-2 .ohmylms-sidebar .ohmylms-feature-image-wrapper {
         display: none;
     }
     
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-single-course-layout-2 .creator-lms-course-header {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header {
         padding-bottom: 30px;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-course-header .creator-lms-course-title {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header .ohmylms-course-title {
         font-size: 20px;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-course-header .creator-lms-course-meta {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header .ohmylms-course-meta {
         margin: 15px 0 0 0;
     }
-    .creator-lms-single-course-layout-2 .creator-lms-course-header .course-author-wrapper {
+    .ohmylms-single-course-layout-2 .ohmylms-course-header .course-author-wrapper {
         margin-top: 20px;
     }
     

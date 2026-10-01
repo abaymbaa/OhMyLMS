@@ -1,6 +1,6 @@
-.creator-lms-page {
-    .creator-lms-course-reviews {
-        .creator-lms-course-single-review {
+.ohmylms-page {
+    .ohmylms-course-reviews {
+        .ohmylms-course-single-review {
             border-bottom: 1px solid #EBECED;
             padding: 28px 0;
 
@@ -44,7 +44,7 @@
             }
 
             .author-name {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 15px;
                 font-weight: 700;
                 line-height: 1.2;
@@ -54,7 +54,7 @@
             }
 
             .course-review-rating-area {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 13px;
                 font-weight: 400;
                 line-height: 1;
@@ -114,7 +114,7 @@
         }
 
         .review-description {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 15px;
             font-weight: 400;
             line-height: 1.6;
@@ -123,7 +123,7 @@
             margin: 0;
         }
 
-        .creator-lms-no-reviews {
+        .ohmylms-no-reviews {
             height: 360px;
             width: 100%;
             display: flex;
@@ -137,7 +137,7 @@
 
             p {
                 font-size: 18px;
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 line-height: 1.4;
                 margin: 0;
                 padding: 0;
@@ -147,11 +147,11 @@
         }
     }
 
-    .creator-lms-course-reviews-form {
+    .ohmylms-course-reviews-form {
         margin-top: 30px;
 
-        .creator-lms-reviews-title {
-            color: var(--creator-lms-heading-color);
+        .ohmylms-reviews-title {
+            color: var(--ohmylms-heading-color);
             font-size: 20px;
             font-weight: 600;
             line-height: 1.2;
@@ -176,7 +176,7 @@
 
         .comment-form {
             label {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 15px;
                 font-weight: 400;
                 line-height: 1.2;
@@ -206,7 +206,7 @@
                 line-height: 1.4;
                 width: 100%;
                 display: block;
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
             }
 
             .comment-form-comment {
@@ -228,7 +228,7 @@
                     padding: 14px 20px;
 
                     &:focus {
-                        border-color: var(--creator-lms-primary-color);
+                        border-color: var(--ohmylms-primary-color);
                     }
                 }
             }
@@ -259,7 +259,7 @@
                     padding: 7px 20px;
                     color: #fff;
                     border-radius: 10px;
-                    background-color: var(--creator-lms-primary-color);
+                    background-color: var(--ohmylms-primary-color);
                     border: 1px solid transparent;
                     transition: all 0.3s ease;
                     text-align: center;
@@ -274,13 +274,13 @@
                     margin: 0;
 
                     &:hover {
-                        color: var(--creator-lms-primary-color);
+                        color: var(--ohmylms-primary-color);
                         background-color: transparent;
-                        border-color: var(--creator-lms-primary-color);
+                        border-color: var(--ohmylms-primary-color);
                     }
 
                     &:focus {
-                        outline: 2px solid var(--creator-lms-outline-color);
+                        outline: 2px solid var(--ohmylms-outline-color);
                     }
 
                     // &:disabled {
@@ -293,7 +293,7 @@
             }
         }
 
-        .creator-lms-stars {
+        .ohmylms-stars {
             padding: 0;
             margin: 0;
             display: inline-flex;
@@ -341,37 +341,37 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-course-single-review {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-course-single-review {
         padding: 20px 0;
     }
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-course-single-review .review-description {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-course-single-review .review-description {
         font-size: 14px;
     }
 
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews {
         height: 230px;
         gap: 20px;
     }
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews svg {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews svg {
         width: 80px;
         height: auto;
     }
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews p {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews p {
         font-size: 15px;
     }
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews {
         height: 190px;
         gap: 12px;
         border-radius: 10px;
     }
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews svg {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews svg {
         width: 60px;
         height: auto;
     }
-    .creator-lms-page .creator-lms-course-reviews .creator-lms-no-reviews p {
+    .ohmylms-page .ohmylms-course-reviews .ohmylms-no-reviews p {
         font-size: 14px;
     }
 

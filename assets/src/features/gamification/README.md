@@ -16,7 +16,7 @@ they are editable JSX, not a standalone React application.
 
 components.json maps named components to the recovered runtime. The build adapter replaces
 all 13 original component bodies and fails if a mapping is missing. The extension SDK loads
-before the admin application. Source builds are served when OMLMS_SOURCE_ASSETS is enabled.
+before the admin application. Source builds are served when OHMYLMS_SOURCE_ASSETS is enabled.
 Original recovered files remain the parity baseline; edit these feature files instead.
 Do not rerun the one-time extraction script over authored changes.
 

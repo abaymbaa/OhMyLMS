@@ -1,19 +1,19 @@
 <?php
 /**
- * CreatorLMS Course List Widget for Elementor
+ * OhMyLMS Course List Widget for Elementor
  *
- * @package OMLMS\Elementor\Widgets
+ * @package OhMyLMS\Elementor\Widgets
  * @since 1.0.0
  */
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use OMLMS\Shortcodes\ShortcodeCourseList;
+use OhMyLMS\Shortcodes\ShortcodeCourseList;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,7 +28,7 @@ class CourseListWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_name() {
-		return 'creator-lms-course-list';
+		return 'ohmylms-course-list';
 	}
 
 	/**
@@ -37,7 +37,7 @@ class CourseListWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return esc_html__( 'CreatorLMS Course List', 'ohmylms' );
+		return esc_html__( 'OhMyLMS Course List', 'ohmylms' );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class CourseListWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_categories() {
-		return array( 'creator-lms' );
+		return array( 'ohmylms' );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class CourseListWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'omlms-frontend', 'omlms-add-to-cart' );
+		return array( 'ohmylms-frontend', 'ohmylms-add-to-cart' );
 	}
 
 	/**
@@ -82,7 +82,7 @@ class CourseListWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'omlms-frontend' );
+		return array( 'ohmylms-frontend' );
 	}
 
 	/**
@@ -132,7 +132,7 @@ class CourseListWidget extends Widget_Base {
 			array(
 				'label'   => esc_html__( 'Layout', 'ohmylms' ),
 				'type'    => Controls_Manager::SELECT,
-				'default' => get_option( 'creator_lms_archive_page_layout', 'grid' ),
+				'default' => get_option( 'ohmylms_archive_page_layout', 'grid' ),
 				'options' => array(
 					'grid' => esc_html__( 'Grid', 'ohmylms' ),
 					'list' => esc_html__( 'List', 'ohmylms' ),
@@ -140,24 +140,22 @@ class CourseListWidget extends Widget_Base {
 			)
 		);
 
-		// Build layout style options based on license status
+		// Build layout style options
 		$layout_options = array(
 			'grid-style1' => esc_html__( 'Layout 1', 'ohmylms' ),
 		);
 
-		// Add pro layouts only if pro license is active
-		if ( creator_lms_is_pro_license() ) {
+		// Layouts 2-4
 			$layout_options['grid-style2'] = esc_html__( 'Layout 2', 'ohmylms' );
 			$layout_options['grid-style3'] = esc_html__( 'Layout 3', 'ohmylms' );
 			$layout_options['grid-style4'] = esc_html__( 'Layout 4', 'ohmylms' );
-		}
 
 		$this->add_control(
 			'layout_style',
 			array(
 				'label'   => esc_html__( 'Layout Style', 'ohmylms' ),
 				'type'    => Controls_Manager::SELECT,
-				'default' => get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' ),
+				'default' => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
 				'options' => $layout_options,
 				'condition' => array(
 					'layout' => 'grid',
@@ -170,7 +168,7 @@ class CourseListWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Columns Per Row', 'ohmylms' ),
 				'type'      => Controls_Manager::SELECT,
-				'default'   => get_option( 'creator_lms_columns_per_row', '3' ),
+				'default'   => get_option( 'ohmylms_columns_per_row', '3' ),
 				'options'   => array(
 					'1' => esc_html__( '1 Column', 'ohmylms' ),
 					'2' => esc_html__( '2 Columns', 'ohmylms' ),
@@ -188,7 +186,7 @@ class CourseListWidget extends Widget_Base {
 			array(
 				'label'   => esc_html__( 'Courses Per Page', 'ohmylms' ),
 				'type'    => Controls_Manager::NUMBER,
-				'default' => get_option( 'creator_lms_courses_per_page', 10 ),
+				'default' => get_option( 'ohmylms_courses_per_page', 10 ),
 				'min'     => 1,
 				'max'     => 100,
 			)
@@ -215,7 +213,7 @@ class CourseListWidget extends Widget_Base {
 				'label_on'     => esc_html__( 'Show', 'ohmylms' ),
 				'label_off'    => esc_html__( 'Hide', 'ohmylms' ),
 				'return_value' => 'yes',
-				'default'      => get_option( 'creator_lms_archive_page_filter_is_enabled', 'no' ),
+				'default'      => get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' ),
 				'condition'    => array(
 					'layout_style' => array( 'grid-style1', 'grid-style2' ),
 					'layout'       => 'grid',
@@ -231,7 +229,7 @@ class CourseListWidget extends Widget_Base {
 				'label_on'     => esc_html__( 'Show', 'ohmylms' ),
 				'label_off'    => esc_html__( 'Hide', 'ohmylms' ),
 				'return_value' => 'yes',
-				'default'      => get_option( 'creator_lms_archive_page_search_is_enabled', 'no' ),
+				'default'      => get_option( 'ohmylms_archive_page_search_is_enabled', 'no' ),
 				'condition'    => array(
 					'layout_style' => array( 'grid-style1', 'grid-style2' ),
 					'layout'       => 'grid',
@@ -247,7 +245,7 @@ class CourseListWidget extends Widget_Base {
 				'label_on'     => esc_html__( 'Show', 'ohmylms' ),
 				'label_off'    => esc_html__( 'Hide', 'ohmylms' ),
 				'return_value' => 'yes',
-				'default'      => get_option( 'creator_lms_archive_page_sorting_is_enabled', 'no' ),
+				'default'      => get_option( 'ohmylms_archive_page_sorting_is_enabled', 'no' ),
 				'condition'    => array(
 					'layout_style' => array( 'grid-style1', 'grid-style2' ),
 					'layout'       => 'grid',
@@ -263,7 +261,7 @@ class CourseListWidget extends Widget_Base {
 				'label_on'     => esc_html__( 'Show', 'ohmylms' ),
 				'label_off'    => esc_html__( 'Hide', 'ohmylms' ),
 				'return_value' => 'yes',
-				'default'      => get_option( 'creator_lms_archive_page_category_is_enabled', 'no' ),
+				'default'      => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ),
 				'condition'    => array(
 					'layout_style' => array( 'grid-style3', 'grid-style4' ),
 					'layout'       => 'grid',
@@ -350,7 +348,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Background Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-container, {{WRAPPER}} .creator-lms-course-cards' => 'background: {{VALUE}} !important;',
+					'{{WRAPPER}} .ohmylms-container, {{WRAPPER}} .ohmylms-course-cards' => 'background: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -362,7 +360,7 @@ class CourseListWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-container, {{WRAPPER}} .creator-lms-course-cards' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+					'{{WRAPPER}} .ohmylms-container, {{WRAPPER}} .ohmylms-course-cards' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -374,7 +372,7 @@ class CourseListWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-container, {{WRAPPER}} .creator-lms-course-cards' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+					'{{WRAPPER}} .ohmylms-container, {{WRAPPER}} .ohmylms-course-cards' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -392,7 +390,7 @@ class CourseListWidget extends Widget_Base {
 					),
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-course-cards' => 'gap: {{SIZE}}{{UNIT}} !important;',
+					'{{WRAPPER}} .ohmylms-course-cards' => 'gap: {{SIZE}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -1091,7 +1089,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button' => 'color: {{VALUE}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button' => 'color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -1102,7 +1100,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Background Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button' => 'background: {{VALUE}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button' => 'background: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -1111,7 +1109,7 @@ class CourseListWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
-				'selector' => '{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button',
+				'selector' => '{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button',
 			)
 		);
 
@@ -1119,7 +1117,7 @@ class CourseListWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'button_border',
-				'selector' => '{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button',
+				'selector' => '{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button',
 			)
 		);
 
@@ -1130,7 +1128,7 @@ class CourseListWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -1142,7 +1140,7 @@ class CourseListWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -1154,7 +1152,7 @@ class CourseListWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				),
 			)
 		);
@@ -1163,7 +1161,7 @@ class CourseListWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .course-card .creator-lms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .creator-lms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.creator-lms-button',
+				'selector' => '{{WRAPPER}} .course-card .ohmylms-button, {{WRAPPER}} .course-card .enroll-button, {{WRAPPER}} .course-card .add_to_cart_button, {{WRAPPER}} .course-card .ohmylms-button-outline, {{WRAPPER}} .course-card .continue-course, {{WRAPPER}} .course-card a.ohmylms-button',
 			)
 		);
 
@@ -1183,7 +1181,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .course-card .creator-lms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .creator-lms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.creator-lms-button:hover' => 'color: {{VALUE}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .ohmylms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.ohmylms-button:hover' => 'color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -1194,7 +1192,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Background Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .course-card .creator-lms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .creator-lms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.creator-lms-button:hover' => 'background: {{VALUE}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .ohmylms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.ohmylms-button:hover' => 'background: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -1205,7 +1203,7 @@ class CourseListWidget extends Widget_Base {
 				'label'     => esc_html__( 'Border Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .course-card .creator-lms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .creator-lms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.creator-lms-button:hover' => 'border-color: {{VALUE}} !important;',
+					'{{WRAPPER}} .course-card .ohmylms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .ohmylms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.ohmylms-button:hover' => 'border-color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -1214,7 +1212,7 @@ class CourseListWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} .course-card .creator-lms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .creator-lms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.creator-lms-button:hover',
+				'selector' => '{{WRAPPER}} .course-card .ohmylms-button:hover, {{WRAPPER}} .course-card .enroll-button:hover, {{WRAPPER}} .course-card .add_to_cart_button:hover, {{WRAPPER}} .course-card .ohmylms-button-outline:hover, {{WRAPPER}} .course-card .continue-course:hover, {{WRAPPER}} .course-card a.ohmylms-button:hover',
 			)
 		);
 
@@ -1235,7 +1233,7 @@ class CourseListWidget extends Widget_Base {
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 
 		// Use the same wrapper class as shortcode for consistency
-		echo '<div class="creator-lms creator-lms-page">';
+		echo '<div class="ohmylms ohmylms-page">';
 		
 		// Use the shortcode class to render the course list
 		ShortcodeCourseList::output( $shortcode_attrs );
@@ -1348,7 +1346,7 @@ class CourseListWidget extends Widget_Base {
 	private function get_course_instructors() {
 		$instructors = get_users(
 			array(
-				'role__in' => array( 'creator_lms_instructor', 'administrator' ),
+				'role__in' => array( 'ohmylms_instructor', 'administrator' ),
 				'fields'   => array( 'ID', 'display_name' ),
 			)
 		);

@@ -82,7 +82,7 @@ export function createAiChapterList(readRuntime) {
           isBorderless={!0}
           variant={'secondary'}
           padding={'8px'}
-          className={'omlms-ai-chapters-wrapper'}
+          className={'ohmylms-ai-chapters-wrapper'}
           borderRadius={'0'}
           style={{
             overflow: 'auto',

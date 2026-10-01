@@ -4,7 +4,7 @@ export function createCommunitiesPage(readRuntime) {
   return function CommunitiesPage() {
     const { G9: CommunityList, HG, I: Controls, React, YG, b: I18n } = readRuntime();
     return (
-      HG('creator-lms', 'communities'),
+      HG('ohmylms', 'communities'),
       (
         <Controls.ContainerWP>
           <YG title={(0, I18n.__)('Communities', 'ohmylms')} showAddButton={!1} />

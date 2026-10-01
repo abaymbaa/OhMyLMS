@@ -78,7 +78,7 @@ var GV = function (e) {
   return h().createElement(I.CardWP, {
     isBorderless: !0
   }, h().createElement(I.SpacerWP, {
-    className: "omlms-category-add-form",
+    className: "ohmylms-category-add-form",
     marginTop: 4,
     marginBottom: 0,
     padding: 4
@@ -107,7 +107,7 @@ var GV = function (e) {
     gap: 2,
     align: "center",
     justify: "flex-start",
-    className: "omlms-category-add-form-submit"
+    className: "ohmylms-category-add-form-submit"
   }, h().createElement(I.ButtonWP, {
     variant: "primary",
     onClick: function () {
@@ -356,7 +356,7 @@ const $V = function (e) {
     marginBottom: 3
   }), h().createElement(I.SpacerWP, {
     marginBottom: 0,
-    className: "".concat(0 === n.length ? "omlms-empty-category" : "")
+    className: "".concat(0 === n.length ? "ohmylms-empty-category" : "")
   }, h().createElement("div", {
     style: {
       position: "relative"

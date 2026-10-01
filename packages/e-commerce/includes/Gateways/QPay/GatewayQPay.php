@@ -12,7 +12,7 @@ class GatewayQPay extends PaymentGateway {
 
     public function __construct() {
         $this->id = 'qpay';
-        $this->settings = (array) get_option( 'creatorlms_qpay_settings', array() );
+        $this->settings = (array) get_option( 'ohmylms_qpay_settings', array() );
         $this->title = $this->get_setting( 'title', __( 'QPay', 'ohmylms' ) );
         $this->description = $this->get_setting( 'instruction', __( 'Pay via QPay QR code using your bank app.', 'ohmylms' ) );
         $this->has_fields = false;
@@ -24,11 +24,11 @@ class GatewayQPay extends PaymentGateway {
             self::$hooks_registered = true;
             add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ), 20 );
             foreach ( array( 'wp_ajax_', 'wp_ajax_nopriv_' ) as $prefix ) {
-                add_action( $prefix . 'omlms_qpay_check_payment', array( $this, 'ajax_check_payment' ) );
-                add_action( $prefix . 'omlms_qpay_resume', array( $this, 'ajax_resume' ) );
+                add_action( $prefix . 'ohmylms_qpay_check_payment', array( $this, 'ajax_check_payment' ) );
+                add_action( $prefix . 'ohmylms_qpay_resume', array( $this, 'ajax_resume' ) );
             }
             add_action( 'rest_api_init', array( $this, 'register_callback_route' ) );
-            add_action( 'update_option_creatorlms_qpay_settings', array( QPayAPI::class, 'settings_changed' ), 10, 2 );
+            add_action( 'update_option_ohmylms_qpay_settings', array( QPayAPI::class, 'settings_changed' ), 10, 2 );
         }
     }
 
@@ -140,7 +140,7 @@ class GatewayQPay extends PaymentGateway {
                 'id'                 => $this->id,
                 'title'              => __( 'QPay', 'ohmylms' ),
                 'description'        => __( 'QPay QR Code Payment Gateway', 'ohmylms' ),
-                'icon'               => '<svg width="23" height="18" viewBox="0 0 23 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="21" height="16" rx="2" stroke="var(--omlms-primary-color)" stroke-width="2"/><rect x="4" y="4" width="4" height="4" fill="var(--omlms-primary-color)"/><rect x="10" y="4" width="4" height="4" fill="var(--omlms-primary-color)"/><rect x="4" y="10" width="4" height="4" fill="var(--omlms-primary-color)"/><rect x="10" y="10" width="2" height="2" fill="var(--omlms-primary-color)"/><rect x="14" y="10" width="2" height="2" fill="var(--omlms-primary-color)"/><rect x="14" y="14" width="2" height="2" fill="var(--omlms-primary-color)"/></svg>',
+                'icon'               => '<svg width="23" height="18" viewBox="0 0 23 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="21" height="16" rx="2" stroke="var(--ohmylms-primary-color)" stroke-width="2"/><rect x="4" y="4" width="4" height="4" fill="var(--ohmylms-primary-color)"/><rect x="10" y="4" width="4" height="4" fill="var(--ohmylms-primary-color)"/><rect x="4" y="10" width="4" height="4" fill="var(--ohmylms-primary-color)"/><rect x="10" y="10" width="2" height="2" fill="var(--ohmylms-primary-color)"/><rect x="14" y="10" width="2" height="2" fill="var(--ohmylms-primary-color)"/><rect x="14" y="14" width="2" height="2" fill="var(--ohmylms-primary-color)"/></svg>',
                 'has_config'         => true,
                 'subscription_support' => false,
                 'settings_fields'    => $fields,
@@ -152,7 +152,7 @@ class GatewayQPay extends PaymentGateway {
 
     private function credentials( $mode ) {
         // Read fresh options: admin saves and tests can change settings within a request.
-        $settings = (array) get_option( 'creatorlms_qpay_settings', array() );
+        $settings = (array) get_option( 'ohmylms_qpay_settings', array() );
         return array( $settings[$mode . '_client_id'] ?? '', $settings[$mode . '_client_secret'] ?? '' );
     }
 
@@ -173,12 +173,12 @@ class GatewayQPay extends PaymentGateway {
     }
 
     public function is_available() {
-        if ( 'yes' !== $this->enabled || ! $this->invoice_code || 'MNT' !== get_omlms_currency() || is_wp_error( $this->api_for_order() ) ) { return false; }
+        if ( 'yes' !== $this->enabled || ! $this->invoice_code || 'MNT' !== get_ohmylms_currency() || is_wp_error( $this->api_for_order() ) ) { return false; }
         if ( ecommerce()->cart ) {
             foreach ( ecommerce()->cart->get_cart() as $item ) {
                 $id = isset( $item['data'] ) && is_object( $item['data'] ) ? $item['data']->get_id() : 0;
-                if ( 'omlms-membership' === get_post_type( $id ) ) {
-                    $membership = omlms_get_membership( $id );
+                if ( 'ohmylms-membership' === get_post_type( $id ) ) {
+                    $membership = ohmylms_get_membership( $id );
                     if ( ! $membership || 'one_time' !== $membership->get_subscription_period() ) { return false; }
                 }
             }
@@ -192,8 +192,8 @@ class GatewayQPay extends PaymentGateway {
         $ids = array( (int) get_post_meta( $order->get_id(), '_membership_id', true ) );
         foreach ( $order->get_items() as $item ) { $ids[] = $item->get_course_id(); }
         foreach ( array_filter( $ids ) as $id ) {
-            if ( 'omlms-membership' === get_post_type( $id ) ) {
-                $membership = omlms_get_membership( $id );
+            if ( 'ohmylms-membership' === get_post_type( $id ) ) {
+                $membership = ohmylms_get_membership( $id );
                 if ( ! $membership || 'one_time' !== $membership->get_subscription_period() ) { return false; }
             }
         }
@@ -242,7 +242,7 @@ class GatewayQPay extends PaymentGateway {
                     'invoice_receiver_code' => 'terminal',
                     'invoice_description' => sprintf( __( 'Order #%s', 'ohmylms' ), $order_id ),
                     'amount' => (float) $order->get_total(),
-                    'callback_url' => add_query_arg( array( 'order_id' => $order_id, 'qpay_token' => $callback_token ), rest_url( 'creatorlms/v1/qpay/callback' ) ),
+                    'callback_url' => add_query_arg( array( 'order_id' => $order_id, 'qpay_token' => $callback_token ), rest_url( 'ohmylms/v1/qpay/callback' ) ),
                 ) );
                 if ( is_wp_error( $invoice ) ) {
                     $data = $invoice->get_error_data();
@@ -284,7 +284,7 @@ class GatewayQPay extends PaymentGateway {
     }
 
     private function ajax_order() {
-        check_ajax_referer( 'omlms_qpay_check_payment_nonce', 'nonce' );
+        check_ajax_referer( 'ohmylms_qpay_check_payment_nonce', 'nonce' );
         $id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
         $order = ecommerce_get_order( $id );
         $token = isset( $_POST['payment_token'] ) && is_string( $_POST['payment_token'] ) ? wp_unslash( $_POST['payment_token'] ) : '';
@@ -322,13 +322,13 @@ class GatewayQPay extends PaymentGateway {
         if ( ! is_wp_error( $result ) && 'paid' === ( $result['status'] ?? '' ) && ecommerce()->cart ) {
             $order = ecommerce_get_order( $id );
             if ( $order && $order->get_cart_hash() === ecommerce()->cart->get_cart_hash() ) {
-                omlms_empty_cart();
+                ohmylms_empty_cart();
             }
         }
     }
 
     public function register_callback_route() {
-        register_rest_route( 'creatorlms/v1', '/qpay/callback', array(
+        register_rest_route( 'ohmylms/v1', '/qpay/callback', array(
             'methods' => 'GET', 'callback' => array( $this, 'handle_callback' ), 'permission_callback' => '__return_true',
         ) );
     }
@@ -349,12 +349,12 @@ class GatewayQPay extends PaymentGateway {
     }
 
     public function payment_scripts() {
-        if ( ! function_exists( 'is_creator_lms_checkout' ) || ! is_creator_lms_checkout() ) { return; }
+        if ( ! function_exists( 'is_ohmylms_checkout' ) || ! is_ohmylms_checkout() ) { return; }
         $base = 'packages/e-commerce/assets/';
-        wp_enqueue_style( 'omlms-qpay-checkout', plugins_url( $base . 'css/qpay-checkout.css', OHMYLMS_FILE ), array(), filemtime( OHMYLMS_DIR . '/' . $base . 'css/qpay-checkout.css' ) );
-        wp_enqueue_script( 'omlms-qpay-checkout', plugins_url( $base . 'js/qpay-checkout.js', OHMYLMS_FILE ), array( 'jquery', 'omlms-checkout' ), filemtime( OHMYLMS_DIR . '/' . $base . 'js/qpay-checkout.js' ), true );
-        wp_localize_script( 'omlms-qpay-checkout', 'omlms_qpay_params', array(
-            'ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'omlms_qpay_check_payment_nonce' ),
+        wp_enqueue_style( 'ohmylms-qpay-checkout', plugins_url( $base . 'css/qpay-checkout.css', OHMYLMS_FILE ), array(), filemtime( OHMYLMS_DIR . '/' . $base . 'css/qpay-checkout.css' ) );
+        wp_enqueue_script( 'ohmylms-qpay-checkout', plugins_url( $base . 'js/qpay-checkout.js', OHMYLMS_FILE ), array( 'jquery', 'ohmylms-checkout' ), filemtime( OHMYLMS_DIR . '/' . $base . 'js/qpay-checkout.js' ), true );
+        wp_localize_script( 'ohmylms-qpay-checkout', 'ohmylms_qpay_params', array(
+            'ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'ohmylms_qpay_check_payment_nonce' ),
             'i18n' => array(
                 'title' => __( 'Pay with QPay', 'ohmylms' ), 'waiting' => __( 'Waiting for payment confirmation…', 'ohmylms' ),
                 'paused' => __( 'Automatic checking is paused. Your order is still pending. Resume checking if you have paid.', 'ohmylms' ),

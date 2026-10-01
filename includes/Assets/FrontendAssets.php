@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Assets;
+namespace OhMyLMS\Assets;
 
-use OMLMS\Abstracts\Assets;
+use OhMyLMS\Abstracts\Assets;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -24,47 +24,47 @@ class FrontendAssets extends Assets {
 	public function get_scripts() {
 		$suffix  = '';
 		$scripts = array(
-			'omlms-slick'       => array(
+			'ohmylms-slick'       => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/slick' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
 				'version'   => '1.8.1',
 			),
-			'omlms-frontend'    => array(
-				'src'       => self::get_asset_url( 'assets/dist/frontend/creator-lms' . $suffix . '.js' ),
+			'ohmylms-frontend'    => array(
+				'src'       => self::get_asset_url( 'assets/dist/frontend/ohmylms' . $suffix . '.js' ),
 				'deps'      => array(  'wp-i18n', 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 			),
-			'omlms-video-player' => array(
+			'ohmylms-video-player' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/video-player' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 			),
-			'omlms-video-progress-tracker' => array(
+			'ohmylms-video-progress-tracker' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/video-progress-tracker' . $suffix . '.js' ),
 				'deps'      => array( 'jquery'),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 			),
-			'omlms-add-to-cart' => array(
+			'ohmylms-add-to-cart' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/add-to-cart' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 			),
-			'omlms-checkout'    => array(
+			'ohmylms-checkout'    => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/checkout' . $suffix . '.js' ),
 				'deps'      => array(  'wp-i18n', 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION . '-' . filemtime( CREATOR_LMS_DIR . '/assets/dist/frontend/checkout.js' ),
+				'version'   => OHMYLMS_VERSION . '-' . filemtime( OHMYLMS_DIR . '/assets/dist/frontend/checkout.js' ),
 			),
-			'omlms-tax-calculation' => array(
+			'ohmylms-tax-calculation' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/tax-calculation' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 			),
 		);
 		return is_array( $scripts ) ? array_filter( $scripts ) : array();
@@ -78,12 +78,12 @@ class FrontendAssets extends Assets {
 	 */
 	public function get_styles() {
 		$styles = apply_filters(
-			'creator_lms_enqueue_styles',
+			'ohmylms_enqueue_styles',
 			array(
-				'omlms-frontend' => array(
+				'ohmylms-frontend' => array(
 					'src'     => self::get_asset_url( 'assets/css/style.css' ),
 					'deps'    => '',
-					'version' => CREATOR_LMS_VERSION,
+					'version' => OHMYLMS_VERSION,
 					'media'   => 'all',
 					'has_rtl' => true,
 				)
@@ -94,20 +94,20 @@ class FrontendAssets extends Assets {
 
 	public function get_script_data( $handle ) {
 		switch ( $handle ) {
-			case 'omlms-frontend':
+			case 'ohmylms-frontend':
 				$localized_data = array(
 					'ajax_url'                    => admin_url( 'admin-ajax.php' ),
 					'current_student_id'          => get_current_user_id(),
 					'nonce'                       => wp_create_nonce( 'ohmylms' ),
 					'load_more_nonce'             => wp_create_nonce( 'load_more_nonce' ),
 					'search_filter_nonce'         => wp_create_nonce( 'search_filter_nonce' ),
-					'video_completion_threshold'  => max( 1, min( 100, (int) get_option( 'creator_lms_video_completion_threshold', 90 ) ) ),
-					'is_creator_page'             => omlms_is_content_page(),
-					'content_protection'          => get_option( 'creator_lms_content_protection', 'no' ),
-					'email_verification_required' => \OMLMS\Services\EmailVerificationService::is_required(),
+					'video_completion_threshold'  => max( 1, min( 100, (int) get_option( 'ohmylms_video_completion_threshold', 90 ) ) ),
+					'is_creator_page'             => ohmylms_is_content_page(),
+					'content_protection'          => get_option( 'ohmylms_content_protection', 'no' ),
+					'email_verification_required' => \OhMyLMS\Services\EmailVerificationService::is_required(),
 				);
 
-				if ( omlms_is_content_page() ) {
+				if ( ohmylms_is_content_page() ) {
 					$localized_data['lesson_completed_nonce']      = wp_create_nonce( 'lesson_completed_nonce' );
 					$localized_data['assignment_submission_nonce'] = wp_create_nonce( 'assignment_submission_nonce' );
 					$localized_data['save_remaining_time']         = wp_create_nonce( 'save_remaining_time' );
@@ -116,28 +116,28 @@ class FrontendAssets extends Assets {
 					$localized_data['video_progress_nonce']        = wp_create_nonce( 'video_progress_nonce' );
 				}
 
-				if ( omlms_is_single_course_page() || is_creator_lms_dashboard() || is_creator_lms_my_courses_shortcode() ) {
+				if ( ohmylms_is_single_course_page() || is_ohmylms_dashboard() || is_ohmylms_my_courses_shortcode() ) {
 					$localized_data['course_drop_nonce']        = wp_create_nonce( 'course_drop_nonce' );
 					$localized_data['download_certificate_nonce'] = wp_create_nonce( 'download_certificate_nonce' );
 				}
 
-				if ( is_creator_lms_profile_shortcode() ) {
+				if ( is_ohmylms_profile_shortcode() ) {
 					$localized_data['student_profile_cover_upload_nonce'] = wp_create_nonce( 'student_profile_cover_image' );
 					$localized_data['student_profile_cover_delete_nonce'] = wp_create_nonce( 'student_profile_cover_image_delete' );
 					$localized_data['student_profile_image_upload_nonce'] = wp_create_nonce( 'student_profile_image_upload' );
 				}
 
-				if ( omlms_is_membership_page() || omlms_is_membership_plan_shortcode() || is_creator_lms_dashboard() ) {
+				if ( ohmylms_is_membership_page() || ohmylms_is_membership_plan_shortcode() || is_ohmylms_dashboard() ) {
 					$localized_data['cancel_membership_nonce'] = wp_create_nonce( 'cancel_membership_nonce' );
 				}
 				break;
-			case 'omlms-add-to-cart':
+			case 'ohmylms-add-to-cart':
 				$localized_data = array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'nonce'    => wp_create_nonce( 'add-to-cart' ),
 				);
 				break;
-			case 'omlms-checkout':
+			case 'ohmylms-checkout':
 				$localized_data = array(
 					'ajax_url'                => admin_url( 'admin-ajax.php' ),
 					'nonce'                   => wp_create_nonce( 'add-to-cart' ),
@@ -146,17 +146,17 @@ class FrontendAssets extends Assets {
 					'gateway_required_fields' => self::get_gateway_required_checkout_fields(),
 				);
 				break;
-			case 'omlms-tax-calculation':
+			case 'ohmylms-tax-calculation':
 				$localized_data = array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
-					'nonce'    => wp_create_nonce( 'omlms_calculate_tax' ),
+					'nonce'    => wp_create_nonce( 'ohmylms_calculate_tax' ),
 				);
 				break;
 			default:
 				$localized_data = false;
 		}
 
-		return apply_filters( 'creator_lms_get_script_data', $localized_data, $handle );
+		return apply_filters( 'ohmylms_get_script_data', $localized_data, $handle );
 	}
 
 	/**
@@ -200,23 +200,23 @@ class FrontendAssets extends Assets {
 		$this->register_scripts();
 		$this->register_styles();
 
-		$layout       = get_option( 'creator_lms_archive_page_layout', 'grid' );
-		$layout_style = get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' );
+		$layout       = get_option( 'ohmylms_archive_page_layout', 'grid' );
+		$layout_style = get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
 
-		if ( omlms_is_single_course_page() ||
-			( is_creator_lms_archive() || omlms_is_course_list_shortcode() &&
+		if ( ohmylms_is_single_course_page() ||
+			( is_ohmylms_archive() || ohmylms_is_course_list_shortcode() &&
 			'grid' === $layout &&
 			( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) )
 		) {
-			wp_enqueue_script( 'omlms-slick' );
+			wp_enqueue_script( 'ohmylms-slick' );
 		}
 
-		if(omlms_is_course_list_shortcode()) {
-			wp_enqueue_script( 'omlms-slick' );
-			wp_enqueue_script( 'omlms-frontend' );
+		if(ohmylms_is_course_list_shortcode()) {
+			wp_enqueue_script( 'ohmylms-slick' );
+			wp_enqueue_script( 'ohmylms-frontend' );
 		}
 
-		if ( isset( $_GET['omlms-certificate-data'] ) ) {
+		if ( isset( $_GET['ohmylms-certificate-data'] ) ) {
 			wp_enqueue_script(
 				'html2pdf',
 				plugin_dir_url( __FILE__ ) . '/packages/html2pdf.bundle.min.js',
@@ -226,33 +226,33 @@ class FrontendAssets extends Assets {
 			);
 		}
 
-		if ( is_creator_lms_buy_now() || is_creator_lms_archive() || omlms_is_course_list_shortcode() || omlms_is_membership_page() || omlms_is_membership_plan_shortcode() || is_creator_lms_dashboard() || is_creator_lms_profile_shortcode() || is_creator_lms_my_courses_shortcode() || ( isset( $_GET['omlms-certificate-data'] ) ) ) {
-			wp_enqueue_script( 'omlms-frontend' );
-			wp_enqueue_script( 'omlms-add-to-cart' );
+		if ( is_ohmylms_buy_now() || is_ohmylms_archive() || ohmylms_is_course_list_shortcode() || ohmylms_is_membership_page() || ohmylms_is_membership_plan_shortcode() || is_ohmylms_dashboard() || is_ohmylms_profile_shortcode() || is_ohmylms_my_courses_shortcode() || ( isset( $_GET['ohmylms-certificate-data'] ) ) ) {
+			wp_enqueue_script( 'ohmylms-frontend' );
+			wp_enqueue_script( 'ohmylms-add-to-cart' );
 		}
 
-		if ( omlms_is_single_course_page() ) {
-			wp_enqueue_script( 'omlms-add-to-cart' );
+		if ( ohmylms_is_single_course_page() ) {
+			wp_enqueue_script( 'ohmylms-add-to-cart' );
 		}
 		
-		if ( is_creator_lms_checkout() ) {
-			wp_enqueue_script( 'omlms-checkout' );
-			wp_enqueue_script( 'omlms-tax-calculation' );
-			wp_enqueue_script( 'omlms-frontend' );
+		if ( is_ohmylms_checkout() ) {
+			wp_enqueue_script( 'ohmylms-checkout' );
+			wp_enqueue_script( 'ohmylms-tax-calculation' );
+			wp_enqueue_script( 'ohmylms-frontend' );
 
-			wp_enqueue_style( 'omlms-frontend' );
-			wp_enqueue_style( 'omlms-general' );
+			wp_enqueue_style( 'ohmylms-frontend' );
+			wp_enqueue_style( 'ohmylms-general' );
 		}
 
-		if ( is_creator_lms() ) {
-			wp_enqueue_script( 'omlms-frontend' );
-			wp_enqueue_style( 'omlms-frontend' );
-			wp_enqueue_style( 'omlms-general' );
+		if ( is_ohmylms() ) {
+			wp_enqueue_script( 'ohmylms-frontend' );
+			wp_enqueue_style( 'ohmylms-frontend' );
+			wp_enqueue_style( 'ohmylms-general' );
 		}
 
-		if ( omlms_is_content_page() ) {
-			wp_enqueue_script( 'omlms-video-player' );
-			wp_enqueue_script( 'omlms-video-progress-tracker' );
+		if ( ohmylms_is_content_page() ) {
+			wp_enqueue_script( 'ohmylms-video-player' );
+			wp_enqueue_script( 'ohmylms-video-progress-tracker' );
 		}
 	}
 

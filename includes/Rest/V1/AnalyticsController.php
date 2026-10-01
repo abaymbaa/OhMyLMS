@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 
 class AnalyticsController extends RestController {
 
@@ -61,8 +61,8 @@ class AnalyticsController extends RestController {
 		$id   = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		$post = get_post( $id );
 
-		if ( empty( $id ) || empty( $post ) || $post->post_type !== CREATOR_LMS_COURSE_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post ) || $post->post_type !== OHMYLMS_COURSE_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data_type = sanitize_key( $request->get_param( 'data_type' ) );
@@ -86,7 +86,7 @@ class AnalyticsController extends RestController {
 		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
-		do_action( 'creator_lms_rest_analytics_course_data', $data, $id, $data_type, $filter, $sort_by, $start_date, $end_date, $search, $completion_type );
+		do_action( 'ohmylms_rest_analytics_course_data', $data, $id, $data_type, $filter, $sort_by, $start_date, $end_date, $search, $completion_type );
 		return $this->prepare_item_for_response( $data, $request );
 	}
 
@@ -106,10 +106,10 @@ class AnalyticsController extends RestController {
 	 */
 
 	private function get_course_data( $course_id, $data_type, $filter, $sort_by = null, $start_date = null, $end_date = null, $search = null, $completion_type = null ) {
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 
 		if ( ! $course ) {
-			return new WP_Error( 'creator_lms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$content_data = array(
@@ -218,12 +218,12 @@ class AnalyticsController extends RestController {
                 pm.meta_value as order_total
             FROM {$wpdb->posts} p
             INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-            INNER JOIN {$wpdb->prefix}omlms_order_items oi ON p.ID = oi.order_id
-            INNER JOIN {$wpdb->prefix}omlms_order_itemmeta line_total ON oi.order_item_id = line_total.order_item_id AND line_total.meta_key = '_line_total'
-            INNER JOIN {$wpdb->prefix}omlms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id AND course_meta.meta_key = '_course_id'
+            INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
+            INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta line_total ON oi.order_item_id = line_total.order_item_id AND line_total.meta_key = '_line_total'
+            INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id AND course_meta.meta_key = '_course_id'
             WHERE
-                p.post_type = 'omlms-order'
-                AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+                p.post_type = 'ohmylms-order'
+                AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 				AND pm.meta_key = '_order_total'
                 AND course_meta.meta_value = %d
 
@@ -262,17 +262,17 @@ class AnalyticsController extends RestController {
 		foreach ( $results as $result ) {
 			$line_total     = floatval( $result['order_total'] );
 			$total_earning += $line_total;
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning += $line_total;
 
 				$order = ecommerce_get_order( $result['order_id'] );
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id          = $single_refund->ID;
-					$total_refund      += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-					$total_net_earning -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+					$total_refund      += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+					$total_net_earning -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 				$total_refund += $line_total;
 			}
 		}
@@ -282,8 +282,8 @@ class AnalyticsController extends RestController {
 			'total_earning' => $total_earning,
 			'total_refund'  => $total_refund,
 			'net_amount'    => $total_net_earning,
-			'currency'      => html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-			'currency_pos'  => get_omlms_currency_position(),
+			'currency'      => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+			'currency_pos'  => get_ohmylms_currency_position(),
 			'graph_data'    => $graph_data,
 		);
 	}
@@ -334,12 +334,12 @@ class AnalyticsController extends RestController {
                 p.post_date,
                 line_total.meta_value as line_total
             FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->prefix}omlms_order_items oi ON p.ID = oi.order_id
-            INNER JOIN {$wpdb->prefix}omlms_order_itemmeta line_total ON oi.order_item_id = line_total.order_item_id AND line_total.meta_key = '_line_total'
-            INNER JOIN {$wpdb->prefix}omlms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id AND course_meta.meta_key = '_course_id'
+            INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
+            INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta line_total ON oi.order_item_id = line_total.order_item_id AND line_total.meta_key = '_line_total'
+            INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id AND course_meta.meta_key = '_course_id'
             WHERE
-                p.post_type = 'omlms-order'
-                AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+                p.post_type = 'ohmylms-order'
+                AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
                 AND course_meta.meta_value = %d
 
         ";
@@ -389,18 +389,18 @@ class AnalyticsController extends RestController {
 
 			$date_key = date( $group_by === 'daily' ? 'Y-m-d' : ( $group_by === 'monthly' ? 'Y-m' : 'Y' ), strtotime( $result['post_date'] ) );
 
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 
 				$graph_data[ $date_key ]['net'] += $line_total;
 
 				$order = ecommerce_get_order( $result['order_id'] );
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
-					$graph_data[ $date_key ]['refund'] += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-					$graph_data[ $date_key ]['net']    -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+					$graph_data[ $date_key ]['refund'] += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+					$graph_data[ $date_key ]['net']    -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 
 				$graph_data[ $date_key ]['refund'] += $line_total;
 			}
@@ -427,13 +427,13 @@ class AnalyticsController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function get_all_students( $course_id, $filter, $sort_by, $start_date = null, $end_date = null, $search = null, $only_completed = null ) {
-		if ( ! creator_lms_is_pro() ) {
+		if ( ! ohmylms_is_pro() ) {
 			return array();
 		}
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 
 		if ( ! $course ) {
-			return new WP_Error( 'creator_lms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$students = $course->get_students( $filter, $sort_by, $start_date, $end_date, $search, $only_completed );
@@ -456,8 +456,8 @@ class AnalyticsController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function get_earning_analytics( $request ) {
-		if ( ! creator_lms_is_pro() ) {
-			return new WP_Error( 'creator_lms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( ! ohmylms_is_pro() ) {
+			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		global $wpdb;
@@ -483,11 +483,11 @@ class AnalyticsController extends RestController {
 
 		// Validate date formats (optional stricter check)
 		if ( ! empty( $start_date ) && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start_date ) ) {
-			return new WP_Error( 'creator_lms_rest_invalid_start_date', __( 'Invalid start date format.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_start_date', __( 'Invalid start date format.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! empty( $end_date ) && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $end_date ) ) {
-			return new WP_Error( 'creator_lms_rest_invalid_end_date', __( 'Invalid end date format.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_end_date', __( 'Invalid end date format.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Get range and grouping
@@ -505,8 +505,8 @@ class AnalyticsController extends RestController {
 				p.post_date
 			FROM {$wpdb->posts} p
 			INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-			WHERE p.post_type = 'omlms-order'
-				AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+			WHERE p.post_type = 'ohmylms-order'
+				AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 				AND pm.meta_key = '_order_total'
 				AND p.post_date BETWEEN %s AND %s";
 
@@ -519,8 +519,8 @@ class AnalyticsController extends RestController {
 				p.post_date
 			FROM {$wpdb->posts} p
 			INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-			WHERE p.post_type = 'omlms-order'
-				AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+			WHERE p.post_type = 'ohmylms-order'
+				AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 				AND pm.meta_key = '_order_total'";
 
 			$prepared_query = $query; // No dynamic data
@@ -561,21 +561,21 @@ class AnalyticsController extends RestController {
 				strtotime( $result['post_date'] )
 			);
 
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning              += $amount;
 				$graph_data[ $date_key ]['net'] += $amount;
 				$single_order                    = ecommerce_get_order( $result['order_id'] );
 
 				foreach ( $single_order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
-					$total_refund                      += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-					$graph_data[ $date_key ]['net']    -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-					$total_net_earning                 -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-					$graph_data[ $date_key ]['refund'] += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+					$total_refund                      += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+					$graph_data[ $date_key ]['net']    -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+					$total_net_earning                 -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+					$graph_data[ $date_key ]['refund'] += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
 
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 				$total_refund                      += $amount;
 				$graph_data[ $date_key ]['refund'] += $amount;
 			}
@@ -601,11 +601,11 @@ class AnalyticsController extends RestController {
 		foreach ( $previous_results as $result ) {
 			$amount = floatval( $result['order_total'] );
 
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$previous_total_net_earning += $amount;
 			}
 
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 				$previous_total_refund += $amount;
 			}
 
@@ -641,8 +641,8 @@ class AnalyticsController extends RestController {
 		$transactions = $this->get_order_transactions_data( $params );
 
 		return array(
-			'currency'               => html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-			'currency_pos'           => get_omlms_currency_position(),
+			'currency'               => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+			'currency_pos'           => get_ohmylms_currency_position(),
 			'earning_graph'          => array(
 				'total_revenue' => $total_earning,
 				'total_refund'  => $total_refund,
@@ -782,7 +782,7 @@ class AnalyticsController extends RestController {
 			: 'DESC';
 
 		$args = array(
-			'post_type'      => 'omlms-order',
+			'post_type'      => 'ohmylms-order',
 			'post_status'    => 'any',
 			'posts_per_page' => isset( $params['limit'] ) ? intval( $params['limit'] ) : -1,
 			'orderby'        => $orderby,
@@ -862,7 +862,7 @@ class AnalyticsController extends RestController {
 			$type        = 'course';
 			foreach ( $order->get_refunds() as $single_refund ) {
 				$refund_id    = $single_refund->ID;
-				$order_total -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+				$order_total -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 			}
 
 			if ( $order->get_status() !== 'completed' ) {
@@ -872,10 +872,10 @@ class AnalyticsController extends RestController {
 			foreach ( $order->get_items() as $item_id => $item ) {
 
 				$post_type = get_post_type( $item->get_course_id() );
-				if ( $post_type === CREATOR_LMS_COURSE_CPT ) {
+				if ( $post_type === OHMYLMS_COURSE_CPT ) {
 					$course = $item->get_course();
 					$type   = 'course';
-				} elseif ( $post_type === CREATOR_LMS_MEMBERSHIP_CPT ) {
+				} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
 					$course = $item->get_membership();
 					$type   = 'membership';
 				} else {
@@ -919,7 +919,7 @@ class AnalyticsController extends RestController {
 	 */
 	private function count_unchecked_orders() {
 		$args = array(
-			'post_type'      => 'omlms-order',
+			'post_type'      => 'ohmylms-order',
 			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'meta_query'     => array(
@@ -959,7 +959,7 @@ class AnalyticsController extends RestController {
                 ON p.ID = pm_total.post_id AND pm_total.meta_key = %s
             WHERE p.post_type = %s
             AND p.post_status != %s
-			AND p.post_status IN ('omlms-completed')
+			AND p.post_status IN ('ohmylms-completed')
             GROUP BY pm_country.meta_value
             ORDER BY total_order_amount DESC
         ";
@@ -968,7 +968,7 @@ class AnalyticsController extends RestController {
 			$sql,
 			'_country',
 			'_order_total',
-			'omlms-order',
+			'ohmylms-order',
 			'trash'
 		);
 

@@ -2,15 +2,15 @@
 /**
  * Hook for Api
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
 class ApiHook
 {
     public function register_hooks(){
-       add_filter('creator_lms_rest_v1_controllers', array( $this, 'add_pro_controllers' ), 10 );
+       add_filter('ohmylms_rest_v1_controllers', array( $this, 'add_pro_controllers' ), 10 );
     }
 
     /**
@@ -18,18 +18,18 @@ class ApiHook
      */
     public function add_pro_controllers( $controllers ){
         $pro_controllers = array(
-			\OMLMS\Rest\V1\MembershipController::class,
-			\OMLMS\Rest\V1\AssignmentController::class,
-			\OMLMS\Rest\V1\DashboardProController::class,
-			\OMLMS\Rest\V1\StudentProController::class,
-			\OMLMS\Rest\V1\AIController::class,
-			\OMLMS\Rest\V1\PluginInstallerController::class,
-			\OMLMS\Rest\V1\SessionController::class,
-			\OMLMS\Rest\V1\EngagementController::class,
+			\OhMyLMS\Rest\V1\MembershipController::class,
+			\OhMyLMS\Rest\V1\AssignmentController::class,
+			\OhMyLMS\Rest\V1\DashboardProController::class,
+			\OhMyLMS\Rest\V1\StudentProController::class,
+			\OhMyLMS\Rest\V1\AIController::class,
+			\OhMyLMS\Rest\V1\PluginInstallerController::class,
+			\OhMyLMS\Rest\V1\SessionController::class,
+			\OhMyLMS\Rest\V1\EngagementController::class,
         );
         
         if( defined('MAILMINT') ){
-            array_push($pro_controllers,\OMLMS\Rest\V1\MailMintAutomationController::class);
+            array_push($pro_controllers,\OhMyLMS\Rest\V1\MailMintAutomationController::class);
         }
 
         $controllers = array_merge( $controllers, $pro_controllers );

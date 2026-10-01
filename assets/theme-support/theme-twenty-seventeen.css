@@ -1,11 +1,11 @@
-.theme-twentysixteen.creator-lms-page .creator-lms {
+.theme-twentysixteen.ohmylms-page .ohmylms {
     max-width: 100%;
 }
-.theme-twentyseventeen.creator-lms-page .wrap {
+.theme-twentyseventeen.ohmylms-page .wrap {
     max-width: 100%;
     padding: 0;
 }
 
-.theme-twentyseventeen.creator-lms-page .entry-content {
+.theme-twentyseventeen.ohmylms-page .entry-content {
     width: 100% !important;
 }

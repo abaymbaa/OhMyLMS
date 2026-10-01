@@ -12,11 +12,9 @@ var $U = n(93509),
       d: "M30.766.53C14.068.53.529 14.066.529 30.765.53 47.464 14.067 61 30.766 61c16.7 0 30.236-13.536 30.236-30.235C61.002 14.066 47.466.53 30.766.53zm0 9.04c5.525 0 10.002 4.48 10.002 10.002 0 5.523-4.477 10-10.002 10-5.523 0-10-4.477-10-10s4.477-10.001 10-10.001zm-.007 43.525a22.19 22.19 0 01-14.45-5.328 4.262 4.262 0 01-1.496-3.24c0-5.6 4.533-10.083 10.135-10.083h11.638c5.603 0 10.119 4.482 10.119 10.083a4.25 4.25 0 01-1.495 3.238 22.183 22.183 0 01-14.451 5.33z"
     })));
   };
-
 const JU = (0, g.memo)(KU);
-
 var XU = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.studentData,
     r = e.isHover,
     a = void 0 !== r && r;
@@ -42,7 +40,7 @@ var XU = function (e) {
       height: "40px"
     }
   }) : React.createElement(JU, null)), React.createElement("div", {
-    className: "omlms-student-info"
+    className: "ohmylms-student-info"
   }, React.createElement(I.HeadingWP, {
     level: 4,
     className: "student-name"
@@ -51,15 +49,13 @@ var XU = function (e) {
     className: "student-email-wrapper"
   }, a ? React.createElement(React.Fragment, null, React.createElement(v.Link, {
     disabled: !t,
-    to: t ? "/students/".concat(null == n ? void 0 : n.student_id, "/report") : "#",
+    to: "/students/".concat(null == n ? void 0 : n.student_id, "/report"),
     className: "student-analytics-link"
   }, React.createElement(vG, null))) : React.createElement(React.Fragment, null, React.createElement(I.TagWP, {
     className: "student-email"
   }, null == n ? void 0 : n.email))))));
 };
-
 const eq = (0, g.memo)(XU);
-
 function tq() {
   var e,
     t,
@@ -146,7 +142,6 @@ function tq() {
     };
   })();
 }
-
 function nq(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -168,7 +163,6 @@ function nq(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, nq(e, t, n, r);
 }
-
 function rq(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -178,7 +172,6 @@ function rq(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function aq(e) {
   return function () {
     var t = this,
@@ -195,7 +188,6 @@ function aq(e) {
     });
   };
 }
-
 function oq(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -235,15 +227,13 @@ function oq(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function iq(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var lq = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.students,
     r = (0, f.g)().id,
     a = (0, y.useDispatch)(T.default),
@@ -380,7 +370,7 @@ var lq = function (e) {
       }
     }],
     ce = (0, g.useCallback)(function (e, n) {
-      t && (V(e), S(!0), K(n));
+      V(e), S(!0), K(n);
     }, []),
     ue = (0, g.useCallback)(aq(tq().m(function e() {
       var t, n;
@@ -400,7 +390,7 @@ var lq = function (e) {
               subject: G,
               message: tinymce.get("new-message").getContent() || Y
             }, e.p = 2, ee(!0), e.n = 3, l()({
-              path: "/creator-lms/v1/notification/course/".concat(r, "/student/").concat($),
+              path: "/ohmylms/v1/notification/course/".concat(r, "/student/").concat($),
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -462,7 +452,7 @@ var lq = function (e) {
               completion_type: F,
               data_type: "student"
             }, "string" != typeof j && (o.filter = "custom", o.start_date = aN()(j[0]).format("YYYY-MM-DD"), o.end_date = aN()(j[1]).format("YYYY-MM-DD")), e.n = 2, l()({
-              path: (0, lN.addQueryArgs)("/creator-lms/v1/analytics/course/".concat(r), o),
+              path: (0, lN.addQueryArgs)("/ohmylms/v1/analytics/course/".concat(r), o),
               method: "GET",
               headers: {
                 "Content-Type": "application/json"
@@ -489,41 +479,35 @@ var lq = function (e) {
     n && !m && (s(n), p(!0));
   }, [n]), (0, g.useEffect)(function () {
     !h && o && ne(i, o);
-  }, [o]), (0, g.useCallback)(function () {
-    window.open(L.pricingPageLink, "_blank");
-  }, []), React.createElement(React.Fragment, null, re, React.createElement("div", {
-    className: "omlms-course-report-table-wrapper"
+  }, [o]), React.createElement(React.Fragment, null, re, React.createElement("div", {
+    className: "ohmylms-course-report-table-wrapper"
   }, React.createElement(I.FlexWP, {
     gap: 4,
     justify: "flex-start"
   }, React.createElement(I.FlexItemWP, null, React.createElement(Cm, {
     placeholder: (0, b.__)("Search", "ohmylms"),
     onChange: me,
-    className: "omlms-filter-report-search"
+    className: "ohmylms-filter-report-search"
   })), React.createElement(I.FlexItemWP, null, React.createElement(ZU, {
     placeholder: (0, b.__)("Filter By Days", "ohmylms"),
-    className: "omlms-filter-report-by-days",
-    popupClassName: "omlms-custom-daterange",
+    className: "ohmylms-filter-report-by-days",
+    popupClassName: "ohmylms-custom-daterange",
     onChange: function (e) {
       "custom_range" !== e && pe(e);
     },
     onRangeChange: pe
   })), React.createElement(I.FlexItemWP, null, React.createElement(vn.A, {
     placeholder: (0, b.__)("Status", "ohmylms"),
-    className: "omlms-filter-report-status",
+    className: "ohmylms-filter-report-status",
     onChange: fe,
     value: F,
     options: de
   }))), React.createElement(I.SpacerWP, {
     marginBottom: 5
-  }), React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Course analytics is a pro feature. Please upgrade to the Pro version to access it.", "ohmylms"),
-    top: "0px",
-    height: "100%"
   }), React.createElement(sN.A, {
     rowKey: "student_id",
     columns: le,
-    dataSource: t ? null != u ? u : [] : $U.qO,
+    dataSource: null != u ? u : [],
     pagination: !1,
     loading: h,
     scroll: {
@@ -555,9 +539,7 @@ var lq = function (e) {
     loading: X
   })));
 };
-
 const cq = (0, g.memo)(lq);
-
 function uq(e) {
   return uq = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -565,7 +547,6 @@ function uq(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, uq(e);
 }
-
 function sq(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -576,7 +557,6 @@ function sq(e, t) {
   }
   return n;
 }
-
 function dq(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -588,7 +568,6 @@ function dq(e) {
   }
   return e;
 }
-
 function mq(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -609,7 +588,6 @@ function mq(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function pq() {
   var e,
     t,
@@ -696,7 +674,6 @@ function pq() {
     };
   })();
 }
-
 function fq(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -718,7 +695,6 @@ function fq(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, fq(e, t, n, r);
 }
-
 function vq(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -728,7 +704,6 @@ function vq(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function gq(e) {
   return function () {
     var t = this,
@@ -745,7 +720,6 @@ function gq(e) {
     });
   };
 }
-
 function hq(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -785,7 +759,6 @@ function hq(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function yq(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

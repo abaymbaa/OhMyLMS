@@ -30,8 +30,8 @@
 					return;
 				}
 
-				data['action']	= 'creator_lms_add_to_cart';
-				data['nonce']	= omlms_add_to_cart_params.nonce;
+				data['action']	= 'ohmylms_add_to_cart';
+				data['nonce']	= ohmylms_add_to_cart_params.nonce;
 				thisButton.removeClass( 'added' );
 				thisButton.addClass( 'loading' );
 
@@ -39,7 +39,7 @@
 				$( document.body ).trigger( 'course_adding_to_cart', [ thisButton, data ] );
 
 				$.ajax( {
-					url: omlms_add_to_cart_params.ajax_url,
+					url: ohmylms_add_to_cart_params.ajax_url,
 					type: 'POST',
 					data: data,
 					dataType: 'json',
@@ -73,9 +73,9 @@
 					return;
 				}
 
-				data['action']	= 'creator_lms_add_to_cart';
+				data['action']	= 'ohmylms_add_to_cart';
 				data['purchase_by']	= 'point';
-				data['nonce']	= omlms_add_to_cart_params.nonce;
+				data['nonce']	= ohmylms_add_to_cart_params.nonce;
 				thisButton.removeClass( 'added' );
 				thisButton.addClass( 'loading' );
 
@@ -83,7 +83,7 @@
 				$( document.body ).trigger( 'course_adding_to_cart', [ thisButton, data ] );
 
 				$.ajax( {
-					url: omlms_add_to_cart_params.ajax_url,
+					url: ohmylms_add_to_cart_params.ajax_url,
 					type: 'POST',
 					data: data,
 					dataType: 'json',

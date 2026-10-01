@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Attempt;
+use OhMyLMS\Data\Attempt;
 
 class AttemptFactory {
     /**

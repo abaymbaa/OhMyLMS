@@ -2,16 +2,16 @@
 /**
  * GoogleMeetApiHelper class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Helpers;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Helpers;
 
 /**
  * Class GoogleMeetApiHelper
  *
- * @package OMLMS\Integrations\GoogleMeet\Helpers
+ * @package OhMyLMS\Integrations\GoogleMeet\Helpers
  * @since 1.0.0
  */
 class GoogleMeetApiHelper {

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use CodeRex\Ecommerce\Abstracts\PaymentGateway;
-use OMLMS\Gateways\AuthorizeNet\AuthorizeNetAPI;
+use OhMyLMS\Gateways\AuthorizeNet\AuthorizeNetAPI;
 
 /**
  * Authorize.Net Payment Gateway.
@@ -31,7 +31,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 */
 	public function __construct() {
 		$this->id                   = 'authorize_net';
-        $gateway_settings_key 	    = 'creatorlms_' . $this->id . '_settings';
+        $gateway_settings_key 	    = 'ohmylms_' . $this->id . '_settings';
         $this->settings 		    =  get_option( $gateway_settings_key, array() );
 		$this->title        		= $this->get_option( 'title', __( 'Authorize.Net', 'ohmylms' ) );
 		$this->description  		= $this->get_option( 'description', __( 'Pay with your credit card via Authorize.Net.', 'ohmylms' ) );
@@ -261,7 +261,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 			<input type="hidden" name="authorize_net_opaque_data_descriptor" id="authorize_net_opaque_data_descriptor" />
 		</div>
 		<?php
-		do_action( 'creator_lms_authorize_net_payment_fields', $this->id );
+		do_action( 'ohmylms_authorize_net_payment_fields', $this->id );
 
 		ob_end_flush();
 	}
@@ -270,7 +270,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 * Enqueue scripts and styles for the payment gateway.
 	 */
 	public function payment_scripts() {
-		if( !is_creator_lms_checkout() && is_creator_lms_order_received_page() ) {
+		if( !is_ohmylms_checkout() && is_ohmylms_order_received_page() ) {
             return;
         }
 		
@@ -282,14 +282,14 @@ class GatewayAuthorizenet extends PaymentGateway {
 		wp_register_script( 'authorize-net-accept-js', $accept_js_url, array(), null, true );
 		wp_enqueue_script( 'authorize-net-accept-js' );
 
-		if ( ! defined( 'CREATOR_LMS_VERSION' ) ) {
-			define( 'CREATOR_LMS_VERSION', time() ); // Use time for cache busting during development
+		if ( ! defined( 'OHMYLMS_VERSION' ) ) {
+			define( 'OHMYLMS_VERSION', time() ); // Use time for cache busting during development
 		}
 
 		$custom_js_url = plugins_url( '/authorize-net.js', __FILE__ );
-		$custom_js_version = CREATOR_LMS_VERSION;
+		$custom_js_version = OHMYLMS_VERSION;
 
-		wp_register_script( 'omlms-authorize-net', $custom_js_url, array( 'jquery', 'authorize-net-accept-js' ), $custom_js_version, true );
+		wp_register_script( 'ohmylms-authorize-net', $custom_js_url, array( 'jquery', 'authorize-net-accept-js' ), $custom_js_version, true );
 
 		$localize_params = array(
 			'apiLoginId'               => $this->api_login_id,
@@ -297,7 +297,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 			'testmode'                 => $this->testmode ? 'true' : 'false',
 			'acceptJsUrl'              => $accept_js_url,
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
-			'checkout_nonce'           => wp_create_nonce( 'creator_lms_authorize_checkout_nonce' ),
+			'checkout_nonce'           => wp_create_nonce( 'ohmylms_authorize_checkout_nonce' ),
 			'error_prefix'             => __( 'Payment error: ', 'ohmylms' ),
 			'msg_card_number_empty'    => __( 'Card number is required.', 'ohmylms' ),
 			'msg_expiration_date_empty' => __( 'Expiration date is required.', 'ohmylms' ),
@@ -305,8 +305,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 			'msg_opaque_data_error'    => __( 'There was an error processing your payment details. Please try again.', 'ohmylms' ),
 		);
 
-		wp_localize_script( 'omlms-authorize-net', 'omlms_authnet_params', $localize_params );
-		wp_enqueue_script( 'omlms-authorize-net' );
+		wp_localize_script( 'ohmylms-authorize-net', 'ohmylms_authnet_params', $localize_params );
+		wp_enqueue_script( 'ohmylms-authorize-net' );
 	}
 
 	/**
@@ -516,8 +516,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 				}
 
 				// Reduce stock levels
-				if (function_exists('creator_lms_reduce_order_stock')) {
-					creator_lms_reduce_order_stock($order_id);
+				if (function_exists('ohmylms_reduce_order_stock')) {
+					ohmylms_reduce_order_stock($order_id);
 				}
 
 
@@ -582,7 +582,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 * @return array Result of subscription payment processing.
 	 */
 	public function process_subscription_payment( $order_id, $membership_id = 0 ) {
-		global $creator_lms_ecommerce; // Assuming this global object provides LMS order functionality.
+		global $ohmylms_ecommerce; // Assuming this global object provides LMS order functionality.
 
 		$order = ecommerce_get_order( $order_id );
 		if ( ! $order ) {
@@ -590,7 +590,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 		}
 
 		$nonce = isset( $_POST['security'] ) ? sanitize_text_field( $_POST['security'] ) : '';
-		if ( ! wp_verify_nonce( $nonce, 'creator_lms_authorize_checkout_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'ohmylms_authorize_checkout_nonce' ) ) {
 			return array( 'result' => 'failure', 'message' => __( 'Security check failed.', 'ohmylms' ) );
 		}
 
@@ -633,7 +633,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 				'profile' => array(
 					'merchantCustomerId' => 'CRTLMS_USER_' . $user_id . '_' . time(), // Ensure uniqueness
 					'email'              => $order->get_billing_email(),
-					'description'        => sprintf( __( 'CreatorLMS Customer Profile for User ID: %s', 'ohmylms' ), $user_id ),
+					'description'        => sprintf( __( 'OhMyLMS Customer Profile for User ID: %s', 'ohmylms' ), $user_id ),
 					'paymentProfiles'    => array(
 						array(
 							'customerType' => 'individual',
@@ -751,8 +751,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 				}
 
 				// Reduce stock levels if applicable for the initial order of a subscription product
-				if (function_exists('creator_lms_reduce_order_stock')) {
-					creator_lms_reduce_order_stock($order_id);
+				if (function_exists('ohmylms_reduce_order_stock')) {
+					ohmylms_reduce_order_stock($order_id);
 				}
 
 				return array(
@@ -780,7 +780,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 * @return bool True on success, false on failure.
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
-		global $creator_lms_ecommerce; // Assuming this global object provides LMS order functionality.
+		global $ohmylms_ecommerce; // Assuming this global object provides LMS order functionality.
 
 		$order = ecommerce_get_order( $order_id );
 
@@ -908,7 +908,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 * @return bool True if cancellation (and refund, if applicable) was successful, false otherwise.
 	 */
 	public function refund_and_cancel_subscription( $lms_subscription_id, $order_id, $amount = null, $reason = '' ) {
-		global $creator_lms_ecommerce;
+		global $ohmylms_ecommerce;
 		$order = ecommerce_get_order( $order_id );
 
 		if ( ! $order ) {
@@ -1058,7 +1058,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 * @param int $original_order_id The ID of the original order that created the subscription.
 	 * @param int $renewal_order_id The ID of the renewal order.
 	 * @param float $amount The amount to charge for this renewal.
-	 * @param int $subscription_id The ID of the omlms-subscription post.
+	 * @param int $subscription_id The ID of the ohmylms-subscription post.
 	 * @param int $student_id The ID of the student/customer.
 	 * @return array Result of the payment attempt.
 	 * @since 1.0.0

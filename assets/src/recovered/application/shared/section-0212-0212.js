@@ -31,14 +31,14 @@ var xte = function (e) {
     fill: "#F4F5F7",
     rx: "8"
   }), React.createElement("path", {
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     d: "M17.225 24.663h-6.206c.255-.427.4-.96.4-1.463V11.253c0-1.056.831-1.916 1.852-1.916h8.36c1.021 0 1.852.86 1.852 1.915v4.396c0 .37.29.669.646.669.357 0 .646-.3.646-.668v-4.396c0-1.794-1.41-3.253-3.143-3.253H13.27c-1.734 0-3.143 1.46-3.143 3.252v6.695h-.984C7.41 17.947 6 19.407 6 21.2v1.997c0 1.534 1.2 2.783 2.684 2.797.008 0 .015.005.023.005h8.518c.356 0 .646-.3.646-.668 0-.37-.29-.67-.646-.67zm-9.933-1.465V21.2c0-1.058.83-1.917 1.852-1.917h.984v3.9l-.002.012c0 .809-.636 1.466-1.42 1.466-.78-.002-1.414-.657-1.414-1.464z"
   }), React.createElement("path", {
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     d: "M20.959 13.343h-7.008c-.357 0-.646.3-.646.669 0 .369.29.668.646.668h7.008c.357 0 .646-.3.646-.668 0-.37-.29-.669-.646-.669zm0 2.988h-7.008c-.357 0-.646.3-.646.669 0 .369.29.668.646.668h7.008c.357 0 .646-.3.646-.668 0-.37-.29-.669-.646-.669zm-3.504 2.989H13.95c-.357 0-.646.3-.646.668 0 .37.29.669.646.669h3.504c.357 0 .646-.3.646-.669a.657.657 0 00-.646-.668zm9.348-1.385a1.911 1.911 0 00-2.764 0l-4.421 4.574c-.164.17-.27.385-.309.62l-.242 1.484c-.06.367.056.743.31 1.006a1.093 1.093 0 00.972.321l1.433-.25c.23-.04.438-.152.602-.322l4.42-4.573a2.074 2.074 0 000-2.86zm-5.291 6.446l-1.13.197.192-1.167 3.023-3.128.938.97-3.023 3.128zm4.378-4.53l-.443.458-.938-.971.443-.458a.647.647 0 01.938 0 .705.705 0 010 .97z"
   }))), React.createElement(I.FlexWP, {
     direction: "column",
-    className: "omlms-td-thumbnail-title"
+    className: "ohmylms-td-thumbnail-title"
   }, React.createElement(v.Link, {
     to: "/assignment-edit/".concat(null == t ? void 0 : t.id),
     title: null == t ? void 0 : t.name,
@@ -55,7 +55,7 @@ var xte = function (e) {
     align: "center",
     justify: "flex-start",
     gap: 2,
-    className: "omlms-td-thumbnail-title-actions"
+    className: "ohmylms-td-thumbnail-title-actions"
   }, React.createElement(I.ButtonWP, {
     onClick: r,
     variant: "text",
@@ -385,7 +385,7 @@ var Ite = function () {
         for (;;) switch (e.n) {
           case 0:
             return e.n = 1, l()({
-              path: "/creator-lms/v1/courses"
+              path: "/ohmylms/v1/courses"
             });
           case 1:
             t = e.v, Y(t);
@@ -557,7 +557,7 @@ var Ite = function () {
     filterByStatusOptions: se,
     formateCategory: !1,
     showFilterByStatus: !1,
-    className: "omlms-assignment-listing-filter-card"
+    className: "ohmylms-assignment-listing-filter-card"
   })), React.createElement(sN.A, {
     rowKey: "id",
     columns: me,
@@ -648,7 +648,7 @@ function Vte(e, t) {
   return r;
 }
 
-null === (zte = window.creator_lms_params) || void 0 === zte || zte.plugin_assets;
+null === (zte = window.ohmylms_params) || void 0 === zte || zte.plugin_assets;
 
 var Hte = function (e) {
   var t,
@@ -663,16 +663,16 @@ var Hte = function (e) {
     s = void 0 === u || u,
     d = e.onSkip,
     m = (0, f.Zp)(),
-    p = [].concat(Bte(null !== (t = window) && void 0 !== t && null !== (t = t.creator_lms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
+    p = [].concat(Bte(null !== (t = window) && void 0 !== t && null !== (t = t.ohmylms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
       label: (0, b.__)("Tutor LMS", "ohmylms"),
       value: "tutorLMS"
-    }] : []), Bte(null !== (n = window) && void 0 !== n && null !== (n = n.creator_lms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
+    }] : []), Bte(null !== (n = window) && void 0 !== n && null !== (n = n.ohmylms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
       label: (0, b.__)("LearnDash", "ohmylms"),
       value: "learnDash"
-    }] : []), Bte(null !== (r = window) && void 0 !== r && null !== (r = r.creator_lms_params) && void 0 !== r && r.is_learnpress_active ? [{
+    }] : []), Bte(null !== (r = window) && void 0 !== r && null !== (r = r.ohmylms_params) && void 0 !== r && r.is_learnpress_active ? [{
       label: (0, b.__)("LearnPress", "ohmylms"),
       value: "learnPress"
-    }] : []), Bte(null !== (a = window) && void 0 !== a && null !== (a = a.creator_lms_params) && void 0 !== a && a.is_masterstudy_active ? [{
+    }] : []), Bte(null !== (a = window) && void 0 !== a && null !== (a = a.ohmylms_params) && void 0 !== a && a.is_masterstudy_active ? [{
       label: (0, b.__)("MasterStudy LMS", "ohmylms"),
       value: "masterStudy"
     }] : [])).length > 0,
@@ -739,7 +739,7 @@ var Hte = function (e) {
       paddingTop: "40px",
       marginBottom: "100px"
     },
-    className: "omlms-setup-wizard-step-indicator"
+    className: "ohmylms-setup-wizard-step-indicator"
   }, React.createElement(Wte, null), s && React.createElement(I.FlexWP, {
     items: "center",
     justify: "center",
@@ -805,7 +805,7 @@ var Hte = function (e) {
     onClick: function () {
       d ? d() : m("/dashboard");
     },
-    className: "omlms-setup-wizard-skip"
+    className: "ohmylms-setup-wizard-skip"
   }, (0, b.__)("Exit Setup", "ohmylms"))))));
 };
 

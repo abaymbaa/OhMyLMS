@@ -2,9 +2,9 @@
 /**
  * Template for displaying name of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/name.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/name.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

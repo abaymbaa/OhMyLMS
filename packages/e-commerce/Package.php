@@ -4,7 +4,7 @@
 defined( 'ABSPATH' ) || exit;
 
 
-define( 'ECOMMERCE_MODULE_PREFIX', 'creator_lms' );
+define( 'ECOMMERCE_MODULE_PREFIX', 'ohmylms' );
 
 /**
  * Main package class.

@@ -21,10 +21,17 @@ export function createCourseEditor(readRuntime) {
     const { step = 'content' } = r.f.g();
     const navigate = r.f.Zp();
     const isAi = r.Ze();
-    const isPro = r.L.useIsPro();
     const { totalSteps } = r.JW();
-    const editor = useCourseEditor({ store: r.T.default, courseId, enableSpin, isAi });
-    const dialogs = useCourseIntegrations({ actions: editor.actions, isPro, enableSpin });
+    const editor = useCourseEditor({
+      store: r.T.default,
+      courseId,
+      enableSpin,
+      isAi,
+    });
+    const dialogs = useCourseIntegrations({
+      actions: editor.actions,
+      enableSpin,
+    });
     const { contextHolder, openNotificationWithIcon } = r.z.A();
     const course = editor.course;
     useEffect(() => {
@@ -41,7 +48,11 @@ export function createCourseEditor(readRuntime) {
     const setActiveStep = (next) => navigate(`/course-edit/${courseId}/${next}`);
     const noop = () => {};
     async function uploadMedia(media, type) {
-      if (type === 'video') editor.actions.setCourse({ video_id: media.id, video_src: media.url });
+      if (type === 'video')
+        editor.actions.setCourse({
+          video_id: media.id,
+          video_src: media.url,
+        });
       else
         editor.actions.setCourse({
           thumbnail_id: media.id,
@@ -52,7 +63,7 @@ export function createCourseEditor(readRuntime) {
     return (
       <Fragment>
         {contextHolder}
-        <div className={`omlms-course-builder-wrapper omlms-steps-${totalSteps}`}>
+        <div className={`ohmylms-course-builder-wrapper ohmylms-steps-${totalSteps}`}>
           <Toolbar
             activeStep={step}
             setActiveStep={setActiveStep}
@@ -69,11 +80,14 @@ export function createCourseEditor(readRuntime) {
             isCommunityEnabled={editor.integrations?.community?.is_enable}
           />
           {editor.error && (
-            <p role="alert" className="omlms-course-save-error">
+            <p role="alert" className="ohmylms-course-save-error">
               {editor.error}
             </p>
           )}
-          <div className="omlms-course-builder-content" aria-busy={editor.loading || editor.saving}>
+          <div
+            className="ohmylms-course-builder-content"
+            aria-busy={editor.loading || editor.saving}
+          >
             {editor.loading ? (
               <Controls.SkeletonWP active rows={10} />
             ) : course ? (

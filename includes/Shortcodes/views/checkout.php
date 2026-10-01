@@ -5,14 +5,14 @@ $user_id = get_current_user_id();
 
 ?>
 <form id="userForm" action="#" method="POST">
-<div class="omlms-checkout-wrapper container">
+<div class="ohmylms-checkout-wrapper container">
 	<div class="col-1">
-		<div class="omlms-form-group">
+		<div class="ohmylms-form-group">
 			<label for="name">Name:</label>
 			<input type="text" id="name" name="name" required>
 		</div>
 
-		<div class="omlms-form-group">
+		<div class="ohmylms-form-group">
 			<label for="email">Email:</label>
 			<input type="email" id="email" name="email" required>
 
@@ -27,7 +27,7 @@ $user_id = get_current_user_id();
 
 			$totalPrice = 0;
 			if ( ! is_admin() ) {
-				foreach ( OMLMS()->order_loader->cart->get_cart() as $cart_item_key => $cart_item ) {
+				foreach ( ohmylms()->order_loader->cart->get_cart() as $cart_item_key => $cart_item ) {
 					$course              = $cart_item['data'];
 					$product['price']    = 50;
 					$product['quantity'] = 1;

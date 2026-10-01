@@ -19,7 +19,7 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         ),
         'O' =>
         array (
-            'OMLMS\\' => 6,
+            'OhMyLMS\\' => 8,
         ),
         'M' =>
         array (
@@ -44,7 +44,7 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
         ),
-        'OMLMS\\' =>
+        'OhMyLMS\\' =>
         array (
             0 => __DIR__ . '/../..' . '/includes',
         ),

@@ -35,9 +35,9 @@ var Une = function (e) {
           n = null == a ? void 0 : a.selectedPlatform,
           r = {
             label: n,
-            icon: (null === (e = window.creator_lms_params) || void 0 === e ? void 0 : e.plugin_assets) + "images/creator-logo.svg"
+            icon: (null === (e = window.ohmylms_params) || void 0 === e ? void 0 : e.plugin_assets) + "images/creator-logo.svg"
           },
-          o = (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.plugin_assets) + "images/";
+          o = (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.plugin_assets) + "images/";
         return "tutorLMS" === n ? r = {
           label: "Tutor LMS",
           icon: o + "tutor_icon.svg"
@@ -66,7 +66,7 @@ var Une = function (e) {
                 return e.a(2);
               case 1:
                 return p(!0), e.p = 2, e.n = 3, l()({
-                  path: "/creator-lms/v1/migrations/".concat(a.selectedPlatform, "/courses")
+                  path: "/ohmylms/v1/migrations/".concat(a.selectedPlatform, "/courses")
                 });
               case 3:
                 null != (t = e.v) && t.courses && (s(t.courses), h(t.courses.map(function (e) {
@@ -109,7 +109,7 @@ var Une = function (e) {
                 return e.a(2, null);
               case 2:
                 return e.n = 3, l()({
-                  path: "/creator-lms/v1/certificates/",
+                  path: "/ohmylms/v1/certificates/",
                   method: "POST",
                   data: {
                     name: "Certificate Template ".concat(a.certificate),
@@ -142,11 +142,11 @@ var Une = function (e) {
                 return e.a(2);
               case 1:
                 return e.p = 1, a = une[t].data, e.n = 2, l()({
-                  path: "/creator-lms/v1/setup-wizard/import-course",
+                  path: "/ohmylms/v1/setup-wizard/import-course",
                   method: "POST",
                   data: a,
                   headers: {
-                    nonce: window.creator_lms_params.setup_wizard_nonce
+                    nonce: window.ohmylms_params.setup_wizard_nonce
                   }
                 });
               case 2:
@@ -175,7 +175,7 @@ var Une = function (e) {
               case 1:
                 return y = e.v, b = {
                   optin: {
-                    creatorlms_allow_tracking: null != a && a.isOptEnabled ? "yes" : "no"
+                    ohmylms_allow_tracking: null != a && a.isOptEnabled ? "yes" : "no"
                   },
                   language: null !== (t = a.language) && void 0 !== t ? t : "en_US",
                   certificate: a.certificate,
@@ -183,20 +183,20 @@ var Une = function (e) {
                   niche: a.niche ? [a.niche] : [],
                   level: a.level,
                   design: {
-                    creator_lms_archive_page_layout: null !== (n = a.archive_page_layout) && void 0 !== n ? n : null === (l = i.creator_lms_archive_page_layout) || void 0 === l ? void 0 : l.value,
-                    creator_lms_columns_per_row: a.courses_per_row || (null === (c = i.creator_lms_columns_per_row) || void 0 === c ? void 0 : c.value) || 4,
-                    creator_lms_courses_per_page: a.courses_per_page || (null === (u = i.creator_lms_courses_per_page) || void 0 === u ? void 0 : u.value) || 10
+                    ohmylms_archive_page_layout: null !== (n = a.archive_page_layout) && void 0 !== n ? n : null === (l = i.ohmylms_archive_page_layout) || void 0 === l ? void 0 : l.value,
+                    ohmylms_columns_per_row: a.courses_per_row || (null === (c = i.ohmylms_columns_per_row) || void 0 === c ? void 0 : c.value) || 4,
+                    ohmylms_courses_per_page: a.courses_per_page || (null === (u = i.ohmylms_courses_per_page) || void 0 === u ? void 0 : u.value) || 10
                   },
                   currency: {
-                    creator_lms_currency: null !== (s = a.currency) && void 0 !== s ? s : null == o || null === (d = o.creator_lms_currency) || void 0 === d ? void 0 : d.value,
-                    creator_lms_currency_pos: (null == o || null === (m = o.creator_lms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
-                    creator_lms_price_thousand_sep: (null == o || null === (p = o.creator_lms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
-                    creator_lms_price_decimal_sep: (null == o || null === (f = o.creator_lms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
-                    creator_lms_price_num_decimals: (null == o || null === (v = o.creator_lms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
+                    ohmylms_currency: null !== (s = a.currency) && void 0 !== s ? s : null == o || null === (d = o.ohmylms_currency) || void 0 === d ? void 0 : d.value,
+                    ohmylms_currency_pos: (null == o || null === (m = o.ohmylms_currency_pos) || void 0 === m ? void 0 : m.value) || "left",
+                    ohmylms_price_thousand_sep: (null == o || null === (p = o.ohmylms_price_thousand_sep) || void 0 === p ? void 0 : p.value) || ",",
+                    ohmylms_price_decimal_sep: (null == o || null === (f = o.ohmylms_price_decimal_sep) || void 0 === f ? void 0 : f.value) || ".",
+                    ohmylms_price_num_decimals: (null == o || null === (v = o.ohmylms_price_num_decimals) || void 0 === v ? void 0 : v.value) || "2"
                   },
                   contact: {
-                    email: null != a && a.isOptEnabled ? null === (g = window.creator_lms_params) || void 0 === g ? void 0 : g.admin_email : "",
-                    name: null != a && a.isOptEnabled ? null === (h = window.creator_lms_params) || void 0 === h ? void 0 : h.admin_name : ""
+                    email: null != a && a.isOptEnabled ? null === (g = window.ohmylms_params) || void 0 === g ? void 0 : g.admin_email : "",
+                    name: null != a && a.isOptEnabled ? null === (h = window.ohmylms_params) || void 0 === h ? void 0 : h.admin_name : ""
                   },
                   wizard_data: a
                 }, e.n = 2, r.saveSetup(b);
@@ -239,7 +239,7 @@ var Une = function (e) {
                   break;
                 }
                 return r = v[n], P(n), x(3 + n), e.p = 4, e.n = 5, l()({
-                  path: "/creator-lms/v1/migrations/".concat(a.selectedPlatform),
+                  path: "/ohmylms/v1/migrations/".concat(a.selectedPlatform),
                   method: "POST",
                   data: Dne({}, a.selectedPlatform, {
                     course_id: r
@@ -296,11 +296,11 @@ var Une = function (e) {
       currentStep: "experienced" == (null == a ? void 0 : a.level) || "intermediate" == (null == a ? void 0 : a.level) ? 2 : 0,
       isShowIndicator: !0
     }), React.createElement(I.ContainerWP, null, React.createElement("div", {
-      className: "omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper"
+      className: "ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper"
     }, React.createElement("div", {
-      className: "omlms-setup-wizard__container"
+      className: "ohmylms-setup-wizard__container"
     }, React.createElement("div", {
-      className: "omlms-setup-wizard__header"
+      className: "ohmylms-setup-wizard__header"
     }, React.createElement(I.HeadingWP, {
       as: "h2",
       color: "#000d25",
@@ -394,7 +394,7 @@ var Une = function (e) {
         boxSizing: "border-box"
       }
     }, React.createElement("div", {
-      className: "omlms-setup-wizard-checkbox",
+      className: "ohmylms-setup-wizard-checkbox",
       onClick: function () {
         v.length === u.length ? h([]) : h(u.map(function (e) {
           return e.id;
@@ -474,7 +474,7 @@ var Une = function (e) {
           gap: "30px"
         }
       }, React.createElement("div", {
-        className: "omlms-setup-wizard-checkbox",
+        className: "ohmylms-setup-wizard-checkbox",
         onClick: function () {
           return t = e.id, void (v.includes(t) ? h(v.filter(function (e) {
             return e !== t;
@@ -583,9 +583,9 @@ var Une = function (e) {
       currentStep: "experienced" == (null == a ? void 0 : a.level) || "intermediate" == (null == a ? void 0 : a.level) ? 2 : 0,
       isShowIndicator: !0
     }), React.createElement(I.ContainerWP, null, React.createElement("div", {
-      className: "omlms-setup-wizard__container"
+      className: "ohmylms-setup-wizard__container"
     }, React.createElement("div", {
-      className: "omlms-setup-wizard__header"
+      className: "ohmylms-setup-wizard__header"
     }, React.createElement(I.HeadingWP, {
       as: "h2",
       color: "#000d25",
@@ -751,7 +751,7 @@ var Une = function (e) {
         border: "1px solid #F97316"
       }
     }, React.createElement("div", {
-      className: "omlms-spinner",
+      className: "ohmylms-spinner",
       style: {
         width: "16px",
         height: "16px",

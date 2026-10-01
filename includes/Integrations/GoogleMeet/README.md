@@ -1,10 +1,10 @@
-# Google Meet Integration for CreatorLMS
+# Google Meet Integration for OhMyLMS
 
 ## Overview
-This integration enables CreatorLMS to create and manage Google Meet live classes, similar to the existing Zoom integration.
+This integration enables OhMyLMS to create and manage Google Meet live classes, similar to the existing Zoom integration.
 
 ## Features
-- Create Google Meet sessions directly from CreatorLMS
+- Create Google Meet sessions directly from OhMyLMS
 - Schedule live classes with date, time, and timezone support
 - Automatic meeting link generation
 - Session countdown timer
@@ -15,7 +15,7 @@ This integration enables CreatorLMS to create and manage Google Meet live classe
 
 ## File Structure
 
-### Backend (PHP) - creatorlms-pro
+### Backend (PHP) - ohmylms-pro
 ```
 includes/Integrations/GoogleMeet/
 ├── GoogleMeet.php                          # Main integration class
@@ -42,7 +42,7 @@ includes/Integrations/GoogleMeet/
     └── content-googlemeet.php             # Meeting display template
 ```
 
-### Frontend (React) - creatorlms
+### Frontend (React) - ohmylms
 ```
 src/
 ├── features/
@@ -70,7 +70,7 @@ src/
 7. Note down Client ID and Client Secret
 
 ### 2. Plugin Configuration
-1. Navigate to CreatorLMS > Settings > Integrations > Google Meet
+1. Navigate to OhMyLMS > Settings > Integrations > Google Meet
 2. Enter your Client ID
 3. Enter your Client Secret
 4. Enter your Redirect URI (provided in the settings)
@@ -94,15 +94,15 @@ src/
 ## API Endpoints
 
 ### Settings
-- `GET /wp-json/creatorlms/v1/googlemeet/settings/credentials` - Get saved credentials
-- `POST /wp-json/creatorlms/v1/googlemeet/settings/credentials` - Save credentials
-- `POST /wp-json/creatorlms/v1/googlemeet/settings/oauth-callback` - Handle OAuth callback
+- `GET /wp-json/ohmylms/v1/googlemeet/settings/credentials` - Get saved credentials
+- `POST /wp-json/ohmylms/v1/googlemeet/settings/credentials` - Save credentials
+- `POST /wp-json/ohmylms/v1/googlemeet/settings/oauth-callback` - Handle OAuth callback
 
 ### Meetings (AJAX)
-- `creatorlms_create_googlemeet` - Create new meeting
-- `creatorlms_update_googlemeet` - Update existing meeting
-- `creatorlms_delete_googlemeet` - Delete meeting
-- `creatorlms_get_googlemeet` - Get meeting details
+- `ohmylms_create_googlemeet` - Create new meeting
+- `ohmylms_update_googlemeet` - Update existing meeting
+- `ohmylms_delete_googlemeet` - Delete meeting
+- `ohmylms_get_googlemeet` - Get meeting details
 
 ## Google Calendar API Integration
 
@@ -145,7 +145,7 @@ The integration uses Google Calendar API v3 to:
 
 ### Customization
 The template (`content-googlemeet.php`) can be customized by:
-1. Copying to your theme: `your-theme/creatorlms/integrations/googlemeet/content-googlemeet.php`
+1. Copying to your theme: `your-theme/ohmylms/integrations/googlemeet/content-googlemeet.php`
 2. Modifying the styles and layout
 
 ## Troubleshooting
@@ -195,7 +195,7 @@ For issues or questions:
 1. Check WordPress debug log
 2. Verify Google Cloud Console settings
 3. Review API quotas and limits
-4. Contact CreatorLMS support
+4. Contact OhMyLMS support
 
 ## Version History
 
@@ -208,9 +208,9 @@ For issues or questions:
 
 ## Credits
 
-Developed for CreatorLMS Pro
+Developed for OhMyLMS Pro
 Following Zoom integration patterns and company best practices
 
 ## License
 
-Proprietary - Part of CreatorLMS Pro
+Proprietary - Part of OhMyLMS Pro

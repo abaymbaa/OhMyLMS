@@ -32,7 +32,7 @@ var j7 = {
               for (;;) switch (t.p = t.n) {
                 case 0:
                   return t.p = 0, t.n = 1, l()({
-                    path: "/creatorlms/v1/zoom/settings/credentials",
+                    path: "/ohmylms/v1/zoom/settings/credentials",
                     method: "GET"
                   });
                 case 1:
@@ -77,7 +77,7 @@ var j7 = {
                   return e.a(2);
                 case 1:
                   return m(!0), e.p = 2, e.n = 3, l()({
-                    path: "/creatorlms/v1/zoom/settings/credentials",
+                    path: "/ohmylms/v1/zoom/settings/credentials",
                     method: "POST",
                     data: a
                   });
@@ -205,7 +205,7 @@ var j7 = {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, e.n = 1, l()({
-                  path: "/creatorlms/v1/ai/settings/credentials",
+                  path: "/ohmylms/v1/ai/settings/credentials",
                   method: "GET"
                 });
               case 1:
@@ -252,7 +252,7 @@ var j7 = {
                   return e.a(2);
                 case 1:
                   return s(!0), e.p = 2, e.n = 3, l()({
-                    path: "/creatorlms/v1/ai/settings/credentials",
+                    path: "/ohmylms/v1/ai/settings/credentials",
                     method: "POST",
                     data: a
                   });
@@ -538,7 +538,7 @@ var j7 = {
               for (;;) switch (t.p = t.n) {
                 case 0:
                   return t.p = 0, t.n = 1, l()({
-                    path: "/creatorlms/v1/googlemeet/settings/credentials",
+                    path: "/ohmylms/v1/googlemeet/settings/credentials",
                     method: "GET"
                   });
                 case 1:
@@ -582,7 +582,7 @@ var j7 = {
                   return e.a(2);
                 case 1:
                   return u(!0), e.p = 2, e.n = 3, l()({
-                    path: "/creatorlms/v1/googlemeet/settings/credentials",
+                    path: "/ohmylms/v1/googlemeet/settings/credentials",
                     method: "POST",
                     data: a
                   });
@@ -609,7 +609,7 @@ var j7 = {
               for (;;) switch (e.p = e.n) {
                 case 0:
                   return S(!0), e.p = 1, e.n = 2, l()({
-                    path: "/creatorlms/v1/googlemeet/settings/oauth-url",
+                    path: "/ohmylms/v1/googlemeet/settings/oauth-url",
                     method: "GET"
                   });
                 case 2:
@@ -739,7 +739,7 @@ var j7 = {
               for (;;) switch (t.p = t.n) {
                 case 0:
                   return t.p = 0, t.n = 1, l()({
-                    path: "/creator-lms/v1/auth/google/settings"
+                    path: "/ohmylms/v1/auth/google/settings"
                   });
                 case 1:
                   n = t.v, e && n && (o(function (e) {
@@ -788,7 +788,7 @@ var j7 = {
                   return e.a(2);
                 case 1:
                   return v(!0), e.p = 2, e.n = 3, l()({
-                    path: "/creator-lms/v1/auth/google/settings",
+                    path: "/ohmylms/v1/auth/google/settings",
                     method: "POST",
                     data: {
                       client_id: a.client_id,

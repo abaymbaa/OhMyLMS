@@ -2,9 +2,9 @@
 /**
  * Signup form
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/global/form-signup.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/global/form-signup.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * * @version  1.0.0
  * * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -14,42 +14,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<?php omlms_get_template( 'global/creator-lms-celebration.php' ); ?>
+<?php ohmylms_get_template( 'global/ohmylms-celebration.php' ); ?>
 
-<form class="creator-lms-login-signup creator-lms-form-signup signup" method="post" <?php echo ( $hidden ) ? 'style="display:none;"' : ''; ?> >
+<form class="ohmylms-login-signup ohmylms-form-signup signup" method="post" <?php echo ( $hidden ) ? 'style="display:none;"' : ''; ?> >
 
-	<?php do_action( 'creator_lms_signup_form_start' ); ?>
+	<?php do_action( 'ohmylms_signup_form_start' ); ?>
 
 	<?php echo ( $message ) ? wpautop( wptexturize( $message ) ) : ''; // @codingStandardsIgnoreLine ?>
-	<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?><div data-ohmylms-registration-fields style="display:contents"><?php endif; ?>
+	<?php if ( defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS ) : ?><div data-ohmylms-registration-fields style="display:contents"><?php endif; ?>
 
-	<div class="creator-lms-form-row creator-lms-form-names-row">
-		<p class="creator-lms-form-row row-first-name">
-			<span class="creator-lms-input-wrapper">
-				<label for="signup-first-name" class="creator-lms-input-label">
+	<div class="ohmylms-form-row ohmylms-form-names-row">
+		<p class="ohmylms-form-row row-first-name">
+			<span class="ohmylms-input-wrapper">
+				<label for="signup-first-name" class="ohmylms-input-label">
 					<?php esc_html_e( 'First Name', 'ohmylms' ); ?>&nbsp;
 					<span class="required" aria-hidden="true">*</span>
 				</label>
 
-				<input type="text" class="creator-lms-input-text" name="first_name" id="signup-first-name" required aria-required="true" />
+				<input type="text" class="ohmylms-input-text" name="first_name" id="signup-first-name" required aria-required="true" />
 			</span>
 		</p>
 
-		<p class="creator-lms-form-row row-last-name">
-			<span class="creator-lms-input-wrapper">
-				<label for="signup-last-name" class="creator-lms-input-label">
+		<p class="ohmylms-form-row row-last-name">
+			<span class="ohmylms-input-wrapper">
+				<label for="signup-last-name" class="ohmylms-input-label">
 					<?php esc_html_e( 'Last Name', 'ohmylms' ); ?>&nbsp;
 					<span class="required" aria-hidden="true">*</span>
 				</label>
 
-				<input type="text" class="creator-lms-input-text" name="last_name" id="signup-last-name" required aria-required="true" />
+				<input type="text" class="ohmylms-input-text" name="last_name" id="signup-last-name" required aria-required="true" />
 			</span>
 		</p>
 	</div>
 
-	<p class="creator-lms-form-row row-email">
-		<span class="creator-lms-input-wrapper">
-			<label for="signup-email" class="creator-lms-input-label">
+	<p class="ohmylms-form-row row-email">
+		<span class="ohmylms-input-wrapper">
+			<label for="signup-email" class="ohmylms-input-label">
 				<?php esc_html_e( 'Email', 'ohmylms' ); ?>&nbsp;
 				<span class="required" aria-hidden="true">*</span>
 
@@ -58,13 +58,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</span>
 			</label>
 
-			<input type="email" class="creator-lms-input-text email" name="email" id="signup-email" aria-required="true" required pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$" />
+			<input type="email" class="ohmylms-input-text email" name="email" id="signup-email" aria-required="true" required pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$" />
 		</span>
 	</p>
 
-	<p class="creator-lms-form-row row-password">
-		<span class="creator-lms-input-wrapper">
-			<label for="signup-password" class="creator-lms-input-label">
+	<p class="ohmylms-form-row row-password">
+		<span class="ohmylms-input-wrapper">
+			<label for="signup-password" class="ohmylms-input-label">
 				<?php esc_html_e( 'Password', 'ohmylms' ); ?>&nbsp;
 				<span class="required" aria-hidden="true">*</span>
 
@@ -73,8 +73,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</span>
 			</label>
 
-			<span class="creator-lms-password-show">
-				<input class="creator-lms-input-text password" type="password" name="password" id="signup-password" autocomplete="current-password" required aria-required="true">
+			<span class="ohmylms-password-show">
+				<input class="ohmylms-input-text password" type="password" name="password" id="signup-password" autocomplete="current-password" required aria-required="true">
 
 				<label class="show-password-icon" tabindex="0">
 					<input type="checkbox" name="show-password-checkbox" class="show-password-checkbox" aria-required="true" aria-hidden="true">
@@ -82,13 +82,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="show-password" aria-label="Toggle password visibility">
 						<span class="eye-on">
 							<?php
-								include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon2.php');
+								include(OHMYLMS_DIR . '/assets/images/icon/eye-icon2.php');
 							?>
 						</span>
 
 						<span class="eye-off">
 							<?php
-								include(CREATOR_LMS_DIR . '/assets/images/icon/eye-off-icon.php');
+								include(OHMYLMS_DIR . '/assets/images/icon/eye-off-icon.php');
 							?>
 						</span>
 					</span>
@@ -97,39 +97,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 	</p>
 
-	<p class="creator-lms-form-row row-phone">
-		<span class="creator-lms-input-wrapper">
-			<label for="signup-phone" class="creator-lms-input-label">
+	<p class="ohmylms-form-row row-phone">
+		<span class="ohmylms-input-wrapper">
+			<label for="signup-phone" class="ohmylms-input-label">
 				<?php esc_html_e( 'Phone Number', 'ohmylms' ); ?>
 			</label>
 
-			<input type="text" class="creator-lms-input-text phone" name="phone" id="signup-phone" />
+			<input type="text" class="ohmylms-input-text phone" name="phone" id="signup-phone" />
 		</span>
 	</p>
 
-	<p class="creator-lms-form-row row-country">
-		<span class="creator-lms-input-wrapper">
-			<label for="signup-country" class="creator-lms-input-label">
+	<p class="ohmylms-form-row row-country">
+		<span class="ohmylms-input-wrapper">
+			<label for="signup-country" class="ohmylms-input-label">
 				<?php esc_html_e( 'Country', 'ohmylms' ); ?>
 			</label>
 
-			<select name="country" id="signup-country" class="creator-lms-input-text">
+			<select name="country" id="signup-country" class="ohmylms-input-text">
 				<option value=""><?php esc_html_e( '— Select country —', 'ohmylms' ); ?></option>
-				<?php foreach ( creator_lms_get_countries() as $country ) : ?>
+				<?php foreach ( ohmylms_get_countries() as $country ) : ?>
 					<option value="<?php echo esc_attr( $country['code'] ); ?>"><?php echo esc_html( $country['title'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
 		</span>
 	</p>
 
-	<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?></div><?php endif; ?>
-	<?php do_action( 'creator_lms_signup_form' ); ?>
+	<?php if ( defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS ) : ?></div><?php endif; ?>
+	<?php do_action( 'ohmylms_signup_form' ); ?>
 
-	<p class="creator-lms-form-row privacy-policy-row">
-		<label for="tnc-accept" class="creator-lms-checkbox creator-lms-form-login-rememberme">
-			<input class="creator-lms-form__input creator-lms-form__input-checkbox" name="tnc-accept" type="checkbox" id="tnc-accept" required />
+	<p class="ohmylms-form-row privacy-policy-row">
+		<label for="tnc-accept" class="ohmylms-checkbox ohmylms-form-login-rememberme">
+			<input class="ohmylms-form__input ohmylms-form__input-checkbox" name="tnc-accept" type="checkbox" id="tnc-accept" required />
 
-			<span class="creator-lms-checkbox-text">
+			<span class="ohmylms-checkbox-text">
 				<span class="checkedbox" aria-hidden="true" id="tnc-accept-label">
 					<svg width="11" height="8" fill="none" viewBox="0 0 11 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" fill-rule="evenodd" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5" d="M9.845 1.157c.207.21.207.55 0 .76L5.3 6.528c-.62.63-1.626.63-2.247 0L1.155 4.602a.543.543 0 010-.76.524.524 0 01.749 0L3.802 5.77c.207.21.542.21.749 0l4.545-4.612a.524.524 0 01.749 0z" clip-rule="evenodd"/></svg>
 				</span>
@@ -145,26 +145,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</label>
 	</p>
 
-	<p class="creator-lms-form-row form-submit-btn">
-		<?php wp_nonce_field( 'creator-lms-signup', 'creator-lms-signup-nonce' ); ?>
-		<input type="hidden" name="action" value="creator_lms_signup">
+	<p class="ohmylms-form-row form-submit-btn">
+		<?php wp_nonce_field( 'ohmylms-signup', 'ohmylms-signup-nonce' ); ?>
+		<input type="hidden" name="action" value="ohmylms_signup">
 		<input type="hidden" name="redirect_to" value="<?php echo esc_url( $redirect_to ); ?>" />
 
-		<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?><span data-ohmylms-registration-submit style="display:contents"><?php endif; ?>
-		<button type="submit" class="creator-lms-button creator-lms-form-signup-submit" name="signup" value="<?php esc_attr_e( 'Sign Up', 'ohmylms' ); ?>" disabled>
+		<?php if ( defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS ) : ?><span data-ohmylms-registration-submit style="display:contents"><?php endif; ?>
+		<button type="submit" class="ohmylms-button ohmylms-form-signup-submit" name="signup" value="<?php esc_attr_e( 'Sign Up', 'ohmylms' ); ?>" disabled>
 			<?php esc_html_e( 'Sign Up', 'ohmylms' ); ?>
 		</button>
-		<?php if ( defined('OMLMS_SOURCE_ASSETS') && OMLMS_SOURCE_ASSETS ) : ?></span><?php endif; ?>
+		<?php if ( defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS ) : ?></span><?php endif; ?>
 	</p>
 
-	<p class="creator-lms-form-row dont-have-account">
+	<p class="ohmylms-form-row dont-have-account">
 		<?php echo __('Already have an account?', 'ohmylms') ?>
-		<a href="#" class="creator-lms-show-login-form">
+		<a href="#" class="ohmylms-show-login-form">
 			<?php esc_html_e( 'Log In', 'ohmylms' ); ?>
 		</a>
 	</p>
 
-	<?php do_action( 'creator_lms_signup_form_end' ); ?>
+	<?php do_action( 'ohmylms_signup_form_end' ); ?>
 
 </form>
 

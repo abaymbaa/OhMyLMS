@@ -14,7 +14,7 @@ var Z8 = function () {
     o = (r.totalPages, (0, y.useSelect)(function (e) {
       return e(T.default).getMemberships();
     }, [])),
-    i = (0, L.useIsPro)(),
+    i = true,
     c = Y8((0, g.useState)(!0), 2),
     u = c[0],
     s = c[1],
@@ -76,14 +76,14 @@ var Z8 = function () {
         return H8().w(function (t) {
           for (;;) switch (t.p = t.n) {
             case 0:
-              if (i) {
+              {
                 t.n = 1;
                 break;
               }
               return re(!0), t.a(2);
             case 1:
               return t.p = 1, G(!0), Q(!0), t.n = 2, l()({
-                path: "/creator-lms/v1/membership/".concat(n),
+                path: "/ohmylms/v1/membership/".concat(n),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -113,9 +113,13 @@ var Z8 = function () {
       return H8().w(function (t) {
         for (;;) switch (t.n) {
           case 0:
-            if (n = o.length > 0 && void 0 !== o[0] ? o[0] : "date", r = o.length > 1 && void 0 !== o[1] ? o[1] : "DESC", i) {
-              t.n = 1;
-              break;
+            {
+              n = o.length > 0 && void 0 !== o[0] ? o[0] : "date";
+              r = o.length > 1 && void 0 !== o[1] ? o[1] : "DESC";
+              {
+                t.n = 1;
+                break;
+              }
             }
             return s(!1), t.a(2);
           case 1:
@@ -137,7 +141,7 @@ var Z8 = function () {
       }, t);
     })), [E, x, P, j, X]),
     pe = (0, g.useCallback)(function (e) {
-      i ? (_(!0), N(e)) : re(!0);
+      _(!0), N(e);
     }, []),
     fe = (0, g.useCallback)(function () {
       _(!1);
@@ -172,7 +176,7 @@ var Z8 = function () {
         label: (0, b.__)("Delete", "ohmylms"),
         value: "delete",
         action: function () {
-          i ? _(!0) : re(!0);
+          _(!0);
         }
       }];
     }, [m]),
@@ -325,7 +329,7 @@ var Z8 = function () {
       render: function (e) {
         var t,
           n = "",
-          r = (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.date_format) || "F j, Y",
+          r = (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.date_format) || "F j, Y",
           a = "".concat(r);
         return e && "object" === V8(e) && e.date ? n = (0, wq.dateI18n)(a, e.date) : "string" == typeof e && (n = (0, wq.dateI18n)(a, e)), React.createElement(I.BadgeWP, {
           isBorderLess: !0,
@@ -366,9 +370,7 @@ var Z8 = function () {
     };
   }, [E, x, P, e, j, X, $]), (0, g.useEffect)(function () {
     !u && t && oe(n, t);
-  }, [t]), (0, g.useCallback)(function () {
-    window.open(L.pricingPageLink, "_blank");
-  }, []), React.createElement(React.Fragment, null, ie, React.createElement(I.ContainerWP, null, React.createElement(YG, {
+  }, [t]), React.createElement(React.Fragment, null, ie, React.createElement(I.ContainerWP, null, React.createElement(YG, {
     title: (0, b.__)("All Memberships", "ohmylms"),
     showAddButton: !0,
     addButtonConfig: we
@@ -377,9 +379,7 @@ var Z8 = function () {
     minHeight: "calc(100vh - 200px)"
   }, React.createElement(I.SpacerWP, {
     padding: 5
-  }, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Membership is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms")
-  }), m.length > 0 ? React.createElement(hN, {
+  }, m.length > 0 ? React.createElement(hN, {
     items: m,
     setItems: p,
     bulksActions: he
@@ -401,62 +401,7 @@ var Z8 = function () {
   }), React.createElement(sN.A, {
     rowKey: "id",
     columns: Ee,
-    dataSource: i ? o || [] : [{
-      id: 1,
-      name: "Premium Membership",
-      price: 100,
-      regular_price: 120,
-      sale_price: 90,
-      currency: "$",
-      currency_pos: "left",
-      members: 150,
-      courses: 10,
-      status: "active"
-    }, {
-      id: 2,
-      name: "Standard Membership",
-      price: 50,
-      regular_price: 50,
-      sale_price: null,
-      currency: "$",
-      currency_pos: "left",
-      members: 80,
-      courses: 5,
-      status: "inactive"
-    }, {
-      id: 3,
-      name: "Basic Membership",
-      price: 20,
-      regular_price: 20,
-      sale_price: null,
-      currency: "$",
-      currency_pos: "left",
-      members: 30,
-      courses: 2,
-      status: "draft"
-    }, {
-      id: 4,
-      name: "Enterprise Plan",
-      price: 300,
-      regular_price: 350,
-      sale_price: 280,
-      currency: "$",
-      currency_pos: "left",
-      members: 250,
-      courses: 20,
-      status: "active"
-    }, {
-      id: 5,
-      name: "Trial Membership",
-      price: 0,
-      regular_price: 0,
-      sale_price: null,
-      currency: "$",
-      currency_pos: "left",
-      members: 500,
-      courses: 1,
-      status: "inactive"
-    }],
+    dataSource: o || [],
     rowSelection: _e,
     pagination: !1,
     loading: u,

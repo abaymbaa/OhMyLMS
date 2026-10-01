@@ -1,5 +1,5 @@
-.creator-lms-page {
-    .creator-lms-timer {
+.ohmylms-page {
+    .ohmylms-timer {
         border-radius: 10px;
         border: 1px solid #EBEBEF;
         background: #FFF;
@@ -11,7 +11,7 @@
         row-gap: 11px;
 
         .clock {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 14px;
             font-weight: 400;
             line-height: 1;
@@ -39,17 +39,17 @@
         .progress-inner {
             position: absolute;
             inset: 0;
-            background-color: var(--creator-lms-progressbar-color);
+            background-color: var(--ohmylms-progressbar-color);
             border-radius: 100px;
             transition: all 1s linear;
         }
     }
     
-    .creator-lms-lesson-details {
-        .creator-lms-lesson-content-body {
+    .ohmylms-lesson-details {
+        .ohmylms-lesson-content-body {
             margin-bottom: 24px;
 
-            .creator-lms-assignment-quiz-meta {
+            .ohmylms-assignment-quiz-meta {
                 margin: 0 0 25px;
                 list-style: none;
                 border-radius: 10px;
@@ -84,7 +84,7 @@
                     }
 
                     strong {
-                        color: var(--creator-lms-heading-color);
+                        color: var(--ohmylms-heading-color);
                         font-weight: 500;
                     }
                 }
@@ -92,19 +92,19 @@
         }
 
         .content-type-assignment {
-            .omlms-notices-wrapper {
+            .ohmylms-notices-wrapper {
                 border-radius: 10px;
 
-                .omlms-NoticeGroup {
+                .ohmylms-NoticeGroup {
                     margin: 12px auto 0;
                     padding: 13px 18px;
                 }
 
-                .omlms-message {
+                .ohmylms-message {
                     padding: 0;
                 }
 
-                ul.omlms-error {
+                ul.ohmylms-error {
                     padding: 0 0 0 30px;
                     margin: 0;
 
@@ -122,7 +122,7 @@
             }
         }
 
-        .creator-lms-assignment-submit {
+        .ohmylms-assignment-submit {
             background-color: #fff;
             padding: 16px 20px 32px;
             border-radius: 10px;
@@ -140,7 +140,7 @@
                 height: calc(100% + 2px);
                 border-radius: 10px;
                 z-index: -1;
-                background: linear-gradient(200deg, rgba(var(--creator-lms-primary-color-rgb), 1) 0%, rgba(140, 174, 250, 1) 100%);
+                background: linear-gradient(200deg, rgba(var(--ohmylms-primary-color-rgb), 1) 0%, rgba(140, 174, 250, 1) 100%);
             }
             &::after {
                 content: "";
@@ -167,7 +167,7 @@
             .assignment-submit-title {
                 width: calc(100% - 320px);
                 h6 {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 16px;
                     font-weight: 500;
                     line-height: 1.2;
@@ -190,7 +190,7 @@
                 z-index: 1;
             }
             
-            .creator-lms-form-group {
+            .ohmylms-form-group {
                 width: 100%;
                 margin-top: 18px;
 
@@ -228,7 +228,7 @@
                         left: calc(100% + 15px);
                         top: 50%;
                         transform: translateY(-50%);
-                        background: var(--creator-lms-heading-color);
+                        background: var(--ohmylms-heading-color);
                         color: #fff;
                         border-radius: 8px;
                         width: 166px;
@@ -265,7 +265,7 @@
                         }
                     }
 
-                    .creator-lms-file-upload {
+                    .ohmylms-file-upload {
                         border-radius: 8px;
                         border: 1px dashed #D8D8DC;
                         background: #FFF;
@@ -280,12 +280,12 @@
                         cursor: pointer;
                     }
     
-                    .creator-lms-button {
+                    .ohmylms-button {
                         padding: 10px 20px;
                     }
     
                     .drop-file-text {
-                        color: var(--creator-lms-body-text-color);
+                        color: var(--ohmylms-body-text-color);
                         text-align: center;
                         font-size: 15px;
                         font-weight: 400;
@@ -314,7 +314,7 @@
                         margin-bottom: 14px;
     
                         .attached-file-label {
-                            color: var(--creator-lms-heading-color);
+                            color: var(--ohmylms-heading-color);
                             font-size: 14px;
                             font-weight: 500;
                             line-height: 1.2;
@@ -324,9 +324,9 @@
                             display: none;
                         }
     
-                        .creator-lms-button {
+                        .ohmylms-button {
                             border: 1px solid #EBEBEF;
-                            color: var(--creator-lms-heading-color);
+                            color: var(--ohmylms-heading-color);
                             background-color: transparent!important;
                             padding: 12px 16px;
                             font-size: 15px;
@@ -340,7 +340,7 @@
                         }
                     }
 
-                    .creator-lms-resources-list {
+                    .ohmylms-resources-list {
                         border-top: none;
                         padding: 0;
                         margin-top: 0;
@@ -384,23 +384,23 @@
                         padding: 0;
                     }
 
-                    .creator-lms-button {
+                    .ohmylms-button {
                         font-size: 14px;
                         padding: 10px 20px;
-                        background-color: var(--creator-lms-primary-color)!important;
+                        background-color: var(--ohmylms-primary-color)!important;
                         color: #ffffff!important;
                         border-radius: 10px;
                         margin-left: auto;
 
                         &:hover {
                             background-color: transparent!important;
-                            color: var(--creator-lms-primary-color)!important;
+                            color: var(--ohmylms-primary-color)!important;
                         }
 
                         &[disabled] {
                             pointer-events: none;
                             color: #A1AECB!important;
-                            background: rgba(var(--creator-lms-primary-color-rgb), 0.10)!important;
+                            background: rgba(var(--ohmylms-primary-color-rgb), 0.10)!important;
                         }
                     }
                 }
@@ -412,106 +412,106 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit {
         padding: 20px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta {
         padding: 17px 20px;
         gap: 28px;
         row-gap: 14px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li {
         width: calc(50% - 19px);
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li:before {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li:before {
         display: none;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .assignment-submit-head {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .assignment-submit-head {
         flex-flow: column-reverse;
         align-items: flex-start;
         gap: 20px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .assignment-submit-title {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .assignment-submit-title {
         width: 100%;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .creator-lms-timer {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .ohmylms-timer {
         width: 100%;
     }
 
 }
 
 @media screen and (max-width: 991px) and (min-width: 768px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta {
         gap: 38px;
         row-gap: 14px;
         padding: 23px 24px;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li {
         width: auto;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li:before {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li:before {
         display: block;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .assignment-submit-head {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .assignment-submit-head {
         flex-flow: row wrap;
         align-items: center;
         gap: 12px;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .assignment-submit-title {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .assignment-submit-title {
         width: calc(100% - 320px);
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .creator-lms-timer {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .ohmylms-timer {
         width: 306px;
     }
 
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta {
         padding: 10px 12px;
         gap: 12px;
         row-gap: 10px;
         border-radius: 8px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li {
         width: calc(50% - 6px);
     }
 
 }
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit {
         padding: 14px;
     }
     
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .creator-lms-form-group textarea {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .ohmylms-form-group textarea {
         padding: 12px 13px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .creator-lms-form-group.submission-file .creator-lms-file-upload {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .ohmylms-form-group.submission-file .ohmylms-file-upload {
         border-radius: 10px;
         padding: 15px;
         height: 135px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-assignment-submit .creator-lms-form-group.submission-submit .creator-lms-button {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-assignment-submit .ohmylms-form-group.submission-submit .ohmylms-button {
         font-size: 13px;
         padding: 10px 16px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content .creator-lms-resources-list {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content .ohmylms-resources-list {
         padding: 20px 0;
         margin: 26px 0 0;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-body .creator-lms-assignment-quiz-meta li {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-body .ohmylms-assignment-quiz-meta li {
         width: 100%;
     }
 

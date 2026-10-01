@@ -40,7 +40,7 @@ export function RegistrationForm({
       setError('');
       try {
         const result = await submitRegistration(
-          window.omlms_frontend_params?.ajax_url || window.omlms_checkout_params?.ajax_url,
+          window.ohmylms_frontend_params?.ajax_url || window.ohmylms_checkout_params?.ajax_url,
           new FormData(form),
         );
         if (result.status === 'pending_verification') {
@@ -82,9 +82,9 @@ export function RegistrationForm({
   function field(name, label, type = 'text', required = false) {
     const id = 'signup-' + name.replace('_', '-');
     return (
-      <p className={`creator-lms-form-row row-${name.replace('_', '-')}`}>
-        <span className="creator-lms-input-wrapper">
-          <label htmlFor={id} className="creator-lms-input-label">
+      <p className={`ohmylms-form-row row-${name.replace('_', '-')}`}>
+        <span className="ohmylms-input-wrapper">
+          <label htmlFor={id} className="ohmylms-input-label">
             {label}
             {required && (
               <span className="required" aria-hidden="true">
@@ -97,7 +97,7 @@ export function RegistrationForm({
             type={type}
             name={name}
             id={id}
-            className={`creator-lms-input-text ${name}`}
+            className={`ohmylms-input-text ${name}`}
             value={values[name] || ''}
             onChange={update}
             required={required}
@@ -113,29 +113,29 @@ export function RegistrationForm({
   return (
     <Fragment>
       {error && (
-        <p role="alert" className="omlms-registration-error">
+        <p role="alert" className="ohmylms-registration-error">
           {error}
         </p>
       )}
-      <div className="creator-lms-form-row creator-lms-form-names-row">
+      <div className="ohmylms-form-row ohmylms-form-names-row">
         {field('first_name', __('First Name', 'ohmylms'), 'text', true)}
         {field('last_name', __('Last Name', 'ohmylms'), 'text', true)}
       </div>
       {field('email', __('Email', 'ohmylms'), 'email', true)}
-      <p className="creator-lms-form-row row-password">
-        <span className="creator-lms-input-wrapper">
-          <label htmlFor="signup-password" className="creator-lms-input-label">
+      <p className="ohmylms-form-row row-password">
+        <span className="ohmylms-input-wrapper">
+          <label htmlFor="signup-password" className="ohmylms-input-label">
             {__('Password', 'ohmylms')}{' '}
             <span className="required" aria-hidden="true">
               *
             </span>
           </label>
-          <span className="creator-lms-password-show">
+          <span className="ohmylms-password-show">
             <input
               id="signup-password"
               name="password"
               type={visible ? 'text' : 'password'}
-              className="creator-lms-input-text password"
+              className="ohmylms-input-text password"
               required
               aria-required="true"
               minLength={8}
@@ -172,15 +172,15 @@ export function RegistrationForm({
         </span>
       </p>
       {field('phone', __('Phone Number', 'ohmylms'))}
-      <p className="creator-lms-form-row row-country">
-        <span className="creator-lms-input-wrapper">
-          <label htmlFor="signup-country" className="creator-lms-input-label">
+      <p className="ohmylms-form-row row-country">
+        <span className="ohmylms-input-wrapper">
+          <label htmlFor="signup-country" className="ohmylms-input-label">
             {__('Country', 'ohmylms')}
           </label>
           <select
             id="signup-country"
             name="country"
-            className="creator-lms-input-text"
+            className="ohmylms-input-text"
             value={values.country || ''}
             onChange={update}
           >
@@ -195,7 +195,7 @@ export function RegistrationForm({
       {createPortal(
         <button
           type="submit"
-          className="creator-lms-button creator-lms-form-signup-submit"
+          className="ohmylms-button ohmylms-form-signup-submit"
           name="signup"
           value={__('Sign Up', 'ohmylms')}
           disabled={!accepted || busy}
@@ -207,7 +207,7 @@ export function RegistrationForm({
       )}
       {pending &&
         createPortal(
-          <div className="omlms-email-pending-notice" role="status">
+          <div className="ohmylms-email-pending-notice" role="status">
             <h3>{__('Check your inbox!', 'ohmylms')}</h3>
             <p>{pending}</p>
           </div>,

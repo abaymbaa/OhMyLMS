@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * Tax settings class.
@@ -43,21 +43,21 @@ class Tax extends Settings {
 		$settings = array(
 			// Main tax settings
 			array(
-				'id'       => 'creator_lms_tax_enabled',
+				'id'       => 'ohmylms_tax_enabled',
 				'default'  => 'no',
 				'type'     => 'checkbox',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_tax_label',
+				'id'       => 'ohmylms_tax_label',
 				'default'  => 'Tax',
 				'type'     => 'text',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_prices_include_tax',
+				'id'       => 'ohmylms_prices_include_tax',
 				'default'  => 'no',
 				'type'     => 'select',
 				'options'  => array(
@@ -69,21 +69,21 @@ class Tax extends Settings {
 
 			// EU VAT settings
 			array(
-				'id'       => 'creator_lms_eu_vat_enabled',
+				'id'       => 'ohmylms_eu_vat_enabled',
 				'default'  => 'no',
 				'type'     => 'checkbox',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_disable_vat_validation',
+				'id'       => 'ohmylms_disable_vat_validation',
 				'default'  => 'no',
 				'type'     => 'checkbox',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_vat_number_label',
+				'id'       => 'ohmylms_vat_number_label',
 				'default'  => 'VAT Number',
 				'type'     => 'text',
 				'desc_tip' => true,
@@ -91,28 +91,28 @@ class Tax extends Settings {
 
 			// Tax rates and fallback
 			array(
-				'id'       => 'creator_lms_existing_tax_rates',
+				'id'       => 'ohmylms_existing_tax_rates',
 				'default'  => array(),
 				'type'     => 'array',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_new_tax_rates',
+				'id'       => 'ohmylms_new_tax_rates',
 				'default'  => array(),
 				'type'     => 'array',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'       => 'creator_lms_tax_rates',
+				'id'       => 'ohmylms_tax_rates',
 				'default'  => array(),
 				'type'     => 'array',
 				'desc_tip' => true,
 			),
 
 			array(
-				'id'                => 'creator_lms_fallback_tax_rate',
+				'id'                => 'ohmylms_fallback_tax_rate',
 				'default'           => '0.00',
 				'type'              => 'number',
 				'custom_attributes' => array(
@@ -125,14 +125,14 @@ class Tax extends Settings {
 
 			// Countries and States data
 			array(
-				'id'       => 'creator_lms_countries',
+				'id'       => 'ohmylms_countries',
 				'default'  => $this->get_countries(),
 				'type'     => 'array',
 				'desc_tip' => false,
 			),
 
 			array(
-				'id'       => 'creator_lms_states',
+				'id'       => 'ohmylms_states',
 				'default'  => $this->get_states(),
 				'type'     => 'array',
 				'desc_tip' => false,

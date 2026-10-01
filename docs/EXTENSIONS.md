@@ -1,6 +1,6 @@
 # Extension API version 1
 
-Feature code can live in `modules/<id>/` or a separate plugin. Internal modules load only via `OMLMS_ENABLED_MODULES` or `ohmylms_enabled_modules`. The examples module is disabled by default.
+Feature code can live in `modules/<id>/` or a separate plugin. Internal modules load only via `OHMYLMS_ENABLED_MODULES` or `ohmylms_enabled_modules`. The examples module is disabled by default.
 
 ## Load and register
 

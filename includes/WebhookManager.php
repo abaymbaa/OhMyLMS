@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
-use OMLMS\Webhooks\WebhookSender;
+use OhMyLMS\Webhooks\WebhookSender;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Handles webhook execution and event triggers
  *
- * @package CreatorLms
+ * @package OhMyLMS
  * @since 1.0.0
  */
 class WebhookManager {

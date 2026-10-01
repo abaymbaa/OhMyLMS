@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$base_color = $email_settings['creator_lms_email_base_color'] ?? 'var(--omlms-primary-color)';
-$email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '#1F2328';
-$cta_btn_position = $email_settings['creator_lms_email_button_possition'] ?? 'center';
+$base_color = $email_settings['ohmylms_email_base_color'] ?? 'var(--ohmylms-primary-color)';
+$email_text_color = $email_settings['ohmylms_email_body_text_color'] ?? '#1F2328';
+$cta_btn_position = $email_settings['ohmylms_email_button_possition'] ?? 'center';
 
 ?>
 <h2 style="color: <?php echo $base_color; ?>; font-size: 16px; line-height: 1.3; margin-bottom: 20px; font-weight: bold;">

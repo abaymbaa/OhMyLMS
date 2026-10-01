@@ -2,25 +2,25 @@
 /**
  * The template for displaying lesson's quiz
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-quiz.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-quiz.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \OMLMS\Data\Quiz $quiz
+ * @global \OhMyLMS\Data\Quiz $quiz
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-$course_id = creator_lms_get_course_by_content_id(get_the_ID());
+$course_id = ohmylms_get_course_by_content_id(get_the_ID());
 ?>
 
 <?php while ( have_posts() ) : ?>
 	<?php the_post(); ?>
-	<div class="creator-lms-lesson-content-body content-type-quiz">
+	<div class="ohmylms-lesson-content-body content-type-quiz">
 		<h1><?php echo get_the_title() ?></h1>
 
-		<ul class="creator-lms-assignment-quiz-meta">
+		<ul class="ohmylms-assignment-quiz-meta">
 			<li class="duratioin">
 				<strong><?php echo __('Questions: ', 'ohmylms'); ?></strong>
 				<?php echo $quiz->get_total_question()?>
@@ -44,19 +44,19 @@ $course_id = creator_lms_get_course_by_content_id(get_the_ID());
 			</li>
 		</ul>
 
-		<div class="creator-lms-wysiwyg-content">
+		<div class="ohmylms-wysiwyg-content">
             <?php
                 the_content();
             ?>
         </div>
 		
-		<div class="creator-lms-table creator-lms-quiz-table">
-			<div class="creator-lms-tr creator-lms-head">
-				<div class="creator-lms-th date">Date</div>
-				<div class="creator-lms-th question">Question</div>
-				<div class="creator-lms-th total-marks">Total Marks</div>
-				<div class="creator-lms-th earned-marks">Earned Marks</div>
-				<div class="creator-lms-th status">Status</div>
+		<div class="ohmylms-table ohmylms-quiz-table">
+			<div class="ohmylms-tr ohmylms-head">
+				<div class="ohmylms-th date">Date</div>
+				<div class="ohmylms-th question">Question</div>
+				<div class="ohmylms-th total-marks">Total Marks</div>
+				<div class="ohmylms-th earned-marks">Earned Marks</div>
+				<div class="ohmylms-th status">Status</div>
 			</div>
 
 			<?php
@@ -65,27 +65,27 @@ $course_id = creator_lms_get_course_by_content_id(get_the_ID());
 			if(!empty($quiz_attempts)){
 				foreach ($quiz_attempts as $attempt){
 					?>
-					<div class="creator-lms-tr">
-						<div class="creator-lms-td-handle" role="button">
+					<div class="ohmylms-tr">
+						<div class="ohmylms-td-handle" role="button">
 							<svg width="10" height="6" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1 1l4 4 4-4"/></svg>
 						</div>
 
-						<div class="creator-lms-td date">
+						<div class="ohmylms-td date">
 							<?php echo date('M j, Y g:i a', strtotime($attempt['start_date'])); ?>
 						</div>
 
-						<div class="creator-lms-td question">
+						<div class="ohmylms-td question">
 							<?php echo $attempt['total_answers_count'] ?>
 						</div>
-						<div class="creator-lms-td total-marks">
+						<div class="ohmylms-td total-marks">
 							<?php echo $quiz->get_total_marks(); ?>
 						</div>
 
-						<div class="creator-lms-td earned-marks">
+						<div class="ohmylms-td earned-marks">
 							<?php echo  !empty($attempt['total_achieved_marks']) ? $attempt['total_achieved_marks'] : 0; ?>
 						</div>
 
-						<div class="creator-lms-td status">
+						<div class="ohmylms-td status">
 							<?php
 							if($attempt['status'] === 'in-review'){
 								echo '<span class="pending">Review</span>';
@@ -103,16 +103,16 @@ $course_id = creator_lms_get_course_by_content_id(get_the_ID());
 							?>
 						</div>
 
-						<div class="creator-lms-mobile-td">
-							<div class="creator-lms-td question" data-title="Question">
+						<div class="ohmylms-mobile-td">
+							<div class="ohmylms-td question" data-title="Question">
 								<?php echo $attempt['total_answers_count'] ?>
 							</div>
 
-							<div class="creator-lms-td total-marks" data-title="Total Marks">
+							<div class="ohmylms-td total-marks" data-title="Total Marks">
 								<?php echo $quiz->get_total_marks(); ?>
 							</div>
 
-							<div class="creator-lms-td earned-marks" data-title="Earned Marks">
+							<div class="ohmylms-td earned-marks" data-title="Earned Marks">
 								<?php echo  $attempt['total_achieved_marks']; ?>
 							</div>
 						</div>
@@ -122,9 +122,9 @@ $course_id = creator_lms_get_course_by_content_id(get_the_ID());
 				}
 			}else {
 				?>
-				<div class="creator-lms-tr no-data">
+				<div class="ohmylms-tr no-data">
 					<?php
-						include(CREATOR_LMS_DIR . '/assets/images/icon/no-review-image.php');
+						include(OHMYLMS_DIR . '/assets/images/icon/no-review-image.php');
 						echo __( 'No Data Found.', 'ohmylms' );
 					?>
 				</div>

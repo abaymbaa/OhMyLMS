@@ -1,16 +1,16 @@
 <?php
 /**
- * CreatorLMS My Courses Widget for Elementor
+ * OhMyLMS My Courses Widget for Elementor
  *
- * @package OMLMS\Elementor\Widgets
+ * @package OhMyLMS\Elementor\Widgets
  * @since 1.0.0
  */
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use OMLMS\Shortcodes\ShortCodeMyCourses;
+use OhMyLMS\Shortcodes\ShortCodeMyCourses;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_name() {
-		return 'creator-lms-my-courses';
+		return 'ohmylms-my-courses';
 	}
 
 	/**
@@ -34,7 +34,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'CreatorLMS My Courses', 'ohmylms' );
+		return __( 'OhMyLMS My Courses', 'ohmylms' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_categories() {
-		return array( 'creator-lms' );
+		return array( 'ohmylms' );
 	}
 
 	/**
@@ -70,7 +70,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'omlms-frontend' );
+		return array( 'ohmylms-frontend' );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'omlms-frontend' );
+		return array( 'ohmylms-frontend' );
 	}
 
 	/**
@@ -756,18 +756,18 @@ class MyCoursesWidget extends Widget_Base {
 	 */
 	protected function render() {
 		// Enqueue assets directly here — the most reliable approach for Elementor
-		// widgets. FrontendAssets only enqueues omlms-frontend when page-detection
+		// widgets. FrontendAssets only enqueues ohmylms-frontend when page-detection
 		// helpers return true (shortcode/block in post content), which is never the
 		// case on an Elementor page. Calling wp_enqueue_* from render() works on
 		// both the published frontend and the editor preview iframe.
-		wp_enqueue_style( 'omlms-frontend' );
-		wp_enqueue_script( 'omlms-frontend' );
+		wp_enqueue_style( 'ohmylms-frontend' );
+		wp_enqueue_script( 'ohmylms-frontend' );
 
 		$settings = $this->get_settings_for_display();
 
 		if ( ! is_array( $settings ) ) {
 			if ( current_user_can( 'edit_posts' ) ) {
-				echo '<div class="creator-lms-widget-error">';
+				echo '<div class="ohmylms-widget-error">';
 				echo '<p>' . esc_html__( 'MyCoursesWidget: could not retrieve widget settings.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
@@ -777,11 +777,11 @@ class MyCoursesWidget extends Widget_Base {
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 
 		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-			echo '<div class="creator-lms-preview-notice">';
+			echo '<div class="ohmylms-preview-notice">';
 			echo '<p>' . esc_html__( 'My Courses Preview', 'ohmylms' ) . '</p>';
 			echo '</div>';
 
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 
 			try {
 				ob_start();
@@ -793,11 +793,11 @@ class MyCoursesWidget extends Widget_Base {
 				echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} catch ( \Throwable $e ) {
 				ob_end_clean();
-				echo '<div class="creator-lms-preview-error">';
+				echo '<div class="ohmylms-preview-error">';
 				echo '<p>' . esc_html__( 'My Courses preview could not be rendered.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			} finally {
-				remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 			}
 		} else {
 			ShortCodeMyCourses::output( $shortcode_attrs );

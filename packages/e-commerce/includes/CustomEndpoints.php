@@ -34,7 +34,7 @@ class CustomEndpoints {
 	 */
 	public function init_query_vars() {
 		$this->query_vars = array(
-			'cr-order-received' => get_option( 'creator_lms_checkout_order_received_endpoint', 'cr-order-received' ),
+			'ohmylms-order-received' => get_option( 'ohmylms_checkout_order_received_endpoint', 'ohmylms-order-received' ),
 		);
 	}
 
@@ -109,7 +109,7 @@ class CustomEndpoints {
 		global $wp;
 
 		switch ( $endpoint ) {
-			case 'cr-order-received':
+			case 'ohmylms-order-received':
 				$title = __( 'Order received', 'ohmylms' );
 				break;
 			default:

@@ -7,11 +7,11 @@ defined( 'ABSPATH' ) || exit;
  * @return void
  * @since 1.0.1
  */
-function creatorlms_update_101_user_membership_table() {
-	if ( creator_lms_is_pro() ) {
+function ohmylms_update_101_user_membership_table() {
+	if ( ohmylms_is_pro() ) {
 		global $wpdb;
-		if ( !$wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}omlms_user_membership` LIKE 'subscription_id';" ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}omlms_user_membership ADD COLUMN `subscription_id` BIGINT(20) UNSIGNED NOT NULL default 0;" );
+		if ( !$wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ohmylms_user_membership` LIKE 'subscription_id';" ) ) {
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}ohmylms_user_membership ADD COLUMN `subscription_id` BIGINT(20) UNSIGNED NOT NULL default 0;" );
 		}
 	}
 }
@@ -21,8 +21,8 @@ function creatorlms_update_101_user_membership_table() {
  * @return void
  * @since 1.0.1
  */
-function creatorlms_update_101_db_version() {
-	\OMLMS\Install::update_db_version( '1.0.1' );
+function ohmylms_update_101_db_version() {
+	\OhMyLMS\Install::update_db_version( '1.0.1' );
 }
 
 /**
@@ -30,13 +30,13 @@ function creatorlms_update_101_db_version() {
  * @return void
  * @since 1.2.1
  */
-function creatorlms_update_121_create_video_progress_table() {
+function ohmylms_update_121_create_video_progress_table() {
 	global $wpdb;
 	
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	
 	$charset_collate = $wpdb->get_charset_collate();
-	$table_name = $wpdb->prefix . 'omlms_video_progress';
+	$table_name = $wpdb->prefix . 'ohmylms_video_progress';
 	
 	// Check if table already exists
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
@@ -69,8 +69,8 @@ function creatorlms_update_121_create_video_progress_table() {
  * @return void
  * @since 1.2.1
  */
-function creatorlms_update_121_db_version() {
-	\OMLMS\Install::update_db_version( '1.2.1' );
+function ohmylms_update_121_db_version() {
+	\OhMyLMS\Install::update_db_version( '1.2.1' );
 }
 
 /**
@@ -78,8 +78,8 @@ function creatorlms_update_121_db_version() {
  * @return void
  * @since 1.2.5
  */
-function creatorlms_update_125_create_student_pages() {
-	\OMLMS\Install::create_student_pages_for_existing_users();
+function ohmylms_update_125_create_student_pages() {
+	\OhMyLMS\Install::create_student_pages_for_existing_users();
 }
 
 /**
@@ -87,30 +87,30 @@ function creatorlms_update_125_create_student_pages() {
  * @return void
  * @since 1.2.5
  */
-function creatorlms_update_125_db_version() {
-	\OMLMS\Install::update_db_version( '1.2.5' );
+function ohmylms_update_125_db_version() {
+	\OhMyLMS\Install::update_db_version( '1.2.5' );
 }
 
 /**
- * Register the dedicated 'omlms_student' role.
+ * Register the dedicated 'ohmylms_student' role.
  * @return void
  * @since 1.2.12
  */
-function creatorlms_update_1212_create_student_role() {
-	\OMLMS\Install::create_student_role();
+function ohmylms_update_1212_create_student_role() {
+	\OhMyLMS\Install::create_student_role();
 }
 
 /**
  * Kick off the background migration of existing enrolled 'subscriber' users
- * to the new 'omlms_student' role. Runs via WP-Cron in small batches so it
+ * to the new 'ohmylms_student' role. Runs via WP-Cron in small batches so it
  * never blocks an admin page load or times out on large user tables.
  *
  * @return void
  * @since 1.2.12
  */
-function creatorlms_update_1212_schedule_student_migration() {
-	if ( ! wp_next_scheduled( 'creatorlms_migrate_students_batch' ) ) {
-		wp_schedule_single_event( time() + 10, 'creatorlms_migrate_students_batch' );
+function ohmylms_update_1212_schedule_student_migration() {
+	if ( ! wp_next_scheduled( 'ohmylms_migrate_students_batch' ) ) {
+		wp_schedule_single_event( time() + 10, 'ohmylms_migrate_students_batch' );
 	}
 }
 
@@ -119,12 +119,12 @@ function creatorlms_update_1212_schedule_student_migration() {
  * @return void
  * @since 1.2.12
  */
-function creatorlms_update_1212_db_version() {
-	\OMLMS\Install::update_db_version( '1.2.12' );
+function ohmylms_update_1212_db_version() {
+	\OhMyLMS\Install::update_db_version( '1.2.12' );
 }
 
 /**
- * Process one batch of the 'subscriber' -> 'omlms_student' migration.
+ * Process one batch of the 'subscriber' -> 'ohmylms_student' migration.
  *
  * Scoped to users who have an actual course enrollment record (not every
  * 'subscriber' on the site) and are still on the 'subscriber' role. Safe to
@@ -135,29 +135,29 @@ function creatorlms_update_1212_db_version() {
  * @return void
  * @since 1.2.12
  */
-function creatorlms_run_student_migration_batch() {
+function ohmylms_run_student_migration_batch() {
 	global $wpdb;
 
-	if ( ! function_exists( 'creator_lms_get_student_role' ) ) {
+	if ( ! function_exists( 'ohmylms_get_student_role' ) ) {
 		return;
 	}
 
-	$role_slug = creator_lms_get_student_role();
+	$role_slug = ohmylms_get_student_role();
 
 	if ( ! get_role( $role_slug ) ) {
-		\OMLMS\Install::create_student_role();
+		\OhMyLMS\Install::create_student_role();
 	}
 
 	if ( ! get_role( $role_slug ) ) {
 		return; // Role could not be created for some reason — don't touch any user.
 	}
 
-	$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
+	$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $enrollment_table ) ) !== $enrollment_table ) {
 		// No enrollment table means nothing can ever match — mark done so the
 		// admin_init watchdog doesn't reschedule this batch forever.
-		update_option( 'creator_lms_student_migration_done', '1' );
+		update_option( 'ohmylms_student_migration_done', '1' );
 		return;
 	}
 
@@ -192,10 +192,10 @@ function creatorlms_run_student_migration_batch() {
 	// unmigratable (skipped by the guard above) — rescheduling would loop
 	// forever on the same rows, since the query has no offset.
 	if ( count( $user_ids ) === $batch_size && $migrated > 0 ) {
-		wp_schedule_single_event( time() + 30, 'creatorlms_migrate_students_batch' );
+		wp_schedule_single_event( time() + 30, 'ohmylms_migrate_students_batch' );
 		return;
 	}
 
-	update_option( 'creator_lms_student_migration_done', '1' );
+	update_option( 'ohmylms_student_migration_done', '1' );
 }
-add_action( 'creatorlms_migrate_students_batch', 'creatorlms_run_student_migration_batch' );
+add_action( 'ohmylms_migrate_students_batch', 'ohmylms_run_student_migration_batch' );

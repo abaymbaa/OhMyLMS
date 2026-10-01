@@ -103,12 +103,12 @@ const FQ = function (e) {
     padding: 6,
     marginBottom: 0
   }, h().createElement(I.FlexWP, {
-    className: "omlms-order-details",
+    className: "ohmylms-order-details",
     justify: "start",
     align: "start",
     gap: 3
   }, h().createElement(I.FlexItemWP, {
-    className: "omlms-order-details-left",
+    className: "ohmylms-order-details-left",
     style: {
       width: "calc(70% - 12px)"
     }
@@ -127,7 +127,7 @@ const FQ = function (e) {
     justify: "space-between",
     align: "stretch",
     gap: 3,
-    className: "omlms-order-details-general-billing"
+    className: "ohmylms-order-details-general-billing"
   }, h().createElement(I.FlexBlockWP, null, h().createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
@@ -187,7 +187,7 @@ const FQ = function (e) {
   }, h().createElement(kQ, {
     relatedOrders: a.related_orders
   })))), h().createElement(I.FlexItemWP, {
-    className: "omlms-order-details-right",
+    className: "ohmylms-order-details-right",
     style: {
       width: "30%"
     }
@@ -245,7 +245,6 @@ const FQ = function (e) {
     description: "No Orders Found"
   })));
 };
-
 function NQ() {
   var e,
     t,
@@ -332,7 +331,6 @@ function NQ() {
     };
   })();
 }
-
 function DQ(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -354,7 +352,6 @@ function DQ(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, DQ(e, t, n, r);
 }
-
 function WQ(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -364,7 +361,6 @@ function WQ(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function zQ(e) {
   return function () {
     var t = this,
@@ -381,7 +377,6 @@ function zQ(e) {
     });
   };
 }
-
 function BQ(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -421,15 +416,13 @@ function BQ(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function LQ(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var VQ = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = (0, f.Zp)(),
     r = (0, z.A)(),
@@ -481,7 +474,7 @@ var VQ = function () {
       t.fetchSubscriptions(e);
     }, [t, S, C, O]);
   (0, g.useEffect)(function () {
-    e && W();
+    W();
   }, [W]), (0, g.useEffect)(function () {
     !s && d && d.length > 0 && a(m, d);
   }, [s, d, m, a, t]);
@@ -574,7 +567,7 @@ var VQ = function () {
             style: {
               textTransform: "capitalize"
             }
-          }, e ? e.replace("omlms-", "").replace("-", " ").replace(/^(\w)/, function (e) {
+          }, e ? e.replace("ohmylms-", "").replace("-", " ").replace(/^(\w)/, function (e) {
             return e.toUpperCase();
           }) : (0, b.__)("N/A", "ohmylms"));
         }
@@ -591,7 +584,7 @@ var VQ = function () {
       }];
     }, [H, function (e) {
       var t = null == e ? void 0 : e.toLowerCase();
-      return "active" === t || "completed" === t || "creatorlms-active" === t ? "green" : "pending" === t || "creatorlms-pending" === t ? "gold" : "on-hold" === t || "creatorlms-on-hold" === t ? "orange" : "cancelled" === t || "creatorlms-cancelled" === t ? "red" : "expired" === t || "creatorlms-expired" === t ? "grey" : "default";
+      return "active" === t || "completed" === t || "ohmylms-active" === t ? "green" : "pending" === t || "ohmylms-pending" === t ? "gold" : "on-hold" === t || "ohmylms-on-hold" === t ? "orange" : "cancelled" === t || "ohmylms-cancelled" === t ? "red" : "expired" === t || "ohmylms-expired" === t ? "grey" : "default";
     }]),
     U = (0, g.useCallback)(function (e, t, n) {
       var r = {}[n.field] || n.field || "start_date",
@@ -637,9 +630,7 @@ var VQ = function () {
   }, React.createElement(I.SpacerWP, {
     padding: 5,
     marginBottom: 0
-  }, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Subscription is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms")
-  }), React.createElement(I.SpacerWP, {
+  }, React.createElement(I.SpacerWP, {
     marginBottom: 4
   }, h.length > 0 ? React.createElement(hN, {
     items: h,
@@ -674,5 +665,4 @@ var VQ = function () {
     perPage: C
   })))));
 };
-
 const HQ = (0, g.memo)(VQ);

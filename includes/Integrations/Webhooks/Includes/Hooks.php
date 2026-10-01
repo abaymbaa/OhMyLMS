@@ -1,13 +1,13 @@
 <?php 
 
-namespace OMLMS\Integrations\Webhooks\Includes;
+namespace OhMyLMS\Integrations\Webhooks\Includes;
 
 class Hooks {
     
     public function __construct() {
-        add_filter( 'creatorlms_integrations', array($this, 'add_webhooks') );
-        add_filter( 'creatorlms_should_enable_webhooks', array($this, 'should_enable_webhooks') );
-        add_action( 'update_option_creatorlms_integrations', array($this, 'on_integration_updated'), 10, 2 );
+        add_filter( 'ohmylms_integrations', array($this, 'add_webhooks') );
+        add_filter( 'ohmylms_should_enable_webhooks', array($this, 'should_enable_webhooks') );
+        add_action( 'update_option_ohmylms_integrations', array($this, 'on_integration_updated'), 10, 2 );
     }
 
 
@@ -21,13 +21,12 @@ class Hooks {
     public function add_webhooks( $integrations ) {
         $integrations['webhooks'] = array(
             'label' => __('Webhooks', 'ohmylms'),
-            'icon' => CREATORLMS_PRO_URL.'/includes/Integrations/Webhooks/Assets/Images/webhook-icon.svg',
+            'icon' => OHMYLMS_PRO_URL.'/includes/Integrations/Webhooks/Assets/Images/webhook-icon.svg',
             'description' => __('Send automated notifications to external services when OhMyLMS events occur, enabling seamless integration with third-party platforms.', 'ohmylms'),
             'categories' => array('automation'),
             'hasSettings' => false,
-            'class' => 'OMLMS\Integrations\Webhooks',
-            'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('webhooks'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('webhooks'),
+            'class' => 'OhMyLMS\Integrations\Webhooks',
+            'is_valid'    => true,
         );
         return $integrations;
     }
@@ -40,7 +39,7 @@ class Hooks {
      * @since 1.0.0
      */
     public function should_enable_webhooks( $should_enable ) {
-        $integrations = get_option( 'creatorlms_integrations' );
+        $integrations = get_option( 'ohmylms_integrations' );
   
         if ( empty( $integrations ) || ! is_array( $integrations ) ) {
             return false;

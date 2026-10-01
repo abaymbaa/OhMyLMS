@@ -20,7 +20,7 @@ class QPayAPI {
     }
 
     private function token_key() {
-        return 'omlms_qpay_v2_' . ( $this->sandbox ? 'test_' : 'live_' ) . $this->fingerprint();
+        return 'ohmylms_qpay_v2_' . ( $this->sandbox ? 'test_' : 'live_' ) . $this->fingerprint();
     }
 
     private function request( $path, $body = null, $method = 'POST', $authenticated = true, $retry = true ) {

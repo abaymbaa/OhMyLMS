@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
-use OMLMS\Admin\Pages\AdminSettings;
+use OhMyLMS\Admin\Pages\AdminSettings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -32,10 +32,10 @@ abstract class SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_filter( 'creator_lms_settings_tabs_array', array( $this, 'add_settings_page' ), 20 );
-		add_action( 'creator_lms_sections_' . $this->id, array( $this, 'output_sections' ) );
-		add_action( 'creator_lms_settings_' . $this->id, array( $this, 'output' ) );
-		add_action( 'creator_lms_settings_save_' . $this->id, array( $this, 'save' ) );
+		add_filter( 'ohmylms_settings_tabs_array', array( $this, 'add_settings_page' ), 20 );
+		add_action( 'ohmylms_sections_' . $this->id, array( $this, 'output_sections' ) );
+		add_action( 'ohmylms_settings_' . $this->id, array( $this, 'output' ) );
+		add_action( 'ohmylms_settings_save_' . $this->id, array( $this, 'save' ) );
 	}
 
 
@@ -95,7 +95,7 @@ abstract class SettingsPage {
 			$settings = $this->get_settings_for_default_section( $section_id );
 		}
 
-		return apply_filters( 'creator_lms_get_settings_' . $this->id, $settings, $section_id );
+		return apply_filters( 'ohmylms_get_settings_' . $this->id, $settings, $section_id );
 	}
 
 
@@ -133,7 +133,7 @@ abstract class SettingsPage {
 	 */
 	public function get_sections(): array {
 		$sections = $this->get_own_sections();
-		return apply_filters( 'creator_lms_get_sections_' . $this->id, $sections );
+		return apply_filters( 'ohmylms_get_sections_' . $this->id, $sections );
 	}
 
 
@@ -145,7 +145,7 @@ abstract class SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function output_sections(): void {
-		global $creator_lms_current_section;
+		global $ohmylms_current_section;
 
 		$sections = $this->get_sections();
 
@@ -158,8 +158,8 @@ abstract class SettingsPage {
 		$array_keys = array_keys( $sections );
 
 		foreach ( $sections as $id => $label ) {
-			$url       = admin_url( 'admin.php?page=omlms-settings&tab=' . $this->id . '&section=' . sanitize_title( $id ) );
-			$class     = ( $creator_lms_current_section === $id ? 'current' : '' );
+			$url       = admin_url( 'admin.php?page=ohmylms-settings&tab=' . $this->id . '&section=' . sanitize_title( $id ) );
+			$class     = ( $ohmylms_current_section === $id ? 'current' : '' );
 			$separator = ( end( $array_keys ) === $id ? '' : '|' );
 			$text      = esc_html( $label );
 			echo "<li><a href='$url' class='$class'>$text</a> $separator </li>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -175,8 +175,8 @@ abstract class SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function output() {
-		global $creator_lms_current_section;
-		$settings = $this->get_settings_for_section( $creator_lms_current_section );
+		global $ohmylms_current_section;
+		$settings = $this->get_settings_for_section( $ohmylms_current_section );
 		AdminSettings::output_fields( $settings );
 	}
 
@@ -198,27 +198,27 @@ abstract class SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function save_settings_for_current_section() {
-		global $creator_lms_current_section;
-		$settings = $this->get_settings_for_section( $creator_lms_current_section );
+		global $ohmylms_current_section;
+		$settings = $this->get_settings_for_section( $ohmylms_current_section );
 		AdminSettings::save_fields( $settings );
 	}
 
 
 	/**
-	 * Trigger creator_lms_update_options_ hook
+	 * Trigger ohmylms_update_options_ hook
 	 *
 	 * @param null $section_id
 	 * @since 1.0.0
 	 */
 	public function do_update_options_action( $section_id = null ) {
-		global $creator_lms_current_section;
+		global $ohmylms_current_section;
 
 		if ( is_null( $section_id ) ) {
-			$section_id = $creator_lms_current_section;
+			$section_id = $ohmylms_current_section;
 		}
 
 		if ( $section_id ) {
-			do_action( 'creator_lms_update_options_' . $this->id . '_' . $section_id );
+			do_action( 'ohmylms_update_options_' . $this->id . '_' . $section_id );
 		}
 	}
 }

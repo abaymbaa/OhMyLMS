@@ -1,13 +1,13 @@
 <?php 
 
-namespace OMLMS\Integrations\Funnel\Includes;
+namespace OhMyLMS\Integrations\Funnel\Includes;
 
 class Hooks {
     
     public function __construct() {
-        add_filter( 'creatorlms_integrations', array($this, 'add_funnel') );
-        add_filter( 'creatorlms_should_show_funnel', array($this, 'should_show_funnel') );
-        add_action( 'creatorlms_after_payment_complete', array($this, 'maybe_process_funnel'), 10, 1 );
+        add_filter( 'ohmylms_integrations', array($this, 'add_funnel') );
+        add_filter( 'ohmylms_should_show_funnel', array($this, 'should_show_funnel') );
+        add_action( 'ohmylms_after_payment_complete', array($this, 'maybe_process_funnel'), 10, 1 );
     }
 
     /**
@@ -20,13 +20,12 @@ class Hooks {
     public function add_funnel( $integrations ) {
         $integrations['funnel'] = array(
             'label' => __('One-Click Offer', 'ohmylms'),
-            'icon' => CREATORLMS_PRO_URL.'/includes/Integrations/Funnel/Assets/Images/funnel-icon.svg',
+            'icon' => OHMYLMS_PRO_URL.'/includes/Integrations/Funnel/Assets/Images/funnel-icon.svg',
             'description' => __('Create sales funnels to show additional offers after course checkout, increasing revenue through upsells and cross-sells.', 'ohmylms'),
             'categories' => array('sales'),
             'hasSettings' => false,
-            'class' => 'OMLMS\Integrations\Funnel',
-            'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('funnel'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('funnel'),
+            'class' => 'OhMyLMS\Integrations\Funnel',
+            'is_valid'    => true,
         );
         return $integrations;
     }
@@ -39,7 +38,7 @@ class Hooks {
      * @since 1.0.0
      */
     public function should_show_funnel( $should_show = false ) {
-        $integrations = get_option( 'creatorlms_integrations' );
+        $integrations = get_option( 'ohmylms_integrations' );
   
         if ( empty( $integrations ) || ! is_array( $integrations ) ) {
             return $should_show;

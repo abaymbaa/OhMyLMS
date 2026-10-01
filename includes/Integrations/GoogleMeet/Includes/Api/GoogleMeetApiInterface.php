@@ -2,16 +2,16 @@
 /**
  * GoogleMeetApiInterface interface.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Api;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Api;
 
 /**
  * Interface GoogleMeetApiInterface
  *
- * @package OMLMS\Integrations\GoogleMeet\Api
+ * @package OhMyLMS\Integrations\GoogleMeet\Api
  * @since 1.0.0
  */
 interface GoogleMeetApiInterface {

@@ -1,18 +1,18 @@
 <?php
 /**
  * @access public
- * @package OMLMS\Migrations
+ * @package OhMyLMS\Migrations
  *
- * @author CreatorLms
+ * @author OhMyLMS
  * @since 1.0.0
  */
-namespace OMLMS\Migrations;
+namespace OhMyLMS\Migrations;
 
 /**
  * Migration class for TutorLMS.
  * This class is responsible for creating migrations for TutorLMS.
  *
- * @author CreatorLms
+ * @author OhMyLMS
  * @since 1.0.0
  */
 class TutorLMS {
@@ -95,7 +95,7 @@ class TutorLMS {
 			'post_excerpt'  => isset( $this->tutor_course['post_excerpt'] ) ? sanitize_text_field( $this->tutor_course['post_excerpt'] ) : '',
 			'post_status'   => 'draft',
 			'post_author'   => isset( $this->tutor_course['post_author'] ) ? intval( $this->tutor_course['post_author'] ) : get_current_user_id(),
-			'post_type'     => 'omlms-course', // Custom post type for OhMyLMS course
+			'post_type'     => 'ohmylms-course', // Custom post type for OhMyLMS course
 			'post_date'     => isset( $this->tutor_course['post_date'], $this->tutor_course['post_status'] ) && 'future' === $this->tutor_course['post_status'] ? gmdate( 'Y-m-d H:i:s', strtotime( $this->tutor_course['post_date'] ) ) : current_datetime()->format( 'Y-m-d H:i:s' ),
 			'post_password' => isset( $this->tutor_course['post_password'] ) ? $this->tutor_course['post_password'] : '',
 		);
@@ -202,7 +202,7 @@ class TutorLMS {
 				'post_excerpt' => sanitize_text_field( $chapter->post_excerpt ),
 				'post_status'  => $chapter->post_status, // Retain original status
 				'post_author'  => intval( $chapter->post_author ),
-				'post_type'    => 'omlms-chapter', // Custom post type for OhMyLMS chapters
+				'post_type'    => 'ohmylms-chapter', // Custom post type for OhMyLMS chapters
 				'post_parent'  => 0, // Chapters in OhMyLMS don't have parents
 			);
 
@@ -216,7 +216,7 @@ class TutorLMS {
 
 			// Insert the relationship between the new course and chapter into the custom table
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_chapter_relationship',
+				$wpdb->prefix . 'ohmylms_chapter_relationship',
 				array(
 					'course_id'    => $new_course_id,  // New course ID
 					'chapter_id'   => $new_chapter_id, // New chapter ID
@@ -272,7 +272,7 @@ class TutorLMS {
 				'post_excerpt' => sanitize_text_field( $lesson->post_excerpt ),
 				'post_status'  => $lesson->post_status, // Retain the lesson's status
 				'post_author'  => intval( $lesson->post_author ),
-				'post_type'    => 'omlms-lesson', // Custom post type for OhMyLMS lessons
+				'post_type'    => 'ohmylms-lesson', // Custom post type for OhMyLMS lessons
 				'post_parent'  => 0, // Reset parent (lessons in OhMyLMS don't have a parent chapter)
 			);
 
@@ -295,7 +295,7 @@ class TutorLMS {
 
 			// Insert the lesson-content relationship into the custom table
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_content_relationship',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				array(
 					'chapter_id'   => $new_chapter_id,  // ID of the new chapter
 					'content_id'   => $new_lesson_id,   // ID of the new lesson
@@ -351,7 +351,7 @@ class TutorLMS {
 				'post_excerpt' => sanitize_text_field( $quiz->post_excerpt ),
 				'post_status'  => $quiz->post_status, // Retain the quiz's status
 				'post_author'  => intval( $quiz->post_author ),
-				'post_type'    => 'omlms-quiz', // Custom post type for OhMyLMS quizzes
+				'post_type'    => 'ohmylms-quiz', // Custom post type for OhMyLMS quizzes
 				'post_parent'  => 0, // Reset parent (quizzes in OhMyLMS don't have a parent chapter)
 			);
 
@@ -365,7 +365,7 @@ class TutorLMS {
 
 			// Insert the lesson-content relationship into the custom table
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_content_relationship',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				array(
 					'chapter_id'   => $new_chapter_id,  // ID of the new chapter
 					'content_id'   => $new_quiz_id,   // ID of the new lesson
@@ -687,12 +687,12 @@ class TutorLMS {
 		}
 
 		foreach ( $questions as $question ) {
-			// Insert question as a new post of type 'omlms-question'
+			// Insert question as a new post of type 'ohmylms-question'
 			$question_post = array(
 				'post_title'   => wp_strip_all_tags( $question->question_title ),
 				'post_content' => $question->question_description,
 				'post_status'  => 'draft',
-				'post_type'    => 'omlms-question',
+				'post_type'    => 'ohmylms-question',
 			);
 
 			$new_question_id = wp_insert_post( $question_post );
@@ -701,9 +701,9 @@ class TutorLMS {
 				continue; // Skip if question creation fails
 			}
 
-			// Insert relationship into `omlms_quiz_questions_relationship`
+			// Insert relationship into `ohmylms_quiz_questions_relationship`
 			$wpdb->insert(
-				"{$wpdb->prefix}omlms_quiz_questions_relationship",
+				"{$wpdb->prefix}ohmylms_quiz_questions_relationship",
 				array(
 					'quiz_id'      => $new_quiz_id,
 					'question_id'  => $new_question_id,
@@ -804,7 +804,7 @@ class TutorLMS {
 
 		foreach ( $answers as $answer ) {
 			$wpdb->insert(
-				"{$wpdb->prefix}omlms_question_answers",
+				"{$wpdb->prefix}ohmylms_question_answers",
 				array(
 					'question_id'  => $new_question_id,
 					'answer'       => $answer->answer_title,
@@ -875,7 +875,7 @@ class TutorLMS {
 	 */
 	private function enroll_student( $student_id, $course_id ) {
 		global $wpdb;
-		$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
+		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 
 		$enrollment_data = array(
 			'course_id'  => $course_id,
@@ -884,13 +884,13 @@ class TutorLMS {
 			'progress'   => 'running',
 			'start_date' => current_time( 'mysql' ),
 		);
-		$student         = new \OMLMS\Data\Student( $student_id );
+		$student         = new \OhMyLMS\Data\Student( $student_id );
 
 		if ( $student && ! $student->maybe_enrolled( $course_id ) ) {
 			// Check if the record exists
 			$existing_record = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->prefix}omlms_user_enrollment WHERE user_id = %d AND course_id = %d",
+					"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d",
 					$student_id,
 					$course_id
 				)

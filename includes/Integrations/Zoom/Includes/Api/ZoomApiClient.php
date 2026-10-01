@@ -2,19 +2,19 @@
 /**
  * ZoomApiClient class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Api;
+namespace OhMyLMS\Integrations\Zoom\Includes\Api;
 
-use OMLMS\Integrations\Zoom\Includes\Api\ZoomApiInterface;
-use OMLMS\Integrations\Zoom\Includes\Services\TokenService;
+use OhMyLMS\Integrations\Zoom\Includes\Api\ZoomApiInterface;
+use OhMyLMS\Integrations\Zoom\Includes\Services\TokenService;
 
 /**
  * Class ZoomApiClient
  *
- * @package OMLMS\Integrations\Zoom\Api
+ * @package OhMyLMS\Integrations\Zoom\Api
  * @since 1.0.0
  */
 class ZoomApiClient implements ZoomApiInterface {

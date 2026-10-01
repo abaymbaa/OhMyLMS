@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/course-taxonomy.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-$page_features = get_option('creator_lms_single_course_page_features');
+$page_features = get_option('ohmylms_single_course_page_features');
 $is_enabeled_category = in_array('category', $page_features);
 $is_enabeled_enrolled_category = in_array('category_with_enroll', $page_features);
 
@@ -22,7 +22,7 @@ $is_enabeled_tag = in_array('tag', $page_features);
 $is_enabeled_enrolled_tag = in_array('tag_with_enroll', $page_features);
 
 $current_student_id = get_current_user_id();
-$student = new \OMLMS\Data\Student( $current_student_id );
+$student = new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
 
 
@@ -37,10 +37,10 @@ if( $maybe_enrolled ){
 	if( ($is_enabeled_enrolled_category && $categories) || ($is_enabeled_enrolled_tag && $tags) ){
 		?>
 		<!-- course meta widget -->
-		<div class="creator-lms-sidebar-widget creator-lms-widget-course-taxonomy">
+		<div class="ohmylms-sidebar-widget ohmylms-widget-course-taxonomy">
 			<?php
 			if ( $is_enabeled_enrolled_category && $categories ) {
-				echo '<div class="single-taxonomy creator-lms-category">';
+				echo '<div class="single-taxonomy ohmylms-category">';
 					echo '<h3 class="sidebar-widget-title">' . __( 'Categories', 'ohmylms' ) . '</h3>';
 					echo '<ul class="category-lists">';
 						$total = count($categories);
@@ -56,7 +56,7 @@ if( $maybe_enrolled ){
 			}
 			
 			if ( $is_enabeled_enrolled_tag && $tags ) {
-				echo '<div class="single-taxonomy creator-lms-tag">';
+				echo '<div class="single-taxonomy ohmylms-tag">';
 					echo '<h3 class="sidebar-widget-title">' . __( 'Tags', 'ohmylms' ) . '</h3>';
 					echo '<ul class="tag-lists">';
 						foreach ($tags as $tag) {
@@ -74,10 +74,10 @@ if( $maybe_enrolled ){
 	if( ($is_enabeled_category && $categories) || ($is_enabeled_tag && $tags) ){
 		?>
 		<!-- course meta widget -->
-		<div class="creator-lms-sidebar-widget creator-lms-widget-course-taxonomy">
+		<div class="ohmylms-sidebar-widget ohmylms-widget-course-taxonomy">
 			<?php
 			if ( $is_enabeled_category && $categories ) {
-				echo '<div class="single-taxonomy creator-lms-category">';
+				echo '<div class="single-taxonomy ohmylms-category">';
 					echo '<h3 class="sidebar-widget-title">' . __( 'Categories', 'ohmylms' ) . '</h3>';
 					echo '<ul class="category-lists">';
 						$total = count($categories);
@@ -93,7 +93,7 @@ if( $maybe_enrolled ){
 			}
 			
 			if ( $is_enabeled_tag && $tags ) {
-				echo '<div class="single-taxonomy creator-lms-tag">';
+				echo '<div class="single-taxonomy ohmylms-tag">';
 					echo '<h3 class="sidebar-widget-title">' . __( 'Tags', 'ohmylms' ) . '</h3>';
 					echo '<ul class="tag-lists">';
 						foreach ($tags as $tag) {

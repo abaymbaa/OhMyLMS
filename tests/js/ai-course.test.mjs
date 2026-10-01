@@ -24,7 +24,7 @@ test('AI course conversion exposes templates, generator and the full outline pre
 
 test('AI course adapter replaces every recovered factory binding',()=>{
  const manifest=JSON.parse(fs.readFileSync(sourceRoot+'manifest.json'));
- const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/creatorlms.js').factories.find(item=>item.id==='1841');
+ const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/ohmylms.js').factories.find(item=>item.id==='1841');
  const fragments=factory.fragments.map(file=>fs.readFileSync(sourceRoot+file,'utf8')).join('\n');
  const ast=parse(`({1841:function(){${fragments}}})`);
  assert.deepEqual(adaptAiCourse(ast),{components:expected.length});

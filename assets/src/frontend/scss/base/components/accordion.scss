@@ -1,5 +1,5 @@
-.creator-lms-default-accordion {
-    .creator-lms-accordion-item {
+.ohmylms-default-accordion {
+    .ohmylms-accordion-item {
         border-radius: 14px;
         border: 1px solid #E9E4F2;
         margin-bottom: 16px;
@@ -10,12 +10,12 @@
         }
     }
 
-    .creator-lms-accordion-head {
+    .ohmylms-accordion-head {
         padding: 21px 24px;
         cursor: pointer;
     }
 
-    .creator-lms-accordion-title {
+    .ohmylms-accordion-title {
         color: #111827;
         font-size: 16px;
         font-weight: 700;
@@ -34,7 +34,7 @@
         }
     }
 
-    .creator-lms-accordion-body {
+    .ohmylms-accordion-body {
         display: none;
         padding: 0 24px 22px;
 
@@ -60,12 +60,12 @@
 
             a {
                 overflow: hidden;
-                color: var(--creator-lms-primary-color);
+                color: var(--ohmylms-primary-color);
                 font-size: 16px;
                 font-weight: 500;
                 line-height: 1.5;
                 text-decoration: underline;
-                text-decoration-color: var(--creator-lms-primary-color);
+                text-decoration-color: var(--ohmylms-primary-color);
 
                 &:hover {
                     text-decoration: none;
@@ -75,41 +75,41 @@
     }
 
     // ---when accordion is expanded---
-    .creator-lms-accordion-item.active {
+    .ohmylms-accordion-item.active {
         background: #fff;
         border-color: transparent;
         box-shadow: 0px 1px 2px 0px #DBDDE1;
 
-        .creator-lms-accordion-title svg {
+        .ohmylms-accordion-title svg {
             transform: rotate(-180deg);
         }
     }
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-default-accordion .creator-lms-accordion-item {
+    .ohmylms-default-accordion .ohmylms-accordion-item {
         border-radius: 10px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-head {
+    .ohmylms-default-accordion .ohmylms-accordion-head {
         padding: 16px 18px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-title {
+    .ohmylms-default-accordion .ohmylms-accordion-title {
         font-size: 14px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-title::before {
+    .ohmylms-default-accordion .ohmylms-accordion-title::before {
         width: 12px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-body p {
+    .ohmylms-default-accordion .ohmylms-accordion-body p {
         font-size: 14px;
     }
 
-    .creator-lms-default-accordion .creator-lms-accordion-body ul {
+    .ohmylms-default-accordion .ohmylms-accordion-body ul {
         padding-left: 30px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-body ul li {
+    .ohmylms-default-accordion .ohmylms-accordion-body ul li {
         margin-bottom: 4px;
     }
-    .creator-lms-default-accordion .creator-lms-accordion-body ul a {
+    .ohmylms-default-accordion .ohmylms-accordion-body ul a {
         font-size: 14px;
     }
 }

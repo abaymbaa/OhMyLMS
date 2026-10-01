@@ -2,11 +2,11 @@
 /**
  * AISettingsController class.
  *
- * @package creatorlms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\AIModel\Includes\Rest;
+namespace OhMyLMS\Integrations\AIModel\Includes\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
@@ -15,7 +15,7 @@ use WP_REST_Server;
 /**
  * Class AISettingsController
  *
- * @package OMLMS\Rest\V1
+ * @package OhMyLMS\Rest\V1
  * @since 1.0.0
  */
 class ClaudeRequestController {
@@ -39,7 +39,7 @@ class ClaudeRequestController {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * Get instance
@@ -229,9 +229,9 @@ class ClaudeRequestController {
 
 		if ( $code === 200 ) {
 			if ( $type === 'image' ) {
-				do_action( 'creatorlms_ai_image_generated' );
+				do_action( 'ohmylms_ai_image_generated' );
 			} else {
-				do_action( 'creatorlms_ai_text_generated' );
+				do_action( 'ohmylms_ai_text_generated' );
 			}
 		}
 

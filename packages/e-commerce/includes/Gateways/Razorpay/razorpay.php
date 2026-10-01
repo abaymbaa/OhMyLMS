@@ -4,7 +4,7 @@
  *
  * This file registers the Razorpay payment gateway with OhMyLMS.
  *
- * @package CreatorLMS
+ * @package OhMyLMS
  * @version 1.0.0
  */
 
@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-define( 'CREATORLMS_RAZORPAY_VERSION', '1.0.0' );
-define( 'CREATORLMS_RAZORPAY_MAIN_FILE', __FILE__ );
-define( 'CREATORLMS_RAZORPAY_ABSPATH', __DIR__ . '/' );
+define( 'OHMYLMS_RAZORPAY_VERSION', '1.0.0' );
+define( 'OHMYLMS_RAZORPAY_MAIN_FILE', __FILE__ );
+define( 'OHMYLMS_RAZORPAY_ABSPATH', __DIR__ . '/' );
 
 /**
  * Register Razorpay Gateway
@@ -25,7 +25,7 @@ define( 'CREATORLMS_RAZORPAY_ABSPATH', __DIR__ . '/' );
  * @return array The updated list of payment gateways including Razorpay.
  * @since 1.0.0
  */
-add_filter( 'creatorlms_payment_gateways', function( $gateways ) {
+add_filter( 'ohmylms_payment_gateways', function( $gateways ) {
     $gateways[] = GatewayRazorPay::class;
     return $gateways;
 } );
@@ -39,7 +39,7 @@ add_filter( 'creatorlms_payment_gateways', function( $gateways ) {
  * @return array The updated payment settings including Razorpay.
  * @since 1.0.0
  */
-add_filter( 'creatorlms_gateway_settings', function( $settings ) {
+add_filter( 'ohmylms_gateway_settings', function( $settings ) {
     if ( class_exists( 'GatewayRazorPay' ) ) {
         $razorpay_gateway = new GatewayRazorPay();
         $razorpay_settings = $razorpay_gateway->get_settings();

@@ -17,7 +17,7 @@ var lN = n(24011),
       style: {
         borderTop: "1px solid #f0f0f0"
       },
-      className: "omlms-pagination-wrapper"
+      className: "ohmylms-pagination-wrapper"
     }, h().createElement(I.FlexWP, {
       align: "center",
       justify: "end"
@@ -44,11 +44,11 @@ var lN = n(24011),
         width: "50px"
       }
     }), h().createElement(I.TextWP, {
-      className: "omlms-pagination-info",
+      className: "ohmylms-pagination-info",
       size: "15px",
       html: !0
     }, "<span>".concat((0, b.__)("of", "ohmylms"), "</span> <span>").concat(Math.ceil(t / o), "</span>")), h().createElement(I.FlexItemWP, {
-      className: "omlms-pagination-buttons"
+      className: "ohmylms-pagination-buttons"
     }, h().createElement(I.ButtonWP, {
       icon: h().createElement("svg", {
         xmlns: "http://www.w3.org/2000/svg",
@@ -465,7 +465,7 @@ var CN = function (e) {
               offset: 5 * (v - 1),
               orderby: u
             }, e.n = 2, l()({
-              path: (0, lN.addQueryArgs)("creator-lms/v1/automation/content/".concat(n), t),
+              path: (0, lN.addQueryArgs)("ohmylms/v1/automation/content/".concat(n), t),
               parse: !1
             });
           case 2:
@@ -527,7 +527,7 @@ var CN = function (e) {
               return e.p = 2, r = {
                 ids: yN(L || m)
               }, Array.isArray(t) && 0 !== (null == t ? void 0 : t.length) && (r.ids = t), e.n = 3, l()({
-                path: "creator-lms/v1/automation/content/".concat(n),
+                path: "ohmylms/v1/automation/content/".concat(n),
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json"
@@ -563,7 +563,7 @@ var CN = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, j(!0), e.n = 2, l()({
-                path: "creator-lms/v1/automation/".concat(t, "/content/").concat(n),
+                path: "ohmylms/v1/automation/".concat(t, "/content/").concat(n),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -604,7 +604,7 @@ var CN = function (e) {
               return e.p = 1, j(!0), r = {
                 status: "pause"
               }, n && (r.status = "active"), e.n = 2, l()({
-                path: "creator-lms/v1/automation/".concat(t),
+                path: "ohmylms/v1/automation/".concat(t),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -631,7 +631,7 @@ var CN = function (e) {
       title: (0, b.__)("Automation Name", "ohmylms"),
       dataIndex: "name",
       key: "name",
-      className: "omlms-automation-name-wrapper",
+      className: "ohmylms-automation-name-wrapper",
       render: function (e, t) {
         return React.createElement(React.Fragment, null, React.createElement(I.TextWP, {
           as: "p",
@@ -653,22 +653,22 @@ var CN = function (e) {
       title: (0, b.__)("Entered", "ohmylms"),
       dataIndex: "enterance",
       key: "enterance",
-      className: "omlms-automation-entered-wrapper",
+      className: "ohmylms-automation-entered-wrapper",
       width: 100,
       render: function (e, t) {
         return React.createElement("span", {
-          className: "omlms-automation-entered"
+          className: "ohmylms-automation-entered"
         }, e);
       }
     }, {
       title: (0, b.__)("Processing", "ohmylms"),
       dataIndex: "processing",
       key: "processing",
-      className: "omlms-automation-processing-wrapper",
+      className: "ohmylms-automation-processing-wrapper",
       width: 100,
       render: function (e, t) {
         return React.createElement("span", {
-          className: "omlms-automation-processing"
+          className: "ohmylms-automation-processing"
         }, e);
       }
     }, {
@@ -676,10 +676,10 @@ var CN = function (e) {
       dataIndex: "completed",
       key: "completed",
       width: 100,
-      className: "omlms-automation-completed-wrapper",
+      className: "ohmylms-automation-completed-wrapper",
       render: function (e, t) {
         return React.createElement("span", {
-          className: "omlms-automation-completed"
+          className: "ohmylms-automation-completed"
         }, e);
       }
     }, {
@@ -687,7 +687,7 @@ var CN = function (e) {
       dataIndex: "status",
       key: "status",
       width: 100,
-      className: "omlms-automation-status-wrapper",
+      className: "ohmylms-automation-status-wrapper",
       render: function (e, t) {
         return React.createElement(I.BadgeWP, {
           isBorderLess: !0,
@@ -700,7 +700,7 @@ var CN = function (e) {
       dataIndex: "pause_run",
       key: "pause_run",
       width: 100,
-      className: "omlms-automation-pause-run-wrapper",
+      className: "ohmylms-automation-pause-run-wrapper",
       render: function (e, t) {
         return React.createElement(Bt.A, {
           checked: "active" === (null == t ? void 0 : t.status),
@@ -715,7 +715,7 @@ var CN = function (e) {
       dataIndex: "action",
       key: "action",
       width: 80,
-      className: "omlms-automation-action-wrapper",
+      className: "ohmylms-automation-action-wrapper",
       render: function (e, t) {
         return React.createElement(I.DropdownMenuWP, {
           controls: [{
@@ -774,7 +774,7 @@ var CN = function (e) {
     style: {
       marginLeft: "auto"
     },
-    className: "omlms-add-automation-button"
+    className: "ohmylms-add-automation-button"
   }, (0, b.__)("Add Automation", "ohmylms")), React.createElement(I.ButtonWP, {
     icon: React.createElement(q.Icon, {
       icon: uN.A,
@@ -794,7 +794,7 @@ var CN = function (e) {
     setItems: p,
     bulksActions: ie
   })) : React.createElement(React.Fragment, null, React.createElement(vn.A, {
-    className: "omlms-automation-list-select-sort",
+    className: "ohmylms-automation-list-select-sort",
     suffixIcon: React.createElement(fn, null),
     options: Z,
     value: u,
@@ -803,14 +803,14 @@ var CN = function (e) {
     },
     classNames: {
       popup: {
-        root: "omlms-ant-select-dropdown"
+        root: "ohmylms-ant-select-dropdown"
       }
     }
   }), React.createElement(I.CardWP, {
     isBorderless: !0,
     padding: "8px"
   }, React.createElement(I.SearchControlWP, {
-    className: "omlms-search-input",
+    className: "ohmylms-search-input",
     placeholder: (0, b.__)("Search Automation", "ohmylms"),
     onChange: K
   })))), React.createElement(I.CardWP, {
@@ -818,7 +818,7 @@ var CN = function (e) {
     padding: "20px",
     margin: "16px 0 0"
   }, React.createElement(sN.A, {
-    className: "omlms-automation-list-table",
+    className: "ohmylms-automation-list-table",
     columns: oe,
     dataSource: k ? [] : S,
     rowKey: "id",
@@ -852,7 +852,7 @@ const PN = (0, g.memo)(CN);
 
 function ON() {
   return React.createElement("svg", {
-    className: "omlms-course-enrollment-automation-icon",
+    className: "ohmylms-course-enrollment-automation-icon",
     width: "24",
     height: "25",
     fill: "none",

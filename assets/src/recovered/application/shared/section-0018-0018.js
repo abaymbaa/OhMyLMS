@@ -2,7 +2,7 @@
 var Dd = function () {
   var e,
     t,
-    n = (0, L.useIsPro)(),
+    n = true,
     r = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
     }, []),
@@ -16,29 +16,28 @@ var Dd = function () {
     l = i.addContentToQuestion,
     c = i.setIsProModalOpen;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-options-list omlms-options-list-statement"
+    className: "ohmylms-options-list ohmylms-options-list-statement"
   }, React.createElement(I.InputWP, {
     placeholder: (0, b.__)("Enter answer(s) here, separated by commas (e.g., Dhaka, teacher, football)", "ohmylms"),
     value: null === (e = a[0]) || void 0 === e ? void 0 : e.answer,
     onChange: function (e) {
       var t;
       return function (e, t) {
-        e && (n ? l(r, a.map(function (n) {
+        e && l(r, a.map(function (n) {
           return (null == n ? void 0 : n.id) === e ? Fd(Fd({}, n), {}, {
             answer: t
           }) : n;
-        })) : c(!0));
+        }));
       }(null === (t = a[0]) || void 0 === t ? void 0 : t.id, e);
     }
   }), !o || null !== (t = a[0]) && void 0 !== t && null !== (t = t.answer) && void 0 !== t && t.trim() ? React.createElement(React.Fragment, null) : React.createElement("div", {
-    className: "omlms-option-correct",
+    className: "ohmylms-option-correct",
     style: {
       color: "red",
       marginTop: 4
     }
   }, (0, b.__)("Field cannot be empty", "ohmylms"))));
 };
-
 const Wd = (0, g.memo)(Dd),
   zd = {
     name: "Fill In The Blank",
@@ -54,7 +53,6 @@ const Wd = (0, g.memo)(Dd),
     },
     isPro: !0
   };
-
 var Bd = function (e) {
   var t = e.isHover,
     n = void 0 !== t && t,
@@ -68,7 +66,7 @@ var Bd = function (e) {
   }, React.createElement("g", {
     clipPath: "url(#clip0_95_8011)"
   }, React.createElement("path", {
-    fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+    fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
     d: "M7.5 4.583c0-.691.558-1.25 1.25-1.25S10 3.892 10 4.583c0 .692-.558 1.25-1.25 1.25S7.5 5.275 7.5 4.583zM20 4.167v5c0 2.3-1.867 4.166-4.167 4.166h-7.5a4.168 4.168 0 01-4.166-4.166v-5C4.167 1.867 6.033 0 8.333 0h7.5C18.133 0 20 1.867 20 4.167zm-14.167 5c0 .641.242 1.225.642 1.675l4.367-4.367c.816-.817 2.241-.817 3.058 0l.867.867a.508.508 0 00.708 0l2.858-2.859v-.316c0-1.375-1.125-2.5-2.5-2.5h-7.5a2.507 2.507 0 00-2.5 2.5v5zm12.5 0V6.842L16.65 8.525c-.817.817-2.242.817-3.058 0l-.867-.867a.508.508 0 00-.708 0L8.025 11.65c.1.017.2.017.308.017h7.5c1.375 0 2.5-1.125 2.5-2.5zm-3.258 5.866a.836.836 0 00-1.025.584l-.242.883a2.455 2.455 0 01-1.175 1.508 2.486 2.486 0 01-1.9.242L3.5 16.267a2.5 2.5 0 01-1.75-3.075l.8-2.967A.843.843 0 001.967 9.2a.843.843 0 00-1.025.583L.15 12.742a4.175 4.175 0 002.917 5.125L10.3 19.85a4.12 4.12 0 003.167-.4 4.154 4.154 0 001.958-2.517l.242-.883a.836.836 0 00-.584-1.025l-.008.008z"
   })), React.createElement("defs", null, React.createElement("clipPath", {
     id: "clip0_95_8011"
@@ -77,9 +75,7 @@ var Bd = function (e) {
     d: "M0 0h20v20H0z"
   })))));
 };
-
 const Ld = (0, g.memo)(Bd);
-
 var Vd = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -106,7 +102,7 @@ var Vd = function () {
     d: "M67.426 28.828h1v-1h-1v1zm2.402 27.828a1.4 1.4 0 01-1.402-1.402h-2a3.4 3.4 0 003.402 3.402v-2zm9.77 0h-9.77v2h9.77v-2zM81 55.254a1.4 1.4 0 01-1.402 1.402v2A3.4 3.4 0 0083 55.254h-2zm0-43.242v43.242h2V12.012h-2zm-1.402-1.403A1.4 1.4 0 0181 12.012h2a3.401 3.401 0 00-3.402-3.403v2zM42 10.61h37.598v-2H42v2zm-1 0h1v-2h-1v2zm-19.219 0H41v-2H21.781v2zm-1.402 1.403a1.4 1.4 0 011.402-1.403v-2a3.401 3.401 0 00-3.402 3.403h2zm0 14.414V12.012h-2v14.414h2zm1.402 1.402a1.4 1.4 0 01-1.402-1.402h-2a3.4 3.4 0 003.402 3.402v-2zm19.219 0H21.781v2H41v-2zm1 0h-1v2h1v-2zm24.426 0H42v2h24.426v-2zm1 0h-1v2h1v-2zm1 2v-1h-2v1h2zm0 25.426V29.828h-2v25.426h2z",
     mask: "url(#a)"
   }), React.createElement("path", {
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     d: "M70.059 22.035H12.402A2.379 2.379 0 0010 24.437V67.68c0 .672.288 1.249.673 1.73l16.143-6.535h19.22l25.752 6.534c.385-.48.673-1.057.673-1.73V24.438a2.379 2.379 0 00-2.402-2.402z"
   }), React.createElement("path", {
     fill: "#4D88FF",
@@ -122,9 +118,7 @@ var Vd = function () {
     d: "M44.336 45.354l-3.105 3.106v21.62h28.828c.672 0 1.249-.288 1.73-.672L47.733 45.354a2.403 2.403 0 00-3.398 0z"
   })));
 };
-
 const Hd = (0, g.memo)(Vd);
-
 var Gd = n(88053),
   Ud = function (e) {
     var t = e.id,
@@ -250,9 +244,7 @@ var Gd = n(88053),
       color: "red"
     }, (0, b.__)("Field cannot be empty", "ohmylms")))));
   };
-
 const qd = (0, g.memo)(Ud);
-
 function Yd(e) {
   return Yd = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -260,7 +252,6 @@ function Yd(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Yd(e);
 }
-
 function Qd(e) {
   return function (e) {
     if (Array.isArray(e)) return em(e);
@@ -270,7 +261,6 @@ function Qd(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Zd(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -281,7 +271,6 @@ function Zd(e, t) {
   }
   return n;
 }
-
 function $d(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -293,7 +282,6 @@ function $d(e) {
   }
   return e;
 }
-
 function Kd(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -314,7 +302,6 @@ function Kd(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Jd(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -348,7 +335,6 @@ function Jd(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Xd(e, t) {
   if (e) {
     if ("string" == typeof e) return em(e, t);
@@ -356,13 +342,11 @@ function Xd(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? em(e, t) : void 0;
   }
 }
-
 function em(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var tm = function () {
   var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
@@ -437,7 +421,7 @@ var tm = function () {
       justify: "flex-start",
       gap: 4
     }, React.createElement(gc, {
-      className: "omlms-drag-icon"
+      className: "ohmylms-drag-icon"
     }), React.createElement(I.FlexBlockWP, null, React.createElement(qd, {
       id: null == a ? void 0 : a.id,
       showOrder: !0,
@@ -512,7 +496,6 @@ var tm = function () {
     size: "small"
   }, (0, b.__)("Add Option", "ohmylms")));
 };
-
 const nm = (0, g.memo)(tm),
   rm = {
     name: "Reorder",
@@ -527,7 +510,6 @@ const nm = (0, g.memo)(tm),
     },
     isPro: !0
   };
-
 var am = function (e) {
   var t = e.isHover,
     n = void 0 !== t && t,
@@ -539,15 +521,13 @@ var am = function (e) {
     viewBox: "0 0 16 18",
     xmlns: "http://www.w3.org/2000/svg"
   }, React.createElement("path", {
-    fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+    fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
     stroke: "#6E42D3",
     strokeWidth: ".2",
     d: "M8.332 15.4a1.602 1.602 0 001.6 1.6h4.266a1.602 1.602 0 001.6-1.6v-4.267a1.602 1.602 0 00-1.6-1.6H9.932a1.602 1.602 0 00-1.6 1.6V15.4zm1.067-4.267a.534.534 0 01.533-.533h4.266a.533.533 0 01.534.533V15.4a.533.533 0 01-.534.533H9.932a.533.533 0 01-.533-.533v-4.267zm.533-2.667h4.266a1.602 1.602 0 001.6-1.6V2.6a1.602 1.602 0 00-1.6-1.6H9.932a1.602 1.602 0 00-1.6 1.6v4.266a1.602 1.602 0 001.6 1.6zM9.399 2.6a.533.533 0 01.533-.533h4.266a.533.533 0 01.534.533v4.266a.533.533 0 01-.534.534H9.932a.533.533 0 01-.533-.534V2.6zM3.534 5.266h3.2a.533.533 0 100-1.067h-3.2A2.67 2.67 0 00.867 6.866v4.266A2.67 2.67 0 003.534 13.8h1.912l-1.223 1.223a.533.533 0 10.754.754l2.133-2.133a.535.535 0 000-.755l-2.133-2.133a.533.533 0 00-.754.754l1.223 1.223H3.534a1.602 1.602 0 01-1.6-1.6V6.866a1.602 1.602 0 011.6-1.6z"
   })));
 };
-
 const om = (0, g.memo)(am);
-
 var im = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -574,7 +554,7 @@ var im = function () {
     d: "M67.426 28.828h1v-1h-1v1zm2.402 27.828a1.4 1.4 0 01-1.402-1.402h-2a3.4 3.4 0 003.402 3.402v-2zm9.77 0h-9.77v2h9.77v-2zM81 55.254a1.4 1.4 0 01-1.402 1.402v2A3.4 3.4 0 0083 55.254h-2zm0-43.242v43.242h2V12.012h-2zm-1.402-1.403A1.4 1.4 0 0181 12.012h2a3.401 3.401 0 00-3.402-3.403v2zM42 10.61h37.598v-2H42v2zm-1 0h1v-2h-1v2zm-19.219 0H41v-2H21.781v2zm-1.402 1.403a1.4 1.4 0 011.402-1.403v-2a3.401 3.401 0 00-3.402 3.403h2zm0 14.414V12.012h-2v14.414h2zm1.402 1.402a1.4 1.4 0 01-1.402-1.402h-2a3.4 3.4 0 003.402 3.402v-2zm19.219 0H21.781v2H41v-2zm1 0h-1v2h1v-2zm24.426 0H42v2h24.426v-2zm1 0h-1v2h1v-2zm1 2v-1h-2v1h2zm0 25.426V29.828h-2v25.426h2z",
     mask: "url(#a)"
   }), React.createElement("path", {
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     d: "M70.059 22.035H12.402A2.379 2.379 0 0010 24.437V67.68c0 .672.288 1.249.673 1.73l16.143-6.535h19.22l25.752 6.534c.385-.48.673-1.057.673-1.73V24.438a2.379 2.379 0 00-2.402-2.402z"
   }), React.createElement("path", {
     fill: "#4D88FF",
@@ -590,9 +570,7 @@ var im = function () {
     d: "M44.336 45.354l-3.105 3.106v21.62h28.828c.672 0 1.249-.288 1.73-.672L47.733 45.354a2.403 2.403 0 00-3.398 0z"
   })));
 };
-
 const lm = (0, g.memo)(im);
-
 function cm(e) {
   return cm = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -600,7 +578,6 @@ function cm(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, cm(e);
 }
-
 function um(e) {
   return function (e) {
     if (Array.isArray(e)) return vm(e);
@@ -610,7 +587,6 @@ function um(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function sm(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -621,7 +597,6 @@ function sm(e, t) {
   }
   return n;
 }
-
 function dm(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -633,7 +608,6 @@ function dm(e) {
   }
   return e;
 }
-
 function mm(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -654,7 +628,6 @@ function mm(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function pm(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -688,7 +661,6 @@ function pm(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function fm(e, t) {
   if (e) {
     if ("string" == typeof e) return vm(e, t);
@@ -696,7 +668,6 @@ function fm(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? vm(e, t) : void 0;
   }
 }
-
 function vm(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

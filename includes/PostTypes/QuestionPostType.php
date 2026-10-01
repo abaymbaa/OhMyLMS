@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Question post type to connect with topics
@@ -71,6 +71,6 @@ class QuestionPostType {
 			'publicly_queryable'  => true,
 			'capability_type'     => 'post',
 		);
-		register_post_type( 'omlms-question', $args );
+		register_post_type( 'ohmylms-question', $args );
 	}
 }

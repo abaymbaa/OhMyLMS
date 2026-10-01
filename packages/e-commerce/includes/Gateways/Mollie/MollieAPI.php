@@ -5,7 +5,7 @@
  * This class provides static methods to interact with the Mollie API v2.
  * It handles request formatting, authentication, and basic response processing.
  *
- * @package     CreatorLMS/Gateways/Mollie/API
+ * @package     OhMyLMS/Gateways/Mollie/API
  * @since       1.0.0
  * @version     1.0.1
  */
@@ -52,12 +52,12 @@ class MollieAPI {
 		$url      = $base_url . trim( $endpoint, '/' );
 
 		if ( empty( self::$api_key ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Mollie API key is not set.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Mollie API key is not set.', 'ohmylms' ) );
 		}
 
 		$headers = [
 			'Authorization' => 'Bearer ' . self::$api_key,
-			'User-Agent'    => 'CreatorLMS/MollieIntegration/1.0', // Added version
+			'User-Agent'    => 'OhMyLMS/MollieIntegration/1.0', // Added version
 			'Content-Type'  => 'application/json',
 		];
 
@@ -99,7 +99,7 @@ class MollieAPI {
 		}
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new WP_Error('mollie_api_json_error', __('Failed to decode API response.', 'creator-lms'), ['body' => $response_body]);
+			return new WP_Error('mollie_api_json_error', __('Failed to decode API response.', 'ohmylms'), ['body' => $response_body]);
 		}
 		return $decoded_body;
 	}
@@ -120,7 +120,7 @@ class MollieAPI {
 		if ( isset( $response['_embedded']['methods'] ) ) { return $response['_embedded']['methods']; }
 		if ( isset( $response['data'] ) && is_array( $response['data'] ) ) { return $response['data'];}
 		if ( is_array( $response ) && isset( $response['count'] ) && 0 === $response['count'] ) { return []; }
-		return new WP_Error('mollie_api_no_methods', __('No payment methods found in API response.', 'creator-lms'), $response);
+		return new WP_Error('mollie_api_no_methods', __('No payment methods found in API response.', 'ohmylms'), $response);
 	}
 
 	/**
@@ -138,11 +138,11 @@ class MollieAPI {
 		}
 		foreach ( $required_fields as $field ) {
 			if ( empty( $payload[ $field ] ) ) {
-				return new WP_Error( 'mollie_api_error', sprintf( __( 'Missing required field for payment creation: %s', 'creator-lms' ), $field ) );
+				return new WP_Error( 'mollie_api_error', sprintf( __( 'Missing required field for payment creation: %s', 'ohmylms' ), $field ) );
 			}
 		}
 		if ( ! isset( $payload['amount']['value'], $payload['amount']['currency'] ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required.', 'ohmylms' ) );
 		}
 		$payload['amount']['value'] = number_format( (float) $payload['amount']['value'], 2, '.', '' );
 
@@ -165,7 +165,7 @@ class MollieAPI {
 	 */
 	public static function create_customer( $data ) {
 		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Valid email is required to create a Mollie customer.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Valid email is required to create a Mollie customer.', 'ohmylms' ) );
 		}
 		if ( empty( $data['name'] ) ) { // Name is recommended by Mollie.
 			$email_parts = explode( '@', $data['email'] );
@@ -183,7 +183,7 @@ class MollieAPI {
 	 */
 	public static function get_payment( $payment_id ) {
 		if ( empty( $payment_id ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Payment ID is required to fetch payment.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Payment ID is required to fetch payment.', 'ohmylms' ) );
 		}
 		return self::request( 'payments/' . sanitize_text_field( $payment_id ), [], 'GET' );
 	}
@@ -198,16 +198,16 @@ class MollieAPI {
 	 */
 	public static function create_subscription( $customer_id, array $data ) {
 		if ( empty( $customer_id ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Customer ID is required to create a subscription.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Customer ID is required to create a subscription.', 'ohmylms' ) );
 		}
 		$required_fields = [ 'amount', 'interval', 'description' ];
 		foreach ( $required_fields as $field ) {
 			if ( empty( $data[ $field ] ) ) {
-				return new WP_Error( 'mollie_api_error', sprintf( __( 'Missing required field for subscription: %s', 'creator-lms' ), $field ) );
+				return new WP_Error( 'mollie_api_error', sprintf( __( 'Missing required field for subscription: %s', 'ohmylms' ), $field ) );
 			}
 		}
 		if ( ! isset( $data['amount']['value'], $data['amount']['currency'] ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required for subscription.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required for subscription.', 'ohmylms' ) );
 		}
 		$data['amount']['value'] = number_format( (float) $data['amount']['value'], 2, '.', '' );
 		return self::request( 'customers/' . sanitize_text_field( $customer_id ) . '/subscriptions', $data, 'POST' );
@@ -222,7 +222,7 @@ class MollieAPI {
 	 */
 	public static function get_subscription( $subscription_id ) {
 		if ( empty( $subscription_id ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Subscription ID is required to fetch subscription.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Subscription ID is required to fetch subscription.', 'ohmylms' ) );
 		}
 		return self::request( 'subscriptions/' . sanitize_text_field( $subscription_id ), [], 'GET' );
 	}
@@ -236,7 +236,7 @@ class MollieAPI {
 	 */
 	public static function get_customer( $customer_id ) {
 		if ( empty( $customer_id ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Customer ID is required to fetch customer.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Customer ID is required to fetch customer.', 'ohmylms' ) );
 		}
 		return self::request( 'customers/' . sanitize_text_field( $customer_id ), [], 'GET' );
 	}
@@ -251,10 +251,10 @@ class MollieAPI {
 	 */
 	public static function create_refund( $payment_id, array $data ) {
 		if ( empty( $payment_id ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Payment ID is required to create a refund.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Payment ID is required to create a refund.', 'ohmylms' ) );
 		}
 		if ( empty( $data['amount'] ) || ! isset( $data['amount']['value'], $data['amount']['currency'] ) ) {
-			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required for refund.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_api_error', __( 'Amount (value and currency) is required for refund.', 'ohmylms' ) );
 		}
 		$data['amount']['value'] = number_format( (float) $data['amount']['value'], 2, '.', '' );
 		return self::request( 'payments/' . sanitize_text_field( $payment_id ) . '/refunds', $data, 'POST' );

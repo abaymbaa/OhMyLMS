@@ -2,18 +2,18 @@
 /**
  * MeetingService class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Services;
+namespace OhMyLMS\Integrations\Zoom\Includes\Services;
 
-use OMLMS\Integrations\Zoom\Includes\Api\Endpoints\MeetingApi;
+use OhMyLMS\Integrations\Zoom\Includes\Api\Endpoints\MeetingApi;
 
 /**
  * Class MeetingService
  *
- * @package OMLMS\Integrations\Zoom\Services
+ * @package OhMyLMS\Integrations\Zoom\Services
  * @since 1.0.0
  */
 class MeetingService {

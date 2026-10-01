@@ -1,7 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var Jt = n(11541),
   Xt = ["title", "description", "isItProFeature", "placeholder", "options", "tooltip", "spacerMarginBottom", "padding", "direction", "gap", "flexItemWidth"];
-
 function en() {
   return en = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -11,7 +10,6 @@ function en() {
     return e;
   }, en.apply(null, arguments);
 }
-
 const tn = function (e) {
   var t = e.title,
     n = e.description,
@@ -50,7 +48,7 @@ const tn = function (e) {
       }
       return a;
     }(e, Xt),
-    E = (0, L.useIsPro)();
+    E = true;
   return h().createElement(h().Fragment, null, h().createElement(I.SpacerWP, {
     marginBottom: s,
     padding: m
@@ -78,12 +76,11 @@ const tn = function (e) {
     width: _
   }, h().createElement(Jt.A, en({
     isMulti: !0,
-    className: "omlms-multi-select",
-    classNamePrefix: "omlms-react-select",
+    className: "ohmylms-multi-select",
+    classNamePrefix: "ohmylms-react-select",
     placeholder: i
   }, w))))));
 };
-
 function nn() {
   var e,
     t,
@@ -170,7 +167,6 @@ function nn() {
     };
   })();
 }
-
 function rn(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -192,7 +188,6 @@ function rn(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, rn(e, t, n, r);
 }
-
 function an(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -202,13 +197,11 @@ function an(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function on(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var ln = function (e) {
   var t = e.title,
     n = e.tooltip,
@@ -315,7 +308,7 @@ var ln = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(Kt, {
     title: t,
     tooltip: n,
-    customClass: "omlms-lesson-settings-prerequisites-button",
+    customClass: "ohmylms-lesson-settings-prerequisites-button",
     onChange: r,
     isChecked: a,
     showDivider: u,
@@ -347,13 +340,10 @@ var ln = function (e) {
     }))))
   }));
 };
-
 const cn = (0, g.memo)(ln);
-
 var un = n(74353),
   sn = n.n(un),
   dn = ["rotate"];
-
 function mn() {
   return mn = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -363,7 +353,6 @@ function mn() {
     return e;
   }, mn.apply(null, arguments);
 }
-
 var pn = function (e) {
   var t = e.rotate,
     n = void 0 === t ? 0 : t,
@@ -400,12 +389,9 @@ var pn = function (e) {
     d: "M3.747 5.815a.708.708 0 011.006 0l3.244 3.244a.708.708 0 001.006 0l3.244-3.244a.708.708 0 111.006.999l-3.251 3.251a2.125 2.125 0 01-3.004 0l-3.25-3.251a.708.708 0 010-.999z"
   })));
 };
-
 const fn = (0, g.memo)(pn);
-
 var vn = n(54870),
   gn = ["customClass", "options", "value", "placeholder", "onChange"];
-
 function hn() {
   return hn = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -415,13 +401,11 @@ function hn() {
     return e;
   }, hn.apply(null, arguments);
 }
-
 function yn(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var bn = function (e) {
   var t = e.customClass,
     n = void 0 === t ? "" : t,
@@ -491,29 +475,25 @@ var bn = function (e) {
       }();
     }((0, g.useState)(!1), 2);
   return u[0], u[1], React.createElement(React.Fragment, null, React.createElement(vn.A, hn({
-    className: "omlms-single-select ".concat(n),
+    className: "ohmylms-single-select ".concat(n),
     placeholder: o,
     options: r,
     value: a,
     onChange: l,
     classNames: {
       popup: {
-        root: "omlms-ant-select-dropdown"
+        root: "ohmylms-ant-select-dropdown"
       }
     }
   }, c)));
 };
-
 const _n = (0, g.memo)(bn);
-
 var wn = n(55907);
-
 function En(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Sn = function (e) {
   var t = e.onDripFeedTypeChange,
     n = e.dripFeedType,
@@ -596,7 +576,7 @@ var Sn = function (e) {
   }, [l]), React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-lesson-settings-drip-feed-list"
+    className: "ohmylms-lesson-settings-drip-feed-list"
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0,
     padding: 4
@@ -619,7 +599,7 @@ var Sn = function (e) {
   }, (0, b.__)("Select Time:")), React.createElement(I.SpacerWP, {
     marginBottom: 2
   }), React.createElement(I.TimePickerWP, {
-    className: "omlms-lesson-settings-drip-feed-time-picker",
+    className: "ohmylms-lesson-settings-drip-feed-time-picker",
     onChange: function (e) {
       var t;
       e ? (t = i ? sn()(i).set("hour", e.hours).set("minute", e.minutes).set("second", 0).format("YYYY-MM-DDTHH:mm:ss.SSS") : sn()(e).format("YYYY-MM-DDTHH:mm:ss.SSS"), a(t)) : a(null);
@@ -640,7 +620,7 @@ var Sn = function (e) {
   }, (0, b.__)("Select Date:")), React.createElement(I.SpacerWP, {
     marginBottom: 2
   }), React.createElement(I.DatePickerWP, {
-    className: "omlms-lesson-settings-drip-feed-date-picker",
+    className: "ohmylms-lesson-settings-drip-feed-date-picker",
     onChange: function (e) {
       r(e);
     },
@@ -651,7 +631,7 @@ var Sn = function (e) {
   }))), ("enrollment-from-x-days" === n || "cohort-from-x-days" === n) && React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
     marginBottom: 5
   }), React.createElement("div", {
-    className: "omlms-drip-feed-day-picker"
+    className: "ohmylms-drip-feed-day-picker"
   }, React.createElement(wn.A, {
     min: 1,
     value: c,
@@ -667,9 +647,7 @@ var Sn = function (e) {
     }
   }))))));
 };
-
 const Rn = (0, g.memo)(Sn);
-
 var xn = ["onChange", "isChecked", "onDripFeedTypeChange", "handleDripDatePickerChange", "handleDripTimePickerChange", "handleDayChange", "dripFeedType", "dripDate", "dripTime", "enrollmentFromXDays", "isCohortBased", "padding"],
   Cn = function (e) {
     var t = e.onChange,
@@ -705,7 +683,7 @@ var xn = ["onChange", "isChecked", "onDripFeedTypeChange", "handleDripDatePicker
     }(e, xn), React.createElement(React.Fragment, null, React.createElement(Kt, {
       title: (0, b.__)("Drip Settings", "ohmylms"),
       tooltip: (0, b.__)("Schedule this lesson to unlock after a set number of days or a specific date.", "ohmylms"),
-      customClass: "omlms-lesson-settings-drip-feed-button",
+      customClass: "ohmylms-lesson-settings-drip-feed-button",
       onChange: t,
       isChecked: n,
       isItProFeature: !0,
@@ -725,9 +703,7 @@ var xn = ["onChange", "isChecked", "onDripFeedTypeChange", "handleDripDatePicker
       }))
     }));
   };
-
 const Pn = (0, g.memo)(Cn);
-
 var On = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     width: "14",
@@ -747,9 +723,7 @@ var On = function () {
     clipRule: "evenodd"
   })));
 };
-
 const kn = (0, g.memo)(On);
-
 var jn = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -769,9 +743,7 @@ var jn = function () {
     clipRule: "evenodd"
   })));
 };
-
 const An = (0, g.memo)(jn);
-
 var Mn = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -784,9 +756,7 @@ var Mn = function () {
     d: "M5.051 16.3a4.5 4.5 0 01-3.176-7.683l6.364-6.364a.75.75 0 011.06 1.06L2.934 9.679a3 3 0 104.243 4.242l8.22-8.22a1.874 1.874 0 00-.608-3.058 1.876 1.876 0 00-2.044.406l-6.63 6.63a.75.75 0 101.062 1.06l4.243-4.242a.75.75 0 111.06 1.06L8.236 11.8a2.251 2.251 0 01-3.182-3.181l6.63-6.63a3.375 3.375 0 014.772 4.774l-8.22 8.22A4.467 4.467 0 015.054 16.3h-.003z"
   })));
 };
-
 const Tn = (0, g.memo)(Mn);
-
 function In(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -826,15 +796,13 @@ function In(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Fn(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Nn = function (e) {
-  var t = (0, L.useIsPro)();
+  var t = true;
   M().noConflict();
   var n = e.resources,
     r = e.handleResources,
@@ -852,7 +820,7 @@ var Nn = function (e) {
     v = p[1],
     h = (0, g.useCallback)(function () {
       var e;
-      t ? ((e = wp.media({
+      (e = wp.media({
         title: "Select or Upload Media",
         button: {
           text: "Use this media"
@@ -868,12 +836,12 @@ var Nn = function (e) {
           };
         });
         r(t);
-      }), e.open()) : v(!0);
+      }), e.open();
     }, [t, i]);
   return React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
     marginBottom: 0,
     padding: 4,
-    className: "omlms-lesson-settings-resources"
+    className: "ohmylms-lesson-settings-resources"
   }, React.createElement(I.FlexWP, {
     gap: 3,
     align: "center",
@@ -882,7 +850,7 @@ var Nn = function (e) {
     level: 4
   }, (0, b.__)("Download Resources", "ohmylms")), o && React.createElement(I.TooltipWP, {
     title: o,
-    className: "omlms-tooltip"
+    className: "ohmylms-tooltip"
   }, React.createElement(React.Fragment, null, React.createElement(Mt.A, null)))), React.createElement(I.SpacerWP, {
     marginBottom: 2
   }), React.createElement(I.CardWP, null, React.createElement(I.SpacerWP, {
@@ -895,8 +863,8 @@ var Nn = function (e) {
     variant: "secondary",
     icon: React.createElement(Tn, null),
     onClick: h,
-    className: "omlms-lesson-settings-resources-upload-button",
-    "aria-disabled": t ? "false" : "true",
+    className: "ohmylms-lesson-settings-resources-upload-button",
+    "aria-disabled": "false",
     style: {
       cursor: "pointer"
     }
@@ -916,7 +884,7 @@ var Nn = function (e) {
       gap: 3,
       align: "center",
       justify: "flex-start",
-      className: "omlms-single-resource-info"
+      className: "ohmylms-single-resource-info"
     }, React.createElement(I.CardWP, {
       className: "resource-icon"
     }, React.createElement(I.FlexWP, {
@@ -969,5 +937,4 @@ var Nn = function (e) {
     onClose: v
   })));
 };
-
 const Dn = (0, g.memo)(Nn);

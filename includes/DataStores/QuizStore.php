@@ -1,10 +1,10 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Chapter;
-use OMLMS\Data\Quiz;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Chapter;
+use OhMyLMS\Data\Quiz;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * Class QuizStore
  * Handles CRUD operations for Quiz data.
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class QuizStore extends DataStore {
@@ -36,19 +36,19 @@ class QuizStore extends DataStore {
 		 * @param string $quiz quiz object
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_creating_new_quiz', $quiz );
+		do_action( 'ohmylms_before_creating_new_quiz', $quiz );
 
 		$slug = $quiz->get_slug( 'edit' );
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_QUIZ_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_QUIZ_CPT );
 
 		$quiz_id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_quiz_data', // Custom filter hook name
+				'ohmylms_new_quiz_data', // Custom filter hook name
 				array(
 					'post_title'    => $quiz->get_name() ? $quiz->get_name() : __( 'Untitled', 'ohmylms' ),
 					'post_content'  => $quiz->get_description(),
 					'post_author'   => get_current_user_id(),
-					'post_type'     => CREATOR_LMS_QUIZ_CPT,
+					'post_type'     => OHMYLMS_QUIZ_CPT,
 					'post_status'   => 'publish',
 					'post_name'     => $slug,
 					'post_date'     => gmdate( 'Y-m-d H:i:s', $quiz->get_date_created( 'edit' )->getOffsetTimestamp() ),
@@ -68,17 +68,17 @@ class QuizStore extends DataStore {
 			 * @param string $quiz quiz object
 			 * @since 1.0.0
 			 */
-			do_action( 'omlms_after_creating_new_quiz', $quiz );
+			do_action( 'ohmylms_after_creating_new_quiz', $quiz );
 
-			if ( ! get_option( 'creatorlms_first_content_created', false ) ) {
-				do_action( 'creatorlms_after_creating_first_content', $id, $lesson );
+			if ( ! get_option( 'ohmylms_first_content_created', false ) ) {
+				do_action( 'ohmylms_after_creating_first_content', $id, $lesson );
 			}
 		}
 	}
 
 	public function read( &$quiz ) {
 		$post_object = get_post( $quiz->get_id() );
-		if ( ! $quiz->get_id() || ! $post_object || CREATOR_LMS_QUIZ_CPT !== $post_object->post_type ) {
+		if ( ! $quiz->get_id() || ! $post_object || OHMYLMS_QUIZ_CPT !== $post_object->post_type ) {
 			return ( __( 'Invalid Quiz.', 'ohmylms' ) );
 		}
 
@@ -105,7 +105,7 @@ class QuizStore extends DataStore {
 	 */
 	public function update( &$quiz ) {
 		$slug = $quiz->get_slug( 'edit' );
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_QUIZ_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_QUIZ_CPT );
 
 		/**
 		 * Before quiz update
@@ -113,7 +113,7 @@ class QuizStore extends DataStore {
 		 * @param Quiz $quiz
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_updating_quiz', $quiz );
+		do_action( 'ohmylms_before_updating_quiz', $quiz );
 
 		$post_data = array(
 			'post_content' => $quiz->get_description( 'edit' ),
@@ -121,7 +121,7 @@ class QuizStore extends DataStore {
 			'post_title'   => $quiz->get_name( 'edit' ),
 			'post_status'  => $quiz->get_status( 'edit' ) ? $quiz->get_status( 'edit' ) : 'publish',
 			'post_name'    => $quiz->get_name( 'edit' ),
-			'post_type'    => CREATOR_LMS_QUIZ_CPT,
+			'post_type'    => OHMYLMS_QUIZ_CPT,
 		);
 		
 		if ( $quiz->get_date_created( 'edit' ) ) {
@@ -142,7 +142,7 @@ class QuizStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_updating_quiz', $quiz->get_id(), $quiz );
+		do_action( 'ohmylms_after_updating_quiz', $quiz->get_id(), $quiz );
 	}
 
 	/**
@@ -160,7 +160,7 @@ class QuizStore extends DataStore {
 		 * @param Quiz $quiz
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_quiz_delete', $quiz );
+		do_action( 'ohmylms_before_quiz_delete', $quiz );
 
 		wp_delete_post( $quiz->get_id(), true );
 
@@ -170,7 +170,7 @@ class QuizStore extends DataStore {
 		 * @param Quiz $quiz
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_quiz_delete', $quiz );
+		do_action( 'ohmylms_after_quiz_delete', $quiz );
 
 		return array(
 			'status'  => 'success',
@@ -206,7 +206,7 @@ class QuizStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_lesson_meta_updated', $quiz );
+		do_action( 'ohmylms_lesson_meta_updated', $quiz );
 	}
 
 	/**
@@ -216,7 +216,7 @@ class QuizStore extends DataStore {
 	 */
 	protected function quiz_meta_key() {
 		return apply_filters(
-			'creator_lms_quiz_meta_key_to_props',
+			'ohmylms_quiz_meta_key_to_props',
 			array(
 				'_quiz_settings' => 'settings',
 				'_drip_settings' => 'drip_settings',
@@ -235,7 +235,7 @@ class QuizStore extends DataStore {
 	 */
 	public function get_questions( &$quiz, $return_type = 'array' ) {
 		global $wpdb;
-		$table_name         = $wpdb->prefix . 'omlms_quiz_questions_relationship';
+		$table_name         = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$quiz_id            = $quiz->get_id();
 		$questions = $wpdb->get_results(
 			$wpdb->prepare(
@@ -246,7 +246,7 @@ class QuizStore extends DataStore {
 		$filtered_questions = array();
 		if ( $questions ) {
 			foreach ( $questions as $question ) {
-				$question_obj = omlms_get_question( $question->question_id );
+				$question_obj = ohmylms_get_question( $question->question_id );
 
 				if ( 'objects' === $return_type ) {
 					$filtered_questions[] = $question_obj;
@@ -284,7 +284,7 @@ class QuizStore extends DataStore {
 	 */
 	public function set_contents( $quiz, $questions ) {
 		global $wpdb;
-		// $table_name = $wpdb->prefix . 'omlms_quiz_questions_relationship';
+		// $table_name = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		// $quiz_id = $quiz->get_id();
 		// $values = array();
 		// foreach ( $questions as $index => $question ) {
@@ -316,7 +316,7 @@ class QuizStore extends DataStore {
 
 		$attempt = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}omlms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
+				"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
 				$quiz->get_id(),
 				$student_id
 			),
@@ -330,7 +330,7 @@ class QuizStore extends DataStore {
 
 		$existing_attempt = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}omlms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
+				"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
 				$quiz->get_id(),
 				$student_id
 			)
@@ -338,7 +338,7 @@ class QuizStore extends DataStore {
 
 		if ( $existing_attempt ) {
 			$wpdb->update(
-				"{$wpdb->prefix}omlms_quiz_attempts",
+				"{$wpdb->prefix}ohmylms_quiz_attempts",
 				array(
 					'course_id' => $arg['course_id'],
 					'total'     => $arg['total'],
@@ -360,7 +360,7 @@ class QuizStore extends DataStore {
 			);
 		} else {
 			$wpdb->insert(
-				"{$wpdb->prefix}omlms_quiz_attempts",
+				"{$wpdb->prefix}ohmylms_quiz_attempts",
 				array(
 					'course_id'  => $arg['course_id'],
 					'quiz_id'    => $quiz->get_id(),
@@ -385,7 +385,7 @@ class QuizStore extends DataStore {
 		global $wpdb;
 
 		$wpdb->update(
-			"{$wpdb->prefix}omlms_quiz_attempts",
+			"{$wpdb->prefix}ohmylms_quiz_attempts",
 			array(
 				'course_id' => $arg['course_id'],
 				'total'     => $arg['total'],
@@ -408,7 +408,7 @@ class QuizStore extends DataStore {
 
 		$get_attempts = $quiz->get_all_quiz_attempts_by_attempt_id( $student_id, $arg['course_id'], $attempt_id );
 		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
-			$student = new \OMLMS\Data\Student( $student_id );
+			$student = new \OhMyLMS\Data\Student( $student_id );
 			$student->complete_lesson( $quiz->get_id(), $arg['course_id'] );
 		}
 	}
@@ -433,9 +433,9 @@ class QuizStore extends DataStore {
             SUM(qa_answers.achive_mark) AS total_achieved_marks,
             SUM(qa_answers.minus_mark) AS total_minus_marks
          FROM
-            {$wpdb->prefix}omlms_quiz_attempts qa
+            {$wpdb->prefix}ohmylms_quiz_attempts qa
          LEFT JOIN
-            {$wpdb->prefix}omlms_quiz_attempts_answers qa_answers
+            {$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
          ON
             qa.id = qa_answers.quiz_attempt_id
          WHERE
@@ -473,9 +473,9 @@ class QuizStore extends DataStore {
             SUM(qa_answers.achive_mark) AS total_achieved_marks,
             SUM(qa_answers.minus_mark) AS total_minus_marks
          FROM
-            {$wpdb->prefix}omlms_quiz_attempts qa
+            {$wpdb->prefix}ohmylms_quiz_attempts qa
          LEFT JOIN
-            {$wpdb->prefix}omlms_quiz_attempts_answers qa_answers
+            {$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
          ON
             qa.id = qa_answers.quiz_attempt_id
          WHERE
@@ -518,9 +518,9 @@ class QuizStore extends DataStore {
 		u.user_email AS student_email,
 		u.display_name AS student_name
 	 FROM
-		{$wpdb->prefix}omlms_quiz_attempts qa
+		{$wpdb->prefix}ohmylms_quiz_attempts qa
 	 LEFT JOIN
-		{$wpdb->prefix}omlms_quiz_attempts_answers qa_answers
+		{$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
 	 ON
 		qa.id = qa_answers.quiz_attempt_id
 	 LEFT JOIN
@@ -552,7 +552,7 @@ class QuizStore extends DataStore {
 		$quiz_result = array();
 		$result = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * from {$wpdb->prefix}omlms_quiz_attempts_answers WHERE quiz_attempt_id = %d",
+				"SELECT * from {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id = %d",
 				$attempt_id
 			)
 		);
@@ -566,10 +566,10 @@ class QuizStore extends DataStore {
 		foreach ( $questions as $key => $question ) {
 			$question_id 									= $question['id'];
 			$questions[ $key ]['given_answer'] 				= isset($quiz_result[ $question_id ]['given_answer']) ? (maybe_unserialize($quiz_result[ $question_id ]['given_answer'])) : null;
-			$obj                               				= omlms_get_question( $question_id );
+			$obj                               				= ohmylms_get_question( $question_id );
 			$question_settings 				   				= $obj->get_settings();
 			$question_type                                 	= isset( $question_settings['type'] ) ? $question_settings['type'] : '';
-			$definition = \OMLMS\Extensions\Registry::get('question', $question_type);
+			$definition = \OhMyLMS\Extensions\Registry::get('question', $question_type);
 			$questions[ $key ]['status']                   	= !empty($quiz_result[$question_id]['is_manually_reviewed']) || (isset($quiz_result[$question_id]) && !empty($definition) && empty($definition['manual'])) ? 'graded' : 'in-review';
 			$questions[ $key ]['image']                    	= $obj->get_image_url();
 			$questions[ $key ]['video']                    	= $obj->get_video_url();
@@ -581,7 +581,7 @@ class QuizStore extends DataStore {
 		$report['questions'] 		= $questions;
 		$report['quiz_attempt_id']	= $attempt_id;
 		$report['status'] = $wpdb->get_var($wpdb->prepare(
-			"SELECT status FROM {$wpdb->prefix}omlms_quiz_attempts WHERE id = %d AND quiz_id = %d",
+			"SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d AND quiz_id = %d",
 			$attempt_id, $quiz->get_id()
 		));
 		$report['total_achieved_marks'] = $total_marks;
@@ -593,7 +593,7 @@ class QuizStore extends DataStore {
 
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}omlms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND course_id = %d",
+				"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND course_id = %d",
 				$quiz->get_id(),
 				$student_id,
 				$course_id
@@ -608,7 +608,7 @@ class QuizStore extends DataStore {
 		$attempt_id             = isset( $request['attempt_id'] ) ? (int) $request['attempt_id'] : '';
 		$quiz_attempt_answer_id = isset( $request['quiz_attempt_answer_id'] ) ? (int) $request['quiz_attempt_answer_id'] : '';
 		$wpdb->update(
-			"{$wpdb->prefix}omlms_quiz_attempts_answers",
+			"{$wpdb->prefix}ohmylms_quiz_attempts_answers",
 			array(
 				'is_manually_reviewed' => 1,
 				'achive_mark'          => $request['marks'],
@@ -628,7 +628,7 @@ class QuizStore extends DataStore {
 			)
 		);
 		$wpdb->update(
-			"{$wpdb->prefix}omlms_quiz_attempts",
+			"{$wpdb->prefix}ohmylms_quiz_attempts",
 			array(
 				'status' => 'completed',
 			),
@@ -650,7 +650,7 @@ class QuizStore extends DataStore {
 			global $wpdb;
 
 			$wpdb->update(
-				"{$wpdb->prefix}omlms_quiz_attempts_answers",
+				"{$wpdb->prefix}ohmylms_quiz_attempts_answers",
 				array(
 					'is_manually_reviewed' => 1,
 					'achive_mark'          => $achieve_mark,

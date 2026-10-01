@@ -2,9 +2,9 @@
 /**
  * Membership Loop Start
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/membership-loop/loop-start.php
+ * This template can be overridden by copying it to yourtheme/ohmylms/membership-loop/loop-start.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -12,4 +12,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="creator-lms-membership-wrapper membership-col-">
+<div class="ohmylms-membership-wrapper membership-col-">

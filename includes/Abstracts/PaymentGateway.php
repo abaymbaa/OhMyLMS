@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 

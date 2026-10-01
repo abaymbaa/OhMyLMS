@@ -1,13 +1,13 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 async function login(page){
- const credentials=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const credentials=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(credentials.username);await page.locator('#user_pass').fill(credentials.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
 }
 async function registration(page){
  await page.goto('/?page_id=210');
- await page.locator('.creator-lms-show-signup-form').first().click();
+ await page.locator('.ohmylms-show-signup-form').first().click();
  const form=page.locator('form[data-ohmylms-registration="react"]').first();
  await expect(form).toBeVisible();
  await expect(form.getByRole('button',{name:'Sign Up',exact:true})).toBeDisabled();
@@ -26,8 +26,8 @@ test('registration keeps PHP fields, rejects errors and submits verification onc
  await form.evaluate(element=>{const input=document.createElement('input');input.name='extension_fixture';input.value='preserved';element.append(input);});
  let count=0;
  await page.route('**/admin-ajax.php',async route=>{
-  if(!route.request().postData()?.includes('creator_lms_signup'))return route.continue();
-  count++;const body=route.request().postData();expect(body).toContain('creator-lms-signup-nonce');expect(body).toContain('extension_fixture');
+  if(!route.request().postData()?.includes('ohmylms_signup'))return route.continue();
+  count++;const body=route.request().postData();expect(body).toContain('ohmylms-signup-nonce');expect(body).toContain('extension_fixture');
   await route.fulfill({json:count===1?{status:'error',message:'<strong>Email already exists</strong>'}:{status:'pending_verification',message:'Please verify your email.'}});
  });
  await form.getByRole('button',{name:'Sign Up',exact:true}).click();
@@ -43,7 +43,7 @@ test('registration creates a real account and redirects',async({page,browser})=>
  try{
   let result;
   await page.route('**/admin-ajax.php',async route=>{
-   if(!route.request().postData()?.includes('creator_lms_signup'))return route.continue();
+   if(!route.request().postData()?.includes('ohmylms_signup'))return route.continue();
    const response=await route.fetch();result=await response.json();await route.fulfill({response});
   });
   await form.getByRole('button',{name:'Sign Up',exact:true}).click();
@@ -65,7 +65,7 @@ test('student list sorts, searches, and blocks the current bulk selection',async
   lastQuery=new URL(route.request().url()).searchParams;
   return route.fulfill({headers:{'X-WP-Total':'2'},json:[1,2].map(id=>({user_id:id,student_name:`Fixture ${id}`,student_email:`fixture${id}@example.invalid`,is_banned:blocked,courses_enrolled:1}))});
  });
- await page.goto('/wp-admin/admin.php?page=creator-lms#/students');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/students');
  await expect(page.getByText('Fixture 1',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Email',exact:true}).click();
  await expect.poll(()=>lastQuery?.get('order_by')).toBe('email');

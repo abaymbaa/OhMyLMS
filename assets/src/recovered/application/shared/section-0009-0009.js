@@ -15,9 +15,9 @@ var fo = function (e) {
     onClick: function () {
       return !o && (null == r ? void 0 : r(!n));
     },
-    className: ["omlms-rec-toggle", n ? "is-on" : "", o ? "is-disabled" : ""].filter(Boolean).join(" ")
+    className: ["ohmylms-rec-toggle", n ? "is-on" : "", o ? "is-disabled" : ""].filter(Boolean).join(" ")
   }, React.createElement("span", {
-    className: "omlms-rec-toggle__knob"
+    className: "ohmylms-rec-toggle__knob"
   }));
 };
 
@@ -27,7 +27,7 @@ var go = function (e) {
   var t = e.size,
     n = void 0 === t ? 34 : t;
   return React.createElement("span", {
-    className: "omlms-rec-spinner",
+    className: "ohmylms-rec-spinner",
     style: {
       width: n,
       height: n
@@ -91,7 +91,7 @@ var bo = function (e) {
     i = o[0],
     l = o[1];
   return t ? React.createElement("span", {
-    className: "omlms-rec-tooltip",
+    className: "ohmylms-rec-tooltip",
     onMouseEnter: function () {
       return l(!0);
     },
@@ -106,7 +106,7 @@ var bo = function (e) {
     }
   }, a, i && React.createElement("span", {
     role: "tooltip",
-    className: "omlms-rec-tooltip__bubble omlms-rec-tooltip__bubble--".concat(r)
+    className: "ohmylms-rec-tooltip__bubble ohmylms-rec-tooltip__bubble--".concat(r)
   }, t)) : a;
 };
 
@@ -120,15 +120,15 @@ var wo = function (e) {
     o = void 0 !== a && a,
     i = e.tooltip;
   return React.createElement("div", {
-    className: "omlms-rec-toggle-row"
+    className: "ohmylms-rec-toggle-row"
   }, React.createElement("span", {
-    className: "omlms-rec-toggle-row__label"
+    className: "ohmylms-rec-toggle-row__label"
   }, t, i && React.createElement(_o, {
     text: i
   }, React.createElement(po, {
     name: "info",
     size: 15,
-    className: "omlms-rec-toggle-row__info"
+    className: "ohmylms-rec-toggle-row__info"
   }))), React.createElement(vo, {
     checked: n,
     onChange: r,
@@ -198,9 +198,9 @@ var xo = "empty",
   Do = function (e) {
     var t = e.plan === ko;
     return React.createElement("div", {
-      className: "omlms-rec-plan"
+      className: "ohmylms-rec-plan"
     }, React.createElement("span", {
-      className: "omlms-rec-plan__dot ".concat(t ? "is-paid" : "is-free")
+      className: "ohmylms-rec-plan__dot ".concat(t ? "is-paid" : "is-free")
     }), React.createElement("span", null, t ? (0, b.__)("Detected: Zoom Pro — cloud recording available", "ohmylms") : (0, b.__)("Detected: Zoom Basic — local recording only", "ohmylms")));
   };
 
@@ -217,13 +217,13 @@ var zo = {
       r = e.icon,
       a = e.children;
     return React.createElement("div", {
-      className: "omlms-rec-callout omlms-rec-callout--".concat(n)
+      className: "ohmylms-rec-callout ohmylms-rec-callout--".concat(n)
     }, React.createElement(po, {
       name: r || zo[n],
       size: 17,
-      className: "omlms-rec-callout__icon"
+      className: "ohmylms-rec-callout__icon"
     }), React.createElement("div", {
-      className: "omlms-rec-callout__body"
+      className: "ohmylms-rec-callout__body"
     }, a));
   };
 
@@ -241,9 +241,9 @@ var Vo = function (e) {
     u = void 0 === c || c,
     s = o === ko;
   return React.createElement("div", {
-    className: "omlms-rec-settings"
+    className: "ohmylms-rec-settings"
   }, u && React.createElement("div", {
-    className: "omlms-rec-settings__label"
+    className: "ohmylms-rec-settings__label"
   }, (0, b.__)("Recording", "ohmylms")), React.createElement(Eo, {
     label: (0, b.__)("Automatically record this session", "ohmylms"),
     checked: n,
@@ -267,7 +267,7 @@ var Go = function (e) {
     r = void 0 === n ? "neutral" : n,
     a = e.style;
   return React.createElement("span", {
-    className: "omlms-rec-badge omlms-rec-badge--".concat(r),
+    className: "ohmylms-rec-badge ohmylms-rec-badge--".concat(r),
     style: a
   }, t);
 };
@@ -292,24 +292,24 @@ var Qo = function (e) {
     o = e.onReplace,
     i = e.onRemove;
   return React.createElement("div", {
-    className: "omlms-rec-card"
+    className: "ohmylms-rec-card"
   }, React.createElement("div", {
-    className: "omlms-rec-card__thumb"
+    className: "ohmylms-rec-card__thumb"
   }, React.createElement("span", {
-    className: "omlms-rec-card__play"
+    className: "ohmylms-rec-card__play"
   }, React.createElement(po, {
     name: "play",
     size: 18
   })), a && React.createElement("span", {
-    className: "omlms-rec-card__time"
+    className: "ohmylms-rec-card__time"
   }, a)), React.createElement("div", {
-    className: "omlms-rec-card__info"
+    className: "ohmylms-rec-card__info"
   }, React.createElement("div", {
-    className: "omlms-rec-card__meta"
+    className: "ohmylms-rec-card__meta"
   }, React.createElement(Yo, {
     source: n
   }), React.createElement("span", {
-    className: "omlms-rec-card__metatext"
+    className: "ohmylms-rec-card__metatext"
   }, function (e) {
     switch (e) {
       case Ao:
@@ -320,19 +320,19 @@ var Qo = function (e) {
         return (0, b.__)("Added via link", "ohmylms");
     }
   }(n))), React.createElement("div", {
-    className: "omlms-rec-card__title",
+    className: "ohmylms-rec-card__title",
     title: r
   }, r), React.createElement("div", {
-    className: "omlms-rec-card__hint"
+    className: "ohmylms-rec-card__hint"
   }, (0, b.__)("This is the replay students watch in the lesson.", "ohmylms"))), React.createElement("div", {
-    className: "omlms-rec-card__actions"
+    className: "ohmylms-rec-card__actions"
   }, React.createElement("button", {
     type: "button",
-    className: "omlms-rec-btn omlms-rec-btn--ghost",
+    className: "ohmylms-rec-btn ohmylms-rec-btn--ghost",
     onClick: o
   }, (0, b.__)("Replace", "ohmylms")), React.createElement("button", {
     type: "button",
-    className: "omlms-rec-btn omlms-rec-btn--danger",
+    className: "ohmylms-rec-btn ohmylms-rec-btn--danger",
     onClick: i
   }, (0, b.__)("Remove", "ohmylms"))));
 };
@@ -341,13 +341,13 @@ const Zo = (0, g.memo)(Qo);
 
 var $o = function () {
   return React.createElement("div", {
-    className: "omlms-rec-processing"
+    className: "ohmylms-rec-processing"
   }, React.createElement(ho, {
     size: 34
   }), React.createElement("div", null, React.createElement("div", {
-    className: "omlms-rec-processing__title"
+    className: "ohmylms-rec-processing__title"
   }, (0, b.__)("Zoom cloud recording is processing…", "ohmylms")), React.createElement("div", {
-    className: "omlms-rec-processing__text"
+    className: "ohmylms-rec-processing__text"
   }, (0, b.__)("Zoom is preparing the file. It'll attach here automatically — usually within a few minutes of the session ending. No action needed.", "ohmylms"))));
 };
 
@@ -363,7 +363,7 @@ var Jo = function (e) {
     role: "tab",
     "aria-selected": n,
     onClick: r,
-    className: "omlms-rec-tab".concat(n ? " is-active" : "")
+    className: "ohmylms-rec-tab".concat(n ? " is-active" : "")
   }, a);
 };
 
@@ -376,15 +376,15 @@ var ei = function (e) {
     a = e.onSubmit,
     o = e.error;
   return React.createElement("div", {
-    className: "omlms-rec-link"
+    className: "ohmylms-rec-link"
   }, React.createElement("div", {
-    className: "omlms-rec-link__row"
+    className: "ohmylms-rec-link__row"
   }, React.createElement("div", {
-    className: "omlms-rec-input".concat(o ? " has-error" : "")
+    className: "ohmylms-rec-input".concat(o ? " has-error" : "")
   }, React.createElement(po, {
     name: "link",
     size: 17,
-    className: "omlms-rec-input__icon"
+    className: "ohmylms-rec-input__icon"
   }), React.createElement("input", {
     type: "url",
     value: n,
@@ -397,15 +397,15 @@ var ei = function (e) {
     }
   })), React.createElement("button", {
     type: "button",
-    className: "omlms-rec-btn omlms-rec-btn--primary",
+    className: "ohmylms-rec-btn ohmylms-rec-btn--primary",
     onClick: a
   }, (0, b.__)("Add", "ohmylms"))), o ? React.createElement("div", {
-    className: "omlms-rec-link__error"
+    className: "ohmylms-rec-link__error"
   }, React.createElement(po, {
     name: "alert-circle",
     size: 15
   }), o) : React.createElement("div", {
-    className: "omlms-rec-link__hint"
+    className: "ohmylms-rec-link__hint"
   }, (0, b.__)("Paste a YouTube, Vimeo link.", "ohmylms")));
 };
 
@@ -417,18 +417,18 @@ var ni = function (e) {
     r = e.onPick;
   return React.createElement("button", {
     type: "button",
-    className: "omlms-rec-dropzone",
+    className: "ohmylms-rec-dropzone",
     onClick: r,
     disabled: n
   }, React.createElement("span", {
-    className: "omlms-rec-dropzone__icon"
+    className: "ohmylms-rec-dropzone__icon"
   }, React.createElement(po, {
     name: "upload",
     size: 22
   })), React.createElement("span", {
-    className: "omlms-rec-dropzone__title"
+    className: "ohmylms-rec-dropzone__title"
   }, n ? (0, b.__)("Opening media library…", "ohmylms") : (0, b.__)("Choose from WordPress Media Library", "ohmylms")), React.createElement("span", {
-    className: "omlms-rec-dropzone__hint"
+    className: "ohmylms-rec-dropzone__hint"
   }, (0, b.__)("Select an existing video, or upload a new one.", "ohmylms")));
 };
 
@@ -447,19 +447,19 @@ var ai = function (e) {
     s = e.upload,
     d = void 0 === s ? {} : s;
   return React.createElement("div", {
-    className: "omlms-rec-add"
+    className: "ohmylms-rec-add"
   }, o && React.createElement("div", {
-    className: "omlms-rec-add__banner"
+    className: "ohmylms-rec-add__banner"
   }, React.createElement(Lo, {
     tone: "info"
   }, (0, b.__)("This session auto-records to Zoom cloud. The replay will attach here on its own after processing — you usually don't need this box. Use it only to add a different source.", "ohmylms"))), React.createElement("div", {
-    className: "omlms-rec-add__body"
+    className: "ohmylms-rec-add__body"
   }, React.createElement("div", {
-    className: "omlms-rec-add__title"
+    className: "ohmylms-rec-add__title"
   }, (0, b.__)("Add Recording", "ohmylms")), React.createElement("div", {
-    className: "omlms-rec-add__sub"
+    className: "ohmylms-rec-add__sub"
   }, (0, b.__)("Attach the replay students will watch if they missed the live class.", "ohmylms")), React.createElement("div", {
-    className: "omlms-rec-add__tabs",
+    className: "ohmylms-rec-add__tabs",
     role: "tablist"
   }, React.createElement(Xo, {
     active: n === Po,
@@ -493,15 +493,15 @@ var ii = function (e) {
     u = e.addBox,
     s = void 0 === u ? {} : u;
   return React.createElement("div", {
-    className: "omlms-rec-block"
+    className: "ohmylms-rec-block"
   }, i && React.createElement("div", {
-    className: "omlms-rec-block__head"
+    className: "ohmylms-rec-block__head"
   }, React.createElement("span", {
-    className: "omlms-rec-block__title"
+    className: "ohmylms-rec-block__title"
   }, React.createElement(po, {
     name: "video",
     size: 20,
-    className: "omlms-rec-block__icon"
+    className: "ohmylms-rec-block__icon"
   }), (0, b.__)("Session Recording", "ohmylms")), a && React.createElement(Uo, {
     tone: "neutral"
   }, (0, b.__)("Live session ended", "ohmylms"))), n === Co && React.createElement(Zo, c), "processing" === n && React.createElement(Ko, null), n === xo && React.createElement(oi, s));
@@ -699,7 +699,7 @@ var di = function (e) {
     type: l,
     onClick: r,
     disabled: o,
-    className: "omlms-lcm-btn omlms-lcm-btn--".concat(n, " ").concat(d).trim()
+    className: "ohmylms-lcm-btn ohmylms-lcm-btn--".concat(n, " ").concat(d).trim()
   }, u, m);
 };
 
@@ -717,7 +717,7 @@ var pi = function (e) {
     u = void 0 === c ? "" : c;
   return React.createElement("button", {
     type: "button",
-    className: "omlms-lcm-iconbtn ".concat(u).trim(),
+    className: "ohmylms-lcm-iconbtn ".concat(u).trim(),
     onClick: n,
     "aria-label": r,
     disabled: l
@@ -743,14 +743,14 @@ var vi = function (e) {
     d = void 0 !== s && s,
     m = e.saveLabel;
   return React.createElement("div", {
-    className: "omlms-lcm-topbar"
+    className: "ohmylms-lcm-topbar"
   }, React.createElement("div", {
-    className: "omlms-lcm-topbar__title"
+    className: "ohmylms-lcm-topbar__title"
   }, t), React.createElement("div", {
-    className: "omlms-lcm-topbar__actions"
+    className: "ohmylms-lcm-topbar__actions"
   }, !l && React.createElement(mi, {
     variant: "text",
-    className: "omlms-lcm-topbar__toggle",
+    className: "ohmylms-lcm-topbar__toggle",
     onClick: o,
     icon: React.createElement(po, {
       name: "settings",
@@ -758,7 +758,7 @@ var vi = function (e) {
     })
   }, (0, b.__)("Settings", "ohmylms")), React.createElement(mi, {
     variant: "text",
-    className: "omlms-lcm-topbar__preview",
+    className: "ohmylms-lcm-topbar__preview",
     onClick: n,
     icon: React.createElement(po, {
       name: "eye",
@@ -772,7 +772,7 @@ var vi = function (e) {
     icon: "close",
     onClick: a,
     ariaLabel: (0, b.__)("Close", "ohmylms"),
-    className: "omlms-lcm-topbar__close"
+    className: "ohmylms-lcm-topbar__close"
   })));
 };
 
@@ -787,7 +787,7 @@ var hi = function (e) {
     i = e.className,
     l = void 0 === i ? "" : i;
   return React.createElement("input", {
-    className: "omlms-lcm-plain ".concat(l).trim(),
+    className: "ohmylms-lcm-plain ".concat(l).trim(),
     value: null != t ? t : "",
     placeholder: r,
     disabled: o,
@@ -805,7 +805,7 @@ var bi = function (e) {
     r = e.disabled,
     a = void 0 !== r && r;
   return React.createElement(yi, {
-    className: "omlms-lcm-title__topic",
+    className: "ohmylms-lcm-title__topic",
     value: t,
     disabled: a,
     placeholder: (0, b.__)("Enter Meeting Topic", "ohmylms"),
@@ -869,7 +869,7 @@ var Ei = function (e) {
     }((0, g.useState)(t), 2),
     i = o[0];
   return o[1], React.createElement("div", {
-    className: "omlms-lcm-agenda ".concat(a ? " is-disabled" : "")
+    className: "ohmylms-lcm-agenda ".concat(a ? " is-disabled" : "")
   }, React.createElement(ne, {
     content: i || "",
     onContentChange: function (e) {
@@ -890,9 +890,9 @@ var Ri = function (e) {
     a = e.disabled,
     o = void 0 !== a && a;
   return e.cover, React.createElement("div", {
-    className: "omlms-lcm-editor"
+    className: "ohmylms-lcm-editor"
   }, React.createElement("div", {
-    className: "omlms-lcm-editor__inner"
+    className: "ohmylms-lcm-editor__inner"
   }, React.createElement(_i, {
     value: t,
     onChange: r,
@@ -912,15 +912,15 @@ var Ci = function (e) {
     r = void 0 !== n && n,
     a = e.tooltip;
   return React.createElement("div", {
-    className: "omlms-lcm-label"
+    className: "ohmylms-lcm-label"
   }, React.createElement("span", null, t, r && React.createElement("span", {
-    className: "omlms-lcm-label__req"
+    className: "ohmylms-lcm-label__req"
   }, "*")), a && React.createElement(_o, {
     text: a
   }, React.createElement(po, {
     name: "info",
     size: 15,
-    className: "omlms-lcm-label__info"
+    className: "ohmylms-lcm-label__info"
   })));
 };
 
@@ -1009,11 +1009,11 @@ var ji = function (e) {
       return e.label.toLowerCase().includes(f.toLowerCase());
     }) : a;
   return React.createElement("div", {
-    className: "omlms-lcm-select".concat(u ? " is-disabled" : "").concat(d ? " is-open" : ""),
+    className: "ohmylms-lcm-select".concat(u ? " is-disabled" : "").concat(d ? " is-open" : ""),
     ref: h
   }, React.createElement("button", {
     type: "button",
-    className: "omlms-lcm-select__control",
+    className: "ohmylms-lcm-select__control",
     disabled: u,
     onClick: function () {
       return m(function (e) {
@@ -1026,9 +1026,9 @@ var ji = function (e) {
     name: "chevron-down",
     size: 18
   })), d && React.createElement("div", {
-    className: "omlms-lcm-select__menu"
+    className: "ohmylms-lcm-select__menu"
   }, l && React.createElement("div", {
-    className: "omlms-lcm-select__search"
+    className: "ohmylms-lcm-select__search"
   }, React.createElement(po, {
     name: "search",
     size: 15
@@ -1040,15 +1040,15 @@ var ji = function (e) {
     },
     placeholder: (0, b.__)("Search…", "ohmylms")
   })), React.createElement("ul", {
-    className: "omlms-lcm-select__list"
+    className: "ohmylms-lcm-select__list"
   }, 0 === _.length && React.createElement("li", {
-    className: "omlms-lcm-select__empty"
+    className: "ohmylms-lcm-select__empty"
   }, (0, b.__)("No matches", "ohmylms")), _.map(function (e) {
     return React.createElement("li", {
       key: e.value
     }, React.createElement("button", {
       type: "button",
-      className: "omlms-lcm-select__opt".concat(e.value === t ? " is-selected" : ""),
+      className: "ohmylms-lcm-select__opt".concat(e.value === t ? " is-selected" : ""),
       onClick: function () {
         null == n || n(e.value), m(!1), v("");
       }
@@ -1067,7 +1067,7 @@ var Mi = function (e) {
     i = e.className,
     l = void 0 === i ? "" : i;
   return React.createElement("input", {
-    className: "omlms-lcm-input ".concat(l).trim(),
+    className: "ohmylms-lcm-input ".concat(l).trim(),
     type: "text",
     inputMode: "numeric",
     value: null != t ? t : "",

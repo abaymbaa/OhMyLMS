@@ -188,7 +188,7 @@ export function createQuizList(readRuntime) {
                     return (
                       (e.n = 1),
                       l()({
-                        path: '/creator-lms/v1/courses',
+                        path: '/ohmylms/v1/courses',
                       })
                     );
                   case 1:
@@ -433,7 +433,7 @@ export function createQuizList(readRuntime) {
                       filterByStatus: F,
                       filterByStatusOptions: se,
                       formateCategory: !1,
-                      className: 'omlms-quiz-listing-filter-card',
+                      className: 'ohmylms-quiz-listing-filter-card',
                     })}
                   </React.Fragment>
                 )}

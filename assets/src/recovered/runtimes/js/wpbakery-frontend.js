@@ -6,13 +6,13 @@
   'use strict';
 
   /**
-   * Initialize CreatorLMS carousels
+   * Initialize OhMyLMS carousels
    */
   function initCarousels($container) {
     // Wait a bit to ensure DOM is ready
     setTimeout(function () {
       // Find carousel wrappers
-      var $carousels = $container ? $container.find('.creator-lms-carousel-wrapper') : $('.creator-lms-carousel-wrapper');
+      var $carousels = $container ? $container.find('.ohmylms-carousel-wrapper') : $('.ohmylms-carousel-wrapper');
       if ($carousels.length) {
         $carousels.each(function () {
           var $carousel = $(this);
@@ -55,7 +55,7 @@
               }]
             });
           } catch (e) {
-            console.error('CreatorLMS: Error initializing carousel', e);
+            console.error('OhMyLMS: Error initializing carousel', e);
           }
         });
       }
@@ -68,12 +68,12 @@
     if (typeof window.vc !== 'undefined') {
       // Listen for shortcode updates
       window.vc.events.on('shortcodes:add', function (model) {
-        if (model.get('shortcode') === 'creator_lms_course_list') {
+        if (model.get('shortcode') === 'ohmylms_course_list') {
           initCarousels();
         }
       });
       window.vc.events.on('shortcodeView:updated', function (view) {
-        if (view.model.get('shortcode') === 'creator_lms_course_list') {
+        if (view.model.get('shortcode') === 'ohmylms_course_list') {
           // Destroy existing slick instances in this view
           view.$el.find('.slick-initialized').each(function () {
             $(this).slick('unslick');
@@ -83,7 +83,7 @@
         }
       });
       window.vc.events.on('shortcodeView:ready', function (view) {
-        if (view.model.get('shortcode') === 'creator_lms_course_list') {
+        if (view.model.get('shortcode') === 'ohmylms_course_list') {
           initCarousels(view.$el);
         }
       });

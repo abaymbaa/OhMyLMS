@@ -1,13 +1,15 @@
-import { createElement, Fragment, useState } from '@wordpress/element';
+import { createElement, Fragment, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { PeopleTabs } from '../schools/PeopleTabs';
 import { useStudents } from './useStudents';
+import { ListTableFrame } from './ListTableFrame';
+import { PeopleDirectory } from '../schools/PeopleDirectory';
+import { AddModal } from '../schools/AddModal';
 
 export function createStudentList(readRuntime) {
-  return function StudentList() {
+  function StudentTable() {
     const {
       I: Controls,
-      YG: Header,
-      Ea: Card,
       aY: Filters,
       sN: { A: Table },
       e9: NameCell,
@@ -170,87 +172,86 @@ export function createStudentList(readRuntime) {
     return (
       <Fragment>
         {contextHolder}
-        <Controls.ContainerWP>
-          <Header title={__('All Students', 'ohmylms')} showAddButton={false} />
-          {students.error && (
-            <div role="alert">
-              {students.error}{' '}
-              <button type="button" onClick={students.reload}>
-                {__('Retry', 'ohmylms')}
-              </button>
-            </div>
-          )}
-          <Card isBorderless minHeight="calc(100vh - 200px)">
-            <Controls.SpacerWP padding={5}>
-              {selected.length ? (
-                <BulkActions
-                  key={selected.join(',')}
-                  items={selected}
-                  setItems={setSelected}
-                  bulksActions={[
-                    {
-                      label: __('Block', 'ohmylms'),
-                      value: 'block',
-                      action: () => setConfirmation({ ids: selected, blocked: true }),
-                    },
-                  ]}
-                />
-              ) : (
-                <Filters
-                  handleSearch={(search) => {
-                    setSelected([]);
-                    students.updateQuery({ search });
-                  }}
-                  searchPlaceholder={__('Search Students', 'ohmylms')}
-                  handleFilterByDays={(value) =>
-                    students.updateQuery({
-                      dateFilter: Array.isArray(value)
-                        ? value.map((day) => date()(day).format('YYYY-MM-DD'))
-                        : value,
-                    })
-                  }
-                  filterByDays={students.query.dateFilter}
-                  filterByDaysOptions={dateOptions}
-                  categories={[]}
-                  currentPage={students.query.page}
-                  totalItems={students.total}
-                  showFilterByPriceType={false}
-                  showFilterByCategory={false}
-                  showFilterByStatus={false}
-                />
-              )}
-              <Table
-                rowKey="user_id"
-                columns={sortableColumns}
-                dataSource={students.students}
-                rowSelection={{ selectedRowKeys: selected, onChange: setSelected }}
-                pagination={false}
-                loading={students.loading}
-                className="student-listing-table"
-                locale={{
-                  emptyText: (
-                    <Empty
-                      icon={<EmptyIcon />}
-                      title={__('No Students yet!', 'ohmylms')}
-                      description={__('Students with enrollments will appear here.', 'ohmylms')}
-                    />
-                  ),
-                }}
+        {students.error && (
+          <div role="alert">
+            {students.error}{' '}
+            <button type="button" onClick={students.reload}>
+              {__('Retry', 'ohmylms')}
+            </button>
+          </div>
+        )}
+        <ListTableFrame
+          readRuntime={readRuntime}
+          toolbar={
+            selected.length ? (
+              <BulkActions
+                key={selected.join(',')}
+                items={selected}
+                setItems={setSelected}
+                bulksActions={[
+                  {
+                    label: __('Block', 'ohmylms'),
+                    value: 'block',
+                    action: () => setConfirmation({ ids: selected, blocked: true }),
+                  },
+                ]}
               />
-              {!students.loading && students.total > students.query.perPage && (
-                <Pagination
-                  total={students.total}
-                  currentPage={students.query.page}
-                  perPage={students.query.perPage}
-                  onPageChange={(page) => {
-                    setSelected([]);
-                    students.updateQuery({ page });
-                  }}
+            ) : (
+              <Filters
+                handleSearch={(search) => {
+                  setSelected([]);
+                  students.updateQuery({ search });
+                }}
+                searchPlaceholder={__('Search Students', 'ohmylms')}
+                handleFilterByDays={(value) =>
+                  students.updateQuery({
+                    dateFilter: Array.isArray(value)
+                      ? value.map((day) => date()(day).format('YYYY-MM-DD'))
+                      : value,
+                  })
+                }
+                filterByDays={students.query.dateFilter}
+                filterByDaysOptions={dateOptions}
+                categories={[]}
+                currentPage={students.query.page}
+                totalItems={students.total}
+                showFilterByPriceType={false}
+                showFilterByCategory={false}
+                showFilterByStatus={false}
+              />
+            )
+          }
+        >
+          <Table
+            rowKey="user_id"
+            columns={sortableColumns}
+            dataSource={students.students}
+            rowSelection={{ selectedRowKeys: selected, onChange: setSelected }}
+            pagination={false}
+            loading={students.loading}
+            className="student-listing-table"
+            locale={{
+              emptyText: (
+                <Empty
+                  icon={<EmptyIcon />}
+                  title={__('No Students yet!', 'ohmylms')}
+                  description={__('Students with enrollments will appear here.', 'ohmylms')}
                 />
-              )}
-            </Controls.SpacerWP>
-          </Card>
-        </Controls.ContainerWP>
+              ),
+            }}
+          />
+          {!students.loading && students.total > students.query.perPage && (
+            <Pagination
+              total={students.total}
+              currentPage={students.query.page}
+              perPage={students.query.perPage}
+              onPageChange={(page) => {
+                setSelected([]);
+                students.updateQuery({ page });
+              }}
+            />
+          )}
+        </ListTableFrame>
         {confirmation && (
           <Confirm
             isOpen
@@ -275,6 +276,67 @@ export function createStudentList(readRuntime) {
           />
         )}
       </Fragment>
+    );
+  }
+  return function StudentList() {
+    const { I: Controls, YG: Header } = readRuntime();
+    const currentTab = () => {
+      const value = new URLSearchParams(window.location.hash.split('?')[1]).get('tab');
+      return ['teachers', 'parents', 'users', 'classes', 'schools'].includes(value)
+        ? value
+        : 'students';
+    };
+    const [tab, setTab] = useState(currentTab);
+    const [adding, setAdding] = useState(false);
+    const [version, setVersion] = useState(0);
+    useEffect(() => {
+      const sync = () => setTab(currentTab());
+      window.addEventListener('hashchange', sync);
+      window.addEventListener('popstate', sync);
+      return () => {
+        window.removeEventListener('hashchange', sync);
+        window.removeEventListener('popstate', sync);
+      };
+    }, []);
+    return (
+      <Controls.ContainerWP>
+        <Header title={__('Students', 'ohmylms')} showAddButton={false} />
+        <PeopleTabs
+          active={tab}
+          onChange={(next) => {
+            window.history.pushState(
+              null,
+              '',
+              `#/students${next === 'students' ? '' : `?tab=${next}`}`,
+            );
+            setTab(next);
+          }}
+        />
+        {tab === 'students' ? (
+          <>
+            <div style={{ marginBottom: 16 }}>
+              <Controls.ButtonWP
+                variant="secondary"
+                onClick={() => setAdding(true)}
+                children={__('Add student', 'ohmylms')}
+              />
+            </div>
+            {adding && (
+              <AddModal
+                kind="students"
+                onClose={() => setAdding(false)}
+                onSaved={() => {
+                  setAdding(false);
+                  setVersion((value) => value + 1);
+                }}
+              />
+            )}
+            <StudentTable key={version} />
+          </>
+        ) : (
+          <PeopleDirectory key={tab} tab={tab} readRuntime={readRuntime} />
+        )}
+      </Controls.ContainerWP>
     );
   };
 }

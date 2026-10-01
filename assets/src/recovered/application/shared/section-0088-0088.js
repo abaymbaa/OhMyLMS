@@ -10,8 +10,8 @@ var GW = function (e) {
     l = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),
-    c = null === (t = window.creator_lms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
-    u = null === (n = window.creator_lms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type,
+    c = null === (t = window.ohmylms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
+    u = null === (n = window.ohmylms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type,
     s = "future" === (null == l ? void 0 : l.status) ? sn()(l.post_date.date).tz(l.post_date.timezone).local().format("YYYY-MM-DDTHH:mm:ss") : sn()().tz(c).format("YYYY-MM-DDTHH:mm:ss"),
     d = VW((0, g.useState)(s), 2),
     m = d[0],
@@ -26,11 +26,11 @@ var GW = function (e) {
   return React.createElement(React.Fragment, null, r && React.createElement(I.ModalWP, {
     onRequestClose: a,
     title: (0, b.__)("Schedule", "ohmylms"),
-    className: "omlms-schedule-modal",
+    className: "ohmylms-schedule-modal",
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0
   }, React.createElement("div", {
-    className: "omlms-calendar",
+    className: "ohmylms-calendar",
     ref: _
   }, React.createElement(q.DateTimePicker, {
     currentDate: m,
@@ -52,7 +52,7 @@ var GW = function (e) {
   }, React.createElement(I.ButtonWP, {
     variant: "secondary",
     onClick: a,
-    className: "omlms-calendar-button outlined"
+    className: "ohmylms-calendar-button outlined"
   }, (0, b.__)("Cancel", "ohmylms")), React.createElement(I.ButtonWP, {
     variant: "primary",
     disabled: E || !m,
@@ -73,16 +73,13 @@ var GW = function (e) {
         }), a();
       } else S((0, b.__)("Please select a future date", "ohmylms"));
     },
-    className: "omlms-calendar-button"
-  }, (0, b.__)("Save", "ohmylms"))))), React.createElement("style", null, "\n.omlms-schedule-modal .components-datetime__date {\n    display: none;\n}\n    \n.omlms-schedule-modal .components-datetime__timezone {\n    display: none;\n}\n\n"));
+    className: "ohmylms-calendar-button"
+  }, (0, b.__)("Save", "ohmylms"))))), React.createElement("style", null, "\n.ohmylms-schedule-modal .components-datetime__date {\n    display: none;\n}\n    \n.ohmylms-schedule-modal .components-datetime__timezone {\n    display: none;\n}\n\n"));
 };
-
 const UW = (0, g.memo)(GW);
-
 var qW = n(57677),
   YW = n(39214),
   QW = n(22642);
-
 function ZW(e) {
   return function (e) {
     if (Array.isArray(e)) return $W(e);
@@ -98,13 +95,11 @@ function ZW(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function $W(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var KW = function () {
   return React.createElement("svg", {
     width: "16",
@@ -119,16 +114,15 @@ var KW = function () {
     clipRule: "evenodd"
   }));
 };
-
 function JW() {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useSelect)(function (e) {
       return e(T.default).getAllIntegrations();
     }, []),
     n = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),
-    r = (0, L.useFeatureAccess)("funnel"),
+    r = true,
     a = (0, g.useMemo)(function () {
       var a, o, i;
       return [{
@@ -143,7 +137,7 @@ function JW() {
           icon: YW.A
         }),
         completed: !1
-      }].concat(ZW(e && (null != t && null !== (a = t.funnel) && void 0 !== a && a.is_enable && r || !r && (null == n || null === (o = n.funnel_steps) || void 0 === o ? void 0 : o.length) > 0) ? [{
+      }].concat(ZW(null != t && null !== (a = t.funnel) && void 0 !== a && a.is_enable && r || false ? [{
         id: "funnel",
         title: (0, b.__)("One-Click Offer", "ohmylms"),
         icon: React.createElement(qW.A, {
@@ -170,7 +164,6 @@ function JW() {
     totalSteps: a.length
   };
 }
-
 function XW(e) {
   return XW = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -178,7 +171,6 @@ function XW(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, XW(e);
 }
-
 function ez(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -189,7 +181,6 @@ function ez(e, t) {
   }
   return n;
 }
-
 function tz(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -201,7 +192,6 @@ function tz(e) {
   }
   return e;
 }
-
 function nz(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -222,7 +212,6 @@ function nz(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function rz(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -262,15 +251,13 @@ function rz(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function az(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const oz = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.activeStep,
     r = (e.setActiveStep, e.courseDescription),
     a = e.setLocalCourse,
@@ -334,14 +321,14 @@ const oz = function (e) {
     };
   return h().createElement(h().Fragment, null, h().createElement(I.CardWP, {
     padding: "10px 10px 10px 20px",
-    className: "omlms-top-navigation ".concat(v ? " ai-course" : "", " creatorlms-active-step-").concat(n)
+    className: "ohmylms-top-navigation ".concat(v ? " ai-course" : "", " ohmylms-active-step-").concat(n)
   }, h().createElement(I.FlexWP, {
     align: "center",
     justify: "space-between",
-    className: "omlms-top-navigation-inner omlms-steps-".concat(M)
+    className: "ohmylms-top-navigation-inner ohmylms-steps-".concat(M)
   }, h().createElement(I.FlexItemWP, {
     flex: 1,
-    className: "omlms-back-button-wrapper"
+    className: "ohmylms-back-button-wrapper"
   }, h().createElement(I.TooltipWP, {
     title: (0, b.__)("Exit the builder", "ohmylms")
   }, h().createElement(Nr, {
@@ -350,16 +337,16 @@ const oz = function (e) {
     }
   }))), h().createElement(I.FlexItemWP, {
     flex: 2,
-    className: "omlms-course-single-steps-item"
+    className: "ohmylms-course-single-steps-item"
   }, h().createElement(I.FlexWP, {
     align: "center",
     justify: "center",
     gap: 10,
-    className: "omlms-course-single-steps-container"
+    className: "ohmylms-course-single-steps-container"
   }, A.map(function (e, t) {
     return h().createElement("div", {
       key: e.id,
-      className: "omlms-course-single-steps-wrapper ".concat(n === e.id ? "active" : "", " ").concat(A.findIndex(function (e) {
+      className: "ohmylms-course-single-steps-wrapper ".concat(n === e.id ? "active" : "", " ").concat(A.findIndex(function (e) {
         return e.id === n;
       }) > t ? "completed" : "", " ").concat(O ? "completed" : "")
     }, h().createElement(I.ButtonWP, {
@@ -371,11 +358,11 @@ const oz = function (e) {
         var t;
       },
       disabled: v || o,
-      className: "omlms-course-single-steps ".concat(n === e.id ? "active" : "", " ").concat(A.findIndex(function (e) {
+      className: "ohmylms-course-single-steps ".concat(n === e.id ? "active" : "", " ").concat(A.findIndex(function (e) {
         return e.id === n;
       }) > t ? "completed" : "", " ").concat(O ? "completed" : "")
     }, h().createElement("div", {
-      className: "omlms-course-single-steps-indicator"
+      className: "ohmylms-course-single-steps-indicator"
     }, A.findIndex(function (e) {
       return e.id === n;
     }) > t || O ? h().createElement(q.Icon, {
@@ -383,7 +370,7 @@ const oz = function (e) {
     }) : t + 1), e.title));
   }))), h().createElement(I.FlexItemWP, {
     flex: 1,
-    className: "omlms-course-actions-wrapper"
+    className: "ohmylms-course-actions-wrapper"
   }, h().createElement(I.FlexWP, {
     align: "center",
     justify: "flex-end",
@@ -436,23 +423,22 @@ const oz = function (e) {
     },
     loading: o
   }))), h().createElement(I.DropdownMenuWP, {
-    className: "omlms-more-options-dropdown",
-    contentClassName: "omlms-more-options-dropdown-content",
+    className: "ohmylms-more-options-dropdown",
+    contentClassName: "ohmylms-more-options-dropdown-content",
     icon: h().createElement(q.Icon, {
       icon: Sc.A
     }),
     controls: [{
       title: (0, b.__)("Integrations", "ohmylms"),
       onClick: function () {
-        v || (t ? l && l("course", c, u) : S(!0));
+        v || l && l("course", c, u);
       }
     }, {
       title: (0, b.__)("Course Automation", "ohmylms"),
       onClick: function () {
         var e;
         if (!v) {
-          if (t) return null !== (e = window) && void 0 !== e && null !== (e = e.creator_lms_params) && void 0 !== e && e.is_mailmint_active ? void i("course", c, u) : (S(!0), p.updateProModalTitle((0, b.__)("Missing Mail Mint Plugin!", "ohmylms")), p.updateProModalContent((0, b.__)("Mail Mint is required to enable automation. Please install and activate the plugin.", "ohmylms")), p.updateProModalButtonText((0, b.__)("Install and Activate", "ohmylms")), void p.updateProModalButtonAction("activate-mail-mint"));
-          S(!0);
+          return null !== (e = window) && void 0 !== e && null !== (e = e.ohmylms_params) && void 0 !== e && e.is_mailmint_active ? void i("course", c, u) : (S(!0), p.updateProModalTitle((0, b.__)("Missing Mail Mint Plugin!", "ohmylms")), p.updateProModalContent((0, b.__)("Mail Mint is required to enable automation. Please install and activate the plugin.", "ohmylms")), p.updateProModalButtonText((0, b.__)("Install and Activate", "ohmylms")), void p.updateProModalButtonAction("activate-mail-mint"));
         }
       }
     }, {
@@ -472,7 +458,6 @@ const oz = function (e) {
     onSave: z
   })));
 };
-
 function iz(e) {
   return iz = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -480,7 +465,6 @@ function iz(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, iz(e);
 }
-
 function lz(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -491,7 +475,6 @@ function lz(e, t) {
   }
   return n;
 }
-
 function cz(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -503,7 +486,6 @@ function cz(e) {
   }
   return e;
 }
-
 function uz(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -524,7 +506,6 @@ function uz(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function sz(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -564,13 +545,11 @@ function sz(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function dz(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function mz() {
   var e,
     t,
@@ -584,7 +563,7 @@ function mz() {
       return e(T.default).getGamificationSettings();
     }, []);
   sn().extend(NW()), sn().extend(lo());
-  var l = (0, y.useDispatch)("creator-lms/store"),
+  var l = (0, y.useDispatch)("ohmylms/store"),
     c = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),
@@ -614,7 +593,7 @@ function mz() {
   return h().createElement(h().Fragment, null, h().createElement(I.FlexWP, {
     justify: "space-between",
     align: "flex-start",
-    className: "omlms-single-settings settings-price omlms-".concat(S)
+    className: "ohmylms-single-settings settings-price ohmylms-".concat(S)
   }, h().createElement(I.FlexItemWP, {
     style: {
       flex: "5"
@@ -658,16 +637,16 @@ function mz() {
     direction: "column",
     justify: "flex-end",
     align: "flex-end",
-    className: "omlms-settings-right"
+    className: "ohmylms-settings-right"
   }, h().createElement("div", {
-    className: "omlms-price-range",
+    className: "ohmylms-price-range",
     style: {
       width: "100%"
     }
   }, h().createElement(I.FlexWP, {
     gap: 4
   }, h().createElement(I.FlexBlockWP, {
-    className: "omlms-single-price"
+    className: "ohmylms-single-price"
   }, h().createElement(I.TextWP, {
     as: "span",
     variant: "muted"
@@ -682,7 +661,7 @@ function mz() {
       return P(0, "regular_price");
     },
     placeholder: (0, b.__)("0.00", "ohmylms"),
-    className: "omlms-course-settings-pricing-input-regular omlms-price-input",
+    className: "ohmylms-course-settings-pricing-input-regular ohmylms-price-input",
     onChange: function (e) {
       /^\d*\.?\d*$/.test(e) && function (e) {
         Number(x) > Number(e) && "paid" === S ? (l.setIsValidCourseSettings(!1), f((0, b.__)("Discount price should be less than regular price", "ohmylms"))) : 0 == e ? (l.setIsValidCourseSettings(!1), f((0, b.__)("Regular price should be greater than 0", "ohmylms"))) : "" !== e && e ? (l.setIsValidCourseSettings(!0), f("")) : (l.setIsValidCourseSettings(!1), f((0, b.__)("Regular price can not be empty", "ohmylms"))), l.setCourse(cz(cz({}, c), {}, {
@@ -694,7 +673,7 @@ function mz() {
       (["e", "E", "+", "-", "/", "\\"].includes(e.key) || /[a-zA-Z]/.test(e.key) && !["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete", "Enter", "."].includes(e.key)) && e.preventDefault();
     }
   })), h().createElement(I.FlexBlockWP, {
-    className: "omlms-single-price"
+    className: "ohmylms-single-price"
   }, h().createElement(I.TextWP, {
     as: "span",
     variant: "muted"
@@ -709,7 +688,7 @@ function mz() {
       return P(0, "sale_price");
     },
     placeholder: (0, b.__)("0.00", "ohmylms"),
-    className: "omlms-course-settings-pricing-input-discount omlms-price-input",
+    className: "ohmylms-course-settings-pricing-input-discount ohmylms-price-input",
     onChange: function (e) {
       (/^\d*\.?\d*$/.test(e) || "" === e || null === e) && function (e) {
         var t, n, r, a;
@@ -792,7 +771,7 @@ function mz() {
   }).value) && h().createElement(h().Fragment, null, h().createElement(I.FlexWP, {
     gap: 4
   }, h().createElement(I.FlexBlockWP, {
-    className: "omlms-single-price"
+    className: "ohmylms-single-price"
   }, h().createElement(I.SpacerWP, {
     marginBottom: 1
   }), h().createElement(I.TextWP, {
@@ -809,7 +788,7 @@ function mz() {
       return P(0, "purchase_point");
     },
     placeholder: (0, b.__)("0", "ohmylms"),
-    className: "omlms-course-settings-pricing-input-discount omlms-price-input",
+    className: "ohmylms-course-settings-pricing-input-discount ohmylms-price-input",
     onChange: function (e) {
       (/^\d*\.?\d*$/.test(e) || "" === e || null === e) && function (e) {
         o ? l.setCourse(cz(cz({}, c), {}, {
@@ -829,7 +808,6 @@ function mz() {
     }
   }, (0, b.__)("Learners can purchase this course using either money or points, based on the selected method.", "ohmylms"))))))))))));
 }
-
 var pz = n(82140),
   fz = function (e) {
     var t = e.capacity,
@@ -880,5 +858,4 @@ var pz = n(82140),
       color: "#ffcc00"
     }, (0, b.__)("Capacity is set to 0. No students can enroll in this course.", "ohmylms"))))));
   };
-
 const vz = (0, g.memo)(fz);

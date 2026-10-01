@@ -48,7 +48,7 @@ export function createGoogleMeetSettings(readRuntime) {
                         (t.p = 0),
                         (t.n = 1),
                         l()({
-                          path: '/creatorlms/v1/googlemeet/settings/credentials',
+                          path: '/ohmylms/v1/googlemeet/settings/credentials',
                           method: 'GET',
                         })
                       );
@@ -126,7 +126,7 @@ export function createGoogleMeetSettings(readRuntime) {
                         (e.p = 2),
                         (e.n = 3),
                         l()({
-                          path: '/creatorlms/v1/googlemeet/settings/credentials',
+                          path: '/ohmylms/v1/googlemeet/settings/credentials',
                           method: 'POST',
                           data: a,
                         })
@@ -180,7 +180,7 @@ export function createGoogleMeetSettings(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: '/creatorlms/v1/googlemeet/settings/oauth-url',
+                          path: '/ohmylms/v1/googlemeet/settings/oauth-url',
                           method: 'GET',
                         })
                       );

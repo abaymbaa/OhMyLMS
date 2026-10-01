@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Bricks\Elements;
+namespace OhMyLMS\Bricks\Elements;
 
 use Bricks\Element;
 
@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class OfferButtonElement extends Element {
 
-    public $category     = 'creator-lms';
-    public $name         = 'creatorlms-offer-button';
+    public $category     = 'ohmylms';
+    public $name         = 'ohmylms-offer-button';
     public $icon         = 'ti-gift';
-    public $css_selector = '.creatorlms-offer-btn';
+    public $css_selector = '.ohmylms-offer-btn';
 
     public function get_label() {
         return __( 'Offer Button', 'ohmylms' );
@@ -42,7 +42,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Background Color', 'ohmylms' ),
             'type'    => 'color',
             'default' => '#6e42d3',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'background-color']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'background-color']],
         ];
 
         $this->controls['color'] = [
@@ -50,7 +50,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Text Color', 'ohmylms' ),
             'type'    => 'color',
             'default' => '#fff',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'color']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'color']],
         ];
 
         $this->controls['border'] = [
@@ -58,7 +58,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Border', 'ohmylms' ),
             'type'    => 'text',
             'default' => '',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'border']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'border']],
         ];
 
         $this->controls['padding'] = [
@@ -67,7 +67,7 @@ class OfferButtonElement extends Element {
             'type'    => 'dimensions',
             'units'   => ['px','em','%'],
             'default' => '12px 24px',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'padding']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'padding']],
         ];
 
         $this->controls['margin'] = [
@@ -76,7 +76,7 @@ class OfferButtonElement extends Element {
             'type'    => 'dimensions',
             'units'   => ['px','em','%'],
             'default' => '',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'margin']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'margin']],
         ];
 
         $this->controls['font_size'] = [
@@ -84,7 +84,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Font Size', 'ohmylms' ),
             'type'    => 'text',
             'default' => '16px',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'font-size']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'font-size']],
         ];
 
         $this->controls['font_weight'] = [
@@ -92,7 +92,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Font Weight', 'ohmylms' ),
             'type'    => 'text',
             'default' => '',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'font-weight']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'font-weight']],
         ];
 
         $this->controls['border_radius'] = [
@@ -100,7 +100,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Border Radius', 'ohmylms' ),
             'type'    => 'text',
             'default' => '4px',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'border-radius']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'border-radius']],
         ];
 
         $this->controls['width'] = [
@@ -108,7 +108,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Width', 'ohmylms' ),
             'type'    => 'text',
             'default' => '',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'width']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'width']],
         ];
 
         $this->controls['height'] = [
@@ -116,7 +116,7 @@ class OfferButtonElement extends Element {
             'label'   => __( 'Height', 'ohmylms' ),
             'type'    => 'text',
             'default' => '',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'height']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'height']],
         ];
 
         // Positioning and alignment controls
@@ -131,7 +131,7 @@ class OfferButtonElement extends Element {
                 'flex'         => __( 'Flex', 'ohmylms' ),
             ],
             'default' => 'inline-block',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'display']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'display']],
         ];
 
         $this->controls['vertical_align'] = [
@@ -147,7 +147,7 @@ class OfferButtonElement extends Element {
                 'text-bottom' => __( 'Text Bottom', 'ohmylms' ),
             ],
             'default' => 'baseline',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'vertical-align']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'vertical-align']],
         ];
 
         $this->controls['box_sizing'] = [
@@ -159,7 +159,7 @@ class OfferButtonElement extends Element {
                 'border-box'  => __( 'Border Box', 'ohmylms' ),
             ],
             'default' => 'border-box',
-            'css'     => [['selector' => '{{WRAPPER}} .creator-lms-offer-btn','property' => 'box-sizing']],
+            'css'     => [['selector' => '{{WRAPPER}} .ohmylms-offer-btn','property' => 'box-sizing']],
         ];
 
         // Advanced controls
@@ -204,7 +204,7 @@ class OfferButtonElement extends Element {
 			'vertical_align' => 'baseline',
 			'margin'         => '0px',
 			'box_sizing'     => 'border-box',
-			'class'          => '.creatorlms-offer-button',
+			'class'          => '.ohmylms-offer-button',
 		];
 
 		$settings = wp_parse_args($this->settings, $defaults);
@@ -286,8 +286,8 @@ class OfferButtonElement extends Element {
 		$action_url = $this->get_offer_action_url($settings['action']);
 
 		// Build button classes
-		$button_classes = array( 'creator-lms-offer-btn' );
-		$button_classes[] = 'creator-lms-offer-btn--' . sanitize_html_class( $settings['action'] );
+		$button_classes = array( 'ohmylms-offer-btn' );
+		$button_classes[] = 'ohmylms-offer-btn--' . sanitize_html_class( $settings['action'] );
 		
 		if ( ! empty( $settings['class'] ) ) {
 			$custom_classes = explode( ' ', $settings['class'] );
@@ -319,7 +319,7 @@ class OfferButtonElement extends Element {
 			$style .= 'border:' . esc_attr($settings['border']) . ';';
 		}
 
-		$this->set_attribute('_root', 'class', 'creatorlms-offer-button ' . esc_attr($settings['class']));
+		$this->set_attribute('_root', 'class', 'ohmylms-offer-button ' . esc_attr($settings['class']));
 		echo '<div '.$this->render_attributes('_root').'>';
 		
 		printf(
@@ -339,8 +339,8 @@ class OfferButtonElement extends Element {
 	 */
 	private function get_offer_action_url($action) {
 		// Get funnel session data
-		if ( class_exists('\OMLMS\Integrations\Funnel\Includes\FunnelManager') ) {
-			$funnel_data = \OMLMS\Integrations\Funnel\Includes\FunnelManager::get_funnel_session();
+		if ( class_exists('\OhMyLMS\Integrations\Funnel\Includes\FunnelManager') ) {
+			$funnel_data = \OhMyLMS\Integrations\Funnel\Includes\FunnelManager::get_funnel_session();
 			$order_id = $funnel_data['order_id'] ?? '';
 			$current_step = $funnel_data['current_step'] ?? '';
 			
@@ -375,7 +375,7 @@ class OfferButtonElement extends Element {
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script( 'omlms-frontend' );
-        wp_enqueue_script( 'omlms-add-to-cart' );
+        wp_enqueue_script( 'ohmylms-frontend' );
+        wp_enqueue_script( 'ohmylms-add-to-cart' );
     }
 }

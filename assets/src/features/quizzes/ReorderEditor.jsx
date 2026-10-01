@@ -120,7 +120,7 @@ export function createReorderEditor(readRuntime) {
             >
               <Controls.FlexWP justify={'flex-start'} gap={4}>
                 {React.createElement(gc, {
-                  className: 'omlms-drag-icon',
+                  className: 'ohmylms-drag-icon',
                 })}
                 <Controls.FlexBlockWP>
                   {React.createElement(qd, {

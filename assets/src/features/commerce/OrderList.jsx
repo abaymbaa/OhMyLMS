@@ -209,12 +209,12 @@ export function createOrderList(readRuntime) {
     const statusOptions = ReactHooks.useMemo(
       () => [
         { value: 'any', label: I18n.__('All Status', 'ohmylms') },
-        { value: 'omlms-completed', label: I18n.__('Completed', 'ohmylms') },
-        { value: 'omlms-pending', label: I18n.__('Pending', 'ohmylms') },
-        { value: 'omlms-on-hold', label: I18n.__('On Hold', 'ohmylms') },
-        { value: 'omlms-processing', label: I18n.__('Processing', 'ohmylms') },
-        { value: 'omlms-cancelled', label: I18n.__('Cancelled', 'ohmylms') },
-        { value: 'omlms-refunded', label: I18n.__('Refunded', 'ohmylms') },
+        { value: 'ohmylms-completed', label: I18n.__('Completed', 'ohmylms') },
+        { value: 'ohmylms-pending', label: I18n.__('Pending', 'ohmylms') },
+        { value: 'ohmylms-on-hold', label: I18n.__('On Hold', 'ohmylms') },
+        { value: 'ohmylms-processing', label: I18n.__('Processing', 'ohmylms') },
+        { value: 'ohmylms-cancelled', label: I18n.__('Cancelled', 'ohmylms') },
+        { value: 'ohmylms-refunded', label: I18n.__('Refunded', 'ohmylms') },
       ],
       [],
     );

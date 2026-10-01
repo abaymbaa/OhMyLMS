@@ -64,7 +64,7 @@ export function createCommunityCourses(readRuntime) {
                         d(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses?search='.concat(t, '&post_status=publish'),
+                          path: '/ohmylms/v1/courses?search='.concat(t, '&post_status=publish'),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export function createCommunityCourses(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses/'.concat(t),
+                          path: '/ohmylms/v1/courses/'.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',

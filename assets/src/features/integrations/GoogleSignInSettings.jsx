@@ -44,7 +44,7 @@ export function createGoogleSignInSettings(readRuntime) {
                         (t.p = 0),
                         (t.n = 1),
                         l()({
-                          path: '/creator-lms/v1/auth/google/settings',
+                          path: '/ohmylms/v1/auth/google/settings',
                         })
                       );
                     case 1:
@@ -127,7 +127,7 @@ export function createGoogleSignInSettings(readRuntime) {
                         (e.p = 2),
                         (e.n = 3),
                         l()({
-                          path: '/creator-lms/v1/auth/google/settings',
+                          path: '/ohmylms/v1/auth/google/settings',
                           method: 'POST',
                           data: {
                             client_id: a.client_id,

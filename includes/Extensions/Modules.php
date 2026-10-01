@@ -1,10 +1,10 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 /** Project modules are explicitly enabled by trusted site configuration. */
 final class Modules {
     public static function load() {
-        $enabled = defined('OMLMS_ENABLED_MODULES') ? OMLMS_ENABLED_MODULES : [];
+        $enabled = defined('OHMYLMS_ENABLED_MODULES') ? OHMYLMS_ENABLED_MODULES : [];
         $enabled = apply_filters('ohmylms_enabled_modules', $enabled);
         foreach (array_unique((array) $enabled) as $id) {
             if (!is_string($id) || !preg_match('/^[a-z][a-z0-9_-]*$/D', $id)) { continue; }

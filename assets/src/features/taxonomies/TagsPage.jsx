@@ -28,7 +28,7 @@ export function createTagsPage(readRuntime) {
       z: Notifications,
       zY,
     } = readRuntime();
-    HG('creator-lms', 'tags');
+    HG('ohmylms', 'tags');
     var e = (0, Notifications.A)(),
       t = e.openNotificationWithIcon,
       n = e.contextHolder,
@@ -78,7 +78,7 @@ export function createTagsPage(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/tags',
+                          path: '/ohmylms/v1/tags',
                         })
                       );
                     case 2:
@@ -134,7 +134,7 @@ export function createTagsPage(readRuntime) {
                       return (
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/tags/'.concat(E.term_id),
+                          path: '/ohmylms/v1/tags/'.concat(E.term_id),
                           method: 'PUT',
                           data: {
                             name: n.name,
@@ -149,7 +149,7 @@ export function createTagsPage(readRuntime) {
                       return (
                         (e.n = 4),
                         l()({
-                          path: '/creator-lms/v1/tags',
+                          path: '/ohmylms/v1/tags',
                           method: 'POST',
                           data: {
                             name: n.name,
@@ -209,7 +209,7 @@ export function createTagsPage(readRuntime) {
                       return (
                         (e.n = 4),
                         l()({
-                          path: '/creator-lms/v1/tags/'.concat(x.term_id),
+                          path: '/ohmylms/v1/tags/'.concat(x.term_id),
                           method: 'DELETE',
                         })
                       );
@@ -221,7 +221,7 @@ export function createTagsPage(readRuntime) {
                       return (
                         (e.n = 6),
                         l()({
-                          path: '/creator-lms/v1/tags/bulk',
+                          path: '/ohmylms/v1/tags/bulk',
                           method: 'DELETE',
                           data: {
                             ids: F,

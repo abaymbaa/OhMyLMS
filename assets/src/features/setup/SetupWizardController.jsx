@@ -50,13 +50,13 @@ export function createSetupWizardController(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         m({
-                          path: 'creator-lms/v1/setup-wizard/onboarding-skipped',
+                          path: 'ohmylms/v1/setup-wizard/onboarding-skipped',
                           method: 'POST',
                           data: {
                             step: t,
                           },
                           headers: {
-                            nonce: window.creator_lms_params.setup_wizard_nonce,
+                            nonce: window.ohmylms_params.setup_wizard_nonce,
                           },
                         })
                       );
@@ -86,10 +86,10 @@ export function createSetupWizardController(readRuntime) {
     return (
       (0, ReactHooks.useEffect)(function () {
         m({
-          path: 'creator-lms/v1/setup-wizard/onboarding-started',
+          path: 'ohmylms/v1/setup-wizard/onboarding-started',
           method: 'POST',
           headers: {
-            nonce: window.creator_lms_params.setup_wizard_nonce,
+            nonce: window.ohmylms_params.setup_wizard_nonce,
           },
         }).catch(function (e) {
           console.error('Failed to track onboarding started:', e);
@@ -108,7 +108,7 @@ export function createSetupWizardController(readRuntime) {
                         return (
                           (e.n = 1),
                           (0, Nte.nb)({
-                            plugin: 'creator-lms',
+                            plugin: 'ohmylms',
                             version: '1.1.16',
                             theme: {
                               color: '#6E42D3',
@@ -187,11 +187,10 @@ export function createSetupWizardController(readRuntime) {
                                                 (e.p = 0),
                                                 (e.n = 1),
                                                 m({
-                                                  path: 'creator-lms/v1/setup-wizard/onboarding-completed',
+                                                  path: 'ohmylms/v1/setup-wizard/onboarding-completed',
                                                   method: 'POST',
                                                   headers: {
-                                                    nonce:
-                                                      window.creator_lms_params.setup_wizard_nonce,
+                                                    nonce: window.ohmylms_params.setup_wizard_nonce,
                                                   },
                                                 })
                                               );
@@ -260,11 +259,10 @@ export function createSetupWizardController(readRuntime) {
                                               (e.p = 0),
                                               (e.n = 1),
                                               m({
-                                                path: 'creator-lms/v1/setup-wizard/onboarding-completed',
+                                                path: 'ohmylms/v1/setup-wizard/onboarding-completed',
                                                 method: 'POST',
                                                 headers: {
-                                                  nonce:
-                                                    window.creator_lms_params.setup_wizard_nonce,
+                                                  nonce: window.ohmylms_params.setup_wizard_nonce,
                                                 },
                                               })
                                             );
@@ -297,7 +295,7 @@ export function createSetupWizardController(readRuntime) {
                           (e.p = 3),
                           (e.n = 4),
                           m({
-                            path: 'creator-lms/v1/settings/design',
+                            path: 'ohmylms/v1/settings/design',
                           })
                         );
                       case 4:
@@ -306,7 +304,7 @@ export function createSetupWizardController(readRuntime) {
                           i.setDesignSettings(t),
                           (e.n = 5),
                           m({
-                            path: 'creator-lms/v1/settings/currency',
+                            path: 'ohmylms/v1/settings/currency',
                           })
                         );
                       case 5:

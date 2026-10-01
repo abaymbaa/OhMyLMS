@@ -60,7 +60,7 @@ export function createGeneralSettings(readRuntime) {
                           i.setLoadingSetting(!0),
                           (e.n = 1),
                           l()({
-                            path: 'creator-lms/v1/settings/general',
+                            path: 'ohmylms/v1/settings/general',
                           })
                         );
                       case 1:
@@ -69,7 +69,7 @@ export function createGeneralSettings(readRuntime) {
                           i.setGeneralSettings(t),
                           (e.n = 2),
                           l()({
-                            path: '/creator-lms/v1/page/search?value=',
+                            path: '/ohmylms/v1/page/search?value=',
                             method: 'GET',
                             headers: {
                               'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export function createGeneralSettings(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
               <MemoGeneralSettingsFields pages={u} setPages={s} />

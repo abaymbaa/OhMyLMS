@@ -164,22 +164,22 @@ var ZY = function () {
         value: "any",
         label: (0, b.__)("All Status", "ohmylms")
       }, {
-        value: "omlms-completed",
+        value: "ohmylms-completed",
         label: (0, b.__)("Completed", "ohmylms")
       }, {
-        value: "omlms-pending",
+        value: "ohmylms-pending",
         label: (0, b.__)("Pending", "ohmylms")
       }, {
-        value: "omlms-on-hold",
+        value: "ohmylms-on-hold",
         label: (0, b.__)("On Hold", "ohmylms")
       }, {
-        value: "omlms-processing",
+        value: "ohmylms-processing",
         label: (0, b.__)("Processing", "ohmylms")
       }, {
-        value: "omlms-cancelled",
+        value: "ohmylms-cancelled",
         label: (0, b.__)("Cancelled", "ohmylms")
       }, {
-        value: "omlms-refunded",
+        value: "ohmylms-refunded",
         label: (0, b.__)("Refunded", "ohmylms")
       }];
     }, []),

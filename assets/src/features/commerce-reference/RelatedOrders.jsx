@@ -18,7 +18,7 @@ export function createRelatedOrders(readRuntime) {
       key: "order_number",
       render: function (e, t) {
         var n = null;
-        return t.relationship === (0, I18n.__)("Subscription", "ohmylms") ? n = "/wp-admin/admin.php?page=creator-lms#/subscription-edit/".concat(t.id) : t.relationship !== (0, I18n.__)("Renewal Order", "ohmylms") && t.relationship !== (0, I18n.__)("Parent", "ohmylms") || (n = "/wp-admin/admin.php?page=creator-lms#/order-edit/".concat(t.id)), n ? <a href={n} target={"_blank"} rel={"noopener noreferrer"}><Controls.TextWP as={"span"} color={"#000D25"} weight={500} size={14}>{"#"}{t.id}</Controls.TextWP></a> : <Controls.TextWP as={"span"} color={"#000D25"} weight={500} size={14}>{"#"}{t.id}</Controls.TextWP>;
+        return t.relationship === (0, I18n.__)("Subscription", "ohmylms") ? n = "/wp-admin/admin.php?page=ohmylms#/subscription-edit/".concat(t.id) : t.relationship !== (0, I18n.__)("Renewal Order", "ohmylms") && t.relationship !== (0, I18n.__)("Parent", "ohmylms") || (n = "/wp-admin/admin.php?page=ohmylms#/order-edit/".concat(t.id)), n ? <a href={n} target={"_blank"} rel={"noopener noreferrer"}><Controls.TextWP as={"span"} color={"#000D25"} weight={500} size={14}>{"#"}{t.id}</Controls.TextWP></a> : <Controls.TextWP as={"span"} color={"#000D25"} weight={500} size={14}>{"#"}{t.id}</Controls.TextWP>;
       }
     }, {
       title: (0, I18n.__)("Relationship", "ohmylms"),
@@ -47,6 +47,6 @@ export function createRelatedOrders(readRuntime) {
         }} />;
       }
     }];
-    return <React.Fragment><Controls.HeadingWP level={4} size={18} weight={500} color={"#000D25"}>{(0, I18n.__)("Related Orders", "ohmylms")}</Controls.HeadingWP><Controls.SpacerWP marginBottom={4} /><Controls.CardWP isBorderless={!0}><Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}><Controls.TableWP rowKey={"order_number"} columns={r} dataSource={n} className={"omlms-related-orders-table"} /></Controls.SpacerWP></Controls.CardWP></React.Fragment>;
+    return <React.Fragment><Controls.HeadingWP level={4} size={18} weight={500} color={"#000D25"}>{(0, I18n.__)("Related Orders", "ohmylms")}</Controls.HeadingWP><Controls.SpacerWP marginBottom={4} /><Controls.CardWP isBorderless={!0}><Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}><Controls.TableWP rowKey={"order_number"} columns={r} dataSource={n} className={"ohmylms-related-orders-table"} /></Controls.SpacerWP></Controls.CardWP></React.Fragment>;
   };
 }

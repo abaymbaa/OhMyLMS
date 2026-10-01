@@ -72,7 +72,7 @@ export function createEarningsReport(readRuntime) {
       U = G[0],
       q = G[1],
       Y = (0, Router.Zp)(),
-      Q = (0, Entitlements.useIsPro)(),
+      Q = true,
       Z = [
         {
           label: (0, I18n.__)('Income', 'ohmylms'),
@@ -208,7 +208,7 @@ export function createEarningsReport(readRuntime) {
           title: 'Type',
           dataIndex: 'type',
           key: 'type',
-          className: 'omlms-transaction-history-type',
+          className: 'ohmylms-transaction-history-type',
           render: function (e, t) {
             return <React.Fragment>{e || 'N/A'}</React.Fragment>;
           },
@@ -217,7 +217,7 @@ export function createEarningsReport(readRuntime) {
           title: 'Details',
           dataIndex: 'order_items',
           key: 'order_items',
-          className: 'omlms-transaction-history-details',
+          className: 'ohmylms-transaction-history-details',
           render: function (e, t) {
             var n;
             return (null === (n = t.order_items) || void 0 === n ? void 0 : n.length) > 0 ? (
@@ -287,16 +287,16 @@ export function createEarningsReport(readRuntime) {
                       for (;;)
                         switch ((e.p = e.n)) {
                           case 0:
-                            if (
-                              ((n = d.length > 1 && void 0 !== d[1] ? d[1] : 'last_30_days'),
-                              (r = d.length > 2 && void 0 !== d[2] ? d[2] : ''),
-                              (a = d.length > 3 && void 0 !== d[3] ? d[3] : 'all'),
-                              (o = d.length > 4 && void 0 !== d[4] ? d[4] : 'date'),
-                              (i = d.length > 5 && void 0 !== d[5] ? d[5] : 'DESC'),
-                              Q)
-                            ) {
-                              e.n = 1;
-                              break;
+                            {
+                              n = d.length > 1 && void 0 !== d[1] ? d[1] : 'last_30_days';
+                              r = d.length > 2 && void 0 !== d[2] ? d[2] : '';
+                              a = d.length > 3 && void 0 !== d[3] ? d[3] : 'all';
+                              o = d.length > 4 && void 0 !== d[4] ? d[4] : 'date';
+                              i = d.length > 5 && void 0 !== d[5] ? d[5] : 'DESC';
+                              {
+                                e.n = 1;
+                                break;
+                              }
                             }
                             return (
                               C(null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.earning_graph),
@@ -337,7 +337,7 @@ export function createEarningsReport(readRuntime) {
                                 (c.end_date = sn()(n[1]).format('YYYY-MM-DD'))),
                               (e.n = 3),
                               l()({
-                                path: (0, lN.addQueryArgs)('/creator-lms/v1/analytics/earnings', c),
+                                path: (0, lN.addQueryArgs)('/ohmylms/v1/analytics/earnings', c),
                                 method: 'GET',
                                 headers: {
                                   'Content-Type': 'application/json',
@@ -473,24 +473,16 @@ export function createEarningsReport(readRuntime) {
             </Controls.SpacerWP>
             <Controls.CardWP isBorderless={!0} variant={'secondary'}>
               <Controls.SpacerWP padding={7.5} marginBottom={0}>
-                <Controls.ProOverlayWP
-                  title={(0, I18n.__)(
-                    'Course analytics is a pro feature. Please upgrade to the Pro version to access it.',
-                    'ohmylms',
-                  )}
-                  top={'0px'}
-                  height={'100%'}
-                />
                 <Controls.FlexWP
                   gap={4}
                   align={'stretch'}
-                  className={'omlms-earning-report-cards-wrapper'}
+                  className={'ohmylms-earning-report-cards-wrapper'}
                 >
                   <Controls.FlexItemWP
                     style={{
                       width: 'calc(67% - 8px)',
                     }}
-                    className={'omlms-earning-report-left-card'}
+                    className={'ohmylms-earning-report-left-card'}
                   >
                     <Controls.CardWP isBorderless={!0}>
                       <Controls.SpacerWP marginBottom={0} padding={6}>
@@ -498,7 +490,7 @@ export function createEarningsReport(readRuntime) {
                           <Controls.HeadingWP level={3}>
                             {(0, I18n.__)('Earnings', 'ohmylms')}
                           </Controls.HeadingWP>
-                          <div className={'omlms-dashboard-filter'}>
+                          <div className={'ohmylms-dashboard-filter'}>
                             <AnalyticsDateFilter
                               placeholder={(0, I18n.__)('Filter By Days', 'ohmylms')}
                               onChange={function (e) {
@@ -599,7 +591,7 @@ export function createEarningsReport(readRuntime) {
                     style={{
                       width: 'calc(33% - 8px)',
                     }}
-                    className={'omlms-earning-report-right-card'}
+                    className={'ohmylms-earning-report-right-card'}
                   >
                     <Controls.FlexWP align={'start'} justify={'start'} direction={'column'} gap={4}>
                       <Controls.FlexItemWP fullWidth={!0}>

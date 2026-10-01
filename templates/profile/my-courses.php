@@ -2,19 +2,19 @@
 /**
  * Template for displaying my courses of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/my-courses.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/my-courses.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit();
-$my_course_tab = apply_filters( 'creator_lms_my_course_tabs', array() );
+$my_course_tab = apply_filters( 'ohmylms_my_course_tabs', array() );
 ?>
-<div class="creator-lms-dashboard-wrapper">
+<div class="ohmylms-dashboard-wrapper">
 	<h1 class="student-name"><?php echo __('My Courses','ohmylms') ?></h1>
-	<div class="creator-lms-my-courses-tab-nav">
-		<div class="creator-lms-my-courses-tab">
+	<div class="ohmylms-my-courses-tab-nav">
+		<div class="ohmylms-my-courses-tab">
 			<ul role="tablist" id="my-courses-tab">
 				<?php foreach ( $my_course_tab as $key => $course_tab ) : ?>
 					<li class="<?php echo $key === 'enrolled-courses' ? 'active': ''; ?>" role="presentation">
@@ -26,10 +26,10 @@ $my_course_tab = apply_filters( 'creator_lms_my_course_tabs', array() );
 			</ul>
 		</div>
 
-		<div class="creator-lms-my-courses-tab-content" id="my-courses-tab-content">
+		<div class="ohmylms-my-courses-tab-content" id="my-courses-tab-content">
 			<?php
 			foreach ( $my_course_tab as $key => $course_tab ) :
-				$courseClass = 'creator-lms-single-tab-content course-' . esc_attr($key);
+				$courseClass = 'ohmylms-single-tab-content course-' . esc_attr($key);
 
 				if ($key === 'enrolled-courses') {
 					$courseClass .= ' active';

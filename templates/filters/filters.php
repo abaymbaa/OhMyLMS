@@ -2,22 +2,22 @@
 /**
  * Template for displaying course filters.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/filters.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/filters.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit();
 if( isset($atts) && is_array($atts) && !empty($atts) && isset($atts['show_filter']) ){
     $is_filter_enabled = $atts['show_filter'];
-    $filter_data = get_option('creator_lms_archive_page_filters',[]);
+    $filter_data = get_option('ohmylms_archive_page_filters',[]);
     if( !is_array($filter_data) || empty($filter_data) ){
         $filter_data = ['category', 'tag', 'price_type', 'difficulty_level'];
     }
 }else{
-    $is_filter_enabled = get_option('creator_lms_archive_page_filter_is_enabled','no');
-    $filter_data = get_option('creator_lms_archive_page_filters',[]);
+    $is_filter_enabled = get_option('ohmylms_archive_page_filter_is_enabled','no');
+    $filter_data = get_option('ohmylms_archive_page_filters',[]);
 }
 
 if( 'no' === $is_filter_enabled ){
@@ -33,7 +33,7 @@ $items = [
 ];
 ?>
 
-<div class="creator-lms-filter-accordion creator-lms-default-accordion">
+<div class="ohmylms-filter-accordion ohmylms-default-accordion">
     <?php 
         if (!empty($filter_data)) { 
             foreach ($filter_data as $filter) { 
@@ -105,24 +105,24 @@ $items = [
                 if( $filter_title && !empty($items[$filter]) ){
 
                 ?>
-                    <div class="creator-lms-accordion-item">
-                        <div class="creator-lms-accordion-head" aria-expanded="true">
-                            <span class="creator-lms-accordion-title">
+                    <div class="ohmylms-accordion-item">
+                        <div class="ohmylms-accordion-head" aria-expanded="true">
+                            <span class="ohmylms-accordion-title">
                                 <?php echo $filter_title; ?>
 
                                 <svg width="13" height="7" fill="none" viewBox="0 0 13 7" xmlns="http://www.w3.org/2000/svg"><path fill="#A1A1AA" stroke="#A1A1AA" stroke-width=".3" d="M1.146 5.766a.792.792 0 001.124 0L5.896 2.14a.792.792 0 011.124 0l3.626 3.626A.793.793 0 1011.77 4.65L8.136 1.016a2.375 2.375 0 00-3.357 0L1.146 4.65a.792.792 0 000 1.116z"/></svg>
                             </span>
                         </div>
 
-                        <div class="creator-lms-accordion-body">
+                        <div class="ohmylms-accordion-body">
                             <?php 
                             foreach( $items[$filter] as $index => $item ) : ?>
                                 
-                                <label for="<?php echo $filter.$index; ?>" class="creator-lms-checkbox" >
-                                    <input type="checkbox" name="creator-lms-filter-checkbox" value="" data-type="<?php echo $filter; ?>" data-slug="<?php echo 'category' === $filter || 'tag' === $filter ?  $item->slug : $item['slug']; ?>" id="<?php echo $filter.$index; ?>" aria-required="true" aria-labelledby="creator-lms-<?php echo $filter.$index; ?>-filter-label">
+                                <label for="<?php echo $filter.$index; ?>" class="ohmylms-checkbox" >
+                                    <input type="checkbox" name="ohmylms-filter-checkbox" value="" data-type="<?php echo $filter; ?>" data-slug="<?php echo 'category' === $filter || 'tag' === $filter ?  $item->slug : $item['slug']; ?>" id="<?php echo $filter.$index; ?>" aria-required="true" aria-labelledby="ohmylms-<?php echo $filter.$index; ?>-filter-label">
 
-                                    <span class="creator-lms-checkbox-text">
-                                        <span class="checkedbox" aria-hidden="false" id="creator-lms-<?php echo $filter.$index; ?>-filter-label" tabindex="0" data-target="<?php echo $filter.$index; ?>">
+                                    <span class="ohmylms-checkbox-text">
+                                        <span class="checkedbox" aria-hidden="false" id="ohmylms-<?php echo $filter.$index; ?>-filter-label" tabindex="0" data-target="<?php echo $filter.$index; ?>">
                                             <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                                         </span>
                                     <?php  

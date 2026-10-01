@@ -1,20 +1,20 @@
-.single.creator-lms-page .creator-lms-courses {
+.single.ohmylms-page .ohmylms-courses {
     padding: 0 0 65px !important;
 }
 
-.single.creator-lms-page .creator-lms-courses-single-layout-2 {
+.single.ohmylms-page .ohmylms-courses-single-layout-2 {
     background-color: #fff;
 }
 
-.creator-lms-single-course * {
+.ohmylms-single-course * {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-single-course {
+.ohmylms-page {
+    .ohmylms-single-course {
 
-        & > .creator-lms-widget-pricebox {
+        & > .ohmylms-widget-pricebox {
             padding: 16px;
             position: fixed;
             bottom: -86px;
@@ -31,27 +31,27 @@
                 display: none;
             }
 
-            .creator-lms-btn-area {
+            .ohmylms-btn-area {
                 margin-top: 0;
             }
         }
     }
 
-    .creator-lms-enrolled-course {
+    .ohmylms-enrolled-course {
         padding-top: 60px;
     }
 
-    .creator-lms-content-wrapper {
+    .ohmylms-content-wrapper {
         display: flex;
         flex-flow: row wrap;
         gap: 60px;
     }
 
-    .creator-lms-content {
+    .ohmylms-content {
         width: calc(100% - 480px);
     }
 
-    .creator-lms-sidebar {
+    .ohmylms-sidebar {
         width: 420px;
         max-width: 100%;
     }
@@ -59,42 +59,42 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-content-wrapper {
+    .ohmylms-page .ohmylms-content-wrapper {
         gap: 30px;
     }
 
-    .creator-lms-page .creator-lms-content {
+    .ohmylms-page .ohmylms-content {
         width: calc(100% - 390px);
     }
 
-    .creator-lms-page .creator-lms-sidebar {
+    .ohmylms-page .ohmylms-sidebar {
         width: 360px;
     }
     
 }
 
 @media screen and (max-width: 991px) {
-    .single.creator-lms-page .creator-lms-courses {
+    .single.ohmylms-page .ohmylms-courses {
         padding: 0 0 50px !important;
     }
 
-    .creator-lms-page .creator-lms-enrolled-course {
+    .ohmylms-page .ohmylms-enrolled-course {
         padding-top: 30px;
     }
 
-    .creator-lms-page .creator-lms-content-wrapper {
+    .ohmylms-page .ohmylms-content-wrapper {
         flex-direction: column;
     }
 
-    .creator-lms-page .creator-lms-content {
+    .ohmylms-page .ohmylms-content {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-sidebar {
+    .ohmylms-page .ohmylms-sidebar {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-single-course.show-sticky-price > .creator-lms-widget-pricebox {
+    .ohmylms-page .ohmylms-single-course.show-sticky-price > .ohmylms-widget-pricebox {
         bottom: 0;
         visibility: visible;
         box-shadow: 0px -4px 10px 0px rgba(219, 222, 231, 0.4784313725);

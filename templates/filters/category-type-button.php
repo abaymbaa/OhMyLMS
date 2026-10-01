@@ -2,7 +2,7 @@
 /**
  * Template for displaying course categories.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -23,15 +23,15 @@ if (taxonomy_exists('course_category')) {
     }
 }
 ?>
-<div class="creator-lms-category-type-button">
+<div class="ohmylms-category-type-button">
     <ul>
-        <li class="active creator-lms-category-filter" data-slug="all">
+        <li class="active ohmylms-category-filter" data-slug="all">
             <a href="#" data-slug="all">
                 <?php echo esc_html__( 'All', 'ohmylms' ); ?>
             </a>
         </li>
         <?php foreach($items as $item): ?>
-            <li class="creator-lms-category-filter" data-slug="<?php echo $item->slug; ?>">
+            <li class="ohmylms-category-filter" data-slug="<?php echo $item->slug; ?>">
                 <a href="#" data-slug="<?php echo $item->slug; ?>">
                     <?php echo esc_html__( $item->name, 'ohmylms' ); ?>
                 </a>

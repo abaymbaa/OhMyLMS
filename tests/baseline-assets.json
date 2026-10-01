@@ -47,7 +47,7 @@
     "bytes": 966,
     "sha256": "331081c71e2c92627790c3b74e5a78adf535cfa00d7ded4a6fd1e239d646808c"
   },
-  "assets/images/creator-lms-logo.svg": {
+  "assets/images/ohmylms-logo.svg": {
     "bytes": 8318,
     "sha256": "77a58e37343b4ec25c7594cf44c8f49b3eaf6d85384a4d538de11d1118f79372"
   },
@@ -283,11 +283,11 @@
     "bytes": 18153,
     "sha256": "10510b45bd5f7301f33b997f2acd04ab9ead6cc443263c729473e92929229eb7"
   },
-  "assets/dist/admin/creatorlms-rtl.js": {
+  "assets/dist/admin/ohmylms-rtl.js": {
     "bytes": 0,
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
-  "assets/dist/admin/creatorlms.js": {
+  "assets/dist/admin/ohmylms.js": {
     "bytes": 4209431,
     "sha256": "0fff93702ae7953bf2c1d61f70de01f09e36b5f6c7b4d55ee007cb38c398e13c"
   },
@@ -311,7 +311,7 @@
     "bytes": 10763,
     "sha256": "7e6aa7f242dbefec179a8eb89acf00b5769b37140a52dd773da6444086343aed"
   },
-  "assets/dist/frontend/creator-lms.js": {
+  "assets/dist/frontend/ohmylms.js": {
     "bytes": 120924,
     "sha256": "da69e1e34068c03ad5e94354e9e26ad83a9c31f887c5192fdb11321032b5a630"
   },
@@ -351,11 +351,11 @@
     "bytes": 7242977,
     "sha256": "9441c1c577b750316fc9d37a5dc60f4c9be6adcc39141a4b7341ebb1dcbeaf14"
   },
-  "assets/dist/css/admin/creatorlms-rtl.css": {
+  "assets/dist/css/admin/ohmylms-rtl.css": {
     "bytes": 5008,
     "sha256": "420aeadade679568b0d5e7cd2f038fcee5b6ec072a6a525f004524a88f747712"
   },
-  "assets/dist/css/admin/creatorlms.css": {
+  "assets/dist/css/admin/ohmylms.css": {
     "bytes": 1644086,
     "sha256": "c301c47c5fcd552d5762233f9cdd1f79592495840da1a71196590d5e6ba8adfc"
   },
@@ -455,7 +455,7 @@
     "bytes": 983,
     "sha256": "ce5a5c2cedaefa5f2199c7849d3aade630f150ab36efb56d2bf30c117a322b51"
   },
-  "assets/images/icon/certificate-creator-lms-logo.php": {
+  "assets/images/icon/certificate-ohmylms-logo.php": {
     "bytes": 7029,
     "sha256": "23f13308a4e26d59e9fafb278e7651da00522161396bfe346eab8148d3ec13a6"
   },
@@ -679,7 +679,7 @@
     "bytes": 658,
     "sha256": "7fccab32490b9b60736be066ed11ed2695a76781c72584170c25a7d80ec7baf1"
   },
-  "assets/images/logo/creator-lms.svg": {
+  "assets/images/logo/ohmylms.svg": {
     "bytes": 1567,
     "sha256": "80cbdd4c5d09f20218d7d9878f687051dcadb202ed9139c89d61ee19cc6abe31"
   },
@@ -703,7 +703,7 @@
     "bytes": 17431,
     "sha256": "0121f2a2cb5273a0cfa711046aa28145f23d2dc9797f0f4dbeccae2483dcc36a"
   },
-  "assets/src/frontend/js/creator-lms.js": {
+  "assets/src/frontend/js/ohmylms.js": {
     "bytes": 120924,
     "sha256": "da69e1e34068c03ad5e94354e9e26ad83a9c31f887c5192fdb11321032b5a630"
   },

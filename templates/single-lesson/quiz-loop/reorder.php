@@ -2,9 +2,9 @@
 /**
  * The template for displaying reorder question
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/reorder.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/quiz-loop/reorder.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

@@ -1,8 +1,8 @@
 <?php 
 
-namespace OMLMS\Integrations\Webhooks;
-use \OMLMS\Integrations\Webhooks\Includes\Hooks;
-use \OMLMS\Integrations\Webhooks\Includes\WebhooksMigration;
+namespace OhMyLMS\Integrations\Webhooks;
+use \OhMyLMS\Integrations\Webhooks\Includes\Hooks;
+use \OhMyLMS\Integrations\Webhooks\Includes\WebhooksMigration;
 
 class Webhooks {
 
@@ -22,7 +22,7 @@ class Webhooks {
      * @since 1.0.0
      */
     public function define_constants() {
-        define( 'CREATORLMS_WEBHOOKS_VERSION', self::Version );
+        define( 'OHMYLMS_WEBHOOKS_VERSION', self::Version );
     }
 
     /**
@@ -44,7 +44,7 @@ class Webhooks {
      * @since 1.0.0
      */
     public function is_enabled() {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         return isset( $integrations[ $this->integration_key ]['is_enable'] ) && 
                $integrations[ $this->integration_key ]['is_enable'] == 1;
     }

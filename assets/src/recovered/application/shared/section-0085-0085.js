@@ -167,7 +167,7 @@ var ND = function (e) {
     justify: "start",
     gap: 2
   }, React.createElement("svg", {
-    className: "omlms-back-arrow-btn-icon",
+    className: "ohmylms-back-arrow-btn-icon",
     width: "19",
     height: "16",
     fill: "none",
@@ -514,7 +514,7 @@ var QD = function (e) {
                 author: "1",
                 trigger_name: ""
               }, t && ((n = F(t)).isImport = !0, delete n.id), e.n = 2, l()({
-                path: "creator-lms/v1/automation/content/".concat(r),
+                path: "ohmylms/v1/automation/content/".concat(r),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -550,7 +550,7 @@ var QD = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, C(!0), n.status = t || "draft", null != n && n.showAnalyticsStat && delete n.showAnalyticsStat, e.n = 2, l()({
-                path: "creator-lms/v1/automation/content/".concat(r),
+                path: "ohmylms/v1/automation/content/".concat(r),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -584,7 +584,7 @@ var QD = function (e) {
     }), null !== (e = window) && void 0 !== e && e.MRM_Vars && null !== (o = window.MRM_Vars) && void 0 !== o && o.mint_trans && null !== (i = window.MRM_Vars) && void 0 !== i && null !== (i = i.mint_trans) && void 0 !== i && i.UnlockWithPremium && (window.MRM_Vars.mint_trans.UnlockWithPremium = (0, b.__)("Upgrade Mail Mint to Pro", "ohmylms"));
     var l = document.querySelector("#email-preview-btn");
     l && l.addEventListener("click", function () {
-      var e = document.querySelector(".omlms-automation-editor-open"),
+      var e = document.querySelector(".ohmylms-automation-editor-open"),
         t = e.querySelector(".mintmrm-template-modal");
       if (t && e) {
         for (var n = new Set(), r = t; r && r !== e;) n.add(r), r = r.parentElement;
@@ -602,11 +602,11 @@ var QD = function (e) {
     style: {
       maxWidth: "1500px"
     },
-    overlayClassName: "omlms-modal-wrap omlms-automation-modal-wrap ".concat(i ? "omlms-automation-editor-open" : "omlms-automation-lists"),
+    overlayClassName: "ohmylms-modal-wrap ohmylms-automation-modal-wrap ".concat(i ? "ohmylms-automation-editor-open" : "ohmylms-automation-lists"),
     shouldCloseOnEsc: !i,
     shouldCloseOnClickOutside: !i,
     onRequestClose: N,
-    className: "omlms-automation-modal-wrapper"
+    className: "ohmylms-automation-modal-wrapper"
   }, i ? React.createElement(React.Fragment, null, React.createElement(nN, {
     headerProps: {
       extHandleNavigation: D,

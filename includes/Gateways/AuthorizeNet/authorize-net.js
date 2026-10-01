@@ -8,8 +8,8 @@ jQuery(document).ready(function ($) {
 	'use strict';
 
     // Check if localized parameters are available
-    if (typeof omlms_authnet_params === 'undefined') {
-        console.error('Authorize.Net Error: Localization object (omlms_authnet_params) not found.');
+    if (typeof ohmylms_authnet_params === 'undefined') {
+        console.error('Authorize.Net Error: Localization object (ohmylms_authnet_params) not found.');
         return;
     }
 
@@ -80,7 +80,7 @@ jQuery(document).ready(function ($) {
                 errorMessages += response.messages.message[i].text + '<br />';
             }
             console.error('Authorize.Net: Accept.js returned errors', response.messages.message);
-            $errorsContainer.html(omlms_authnet_params.error_prefix + errorMessages);
+            $errorsContainer.html(ohmylms_authnet_params.error_prefix + errorMessages);
             enableSubmitButton();
         } else if (response.messages.resultCode === "Ok") {
             console.log('Authorize.Net: Accept.js successful, setting opaque data', {
@@ -93,14 +93,14 @@ jQuery(document).ready(function ($) {
 
             // Prepare data for AJAX submission
             var formData = $form.serialize();
-            formData += '&security=' + omlms_authnet_params.checkout_nonce;
-            if (formData.indexOf('action=creator_lms_checkout') === -1) {
-                formData += '&action=creator_lms_checkout';
+            formData += '&security=' + ohmylms_authnet_params.checkout_nonce;
+            if (formData.indexOf('action=ohmylms_checkout') === -1) {
+                formData += '&action=ohmylms_checkout';
             }
 
             $.ajax({
                 type: 'POST',
-                url: omlms_authnet_params.ajax_url,
+                url: ohmylms_authnet_params.ajax_url,
                 data: formData,
                 dataType: 'json',
                 success: function(ajaxResponse) {
@@ -112,7 +112,7 @@ jQuery(document).ready(function ($) {
                             $errorsContainer.html('Payment successful, but no redirect URL provided.'); // Should not happen
                         }
                     } else {
-                        var errorMessage = ajaxResponse.messages || ajaxResponse.message || omlms_authnet_params.msg_opaque_data_error;
+                        var errorMessage = ajaxResponse.messages || ajaxResponse.message || ohmylms_authnet_params.msg_opaque_data_error;
                         // WC usually returns messages as HTML string. If not, join if it's an array.
                         if (Array.isArray(errorMessage)) {
                             errorMessage = errorMessage.join('<br/>');
@@ -122,14 +122,14 @@ jQuery(document).ready(function ($) {
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $errorsContainer.html(omlms_authnet_params.error_prefix + omlms_authnet_params.msg_opaque_data_error + ' (AJAX: ' + textStatus + ' - ' + errorThrown + ')');
+                    $errorsContainer.html(ohmylms_authnet_params.error_prefix + ohmylms_authnet_params.msg_opaque_data_error + ' (AJAX: ' + textStatus + ' - ' + errorThrown + ')');
                     enableSubmitButton();
                 }
             });
         } else {
             // Unexpected response from Accept.js
             console.error("Authorize.Net Error: Unexpected response from Accept.js", response);
-            $errorsContainer.html(omlms_authnet_params.error_prefix + omlms_authnet_params.msg_opaque_data_error);
+            $errorsContainer.html(ohmylms_authnet_params.error_prefix + ohmylms_authnet_params.msg_opaque_data_error);
             enableSubmitButton();
         }
     }
@@ -170,25 +170,25 @@ jQuery(document).ready(function ($) {
 
         // Validate required data before submitting
         if (!cardNumber || cardNumber.length < 13) {
-            $errorsContainer.html(omlms_authnet_params.msg_card_number_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_card_number_empty);
             enableSubmitButton();
             return;
         }
         if (!month || !year || month.length !== 2 || year.length !== 4) {
-            $errorsContainer.html(omlms_authnet_params.msg_expiration_date_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_expiration_date_empty);
             enableSubmitButton();
             return;
         }
         if (!cardCode || cardCode.length < 3) {
-            $errorsContainer.html(omlms_authnet_params.msg_cvv_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_cvv_empty);
             enableSubmitButton();
             return;
         }
 
         // Validate credentials are present
-        if (!omlms_authnet_params.clientKey || !omlms_authnet_params.apiLoginId) {
+        if (!ohmylms_authnet_params.clientKey || !ohmylms_authnet_params.apiLoginId) {
             console.error('Authorize.Net Error: Missing API credentials');
-            $errorsContainer.html(omlms_authnet_params.error_prefix + 'Payment gateway not properly configured. Please contact support.');
+            $errorsContainer.html(ohmylms_authnet_params.error_prefix + 'Payment gateway not properly configured. Please contact support.');
             enableSubmitButton();
             return;
         }
@@ -202,8 +202,8 @@ jQuery(document).ready(function ($) {
                 cardCode: cardCode
             },
             authData: {
-                clientKey: omlms_authnet_params.clientKey,
-                apiLoginID: omlms_authnet_params.apiLoginId
+                clientKey: ohmylms_authnet_params.clientKey,
+                apiLoginID: ohmylms_authnet_params.apiLoginId
             }
         };
 
@@ -211,17 +211,17 @@ jQuery(document).ready(function ($) {
             cardNumberMasked: cardNumber.replace(/\d(?=\d{4})/g, '*'),
             month: month,
             year: year,
-            hasClientKey: !!omlms_authnet_params.clientKey,
-            hasApiLoginId: !!omlms_authnet_params.apiLoginId,
-            testmode: omlms_authnet_params.testmode,
-            acceptJsUrl: omlms_authnet_params.acceptJsUrl
+            hasClientKey: !!ohmylms_authnet_params.clientKey,
+            hasApiLoginId: !!ohmylms_authnet_params.apiLoginId,
+            testmode: ohmylms_authnet_params.testmode,
+            acceptJsUrl: ohmylms_authnet_params.acceptJsUrl
         });
 
         if (typeof Accept !== 'undefined' && typeof Accept.dispatchData === 'function') {
             Accept.dispatchData(secureData, responseHandler);
         } else {
             console.error('Authorize.Net Error: Accept.js or Accept.dispatchData function is not available.');
-            $errorsContainer.html(omlms_authnet_params.error_prefix + 'Payment gateway script not loaded correctly. Please try again or contact support.');
+            $errorsContainer.html(ohmylms_authnet_params.error_prefix + 'Payment gateway script not loaded correctly. Please try again or contact support.');
             enableSubmitButton();
         }
     });
@@ -245,7 +245,7 @@ jQuery(document).ready(function ($) {
     // Simple validation on blur
     $cardNumberEl.on('blur', function() {
         if ($(this).val().replace(/\s/g, '').length < 13) {
-            $errorsContainer.html(omlms_authnet_params.msg_card_number_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_card_number_empty);
             $(this).addClass('input-error');
         } else {
             $(this).removeClass('input-error');
@@ -253,7 +253,7 @@ jQuery(document).ready(function ($) {
     });
     $expirationDateEl.on('blur', function() {
         if (!/^\d{2}\/\d{2,4}$/.test($(this).val())) {
-            $errorsContainer.html(omlms_authnet_params.msg_expiration_date_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_expiration_date_empty);
             $(this).addClass('input-error');
         } else {
             $(this).removeClass('input-error');
@@ -261,7 +261,7 @@ jQuery(document).ready(function ($) {
     });
     $cvvEl.on('blur', function() {
         if ($(this).val().length < 3) {
-            $errorsContainer.html(omlms_authnet_params.msg_cvv_empty);
+            $errorsContainer.html(ohmylms_authnet_params.msg_cvv_empty);
             $(this).addClass('input-error');
         } else {
             $(this).removeClass('input-error');
@@ -269,9 +269,9 @@ jQuery(document).ready(function ($) {
     });
 
     // Inject professional styles for Authorize.Net payment fields if not already present
-    if (!document.getElementById('omlms-authorize-net-styles')) {
+    if (!document.getElementById('ohmylms-authorize-net-styles')) {
         const style = document.createElement('style');
-        style.id = 'omlms-authorize-net-styles';
+        style.id = 'ohmylms-authorize-net-styles';
         style.innerHTML = `
         #authorize-net-payment-form {
             max-width: 400px;

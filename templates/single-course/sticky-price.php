@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/sticky-price.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $current_student_id = get_current_user_id();
-$student            = new \OMLMS\Data\Student( $current_student_id );
+$student            = new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled     = false;
 
 if ( $student ) {
@@ -24,8 +24,8 @@ if ( $student ) {
 
 ?>
 
-<div class="creator-lms-sticky-price <?php echo esc_attr( $maybe_enrolled ? 'course-enrolled' : '' ); ?>">
-    <div class="creator-lms-container">
+<div class="ohmylms-sticky-price <?php echo esc_attr( $maybe_enrolled ? 'course-enrolled' : '' ); ?>">
+    <div class="ohmylms-container">
         <div class="sticky-price-wrapper">
             <div class="sticky-price-left">
                 <p class="course-name">
@@ -33,8 +33,8 @@ if ( $student ) {
                 </p>
             </div>
 
-            <?php omlms_get_template( 'single-course/widgets/pricebox.php' ); ?>
-            <?php creator_lms_continue_learn_button(); ?>
+            <?php ohmylms_get_template( 'single-course/widgets/pricebox.php' ); ?>
+            <?php ohmylms_continue_learn_button(); ?>
         </div>
     </div>
 </div>

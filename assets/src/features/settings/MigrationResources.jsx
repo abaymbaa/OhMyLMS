@@ -28,7 +28,7 @@ export function createMigrationResources(readRuntime) {
           </svg>
         ),
         label: (0, I18n.__)('Blog & Tutorials', 'ohmylms'),
-        url: 'https://creatorlms.net/blog/',
+        url: 'https://ohmylms.com/blog/',
       },
       {
         icon: (
@@ -48,7 +48,7 @@ export function createMigrationResources(readRuntime) {
           </svg>
         ),
         label: (0, I18n.__)('Documentation', 'ohmylms'),
-        url: 'https://creatorlms.net/docs/',
+        url: 'https://ohmylms.com/docs/',
       },
       {
         icon: (
@@ -77,7 +77,7 @@ export function createMigrationResources(readRuntime) {
           </svg>
         ),
         label: (0, I18n.__)('Support', 'ohmylms'),
-        url: 'https://creatorlms.net/contact-us/',
+        url: 'https://ohmylms.com/contact-us/',
       },
       {
         icon: (

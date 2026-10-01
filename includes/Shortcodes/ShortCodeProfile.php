@@ -2,13 +2,13 @@
 /**
  * Student Profile Shortcode
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
-use OMLMS\Data\Student;
+use OhMyLMS\Data\Student;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -29,8 +29,8 @@ class ShortCodeProfile {
 
 		// Show login form if not logged in.
 		if ( ! is_user_logged_in() ) {
-			omlms_get_template( 'global/toast.php' );
-			omlms_get_template( 'profile/form-login.php' );
+			ohmylms_get_template( 'global/toast.php' );
+			ohmylms_get_template( 'profile/form-login.php' );
 			return;
 		}
 
@@ -129,7 +129,7 @@ class ShortCodeProfile {
 				'button_hover_border' => '#4361EE',
 			),
 			$atts,
-			'creator_lms_profile'
+			'ohmylms_profile'
 		);
 
 		$student = new Student( get_current_user_id() );
@@ -144,7 +144,7 @@ class ShortCodeProfile {
 		// Display header with navigation if enabled.
 		$show_header = filter_var( $args['show_header'], FILTER_VALIDATE_BOOLEAN );
 		if ( $show_header ) {
-			omlms_get_template(
+			ohmylms_get_template(
 				'global/main-header.php',
 				array(
 					'student' => $student,
@@ -153,37 +153,37 @@ class ShortCodeProfile {
 		}
 
 		// Display profile content with sidebar layout.
-		echo '<section class="creator-lms-dashboard">';
-		echo '<div class="creator-lms-container">';
+		echo '<section class="ohmylms-dashboard">';
+		echo '<div class="ohmylms-container">';
 		
 		// Show notices.
-		if ( function_exists( 'creator_lms_show_all_notices' ) ) {
-			creator_lms_show_all_notices();
+		if ( function_exists( 'ohmylms_show_all_notices' ) ) {
+			ohmylms_show_all_notices();
 		}
 		
 		// Profile layout with sidebar.
-		echo '<div class="creator-lms-student-profile">';
-		echo '<span class="creator-lms-hamburger" aria-label="Menu">';
+		echo '<div class="ohmylms-student-profile">';
+		echo '<span class="ohmylms-hamburger" aria-label="Menu">';
 		echo '<svg width="14" height="11" fill="none" viewBox="0 0 14 11" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" stroke="#21212F" stroke-width=".1" d="M13.125 1.872H.875C.411 1.872.05 1.482.05.96.05.439.411.05.875.05h12.25c.464 0 .825.39.825.91 0 .522-.361.912-.825.912zm0 4.484H.875c-.464 0-.825-.39-.825-.91 0-.522.361-.912.825-.912h12.25c.464 0 .825.39.825.911s-.361.91-.825.91zm0 4.483H.875c-.464 0-.825-.39-.825-.911 0-.522.361-.911.825-.911h12.25c.464 0 .825.39.825.91 0 .522-.361.912-.825.912z"/></svg>';
 		echo '</span>';
 		
-		echo '<div class="creator-lms-student-profile-wrapper">';
+		echo '<div class="ohmylms-student-profile-wrapper">';
 		
 		// Custom sidebar navigation for shortcode.
 		self::render_navigation( $current_view );
 		
-		echo '<div class="creator-lms-student-profile-sidebar-content">';
+		echo '<div class="ohmylms-student-profile-sidebar-content">';
 		
 		// Display content based on view and mode.
 		if ( $current_view === 'transactions-history' ) {
 			self::render_transactions_history();
-		} elseif ( $current_view === 'membership' && creator_lms_is_pro() ) {
+		} elseif ( $current_view === 'membership' && ohmylms_is_pro() ) {
 			self::render_membership();
 		} elseif ( $current_view === 'invoice-details' ) {
 			self::render_invoice_details();
 		} elseif ( $is_edit_mode ) {
 			// Profile edit content.
-			omlms_get_template(
+			ohmylms_get_template(
 				'profile/profile-edit.php',
 				array(
 					'student' => $student,
@@ -191,7 +191,7 @@ class ShortCodeProfile {
 			);
 		} else {
 			// Profile view content.
-			omlms_get_template(
+			ohmylms_get_template(
 				'profile/profile.php',
 				array(
 					'student' => $student,
@@ -199,12 +199,12 @@ class ShortCodeProfile {
 			);
 		}
 		
-		echo '</div>'; // .creator-lms-student-profile-sidebar-content
-		echo '</div>'; // .creator-lms-student-profile-wrapper
-		echo '</div>'; // .creator-lms-student-profile
+		echo '</div>'; // .ohmylms-student-profile-sidebar-content
+		echo '</div>'; // .ohmylms-student-profile-wrapper
+		echo '</div>'; // .ohmylms-student-profile
 		
-		echo '</div>'; // .creator-lms-container
-		echo '</section>'; // .creator-lms-dashboard
+		echo '</div>'; // .ohmylms-container
+		echo '</section>'; // .ohmylms-dashboard
 		
 		// Add JavaScript to handle navigation and edit button.
 		self::add_navigation_handler();
@@ -219,15 +219,15 @@ class ShortCodeProfile {
 	private static function render_navigation( $current_view ) {
 		$current_url = remove_query_arg( array( 'view', 'edit' ) );
 		?>
-		<aside class="creator-lms-student-profile-sidebar">
-			<ul class="creator-lms-student-profile-tab">
+		<aside class="ohmylms-student-profile-sidebar">
+			<ul class="ohmylms-student-profile-tab">
 				<li class="item-profile <?php echo ( $current_view === 'profile' ) ? 'active' : ''; ?>">
 					<a href="<?php echo esc_url( add_query_arg( 'view', 'profile', $current_url ) ); ?>" data-view="profile">
 						<span class="icon icon-regular">
-							<?php include( CREATOR_LMS_DIR . '/assets/images/icon/profile-icon.php' ); ?>
+							<?php include( OHMYLMS_DIR . '/assets/images/icon/profile-icon.php' ); ?>
 						</span>
 						<span class="icon icon-active">
-							<?php include( CREATOR_LMS_DIR . '/assets/images/icon/profile-active-icon.php' ); ?>
+							<?php include( OHMYLMS_DIR . '/assets/images/icon/profile-active-icon.php' ); ?>
 						</span>
 						<?php echo __( 'Profile', 'ohmylms' ); ?>
 					</a>
@@ -236,23 +236,23 @@ class ShortCodeProfile {
 				<li class="item-transaction-history <?php echo ( $current_view === 'transactions-history' ) ? 'active' : ''; ?>">
 					<a href="<?php echo esc_url( add_query_arg( 'view', 'transactions-history', $current_url ) ); ?>" data-view="transactions-history">
 						<span class="icon icon-regular">
-							<?php include( CREATOR_LMS_DIR . '/assets/images/icon/cart-icon.php' ); ?>
+							<?php include( OHMYLMS_DIR . '/assets/images/icon/cart-icon.php' ); ?>
 						</span>
 						<span class="icon icon-active">
-							<?php include( CREATOR_LMS_DIR . '/assets/images/icon/cart-active-icon.php' ); ?>
+							<?php include( OHMYLMS_DIR . '/assets/images/icon/cart-active-icon.php' ); ?>
 						</span>
 						<?php echo __( 'Transaction History', 'ohmylms' ); ?>
 					</a>
 				</li>
 
-				<?php if ( creator_lms_is_pro() ) : ?>
+				<?php if ( ohmylms_is_pro() ) : ?>
 					<li class="item-membership <?php echo ( $current_view === 'membership' ) ? 'active' : ''; ?>">
 						<a href="<?php echo esc_url( add_query_arg( 'view', 'membership', $current_url ) ); ?>" data-view="membership">
 							<span class="icon icon-regular">
-								<?php include( CREATOR_LMS_DIR . '/assets/images/icon/membership-icon.php' ); ?>
+								<?php include( OHMYLMS_DIR . '/assets/images/icon/membership-icon.php' ); ?>
 							</span>
 							<span class="icon icon-active">
-								<?php include( CREATOR_LMS_DIR . '/assets/images/icon/membership-active-icon.php' ); ?>
+								<?php include( OHMYLMS_DIR . '/assets/images/icon/membership-active-icon.php' ); ?>
 							</span>
 							<?php echo __( 'Membership', 'ohmylms' ); ?>
 						</a>
@@ -270,7 +270,7 @@ class ShortCodeProfile {
 	 */
 	private static function render_transactions_history() {
 		$current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
-		\OMLMS\Shortcodes\ShortCodeMyProfile::transactions_history( $current_page );
+		\OhMyLMS\Shortcodes\ShortCodeMyProfile::transactions_history( $current_page );
 	}
 
 	/**
@@ -280,7 +280,7 @@ class ShortCodeProfile {
 	 */
 	private static function render_membership() {
 		$current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
-		\OMLMS\Shortcodes\ShortCodeMyProfile::membership( $current_page );
+		\OhMyLMS\Shortcodes\ShortCodeMyProfile::membership( $current_page );
 	}
 
 	/**
@@ -290,7 +290,7 @@ class ShortCodeProfile {
 	 */
 	private static function render_invoice_details() {
 		$current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
-		\OMLMS\Shortcodes\ShortCodeMyProfile::invoice_details( $current_page );
+		\OhMyLMS\Shortcodes\ShortCodeMyProfile::invoice_details( $current_page );
 	}
 
 	/**
@@ -303,7 +303,7 @@ class ShortCodeProfile {
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			// Handle edit button click
-			const editButton = document.querySelector('.creator-lms-profile-actions .profile-edit');
+			const editButton = document.querySelector('.ohmylms-profile-actions .profile-edit');
 			if (editButton) {
 				editButton.addEventListener('click', function(e) {
 					e.preventDefault();
@@ -333,7 +333,7 @@ class ShortCodeProfile {
 			}
 
 			// Handle navigation menu clicks in header dropdown
-			const headerProfileLink = document.querySelector('.creator-lms-user-dropdown .my-profile-link');
+			const headerProfileLink = document.querySelector('.ohmylms-user-dropdown .my-profile-link');
 			if (headerProfileLink) {
 				headerProfileLink.addEventListener('click', function(e) {
 					e.preventDefault();
@@ -345,22 +345,22 @@ class ShortCodeProfile {
 			}
 
 			// Handle Dashboard link
-			const dashboardLink = document.querySelector('.creator-lms-user-dropdown .dashboard-link');
+			const dashboardLink = document.querySelector('.ohmylms-user-dropdown .dashboard-link');
 			if (dashboardLink) {
 				dashboardLink.addEventListener('click', function(e) {
 					e.preventDefault();
 					// Redirect to Dashboard page
-					window.location.href = '<?php echo esc_url( omlms_get_page_permalink( 'student_dashboard' ) ); ?>';
+					window.location.href = '<?php echo esc_url( ohmylms_get_page_permalink( 'student_dashboard' ) ); ?>';
 				});
 			}
 
 			// Handle My Courses link
-			const myCoursesLink = document.querySelector('.creator-lms-user-dropdown .my-course-link');
+			const myCoursesLink = document.querySelector('.ohmylms-user-dropdown .my-course-link');
 			if (myCoursesLink) {
 				myCoursesLink.addEventListener('click', function(e) {
 					e.preventDefault();
 					// Redirect to My Courses page
-					window.location.href = '<?php echo esc_url( omlms_get_page_permalink( 'student_courses' ) ); ?>';
+					window.location.href = '<?php echo esc_url( ohmylms_get_page_permalink( 'student_courses' ) ); ?>';
 				});
 			}
 
@@ -479,23 +479,23 @@ class ShortCodeProfile {
 
 		// Generate CSS
 		?>
-		<style id="creator-lms-profile-custom-styles">
+		<style id="ohmylms-profile-custom-styles">
 			/* Header Background */
 			<?php if ( $header_bg_color ) : ?>
-			.creator-lms-page .creator-lms-header {
+			.ohmylms-page .ohmylms-header {
 				background-color: <?php echo esc_attr( $header_bg_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			/* User Menu Dropdown */
 			<?php if ( $user_menu_bg_color ) : ?>
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown {
 				background-color: <?php echo esc_attr( $user_menu_bg_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			<?php if ( $user_menu_color || $user_menu_font_size || $user_menu_font_weight ) : ?>
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a {
 				<?php if ( $user_menu_color ) : ?>
 				color: <?php echo esc_attr( $user_menu_color ); ?> !important;
 				<?php endif; ?>
@@ -510,7 +510,7 @@ class ShortCodeProfile {
 
 			/* User Menu Hover */
 			<?php if ( $user_menu_hover_color || $user_menu_hover_bg_color ) : ?>
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a:hover {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a:hover {
 				<?php if ( $user_menu_hover_color ) : ?>
 				color: <?php echo esc_attr( $user_menu_hover_color ); ?> !important;
 				<?php endif; ?>
@@ -522,34 +522,34 @@ class ShortCodeProfile {
 
 			/* User Menu Icons */
 			<?php if ( $user_menu_icon_color ) : ?>
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a svg {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a svg {
 				color: <?php echo esc_attr( $user_menu_icon_color ); ?> !important;
 			}
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a svg path {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a svg path {
 				fill: <?php echo esc_attr( $user_menu_icon_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			/* User Menu Icons Hover */
 			<?php if ( $user_menu_icon_hover_color ) : ?>
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a:hover svg {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a:hover svg {
 				color: <?php echo esc_attr( $user_menu_icon_hover_color ); ?> !important;
 			}
-			.creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a:hover svg path {
+			.ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a:hover svg path {
 				fill: <?php echo esc_attr( $user_menu_icon_hover_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			/* Section Background */
 			<?php if ( $section_bg_color ) : ?>
-			.creator-lms-page .creator-lms-dashboard {
+			.ohmylms-page .ohmylms-dashboard {
 				background-color: <?php echo esc_attr( $section_bg_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			/* Profile Wrapper */
 			<?php if ( $wrapper_border || $wrapper_bg_color || $wrapper_shadow ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-wrapper {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-wrapper {
 				<?php if ( $wrapper_border ) : ?>
 				border-color: <?php echo esc_attr( $wrapper_border ); ?> !important;
 				<?php endif; ?>
@@ -564,7 +564,7 @@ class ShortCodeProfile {
 
 			/* Sidebar Items */
 			<?php if ( $sidebar_item_color || $sidebar_item_font_size || $sidebar_item_font_weight || $sidebar_item_bg_color ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab li a {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab li a {
 				<?php if ( $sidebar_item_color ) : ?>
 				color: <?php echo esc_attr( $sidebar_item_color ); ?> !important;
 				<?php endif; ?>
@@ -582,8 +582,8 @@ class ShortCodeProfile {
 
 			/* Sidebar Items Active/Hover */
 			<?php if ( $sidebar_item_active_color || $sidebar_item_active_font_size || $sidebar_item_active_font_weight || $sidebar_item_active_bg_color ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab li a:hover,
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab li.active a {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab li a:hover,
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab li.active a {
 				<?php if ( $sidebar_item_active_color ) : ?>
 				color: <?php echo esc_attr( $sidebar_item_active_color ); ?> !important;
 				<?php endif; ?>
@@ -601,7 +601,7 @@ class ShortCodeProfile {
 
 			/* Sidebar Content */
 			<?php if ( $sidebar_content_bg_color || $sidebar_content_shadow ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar-content {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar-content {
 				<?php if ( $sidebar_content_bg_color ) : ?>
 				background-color: <?php echo esc_attr( $sidebar_content_bg_color ); ?> !important;
 				<?php endif; ?>
@@ -612,14 +612,14 @@ class ShortCodeProfile {
 			<?php endif; ?>
 
 			<?php if ( $sidebar_content_padding ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content {
 				padding: <?php echo esc_attr( $sidebar_content_padding ); ?>px !important;
 			}
 			<?php endif; ?>
 
 			/* Sidebar Content Title */
 			<?php if ( $sidebar_content_title_color || $sidebar_content_title_font_size || $sidebar_content_title_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content .profile-tab-title {
+			.ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content .profile-tab-title {
 				<?php if ( $sidebar_content_title_color ) : ?>
 				color: <?php echo esc_attr( $sidebar_content_title_color ); ?> !important;
 				<?php endif; ?>
@@ -634,7 +634,7 @@ class ShortCodeProfile {
 
 			/* Profile Name */
 			<?php if ( $profile_name_color || $profile_name_font_size || $profile_name_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-name {
+			.ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-name {
 				<?php if ( $profile_name_color ) : ?>
 				color: <?php echo esc_attr( $profile_name_color ); ?> !important;
 				<?php endif; ?>
@@ -649,7 +649,7 @@ class ShortCodeProfile {
 
 			/* Profile Bio */
 			<?php if ( $profile_bio_color || $profile_bio_font_size || $profile_bio_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile .profile-bio {
+			.ohmylms-page .ohmylms-student-profile .student-profile .profile-bio {
 				<?php if ( $profile_bio_color ) : ?>
 				color: <?php echo esc_attr( $profile_bio_color ); ?> !important;
 				<?php endif; ?>
@@ -664,7 +664,7 @@ class ShortCodeProfile {
 
 			/* Profile Edit Button */
 			<?php if ( $profile_edit_color || $profile_edit_bg_color || $profile_edit_border || $profile_edit_font_size || $profile_edit_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-actions .profile-edit {
+			.ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-actions .profile-edit {
 				<?php if ( $profile_edit_color ) : ?>
 				color: <?php echo esc_attr( $profile_edit_color ); ?> !important;
 				<?php endif; ?>
@@ -685,7 +685,7 @@ class ShortCodeProfile {
 
 			/* Profile Edit Button Hover */
 			<?php if ( $profile_edit_hover_color || $profile_edit_hover_bg_color ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-actions .profile-edit:hover {
+			.ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-actions .profile-edit:hover {
 				<?php if ( $profile_edit_hover_color ) : ?>
 				color: <?php echo esc_attr( $profile_edit_hover_color ); ?> !important;
 				<?php endif; ?>
@@ -697,8 +697,8 @@ class ShortCodeProfile {
 
 			/* Basic Info Section */
 			<?php if ( $basic_info_bg_color || $basic_info_shadow || $basic_info_padding ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-basic-info,
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-account {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-basic-info,
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-account {
 				<?php if ( $basic_info_bg_color ) : ?>
 				background-color: <?php echo esc_attr( $basic_info_bg_color ); ?> !important;
 				<?php endif; ?>
@@ -713,7 +713,7 @@ class ShortCodeProfile {
 
 			/* Basic Info Title */
 			<?php if ( $basic_info_title_color || $basic_info_title_font_size || $basic_info_title_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .account-title {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .account-title {
 				<?php if ( $basic_info_title_color ) : ?>
 				color: <?php echo esc_attr( $basic_info_title_color ); ?> !important;
 				<?php endif; ?>
@@ -728,13 +728,13 @@ class ShortCodeProfile {
 
 			/* Input Fields */
 			<?php if ( $input_bg_color || $input_border || $input_text_color || $input_font_size || $input_padding || $input_border_radius ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input[type="text"],
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input[type="email"],
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input[type="password"],
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input[type="url"],
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input[type="date"],
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit select,
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit textarea {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input[type="text"],
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input[type="email"],
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input[type="password"],
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input[type="url"],
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input[type="date"],
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit select,
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit textarea {
 				<?php if ( $input_bg_color ) : ?>
 				background-color: <?php echo esc_attr( $input_bg_color ); ?> !important;
 				<?php endif; ?>
@@ -758,15 +758,15 @@ class ShortCodeProfile {
 
 			/* Input Placeholder */
 			<?php if ( $input_placeholder_color ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit input::placeholder,
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit textarea::placeholder {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit input::placeholder,
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit textarea::placeholder {
 				color: <?php echo esc_attr( $input_placeholder_color ); ?> !important;
 			}
 			<?php endif; ?>
 
 			/* Labels */
 			<?php if ( $label_color || $label_font_size || $label_font_weight ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-form-group > label {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-form-group > label {
 				<?php if ( $label_color ) : ?>
 				color: <?php echo esc_attr( $label_color ); ?> !important;
 				<?php endif; ?>
@@ -781,7 +781,7 @@ class ShortCodeProfile {
 
 			/* Buttons */
 			<?php if ( $button_bg_color || $button_text_color || $button_font_size || $button_font_weight || $button_border_radius ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-button {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-button {
 				<?php if ( $button_bg_color ) : ?>
 				background-color: <?php echo esc_attr( $button_bg_color ); ?> !important;
 				<?php endif; ?>
@@ -802,7 +802,7 @@ class ShortCodeProfile {
 
 			/* Button Hover */
 			<?php if ( $button_hover_bg_color || $button_hover_text_color || $button_hover_border ) : ?>
-			.creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-button:hover {
+			.ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-button:hover {
 				<?php if ( $button_hover_bg_color ) : ?>
 				background-color: <?php echo esc_attr( $button_hover_bg_color ); ?> !important;
 				<?php endif; ?>

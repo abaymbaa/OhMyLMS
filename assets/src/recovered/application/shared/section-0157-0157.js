@@ -642,7 +642,7 @@ var o3 = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, p(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/badges",
+                path: "/ohmylms/v1/engagement/badges",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -675,7 +675,7 @@ var o3 = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, p(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/badges",
+                path: "/ohmylms/v1/engagement/badges",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"

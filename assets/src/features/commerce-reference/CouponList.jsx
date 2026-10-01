@@ -105,7 +105,7 @@ export function createCouponList(readRuntime) {
           render: function (e, t) {
             return <v.Link to={"#"} onClick={function () {
               return ae(t);
-            }} className={"omlms-coupon-title"}>{Ge(e) || "N/A"}</v.Link>;
+            }} className={"ohmylms-coupon-title"}>{Ge(e) || "N/A"}</v.Link>;
           }
         }, {
           title: (0, I18n.__)("Status", "ohmylms"),
@@ -125,7 +125,7 @@ export function createCouponList(readRuntime) {
           dataIndex: "code",
           width: "15%",
           render: function (e) {
-            return <Controls.SpacerWP marginBottom={0} className={"omlms-coupon-code"}><Controls.TagWP style={Wre(Wre({
+            return <Controls.SpacerWP marginBottom={0} className={"ohmylms-coupon-code"}><Controls.TagWP style={Wre(Wre({
                 fontSize: "12px",
                 color: "#6E42D3",
                 fontWeight: 500,
@@ -213,7 +213,7 @@ export function createCouponList(readRuntime) {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, e.n = 1, l()({
-                  path: "/creator-lms/v1/courses?search=".concat(t),
+                  path: "/ohmylms/v1/courses?search=".concat(t),
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"
@@ -254,7 +254,7 @@ export function createCouponList(readRuntime) {
                 }), P(a), $("success", (0, I18n.__)("Coupon ".concat(null != t && t.id ? "updated" : "created", " successfully."), "ohmylms")), f(!1), D(null), 1 === B ? ce() : L(1), e.n = 3;
                 break;
               case 2:
-                e.p = 2, o = e.v, console.error(o), "creator_lms_rest_coupon_code_already_exists" === (null == o ? void 0 : o.code) ? $("error", null == o ? void 0 : o.message) : $("error", (0, I18n.__)("Something went wrong!", "ohmylms"));
+                e.p = 2, o = e.v, console.error(o), "ohmylms_rest_coupon_code_already_exists" === (null == o ? void 0 : o.code) ? $("error", null == o ? void 0 : o.message) : $("error", (0, I18n.__)("Something went wrong!", "ohmylms"));
               case 3:
                 return e.a(2);
             }

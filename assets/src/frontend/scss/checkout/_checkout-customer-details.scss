@@ -1,14 +1,14 @@
-.creator-lms-page {
-    .creator-lms-checkout-customer-details {
+.ohmylms-page {
+    .ohmylms-checkout-customer-details {
         margin-bottom: 30px;
         
-        .creator-lms-billing-field-wrapper {
+        .ohmylms-billing-field-wrapper {
             display: flex;
             flex-flow: row wrap;
             gap: 10px;
         }
 
-        .creator-lms-form-row {
+        .ohmylms-form-row {
             width: 100%;
             margin: 0;
             padding: 0;
@@ -27,18 +27,18 @@
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-checkout-customer-details {
+    .ohmylms-page .ohmylms-checkout-customer-details {
         margin-bottom: 22px;
     }
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-checkout-customer-details #country_field,
-    .creator-lms-page .creator-lms-checkout-customer-details #state_field,
-    .creator-lms-page .creator-lms-checkout-customer-details #city_field,
-    .creator-lms-page .creator-lms-checkout-customer-details #postcode_field,
-    .creator-lms-page .creator-lms-checkout-customer-details #last_name_field, 
-    .creator-lms-page .creator-lms-checkout-customer-details #first_name_field {
+    .ohmylms-page .ohmylms-checkout-customer-details #country_field,
+    .ohmylms-page .ohmylms-checkout-customer-details #state_field,
+    .ohmylms-page .ohmylms-checkout-customer-details #city_field,
+    .ohmylms-page .ohmylms-checkout-customer-details #postcode_field,
+    .ohmylms-page .ohmylms-checkout-customer-details #last_name_field, 
+    .ohmylms-page .ohmylms-checkout-customer-details #first_name_field {
         width: 100%;
     }
     

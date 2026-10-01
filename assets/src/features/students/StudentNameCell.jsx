@@ -43,7 +43,7 @@ export function createStudentNameCell(readRuntime) {
               <JU />
             )}
           </v.Link>
-          <Controls.FlexWP direction={'column'} className={'omlms-td-thumbnail-title'}>
+          <Controls.FlexWP direction={'column'} className={'ohmylms-td-thumbnail-title'}>
             <v.Link
               to={'/students/'.concat(null == data ? void 0 : data.user_id, '/report')}
               title={null == data ? void 0 : data.student_name}
@@ -62,7 +62,7 @@ export function createStudentNameCell(readRuntime) {
               </Controls.TextWP>
             </v.Link>
             <Controls.FlexWP align={'center'} justify={'start'} gap={'2'}>
-              <div className={'omlms-td-action-analytics'}>
+              <div className={'ohmylms-td-action-analytics'}>
                 <Controls.ButtonWP
                   icon={React.createElement(vG, null)}
                   onClick={r}
@@ -73,7 +73,7 @@ export function createStudentNameCell(readRuntime) {
                   }}
                 />
               </div>
-              <div className={'omlms-td-login-info'}>
+              <div className={'ohmylms-td-login-info'}>
                 {null != data && data.last_login ? (
                   <Controls.BadgeWP variant={'secondary'} isBorderLess={!0}>
                     {(0, I18n.__)('Last login', 'ohmylms')}{' '}

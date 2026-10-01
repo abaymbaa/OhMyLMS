@@ -40,10 +40,12 @@ export function createScormImport(readRuntime) {
         />
         <Controls.ContainerWP>
           <div
-            className={'omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper'}
+            className={
+              'ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper'
+            }
           >
-            <div className={'omlms-setup-wizard__container'}>
-              <div className={'omlms-setup-wizard__header'}>
+            <div className={'ohmylms-setup-wizard__container'}>
+              <div className={'ohmylms-setup-wizard__header'}>
                 <Controls.HeadingWP
                   as={'h2'}
                   color={'#000d25'}

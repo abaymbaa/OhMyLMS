@@ -1,14 +1,14 @@
 <?php
 /**
- * CreatorLMS Course List Element for Bricks
+ * OhMyLMS Course List Element for Bricks
  *
- * @package OMLMS\Bricks\Elements
+ * @package OhMyLMS\Bricks\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\Bricks\Elements;
+namespace OhMyLMS\Bricks\Elements;
 
-use OMLMS\Shortcodes\ShortcodeCourseList;
+use OhMyLMS\Shortcodes\ShortcodeCourseList;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -22,16 +22,16 @@ class CourseListElement extends \Bricks\Element {
 	 *
 	 * @var string
 	 */
-	public $category = 'creator-lms';
+	public $category = 'ohmylms';
 
 	/**
 	 * Element name
 	 *
 	 * @var string
 	 */
-	public $name = 'creator-lms-course-list';
+	public $name = 'ohmylms-course-list';
 
-	public $css_selector = ' .creator-lms-page .creator-lms-course-list-shortcode';
+	public $css_selector = ' .ohmylms-page .ohmylms-course-list-shortcode';
 	/**
 	 * Element icon
 	 *
@@ -51,14 +51,14 @@ class CourseListElement extends \Bricks\Element {
 	 *
 	 * @var array
 	 */
-	public $scripts = array( 'omlms-frontend', 'omlms-add-to-cart', 'omlms-slick' );
+	public $scripts = array( 'ohmylms-frontend', 'ohmylms-add-to-cart', 'ohmylms-slick' );
 
 	/**
 	 * Element styles
 	 *
 	 * @var array
 	 */
-	public $styles = array( 'omlms-frontend', 'omlms-general' );
+	public $styles = array( 'ohmylms-frontend', 'ohmylms-general' );
 
 	/**
 	 * Get element label
@@ -66,7 +66,7 @@ class CourseListElement extends \Bricks\Element {
 	 * @return string
 	 */
 	public function get_label() {
-		return esc_html__( 'CreatorLMS Course List', 'ohmylms' );
+		return esc_html__( 'OhMyLMS Course List', 'ohmylms' );
 	}
 
 	/**
@@ -103,27 +103,25 @@ class CourseListElement extends \Bricks\Element {
 				'grid' => esc_html__( 'Grid', 'ohmylms' ),
 				'list' => esc_html__( 'List', 'ohmylms' ),
 			),
-			'default' => get_option( 'creator_lms_archive_page_layout', 'grid' ),
+			'default' => get_option( 'ohmylms_archive_page_layout', 'grid' ),
 		);
 
-		// Build layout style options based on license status
+		// Build layout style options
 		$layout_options = array(
 			'grid-style1' => esc_html__( 'Layout 1', 'ohmylms' ),
 		);
 
-		// Add pro layouts only if pro license is active
-		if ( creator_lms_is_pro_license() ) {
+		// Layouts 2-4
 			$layout_options['grid-style2'] = esc_html__( 'Layout 2', 'ohmylms' );
 			$layout_options['grid-style3'] = esc_html__( 'Layout 3', 'ohmylms' );
 			$layout_options['grid-style4'] = esc_html__( 'Layout 4', 'ohmylms' );
-		}
 
 		$this->controls['layout_style'] = array(
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Layout Style', 'ohmylms' ),
 			'type'     => 'select',
 			'options'  => $layout_options,
-			'default'  => get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' ),
+			'default'  => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
 			'required' => array( array( 'layout', '=', 'grid' ) ),
 		);
 
@@ -137,7 +135,7 @@ class CourseListElement extends \Bricks\Element {
 				'3' => esc_html__( '3 Columns', 'ohmylms' ),
 				'4' => esc_html__( '4 Columns', 'ohmylms' ),
 			),
-			'default'  => get_option( 'creator_lms_columns_per_row', '3' ),
+			'default'  => get_option( 'ohmylms_columns_per_row', '3' ),
 			'required' => array( array( 'layout', '=', 'grid' ) ),
 			'description' => esc_html__( 'Note: If "Show Filter" is enabled for Layout Style 1 or 2, maximum columns allowed is 3.', 'ohmylms' ),
 		);
@@ -148,7 +146,7 @@ class CourseListElement extends \Bricks\Element {
 			'type'        => 'number',
 			'min'         => 1,
 			'max'         => 100,
-			'default'     => get_option( 'creator_lms_courses_per_page', 10 ),
+			'default'     => get_option( 'ohmylms_courses_per_page', 10 ),
 		);
 
 		// Feature Toggles Group
@@ -163,7 +161,7 @@ class CourseListElement extends \Bricks\Element {
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Show Filter', 'ohmylms' ),
 			'type'     => 'checkbox',
-			'default'  => get_option( 'creator_lms_archive_page_filter_is_enabled', 'no' ) === 'yes',
+			'default'  => get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' ) === 'yes',
 			'required' => array(
 				array( 'layout', '=', 'grid' ),
 				array( 'layout_style', '=', array( 'grid-style1', 'grid-style2' ) ),
@@ -174,7 +172,7 @@ class CourseListElement extends \Bricks\Element {
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Show Search', 'ohmylms' ),
 			'type'     => 'checkbox',
-			'default'  => get_option( 'creator_lms_archive_page_search_is_enabled', 'no' ) === 'yes',
+			'default'  => get_option( 'ohmylms_archive_page_search_is_enabled', 'no' ) === 'yes',
 			'required' => array(
 				array( 'layout', '=', 'grid' ),
 				array( 'layout_style', '=', array( 'grid-style1', 'grid-style2' ) ),
@@ -185,7 +183,7 @@ class CourseListElement extends \Bricks\Element {
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Show Sort', 'ohmylms' ),
 			'type'     => 'checkbox',
-			'default'  => get_option( 'creator_lms_archive_page_sorting_is_enabled', 'no' ) === 'yes',
+			'default'  => get_option( 'ohmylms_archive_page_sorting_is_enabled', 'no' ) === 'yes',
 			'required' => array(
 				array( 'layout', '=', 'grid' ),
 				array( 'layout_style', '=', array( 'grid-style1', 'grid-style2' ) ),
@@ -196,7 +194,7 @@ class CourseListElement extends \Bricks\Element {
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Show Category', 'ohmylms' ),
 			'type'     => 'checkbox',
-			'default'  => get_option( 'creator_lms_archive_page_category_is_enabled', 'no' ) === 'yes',
+			'default'  => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ) === 'yes',
 			'required' => array(
 				array( 'layout', '=', 'grid' ),
 				array( 'layout_style', '=', array( 'grid-style3', 'grid-style4' ) ),
@@ -281,25 +279,25 @@ class CourseListElement extends \Bricks\Element {
 			'group' => 'wrapper',
 			'label' => esc_html__('Background','ohmylms'),
 			'type'  => 'color',
-			'css'   => [['property'=>'background','selector'=>'{{WRAPPER}} .creator-lms-container']],
+			'css'   => [['property'=>'background','selector'=>'{{WRAPPER}} .ohmylms-container']],
 		];
 		$this->controls['wrapper_padding'] = [
 			'group'=>'wrapper',
 			'label'=>esc_html__('Padding','ohmylms'),
 			'type'=>'spacing',
-			'css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .creator-lms-container']],
+			'css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .ohmylms-container']],
 		];
 		$this->controls['wrapper_margin'] = [
 			'group'=>'wrapper',
 			'label'=>esc_html__('Margin','ohmylms'),
 			'type'=>'spacing',
-			'css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .creator-lms-container']],
+			'css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .ohmylms-container']],
 		];
 
 		// Card
 		$this->controls['card_background'] = [
 			'group'=>'card','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .creator-lms-container .course-card']],
+			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .ohmylms-container .course-card']],
 		];
 
 		$this->controls['card_border'] = [
@@ -338,16 +336,16 @@ class CourseListElement extends \Bricks\Element {
 		// Title
 		$this->controls['title_typography'] = [
 			'group'=>'title','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .creator-lms-course-cards .course-card .course-info .creator-lms-loop-course-title']],
+			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .ohmylms-course-cards .course-card .course-info .ohmylms-loop-course-title']],
 		];
 		$this->controls['title_color'] = [
 			'group'=>'title','label'=>esc_html__('Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .course-info .creator-lms-loop-course-link .creator-lms-loop-course-title']],
+			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title']],
 		];
 		
 		$this->controls['title_margin'] = [
 			'group'=>'title','label'=>esc_html__('Margin','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .course-info .creator-lms-loop-course-link .creator-lms-loop-course-title']],
+			'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title']],
 		];
 
 		// Description
@@ -367,54 +365,54 @@ class CourseListElement extends \Bricks\Element {
 		// Price
 		$this->controls['price_typography'] = [
 			'group'=>'price','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .price .omlms-price-amount bdi']],
+			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .price .ohmylms-price-amount bdi']],
 		];
 		$this->controls['price_background'] = [
 			'group'=>'price','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .omlms-price-amount']],
+			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-price-amount']],
 		];
 		$this->controls['price_color'] = [
 			'group'=>'price','label'=>esc_html__('Sale Price Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .price del .omlms-price-amount bdi']],
+			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .price del .ohmylms-price-amount bdi']],
 		];
 		
 		$this->controls['price_regular_color'] = [
 			'group'=>'price','label'=>esc_html__('Regular Price Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .omlms-price-amount bdi']],
+			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-price-amount bdi']],
 		];
 
 		// Button
 		$this->controls['button_typography'] = [
 			'group'=>'button','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_background'] = [
 			'group'=>'button','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_color'] = [
 			'group'=>'button','label'=>esc_html__('Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_padding'] = [
 			'group'=>'button','label'=>esc_html__('Padding','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_border'] = [
 			'group'=>'button','label'=>esc_html__('Border','ohmylms'),
-			'type'=>'border','css'=>[['selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'border','css'=>[['selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_border_radius'] = [
 			'group'=>'button','label'=>esc_html__('Border Radius','ohmylms'),
-			'type'=>'dimension','css'=>[['property'=>'border-radius','selector'=>'{{WRAPPER}} .course-card .creator-lms-button']],
+			'type'=>'dimension','css'=>[['property'=>'border-radius','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
 		];
 		$this->controls['button_hover_background'] = [
 			'group'=>'button','label'=>esc_html__('Hover Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .creator-lms-button:hover']],
+			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-button:hover']],
 		];
 		$this->controls['button_hover_color'] = [
 			'group'=>'button','label'=>esc_html__('Hover Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .creator-lms-button:hover']],
+			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-button:hover']],
 		];
 	}
 
@@ -429,7 +427,7 @@ class CourseListElement extends \Bricks\Element {
 		// Convert Bricks settings to shortcode attributes
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 		// Use the same wrapper class as shortcode for consistency
-		echo '<div class="creator-lms-container creator-lms creator-lms-page">';
+		echo '<div class="ohmylms-container ohmylms ohmylms-page">';
 		
 		// Use the shortcode class to render the course list
 		ShortcodeCourseList::output( $shortcode_attrs );
@@ -865,7 +863,7 @@ class CourseListElement extends \Bricks\Element {
 	private function get_course_instructors() {
 		$instructors = get_users(
 			array(
-				'role__in' => array( 'creator_lms_instructor', 'administrator' ),
+				'role__in' => array( 'ohmylms_instructor', 'administrator' ),
 				'fields'   => array( 'ID', 'display_name' ),
 			)
 		);
@@ -879,49 +877,49 @@ class CourseListElement extends \Bricks\Element {
 	}
 
 	/**
-	 * Add CSS variables for CreatorLMS styling
+	 * Add CSS variables for OhMyLMS styling
 	 * Ensures variables are available in Bricks builder
 	 *
 	 * @return void
 	 */
 	private function add_css_variables() {
 		// Check if already added to avoid duplicates
-		if ( wp_style_is( 'creator-lms-css-variables', 'enqueued' ) ) {
+		if ( wp_style_is( 'ohmylms-css-variables', 'enqueued' ) ) {
 			return;
 		}
 
-		$primary_color       = get_option( 'creator_lms_primary_color_scheme' );
-		$primary_hover_color = get_option( 'creator_lms_primary_hover_color_scheme' );
-		$heading_color       = get_option( 'creator_lms_heading_color_scheme' );
-		$body_text_color     = get_option( 'creator_lms_body_text_color_scheme' );
-		$progressbar_color   = get_option( 'creator_lms_body_progress_color_scheme' );
+		$primary_color       = get_option( 'ohmylms_primary_color_scheme' );
+		$primary_hover_color = get_option( 'ohmylms_primary_hover_color_scheme' );
+		$heading_color       = get_option( 'ohmylms_heading_color_scheme' );
+		$body_text_color     = get_option( 'ohmylms_body_text_color_scheme' );
+		$progressbar_color   = get_option( 'ohmylms_body_progress_color_scheme' );
 
 		$primary_color     = isset( $primary_color ) && ! empty( $primary_color ) ? $primary_color : '#6e42d3';
-		$primary_color_rgb = creator_lms_hex_to_rgb( $primary_color );
+		$primary_color_rgb = ohmylms_hex_to_rgb( $primary_color );
 
 		$css_variables = ":root {
-			--creator-lms-primary-color: " . esc_html( $primary_color ) . ";
-			--creator-lms-primary-color-rgb: " . esc_html( $primary_color_rgb ) . ";
-			--creator-lms-heading-color: " . ( isset( $heading_color ) && ! empty( $heading_color ) ? esc_html( $heading_color ) : '#000D25' ) . ";
-			--creator-lms-body-text-color: " . ( isset( $body_text_color ) && ! empty( $body_text_color ) ? esc_html( $body_text_color ) : '#52525B' ) . ";
-			--creator-lms-progressbar-color: " . ( $progressbar_color ? esc_html( $progressbar_color ) : '#F85656' ) . ";
-			--creator-lms-outline-color: var(--omlms-primary-color);
+			--ohmylms-primary-color: " . esc_html( $primary_color ) . ";
+			--ohmylms-primary-color-rgb: " . esc_html( $primary_color_rgb ) . ";
+			--ohmylms-heading-color: " . ( isset( $heading_color ) && ! empty( $heading_color ) ? esc_html( $heading_color ) : '#000D25' ) . ";
+			--ohmylms-body-text-color: " . ( isset( $body_text_color ) && ! empty( $body_text_color ) ? esc_html( $body_text_color ) : '#52525B' ) . ";
+			--ohmylms-progressbar-color: " . ( $progressbar_color ? esc_html( $progressbar_color ) : '#F85656' ) . ";
+			--ohmylms-outline-color: var(--ohmylms-primary-color);
 		}";
 
 		// Register and enqueue inline styles
-		wp_register_style( 'creator-lms-css-variables', false );
-		wp_enqueue_style( 'creator-lms-css-variables' );
-		wp_add_inline_style( 'creator-lms-css-variables', $css_variables );
+		wp_register_style( 'ohmylms-css-variables', false );
+		wp_enqueue_style( 'ohmylms-css-variables' );
+		wp_add_inline_style( 'ohmylms-css-variables', $css_variables );
 	}
 
 
     public function enqueue_scripts() {
-        wp_enqueue_script( 'omlms-frontend' );
-        wp_enqueue_script( 'omlms-add-to-cart' );
+        wp_enqueue_script( 'ohmylms-frontend' );
+        wp_enqueue_script( 'ohmylms-add-to-cart' );
 
-        wp_enqueue_style( 'omlms-frontend' );
-		wp_enqueue_style( 'omlms-general' );
-		wp_enqueue_script( 'omlms-slick' );
+        wp_enqueue_style( 'ohmylms-frontend' );
+		wp_enqueue_style( 'ohmylms-general' );
+		wp_enqueue_script( 'ohmylms-slick' );
 		
 		// Ensure CSS variables are available in Bricks builder
 		$this->add_css_variables();
@@ -935,7 +933,7 @@ class CourseListElement extends \Bricks\Element {
 			jQuery(document).ready(function($) {
 				function initSlickCarousel() {
 					if (typeof $.fn.slick !== 'undefined') {
-						$('.creator-lms-course-cards-carousel').each(function(){
+						$('.ohmylms-course-cards-carousel').each(function(){
 							if (!$(this).hasClass('slick-initialized')) {
 								let colPerRow = $(this).data('col') || {$columns};
 								$(this).slick({
@@ -964,7 +962,7 @@ class CourseListElement extends \Bricks\Element {
 											}
 										}
 									]
-								}).addClass('creator-lms-initialized').css('display', 'block');
+								}).addClass('ohmylms-initialized').css('display', 'block');
 							}
 						});
 					} else {
@@ -986,7 +984,7 @@ class CourseListElement extends \Bricks\Element {
 					mutations.forEach(function(mutation) {
 						if (mutation.type === 'childList') {
 							var addedNodes = $(mutation.addedNodes);
-							if (addedNodes.find('.creator-lms-course-cards-carousel').length || addedNodes.hasClass('creator-lms-course-cards-carousel')) {
+							if (addedNodes.find('.ohmylms-course-cards-carousel').length || addedNodes.hasClass('ohmylms-course-cards-carousel')) {
 								setTimeout(initSlickCarousel, 300);
 							}
 						}
@@ -999,7 +997,7 @@ class CourseListElement extends \Bricks\Element {
 				});
 			});
 			";
-			wp_add_inline_script( 'omlms-slick', $inline_script );
+			wp_add_inline_script( 'ohmylms-slick', $inline_script );
 		}
     }
 }

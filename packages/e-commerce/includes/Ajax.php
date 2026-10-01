@@ -16,15 +16,15 @@ class Ajax {
 		);
 
 		foreach ( $ajax_events_nopriv as $ajax_event ) {
-			add_action( 'wp_ajax_creator_lms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
-			add_action( 'wp_ajax_nopriv_creator_lms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+			add_action( 'wp_ajax_ohmylms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+			add_action( 'wp_ajax_nopriv_ohmylms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
 		}
 
 		$ajax_events = array(
 			'search_pages',
 		);
 		foreach ( $ajax_events as $ajax_event ) {
-			add_action( 'wp_ajax_creator_lms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+			add_action( 'wp_ajax_ohmylms_' . $ajax_event, array( __CLASS__, $ajax_event ) );
 		}
 	}
 
@@ -45,7 +45,7 @@ class Ajax {
 			wp_send_json_error( 'No country code provided.' );
 		}
 
-		$states = creatorlms_get_states( $country_code );
+		$states = ohmylms_get_states( $country_code );
 		wp_send_json_success( $states );
 	}
 }

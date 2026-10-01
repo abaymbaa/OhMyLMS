@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 final class Layouts {
     private static $rendering=[];

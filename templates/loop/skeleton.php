@@ -2,7 +2,7 @@
 /**
  * Course loop skeleton loader
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div class="creator-lms-skeleton-card" >
+<div class="ohmylms-skeleton-card" >
     <div class="skeleton-card-image"></div>
 
     <div class="skeleton-card-content">

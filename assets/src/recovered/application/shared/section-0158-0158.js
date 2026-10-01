@@ -109,7 +109,7 @@ var p3 = function () {
               return e.p = 0, o(!0), n = t.filter(function (e) {
                 return e.slug !== f;
               }), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/badges",
+                path: "/ohmylms/v1/engagement/badges",
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json"
@@ -139,7 +139,7 @@ var p3 = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, o(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/badges"
+                path: "ohmylms/v1/engagement/badges"
               });
             case 1:
               t = e.v, n(t), e.n = 3;
@@ -220,9 +220,7 @@ var p3 = function () {
     isDelete: !0
   }));
 };
-
 const f3 = (0, g.memo)(p3);
-
 function v3() {
   var e,
     t,
@@ -309,7 +307,6 @@ function v3() {
     };
   })();
 }
-
 function g3(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -331,7 +328,6 @@ function g3(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, g3(e, t, n, r);
 }
-
 function h3(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -341,7 +337,6 @@ function h3(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function y3(e) {
   return function () {
     var t = this,
@@ -358,7 +353,6 @@ function y3(e) {
     });
   };
 }
-
 function b3(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -398,15 +392,13 @@ function b3(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function _3(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var w3 = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = b3((0, g.useState)({
       enable: !1,
@@ -460,7 +452,7 @@ var w3 = function () {
           for (;;) switch (e.n) {
             case 0:
               return _(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/settings/badge"
+                path: "ohmylms/v1/engagement/settings/badge"
               });
             case 1:
               t = e.v, a(t || r), _(!1);
@@ -473,7 +465,7 @@ var w3 = function () {
         return e.apply(this, arguments);
       };
     }();
-    e && t();
+    t();
   }, []), (0, g.useEffect)(function () {
     !h && p && s(f, p);
   }, [p]);
@@ -482,14 +474,14 @@ var w3 = function () {
       return v3().w(function (n) {
         for (;;) switch (n.p = n.n) {
           case 0:
-            if (e) {
+            {
               n.n = 1;
               break;
             }
             return n.a(2);
           case 1:
             return t.setLoadingSetting(!0), S(!0), n.p = 2, n.n = 3, l()({
-              path: "/creator-lms/v1/engagement/settings/badge",
+              path: "/ohmylms/v1/engagement/settings/badge",
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -522,9 +514,7 @@ var w3 = function () {
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     rows: 15
-  }))) : React.createElement(React.Fragment, null, d, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Badges are available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms")
-  }), React.createElement(I.CardWP, {
+  }))) : React.createElement(React.Fragment, null, d, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
   }, React.createElement(I.SpacerWP, {
@@ -551,9 +541,7 @@ var w3 = function () {
     onClose: C
   })));
 };
-
 const E3 = (0, g.memo)(w3);
-
 function S3(e) {
   return function (e) {
     if (Array.isArray(e)) return R3(e);
@@ -569,13 +557,11 @@ function S3(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function R3(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var x3 = function (e) {
   var t = e.rules,
     n = e.setRules,
@@ -675,9 +661,7 @@ var x3 = function (e) {
     }
   }))));
 };
-
 const C3 = (0, g.memo)(x3);
-
 function P3(e) {
   return P3 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -685,7 +669,6 @@ function P3(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, P3(e);
 }
-
 function O3(e, t) {
   var n = "undefined" != typeof Symbol && e[Symbol.iterator] || e["@@iterator"];
   if (!n) {
@@ -734,7 +717,6 @@ function O3(e, t) {
     }
   };
 }
-
 function k3(e) {
   return function (e) {
     if (Array.isArray(e)) return z3(e);
@@ -744,7 +726,6 @@ function k3(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function j3() {
   var e,
     t,
@@ -831,7 +812,6 @@ function j3() {
     };
   })();
 }
-
 function A3(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -853,7 +833,6 @@ function A3(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, A3(e, t, n, r);
 }
-
 function M3(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -863,7 +842,6 @@ function M3(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function T3(e) {
   return function () {
     var t = this,
@@ -880,7 +858,6 @@ function T3(e) {
     });
   };
 }
-
 function I3(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -891,7 +868,6 @@ function I3(e, t) {
   }
   return n;
 }
-
 function F3(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -903,7 +879,6 @@ function F3(e) {
   }
   return e;
 }
-
 function N3(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -924,7 +899,6 @@ function N3(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function D3(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -958,7 +932,6 @@ function D3(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function W3(e, t) {
   if (e) {
     if ("string" == typeof e) return z3(e, t);
@@ -966,7 +939,6 @@ function W3(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? z3(e, t) : void 0;
   }
 }
-
 function z3(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

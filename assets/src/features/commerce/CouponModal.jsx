@@ -128,13 +128,13 @@ export function createCouponModal(readRuntime) {
           description,
           date_expires: {
             date: moment(endDate).format('YYYY-MM-DDTHH:mm:ss'),
-            timezone: window.creator_lms_params?.timezone?.timezone_string,
-            timezone_type: window.creator_lms_params?.timezone?.timezone_type,
+            timezone: window.ohmylms_params?.timezone?.timezone_string,
+            timezone_type: window.ohmylms_params?.timezone?.timezone_type,
           },
           date_start: {
             date: moment(startDate).format('YYYY-MM-DDTHH:mm:ss'),
-            timezone: window.creator_lms_params?.timezone?.timezone_string,
-            timezone_type: window.creator_lms_params?.timezone?.timezone_type,
+            timezone: window.ohmylms_params?.timezone?.timezone_string,
+            timezone_type: window.ohmylms_params?.timezone?.timezone_type,
           },
           individual_use: 'no',
           exclude_sale_items: [],
@@ -255,7 +255,7 @@ export function createCouponModal(readRuntime) {
                         )}
                       </Controls.TextWP>
                     </Controls.FlexItemWP>
-                    <Controls.FlexItemWP isBlock={!0} className={'omlms-coupon-generate'}>
+                    <Controls.FlexItemWP isBlock={!0} className={'ohmylms-coupon-generate'}>
                       <Controls.FlexWP gap={2}>
                         <Controls.FlexItemWP
                           style={{
@@ -272,7 +272,7 @@ export function createCouponModal(readRuntime) {
                             }}
                           />
                           <Controls.ButtonWP
-                            className={'omlms-coupon-generate-btn '.concat(l && 'is-generating')}
+                            className={'ohmylms-coupon-generate-btn '.concat(l && 'is-generating')}
                             onClick={function () {
                               (c(!0),
                                 setTimeout(function () {

@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/tabs/layout3-description.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -25,9 +25,9 @@ $description_class = empty( get_the_content( $course->get_id() ) ) ? 'no-descrip
 
 ?>
 
-<div class="creator-lms-description-content creator-lms-wysiwyg-content layout3-description">
-	<div class="creator-lms-description-content-inner" initial-height="330" style="--initial-height: 330px;">
-		<div class="creator-lms-description-content-height <?php echo esc_attr( $description_class ); ?>">
+<div class="ohmylms-description-content ohmylms-wysiwyg-content layout3-description">
+	<div class="ohmylms-description-content-inner" initial-height="330" style="--initial-height: 330px;">
+		<div class="ohmylms-description-content-height <?php echo esc_attr( $description_class ); ?>">
 			<?php 
 				if ( ! empty( get_the_content($course->get_id()) ) ) {
 					echo get_the_content($course->get_id());
@@ -35,7 +35,7 @@ $description_class = empty( get_the_content( $course->get_id() ) ) ? 'no-descrip
 				}else {
 					?>
 					<div class="no-course-data">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 						<p>
 							<?php echo __( 'No course description found.', 'ohmylms' ); ?>
 						</p>

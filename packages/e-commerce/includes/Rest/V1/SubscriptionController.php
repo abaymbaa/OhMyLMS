@@ -11,7 +11,7 @@ use CodeRex\Ecommerce\SubscriptionManager;
 class SubscriptionController extends RestController {
 	protected $base = 'subscriptions';
 
-	protected $post_type = 'omlms-subscription';
+	protected $post_type = 'ohmylms-subscription';
 
 	/**
 	 * The schema for the subscription item.
@@ -221,12 +221,12 @@ class SubscriptionController extends RestController {
 		}
 
 		$subscription_statuses = array(
-			'creatorlms-pending',
-			'creatorlms-active',
-			'creatorlms-on-hold',
-			'creatorlms-pending-cancel',
-			'creatorlms-cancelled',
-			'creatorlms-expired',
+			'ohmylms-pending',
+			'ohmylms-active',
+			'ohmylms-on-hold',
+			'ohmylms-pending-cancel',
+			'ohmylms-cancelled',
+			'ohmylms-expired',
 		);
 
 		$args = array(
@@ -549,13 +549,13 @@ class SubscriptionController extends RestController {
 
 		// Fire actions for status transitions
 		if ( $get_previous_status !== 'active' && $get_current_status === 'active' ) {
-			do_action( 'creator_lms_update_subscription_status_to_active', $current_subscription );
+			do_action( 'ohmylms_update_subscription_status_to_active', $current_subscription );
 		}
 		if ( $get_previous_status !== 'cancelled' && $get_current_status === 'cancelled' ) {
-			do_action( 'creator_lms_update_subscription_status_to_cancelled', $current_subscription );
+			do_action( 'ohmylms_update_subscription_status_to_cancelled', $current_subscription );
 		}
 		if ( $get_previous_status !== 'expired' && $get_current_status === 'expired' ) {
-			do_action( 'creator_lms_update_subscription_status_to_expired', $current_subscription );
+			do_action( 'ohmylms_update_subscription_status_to_expired', $current_subscription );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
@@ -686,9 +686,9 @@ class SubscriptionController extends RestController {
 			$payment_method_title = $order->get_payment_method_title();
 			foreach ( $order->get_items() as $item_id => $item ) {
 				$post_type = get_post_type( $item->get_course_id() );
-				if ( $post_type === CREATOR_LMS_COURSE_CPT ) {
+				if ( $post_type === OHMYLMS_COURSE_CPT ) {
 					$course = $item->get_course();
-				} elseif ( $post_type === CREATOR_LMS_MEMBERSHIP_CPT ) {
+				} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
 					$course = $item->get_membership();
 				} else {
 					$course = $item->get_course();
@@ -701,7 +701,7 @@ class SubscriptionController extends RestController {
 					$item_meta            = array(
 						'key'   => 'membership_id',
 						'name'  => $course->get_name(),
-						'price' => omlms_format_decimal( $course->get_price(), omlms_get_price_decimals() ),
+						'price' => ohmylms_format_decimal( $course->get_price(), ohmylms_get_price_decimals() ),
 						'quantity' => 1,
 					);
 					$courses = method_exists($course, 'get_products') ? $course->get_products() : array();
@@ -723,7 +723,7 @@ class SubscriptionController extends RestController {
 				$coupon_line = array(
 					'title'    => $item->get_name(),
 					'code'     => $item->get_code(),
-					'discount' => omlms_format_decimal( $item->get_discount(), omlms_get_price_decimals() ),
+					'discount' => ohmylms_format_decimal( $item->get_discount(), ohmylms_get_price_decimals() ),
 				);
 				$data['coupon_lines'] = $coupon_line;
 			}

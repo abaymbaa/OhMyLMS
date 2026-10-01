@@ -1,37 +1,37 @@
-.theme-generatepress.creator-lms-page .container.grid-container {
+.theme-generatepress.ohmylms-page .container.grid-container {
     width: 100%;
     max-width: 100%;
 }
 
-.theme-generatepress.creator-lms-page .container.grid-container > .site-content {
+.theme-generatepress.ohmylms-page .container.grid-container > .site-content {
     display: block;
 }
 
-.theme-generatepress.creator-lms-page .container.grid-container > .site-content .content-area {
+.theme-generatepress.ohmylms-page .container.grid-container > .site-content .content-area {
     width: 100%;
 }
 
-.theme-generatepress.creator-lms-page .container.grid-container .site-main {
+.theme-generatepress.ohmylms-page .container.grid-container .site-main {
     margin: 0;
 }
 
-.theme-generatepress.creator-lms-page .inside-article {
+.theme-generatepress.ohmylms-page .inside-article {
     padding: 0;
 }
 
-.theme-generatepress.creator-lms-page .inside-article .entry-content:not(:first-child) {
+.theme-generatepress.ohmylms-page .inside-article .entry-content:not(:first-child) {
     margin-top: 0;
 }
 
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="text"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="email"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="url"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="password"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="search"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="tel"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper input[type="number"]:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper textarea:focus,
-.theme-generatepress.creator-lms-page .creator-lms-checkout-form-wrapper select:focus {
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="text"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="email"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="url"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="password"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="search"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="tel"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper input[type="number"]:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper textarea:focus,
+.theme-generatepress.ohmylms-page .ohmylms-checkout-form-wrapper select:focus {
     color: #52525b;
     border-color: #ebebef;
     background-color: transparent;

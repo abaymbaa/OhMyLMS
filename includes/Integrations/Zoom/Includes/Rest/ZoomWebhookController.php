@@ -6,13 +6,13 @@
  * recording to the matching session lesson, so instructors on a paid/cloud
  * plan don't have to attach the replay by hand.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Rest;
+namespace OhMyLMS\Integrations\Zoom\Includes\Rest;
 
-use OMLMS\Integrations\Zoom\Includes\Helpers\ZoomApiHelper;
+use OhMyLMS\Integrations\Zoom\Includes\Helpers\ZoomApiHelper;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -20,7 +20,7 @@ use WP_REST_Server;
 /**
  * Class ZoomWebhookController
  *
- * @package OMLMS\Integrations\Zoom\Includes\Rest
+ * @package OhMyLMS\Integrations\Zoom\Includes\Rest
  * @since 1.0.0
  */
 class ZoomWebhookController {
@@ -44,7 +44,7 @@ class ZoomWebhookController {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * Get instance

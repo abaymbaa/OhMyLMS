@@ -41,8 +41,8 @@
     function fetchCourses(callback) {
         // Use WP REST API to fetch published courses
         var url = window.wpApiSettings && window.wpApiSettings.root
-            ? window.wpApiSettings.root + 'wp/v2/omlms-course?status=publish&per_page=100&orderby=title&order=asc'
-            : '/wp-json/wp/v2/omlms-course?status=publish&per_page=100&orderby=title&order=asc';
+            ? window.wpApiSettings.root + 'wp/v2/ohmylms-course?status=publish&per_page=100&orderby=title&order=asc'
+            : '/wp-json/wp/v2/ohmylms-course?status=publish&per_page=100&orderby=title&order=asc';
         
         fetch(url, {
             credentials: 'same-origin'
@@ -58,10 +58,10 @@
             });
     }
 
-    registerBlockType('creator-lms/buy-now', {
+    registerBlockType('ohmylms/buy-now', {
         title: __('OhMyLMS Buy Now Button', 'ohmylms'),
         icon: 'cart',
-        category: 'creator-lms',
+        category: 'ohmylms',
         attributes: attributesData,
         edit: function(props) {
             var attributes = {};
@@ -166,7 +166,7 @@
 
             // ServerSideRender preview
             var serverSideRender = createElement(ServerSideRender, {
-                block: 'creator-lms/buy-now',
+                block: 'ohmylms/buy-now',
                 attributes: attributes
             });
 

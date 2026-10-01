@@ -6,7 +6,7 @@ var F2 = function () {
     r,
     a,
     o,
-    i = (0, L.useIsPro)(),
+    i = true,
     c = (0, y.useDispatch)(T.default),
     u = M2((0, g.useState)({
       enable: !1,
@@ -193,7 +193,7 @@ var F2 = function () {
           for (;;) switch (e.n) {
             case 0:
               return h(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/settings/point"
+                path: "ohmylms/v1/engagement/settings/point"
               });
             case 1:
               t = e.v, d(t || s), h(!1), t && (n = W(t.rules || [], q), d(O2(O2({}, t), {}, {
@@ -210,7 +210,7 @@ var F2 = function () {
         return e.apply(this, arguments);
       };
     }();
-    i && e();
+    e();
   }, []);
   var W = function (e, t) {
     var n = function (e) {
@@ -248,14 +248,14 @@ var F2 = function () {
         return x2().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (i) {
+              {
                 e.n = 1;
                 break;
               }
               return e.a(2);
             case 1:
               return c.setLoadingSetting(!0), E(!0), e.p = 2, e.n = 3, l()({
-                path: "/creator-lms/v1/engagement/settings/point",
+                path: "/ohmylms/v1/engagement/settings/point",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -301,7 +301,7 @@ var F2 = function () {
               }), a = r.rules.filter(function (e) {
                 return null == e ? void 0 : e.value;
               }), n ? x(r.rules[t]) : a.length > 0 ? x(a[0]) : x(null), e.p = 1, e.n = 2, l()({
-                path: "/creator-lms/v1/engagement/settings/point",
+                path: "/ohmylms/v1/engagement/settings/point",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -342,7 +342,7 @@ var F2 = function () {
                   return t === R.index ? R : e;
                 })
               }), e.n = 3, l()({
-                path: "/creator-lms/v1/engagement/settings/point",
+                path: "/ohmylms/v1/engagement/settings/point",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -540,9 +540,7 @@ var F2 = function () {
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     rows: 15
-  })))) : React.createElement(React.Fragment, null, N, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("The Bonus Point System is a Pro feature and will be available soon. Stay tuned to unlock advanced gamification tools that boost learner motivation and course completion rates.", "ohmylms")
-  }), React.createElement(I.CardWP, {
+  })))) : React.createElement(React.Fragment, null, N, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
   }, React.createElement(I.SpacerWP, {
@@ -554,7 +552,7 @@ var F2 = function () {
     align: "flex-start",
     direction: "column",
     gap: 2
-  }, i && React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
+  }, React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     padding: "24px",
     fullWidth: !0
@@ -864,7 +862,7 @@ var F2 = function () {
       marginBottom: "8px"
     }
   }, (0, b.__)("Email Body", "ohmylms")), React.createElement(I.TextareaWP, {
-    className: "omlms-text-generate-prompt-input",
+    className: "ohmylms-text-generate-prompt-input",
     placeholder: (0, b.__)("Write here...", "ohmylms"),
     value: R.email.body,
     onChange: Y
@@ -1052,7 +1050,7 @@ var F2 = function () {
       fontSize: "16px"
     }
   }, (0, b.__)("Email body", "ohmylms")), React.createElement(I.TextareaWP, {
-    className: "omlms-text-generate-prompt-input",
+    className: "ohmylms-text-generate-prompt-input",
     placeholder: (0, b.__)("Write here...", "ohmylms"),
     value: R.email.body,
     onChange: Y

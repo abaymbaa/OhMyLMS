@@ -2,10 +2,10 @@ const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 const path=require('node:path');
 test.beforeEach(async({page})=>{
- const credentials=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const credentials=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(credentials.username);await page.locator('#user_pass').fill(credentials.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
- for(const file of ['sdk/extensions.js','assets/dist/admin/creatorlms.js'])await page.route('**/build/'+file+'*',route=>route.fulfill({path:path.resolve('build/'+file),contentType:'application/javascript'}));
- await page.goto('/wp-admin/admin.php?page=creator-lms#/memberships');
+ for(const file of ['sdk/extensions.js','assets/dist/admin/ohmylms.js'])await page.route('**/build/'+file+'*',route=>route.fulfill({path:path.resolve('build/'+file),contentType:'application/javascript'}));
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/memberships');
  await expect.poll(()=>page.evaluate(()=>Object.keys(window.ohmylms?.extensions?.membershipComponents||{}).length)).toBe(7);
 });
 
@@ -13,7 +13,7 @@ test('membership React editor validates, retries failed saves, and persists exte
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.getByRole('button',{name:'Add Membership',exact:true}).first().click();
  await expect(page.getByRole('button',{name:'Next',exact:true})).toBeDisabled();
- const name=page.locator('.omlms-membership-plan-name-input input, input.omlms-membership-plan-name-input');
+ const name=page.locator('.ohmylms-membership-plan-name-input input, input.ohmylms-membership-plan-name-input');
  await name.fill('React membership fixture');
  await page.getByPlaceholder('e.g. 5.90').first().fill('120');
  await page.getByLabel('Member benefit').fill('React benefit retained');

@@ -1,17 +1,17 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Assignment;
-use OMLMS\Data\Lesson;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Assignment;
+use OhMyLMS\Data\Lesson;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class LessonStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class LessonStore extends DataStore {
@@ -35,13 +35,13 @@ class LessonStore extends DataStore {
 		}
 
 		$original_slug = $slug;
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_LESSON_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
 
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_lesson_data',
+				'ohmylms_new_lesson_data',
 				array(
-					'post_type'     => CREATOR_LMS_LESSON_CPT,
+					'post_type'     => OHMYLMS_LESSON_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => $lesson->get_status() ? $lesson->get_status() : 'draft',
 					'post_title'    => $lesson->get_name() ? $lesson->get_name() : __( 'Untitled', 'ohmylms' ),
@@ -69,9 +69,9 @@ class LessonStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_after_creating_new_lesson', $id, $lesson );
-			if ( ! get_option( 'creatorlms_first_content_created', false ) ) {
-				do_action( 'creatorlms_after_creating_first_content', $id, $lesson );
+			do_action( 'ohmylms_after_creating_new_lesson', $id, $lesson );
+			if ( ! get_option( 'ohmylms_first_content_created', false ) ) {
+				do_action( 'ohmylms_after_creating_first_content', $id, $lesson );
 			}
 		}
 	}
@@ -87,7 +87,7 @@ class LessonStore extends DataStore {
 	 */
 	public function read( &$lesson ) {
 		$post_object = get_post( $lesson->get_id() );
-		if ( ! $lesson->get_id() || ! $post_object || CREATOR_LMS_LESSON_CPT !== $post_object->post_type ) {
+		if ( ! $lesson->get_id() || ! $post_object || OHMYLMS_LESSON_CPT !== $post_object->post_type ) {
 			return ( __( 'Invalid lesson.', 'ohmylms' ) );
 		}
 
@@ -117,14 +117,14 @@ class LessonStore extends DataStore {
 	 */
 	public function update( &$lesson ) {
 		$slug = $lesson->get_slug( 'edit' );
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_LESSON_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
 		$post_data = array(
 			'post_content' => $lesson->get_description( 'edit' ),
 			'post_excerpt' => $lesson->get_short_description( 'edit' ),
 			'post_title'   => $lesson->get_name( 'edit' ),
 			'post_status'  => $lesson->get_status( 'edit' ) ? $lesson->get_status( 'edit' ) : 'publish',
 			'post_name'    => sanitize_title( $lesson->get_name() ),
-			'post_type'    => CREATOR_LMS_LESSON_CPT,
+			'post_type'    => OHMYLMS_LESSON_CPT,
 		);
 		if ( $lesson->get_date_created( 'edit' ) ) {
 			$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $lesson->get_date_created( 'edit' )->getOffsetTimestamp() );
@@ -145,7 +145,7 @@ class LessonStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_updating_lesson', $lesson->get_id(), $lesson );
+		do_action( 'ohmylms_after_updating_lesson', $lesson->get_id(), $lesson );
 	}
 
 	
@@ -187,7 +187,7 @@ class LessonStore extends DataStore {
 	/**
 	 * Delete a lesson.
 	 *
-	 * This function deletes a lesson by its ID and triggers the 'creator_lms_after_deleting_a_lesson' action hook.
+	 * This function deletes a lesson by its ID and triggers the 'ohmylms_after_deleting_a_lesson' action hook.
 	 *
 	 * @param Lesson $lesson The lesson object to be deleted.
 	 * @param array  $args   Optional. Additional arguments for the delete operation. Default empty array.
@@ -206,7 +206,7 @@ class LessonStore extends DataStore {
 				 *
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_deleting_a_lesson' );
+				do_action( 'ohmylms_after_deleting_a_lesson' );
 			}
 		}
 	}
@@ -275,7 +275,7 @@ class LessonStore extends DataStore {
 			'_video_settings'    => 'video_settings',
 
 		);
-		$meta_key_to_props = apply_filters( 'creator_lms_lesson_meta_key_to_props', $meta_key_to_props );
+		$meta_key_to_props = apply_filters( 'ohmylms_lesson_meta_key_to_props', $meta_key_to_props );
 		$props_to_update   = $meta_key_to_props;
 
 		foreach ( $props_to_update as $meta_key => $prop ) {
@@ -291,7 +291,7 @@ class LessonStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_lesson_meta_updated', $lesson );
+		do_action( 'ohmylms_lesson_meta_updated', $lesson );
 	}
 
 
@@ -308,8 +308,8 @@ class LessonStore extends DataStore {
 	public function get_order_number( &$lesson ) {
 		global $wpdb;
 		$lesson_id  = $lesson->get_id();
-		$chapter_id = creator_lms_get_chapter_id_by_content_id( $lesson_id );
-		$table_name   = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_id = ohmylms_get_chapter_id_by_content_id( $lesson_id );
+		$table_name   = $wpdb->prefix . 'ohmylms_content_relationship';
 		$order_number = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT order_number FROM {$table_name} WHERE chapter_id = %d AND content_id = %d",

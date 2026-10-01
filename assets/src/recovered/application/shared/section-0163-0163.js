@@ -1002,7 +1002,7 @@ var $5 = function (e) {
     onRequestClose: P,
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0,
-    className: "omlms-full-height-modal",
+    className: "ohmylms-full-height-modal",
     size: "large"
   }, E ? React.createElement(I.SkeletonWP, {
     rows: 10
@@ -1010,7 +1010,7 @@ var $5 = function (e) {
     items: k,
     activekey: p,
     onChange: function () {},
-    className: "omlms-tab-has-custom-navigation"
+    className: "ohmylms-tab-has-custom-navigation"
   }), React.createElement(I.DividerWP, {
     marginStart: 4
   }), React.createElement(I.SpacerWP, {

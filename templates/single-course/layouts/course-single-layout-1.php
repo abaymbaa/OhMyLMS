@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/layouts/course-single-layout-1.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,37 +15,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 ?>
-<?php omlms_get_template( 'global/creator-lms-celebration.php' ); ?>
+<?php ohmylms_get_template( 'global/ohmylms-celebration.php' ); ?>
 
-<div class="creator-lms-content-wrapper">
-    <div class="creator-lms-content">
+<div class="ohmylms-content-wrapper">
+    <div class="ohmylms-content">
         <?php
             /**
-             * Hook: creator_lms_single_course_content.
+             * Hook: ohmylms_single_course_content.
              *
-             * @hooked: creator_lms_single_course_header (5)
-             * @hooked: creator_lms_single_course_tabs (10)
+             * @hooked: ohmylms_single_course_header (5)
+             * @hooked: ohmylms_single_course_tabs (10)
              */
-            do_action( 'creator_lms_single_course_content' );
+            do_action( 'ohmylms_single_course_content' );
         ?>
     </div>
 
-    <aside class="creator-lms-sidebar">
+    <aside class="ohmylms-sidebar">
         <?php
             /**
-             * Hook: creator_lms_course_sidebar_widget.
+             * Hook: ohmylms_course_sidebar_widget.
              *
-             * @hooked: creator_lms_widget_pricebox (5).
-             * @hooked: creator_lms_widget_course_membership (10).
-             * @hooked: creator_lms_widget_course_progress (15).
-             * @hooked: creator_lms_widget_certificate (20).
-             * @hooked: creator_lms_widget_course_meta (25).
-             * @hooked: creator_lms_widget_course_leaderboard (30).
-             * @hooked: creator_lms_widget_course_author (35).
-             * @hooked: creator_lms_widget_course_taxonomy (40).
-             * @hooked: creator_lms_widget_course_drop (45).
+             * @hooked: ohmylms_widget_pricebox (5).
+             * @hooked: ohmylms_widget_course_membership (10).
+             * @hooked: ohmylms_widget_course_progress (15).
+             * @hooked: ohmylms_widget_certificate (20).
+             * @hooked: ohmylms_widget_course_meta (25).
+             * @hooked: ohmylms_widget_course_leaderboard (30).
+             * @hooked: ohmylms_widget_course_author (35).
+             * @hooked: ohmylms_widget_course_taxonomy (40).
+             * @hooked: ohmylms_widget_course_drop (45).
              */
-            do_action( 'creator_lms_course_sidebar_widget' );
+            do_action( 'ohmylms_course_sidebar_widget' );
         ?>
     </aside>
 </div>

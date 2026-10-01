@@ -42,7 +42,7 @@ class OrderRefund extends Order {
 	 * @since 1.0.0
 	 */
 	public function set_amount( $amount ) {
-		$this->set_prop( 'amount', omlms_format_decimal( $amount ) );
+		$this->set_prop( 'amount', ohmylms_format_decimal( $amount ) );
 	}
 
 	/**
@@ -139,7 +139,7 @@ class OrderRefund extends Order {
 	 * @since 1.0.0
 	 */
 	public function get_post_type() {
-		return 'omlms_order_refund';
+		return 'ohmylms_order_refund';
 	}
 
 	/**

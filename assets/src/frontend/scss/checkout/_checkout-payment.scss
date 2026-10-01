@@ -1,6 +1,6 @@
-.creator-lms-page {
-    .creator-lms-checkout-payment {
-        .creator-lms-payment-methods {
+.ohmylms-page {
+    .ohmylms-checkout-payment {
+        .ohmylms-payment-methods {
             list-style: none;
             padding: 0;
             margin: 0 0 13px;
@@ -9,13 +9,13 @@
             gap: 13px;
         }
 
-        .creator-lms-payment-method-wrapper {
+        .ohmylms-payment-method-wrapper {
             border-radius: 12px;
             background: #FFF;
             margin-bottom: 40px;
         }
 
-        .creator-lms-single-payment {
+        .ohmylms-single-payment {
             padding: 11px 12px 11px;
             margin: 0;
             border-radius: 6px;
@@ -24,13 +24,13 @@
             transition: all 0.3s ease;
 
             &.selected {
-                border-color: var(--creator-lms-primary-color);
+                border-color: var(--ohmylms-primary-color);
                 background-color: #fff;
             }
 
-            .creator-lms-radiobtn {
-                .creator-lms-radiobtn-text {
-                    color: var(--creator-lms-heading-color);
+            .ohmylms-radiobtn {
+                .ohmylms-radiobtn-text {
+                    color: var(--ohmylms-heading-color);
                     font-size: 16px;
                     font-weight: 500;
                     line-height: 1;
@@ -63,7 +63,7 @@
                     }
                 }
 
-                input[type=radio]:checked + .creator-lms-radiobtn-text .radiobox svg {
+                input[type=radio]:checked + .ohmylms-radiobtn-text .radiobox svg {
                     opacity: 1;
                 }
             }
@@ -76,10 +76,10 @@
                     font-size: 14px;
                     line-height: 1.5;
                     margin-bottom: 12px;
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
 
                     a {
-                        color: var(--creator-lms-primary-color);
+                        color: var(--ohmylms-primary-color);
                         text-decoration: none;
 
                         &:hover {
@@ -103,14 +103,14 @@
             padding: 17px 22px 16px;
         }
 
-        .creator-lms-tnc-wrapper {
+        .ohmylms-tnc-wrapper {
             margin-top: 12px;
 
             p {
                 margin: 0;
             }
 
-            .creator-lms-checkbox-text {
+            .ohmylms-checkbox-text {
                 padding-left: 0;
 
                 .checkedbox:before {
@@ -118,7 +118,7 @@
                 }
 
                 a {
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                     outline: none!important;
 
                     &:hover {
@@ -126,28 +126,28 @@
                     }
 
                     &:focus {
-                        outline: 1px dotted var(--creator-lms-heading-color)!important;
+                        outline: 1px dotted var(--ohmylms-heading-color)!important;
                     }
                 }
             }
 
-            .creator-lms-checkbox-text .checkedbox {
+            .ohmylms-checkbox-text .checkedbox {
                 display: none;
             }
 
         }
 
-        .creator-lms-place-order-button {
+        .ohmylms-place-order-button {
             color: #FFF!important;
             font-size: 18px;
             font-weight: 700;
             line-height: 1.2;
-            background-color: var(--creator-lms-primary-color)!important;
+            background-color: var(--ohmylms-primary-color)!important;
             padding: 16px 24px;
             text-transform: none;
             letter-spacing: 0;
             border-radius: 8px;
-            border-color: var(--creator-lms-primary-color);
+            border-color: var(--ohmylms-primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -158,9 +158,9 @@
                 border-radius: 8px;
             }
 
-            .creator-lms-loader {
+            .ohmylms-loader {
                 border-color: #ffffff;
-                border-top-color: var(--creator-lms-primary-color);
+                border-top-color: var(--ohmylms-primary-color);
                 width: 14px;
                 height: 14px;
                 transition: all 0.3s ease;
@@ -168,10 +168,10 @@
 
             &:hover {
                 background-color: transparent!important;
-                color: var(--creator-lms-primary-color)!important;
+                color: var(--ohmylms-primary-color)!important;
 
-                .creator-lms-loader {
-                    border-color: var(--creator-lms-primary-color);
+                .ohmylms-loader {
+                    border-color: var(--ohmylms-primary-color);
                     border-top-color: #ffffff;
                     width: 14px;
                     height: 14px;
@@ -182,36 +182,36 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-place-order-button {
         font-size: 15px;
         padding: 14px 18px;
     }
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button .creator-lms-loader {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-place-order-button .ohmylms-loader {
         width: 12px;
         height: 12px;
     }
 
-    .creator-lms-page .creator-lms-checkout-payment .no-payment-method-text,
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment {
+    .ohmylms-page .ohmylms-checkout-payment .no-payment-method-text,
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-single-payment {
         padding: 13px 15px 13px;
     }
 
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-single-payment .ohmylms-radiobtn .ohmylms-radiobtn-text {
         font-size: 14px;
     }
 
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-single-payment .creator-lms-radiobtn .creator-lms-radiobtn-text .radiobox:before {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-single-payment .ohmylms-radiobtn .ohmylms-radiobtn-text .radiobox:before {
         top: calc(50% - 2px);
     }
 }
 
 @media screen and (max-width: 991px) {
     
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-payment-method-wrapper {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-payment-method-wrapper {
         margin-bottom: 14px;
     }
 
-    .creator-lms-page .creator-lms-checkout-payment .creator-lms-place-order-button {
+    .ohmylms-page .ohmylms-checkout-payment .ohmylms-place-order-button {
         display: none;
     }
     

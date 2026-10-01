@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
-use OMLMS\Abstracts\PostType;
-use OMLMS\Membership\MembershipHelper;
+use OhMyLMS\Abstracts\PostType;
+use OhMyLMS\Membership\MembershipHelper;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -31,7 +31,7 @@ class MembershipPostType extends PostType {
 
 
 	public function __construct() {
-		$this->post_type = 'omlms-membership';
+		$this->post_type = 'ohmylms-membership';
 		parent::__construct();
 
 		// add_action( 'add_meta_boxes', [$this, 'membership_add_plan_meta_box'] );
@@ -39,7 +39,7 @@ class MembershipPostType extends PostType {
 
 
 	/**
-	 * Get arguments of CPT - omlms-membership
+	 * Get arguments of CPT - ohmylms-membership
 	 *
 	 * @return array|void
 	 * @since 1.0.0
@@ -76,10 +76,10 @@ class MembershipPostType extends PostType {
 			'filter_items_list'     => __( 'Filter Memberships list', 'ohmylms' ),
 		);
 		// Get permalink structure of OhMyLMS courses
-		$permalinks = omlms_get_permalink_structure();
+		$permalinks = ohmylms_get_permalink_structure();
 
 		// Get course archive page ID and set archive page
-		$membership_page_id = omlms_get_page_id( 'membership' );
+		$membership_page_id = ohmylms_get_page_id( 'membership' );
 		$has_archive        = $membership_page_id && get_post( $membership_page_id ) ? urldecode( get_page_uri( $membership_page_id ) ) : 'membership';
 
 		// CPT supports
@@ -121,7 +121,7 @@ class MembershipPostType extends PostType {
 			'membership_meta_box',
 			__( 'Membership Details', 'ohmylms' ),
 			array( $this, 'membership_meta_box_callback' ),
-			'omlms-membership',
+			'ohmylms-membership',
 			'normal',
 			'high'
 		);
@@ -139,12 +139,12 @@ class MembershipPostType extends PostType {
 		wp_nonce_field( 'membership_save_meta_box_data', 'membership_meta_box_nonce' );
 
 		// == implement plan details == //
-		$membership_plans = get_post_meta( $post->ID, 'omlms_membership_plans', true );
+		$membership_plans = get_post_meta( $post->ID, 'ohmylms_membership_plans', true );
 		$membership_plans = is_array( $membership_plans ) ? $membership_plans : array();
 
 		$courses = get_posts(
 			array(
-				'post_type'   => 'omlms-course',
+				'post_type'   => 'ohmylms-course',
 				'post_status' => 'publish',
 				'numberposts' => -1,
 			)
@@ -197,20 +197,20 @@ class MembershipPostType extends PostType {
 		<p>
 			<button type="button" id="add_membership_plan" class="button"><?php esc_html_e( 'Add Another Plan', 'ohmylms' ); ?></button>
 		</p>
-		<div class="omlms-loader" ></div>
+		<div class="ohmylms-loader" ></div>
 		<p>
 			<button type="button" id="membership_save_button" class="button button-primary"><?php esc_html_e( 'Save Membership Details', 'ohmylms' ); ?></button>
 		</p>
-		<div class="omlms-notice"></div>
+		<div class="ohmylms-notice"></div>
 
 		<style>
-			.omlms-loader {
+			.ohmylms-loader {
 				display: none;
 				text-align: center;
 				margin-top: 10px;
 			}
 
-			.omlms-loader .spinner {
+			.ohmylms-loader .spinner {
 				display: inline-block;
 				float: left;
 				width: 20px;
@@ -228,12 +228,12 @@ class MembershipPostType extends PostType {
 				}
 			}
 
-			.omlms-notice {
+			.ohmylms-notice {
 				display: none;
 				margin-top: 10px;
 			}
 
-			.omlms-notice .notice {
+			.ohmylms-notice .notice {
 				padding: 10px;
 				border-radius: 3px;
 			}

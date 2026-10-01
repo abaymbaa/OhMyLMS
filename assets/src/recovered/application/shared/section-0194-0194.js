@@ -6,7 +6,6 @@ function d9(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, d9(e);
 }
-
 function m9(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -17,7 +16,6 @@ function m9(e, t) {
   }
   return n;
 }
-
 function p9(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -29,7 +27,6 @@ function p9(e) {
   }
   return e;
 }
-
 function f9(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -50,7 +47,6 @@ function f9(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var v9 = {
     title: "",
     slug: "",
@@ -158,9 +154,7 @@ var v9 = {
       maxWidth: "345px"
     })));
   };
-
 const h9 = (0, g.memo)(g9);
-
 function y9(e) {
   return y9 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -168,7 +162,6 @@ function y9(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, y9(e);
 }
-
 function b9() {
   var e,
     t,
@@ -255,7 +248,6 @@ function b9() {
     };
   })();
 }
-
 function _9(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -277,7 +269,6 @@ function _9(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, _9(e, t, n, r);
 }
-
 function w9(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -287,7 +278,6 @@ function w9(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function E9(e) {
   return function () {
     var t = this,
@@ -304,7 +294,6 @@ function E9(e) {
     });
   };
 }
-
 function S9(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -315,7 +304,6 @@ function S9(e, t) {
   }
   return n;
 }
-
 function R9(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -327,7 +315,6 @@ function R9(e) {
   }
   return e;
 }
-
 function x9(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -348,7 +335,6 @@ function x9(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function C9(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -388,13 +374,11 @@ function C9(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function P9(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var O9 = function () {
   var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectCommunity();
@@ -432,7 +416,7 @@ var O9 = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, d(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/courses?search=".concat(t, "&post_status=publish"),
+                path: "/ohmylms/v1/courses?search=".concat(t, "&post_status=publish"),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -472,7 +456,7 @@ var O9 = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/courses/".concat(t),
+                path: "/ohmylms/v1/courses/".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -535,9 +519,7 @@ var O9 = function () {
     placeholder: (0, b.__)("Select a course...", "ohmylms")
   }))));
 };
-
 const k9 = (0, g.memo)(O9);
-
 function j9() {
   var e,
     t,
@@ -624,7 +606,6 @@ function j9() {
     };
   })();
 }
-
 function A9(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -646,7 +627,6 @@ function A9(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, A9(e, t, n, r);
 }
-
 function M9(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -656,7 +636,6 @@ function M9(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function T9(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -696,13 +675,11 @@ function T9(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function I9(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var F9 = function (e) {
   var t = e.isOpen,
     n = e.setIsOpen,
@@ -750,7 +727,7 @@ var F9 = function (e) {
                   t.n = 7;
                   break;
                 }
-                if (L.isProActive) {
+                {
                   t.n = 2;
                   break;
                 }
@@ -842,7 +819,7 @@ var F9 = function (e) {
     onRequestClose: S,
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0,
-    className: "omlms-full-height-modal",
+    className: "ohmylms-full-height-modal",
     size: "fill"
   }, r ? React.createElement(I.SkeletonWP, {
     rows: 10
@@ -852,7 +829,7 @@ var F9 = function (e) {
     onChange: function (e) {
       return m(e);
     },
-    className: "omlms-tab-has-custom-navigation"
+    className: "ohmylms-tab-has-custom-navigation"
   }), React.createElement(I.DividerWP, {
     marginStart: 4
   }), React.createElement(I.SpacerWP, {
@@ -874,9 +851,7 @@ var F9 = function (e) {
     onClose: w
   }))));
 };
-
 const N9 = (0, g.memo)(F9);
-
 function D9() {
   var e,
     t,
@@ -963,7 +938,6 @@ function D9() {
     };
   })();
 }
-
 function W9(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -985,7 +959,6 @@ function W9(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, W9(e, t, n, r);
 }
-
 function z9(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -995,7 +968,6 @@ function z9(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function B9(e) {
   return function () {
     var t = this,

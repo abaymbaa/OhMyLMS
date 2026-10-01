@@ -483,7 +483,7 @@ var rY = function (e) {
     placeholder: o,
     onChange: r
   })), s && h().createElement(I.FlexItemWP, {
-    className: "omlms-filter-by-price-item"
+    className: "ohmylms-filter-by-price-item"
   }, h().createElement(vn.A, {
     placeholder: (0, b.__)("Filter By Price Type", "ohmylms"),
     onChange: d,
@@ -493,7 +493,7 @@ var rY = function (e) {
       width: "150px"
     }
   })), y && h().createElement(I.FlexItemWP, {
-    className: "omlms-category-select-item"
+    className: "ohmylms-category-select-item"
   }, h().createElement(I.SearchSelectWP, {
     placeholder: R,
     onChange: function (e) {
@@ -507,9 +507,9 @@ var rY = function (e) {
     isClearable: !1,
     isSearchable: !0,
     isMulti: !1,
-    customClass: "omlms-category-select"
+    customClass: "ohmylms-category-select"
   })), O && h().createElement(I.FlexItemWP, {
-    className: "omlms-filter-by-status-item"
+    className: "ohmylms-filter-by-status-item"
   }, h().createElement(vn.A, {
     placeholder: (0, b.__)("Filter By Status", "ohmylms"),
     onChange: k,
@@ -519,7 +519,7 @@ var rY = function (e) {
       width: "150px"
     }
   })), l && h().createElement(I.FlexItemWP, {
-    className: "omlms-filter-by-days-item"
+    className: "ohmylms-filter-by-days-item"
   }, h().createElement(ZU, {
     placeholder: (0, b.__)("Filter By Days", "ohmylms"),
     onChange: function (e) {
@@ -533,7 +533,7 @@ var rY = function (e) {
     style: {
       marginLeft: "auto"
     },
-    className: "omlms-count-item"
+    className: "ohmylms-count-item"
   }, h().createElement(I.TextWP, null, (0, b.__)("Showing ".concat(Math.min((N - 1) * z + 1, D), "-").concat(Math.min(N * z, D), " of ").concat(D), "ohmylms"))))));
 };
 

@@ -1,8 +1,8 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var a4 = (0, g.memo)(function () {
   var e;
-  HG("creator-lms", "webhooks");
-  var t = (0, L.useIsPro)(),
+  HG("ohmylms", "webhooks");
+  var t = true,
     n = (0, y.useDispatch)(T.default),
     r = (0, z.A)(),
     a = r.openNotificationWithIcon,
@@ -86,10 +86,10 @@ var a4 = (0, g.memo)(function () {
       S(e), O([]);
     }, []),
     te = (0, g.useCallback)(function () {
-      t && $ ? (f(null), d(!0)) : U(!0);
+      $ ? (f(null), d(!0)) : U(!0);
     }, [t, $]),
     ne = (0, g.useCallback)(function (e) {
-      if (t && $) {
+      if ($) {
         var n = Y.find(function (t) {
           return t.id === e;
         });
@@ -97,7 +97,7 @@ var a4 = (0, g.memo)(function () {
       } else U(!0);
     }, [Y, t, $]),
     re = (0, g.useCallback)(function (e) {
-      t && $ ? (N(!0), B(e)) : U(!0);
+      $ ? (N(!0), B(e)) : U(!0);
     }, [t, $]),
     ae = (0, g.useCallback)(function () {
       N(!1), B(null);
@@ -151,7 +151,7 @@ var a4 = (0, g.memo)(function () {
           return J5().w(function (e) {
             for (;;) switch (e.p = e.n) {
               case 0:
-                if (t && $) {
+                if ($) {
                   e.n = 1;
                   break;
                 }
@@ -177,7 +177,7 @@ var a4 = (0, g.memo)(function () {
           return J5().w(function (e) {
             for (;;) switch (e.p = e.n) {
               case 0:
-                if (t && $) {
+                if ($) {
                   e.n = 1;
                   break;
                 }
@@ -200,7 +200,7 @@ var a4 = (0, g.memo)(function () {
         label: (0, b.__)("Delete", "ohmylms"),
         value: "delete",
         action: function () {
-          t && $ ? N(!0) : U(!0);
+          $ ? N(!0) : U(!0);
         }
       }];
       var e, r;
@@ -321,7 +321,7 @@ var a4 = (0, g.memo)(function () {
       sorter: !1,
       render: function (e) {
         var t,
-          n = (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.date_format) || "F j, Y",
+          n = (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.date_format) || "F j, Y",
           r = e ? (0, wq.dateI18n)(n, e) : "-";
         return React.createElement(I.BadgeWP, {
           isBorderLess: !0,
@@ -358,7 +358,7 @@ var a4 = (0, g.memo)(function () {
   return React.createElement(React.Fragment, null, o, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     paddingTop: 1,
@@ -374,9 +374,7 @@ var a4 = (0, g.memo)(function () {
     minHeight: "calc(100vh - 30px)"
   }, React.createElement(I.SpacerWP, {
     padding: 5
-  }, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Webhooks is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features. After upgrading, enable Webhooks from the Integrations page.", "ohmylms")
-  }), P.length > 0 ? React.createElement(hN, {
+  }, P.length > 0 ? React.createElement(hN, {
     items: P,
     setItems: O,
     bulksActions: ue

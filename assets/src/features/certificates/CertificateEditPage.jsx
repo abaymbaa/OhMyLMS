@@ -16,7 +16,7 @@ export function createCertificateEditPage(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'certificates');
+    HG('ohmylms', 'certificates');
     var e = (0, Router.g)().id,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = (function (e, t) {

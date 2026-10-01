@@ -110,9 +110,14 @@ export function createOrderDetails(readRuntime) {
         <Controls.SpacerWP marginBottom={3} />
         <Controls.CardWP isBorderless={true}>
           <Controls.SpacerWP padding={6} marginBottom={0}>
-            <Controls.FlexWP className="omlms-order-details" justify="start" align="start" gap={3}>
+            <Controls.FlexWP
+              className="ohmylms-order-details"
+              justify="start"
+              align="start"
+              gap={3}
+            >
               <Controls.FlexItemWP
-                className="omlms-order-details-left"
+                className="ohmylms-order-details-left"
                 style={{ width: 'calc(70% - 12px)' }}
               >
                 <Controls.CardWP isBorderless={true} variant="secondary">
@@ -125,7 +130,7 @@ export function createOrderDetails(readRuntime) {
                   justify="space-between"
                   align="stretch"
                   gap={3}
-                  className="omlms-order-details-general-billing"
+                  className="ohmylms-order-details-general-billing"
                 >
                   <Controls.FlexBlockWP>
                     <Controls.CardWP
@@ -183,7 +188,7 @@ export function createOrderDetails(readRuntime) {
                   </Controls.CardWP>
                 )}
               </Controls.FlexItemWP>
-              <Controls.FlexItemWP className="omlms-order-details-right" style={{ width: '30%' }}>
+              <Controls.FlexItemWP className="ohmylms-order-details-right" style={{ width: '30%' }}>
                 <Controls.CardWP isBorderless={true} variant="secondary">
                   <Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}>
                     <OrderStatus status={order.status} order={order} />

@@ -45,7 +45,7 @@ export function createCourseList(readRuntime) {
       yc,
       z: Notifications,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)(),
+    var e = true,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).selectCourses();
@@ -376,12 +376,10 @@ export function createCourseList(readRuntime) {
               return cY().w(function (n) {
                 for (;;)
                   switch (n.n) {
-                    case 0:
-                      if (e) {
-                        n.n = 1;
-                        break;
-                      }
-                      return (Pe(!0), n.a(2));
+                    case 0: {
+                      n.n = 1;
+                      break;
+                    }
                     case 1:
                       if (!r) {
                         n.n = 3;
@@ -429,12 +427,10 @@ export function createCourseList(readRuntime) {
               function (n) {
                 for (;;)
                   switch ((n.p = n.n)) {
-                    case 0:
-                      if (e) {
-                        n.n = 1;
-                        break;
-                      }
-                      return (Pe(!0), n.a(2));
+                    case 0: {
+                      n.n = 1;
+                      break;
+                    }
                     case 1:
                       if ((ye(!0), (n.p = 2), !ae)) {
                         n.n = 4;
@@ -490,7 +486,7 @@ export function createCourseList(readRuntime) {
       it = (0, ReactHooks.useCallback)(
         function () {
           var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null;
-          e ? (t && oe(t), me(!0)) : Pe(!0);
+          (t && oe(t), me(!0));
         },
         [e],
       ),
@@ -509,7 +505,7 @@ export function createCourseList(readRuntime) {
                         }),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses/'.concat(t, '/status'),
+                          path: '/ohmylms/v1/courses/'.concat(t, '/status'),
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -545,7 +541,7 @@ export function createCourseList(readRuntime) {
                 for (;;)
                   switch ((t.p = t.n)) {
                     case 0:
-                      if (e && !Se) {
+                      if (!Se) {
                         t.n = 1;
                         break;
                       }
@@ -556,7 +552,7 @@ export function createCourseList(readRuntime) {
                         Re(!0),
                         (t.n = 2),
                         l()({
-                          path: '/creator-lms/v1/courses/'.concat(ae, '/clone'),
+                          path: '/ohmylms/v1/courses/'.concat(ae, '/clone'),
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -597,7 +593,7 @@ export function createCourseList(readRuntime) {
         (oe(null), we(!1));
       }, []),
       st = (0, ReactHooks.useCallback)(function (t) {
-        e ? (we(!0), oe(t)) : Pe(!0);
+        (we(!0), oe(t));
       }, []),
       dt = (0, ReactHooks.useCallback)(function () {
         Q(!0);

@@ -3,9 +3,9 @@
 /**
  * The template for displaying True or False question
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/true-false.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/quiz-loop/true-false.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

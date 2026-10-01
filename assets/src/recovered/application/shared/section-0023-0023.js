@@ -158,7 +158,7 @@ const Sf = function (e) {
   }, []);
   var fe = function (e) {
       for (var t = function (e) {
-          return e.classList.contains("omlms-draggable-single-chapter") && e.hasAttribute("draggable") && "true" === e.getAttribute("draggable");
+          return e.classList.contains("ohmylms-draggable-single-chapter") && e.hasAttribute("draggable") && "true" === e.getAttribute("draggable");
         }, n = e; n;) {
         if (t(n)) return !0;
         n = n.parentElement;
@@ -197,7 +197,7 @@ const Sf = function (e) {
     justify: "start",
     gap: 0
   }, h().createElement(I.FlexItemWP, {
-    className: "omlms-chapter-sidebar ".concat(le ? "omlms-chapter-sidebar-open" : "")
+    className: "ohmylms-chapter-sidebar ".concat(le ? "ohmylms-chapter-sidebar-open" : "")
   }, h().createElement(lc, {
     courseId: a,
     setActiveIndex: K,
@@ -206,7 +206,7 @@ const Sf = function (e) {
   }), se ? h().createElement(h().Fragment, null, h().createElement(_.A, {
     active: !0
   })) : h().createElement(h().Fragment, null, h().createElement("div", {
-    className: "omlms-chapter-nav-wrapper"
+    className: "ohmylms-chapter-nav-wrapper"
   }, x.length > 0 && x.map(function (e, t) {
     return h().createElement("div", {
       key: null == e ? void 0 : e.id,
@@ -249,7 +249,7 @@ const Sf = function (e) {
           }
         }(e);
       },
-      className: "omlms-draggable-single-chapter"
+      className: "ohmylms-draggable-single-chapter"
     }, h().createElement(Ip, {
       chapter: e,
       chapterId: e.id,
@@ -271,9 +271,9 @@ const Sf = function (e) {
       handleSaveName: he
     }));
   })))), h().createElement(I.FlexItemWP, {
-    className: "omlms-chapter-preview ".concat(le ? "omlms-chapter-sidebar-open" : "", " ").concat(me ? "" : "omlms-course-info-closed")
+    className: "ohmylms-chapter-preview ".concat(le ? "ohmylms-chapter-sidebar-open" : "", " ").concat(me ? "" : "ohmylms-course-info-closed")
   }, h().createElement("div", {
-    className: "omlms-course-info-wrapper ".concat(me ? "" : "omlms-course-info-closed")
+    className: "ohmylms-course-info-wrapper ".concat(me ? "" : "ohmylms-course-info-closed")
   }, h().createElement($p, {
     handleInputChange: u,
     onContentChange: s,
@@ -284,20 +284,20 @@ const Sf = function (e) {
     onClick: function () {
       w.setCourseInfoOpen(!me);
     },
-    className: "omlms-course-info-toggle",
+    className: "ohmylms-course-info-toggle",
     icon: me ? h().createElement(Jp, null) : h().createElement(ef, null)
   })), h().createElement(I.SpacerWP, {
     marginTop: 2,
     paddingX: 4,
-    className: "omlms-chapter-content-wrapper"
+    className: "ohmylms-chapter-content-wrapper"
   }, h().createElement(I.FlexWP, {
     align: "start",
     justify: "space-between",
     gap: 2,
     direction: "column",
-    className: "omlms-chapter-contents-wrapper"
+    className: "ohmylms-chapter-contents-wrapper"
   }, h().createElement("div", {
-    className: "omlms-chapter-contents"
+    className: "ohmylms-chapter-contents"
   }, x.length > 0 ? x.map(function (e, t) {
     return h().createElement(h().Suspense, {
       fallback: h().createElement(_.A, {
@@ -336,9 +336,7 @@ const Sf = function (e) {
     chapterId: null === (n = x[0]) || void 0 === n ? void 0 : n.id
   }));
 };
-
 var Rf = ["title", "description", "isItProFeature", "inputType", "tooltip", "value", "onChange", "isDescriptionHTML", "spacerPadding", "spacerMarginBottom", "showProTag", "error", "required", "headerFontSize"];
-
 function xf() {
   return xf = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -348,9 +346,8 @@ function xf() {
     return e;
   }, xf.apply(null, arguments);
 }
-
 var Cf = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.title,
     r = e.description,
     a = e.isItProFeature,
@@ -415,7 +412,7 @@ var Cf = function (e) {
       color: "#FF4955"
     }
   }, "*")), o && !t && y && React.createElement("span", {
-    className: "omlms-pro-tag"
+    className: "ohmylms-pro-tag"
   }, (0, b.__)("Pro", "ohmylms"))), c && React.createElement(V.A, {
     text: c,
     placement: "top"
@@ -456,9 +453,7 @@ var Cf = function (e) {
     }
   }, w)));
 };
-
 const Pf = (0, g.memo)(Cf);
-
 var Of = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     width: "15",
@@ -478,11 +473,8 @@ var Of = function () {
     d: "M16.234 1h-4.662a.75.75 0 00-.75.735.764.764 0 00.767.765h2.854L8.47 8.475a.75.75 0 001.06 1.06l5.975-5.973v2.865a.75.75 0 001.5 0V1.77a.771.771 0 00-.77-.771z"
   })));
 };
-
 const kf = (0, g.memo)(Of);
-
 var jf = n(21186);
-
 function Af(e) {
   return Af = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -490,7 +482,6 @@ function Af(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Af(e);
 }
-
 function Mf() {
   var e,
     t,
@@ -577,7 +568,6 @@ function Mf() {
     };
   })();
 }
-
 function Tf(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -599,7 +589,6 @@ function Tf(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Tf(e, t, n, r);
 }
-
 function If(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -609,7 +598,6 @@ function If(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Ff(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -620,7 +608,6 @@ function Ff(e, t) {
   }
   return n;
 }
-
 function Nf(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -632,7 +619,6 @@ function Nf(e) {
   }
   return e;
 }
-
 function Df(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -653,7 +639,6 @@ function Df(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Wf(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -693,13 +678,11 @@ function Wf(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function zf(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const Bf = function (e) {
   var t = e.isCommunityEnabled,
     n = e.courseId,
@@ -726,7 +709,7 @@ const Bf = function (e) {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, e.n = 1, l()({
-                  path: "/creatorlms/v1/communities/space/course/".concat(n),
+                  path: "/ohmylms/v1/communities/space/course/".concat(n),
                   method: "GET"
                 });
               case 1:
@@ -764,7 +747,7 @@ const Bf = function (e) {
   }, [t, n]), (0, g.useEffect)(function () {
     void 0 !== (null == r ? void 0 : r.space_title) && m(r.space_title), void 0 !== (null == r ? void 0 : r.space_description) && f(r.space_description);
   }, [null == r ? void 0 : r.space_title, null == r ? void 0 : r.space_description]), h().createElement(I.ContainerWP, {
-    className: "omlms-community-settings"
+    className: "ohmylms-community-settings"
   }, h().createElement(I.SpacerWP, {
     marginBottom: 0,
     paddingY: 10
@@ -814,7 +797,7 @@ const Bf = function (e) {
       level: "4"
     }, (0, b.__)("Space URL", "ohmylms")), h().createElement(I.TextWP, null, (0, b.__)("A unique URL to access the space.", "ohmylms"))), h().createElement(I.FlexItemWP, {
       isBlock: !0,
-      className: "omlms-coupon-generate omlms-community-generate"
+      className: "ohmylms-coupon-generate ohmylms-community-generate"
     }, h().createElement(I.FlexWP, {
       gap: 2
     }, h().createElement(I.FlexItemWP, {
@@ -827,7 +810,7 @@ const Bf = function (e) {
       value: u,
       readOnly: !0
     }), h().createElement(I.ButtonWP, {
-      className: "omlms-coupon-generate-btn omlms-community-generate-btn",
+      className: "ohmylms-coupon-generate-btn ohmylms-community-generate-btn",
       onClick: function () {
         return window.open(u, "_blank");
       }
@@ -838,12 +821,10 @@ const Bf = function (e) {
     status: "error"
   }, y));
 };
-
 var Lf = "automation-canvas",
   Vf = "automation-canvas/automation",
   Hf = "automation-canvas/step",
   Gf = n(87240);
-
 function Uf(e) {
   return Uf = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -851,7 +832,6 @@ function Uf(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Uf(e);
 }
-
 function qf(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -862,7 +842,6 @@ function qf(e, t) {
   }
   return n;
 }
-
 function Yf(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -874,7 +853,6 @@ function Yf(e) {
   }
   return e;
 }
-
 function Qf(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -895,7 +873,6 @@ function Qf(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var Zf = function () {
     return {
       type: "SET_ACTIVATION_PANEL_VISIBILITY",
@@ -912,28 +889,24 @@ var Zf = function () {
       return e.registry.dispatch(Gf.M_).disableComplementaryArea(Lf);
     };
   };
-
 function Jf(e) {
   return {
     type: "SET_INSERTER_POPOVER",
     data: e
   };
 }
-
 function Xf(e) {
   return {
     type: "ADD_STEP",
     value: e
   };
 }
-
 function ev(e) {
   return {
     type: "ADD_LOGICAL_STEP",
     value: e
   };
 }
-
 function tv(e, t, n, r) {
   return {
     type: "SET_SELECTED_STEP",
@@ -943,21 +916,18 @@ function tv(e, t, n, r) {
     conditionIndex: r
   };
 }
-
 function nv(e) {
   return {
     type: "FULL_AUTOMATION_DATA",
     data: e
   };
 }
-
 function rv(e) {
   return {
     type: "DELETE_SELECTED_STEP",
     index: e
   };
 }
-
 function av(e, t, n) {
   return {
     type: "DELETE_CONDITIONAL_SELECTED_STEP",
@@ -966,7 +936,6 @@ function av(e, t, n) {
     conditionIndex: n
   };
 }
-
 function ov(e) {
   return {
     type: "UPDATE_AUTOMATION",
@@ -975,7 +944,6 @@ function ov(e) {
     })
   };
 }
-
 function iv(e) {
   return {
     type: "UPDATE_AUTOMATION",
@@ -984,7 +952,6 @@ function iv(e) {
     })
   };
 }
-
 function lv(e) {
   return {
     type: "UPDATE_AUTOMATION",
@@ -993,7 +960,6 @@ function lv(e) {
     })
   };
 }
-
 function cv(e) {
   return {
     type: "UPDATE_AUTOMATION",
@@ -1002,35 +968,30 @@ function cv(e) {
     })
   };
 }
-
 function uv(e) {
   return {
     type: "REGISTER_STEP_TYPE",
     stepType: e
   };
 }
-
 function sv(e) {
   return {
     type: "UNREGISTER_STEP_TYPE",
     stepKey: e
   };
 }
-
 function dv(e) {
   return {
     type: "UNREGISTER_ALL_EXCEPT_STEP_TYPES",
     keepStepKeys: e
   };
 }
-
 function mv(e) {
   return {
     type: "UNREGISTER_ALL_EXCEPT_TRIGGER_TYPES",
     triggerGroup: e
   };
 }
-
 function pv(e, t, n, r, a, o) {
   return {
     type: "UPDATE_STEP_ARGS",
@@ -1042,49 +1003,42 @@ function pv(e, t, n, r, a, o) {
     value: o
   };
 }
-
 function fv(e) {
   return trackErrors(e), {
     type: "SET_ERRORS",
     errors: e
   };
 }
-
 function vv(e) {
   return {
     type: "SET_DATA_LOADER",
     dataLoader: e
   };
 }
-
 function gv(e) {
   return {
     type: "SET_SAVE_LOADER",
     saveLoader: e
   };
 }
-
 function hv(e) {
   return {
     type: "SET_SHOW_STAT",
     showStat: e
   };
 }
-
 function yv(e) {
   return {
     type: "SET_MAYBE_SAVE",
     save: e
   };
 }
-
 function bv(e) {
   return {
     type: "SET_UPDATE_CLICKED",
     save: e
   };
 }
-
 function _v(e, t, n, r) {
   return {
     type: "SET_OPEN_AI_MODAL",
@@ -1094,14 +1048,12 @@ function _v(e, t, n, r) {
     promptType: r
   };
 }
-
 function wv(e) {
   return {
     type: "SET_EMAIL_CONDITION",
     emailConditions: e
   };
 }
-
 function Ev(e, t, n, r, a, o) {
   return {
     type: "SET_CTA_PRO_MODAL",
@@ -1113,21 +1065,18 @@ function Ev(e, t, n, r, a, o) {
     feature: o
   };
 }
-
 function Sv(e) {
   return {
     type: "SET_CONTACT_CONDITION",
     contactConditions: e
   };
 }
-
 function Rv(e) {
   return {
     type: "SET_SEGMENT_CONDITION",
     segmentConditions: e
   };
 }
-
 function xv(e) {
   return {
     type: "SET_ACTIVATE_AUTO_SAVE",

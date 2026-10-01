@@ -2,13 +2,13 @@
 /**
  * Student My Courses Shortcode
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
-use OMLMS\Data\Student;
+use OhMyLMS\Data\Student;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -24,10 +24,10 @@ class ShortCodeMyCourses {
 	public static function output( $atts ) {
 		// Check if we're in any page-builder preview mode before the cart null guard,
 		// so that editor previews work even when the cart session isn't initialised.
-		$is_preview_mode = apply_filters( 'creator_lms_gutenberg_preview_mode', false )
-			|| apply_filters( 'creator_lms_elementor_preview_mode', false )
-			|| apply_filters( 'creator_lms_bricks_preview_mode', false )
-			|| apply_filters( 'creator_lms_wpbakery_preview_mode', false );
+		$is_preview_mode = apply_filters( 'ohmylms_gutenberg_preview_mode', false )
+			|| apply_filters( 'ohmylms_elementor_preview_mode', false )
+			|| apply_filters( 'ohmylms_bricks_preview_mode', false )
+			|| apply_filters( 'ohmylms_wpbakery_preview_mode', false );
 
 		// Check cart class is loaded or abort (skip in preview mode).
 		if ( ! $is_preview_mode && is_null( ecommerce()->cart ) ) {
@@ -36,8 +36,8 @@ class ShortCodeMyCourses {
 
 		// Show login form if not logged in and not in preview mode.
 		if ( ! is_user_logged_in() && ! $is_preview_mode ) {
-			omlms_get_template( 'global/toast.php' );
-			omlms_get_template( 'profile/form-login.php' );
+			ohmylms_get_template( 'global/toast.php' );
+			ohmylms_get_template( 'profile/form-login.php' );
 			return;
 		}
 
@@ -107,7 +107,7 @@ class ShortCodeMyCourses {
 				'no_course_card_padding' => 40,
 			),
 			$atts,
-			'creator_lms_my_courses'
+			'ohmylms_my_courses'
 		);
 
 		$student = new Student( get_current_user_id() );
@@ -115,7 +115,7 @@ class ShortCodeMyCourses {
 		// Display header with navigation if enabled
 		$show_header = filter_var( $args['show_header'], FILTER_VALIDATE_BOOLEAN );
 		if ( $show_header ) {
-			omlms_get_template(
+			ohmylms_get_template(
 				'global/main-header.php',
 				array(
 					'student' => $student,
@@ -124,30 +124,30 @@ class ShortCodeMyCourses {
 		}
 
 		// Generate unique ID for this instance
-		$unique_id = 'creator-lms-my-courses-' . uniqid();
+		$unique_id = 'ohmylms-my-courses-' . uniqid();
 
 		// Output custom styles
 		self::output_custom_styles( $unique_id, $args );
 
 		// Display my courses content.
-		echo '<section class="creator-lms-dashboard ' . esc_attr( $unique_id ) . '">';
-		echo '<div class="creator-lms-container">';
+		echo '<section class="ohmylms-dashboard ' . esc_attr( $unique_id ) . '">';
+		echo '<div class="ohmylms-container">';
 		
 		// Show notices.
-		if ( function_exists( 'creator_lms_show_all_notices' ) ) {
-			creator_lms_show_all_notices();
+		if ( function_exists( 'ohmylms_show_all_notices' ) ) {
+			ohmylms_show_all_notices();
 		}
 		
 		// My courses content.
-		omlms_get_template(
+		ohmylms_get_template(
 			'profile/my-courses.php',
 			array(
 				'user' => get_user_by( 'id', get_current_user_id() ),
 			)
 		);
 		
-		echo '</div>'; // .creator-lms-container
-		echo '</section>'; // .creator-lms-dashboard
+		echo '</div>'; // .ohmylms-container
+		echo '</section>'; // .ohmylms-dashboard
 		
 		// Add JavaScript to prevent navigation redirects.
 		self::add_navigation_handler( $args );
@@ -164,42 +164,42 @@ class ShortCodeMyCourses {
 		?>
 		<style>
 			/* Header styling */
-			.creator-lms-header {
+			.ohmylms-header {
 				background-color: <?php echo esc_attr( $args['header_bg_color'] ); ?> !important;
 			}
 
 			/* User menu styling */
-			.creator-lms-user-dropdown a,
-			.creator-lms-user-dropdown button,
-			.creator-lms-user-dropdown span {
+			.ohmylms-user-dropdown a,
+			.ohmylms-user-dropdown button,
+			.ohmylms-user-dropdown span {
 				color: <?php echo esc_attr( $args['user_menu_color'] ); ?> !important;
 				font-size: <?php echo esc_attr( $args['user_menu_font_size'] ); ?>px !important;
 				font-weight: <?php echo esc_attr( $args['user_menu_font_weight'] ); ?> !important;
 			}
 
-			.creator-lms-user-dropdown {
+			.ohmylms-user-dropdown {
 				background-color: <?php echo esc_attr( $args['user_menu_bg_color'] ); ?> !important;
 			}
 
 			/* User Menu Hover */
-			.creator-lms-user-dropdown li a:hover {
+			.ohmylms-user-dropdown li a:hover {
 				color: <?php echo esc_attr( $args['user_menu_hover_color'] ); ?> !important;
 				background-color: <?php echo esc_attr( $args['user_menu_hover_bg_color'] ); ?> !important;
 			}
 
 			/* User Menu Icons */
-			.creator-lms-user-dropdown li a svg {
+			.ohmylms-user-dropdown li a svg {
 				color: <?php echo esc_attr( $args['user_menu_icon_color'] ); ?> !important;
 			}
-			.creator-lms-user-dropdown li a svg path {
+			.ohmylms-user-dropdown li a svg path {
 				fill: <?php echo esc_attr( $args['user_menu_icon_color'] ); ?> !important;
 			}
 
 			/* User Menu Icons Hover */
-			.creator-lms-user-dropdown li a:hover svg {
+			.ohmylms-user-dropdown li a:hover svg {
 				color: <?php echo esc_attr( $args['user_menu_icon_hover_color'] ); ?> !important;
 			}
-			.creator-lms-user-dropdown li a:hover svg path {
+			.ohmylms-user-dropdown li a:hover svg path {
 				fill: <?php echo esc_attr( $args['user_menu_icon_hover_color'] ); ?> !important;
 			}
 
@@ -209,21 +209,21 @@ class ShortCodeMyCourses {
 			}
 
 			/* Wrapper styling */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-dashboard-wrapper {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-dashboard-wrapper {
 				background-color: <?php echo esc_attr( $args['wrapper_bg_color'] ); ?> !important;
 				padding: <?php echo esc_attr( $args['wrapper_padding'] ); ?>px !important;
 			}
 
 			/* Title typography */
 			.<?php echo esc_attr( $unique_id ); ?> .student-name,
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-dashboard-wrapper h1 {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-dashboard-wrapper h1 {
 				color: <?php echo esc_attr( $args['title_color'] ); ?> !important;
 				font-size: <?php echo esc_attr( $args['title_font_size'] ); ?>px !important;
 				font-weight: <?php echo esc_attr( $args['title_font_weight'] ); ?> !important;
 			}
 
 			/* Text typography */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-dashboard-wrapper,
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-dashboard-wrapper,
 			.<?php echo esc_attr( $unique_id ); ?> .progressbar-title,
 			.<?php echo esc_attr( $unique_id ); ?> .completed-date,
 			.<?php echo esc_attr( $unique_id ); ?> .no-course-data p {
@@ -233,7 +233,7 @@ class ShortCodeMyCourses {
 			}
 
 			/* Button styling - Normal state */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-button {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-button {
 				color: <?php echo esc_attr( $args['button_text_color'] ); ?> !important;
 				background-color: <?php echo esc_attr( $args['button_bg_color'] ); ?> !important;
 				font-size: <?php echo esc_attr( $args['button_font_size'] ); ?>px !important;
@@ -244,36 +244,36 @@ class ShortCodeMyCourses {
 			}
 
 			/* Button styling - Hover & Active state */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-button:hover,
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-button:active,
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-button:focus {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-button:hover,
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-button:active,
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-button:focus {
 				color: <?php echo esc_attr( $args['button_hover_text_color'] ); ?> !important;
 				background-color: <?php echo esc_attr( $args['button_hover_bg_color'] ); ?> !important;
 			}
 
 			/* Course card styling */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-dashboard-single-course {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-dashboard-single-course {
 				background-color: <?php echo esc_attr( $args['card_bg_color'] ); ?> !important;
 				padding: <?php echo esc_attr( $args['card_padding'] ); ?>px !important;
 			}
 
 			/* Progress bar colors */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-progressbar-outer {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-progressbar-outer {
 				background-color: <?php echo esc_attr( $args['progress_bar_bg_color'] ); ?> !important;
 			}
 
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-progressbar-inner {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-progressbar-inner {
 				background-color: <?php echo esc_attr( $args['progress_bar_fill_color'] ); ?> !important;
 			}
 
 			/* Tab styling - Normal state */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-my-courses-tab button {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-my-courses-tab button {
 				color: <?php echo esc_attr( $args['tab_normal_color'] ); ?> !important;
 			}
 
 			/* Tab styling - Active state */
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-my-courses-tab li.active button,
-			.<?php echo esc_attr( $unique_id ); ?> .creator-lms-my-courses-tab button[aria-selected="true"] {
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-my-courses-tab li.active button,
+			.<?php echo esc_attr( $unique_id ); ?> .ohmylms-my-courses-tab button[aria-selected="true"] {
 				color: <?php echo esc_attr( $args['tab_active_color'] ); ?> !important;
 				border-bottom-color: <?php echo esc_attr( $args['tab_active_color'] ); ?> !important;
 			}
@@ -295,14 +295,14 @@ class ShortCodeMyCourses {
 	 */
 	private static function add_navigation_handler( $args = array() ) {
 		// Get URLs from global settings
-		$my_profile_url = omlms_get_nav_link_url( 'profile' );
-		$my_courses_url = omlms_get_nav_link_url( 'courses' );
-		$dashboard_url = omlms_get_page_permalink( 'student_dashboard' );
+		$my_profile_url = ohmylms_get_nav_link_url( 'profile' );
+		$my_courses_url = ohmylms_get_nav_link_url( 'courses' );
+		$dashboard_url = ohmylms_get_page_permalink( 'student_dashboard' );
 		?>
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			// Prevent "Dashboard" link in header from redirecting
-			const dashboardLink = document.querySelector('.creator-lms-user-dropdown .dashboard-link');
+			const dashboardLink = document.querySelector('.ohmylms-user-dropdown .dashboard-link');
 			if (dashboardLink) {
 				dashboardLink.addEventListener('click', function(e) {
 					e.preventDefault();
@@ -312,7 +312,7 @@ class ShortCodeMyCourses {
 			}
 
 			// Prevent "My Courses" link from redirecting (keep on same page)
-			const myCoursesLink = document.querySelector('.creator-lms-user-dropdown .my-course-link');
+			const myCoursesLink = document.querySelector('.ohmylms-user-dropdown .my-course-link');
 			if (myCoursesLink) {
 				myCoursesLink.addEventListener('click', function(e) {
 					e.preventDefault();
@@ -322,7 +322,7 @@ class ShortCodeMyCourses {
 			}
 
 			// Handle "My Profile" link
-			const myProfileLink = document.querySelector('.creator-lms-user-dropdown .my-profile-link');
+			const myProfileLink = document.querySelector('.ohmylms-user-dropdown .my-profile-link');
 			if (myProfileLink) {
 				myProfileLink.addEventListener('click', function(e) {
 					e.preventDefault();

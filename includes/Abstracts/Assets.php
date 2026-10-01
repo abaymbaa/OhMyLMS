@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit();
  * This class provides methods for registering, enqueuing, and localizing
  * scripts and styles in a WordPress environment.
  *
- * @package OMLMS\Abstracts
+ * @package OhMyLMS\Abstracts
  * @since 1.0.0
  */
 abstract class Assets {
@@ -74,7 +74,7 @@ abstract class Assets {
 	 * @since 1.0.0
 	 */
 	protected function get_asset_url( $path ) {
-		return plugins_url( $path, CREATOR_LMS_FILE );
+		return plugins_url( $path, OHMYLMS_FILE );
 	}
 
 	/**
@@ -83,12 +83,12 @@ abstract class Assets {
 	 * @param string $handle    Name of the script.
 	 * @param string $path      Full URL of the script.
 	 * @param array  $deps      An array of registered script handles this script depends on. Default 'jquery'.
-	 * @param string $version   String specifying the script version number. Default CREATOR_LMS_VERSION.
+	 * @param string $version   String specifying the script version number. Default OHMYLMS_VERSION.
 	 * @param array  $in_footer Optional. Whether to enqueue the script before </body> instead of in the <head>. Default array('strategy' => 'defer').
 	 *
 	 * @since 1.0.0
 	 */
-	public function register_script( $handle, $path, $deps = array( 'jquery' ), $version = CREATOR_LMS_VERSION, $in_footer = array( 'strategy' => 'defer' ) ) {
+	public function register_script( $handle, $path, $deps = array( 'jquery' ), $version = OHMYLMS_VERSION, $in_footer = array( 'strategy' => 'defer' ) ) {
 		$this->scripts[] = $handle;
 		wp_register_script( $handle, $path, $deps, $version, $in_footer );
 	}
@@ -105,7 +105,7 @@ abstract class Assets {
 	 *
 	 * @since 1.0.0
 	 */
-	public function register_style( $handle, $path, $deps = array(), $version = CREATOR_LMS_VERSION, $media = 'all', $has_rtl = false ) {
+	public function register_style( $handle, $path, $deps = array(), $version = OHMYLMS_VERSION, $media = 'all', $has_rtl = false ) {
 		$this->styles[] = $handle;
 		wp_register_style( $handle, $path, $deps, $version, $media );
 		if ( $has_rtl ) {
@@ -178,7 +178,7 @@ abstract class Assets {
 			$this->localize_script( $handle );
 		}
 
-		$this->localize_script_MRM( 'creator-lms' );
+		$this->localize_script_MRM( 'ohmylms' );
 	}
 
 	/**

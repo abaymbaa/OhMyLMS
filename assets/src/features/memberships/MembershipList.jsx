@@ -55,7 +55,7 @@ export function createMembershipList(readRuntime) {
         (0, WordPressData.useSelect)(function (e) {
           return e(StoreModule.default).getMemberships();
         }, [])),
-      i = (0, Entitlements.useIsPro)(),
+      i = true,
       c = Y8((0, ReactHooks.useState)(!0), 2),
       u = c[0],
       s = c[1],
@@ -123,7 +123,7 @@ export function createMembershipList(readRuntime) {
                   for (;;)
                     switch ((t.p = t.n)) {
                       case 0:
-                        if (i) {
+                        {
                           t.n = 1;
                           break;
                         }
@@ -135,7 +135,7 @@ export function createMembershipList(readRuntime) {
                           Q(!0),
                           (t.n = 2),
                           l()({
-                            path: '/creator-lms/v1/membership/'.concat(n),
+                            path: '/ohmylms/v1/membership/'.concat(n),
                             method: 'GET',
                             headers: {
                               'Content-Type': 'application/json',
@@ -176,13 +176,13 @@ export function createMembershipList(readRuntime) {
               for (;;)
                 switch (t.n) {
                   case 0:
-                    if (
-                      ((n = o.length > 0 && void 0 !== o[0] ? o[0] : 'date'),
-                      (r = o.length > 1 && void 0 !== o[1] ? o[1] : 'DESC'),
-                      i)
-                    ) {
-                      t.n = 1;
-                      break;
+                    {
+                      n = o.length > 0 && void 0 !== o[0] ? o[0] : 'date';
+                      r = o.length > 1 && void 0 !== o[1] ? o[1] : 'DESC';
+                      {
+                        t.n = 1;
+                        break;
+                      }
                     }
                     return (s(!1), t.a(2));
                   case 1:
@@ -213,7 +213,7 @@ export function createMembershipList(readRuntime) {
         [E, x, P, j, X],
       ),
       pe = (0, ReactHooks.useCallback)(function (e) {
-        i ? (_(!0), N(e)) : re(!0);
+        (_(!0), N(e));
       }, []),
       fe = (0, ReactHooks.useCallback)(function () {
         _(!1);
@@ -264,7 +264,7 @@ export function createMembershipList(readRuntime) {
               label: (0, I18n.__)('Delete', 'ohmylms'),
               value: 'delete',
               action: function () {
-                i ? _(!0) : re(!0);
+                _(!0);
               },
             },
           ];
@@ -471,9 +471,8 @@ export function createMembershipList(readRuntime) {
             var t,
               n = '',
               r =
-                (null === (t = window.creator_lms_params) || void 0 === t
-                  ? void 0
-                  : t.date_format) || 'F j, Y',
+                (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.date_format) ||
+                'F j, Y',
               a = ''.concat(r);
             return (
               e && 'object' === V8(e) && e.date
@@ -541,9 +540,6 @@ export function createMembershipList(readRuntime) {
         },
         [t],
       ),
-      (0, ReactHooks.useCallback)(function () {
-        window.open(Entitlements.pricingPageLink, '_blank');
-      }, []),
       (
         <React.Fragment>
           {contextHolder}
@@ -555,12 +551,6 @@ export function createMembershipList(readRuntime) {
             />
             <Ea isBorderless={!0} minHeight={'calc(100vh - 200px)'}>
               <Controls.SpacerWP padding={5}>
-                <Controls.ProOverlayWP
-                  title={(0, I18n.__)(
-                    'Membership is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.',
-                    'ohmylms',
-                  )}
-                />
                 {m.length > 0
                   ? React.createElement(hN, {
                       items: m,
@@ -586,72 +576,7 @@ export function createMembershipList(readRuntime) {
                 <sN.A
                   rowKey={'id'}
                   columns={Ee}
-                  dataSource={
-                    i
-                      ? o || []
-                      : [
-                          {
-                            id: 1,
-                            name: 'Premium Membership',
-                            price: 100,
-                            regular_price: 120,
-                            sale_price: 90,
-                            currency: '$',
-                            currency_pos: 'left',
-                            members: 150,
-                            courses: 10,
-                            status: 'active',
-                          },
-                          {
-                            id: 2,
-                            name: 'Standard Membership',
-                            price: 50,
-                            regular_price: 50,
-                            sale_price: null,
-                            currency: '$',
-                            currency_pos: 'left',
-                            members: 80,
-                            courses: 5,
-                            status: 'inactive',
-                          },
-                          {
-                            id: 3,
-                            name: 'Basic Membership',
-                            price: 20,
-                            regular_price: 20,
-                            sale_price: null,
-                            currency: '$',
-                            currency_pos: 'left',
-                            members: 30,
-                            courses: 2,
-                            status: 'draft',
-                          },
-                          {
-                            id: 4,
-                            name: 'Enterprise Plan',
-                            price: 300,
-                            regular_price: 350,
-                            sale_price: 280,
-                            currency: '$',
-                            currency_pos: 'left',
-                            members: 250,
-                            courses: 20,
-                            status: 'active',
-                          },
-                          {
-                            id: 5,
-                            name: 'Trial Membership',
-                            price: 0,
-                            regular_price: 0,
-                            sale_price: null,
-                            currency: '$',
-                            currency_pos: 'left',
-                            members: 500,
-                            courses: 1,
-                            status: 'inactive',
-                          },
-                        ]
-                  }
+                  dataSource={o || []}
                   rowSelection={_e}
                   pagination={!1}
                   loading={u}

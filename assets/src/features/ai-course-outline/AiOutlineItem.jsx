@@ -39,7 +39,7 @@ export function createAiOutlineItem(readRuntime) {
                 <Controls.BadgeWP
                   isBorderLess={!0}
                   variant={'secondary'}
-                  color={'var(--omlms-primary-color)'}
+                  color={'var(--ohmylms-primary-color)'}
                   style={{
                     marginInlineStart: '10px',
                   }}

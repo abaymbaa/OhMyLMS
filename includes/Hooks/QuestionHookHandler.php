@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Abstracts\HookHandler;
+use OhMyLMS\Abstracts\HookHandler;
 
 /**
  * Handles hooks related to lessons in the OhMyLMS plugin.
@@ -12,11 +12,11 @@ use OMLMS\Abstracts\HookHandler;
 class QuestionHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		add_action( 'creator_lms_rest_insert_question', array( $this, 'link_question_with_quiz' ), 10, 2 );
-		add_action( 'creator_lms_rest_question_updated', array( $this, 'link_question_with_quiz' ), 10, 2 );
-		add_action( 'creator_lms_rest_delete_question', array( $this, 'unlink_quiz_from_question' ), 10 );
-		add_action( 'creator_lms_rest_insert_question', array( $this, 'save_or_update_question_answer' ), 10, 2 );
-		add_action( 'creator_lms_rest_question_updated', array( $this, 'save_or_update_question_answer' ), 10, 2 );
+		add_action( 'ohmylms_rest_insert_question', array( $this, 'link_question_with_quiz' ), 10, 2 );
+		add_action( 'ohmylms_rest_question_updated', array( $this, 'link_question_with_quiz' ), 10, 2 );
+		add_action( 'ohmylms_rest_delete_question', array( $this, 'unlink_quiz_from_question' ), 10 );
+		add_action( 'ohmylms_rest_insert_question', array( $this, 'save_or_update_question_answer' ), 10, 2 );
+		add_action( 'ohmylms_rest_question_updated', array( $this, 'save_or_update_question_answer' ), 10, 2 );
 	}
 
 
@@ -59,7 +59,7 @@ class QuestionHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_QUIZ_QUESTION_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
 
 		// Check if the relationship already exists
 		$exists = $wpdb->get_var(
@@ -104,7 +104,7 @@ class QuestionHookHandler extends HookHandler {
 		 * @param int $chapter_id The ID of the chapter.
 		 * @param int $lesson_id The ID of the lesson.
 		 */
-		do_action( 'creator_lms_quiz_question_relationship_created', $quiz_id, $question_id );
+		do_action( 'ohmylms_quiz_question_relationship_created', $quiz_id, $question_id );
 	}
 
 
@@ -125,7 +125,7 @@ class QuestionHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_QUIZ_QUESTION_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
 
 		$wpdb->delete(
 			$table_name,
@@ -141,14 +141,14 @@ class QuestionHookHandler extends HookHandler {
 
 	public function save_or_update_question_answer( $question, $request ) {
 
-		$question_data    = omlms_get_question( $question->ID );
+		$question_data    = ohmylms_get_question( $question->ID );
 		$all_ready_answer = $question_data->get_questions();
 		$answers          = ! empty( $request['questions'] ) ? $request['questions'] : array();
 		if ( empty( $answers ) ) {
 			return;
 		}
 		global $wpdb;
-		$answers_table = $wpdb->prefix . 'omlms_question_answers';
+		$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
 
 		$existing_ids = array_column( $all_ready_answer, 'id' );
 		$new_ids      = array_filter( array_column( $answers, 'id' ) );
@@ -192,7 +192,7 @@ class QuestionHookHandler extends HookHandler {
 		// Delete answers that are not in the new answers list
 		$ids_to_delete = array_diff( $existing_ids, $new_ids );
 		if ( ! empty( $ids_to_delete ) ) {
-			$answermeta_table = $wpdb->prefix . 'omlms_question_answermeta';
+			$answermeta_table = $wpdb->prefix . 'ohmylms_question_answermeta';
 			foreach ( $ids_to_delete as $id ) {
 				$wpdb->delete( $answers_table, array( 'id' => $id ), array( '%d' ) );
 				$wpdb->delete( $answermeta_table, array( 'answer_id' => $id ), array( '%d' ) );
@@ -213,7 +213,7 @@ class QuestionHookHandler extends HookHandler {
 	private function update_question_answer_meta( $answer_id, $answer_data ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'omlms_question_answermeta';
+		$table = $wpdb->prefix . 'ohmylms_question_answermeta';
 
 		// Define allowed meta keys
 		$allowed_keys = [
@@ -274,7 +274,7 @@ class QuestionHookHandler extends HookHandler {
 	 */
 	protected function update_answer_meta( $answer_id, $meta_key, $meta_value ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_question_answermeta';
+		$table_name = $wpdb->prefix . 'ohmylms_question_answermeta';
 
 		$value = maybe_serialize( $meta_value );
 

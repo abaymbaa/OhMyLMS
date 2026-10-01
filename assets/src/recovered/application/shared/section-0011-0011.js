@@ -102,16 +102,16 @@ var gl = function (e) {
       };
     }();
   return React.createElement("div", {
-    className: "omlms-lcm-aimodal",
+    className: "ohmylms-lcm-aimodal",
     onMouseDown: function (e) {
       e.target === e.currentTarget && t();
     }
   }, React.createElement("div", {
-    className: "omlms-lcm-aimodal__card",
+    className: "ohmylms-lcm-aimodal__card",
     role: "dialog",
     "aria-modal": "true"
   }, React.createElement("div", {
-    className: "omlms-lcm-aimodal__head"
+    className: "ohmylms-lcm-aimodal__head"
   }, React.createElement("span", null, (0, b.__)("Generate AI Photo", "ohmylms")), React.createElement("button", {
     type: "button",
     onClick: t,
@@ -120,9 +120,9 @@ var gl = function (e) {
     name: "close",
     size: 18
   }))), React.createElement("div", {
-    className: "omlms-lcm-aimodal__body"
+    className: "ohmylms-lcm-aimodal__body"
   }, React.createElement("div", {
-    className: "omlms-lcm-aimodal__promptrow"
+    className: "ohmylms-lcm-aimodal__promptrow"
   }, React.createElement("input", {
     value: i,
     onChange: function (e) {
@@ -137,18 +137,18 @@ var gl = function (e) {
     onClick: R,
     disabled: u
   }, u ? (0, b.__)("Generating…", "ohmylms") : (0, b.__)("Generate", "ohmylms"))), v && React.createElement("div", {
-    className: "omlms-lcm-aimodal__error"
+    className: "ohmylms-lcm-aimodal__error"
   }, v), u && React.createElement("div", {
-    className: "omlms-lcm-aimodal__loading"
+    className: "ohmylms-lcm-aimodal__loading"
   }, React.createElement(ho, {
     size: 34
   })), !!w.length && React.createElement("div", {
-    className: "omlms-lcm-aimodal__grid"
+    className: "ohmylms-lcm-aimodal__grid"
   }, w.map(function (e, t) {
     return React.createElement("button", {
       key: t,
       type: "button",
-      className: "omlms-lcm-aimodal__thumb",
+      className: "ohmylms-lcm-aimodal__thumb",
       onClick: function () {
         return x(e);
       },
@@ -158,12 +158,10 @@ var gl = function (e) {
       alt: ""
     }));
   })), m && React.createElement("div", {
-    className: "omlms-lcm-aimodal__applying"
+    className: "ohmylms-lcm-aimodal__applying"
   }, (0, b.__)("Saving to media library…", "ohmylms")))));
 };
-
 const hl = (0, g.memo)(gl);
-
 function yl(e) {
   return yl = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -171,7 +169,6 @@ function yl(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, yl(e);
 }
-
 function bl(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -182,7 +179,6 @@ function bl(e, t) {
   }
   return n;
 }
-
 function _l(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -194,7 +190,6 @@ function _l(e) {
   }
   return e;
 }
-
 function wl(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -215,7 +210,6 @@ function wl(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function El() {
   var e,
     t,
@@ -302,7 +296,6 @@ function El() {
     };
   })();
 }
-
 function Sl(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -324,7 +317,6 @@ function Sl(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Sl(e, t, n, r);
 }
-
 function Rl(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -334,7 +326,6 @@ function Rl(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function xl(e) {
   return function () {
     var t = this,
@@ -351,7 +342,6 @@ function xl(e) {
     });
   };
 }
-
 function Cl(e) {
   return function (e) {
     if (Array.isArray(e)) return kl(e);
@@ -361,7 +351,6 @@ function Cl(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Pl(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -395,7 +384,6 @@ function Pl(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Ol(e, t) {
   if (e) {
     if ("string" == typeof e) return kl(e, t);
@@ -403,15 +391,12 @@ function Ol(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? kl(e, t) : void 0;
   }
 }
-
 function kl(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 sn().extend(lo());
-
 var jl = function (e) {
   var t,
     n = e.isOpen,
@@ -455,7 +440,7 @@ var jl = function (e) {
     I = (0, z.A)(),
     F = I.openNotificationWithIcon,
     N = I.contextHolder,
-    D = (0, L.useFeatureAccess)("zoom"),
+    D = true,
     W = Qi(),
     B = (null == u ? void 0 : u.zoom_plan) || jo,
     V = function (e) {
@@ -472,7 +457,7 @@ var jl = function (e) {
         return El().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (D) {
+              {
                 e.n = 1;
                 break;
               }
@@ -523,7 +508,7 @@ var jl = function (e) {
         return El().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (D) {
+              {
                 e.n = 1;
                 break;
               }
@@ -656,7 +641,7 @@ var jl = function (e) {
       w || R || r();
     },
     onSave: function () {
-      D && (v ? G() : H());
+      v ? G() : H();
     },
     onPreview: function () {
       null != u && u.preview_url && window.open(u.preview_url, "_blank");
@@ -722,9 +707,7 @@ var jl = function (e) {
     }
   })) : null;
 };
-
 const Al = (0, g.memo)(jl);
-
 function Ml(e) {
   return Ml = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -732,7 +715,6 @@ function Ml(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ml(e);
 }
-
 function Tl(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -743,7 +725,6 @@ function Tl(e, t) {
   }
   return n;
 }
-
 function Il(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -755,7 +736,6 @@ function Il(e) {
   }
   return e;
 }
-
 function Fl(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -776,7 +756,6 @@ function Fl(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Nl() {
   var e,
     t,
@@ -863,7 +842,6 @@ function Nl() {
     };
   })();
 }
-
 function Dl(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -885,7 +863,6 @@ function Dl(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Dl(e, t, n, r);
 }
-
 function Wl(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -895,7 +872,6 @@ function Wl(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function zl(e) {
   return function () {
     var t = this,
@@ -912,7 +888,6 @@ function zl(e) {
     });
   };
 }
-
 function Bl(e) {
   return function (e) {
     if (Array.isArray(e)) return Hl(e);
@@ -922,7 +897,6 @@ function Bl(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Ll(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -956,7 +930,6 @@ function Ll(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Vl(e, t) {
   if (e) {
     if ("string" == typeof e) return Hl(e, t);
@@ -964,11 +937,9 @@ function Vl(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Hl(e, t) : void 0;
   }
 }
-
 function Hl(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 sn().extend(lo());

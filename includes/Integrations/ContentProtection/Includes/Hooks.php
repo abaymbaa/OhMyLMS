@@ -1,11 +1,11 @@
 <?php 
 
-namespace OMLMS\Integrations\ContentProtection\Includes;
+namespace OhMyLMS\Integrations\ContentProtection\Includes;
 
 class Hooks {
     
     public function __construct() {
-        add_filter( 'creatorlms_integrations', array($this, 'add_content_protection') );
+        add_filter( 'ohmylms_integrations', array($this, 'add_content_protection') );
     }
 
 
@@ -19,13 +19,12 @@ class Hooks {
     public function add_content_protection( $integrations ) {
         $integrations['content_protection'] = array(
             'label' => __('Content Protection', 'ohmylms'),
-            'icon' => CREATORLMS_PRO_URL.'/includes/Integrations/ContentProtection/Assets/Images/content-protection-icon.svg',
+            'icon' => OHMYLMS_PRO_URL.'/includes/Integrations/ContentProtection/Assets/Images/content-protection-icon.svg',
             'description' => __('Protect your content by disabling copying, inspecting, and screen recording features.', 'ohmylms'),
             'categories'  => array('course-engagement'),
             'hasSettings' => false,
-            'class'       => 'OMLMS\Integrations\ContentProtection',
-            'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('content_protection'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('content_protection'),
+            'class'       => 'OhMyLMS\Integrations\ContentProtection',
+            'is_valid'    => true,
         );
         return $integrations;
     }
@@ -37,7 +36,7 @@ class Hooks {
      * @since 1.0.0
      */
     public function should_show_cohort( $should_show ) {
-        $integrations = get_option( 'creatorlms_integrations' );
+        $integrations = get_option( 'ohmylms_integrations' );
   
         if ( empty( $integrations ) || ! is_array( $integrations ) ) {
             return $should_show;

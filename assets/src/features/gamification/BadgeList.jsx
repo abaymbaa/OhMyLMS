@@ -158,7 +158,7 @@ export function createBadgeList(readRuntime) {
                         })),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/badges',
+                          path: '/ohmylms/v1/engagement/badges',
                           method: 'DELETE',
                           headers: {
                             'Content-Type': 'application/json',
@@ -209,7 +209,7 @@ export function createBadgeList(readRuntime) {
                         o(!0),
                         (e.n = 1),
                         l()({
-                          path: 'creator-lms/v1/engagement/badges',
+                          path: 'ohmylms/v1/engagement/badges',
                         })
                       );
                     case 1:

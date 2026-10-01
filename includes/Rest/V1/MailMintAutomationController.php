@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_Error;
 use WP_REST_Response;
 use WP_HTTP_Response;
@@ -11,7 +11,7 @@ use WP_HTTP_Response;
  *
  * Handles REST API endpoints for MailMint automation settings.
  *
- * @package OMLMS\Rest\V1
+ * @package OhMyLMS\Rest\V1
  * @since 1.0.0
  */
 class MailMintAutomationController extends RestController {
@@ -31,7 +31,7 @@ class MailMintAutomationController extends RestController {
      */
     public function check_automation_permission( $request ) {
         if ( ! current_user_can( 'edit_posts' ) ) {
-            return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to manage automations.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
+            return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to manage automations.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
         }
 
         /*
@@ -43,12 +43,12 @@ class MailMintAutomationController extends RestController {
             $request,
             'edit',
             array(
-                CREATOR_LMS_COURSE_CPT,
-                CREATOR_LMS_LESSON_CPT,
-                CREATOR_LMS_ASSIGNMENT_CPT,
-                CREATOR_LMS_QUIZ_CPT,
-                CREATOR_LMS_MEMBERSHIP_CPT,
-                CREATOR_LMS_CHAPTER_CPT,
+                OHMYLMS_COURSE_CPT,
+                OHMYLMS_LESSON_CPT,
+                OHMYLMS_ASSIGNMENT_CPT,
+                OHMYLMS_QUIZ_CPT,
+                OHMYLMS_MEMBERSHIP_CPT,
+                OHMYLMS_CHAPTER_CPT,
             ),
             'post_id'
         );
@@ -111,7 +111,7 @@ class MailMintAutomationController extends RestController {
             array(
                 'args' => array(
                     'id' => array(
-                        'description' => __( 'Unique identifier for the automation.', 'creator-lms' ),
+                        'description' => __( 'Unique identifier for the automation.', 'ohmylms' ),
                         'type'        => 'integer',
                     ),
                 ),
@@ -178,7 +178,7 @@ class MailMintAutomationController extends RestController {
             return rest_ensure_response( [] );
         }
 
-        $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+        $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
         $automation_data = $automation_instance->get_all( $automation_ids, $order_by, $order_type, $offset, $per_page, $search, $status );
        
         return rest_ensure_response( $automation_data );
@@ -192,7 +192,7 @@ class MailMintAutomationController extends RestController {
      * @return WP_Error|WP_REST_Response|WP_HTTP_Response
      */
     public function create_item( $request ) {
-        $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+        $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
         
         if ( ! $automation_instance ) {
             return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );
@@ -223,7 +223,7 @@ class MailMintAutomationController extends RestController {
      * @return WP_Error|WP_REST_Response|WP_HTTP_Response
      */
     public function delete_item( $request ) {
-        $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+        $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
         if ( ! $automation_instance ) {
             return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );
         }
@@ -241,7 +241,7 @@ class MailMintAutomationController extends RestController {
      * @return WP_Error|WP_REST_Response|WP_HTTP_Response
      */
     public function delete_automation( $request ) {
-        $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+        $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
         if ( ! $automation_instance ) {
             return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );
         }
@@ -272,7 +272,7 @@ class MailMintAutomationController extends RestController {
         $new_status = $request->get_param( 'status' );
 
         // Create a new MailMint instance for the post ID
-        $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+        $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
 
         if ( ! $automation_instance ) {
             return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );
@@ -305,7 +305,7 @@ class MailMintAutomationController extends RestController {
         }
 
          // Create a new MailMint instance for the post ID
-         $automation_instance = new \OMLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
+         $automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
 
          if ( ! $automation_instance ) {
              return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );

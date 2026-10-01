@@ -20,7 +20,7 @@ export function createAssignmentGrading(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'assignments');
+    HG('ohmylms', 'assignments');
     var e = (0, WordPressData.useDispatch)(StoreModule.default),
       t = mK((0, ReactHooks.useState)([]), 2),
       n = t[0],
@@ -64,7 +64,7 @@ export function createAssignmentGrading(readRuntime) {
                         s(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/assignment/'
+                          path: '/ohmylms/v1/assignment/'
                             .concat(m, '/report/')
                             .concat(assignmentId),
                           method: 'GET',
@@ -134,7 +134,7 @@ export function createAssignmentGrading(readRuntime) {
                         ]),
                         (t.n = 1),
                         l()({
-                          path: '/creator-lms/v1/assignment/'
+                          path: '/ohmylms/v1/assignment/'
                             .concat(m, '/report/')
                             .concat(assignmentId),
                           method: 'POST',

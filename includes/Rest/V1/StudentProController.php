@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Course;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Course;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -36,7 +36,7 @@ class StudentProController extends RestController {
 	 * @return bool
 	 */
 	public function check_student_permission() {
-		return current_user_can( 'manage_options' ) || current_user_can( 'manage_creator_lms' );
+		return current_user_can( 'manage_options' ) || current_user_can( 'manage_ohmylms' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class StudentProController extends RestController {
 			array(
 				'args' => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the student.', 'creator-lms' ),
+						'description' => __( 'Unique identifier for the student.', 'ohmylms' ),
 						'type'        => 'integer',
 					),
 				),
@@ -139,8 +139,8 @@ class StudentProController extends RestController {
         // Get the student's avatar image URL (if available)
         $student_avatar_url = get_avatar_url( $user_id, array( 'size' => 96 ) ); // You can adjust the size as needed
 
-        // Get the enrollment date from the omlms_user_enrollment table
-        $enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
+        // Get the enrollment date from the ohmylms_user_enrollment table
+        $enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
         $enrollment = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT start_date 
@@ -154,7 +154,7 @@ class StudentProController extends RestController {
         $enrollment_date = isset( $enrollment['start_date'] ) ? $enrollment['start_date'] : '';
 
 
-        $student = new \OMLMS\Data\Student( $user_id );
+        $student = new \OhMyLMS\Data\Student( $user_id );
         $enrolled_courses = $student->get_enrolled_course_count();
         $in_progress_courses = $student->get_progress_course_count();
         $completed_courses = $student->get_completed_course_count();
@@ -171,8 +171,8 @@ class StudentProController extends RestController {
 
                 $course_id = $course->get_id();
 
-                // Query the omlms_user_progress table for completed items for the specific course
-                $enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
+                // Query the ohmylms_user_progress table for completed items for the specific course
+                $enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
                 $enrollment = $wpdb->get_row(
                     $wpdb->prepare(
                         "SELECT * 
@@ -197,7 +197,7 @@ class StudentProController extends RestController {
                 }
 
                 // Query the progress table for completed items using the enrollment ID
-                $progress_table = $wpdb->prefix . 'omlms_user_progress';
+                $progress_table = $wpdb->prefix . 'ohmylms_user_progress';
                 $completed_items = $wpdb->get_results(
                     $wpdb->prepare(
                         "SELECT content_type, COUNT(*) as count
@@ -275,8 +275,8 @@ class StudentProController extends RestController {
             }
         }
 
-        // Fetch the membership data from omlms_user_membership table
-        $membership_table = $wpdb->prefix . 'omlms_user_membership';
+        // Fetch the membership data from ohmylms_user_membership table
+        $membership_table = $wpdb->prefix . 'ohmylms_user_membership';
         $membership_data = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT membership_id as id 
@@ -291,7 +291,7 @@ class StudentProController extends RestController {
         if ( ! empty( $membership_data ) ) {
             $total_membership = count( $membership_data );
             foreach ( $membership_data as $single_membership ) {
-                $membership = omlms_get_membership( $single_membership['id'] );
+                $membership = ohmylms_get_membership( $single_membership['id'] );
                 
                 if( ! $membership  ) {
                     continue;
@@ -326,8 +326,8 @@ class StudentProController extends RestController {
             'total_membership' => $total_membership,
             'courses' => $course_data,
             'memberships' => $membership_info,
-            'currency'		 => html_entity_decode(get_omlms_currency_symbol( get_omlms_currency() )),
-            'currency_pos'	=> get_omlms_currency_position(),
+            'currency'		 => html_entity_decode(get_ohmylms_currency_symbol( get_ohmylms_currency() )),
+            'currency_pos'	=> get_ohmylms_currency_position(),
         );
 
         return rest_ensure_response( $response );
@@ -346,7 +346,7 @@ class StudentProController extends RestController {
 	protected function get_taxonomy_terms($course, $taxonomy = 'category')
 	{
 		$terms = array();
-		foreach (creator_lms_get_object_terms($course->get_id(), 'course_' . $taxonomy) as $term) {
+		foreach (ohmylms_get_object_terms($course->get_id(), 'course_' . $taxonomy) as $term) {
 			$terms[] = array(
 				'id'   => $term->term_id,
 				'name' => $term->name,

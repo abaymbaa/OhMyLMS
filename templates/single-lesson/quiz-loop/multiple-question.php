@@ -3,9 +3,9 @@
 /**
  * The template for displaying lesson's Audio, Video, Text content
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/multiple-question.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/quiz-loop/multiple-question.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

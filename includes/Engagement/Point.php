@@ -4,11 +4,11 @@
  * 
  * This class handles the point system settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
-use OMLMS\Engagement\Achievements;
+use OhMyLMS\Engagement\Achievements;
 
 class Point {
     
@@ -18,8 +18,8 @@ class Point {
      * @return array
      */
     public static function get_rules() {
-        $settings = get_option( 'creator_lms_point_settings', array() );
-        return apply_filters( 'creator_lms_point_settings', $settings );
+        $settings = get_option( 'ohmylms_point_settings', array() );
+        return apply_filters( 'ohmylms_point_settings', $settings );
     }
 
     /**
@@ -80,10 +80,10 @@ class Point {
         $response = Achievements::insert_achievement( $data );
         if( $response ) {
             set_transient( 'points_added_for_user_' . $user_id, true, 60 );
-            do_action( 'creator_lms_after_point_added', $user_id, $points, $type );
+            do_action( 'ohmylms_after_point_added', $user_id, $points, $type );
             
             // Trigger gamification event for tracking
-            do_action( 'creatorlms_gamification_trigger_used', $type, array( 'points' => $points, 'user_id' => $user_id ) );
+            do_action( 'ohmylms_gamification_trigger_used', $type, array( 'points' => $points, 'user_id' => $user_id ) );
         }
         return $response;
     }
@@ -136,7 +136,7 @@ class Point {
         );
         $response = Achievements::insert_achievement( $data );
         if( $response ) {
-            do_action( 'creator_lms_after_point_deduct', $user_id, $points, $type );
+            do_action( 'ohmylms_after_point_deduct', $user_id, $points, $type );
         }
         return $response;
     }
@@ -187,7 +187,7 @@ class Point {
      */
     public static function get_total_points( $user_id ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'omlms_user_achievement';
+        $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
         $total_points = $wpdb->get_var( $wpdb->prepare(
             "SELECT SUM(points) FROM {$table_name} WHERE user_id = %d AND status = 'active'",
             $user_id

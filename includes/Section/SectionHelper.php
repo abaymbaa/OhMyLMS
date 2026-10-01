@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Section;
+namespace OhMyLMS\Section;
 
-use OMLMS\Course\CourseHelper;
+use OhMyLMS\Course\CourseHelper;
 
 /**
  * Responsible to handle all section related calculations
@@ -28,13 +28,13 @@ class SectionHelper {
 		 * @param string $description course description
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_add_section', $title, $description );
+		do_action( 'ohmylms_before_add_section', $title, $description );
 
 		$post_id = wp_insert_post(
 			array(
 				'post_title'   => $title,
 				'post_excerpt' => $description,
-				'post_type'    => 'omlms-section',
+				'post_type'    => 'ohmylms-section',
 				'post_status'  => 'publish',
 			)
 		);
@@ -58,7 +58,7 @@ class SectionHelper {
 		 * @param string $post_id newly inserted section id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_add_section', $title, $description, $post_id );
+		do_action( 'ohmylms_after_add_section', $title, $description, $post_id );
 
 		$section_data = array(
 			'id'          => $post_id,
@@ -85,7 +85,7 @@ class SectionHelper {
 
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'omlms_sections_with_lessons';
+		$table = $wpdb->prefix . 'ohmylms_sections_with_lessons';
 
 		$result = $wpdb->insert(
 			$table,

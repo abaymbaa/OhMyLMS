@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * General settings class.
@@ -42,52 +42,52 @@ class EmailSettings extends Settings {
 	public function get_settings() {
 		$settings = array(
 			array(
-				'id'      => 'creator_lms_email_branding_image',
+				'id'      => 'ohmylms_email_branding_image',
 				'type'    => 'image',
 				'default' => '',
 			),
 			array(
-				'id'      => 'creator_lms_email_base_color',
+				'id'      => 'ohmylms_email_base_color',
 				'type'    => 'color',
 				'default' => '#6E42D3',
 			),
 			array(
-				'id'      => 'creator_lms_email_background_color',
+				'id'      => 'ohmylms_email_background_color',
 				'type'    => 'color',
 				'default' => '#F4F5F7',
 			),
 			array(
-				'id'      => 'creator_lms_email_body_background_color',
+				'id'      => 'ohmylms_email_body_background_color',
 				'type'    => 'color',
 				'default' => '#FFFFFF',
 			),
 			array(
-				'id'      => 'creator_lms_email_body_text_color',
+				'id'      => 'ohmylms_email_body_text_color',
 				'type'    => 'color',
 				'default' => '#1F2328',
 			),
 			array(
-				'id'      => 'creator_lms_email_button_possition',
+				'id'      => 'ohmylms_email_button_possition',
 				'type'    => 'text',
 				'default' => 'left',
 			),
 			array(
-				'id'      => 'creator_lms_email_sender_email_address',
+				'id'      => 'ohmylms_email_sender_email_address',
 				'type'    => 'text',
 				'default' => '',
 			),
 			array(
-				'id'      => 'creator_lms_email_sender_name',
+				'id'      => 'ohmylms_email_sender_name',
 				'type'    => 'text',
 				'default' => '',
 			),
 			array(
-				'id'      => 'creator_lms_email_footer_text',
+				'id'      => 'ohmylms_email_footer_text',
 				'type'    => 'text',
 				'default' => '',
 			),
 			array(
-				'id'      => 'omlms_notification_color',
+				'id'      => 'ohmylms_notification_color',
 				'type'    => 'color',
 				'default' => '#6E42D3',
 			),

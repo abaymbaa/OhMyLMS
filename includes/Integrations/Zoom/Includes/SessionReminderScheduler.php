@@ -1,13 +1,13 @@
 <?php
 
-namespace OMLMS\Integrations\Zoom\Includes;
+namespace OhMyLMS\Integrations\Zoom\Includes;
 
 /**
  * Zoom Session Reminder Handler
  * 
  * This class handles the reminder for zoom sessions
  * 
- * @package OMLMS\Integrations\Zoom\Includes
+ * @package OhMyLMS\Integrations\Zoom\Includes
  * @since 1.0.0
  * @author WPFunnels Team
  */
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) exit;
 use WP_Query;
 
 class SessionReminderScheduler {
-    const ACTION_HOOK = 'creator_lms_send_zoom_session_reminders';
+    const ACTION_HOOK = 'ohmylms_send_zoom_session_reminders';
 
     public static function init() {
         add_action('init', [__CLASS__, 'schedule_reminder']);
@@ -51,7 +51,7 @@ class SessionReminderScheduler {
         $now = current_time('timestamp');
         $target = $now + DAY_IN_SECONDS;
         $args = [
-            'post_type'      => 'omlms-session',
+            'post_type'      => 'ohmylms-session',
             'post_status'    => 'publish',
             'meta_query'     => [
                 [
@@ -76,7 +76,7 @@ class SessionReminderScheduler {
             $start_timestamp    = strtotime(str_replace('T', ' ', $raw_start));
             $meeting_data       = get_post_meta( $post->ID, '_zoom_meeting_data', true );
             $meeting_data       = json_decode( $meeting_data, true );
-            $course_id          = creator_lms_get_course_by_content_id($post->ID);
+            $course_id          = ohmylms_get_course_by_content_id($post->ID);
             $zoom_link          = isset($meeting_data['join_url']) ? $meeting_data['join_url'] : '';
             if (!$course_id) {
                 continue;
@@ -84,7 +84,7 @@ class SessionReminderScheduler {
             if ($start_timestamp > $now && $start_timestamp <= $target) {
                 $students = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT user_id FROM {$wpdb->prefix}omlms_user_enrollment WHERE course_id = %d AND status = 'enrolled'",
+                        "SELECT user_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id = %d AND status = 'enrolled'",
                         $course_id
                     )
                 );
@@ -117,7 +117,7 @@ class SessionReminderScheduler {
      * @since 1.0.0
      */
     protected static function has_sent_email($user_id, $session_id) {
-        return get_user_meta($user_id, '_omlms_zoom_reminder_' . $session_id, true);
+        return get_user_meta($user_id, '_ohmylms_zoom_reminder_' . $session_id, true);
     }
 
     /**
@@ -129,7 +129,7 @@ class SessionReminderScheduler {
      * @since 1.0.0
      */
     protected static function mark_email_sent($user_id, $session_id) {
-        update_user_meta($user_id, '_omlms_zoom_reminder_' . $session_id, true);
+        update_user_meta($user_id, '_ohmylms_zoom_reminder_' . $session_id, true);
     }
 
     /**

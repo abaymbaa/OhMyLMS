@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_REST_Server;
 use WP_REST_Response;
 use WP_Error;
@@ -54,8 +54,6 @@ class AppController extends RestController {
             $result['currency_settings'] = $this->get_currency_settings();
             $result['engagement_settings'] = $this->get_engagement_settings();
             $result['ai_settings'] = $this->get_ai_settings();
-            $result['license_info'] = $this->get_license_info();
-            $result['plan_features'] = $this->get_plan_features();
         } else {
             switch ( $type ) {
                 case 'categories':
@@ -73,12 +71,6 @@ class AppController extends RestController {
                 case 'ai_settings':
                     $result['ai_settings'] = $this->get_ai_settings();
                     break;
-                case 'license_info':
-                    $result['license_info'] = $this->get_license_info();
-                    break;
-                case 'plan_features':
-                    $result['plan_features'] = $this->get_plan_features();
-                    break;
                 default:
                     return new \WP_Error( 'invalid_type', \__( 'Invalid type parameter.', 'ohmylms' ), array( 'status' => 400 ) );
             }
@@ -95,10 +87,10 @@ class AppController extends RestController {
      * @since 1.0.0
      */
     public function get_engagement_settings() {
-        if ( !creator_lms_is_pro() ) return array();
-        $point_settings = \OMLMS\Engagement\Point::get_rules();
-        $badge_settings = \OMLMS\Engagement\Badge::get_rules();
-        $reward_settings = \OMLMS\Engagement\Reward::get_rules();
+        if ( !ohmylms_is_pro() ) return array();
+        $point_settings = \OhMyLMS\Engagement\Point::get_rules();
+        $badge_settings = \OhMyLMS\Engagement\Badge::get_rules();
+        $reward_settings = \OhMyLMS\Engagement\Reward::get_rules();
 
         return array(
             'point_settings' => $point_settings,
@@ -112,34 +104,17 @@ class AppController extends RestController {
      * Get AI settings for the app.
      */
     public function get_ai_settings() {
-        if ( !creator_lms_is_pro() ) return array();
+        if ( !ohmylms_is_pro() ) return array();
         $user_id = \get_current_user_id();
-		$settings = \get_user_meta( $user_id, 'creatorlms_ai_api_credentials', true );
-        $text_credit = get_option( 'creatorlms_pro_token_remaining', 0 );
-        $image_count = get_option( 'creatorlms_pro_image_token_remaining', 0 );
+		$settings = \get_user_meta( $user_id, 'ohmylms_ai_api_credentials', true );
+        $text_credit = get_option( 'ohmylms_pro_token_remaining', 0 );
+        $image_count = get_option( 'ohmylms_pro_image_token_remaining', 0 );
 		if ( empty( $settings ) ) {
 			$settings = array();
 		}
         $settings['text_credit'] = $text_credit;
         $settings['image_count'] = $image_count;
 		return $settings;
-    }
-
-    /**
-     * Get license information for the app.
-     */
-    public function get_license_info() {
-        if ( !creator_lms_is_pro() ) return array();
-        return \OMLMS\Utility\LicenseHelper::get_license_data();
-    }
-
-
-    /**
-     * Get license information for the app.
-     */
-    public function get_plan_features() {
-        if ( !creator_lms_is_pro() ) return array();
-        return \OMLMS\Utility\LicenseHelper::get_plan_features();
     }
 
     /**
@@ -173,10 +148,10 @@ class AppController extends RestController {
      * Get integrations from wp_options
      */
     private function get_integrations() {
-        $is_community_active = defined( 'CREATORLMS_COMMUNITY_VERSION' );
+        $is_community_active = defined( 'OHMYLMS_COMMUNITY_VERSION' );
 
-        if ( !creator_lms_is_pro() && !$is_community_active ) return array();
-        else if($is_community_active && !creator_lms_is_pro()) {
+        if ( !ohmylms_is_pro() && !$is_community_active ) return array();
+        else if($is_community_active && !ohmylms_is_pro()) {
             $integrations = array(
                 'community' => array(
                     'is_enable' => 1,
@@ -185,7 +160,7 @@ class AppController extends RestController {
             return $integrations;
         }
 
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         if( $is_community_active ) {
             $integrations['community']['is_enable'] = 1;
         } else {
@@ -200,11 +175,11 @@ class AppController extends RestController {
      */
     private function get_currency_settings() {
         $keys = array(
-            'creator_lms_currency',
-            'creator_lms_currency_pos',
-            'creator_lms_price_thousand_sep',
-            'creator_lms_price_decimal_sep',
-            'creator_lms_price_num_decimals',
+            'ohmylms_currency',
+            'ohmylms_currency_pos',
+            'ohmylms_price_thousand_sep',
+            'ohmylms_price_decimal_sep',
+            'ohmylms_price_num_decimals',
         );
         $settings = array();
         foreach ( $keys as $key ) {

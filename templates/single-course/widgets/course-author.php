@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/course-author.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -21,7 +21,7 @@ $avatar_url 	= get_avatar_url( $author_id );
 ?>
 
 <!-- course author widget -->
-<div class="creator-lms-sidebar-widget creator-lms-widget-course-author">
+<div class="ohmylms-sidebar-widget ohmylms-widget-course-author">
     <div class="course-author-wrapper">
         <figure class="author-avatar">
             <img src="<?php echo $avatar_url; ?>" alt="course author avatar">

@@ -16,9 +16,7 @@ var ye = function () {
     d: "M5.4 10.868c.596 0 1.08-.456 1.08-1.019S5.996 8.83 5.4 8.83c-.597 0-1.08.456-1.08 1.019s.483 1.019 1.08 1.019zm3.6 0c.597 0 1.08-.456 1.08-1.019S9.597 8.83 9 8.83c-.597 0-1.08.456-1.08 1.019s.483 1.019 1.08 1.019zm-3.6 3.396c.596 0 1.08-.456 1.08-1.018 0-.563-.484-1.02-1.08-1.02-.597 0-1.08.457-1.08 1.02 0 .562.483 1.018 1.08 1.018zm7.2-3.396c.597 0 1.08-.456 1.08-1.019S13.198 8.83 12.6 8.83c-.596 0-1.08.456-1.08 1.019s.484 1.019 1.08 1.019zm0 3.396c.597 0 1.08-.456 1.08-1.018 0-.563-.483-1.02-1.08-1.02-.596 0-1.08.457-1.08 1.02 0 .562.484 1.018 1.08 1.018zm-3.6 0c.597 0 1.08-.456 1.08-1.018 0-.563-.483-1.02-1.08-1.02-.597 0-1.08.457-1.08 1.02 0 .562.483 1.018 1.08 1.018z"
   })));
 };
-
 const be = (0, g.memo)(ye);
-
 var _e = function () {
   var e = (0, g.useMemo)(function () {
     return (0, de.A)();
@@ -85,7 +83,6 @@ var _e = function () {
     d: "M42 69h128v74H42z"
   }))), React.createElement("script", null)));
 };
-
 const we = (0, g.memo)(_e),
   Ee = function (e) {
     switch (e) {
@@ -105,7 +102,6 @@ const we = (0, g.memo)(_e),
         return ce;
     }
   };
-
 var Se = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     width: "20",
@@ -120,9 +116,7 @@ var Se = function () {
     clipRule: "evenodd"
   })));
 };
-
 const Re = (0, g.memo)(Se);
-
 var xe = function (e) {
   var t = e.color,
     n = void 0 === t ? "#F85656" : t;
@@ -139,9 +133,7 @@ var xe = function (e) {
     clipRule: "evenodd"
   })));
 };
-
 const Ce = (0, g.memo)(xe);
-
 function Pe(e) {
   return Pe = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -149,9 +141,7 @@ function Pe(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Pe(e);
 }
-
 var Oe = ["isOpen", "onClose", "onDelete", "title", "description", "modalPosition", "type", "actionBtnText", "loading", "isDelete"];
-
 function ke() {
   return ke = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -161,7 +151,6 @@ function ke() {
     return e;
   }, ke.apply(null, arguments);
 }
-
 function je(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -172,7 +161,6 @@ function je(e, t) {
   }
   return n;
 }
-
 function Ae(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -193,7 +181,6 @@ function Ae(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var Me = function (e) {
     var t = e.type,
       n = e.title,
@@ -303,9 +290,7 @@ var Me = function (e) {
       style: v
     }, u)));
   };
-
 const Ie = (0, g.memo)(Te);
-
 var Fe = n(36032),
   Ne = n(78907),
   De = function () {
@@ -327,9 +312,7 @@ var Fe = n(36032),
       clipRule: "evenodd"
     })));
   };
-
 const We = (0, g.memo)(De);
-
 var ze = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -369,9 +352,7 @@ var ze = function () {
     transform: "translate(6.885 6)"
   })))));
 };
-
 const Be = (0, g.memo)(ze);
-
 var Le = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -424,9 +405,7 @@ var Le = function () {
     transform: "translate(6.885 6)"
   })))));
 };
-
 const Ve = (0, g.memo)(Le);
-
 var He = n(83193),
   Ge = function (e) {
     try {
@@ -435,7 +414,6 @@ var He = n(83193),
       return "";
     }
   };
-
 function Ue(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -475,19 +453,17 @@ function Ue(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function qe(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const Ye = function (e) {
   var t,
     n,
     r,
     a,
-    o = (0, L.useIsPro)(),
+    o = true,
     i = e.content,
     l = e.contentId,
     c = e.chapterId,
@@ -554,45 +530,51 @@ const Ye = function (e) {
       display: "flex",
       gap: "8px"
     },
-    className: "omlms-lesson-action-buttons-wrapper"
+    className: "ohmylms-lesson-action-buttons-wrapper"
   }, h().createElement(I.TooltipWP, {
-    text: (0, b.__)("".concat(o ? "Add Integration" : "You need the OhMyLMS PRO to use this feature"), "ohmylms"),
+    text: (0, b.__)("".concat("Add Integration"), "ohmylms"),
     placement: "top"
   }, h().createElement(I.ButtonWP, {
     variant: "default",
     onClick: function (e) {
       return function (e) {
         var t;
-        if (e.stopPropagation(), o) {
-          var n = "lesson";
-          "quiz" === (null == i ? void 0 : i.type) && (n = "quiz"), "assignment" === (null == i ? void 0 : i.type) && (n = "assignment"), d(n, null == i ? void 0 : i.id, null !== (t = null == i ? void 0 : i.title) && void 0 !== t ? t : null == i ? void 0 : i.name);
-        } else E(!0);
+        {
+          e.stopPropagation();
+          {
+            var n = "lesson";
+            "quiz" === (null == i ? void 0 : i.type) && (n = "quiz"), "assignment" === (null == i ? void 0 : i.type) && (n = "assignment"), d(n, null == i ? void 0 : i.id, null !== (t = null == i ? void 0 : i.title) && void 0 !== t ? t : null == i ? void 0 : i.name);
+          }
+        }
       }(e);
     },
     icon: h().createElement(Ve, null),
-    "aria-disabled": o ? "false" : "true",
+    "aria-disabled": "false",
     style: {
       cursor: "pointer",
       color: "#FFF"
     },
     padding: 0
   })), h().createElement(I.TooltipWP, {
-    text: (0, b.__)("".concat(o ? null !== (r = window) && void 0 !== r && null !== (r = r.creator_lms_params) && void 0 !== r && r.is_mailmint_active ? "Add Automation" : "You need the Mail Mint Plugin to use this feature" : "You need the OhMyLMS PRO to use this feature"), "ohmylms"),
+    text: (0, b.__)("".concat(null !== (r = window) && void 0 !== r && null !== (r = r.ohmylms_params) && void 0 !== r && r.is_mailmint_active ? "Add Automation" : "You need the Mail Mint Plugin to use this feature"), "ohmylms"),
     placement: "top"
   }, h().createElement(I.ButtonWP, {
     variant: "default",
     onClick: function (e) {
       return function (e) {
         var t, n;
-        if (e.stopPropagation(), o) {
-          if (null === (t = window) || void 0 === t || null === (t = t.creator_lms_params) || void 0 === t || !t.is_mailmint_active) return E(!0), S.updateProModalTitle((0, b.__)("Missing Mail Mint Plugin!", "ohmylms")), S.updateProModalContent((0, b.__)("Mail Mint is required to enable automation. Please install and activate the plugin.", "ohmylms")), S.updateProModalButtonText((0, b.__)("Install and Activate", "ohmylms")), void S.updateProModalButtonAction("activate-mail-mint");
-          var r = "lesson";
-          "quiz" === (null == i ? void 0 : i.type) && (r = "quiz"), "assignment" === (null == i ? void 0 : i.type) && (r = "assignment"), s(r, null == i ? void 0 : i.id, null !== (n = null == i ? void 0 : i.title) && void 0 !== n ? n : null == i ? void 0 : i.name);
-        } else E(!0);
+        {
+          e.stopPropagation();
+          {
+            if (null === (t = window) || void 0 === t || null === (t = t.ohmylms_params) || void 0 === t || !t.is_mailmint_active) return E(!0), S.updateProModalTitle((0, b.__)("Missing Mail Mint Plugin!", "ohmylms")), S.updateProModalContent((0, b.__)("Mail Mint is required to enable automation. Please install and activate the plugin.", "ohmylms")), S.updateProModalButtonText((0, b.__)("Install and Activate", "ohmylms")), void S.updateProModalButtonAction("activate-mail-mint");
+            var r = "lesson";
+            "quiz" === (null == i ? void 0 : i.type) && (r = "quiz"), "assignment" === (null == i ? void 0 : i.type) && (r = "assignment"), s(r, null == i ? void 0 : i.id, null !== (n = null == i ? void 0 : i.title) && void 0 !== n ? n : null == i ? void 0 : i.name);
+          }
+        }
       }(e);
     },
     icon: h().createElement(Be, null),
-    "aria-disabled": o && null !== (a = window) && void 0 !== a && null !== (a = a.creator_lms_params) && void 0 !== a && a.is_mailmint_active ? "false" : "true",
+    "aria-disabled": null !== (a = window) && void 0 !== a && null !== (a = a.ohmylms_params) && void 0 !== a && a.is_mailmint_active ? "false" : "true",
     style: {
       cursor: "pointer",
       color: "#FFF"
@@ -619,13 +601,11 @@ const Ye = function (e) {
     onClose: E
   })));
 };
-
 var Qe = n(84976).useLocation,
   Ze = function () {
     return !!Qe().pathname.includes("/ai-suggestion");
   },
   $e = n(55095);
-
 function Ke(e) {
   return Ke = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -633,7 +613,6 @@ function Ke(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ke(e);
 }
-
 function Je(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -644,7 +623,6 @@ function Je(e, t) {
   }
   return n;
 }
-
 function Xe(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -656,7 +634,6 @@ function Xe(e) {
   }
   return e;
 }
-
 function et(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -677,7 +654,6 @@ function et(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function tt(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -711,7 +687,6 @@ function tt(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function nt(e, t) {
   if (e) {
     if ("string" == typeof e) return rt(e, t);
@@ -719,7 +694,6 @@ function nt(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? rt(e, t) : void 0;
   }
 }
-
 function rt(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

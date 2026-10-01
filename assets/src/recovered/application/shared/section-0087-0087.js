@@ -64,7 +64,7 @@ var RW = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/".concat(d, "/auth/tags")
+                path: "/ohmylms/v1/".concat(d, "/auth/tags")
               });
             case 2:
               null != (t = e.v) && t.success && null != t && t.data && T(t.data.map(function (e) {
@@ -98,7 +98,7 @@ var RW = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/".concat(d, "/triggers/lists")
+                path: "/ohmylms/v1/".concat(d, "/triggers/lists")
               });
             case 2:
               null != (t = e.v) && t.success && null != t && t.data && D(t.data.map(function (e) {
@@ -126,7 +126,7 @@ var RW = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, t = [], e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/wpfusion/auth/status"
+                path: "/ohmylms/v1/wpfusion/auth/status"
               });
             case 2:
               null != (r = e.v) && null !== (n = r.data) && void 0 !== n && n.connected && t.push({
@@ -163,7 +163,7 @@ var RW = function (e) {
               return e.a(2);
             case 1:
               return e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/".concat(d, "/triggers/actions")
+                path: "/ohmylms/v1/".concat(d, "/triggers/actions")
               });
             case 2:
               null != (t = e.v) && t.success && null != t && t.data && j(t.data), e.n = 4;
@@ -186,7 +186,7 @@ var RW = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return B(!0), e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/".concat(d, "/triggers/").concat(o)
+                path: "/ohmylms/v1/".concat(d, "/triggers/").concat(o)
               });
             case 2:
               if (null != (t = e.v) && t.success && null != t && t.data) {
@@ -201,20 +201,20 @@ var RW = function (e) {
                   action_data: a,
                   status: r.status
                 }), i = r.trigger_event || "", (c = {
-                  creator_lms_quiz_completed: "quiz_submitted",
-                  creator_lms_quiz_submission: "quiz_submitted",
-                  creator_lms_after_assignment_submitted: "assignment_submitted",
-                  creator_lms_lesson_completed: "lesson_completed",
-                  creator_lms_course_completed: "course_completed",
-                  creator_lms_manual_student_enrollment: "course_enrollment",
-                  creator_lms_student_unenrolled: "course_unenrollment"
-                })[i] ? i = c[i] : i.startsWith("creator_lms_") && (i = i.replace("creator_lms_", "")), null !== (n = a) && void 0 !== n && n.actions && Array.isArray(a.actions) ? (u = {
-                  creator_lms_quiz_submission: "quiz_submitted",
-                  creator_lms_after_assignment_submitted: "assignment_submitted",
-                  creator_lms_lesson_completed: "lesson_completed",
-                  creator_lms_course_completed: "course_completed",
-                  creator_lms_manual_student_enrollment: "course_enrollment",
-                  creator_lms_student_unenrolled: "course_unenrollment"
+                  ohmylms_quiz_completed: "quiz_submitted",
+                  ohmylms_quiz_submission: "quiz_submitted",
+                  ohmylms_after_assignment_submitted: "assignment_submitted",
+                  ohmylms_lesson_completed: "lesson_completed",
+                  ohmylms_course_completed: "course_completed",
+                  ohmylms_manual_student_enrollment: "course_enrollment",
+                  ohmylms_student_unenrolled: "course_unenrollment"
+                })[i] ? i = c[i] : i.startsWith("ohmylms_") && (i = i.replace("ohmylms_", "")), null !== (n = a) && void 0 !== n && n.actions && Array.isArray(a.actions) ? (u = {
+                  ohmylms_quiz_submission: "quiz_submitted",
+                  ohmylms_after_assignment_submitted: "assignment_submitted",
+                  ohmylms_lesson_completed: "lesson_completed",
+                  ohmylms_course_completed: "course_completed",
+                  ohmylms_manual_student_enrollment: "course_enrollment",
+                  ohmylms_student_unenrolled: "course_unenrollment"
                 }, s = a.actions.map(function (e, t) {
                   var n = u[e.event] || e.event,
                     r = e.tag_ids || [];
@@ -290,44 +290,44 @@ var RW = function (e) {
       return e;
     };
   return z ? React.createElement("div", {
-    className: "omlms-integration-modal"
+    className: "ohmylms-integration-modal"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header"
+    className: "ohmylms-integration-modal__header"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header-left"
+    className: "ohmylms-integration-modal__header-left"
   }, React.createElement("button", {
     type: "button",
-    className: "omlms-integration-modal__back-btn",
+    className: "ohmylms-integration-modal__back-btn",
     onClick: c
   }, React.createElement(q.Icon, {
     icon: jr.A
   })), React.createElement("h2", {
-    className: "omlms-integration-modal__title"
+    className: "ohmylms-integration-modal__title"
   }, o ? (0, b.__)("Edit Integration", "ohmylms") : (0, b.__)("Add Integration", "ohmylms")))), React.createElement("div", {
-    className: "omlms-integration-modal__content"
+    className: "ohmylms-integration-modal__content"
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     title: !1,
     rows: 10
   }))) : React.createElement("div", {
-    className: "omlms-integration-modal"
+    className: "ohmylms-integration-modal"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header"
+    className: "ohmylms-integration-modal__header"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header-left"
+    className: "ohmylms-integration-modal__header-left"
   }, React.createElement("button", {
     type: "button",
-    className: "omlms-integration-modal__back-btn",
+    className: "ohmylms-integration-modal__back-btn",
     onClick: c,
     disabled: u
   }, React.createElement(q.Icon, {
     icon: jr.A
   })), React.createElement("h2", {
-    className: "omlms-integration-modal__title"
+    className: "ohmylms-integration-modal__title"
   }, o ? (0, b.__)("Edit Integration", "ohmylms") : (0, b.__)("Add Integration", "ohmylms")))), React.createElement("div", {
-    className: "omlms-integration-modal__content"
+    className: "ohmylms-integration-modal__content"
   }, React.createElement("div", {
-    className: "omlms-integration-form-wrapper wpfunnels-style"
+    className: "ohmylms-integration-form-wrapper wpfunnels-style"
   }, React.createElement("form", {
     onSubmit: function (e) {
       e.preventDefault();
@@ -728,7 +728,7 @@ var MW = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return P(!0), e.p = 1, e.n = 2, l()({
-                path: "/creatorlms/v1/wpfusion/auth/status"
+                path: "/ohmylms/v1/wpfusion/auth/status"
               });
             case 2:
               r = e.v, a = [], null != r && r.success && (null != r && null !== (t = r.data) && void 0 !== t && t.connected || null != r && null !== (n = r.data) && void 0 !== n && n.is_connected) && a.push({
@@ -781,12 +781,12 @@ var MW = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, m(!0), n = t.crmType || _, i = t.integrationFor || r, c = t.contentId || a, s = {
-                quiz_submitted: "creator_lms_quiz_submission",
-                assignment_submitted: "creator_lms_after_assignment_submitted",
-                lesson_completed: "creator_lms_lesson_completed",
-                course_completed: "creator_lms_course_completed",
-                course_enrollment: "creator_lms_manual_student_enrollment",
-                course_unenrollment: "creator_lms_student_unenrolled"
+                quiz_submitted: "ohmylms_quiz_submission",
+                assignment_submitted: "ohmylms_after_assignment_submitted",
+                lesson_completed: "ohmylms_lesson_completed",
+                course_completed: "ohmylms_course_completed",
+                course_enrollment: "ohmylms_manual_student_enrollment",
+                course_unenrollment: "ohmylms_student_unenrolled"
               }, d = t.actions.map(function (e) {
                 var t = {
                   event: s[e.event] || e.event,
@@ -804,7 +804,7 @@ var MW = function (e) {
                   actions: d
                 },
                 status: t.status || "active"
-              }, g = f ? "/creatorlms/v1/".concat(n, "/triggers/").concat(f) : "/creatorlms/v1/".concat(n, "/triggers"), h = f ? "PUT" : "POST", e.n = 1, l()({
+              }, g = f ? "/ohmylms/v1/".concat(n, "/triggers/").concat(f) : "/ohmylms/v1/".concat(n, "/triggers"), h = f ? "PUT" : "POST", e.n = 1, l()({
                 path: g,
                 method: h,
                 data: p
@@ -832,7 +832,7 @@ var MW = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creatorlms/v1/".concat(n, "/triggers/").concat(t),
+                path: "/ohmylms/v1/".concat(n, "/triggers/").concat(t),
                 method: "DELETE"
               });
             case 1:
@@ -856,11 +856,11 @@ var MW = function (e) {
     style: {
       maxWidth: "1500px"
     },
-    overlayClassName: "omlms-modal-wrap omlms-integration-modal-wrap ".concat(c ? "omlms-integration-editor-open" : "omlms-integration-lists"),
+    overlayClassName: "ohmylms-modal-wrap ohmylms-integration-modal-wrap ".concat(c ? "ohmylms-integration-editor-open" : "ohmylms-integration-lists"),
     shouldCloseOnEsc: !c,
     shouldCloseOnClickOutside: !c,
     onRequestClose: j,
-    className: "omlms-integration-modal-wrapper"
+    className: "ohmylms-integration-modal-wrapper"
   }, c ? React.createElement(xW, {
     crmType: _,
     integrationFor: r,

@@ -36,7 +36,7 @@ var Zm = [{
       l,
       c,
       u,
-      s = (0, L.useIsPro)(),
+      s = true,
       d = (e.chapterId, (0, y.useSelect)(function (e) {
         return e(T.default).getQuizSettings();
       }, [])),
@@ -57,16 +57,16 @@ var Zm = [{
       S = w[1],
       R = ["time_limit", "hide_answers", "move_to_next_section", "randomize_questions", "allow_attempts", "question_in_one_page", "layout", "hide_question_number", "short_text_limit", "long_text_limit"],
       x = function (e, t) {
-        s || !R.includes(e) ? v({
+        v({
           settings: Um(Um({}, d), {}, qm({}, e, t))
-        }) : S(!0);
+        });
       },
       C = function (e, t, n) {
-        s || !R.includes(e) ? v(n ? {
+        v(n ? {
           settings: Um(Um({}, d), {}, qm({}, e, Um(Um({}, null == d ? void 0 : d[e]), {}, qm({}, n, t))))
         } : {
           settings: Um(Um({}, d), {}, qm({}, e, t))
-        }) : S(!0);
+        });
       },
       P = (0, g.useCallback)(function (e) {
         Number(e) < 1 || v(Um(Um({}, m), {}, {
@@ -88,7 +88,7 @@ var Zm = [{
     }, []), React.createElement(React.Fragment, null, React.createElement(zm, {
       title: (0, b.__)("Visibility", "ohmylms"),
       description: (0, b.__)("Choose whether to publish this quiz for members or save it as a draft to keep editing.", "ohmylms"),
-      className: "omlms-quiz-visibility-settings"
+      className: "ohmylms-quiz-visibility-settings"
     }, React.createElement(vn.A, {
       value: null == m ? void 0 : m.status,
       onChange: function (e) {
@@ -98,11 +98,11 @@ var Zm = [{
       },
       options: Zm,
       placeholder: (0, b.__)("Select Visibility", "ohmylms"),
-      className: "omlms-quiz-visibility-select"
+      className: "ohmylms-quiz-visibility-select"
     })), React.createElement(Pn, {
       onChange: function () {
         var e;
-        if (s) {
+        {
           var t = !(null != m && null !== (e = m.drip_settings) && void 0 !== e && e.enable);
           v(Um(Um({}, m), {}, {
             drip_settings: Um(Um({}, null == m ? void 0 : m.drip_settings), {}, {
@@ -111,11 +111,11 @@ var Zm = [{
               type: f ? "cohort-start" : "enrollment-from-x-days"
             })
           }));
-        } else S(!0);
+        }
       },
       isChecked: null == m || null === (t = m.drip_settings) || void 0 === t ? void 0 : t.enable,
       onDripFeedTypeChange: function (e) {
-        if (s) {
+        {
           var t,
             n,
             r = Um(Um({}, null == m ? void 0 : m.drip_settings), {}, {
@@ -128,7 +128,7 @@ var Zm = [{
           v(Um(Um({}, m), {}, {
             drip_settings: r
           }));
-        } else S(!0);
+        }
       },
       handleDripDatePickerChange: function (e, t) {
         v(Um(Um({}, m), {}, {
@@ -159,7 +159,7 @@ var Zm = [{
     }), React.createElement(zm, {
       title: (0, b.__)("Time Limit", "ohmylms"),
       description: (0, b.__)("Set a time limit for how long students have to complete the quiz.", "ohmylms"),
-      className: "omlms-quiz-time-limit-settings"
+      className: "ohmylms-quiz-time-limit-settings"
     }, React.createElement(I.FlexWP, {
       justify: "flex-end",
       align: "center",
@@ -173,7 +173,7 @@ var Zm = [{
       style: {
         width: 100
       },
-      className: "omlms-time-limit-input",
+      className: "ohmylms-time-limit-input",
       onChange: function (e) {
         var t = e;
         /^\d*\.?\d*$/.test(t) && C("time_limit", t, "value");
@@ -194,7 +194,7 @@ var Zm = [{
       options: $m,
       placeholder: (0, b.__)("Select Time Type", "ohmylms"),
       disabled: !s,
-      className: "omlms-time-limit-type-select"
+      className: "ohmylms-time-limit-type-select"
     }))), React.createElement(Vm, {
       handleChange: C,
       isChecked: null == d || null === (c = d.passing_grade) || void 0 === c ? void 0 : c.enabled,
@@ -203,11 +203,11 @@ var Zm = [{
     }), React.createElement(zm, {
       title: (0, b.__)("Hide Answers On Results Page", "ohmylms"),
       description: (0, b.__)("Keep the correct answers hidden after quiz completion to focus students on learning.", "ohmylms"),
-      className: "omlms-quiz-hide-answers-settings"
+      className: "ohmylms-quiz-hide-answers-settings"
     }, React.createElement("div", {
       style: {
         display: "inline-block",
-        opacity: s ? 1 : .3,
+        opacity: 1,
         cursor: "pointer"
       }
     }, React.createElement(Bt.A, {
@@ -215,15 +215,15 @@ var Zm = [{
       onChange: function (e) {
         return x("hide_answers", e);
       },
-      className: "omlms-hide-answers-switch"
+      className: "ohmylms-hide-answers-switch"
     }))), React.createElement(zm, {
       title: (0, b.__)("Move to Next Section Without Passing Grade", "ohmylms"),
       description: (0, b.__)("Allow students to continue to the next section even if they don’t pass the quiz.", "ohmylms"),
-      className: "omlms-quiz-move-next-settings"
+      className: "ohmylms-quiz-move-next-settings"
     }, React.createElement("div", {
       style: {
         display: "inline-block",
-        opacity: s ? 1 : .3,
+        opacity: 1,
         cursor: "pointer"
       }
     }, React.createElement(Bt.A, {
@@ -231,15 +231,15 @@ var Zm = [{
       onChange: function (e) {
         return x("move_to_next_section", e);
       },
-      className: "omlms-move-next-switch"
+      className: "ohmylms-move-next-switch"
     }))), React.createElement(zm, {
       title: (0, b.__)("Randomize Quiz Questions", "ohmylms"),
       description: (0, b.__)("Shuffle the question order to create a different quiz experience each time.", "ohmylms"),
-      className: "omlms-quiz-randomize-questions-settings"
+      className: "ohmylms-quiz-randomize-questions-settings"
     }, React.createElement("div", {
       style: {
         display: "inline-block",
-        opacity: s ? 1 : .3,
+        opacity: 1,
         cursor: "pointer"
       }
     }, React.createElement(Bt.A, {
@@ -247,11 +247,11 @@ var Zm = [{
       onChange: function (e) {
         return x("randomize_questions", e);
       },
-      className: "omlms-randomize-questions-switch"
+      className: "ohmylms-randomize-questions-switch"
     }))), React.createElement(zm, {
       title: (0, b.__)("Attempts Allowed", "ohmylms"),
       description: (0, b.__)("Limit the number of times a student can retake the quiz for better evaluation.", "ohmylms"),
-      className: "omlms-quiz-attempts-allowed-settings"
+      className: "ohmylms-quiz-attempts-allowed-settings"
     }, React.createElement(I.InputNumberWP, {
       type: "number",
       min: 0,
@@ -271,14 +271,14 @@ var Zm = [{
       onBlur: function () {
         (null == d ? void 0 : d.allow_attempts) < 0 && x("allow_attempts", 0);
       },
-      className: "omlms-attempts-allowed-input"
+      className: "ohmylms-attempts-allowed-input"
     })), React.createElement(zm, {
       title: (0, b.__)("Question Layout", "ohmylms"),
       description: (0, b.__)("Choose how your quiz questions are displayed to students.", "ohmylms"),
       isItProFeature: !0,
-      className: "omlms-quiz-layout-settings-card"
+      className: "ohmylms-quiz-layout-settings-card"
     }, React.createElement("div", {
-      className: "omlms-quiz-layout-settings"
+      className: "ohmylms-quiz-layout-settings"
     }, React.createElement(vn.A, {
       value: (null == d ? void 0 : d.layout) || "one_question_per_page",
       onChange: function (e) {
@@ -289,7 +289,7 @@ var Zm = [{
       showSearch: !1,
       classNames: {
         popup: {
-          root: "omlms-ant-select-dropdown"
+          root: "ohmylms-ant-select-dropdown"
         }
       },
       disabled: !s
@@ -313,15 +313,15 @@ var Zm = [{
       onBlur: function () {
         (null == d ? void 0 : d.question_in_one_page) < 0 && x("question_in_one_page", value);
       },
-      className: "omlms-questions-per-page-input"
+      className: "ohmylms-questions-per-page-input"
     })))), React.createElement(zm, {
       title: (0, b.__)("Hide Question Number", "ohmylms"),
       isItProFeature: !0,
-      className: "omlms-quiz-hide-question-number-settings"
+      className: "ohmylms-quiz-hide-question-number-settings"
     }, React.createElement("div", {
       style: {
         display: "inline-block",
-        opacity: s ? 1 : .3,
+        opacity: 1,
         cursor: "pointer"
       }
     }, React.createElement(Bt.A, {
@@ -329,11 +329,11 @@ var Zm = [{
       onChange: function (e) {
         return x("hide_question_number", e);
       },
-      className: "omlms-hide-question-number-switch"
+      className: "ohmylms-hide-question-number-switch"
     }))), React.createElement(zm, {
       title: (0, b.__)("Set Character Limit for Short Answers", "ohmylms"),
       isItProFeature: !0,
-      className: "omlms-quiz-short-answer-limit-settings"
+      className: "ohmylms-quiz-short-answer-limit-settings"
     }, React.createElement(I.InputNumberWP, {
       type: "number",
       min: 0,
@@ -355,12 +355,12 @@ var Zm = [{
         (null == d ? void 0 : d.short_text_limit) < 0 && x("short_text_limit", 0);
       },
       disabled: !s,
-      className: "omlms-short-answer-limit-input"
+      className: "ohmylms-short-answer-limit-input"
     })), React.createElement(zm, {
       title: (0, b.__)("Set Character Limit for Long Answers", "ohmylms"),
       showDivider: !1,
       isItProFeature: !0,
-      className: "omlms-quiz-long-answer-limit-settings"
+      className: "ohmylms-quiz-long-answer-limit-settings"
     }, React.createElement(I.InputNumberWP, {
       type: "number",
       min: 0,
@@ -382,15 +382,13 @@ var Zm = [{
         (null == d ? void 0 : d.long_text_limit) < 0 && x("long_text_limit", 0);
       },
       disabled: !s,
-      className: "omlms-long-answer-limit-input"
+      className: "ohmylms-long-answer-limit-input"
     })), E && React.createElement(React.Fragment, null, React.createElement(He.default, {
       isOpen: E,
       onClose: S
     })));
   };
-
 const Xm = (0, g.memo)(Jm);
-
 var ep = n(12278),
   tp = function (e) {
     var t = e.setIsSettingsOpen;
@@ -410,7 +408,7 @@ var ep = n(12278),
       justify: "start",
       gap: 2
     }, React.createElement("svg", {
-      className: "omlms-back-arrow-btn-icon",
+      className: "ohmylms-back-arrow-btn-icon",
       width: "19",
       height: "16",
       fill: "none",
@@ -429,9 +427,7 @@ var ep = n(12278),
       padding: 4
     }, React.createElement(Xm, null))))));
   };
-
 const np = (0, g.memo)(tp);
-
 function rp(e) {
   return rp = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -439,7 +435,6 @@ function rp(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, rp(e);
 }
-
 function ap(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -450,7 +445,6 @@ function ap(e, t) {
   }
   return n;
 }
-
 function op(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -462,7 +456,6 @@ function op(e) {
   }
   return e;
 }
-
 function ip() {
   var e,
     t,
@@ -549,7 +542,6 @@ function ip() {
     };
   })();
 }
-
 function lp(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -571,7 +563,6 @@ function lp(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, lp(e, t, n, r);
 }
-
 function cp(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -581,7 +572,6 @@ function cp(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function up(e) {
   return function () {
     var t = this,
@@ -598,7 +588,6 @@ function up(e) {
     });
   };
 }
-
 function sp(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -619,7 +608,6 @@ function sp(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function dp(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -659,13 +647,11 @@ function dp(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function mp(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var pp = function (e) {
   var t = e.chapterId,
     n = e.isSettingsOpen,
@@ -795,7 +781,7 @@ var pp = function (e) {
   }, [E]), React.createElement(React.Fragment, null, !t && i, !t && React.createElement(Wr, {
     title: (0, b.__)("Quiz Outline", "ohmylms"),
     redirection: "/quizzes",
-    className: "omlms-quiz-header",
+    className: "ohmylms-quiz-header",
     rightContent: React.createElement(React.Fragment, null, React.createElement(D.A, {
       variant: "secondary",
       onClick: function () {
@@ -819,7 +805,7 @@ var pp = function (e) {
         (0, Ec.$)(h).isValid || null == h || null === (e = h.settings) || void 0 === e || !e.type ? r(!0) : d.setQuizError(!0);
       },
       icon: React.createElement(Rt, null),
-      className: "omlms-quize-settings-btn"
+      className: "ohmylms-quize-settings-btn"
     }))
   }), x ? React.createElement(React.Fragment, null, React.createElement(_.A, {
     active: !0,
@@ -837,7 +823,7 @@ var pp = function (e) {
     padding: 6,
     marginTop: 4
   }, React.createElement("div", {
-    className: "omlms-quiz-editor-header"
+    className: "ohmylms-quiz-editor-header"
   }, React.createElement(I.InputWP, {
     value: "Untitled" === (null == p ? void 0 : p.name) ? "" : Ge(null == p ? void 0 : p.name),
     onChange: function (e) {
@@ -845,7 +831,7 @@ var pp = function (e) {
     },
     placeholder: (0, b.__)("Enter Quiz Title", "ohmylms"),
     name: "chapterName",
-    className: "omlms-quiz-name-title",
+    className: "ohmylms-quiz-name-title",
     autoComplete: "off"
   }), React.createElement(I.SpacerWP, null), React.createElement(W.A, {
     value: (null == p ? void 0 : p.description) || "",
@@ -853,7 +839,7 @@ var pp = function (e) {
       return V("description", e);
     },
     placeholder: (0, b.__)("Add Quiz description ...", "ohmylms"),
-    className: "omlms-quiz-description",
+    className: "ohmylms-quiz-description",
     name: "descriptionName",
     rows: 3
   })), React.createElement(I.CardWP, {
@@ -871,7 +857,7 @@ var pp = function (e) {
     setHovered: s
   })), React.createElement(I.FlexItemWP, {
     flex: 1,
-    className: "omlms-editor-sider omlms-editor-right ".concat(u ? "omlms-editor-right-hovered" : ""),
+    className: "ohmylms-editor-sider ohmylms-editor-right ".concat(u ? "ohmylms-editor-right-hovered" : ""),
     style: {
       borderLeft: "1px solid #EBEBEF"
     }
@@ -880,9 +866,7 @@ var pp = function (e) {
     setHovered: s
   }))))))));
 };
-
 const fp = (0, g.memo)(pp);
-
 function vp(e) {
   return vp = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;

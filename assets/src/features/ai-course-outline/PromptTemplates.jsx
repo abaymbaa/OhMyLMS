@@ -78,7 +78,7 @@ export function createPromptTemplates(readRuntime) {
           },
           <Controls.CardWP
             padding={''.concat(2 < t.length ? '16px 16px 0' : '16px')}
-            className={'omlms-templates-card-container'}
+            className={'ohmylms-templates-card-container'}
           >
             <PromptTemplateSlider templates={t} currentIndex={s} onEdit={f} maxItemsToShow={2} />
             <PromptCarouselNavigation
@@ -115,7 +115,7 @@ export function createPromptTemplates(readRuntime) {
       );
     return (
       <React.Fragment>
-        <div className={'omlms-prompt-template-wrapper'} style={E}>
+        <div className={'ohmylms-prompt-template-wrapper'} style={E}>
           <Controls.FlexWP justify={'flex-end'}>
             <Controls.ButtonWP
               icon={<PromptTemplateToggleIcon rotate={l ? '0' : '180'} />}
@@ -136,7 +136,7 @@ export function createPromptTemplates(readRuntime) {
         {(null == o ? void 0 : o.current) && w()}
         <style jsx={'true'} scoped={!0}>
           {
-            '\n                .omlms-templates-card-container {\n                    animation: omlms-templates-card-container-animation 0.5s ease-in-out;\n                }\n                @keyframes omlms-templates-card-container-animation {\n                    0% {\n                        height: 0;\n                        opacity: 0;\n                    }\n                    100% {\n                        height: 100%;\n                        opacity: 1;\n                    }\n                }\n            '
+            '\n                .ohmylms-templates-card-container {\n                    animation: ohmylms-templates-card-container-animation 0.5s ease-in-out;\n                }\n                @keyframes ohmylms-templates-card-container-animation {\n                    0% {\n                        height: 0;\n                        opacity: 0;\n                    }\n                    100% {\n                        height: 100%;\n                        opacity: 1;\n                    }\n                }\n            '
           }
         </style>
       </React.Fragment>

@@ -2,26 +2,26 @@
 /**
  * Email Verification Email
  *
- * @package OMLMS\Emails\StudentsEmail
+ * @package OhMyLMS\Emails\StudentsEmail
  * @since   1.0.0
  */
 
-namespace OMLMS\Emails\StudentsEmail;
+namespace OhMyLMS\Emails\StudentsEmail;
 
-use OMLMS\Emails\Emails;
-use OMLMS\Services\EmailVerificationService;
+use OhMyLMS\Emails\Emails;
+use OhMyLMS\Services\EmailVerificationService;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Listens for omlms_send_email_verification and sends the HTML verification email.
+ * Listens for ohmylms_send_email_verification and sends the HTML verification email.
  */
 class EmailVerification {
 
 	public function __construct() {
-		add_action( 'omlms_send_email_verification', array( $this, 'send' ), 10, 2 );
+		add_action( 'ohmylms_send_email_verification', array( $this, 'send' ), 10, 2 );
 	}
 
 	/**
@@ -58,8 +58,8 @@ class EmailVerification {
 
 		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
-		$sender_name  = $email_settings['creator_lms_email_sender_name'] ?? '';
-		$sender_email = $email_settings['creator_lms_email_sender_email_address'] ?? '';
+		$sender_name  = $email_settings['ohmylms_email_sender_name'] ?? '';
+		$sender_email = $email_settings['ohmylms_email_sender_email_address'] ?? '';
 		if ( $sender_email && $sender_name ) {
 			$headers[] = 'From: ' . $sender_name . ' <' . $sender_email . '>';
 		}
@@ -80,15 +80,15 @@ class EmailVerification {
 		$data = wp_parse_args( $data, $defaults );
 
 		$settings    = $data['email_settings'];
-		$base_color  = ! empty( $settings['creator_lms_email_base_color'] ) ? $settings['creator_lms_email_base_color'] : '#6E42D3';
-		$bg_color    = ! empty( $settings['creator_lms_email_background_color'] ) ? $settings['creator_lms_email_background_color'] : '#F4F5F7';
-		$body_bg     = ! empty( $settings['creator_lms_email_body_background_color'] ) ? $settings['creator_lms_email_body_background_color'] : '#FFFFFF';
-		$text_color  = ! empty( $settings['creator_lms_email_body_text_color'] ) ? $settings['creator_lms_email_body_text_color'] : '#1F2328';
+		$base_color  = ! empty( $settings['ohmylms_email_base_color'] ) ? $settings['ohmylms_email_base_color'] : '#6E42D3';
+		$bg_color    = ! empty( $settings['ohmylms_email_background_color'] ) ? $settings['ohmylms_email_background_color'] : '#F4F5F7';
+		$body_bg     = ! empty( $settings['ohmylms_email_body_background_color'] ) ? $settings['ohmylms_email_body_background_color'] : '#FFFFFF';
+		$text_color  = ! empty( $settings['ohmylms_email_body_text_color'] ) ? $settings['ohmylms_email_body_text_color'] : '#1F2328';
 		$logo_url    = '';
 
-		if ( ! empty( $settings['creator_lms_email_branding_image'] ) ) {
-			$logo_id  = attachment_url_to_postid( $settings['creator_lms_email_branding_image'] );
-			$logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : $settings['creator_lms_email_branding_image'];
+		if ( ! empty( $settings['ohmylms_email_branding_image'] ) ) {
+			$logo_id  = attachment_url_to_postid( $settings['ohmylms_email_branding_image'] );
+			$logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : $settings['ohmylms_email_branding_image'];
 		}
 
 		ob_start();

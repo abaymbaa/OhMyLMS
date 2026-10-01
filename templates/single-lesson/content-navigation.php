@@ -2,33 +2,33 @@
 /**
  * The template for displaying lesson's Assignment content
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-assignment.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-assignment.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \OMLMS\Data\Lesson $lesson
- * @global \OMLMS\Data\Student $student
+ * @global \OhMyLMS\Data\Lesson $lesson
+ * @global \OhMyLMS\Data\Student $student
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-if( 'omlms-lesson' === get_post_type() ){
-	$lesson = omlms_get_lesson(get_the_ID());
-} elseif (get_post_type() === 'omlms-quiz'){
-	$lesson = omlms_get_quiz(get_the_ID());
-} elseif('omlms-session' === get_post_type()){
-	$lesson = omlms_get_session(get_the_ID());
+if( 'ohmylms-lesson' === get_post_type() ){
+	$lesson = ohmylms_get_lesson(get_the_ID());
+} elseif (get_post_type() === 'ohmylms-quiz'){
+	$lesson = ohmylms_get_quiz(get_the_ID());
+} elseif('ohmylms-session' === get_post_type()){
+	$lesson = ohmylms_get_session(get_the_ID());
 } else{
-	$lesson = omlms_get_assignment(get_the_ID());
+	$lesson = ohmylms_get_assignment(get_the_ID());
 }
 $lesson_id = $lesson->get_id();
 $current_id = get_the_ID();
-$student = new \OMLMS\Data\Student(get_current_user_id());
-$course_id = creator_lms_get_course_by_content_id($lesson_id);
-$get_type = 'omlms-session' === get_post_type() ? 'session' : $lesson->get_type();
+$student = new \OhMyLMS\Data\Student(get_current_user_id());
+$course_id = ohmylms_get_course_by_content_id($lesson_id);
+$get_type = 'ohmylms-session' === get_post_type() ? 'session' : $lesson->get_type();
 $is_checked = $student->maybe_completed($lesson_id) ? 'checked' : '';
-if( 'omlms-session' === get_post_type() ){
+if( 'ohmylms-session' === get_post_type() ){
 	$meeting_start_date = get_post_meta($lesson_id, '_start_date', true);
     $timezone           = get_post_meta($lesson_id, '_timezone', true);
     $meeting_duration   = get_post_meta($lesson_id, '_duration', true);
@@ -77,20 +77,20 @@ if( 'omlms-session' === get_post_type() ){
 }
 ?>
 
-<div class="creator-lms-lesson-navigation">
+<div class="ohmylms-lesson-navigation">
     <?php if( 'assignment' == $get_type ) { 
         $submission_count = count($lesson->get_submission($student->get_id()));
         $allowed_submission = $lesson->get_number_of_files();
         $is_allow = $lesson->get_allow_upload_files();
-        $student = new \OMLMS\Data\Student( get_current_user_id() );
+        $student = new \OhMyLMS\Data\Student( get_current_user_id() );
         $deadline = false;
         if( $student ){
             $deadline = $student->get_assignment_remaining_time( $lesson->get_id() );
         }
         ?>
         <div class="assignment-quiz-navigation assignment-navigation">
-            <?php if( $is_allow && !empty(omlms_get_next_content_permalink($lesson_id) ) ){ ?>
-                <a href="<?php echo omlms_get_next_content_permalink($lesson_id)  ?>" class="skip">
+            <?php if( $is_allow && !empty(ohmylms_get_next_content_permalink($lesson_id) ) ){ ?>
+                <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id)  ?>" class="skip">
                     <?php echo __('Skip to Next', 'ohmylms'); ?>
                 </a>
             <?php } ?>
@@ -98,35 +98,35 @@ if( 'omlms-session' === get_post_type() ){
             <?php if( $is_allow ) : ?>
                 <?php if( (int) $submission_count === 0 ) : ?>
                     <?php if( 0 !== $deadline ) : ?>
-                        <button type="button" class="start-submit-assignment creator-lms-button" aria-label="Start Assignment">
+                        <button type="button" class="start-submit-assignment ohmylms-button" aria-label="Start Assignment">
                             <?php echo __('Start Assignment Submit', 'ohmylms'); ?>
                         </button>
                     <?php else : ?>
-                        <button type="button" class="start-not-submit-assignment creator-lms-button" aria-label="Start Assignment" disabled>
+                        <button type="button" class="start-not-submit-assignment ohmylms-button" aria-label="Start Assignment" disabled>
                             <?php echo __('Start Assignment Submit', 'ohmylms'); ?>
                         </button>
                     <?php endif;?>
                 <?php elseif( (int) $submission_count > 0 && (int) $submission_count < (int) $allowed_submission ) : ?>
 
                     <?php if( 0 !== $deadline ) : ?>
-                        <button type="button" class="start-submit-assignment creator-lms-button" aria-label="Start Assignment">
+                        <button type="button" class="start-submit-assignment ohmylms-button" aria-label="Start Assignment">
                             <?php echo __('Try Again', 'ohmylms'); ?>
                         </button>
                     <?php else : ?>
-                        <button type="button" class="start-not-submit-assignment creator-lms-button" aria-label="Start Assignment" disabled>
+                        <button type="button" class="start-not-submit-assignment ohmylms-button" aria-label="Start Assignment" disabled>
                             <?php echo __('Try Again', 'ohmylms'); ?>
                         </button>
                     <?php endif;?>
 
 
                     <div class="default-navigation">
-                        <input type="hidden" id="creator-lms-lesson-id" value="<?php echo get_the_ID(); ?>">
-                        <input type="hidden" id="creator-lms-student-id" value="<?php echo get_current_user_id(); ?>">
+                        <input type="hidden" id="ohmylms-lesson-id" value="<?php echo get_the_ID(); ?>">
+                        <input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
 
                         <?php if ($is_checked && $student->maybe_enrolled( $course_id ) ) : ?>
-                            <label for="creator-lms-completed-lesson" class="creator-lms-checkbox" tabindex="0">
-                                <input type="checkbox" name="lesson-completed" value="" id="creator-lms-completed-lesson" <?php echo $is_checked?>  <?php echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
-                                <span class="creator-lms-checkbox-text">
+                            <label for="ohmylms-completed-lesson" class="ohmylms-checkbox" tabindex="0">
+                                <input type="checkbox" name="lesson-completed" value="" id="ohmylms-completed-lesson" <?php echo $is_checked?>  <?php echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
+                                <span class="ohmylms-checkbox-text">
                                     <span class="checkedbox" aria-hidden="true" id="completed-lesson">
                                         <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                                     </span>
@@ -135,8 +135,8 @@ if( 'omlms-session' === get_post_type() ){
                             </label>
                         <?php endif;?>
 
-                        <?php if(!empty(omlms_get_next_content_permalink($lesson_id))){ ?>
-                            <a href="<?php echo omlms_get_next_content_permalink($lesson_id) ?>" class="next-lesson creator-lms-button" lesson-id="<?php echo $lesson_id; ?>">
+                        <?php if(!empty(ohmylms_get_next_content_permalink($lesson_id))){ ?>
+                            <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id) ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
                                 <?php echo __('Next Lesson', 'ohmylms'); ?>
                             </a>
                         <?php } ?>
@@ -144,12 +144,12 @@ if( 'omlms-session' === get_post_type() ){
 
                 <?php else : ?>
                     <div class="default-navigation">
-                        <input type="hidden" id="creator-lms-lesson-id" value="<?php echo get_the_ID(); ?>">
-                        <input type="hidden" id="creator-lms-student-id" value="<?php echo get_current_user_id(); ?>">
+                        <input type="hidden" id="ohmylms-lesson-id" value="<?php echo get_the_ID(); ?>">
+                        <input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
                         <?php if ($is_checked && $student->maybe_enrolled( $course_id ) ) : ?>
-                            <label class="creator-lms-checkbox">
-                                <input type="checkbox" name="lesson-completed" value="" id="creator-lms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> >
-                                <span class="creator-lms-checkbox-text">
+                            <label class="ohmylms-checkbox">
+                                <input type="checkbox" name="lesson-completed" value="" id="ohmylms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> >
+                                <span class="ohmylms-checkbox-text">
                                     <span class="checkedbox">
                                         <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                                     </span>
@@ -158,8 +158,8 @@ if( 'omlms-session' === get_post_type() ){
                             </label>
                         <?php endif;?>
 
-                        <?php if(!empty(omlms_get_next_content_permalink($lesson_id))){ ?>
-                            <a href="<?php echo omlms_get_next_content_permalink($lesson_id) ?>" class="next-lesson creator-lms-button" lesson-id="<?php echo $lesson_id; ?>">
+                        <?php if(!empty(ohmylms_get_next_content_permalink($lesson_id))){ ?>
+                            <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id) ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
                                 <?php echo __('Next Lesson', 'ohmylms'); ?>
                             </a>
                         <?php } ?>
@@ -167,10 +167,10 @@ if( 'omlms-session' === get_post_type() ){
                 <?php endif; ?>
             <?php else : ?>
                 <div class="default-navigation">
-                    <input type="hidden" id="creator-lms-lesson-id" value="<?php echo get_the_ID(); ?>">
-                    <input type="hidden" id="creator-lms-student-id" value="<?php echo get_current_user_id(); ?>">
-                    <?php if(!empty(omlms_get_next_content_permalink($lesson_id))){ ?>
-                        <a href="<?php echo omlms_get_next_content_permalink($lesson_id) ?>" class="next-lesson creator-lms-button" lesson-id="<?php echo $lesson_id; ?>">
+                    <input type="hidden" id="ohmylms-lesson-id" value="<?php echo get_the_ID(); ?>">
+                    <input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
+                    <?php if(!empty(ohmylms_get_next_content_permalink($lesson_id))){ ?>
+                        <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id) ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
                             <?php echo __('Next Lesson', 'ohmylms'); ?>
                         </a>
                     <?php } ?>
@@ -180,41 +180,41 @@ if( 'omlms-session' === get_post_type() ){
     <?php } ?>
 
     <?php if( 'quiz' == $get_type ) {
-		$currentUrl = creatorlms_get_pretty_content_permalink($lesson_id);
+		$currentUrl = ohmylms_get_pretty_content_permalink($lesson_id);
         ?>
         <div class="assignment-quiz-navigation quiz-navigation">
-            <?php if( !empty(omlms_get_next_content_permalink($lesson_id) ) ){ ?>
-                <a href="<?php echo omlms_get_next_content_permalink($lesson_id)  ?>" class="skip">
+            <?php if( !empty(ohmylms_get_next_content_permalink($lesson_id) ) ){ ?>
+                <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id)  ?>" class="skip">
                     <?php echo __('Skip to Next', 'ohmylms'); ?>
                 </a>
             <?php } ?>
 
 			<form action="" method="post">
 				<input type="hidden" name="action" value="quiz-action">
-				<input type="hidden" name="creator_lms_quiz_id" value="<?php echo get_the_ID(); ?>">
-				<input type="hidden" name="creator_lms_student_id" value="<?php echo get_current_user_id(); ?>">
+				<input type="hidden" name="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
+				<input type="hidden" name="ohmylms_student_id" value="<?php echo get_current_user_id(); ?>">
 				<?php wp_nonce_field( 'save_quiz_attempt', 'save-quiz-attempt-nonce' ); ?>
                 
 
 				<?php if($lesson->get_take_attempts() > 0 && $lesson->get_take_attempts() > $lesson->count_total_attempt($student->get_id(),$course_id)){ ?>
-					<button type="submit" class="start-submit-quiz creator-lms-button <?php echo $lesson->count_total_attempt($student->get_id(),$course_id) > 1 ? 'quiz-taken' : '' ?>">
+					<button type="submit" class="start-submit-quiz ohmylms-button <?php echo $lesson->count_total_attempt($student->get_id(),$course_id) > 1 ? 'quiz-taken' : '' ?>">
 						<?php echo __('Start Quiz', 'ohmylms'); ?>
 					</button>
 				<?php }else {?>
-                    <button type="button" class="start-submit-quiz creator-lms-button" disabled >
+                    <button type="button" class="start-submit-quiz ohmylms-button" disabled >
 						<?php echo __('Start Quiz', 'ohmylms'); ?>
 					</button>
                 <?php } ?>
 			</form>
 
             <div class="default-navigation" style="display: <?php echo( 'quiz' == $get_type && $is_checked ) || ('quiz' != $get_type)? 'flex' : 'none' ?>" >
-                <input type="hidden" id="creator-lms-lesson-id" value="<?php echo get_the_ID(); ?>">
-                <input type="hidden" id="creator-lms-student-id" value="<?php echo get_current_user_id(); ?>">
+                <input type="hidden" id="ohmylms-lesson-id" value="<?php echo get_the_ID(); ?>">
+                <input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
                 
                 <?php if ( $student->maybe_enrolled( $course_id ) ) : ?>
-                    <label for="creator-lms-completed-lesson" class="creator-lms-checkbox" tabindex="0">
-                        <input type="checkbox" name="lesson-completed" value="" id="creator-lms-completed-lesson" <?php echo $is_checked?>  <?php echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
-                        <span class="creator-lms-checkbox-text">
+                    <label for="ohmylms-completed-lesson" class="ohmylms-checkbox" tabindex="0">
+                        <input type="checkbox" name="lesson-completed" value="" id="ohmylms-completed-lesson" <?php echo $is_checked?>  <?php echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
+                        <span class="ohmylms-checkbox-text">
                             <span class="checkedbox" aria-hidden="true" id="completed-lesson">
                                 <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                             </span>
@@ -223,8 +223,8 @@ if( 'omlms-session' === get_post_type() ){
                     </label>
                 <?php endif; ?>
 
-                <?php if(!empty(omlms_get_next_content_permalink($lesson_id))){ ?>
-                    <a href="<?php echo omlms_get_next_content_permalink($lesson_id) ?>" class="next-lesson creator-lms-button" lesson-id="<?php echo $lesson_id; ?>">
+                <?php if(!empty(ohmylms_get_next_content_permalink($lesson_id))){ ?>
+                    <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id) ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
                         <?php echo __('Next Lesson', 'ohmylms'); ?>
                     </a>
                 <?php } ?>
@@ -236,7 +236,7 @@ if( 'omlms-session' === get_post_type() ){
             if($lesson->get_take_attempts() > 0 &&  $lesson->get_take_attempts() > $lesson->count_total_attempt($student->get_id(),$course_id)){
             
             }else{ ?>
-                <p class="creator-lms-quiz-notice">
+                <p class="ohmylms-quiz-notice">
                     <svg width="16" height="16" fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><g fill="#A1A1AA" clip-path="url(#clip0_3836_17160)"><path d="M8 16a8 8 0 118-8 8.009 8.009 0 01-8 8zM8 1.333A6.667 6.667 0 1014.667 8 6.674 6.674 0 008 1.333z"/><path d="M8 12.667A.667.667 0 017.333 12V6.667a.667.667 0 011.334 0V12a.667.667 0 01-.667.667zM8.667 4a.667.667 0 11-1.334 0 .667.667 0 011.334 0z"/></g><defs><clipPath id="clip0_3836_17160"><path fill="#fff" d="M0 0h16v16H0z" transform="matrix(1 0 0 -1 0 16)"/></clipPath></defs></svg>
                     <?php 
                     $attempts = $lesson->get_take_attempts();
@@ -251,16 +251,16 @@ if( 'omlms-session' === get_post_type() ){
 
     <?php if( 'quiz' != $get_type && 'assignment' != $get_type ) { ?>
         <div class="default-navigation">
-            <input type="hidden" id="creator-lms-lesson-id" value="<?php echo get_the_ID(); ?>">
-            <input type="hidden" id="creator-lms-student-id" value="<?php echo get_current_user_id(); ?>">
+            <input type="hidden" id="ohmylms-lesson-id" value="<?php echo get_the_ID(); ?>">
+            <input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
             
             <?php if ( $student->maybe_enrolled( $course_id ) ) : ?> 
                 <?php if('session' === $get_type): ?>
                     <?php if($show_button_on_session ): ?>
-                        <label for="creator-lms-completed-lesson" class="creator-lms-checkbox" tabindex="0">
-                            <input type="checkbox" name="lesson-completed" value="" id="creator-lms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
+                        <label for="ohmylms-completed-lesson" class="ohmylms-checkbox" tabindex="0">
+                            <input type="checkbox" name="lesson-completed" value="" id="ohmylms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
 
-                            <span class="creator-lms-checkbox-text">
+                            <span class="ohmylms-checkbox-text">
                                 <span class="checkedbox" aria-hidden="true" id="completed-lesson">
                                     <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                                 </span>
@@ -269,10 +269,10 @@ if( 'omlms-session' === get_post_type() ){
                         </label>
                     <?php endif ?>
                 <?php else : ?>
-                    <label for="creator-lms-completed-lesson" class="creator-lms-checkbox" tabindex="0">
-                        <input type="checkbox" name="lesson-completed" value="" id="creator-lms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
+                    <label for="ohmylms-completed-lesson" class="ohmylms-checkbox" tabindex="0">
+                        <input type="checkbox" name="lesson-completed" value="" id="ohmylms-completed-lesson" <?php echo $is_checked?>  <?php   echo $is_checked ? 'disabled' : ''  ?> aria-required="true" aria-labelledby="completed-lesson" >
 
-                        <span class="creator-lms-checkbox-text">
+                        <span class="ohmylms-checkbox-text">
                             <span class="checkedbox" aria-hidden="true" id="completed-lesson">
                                 <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                             </span>
@@ -282,8 +282,8 @@ if( 'omlms-session' === get_post_type() ){
                 <?php endif ?>
             <?php endif ?>
 
-            <?php if(!empty(omlms_get_next_content_permalink($lesson_id))){ ?>
-                <a href="<?php echo omlms_get_next_content_permalink($lesson_id) ?>" class="next-lesson creator-lms-button" lesson-id="<?php echo $lesson_id; ?>">
+            <?php if(!empty(ohmylms_get_next_content_permalink($lesson_id))){ ?>
+                <a href="<?php echo ohmylms_get_next_content_permalink($lesson_id) ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
                     <?php echo __('Next Lesson', 'ohmylms'); ?>
                 </a>
             <?php } ?>

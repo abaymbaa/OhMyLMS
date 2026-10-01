@@ -1,13 +1,13 @@
-.creator-lms-page {
-    .creator-lms-single-course-layout-2 {
-        .creator-lms-course-resource {
+.ohmylms-page {
+    .ohmylms-single-course-layout-2 {
+        .ohmylms-course-resource {
             margin-top: 40px;
 
-            .creator-lms-table {
+            .ohmylms-table {
                 box-shadow: none;
                 border: 1px solid #EBECED;
 
-                .creator-lms-head {
+                .ohmylms-head {
                     border: none;
                     border-bottom: 1px solid #EBECED;
                 }
@@ -17,11 +17,11 @@
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-course-resource {
+    .ohmylms-page .ohmylms-single-course-layout-2 .ohmylms-course-resource {
         margin-top: 30px;
     }
 
-    .creator-lms-page .creator-lms-single-course-layout-2 .creator-lms-table .creator-lms-tr .action {
+    .ohmylms-page .ohmylms-single-course-layout-2 .ohmylms-table .ohmylms-tr .action {
         width: 70px;
     }
 }

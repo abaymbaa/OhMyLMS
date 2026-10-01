@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Emails\CreatorsEmail;
+namespace OhMyLMS\Emails\CreatorsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 
 class QuizSubmitted {
 
 	public function __construct() {
-		add_action( 'creator_lms_quiz_submission', array( $this, 'trigger' ), 10, 4 );
-		add_action( 'omlms_send_quiz_submission_digest', array( $this, 'send_digest' ) );
+		add_action( 'ohmylms_quiz_submission', array( $this, 'trigger' ), 10, 4 );
+		add_action( 'ohmylms_send_quiz_submission_digest', array( $this, 'send_digest' ) );
 	}
 
 	public function basic_settings(): array {
@@ -49,11 +49,11 @@ class QuizSubmitted {
 		}
 
 		global $wpdb;
-		$attempt    = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}omlms_quiz_attempts WHERE quiz_id = %d AND student_id = %d ORDER BY id DESC LIMIT 1", $quiz_id, $student_id ) );
+		$attempt    = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d ORDER BY id DESC LIMIT 1", $quiz_id, $student_id ) );
 		$attempt_id = $attempt ? $attempt->id : 0;
 
 		if ( isset( $settings['delivery_type'] ) && 'digest' === $settings['delivery_type'] ) {
-			$queue   = get_option( 'omlms_quiz_submission_queue', array() );
+			$queue   = get_option( 'ohmylms_quiz_submission_queue', array() );
 			$queue[] = array(
 				'quiz_id'    => $quiz_id,
 				'attempt_id' => $attempt_id,
@@ -61,7 +61,7 @@ class QuizSubmitted {
 				'student_id' => $student_id,
 				'time'       => current_time( 'mysql' ),
 			);
-			update_option( 'omlms_quiz_submission_queue', $queue, false );
+			update_option( 'ohmylms_quiz_submission_queue', $queue, false );
 			return;
 		}
 
@@ -75,12 +75,12 @@ class QuizSubmitted {
 			return;
 		}
 
-		$queue = get_option( 'omlms_quiz_submission_queue', array() );
+		$queue = get_option( 'ohmylms_quiz_submission_queue', array() );
 		if ( empty( $queue ) ) {
 			return;
 		}
 
-		update_option( 'omlms_quiz_submission_queue', array(), false );
+		update_option( 'ohmylms_quiz_submission_queue', array(), false );
 
 		$by_course = array();
 		foreach ( $queue as $item ) {
@@ -98,7 +98,7 @@ class QuizSubmitted {
 			return;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -115,10 +115,10 @@ class QuizSubmitted {
 		$subject = isset( $settings['subject'] ) ? $settings['subject'] : '';
 		$subject = $this->replace_tags( $subject, $student->display_name, $course->get_name(), $quiz_title );
 
-		$settings['button_link'] = admin_url( 'admin.php?page=creator-lms#/quiz-report/' . $quiz_id . '/grade-quiz/' . $attempt_id );
+		$settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/quiz-report/' . $quiz_id . '/grade-quiz/' . $attempt_id );
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/instructor-quiz-submitted',
 			array(
 				'student'        => $student,
@@ -137,7 +137,7 @@ class QuizSubmitted {
 	}
 
 	private function send_digest_for_course( $course_id, $items, $settings ) {
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -165,16 +165,16 @@ class QuizSubmitted {
 				'quiz_title'   => $q ? $q->post_title : __( 'Unknown Quiz', 'ohmylms' ),
 				'time'         => $item['time'],
 				'grade_link'   => ! empty( $item['attempt_id'] )
-					? admin_url( 'admin.php?page=creator-lms#/quiz-report/' . $item['quiz_id'] . '/grade-quiz/' . $item['attempt_id'] )
+					? admin_url( 'admin.php?page=ohmylms#/quiz-report/' . $item['quiz_id'] . '/grade-quiz/' . $item['attempt_id'] )
 					: '',
 			);
 		}
 
 		$digest_settings = $settings;
-		$digest_settings['button_link'] = admin_url( 'admin.php?page=creator-lms#/quiz-report' );
+		$digest_settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/quiz-report' );
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/instructor-quiz-submitted',
 			array(
 				'student'        => null,
@@ -215,8 +215,8 @@ class QuizSubmitted {
 
 	private function send_email( $to, $subject, $body, $email_settings ) {
 		$headers      = array( 'MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8' );
-		$sender_name  = $email_settings['creator_lms_email_sender_name'];
-		$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+		$sender_name  = $email_settings['ohmylms_email_sender_name'];
+		$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 		if ( $sender_email && $sender_name ) {
 			$headers[] = 'From: ' . $sender_name . ' <' . $sender_email . '>';
 		}

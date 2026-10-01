@@ -64,7 +64,7 @@ export function createDesignSettings(readRuntime) {
                           i.setLoadingSetting(!0),
                           (e.n = 1),
                           l()({
-                            path: 'creator-lms/v1/settings/design',
+                            path: 'ohmylms/v1/settings/design',
                           })
                         );
                       case 1:
@@ -99,7 +99,7 @@ export function createDesignSettings(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} paddingTop={2} marginTop={4} marginBottom={0}>
               <ep.A

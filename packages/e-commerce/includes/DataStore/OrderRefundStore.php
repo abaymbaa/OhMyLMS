@@ -48,7 +48,7 @@ class OrderRefundStore extends OrderStore {
 			$order_id = $parent_order_id;
 		}
 		
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$wpdb->update(
 			$table_name,
 			array(
@@ -58,8 +58,8 @@ class OrderRefundStore extends OrderStore {
 				'order_id' => $order_id,
 			)
 		);
-		if ( creator_lms_is_pro() ) {
-			$table_name = $wpdb->prefix . 'omlms_user_membership';
+		if ( ohmylms_is_pro() ) {
+			$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 			$wpdb->update(
 				$table_name,
 				array(

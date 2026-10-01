@@ -2,9 +2,9 @@
 /**
  * Membership Loop End
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/membership-loop/loop-end.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/membership-loop/loop-end.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

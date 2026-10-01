@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Assets;
+namespace OhMyLMS\Assets;
 
-use OMLMS\Abstracts\Assets;
-use OMLMS\Membership\MembershipHelper;
+use OhMyLMS\Abstracts\Assets;
+use OhMyLMS\Membership\MembershipHelper;
 
 use function CodeRex\Ecommerce\ecommerce;
 
@@ -18,40 +18,40 @@ class AdminAssets extends Assets {
 		$suffix = '';
 
 		$scripts = array(
-			'creator-lms-vendor'      => array(
+			'ohmylms-vendor'      => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/vendors' . $suffix . '.js' ),
-				'version'   => CREATOR_LMS_VERSION,
+				'version'   => OHMYLMS_VERSION,
 				'deps'		=> array( 'react', 'react-dom' ),
 				'in_footer' => true,
-				'screens'   => array( 'toplevel_page_creator-lms' ),
+				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'creator-lms-chartjs'      => array(
+			'ohmylms-chartjs'      => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/chartjs' . $suffix . '.js' ),
-				'version'   => CREATOR_LMS_VERSION,
-				'deps'		=> array( 'creator-lms-vendor' ),
+				'version'   => OHMYLMS_VERSION,
+				'deps'		=> array( 'ohmylms-vendor' ),
 				'in_footer' => true,
-				'screens'   => array( 'toplevel_page_creator-lms' ),
+				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'creator-lms-editor'      => array(
+			'ohmylms-editor'      => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/editor' . $suffix . '.js' ),
-				'version'   => CREATOR_LMS_VERSION,
-				'deps'		=> array( 'creator-lms-vendor' ),
+				'version'   => OHMYLMS_VERSION,
+				'deps'		=> array( 'ohmylms-vendor' ),
 				'in_footer' => true,
-				'screens'   => array( 'toplevel_page_creator-lms' ),
+				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'creator-lms-emotion'      => array(
+			'ohmylms-emotion'      => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/emotion' . $suffix . '.js' ),
-				'version'   => CREATOR_LMS_VERSION,
-				'deps'		=> array( 'creator-lms-vendor' ),
+				'version'   => OHMYLMS_VERSION,
+				'deps'		=> array( 'ohmylms-vendor' ),
 				'in_footer' => true,
-				'screens'   => array( 'toplevel_page_creator-lms' ),
+				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'creator-lms'      => array(
-				'src'       => self::get_asset_url( 'assets/dist/admin/creatorlms' . $suffix . '.js' ),
-				'deps'      => array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-api-fetch', 'creator-lms-vendor', 'creator-lms-chartjs', 'creator-lms-editor', 'creator-lms-emotion' ),
-				'version'   => CREATOR_LMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/dist/admin/creatorlms' . $suffix . '.js' ),
+			'ohmylms'      => array(
+				'src'       => self::get_asset_url( 'assets/dist/admin/ohmylms' . $suffix . '.js' ),
+				'deps'      => array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-api-fetch', 'ohmylms-vendor', 'ohmylms-chartjs', 'ohmylms-editor', 'ohmylms-emotion' ),
+				'version'   => OHMYLMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/dist/admin/ohmylms' . $suffix . '.js' ),
 				'in_footer' => true,
-				'screens'   => array( 'toplevel_page_creator-lms' ),
+				'screens'   => array( 'toplevel_page_ohmylms' ),
 			)
 		);
 
@@ -61,34 +61,34 @@ class AdminAssets extends Assets {
 	public function get_styles() {
 		$suffix = '';
 		$styles = array(
-			'creator-lms-main' => array(
-				'src'     => self::get_asset_url( 'assets/dist/css/admin/creatorlms.css' ),
+			'ohmylms-main' => array(
+				'src'     => self::get_asset_url( 'assets/dist/css/admin/ohmylms.css' ),
 				'deps'    => '',
-				'version' => CREATOR_LMS_VERSION,
+				'version' => OHMYLMS_VERSION,
 				'media'   => 'all',
 				'has_rtl' => false,
-				'screens' => array( 'toplevel_page_creator-lms' ),
+				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'creator-lms-rtl' => array(
-				'src'     => self::get_asset_url( 'assets/dist/css/admin/creatorlms-rtl.css' ),
+			'ohmylms-rtl' => array(
+				'src'     => self::get_asset_url( 'assets/dist/css/admin/ohmylms-rtl.css' ),
 				'deps'    => '',
-				'version' => CREATOR_LMS_VERSION,
+				'version' => OHMYLMS_VERSION,
 				'media'   => 'all',
 				'has_rtl' => false,
-				'screens' => array( 'toplevel_page_creator-lms' ),
+				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'omlms-tailwind' => array(
+			'ohmylms-tailwind' => array(
 				'src'     => self::get_asset_url( 'assets/css/tailwind.css' ),
 				'deps'    => '',
-				'version' => CREATOR_LMS_VERSION,
+				'version' => OHMYLMS_VERSION,
 				'media'   => 'all',
 				'has_rtl' => false,
-				'screens' => array( 'toplevel_page_creator-lms' ),
+				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'omlms-global' => array(
+			'ohmylms-global' => array(
 				'src'     => self::get_asset_url( 'assets/css/global.css' ),
 				'deps'    => '',
-				'version' => CREATOR_LMS_VERSION,
+				'version' => OHMYLMS_VERSION,
 				'media'   => 'all',
 				'has_rtl' => false,
 				'screens' => array( 'all' ),
@@ -103,25 +103,25 @@ class AdminAssets extends Assets {
 		$admin_name  = $admin_user ? $admin_user->display_name : '';
 
 		switch ( $handle ) {
-			case 'creator-lms':
+			case 'ohmylms':
 				$localized_data = array(
 					'ajax_url'                     	=> admin_url( 'admin-ajax.php' ),
 					'api_url'                      	=> get_rest_url(),
 					'nonce'                        	=> wp_create_nonce( 'wp_rest' ),
-					'setup_wizard_nonce'           	=> wp_create_nonce( 'omlms_setup_wizard' ),
-					'delete_cache_nonce'           	=> wp_create_nonce( 'omlms_delete_cache_nonce' ),
+					'setup_wizard_nonce'           	=> wp_create_nonce( 'ohmylms_setup_wizard' ),
+					'delete_cache_nonce'           	=> wp_create_nonce( 'ohmylms_delete_cache_nonce' ),
 					'should_track'                 	=> false,
-					'track_page_view_nonce'        	=> wp_create_nonce( 'omlms_track_page_view' ),
-					'currency'                     	=> get_omlms_currency_symbol( get_omlms_currency() ),
+					'track_page_view_nonce'        	=> wp_create_nonce( 'ohmylms_track_page_view' ),
+					'currency'                     	=> get_ohmylms_currency_symbol( get_ohmylms_currency() ),
 					'gtm_offset'                   	=> get_option( 'gmt_offset' ),
 					'timezone_string'              	=> get_option( 'timezone_string' ),
-					'currency_symbol'              	=> get_omlms_currency_symbol(),
-					'currency_position'            	=> get_option( 'creator_lms_currency_pos', 'left' ),
-					'decimal_separator'            	=> omlms_get_price_decimal_separator(),
-					'currency_format_trim_zeros'   	=> omlms_get_price_thousand_separator(),
-					'currency_format_num_decimals' 	=> omlms_get_price_decimals(),
-					'price_format'                 	=> omlms_get_price_format(),
-					'omlms_home_page'              	=> admin_url( 'admin.php?page=creator-lms' ),
+					'currency_symbol'              	=> get_ohmylms_currency_symbol(),
+					'currency_position'            	=> get_option( 'ohmylms_currency_pos', 'left' ),
+					'decimal_separator'            	=> ohmylms_get_price_decimal_separator(),
+					'currency_format_trim_zeros'   	=> ohmylms_get_price_thousand_separator(),
+					'currency_format_num_decimals' 	=> ohmylms_get_price_decimals(),
+					'price_format'                 	=> ohmylms_get_price_format(),
+					'ohmylms_home_page'              	=> admin_url( 'admin.php?page=ohmylms' ),
 					'plugin_assets'                	=> plugin_dir_url( __FILE__ ),
 					'admin_name'                   	=> $admin_name,
 					'admin_email'                  	=> $admin_email,
@@ -129,7 +129,6 @@ class AdminAssets extends Assets {
 					'is_learndash_lms_active'      	=> defined( 'LEARNDASH_VERSION' ),
 					'is_learnpress_active'         	=> defined( 'LEARNPRESS_VERSION' ),
 					'is_masterstudy_active'        	=> defined( 'STM_LMS_VERSION' ) || defined( 'STM_LMS_FILE' ) || defined( 'MASTERSTUDY_LMS_VERSION' ) || class_exists( 'STM_LMS' ) || post_type_exists( 'stm-courses' ),
-					'is_pro_active'                	=> creator_lms_is_pro_license(),
 					'is_wpfusion_active'           	=> defined('WP_FUSION_VERSION'),
 					'is_mailmint_active'           	=> defined( 'MRM_VERSION' ),
 					'is_uiexpress_active'          	=> defined( 'uixpress_plugin_version' ),
@@ -137,46 +136,46 @@ class AdminAssets extends Assets {
 					'date_format' 					=> get_option( 'date_format' ),
 					'time_format' 					=> get_option( 'time_format' ),
 					'payment_gateways'            	=> apply_filters(
-						'creatorlms_payment_gateways',
+						'ohmylms_payment_gateways',
 						ecommerce()->gateways()->get_payment_gateway_settings()
 					),
-					'integrations'					=> apply_filters('creatorlms_integrations', array()),
-					'is_cohort_enabled'				=> apply_filters('creatorlms_should_show_cohort', false),
-					'is_gamification_enabled'	    => apply_filters( 'creator_lms_show_gamification_menu', false ),
-					'is_webhook_enabled'	    	=> apply_filters( 'creatorlms_should_enable_webhooks', false ),
-					'is_funnel_enabled'				=> apply_filters('creatorlms_should_show_funnel', false),
-					'is_communities_enabled'		=> apply_filters('creatorlms_is_communities_enabled', false),
-					'is_community_addon_active'     => defined( 'CREATORLMS_COMMUNITY_VERSION' ),
+					'integrations'					=> apply_filters('ohmylms_integrations', array()),
+					'is_cohort_enabled'				=> apply_filters('ohmylms_should_show_cohort', false),
+					'is_gamification_enabled'	    => apply_filters( 'ohmylms_show_gamification_menu', false ),
+					'is_webhook_enabled'	    	=> apply_filters( 'ohmylms_should_enable_webhooks', false ),
+					'is_funnel_enabled'				=> apply_filters('ohmylms_should_show_funnel', false),
+					'is_communities_enabled'		=> apply_filters('ohmylms_is_communities_enabled', false),
+					'is_community_addon_active'     => defined( 'OHMYLMS_COMMUNITY_VERSION' ),
 					'community_addon_data'          => $this->get_community_addon_data(),
-					'has_pro_plugin'	            => creator_lms_is_pro(),
-					'setup_wizard_certificate_id'	=> get_option('creatorlms_setup_wizard_certificate_id', 0)
+					'has_pro_plugin'	            => ohmylms_is_pro(),
+					'setup_wizard_certificate_id'	=> get_option('ohmylms_setup_wizard_certificate_id', 0)
 				);
 				break;
-			case 'omlms-settings':
+			case 'ohmylms-settings':
 				$localized_data = array(
 					'ajax_url'           => admin_url( 'admin-ajax.php' ),
 					'search_pages_nonce' => wp_create_nonce( 'search-pages' ),
 				);
 				break;
-			case 'omlms-membership':
+			case 'ohmylms-membership':
 				$localized_data = array(
 					'ajax_url'             => admin_url( 'admin-ajax.php' ),
-					'nonce'                => wp_create_nonce( 'omlms-membership' ),
+					'nonce'                => wp_create_nonce( 'ohmylms-membership' ),
 					'courses'              => MembershipHelper::get_courses_for_membership_plans(),
 					'subscription_options' => MembershipHelper::subscription_options(),
 				);
 				break;
-			case 'omlms-course':
+			case 'ohmylms-course':
 				$localized_data = array(
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
-					'nonce'    => wp_create_nonce( 'omlms-course' ),
+					'nonce'    => wp_create_nonce( 'ohmylms-course' ),
 				);
 				break;
 			default:
 				$localized_data = false;
 		}
 
-		return apply_filters( 'creator_lms_get_admin_script_data', $localized_data, $handle );
+		return apply_filters( 'ohmylms_get_admin_script_data', $localized_data, $handle );
 	}
 
 
@@ -227,9 +226,9 @@ class AdminAssets extends Assets {
 			wp_enqueue_script( $handle );
 		}
 		wp_set_script_translations(
-			'creator-lms',
 			'ohmylms',
-			plugin_dir_path(OMLMS_FILE) . 'languages'
+			'ohmylms',
+			plugin_dir_path(OHMYLMS_FILE) . 'languages'
 		);
 		
 		foreach ( $this->get_styles() as $handle => $style ) {
@@ -238,7 +237,7 @@ class AdminAssets extends Assets {
 			}
 			
 			// Skip RTL styles if not in RTL mode
-			if ( $handle === 'creator-lms-rtl' && ! is_rtl() ) {
+			if ( $handle === 'ohmylms-rtl' && ! is_rtl() ) {
 				continue;
 			}
 			
@@ -255,7 +254,7 @@ class AdminAssets extends Assets {
 		$installed = false;
 
 		foreach ( $plugins as $path => $plugin ) {
-			if ( 'OhMyLMS - Community Addon' === $plugin['Name'] || 'creatorlms-community' === $plugin['TextDomain'] ) {
+			if ( 'OhMyLMS - Community Addon' === $plugin['Name'] || 'ohmylms-community' === $plugin['TextDomain'] ) {
 				$slug      = $path;
 				$installed = true;
 				break;

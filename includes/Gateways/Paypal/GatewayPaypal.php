@@ -1,8 +1,8 @@
 <?php
 
 use CodeRex\Ecommerce\Abstracts\PaymentGateway;
-use OMLMS\Gateways\Paypal\PaypalAPI;
-use OMLMS\Integrations\Funnel\Includes\FunnelManager;
+use OhMyLMS\Gateways\Paypal\PaypalAPI;
+use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 
 /**
  * Class GatewayPaypal
@@ -27,7 +27,7 @@ class GatewayPaypal extends PaymentGateway {
      */
     public function __construct() {
         $this->id = 'paypal';
-        $gateway_settings_key = 'creatorlms_' . $this->id . '_settings';
+        $gateway_settings_key = 'ohmylms_' . $this->id . '_settings';
         $this->settings = get_option($gateway_settings_key, array());
         $this->title = $this->get_setting('title', __('Paypal', 'ohmylms'));
         $this->description = $this->get_setting('instruction', __('Pay with PayPal payment.', 'ohmylms'));
@@ -39,7 +39,7 @@ class GatewayPaypal extends PaymentGateway {
         $this->client_secret = $this->testmode
             ? $this->get_setting('sandbox_client_secret', '')
             : $this->get_setting('client_secret', '');
-        $this->webhook_url = $this->get_setting('webhook_url', home_url('/wp-json/creatorlms/v1/paypal-webhook'));
+        $this->webhook_url = $this->get_setting('webhook_url', home_url('/wp-json/ohmylms/v1/paypal-webhook'));
         $this->webhook_id = $this->get_setting('webhook_id', '');
         $this->has_fields = true;
         $this->enabled = $this->get_setting('enabled', 'no');
@@ -70,7 +70,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * @return string
 	 */
 	private function get_current_currency() {
-		return strtoupper(function_exists('get_omlms_currency') ? get_omlms_currency() : 'usd');
+		return strtoupper(function_exists('get_ohmylms_currency') ? get_ohmylms_currency() : 'usd');
 	}
 
     /**
@@ -173,7 +173,7 @@ class GatewayPaypal extends PaymentGateway {
 //                'title' => __('Webhook URL', 'ohmylms'),
 //                'short_description' => __('Enter the webhook URL for PayPal notifications.', 'ohmylms') . ' ' . __('How to set up', 'ohmylms') . ' <a href="https://developer.paypal.com/docs/api-basics/notifications/webhooks/" target="_blank">' . __('PayPal Webhooks', 'ohmylms') . '</a>',
 //                'input_type' => 'text',
-//                'default_value' => home_url('/wp-json/creatorlms/v1/paypal-webhook'),
+//                'default_value' => home_url('/wp-json/ohmylms/v1/paypal-webhook'),
 //                'value' => $this->get_setting('webhook_url', ''),
 //                'option_name' => 'webhook_url'
 //            ),
@@ -232,7 +232,7 @@ class GatewayPaypal extends PaymentGateway {
                 return $response;
             }
             $webhook_id = $response['id'] ?? null;
-            update_option('creatorlms_paypal_settings', array_merge($this->settings, ['webhook_id' => $webhook_id]));
+            update_option('ohmylms_paypal_settings', array_merge($this->settings, ['webhook_id' => $webhook_id]));
             $this->webhook_id = $webhook_id;
             return $webhook_id;
         } catch (\Exception $e) {
@@ -246,7 +246,7 @@ class GatewayPaypal extends PaymentGateway {
      * @since 1.0.0
      */
     public function register_webhook_endpoint() {
-        register_rest_route('creatorlms/v1', '/paypal-webhook', array(
+        register_rest_route('ohmylms/v1', '/paypal-webhook', array(
             'methods' => WP_REST_Server::ALLMETHODS,
             'callback' => array($this, 'handle_webhook'),
             'permission_callback' => '__return_true',
@@ -571,7 +571,7 @@ class GatewayPaypal extends PaymentGateway {
 
         $return_url = $funnel_url ? $funnel_url : add_query_arg(
             array( 'order_id' => $order->get_id(), 'key' => $order->get_order_key() ),
-            creator_lms_get_checkout_url() . '/cr-order-received/' . $order->get_id()
+            ohmylms_get_checkout_url() . '/ohmylms-order-received/' . $order->get_id()
         );
 
         $data['payment_source'] = [
@@ -916,7 +916,7 @@ class GatewayPaypal extends PaymentGateway {
         update_post_meta($order_id, '_paypal_fee', $paypal_fee);
         update_post_meta($order_id, '_net_amount', $net_amount);
 
-        $membership_table   = $wpdb->prefix . 'omlms_user_membership';
+        $membership_table   = $wpdb->prefix . 'ohmylms_user_membership';
         $order              = ecommerce_get_order($order_id);
         if( $order ) {
             $order->payment_complete($transaction_id);
@@ -1102,7 +1102,7 @@ class GatewayPaypal extends PaymentGateway {
         update_post_meta($original_order->get_id(), '_net_amount', $existing_net + $net_amount);
 
         // Mark upsell as paid in your system
-        do_action( 'creator_lms_upsell_payment_completed', $original_order->get_id(), $step_data );
+        do_action( 'ohmylms_upsell_payment_completed', $original_order->get_id(), $step_data );
 
         $original_order->save();
         return array('success' => true, 'message' => __('Payment processed successfully.', 'ohmylms'));

@@ -16,9 +16,7 @@ var n0 = function () {
     stroke: "#BDBFC7"
   })));
 };
-
 const r0 = (0, g.memo)(n0);
-
 var a0 = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     width: "92",
@@ -36,13 +34,11 @@ var a0 = function () {
     "clip-rule": "evenodd"
   })));
 };
-
 const o0 = (0, g.memo)(a0);
-
 var i0 = function () {
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
-    className: "omlms-dummy-pricing",
+    className: "ohmylms-dummy-pricing",
     style: {
       borderRadius: "10px"
     }
@@ -50,23 +46,21 @@ var i0 = function () {
     marginBottom: 0,
     padding: 3
   }, React.createElement("span", {
-    className: "omlms-dummy-price"
+    className: "ohmylms-dummy-price"
   }, "$40.99 ", React.createElement("del", null, "$50.23")), React.createElement("span", {
-    className: "omlms-dummy-content-title extra-small"
+    className: "ohmylms-dummy-content-title extra-small"
   }), React.createElement("div", {
-    className: "omlms-dummy-button"
+    className: "ohmylms-dummy-button"
   }, React.createElement("span", {
-    className: "omlms-dummy-button-text"
+    className: "ohmylms-dummy-button-text"
   })))));
 };
-
 const l0 = (0, g.memo)(i0);
-
 var c0 = function () {
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     variant: "secondary",
     isBorderless: !0,
-    className: "omlms-dummy-membership",
+    className: "ohmylms-dummy-membership",
     style: {
       borderRadius: "10px"
     }
@@ -74,7 +68,7 @@ var c0 = function () {
     marginBottom: 0,
     padding: 3
   }, React.createElement("div", {
-    className: "omlms-dummy-sidebar-header"
+    className: "ohmylms-dummy-sidebar-header"
   }, React.createElement("svg", {
     fill: "none",
     width: "18",
@@ -85,7 +79,7 @@ var c0 = function () {
     fill: "#A1A1AA",
     d: "M17.98 5.025l-1.7 7.434a.695.695 0 01-.691.54H2.352a.695.695 0 01-.69-.54L.015 5.026a.677.677 0 01.249-.684.695.695 0 01.732-.075L5.032 6.2 8.376.347A.687.687 0 018.977 0a.696.696 0 01.602.347l3.344 5.861 4.062-1.95a.697.697 0 01.748.065.685.685 0 01.247.702z"
   })), (0, b.__)("Membership", "ohmylms")), React.createElement("div", {
-    className: "omlms-dummy-sidebar-content"
+    className: "ohmylms-dummy-sidebar-content"
   }, React.createElement("span", {
     className: "crlmls-dummy-content-text",
     style: {
@@ -99,14 +93,12 @@ var c0 = function () {
       backgroundColor: "#BDBFC7"
     }
   }), React.createElement("div", {
-    className: "omlms-dummy-button"
+    className: "ohmylms-dummy-button"
   }, React.createElement("span", {
-    className: "omlms-dummy-button-text"
+    className: "ohmylms-dummy-button-text"
   }))))));
 };
-
 const u0 = (0, g.memo)(c0);
-
 var s0 = function (e) {
   var t = e.level,
     n = e.review,
@@ -124,11 +116,11 @@ var s0 = function (e) {
     f = e.tag,
     v = e.showPricing;
   return React.createElement(React.Fragment, null, React.createElement(LJ, null, React.createElement("div", {
-    className: "omlms-dummy-layout-wrapper for-template3"
+    className: "ohmylms-dummy-layout-wrapper for-template3"
   }, React.createElement("div", {
-    className: "omlms-dummy-layout-body"
+    className: "ohmylms-dummy-layout-body"
   }, React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "90%",
       height: "8px"
@@ -136,7 +128,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 2
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "70%",
       height: "8px"
@@ -144,11 +136,11 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 4
   }), ((null == t ? void 0 : t.isChecked) || (null == n ? void 0 : n.isChecked) || (null == r ? void 0 : r.isChecked) || (null == o ? void 0 : o.isChecked) || (null == a ? void 0 : a.isChecked)) && React.createElement("div", {
-    className: "omlms-dummy-course-info"
+    className: "ohmylms-dummy-course-info"
   }, (null == n ? void 0 : n.isChecked) && React.createElement(oX, null), (null == t ? void 0 : t.isChecked) && React.createElement(rX, null), (null == r ? void 0 : r.isChecked) && React.createElement(lX, null), (null == o ? void 0 : o.isChecked) && React.createElement(wX, null), (null == a ? void 0 : a.isChecked) && React.createElement(uX, null)), (null == m ? void 0 : m.isChecked) && React.createElement(r0, null), React.createElement(o0, null), React.createElement(I.SpacerWP, {
     marginBottom: 4
   }), React.createElement("div", {
-    className: "omlms-dummy-course"
+    className: "ohmylms-dummy-course"
   }, React.createElement(FX, null), React.createElement("div", null, React.createElement("svg", {
     width: "189",
     height: "8",
@@ -173,7 +165,7 @@ var s0 = function (e) {
     fill: "#BDBFC7",
     rx: "2"
   })), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "1px",
@@ -182,7 +174,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 4
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -191,7 +183,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -200,7 +192,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "85%",
       height: "4px",
@@ -220,7 +212,7 @@ var s0 = function (e) {
   }, React.createElement(I.SpacerWP, {
     marginBottom: 5
   }, React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100px",
       height: "6px",
@@ -229,7 +221,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -238,7 +230,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -247,7 +239,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "80%",
       height: "4px",
@@ -256,7 +248,7 @@ var s0 = function (e) {
   })), React.createElement(I.SpacerWP, {
     marginBottom: 5
   }, React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100px",
       height: "6px",
@@ -265,7 +257,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -274,7 +266,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "90%",
       height: "4px",
@@ -283,7 +275,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "80%",
       height: "4px",
@@ -292,7 +284,7 @@ var s0 = function (e) {
   })), React.createElement(I.SpacerWP, {
     marginBottom: 0
   }, React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100px",
       height: "6px",
@@ -301,7 +293,7 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
@@ -310,14 +302,14 @@ var s0 = function (e) {
   }), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title",
+    className: "ohmylms-dummy-content-title",
     style: {
       width: "100%",
       height: "4px",
       backgroundColor: "#CFCCD6"
     }
   }))))))), React.createElement("div", {
-    className: "omlms-dummy-layout-sidebar"
+    className: "ohmylms-dummy-layout-sidebar"
   }, React.createElement(I.CardWP, {
     variant: "secondary",
     isBorderless: !0
@@ -326,7 +318,7 @@ var s0 = function (e) {
   }, ((null == i ? void 0 : i.isChecked) || (null == l ? void 0 : l.isChecked)) && React.createElement(I.CardWP, {
     variant: "secondary",
     isBorderless: !0,
-    className: "omlms-dummy-course-info-sidebar"
+    className: "ohmylms-dummy-course-info-sidebar"
   }, (null == i ? void 0 : i.isChecked) && React.createElement(React.Fragment, null, React.createElement(SX, null), React.createElement(I.SpacerWP, {
     marginBottom: 1
   })), (null == l ? void 0 : l.isChecked) && React.createElement(xX, null), React.createElement(I.SpacerWP, {
@@ -335,15 +327,11 @@ var s0 = function (e) {
     marginBottom: 1
   })), (null == f ? void 0 : f.isChecked) && React.createElement(t0, null))))));
 };
-
 const d0 = (0, g.memo)(s0);
-
 var m0 = function (e) {
   return React.createElement(React.Fragment, null, "layout_1" === e.template && React.createElement(React.Fragment, null, React.createElement(DX, e)), "layout_2" === e.template && React.createElement(React.Fragment, null, React.createElement(HX, e)), "layout_3" === e.template && React.createElement(React.Fragment, null, React.createElement(d0, e)));
 };
-
 const p0 = (0, g.memo)(m0);
-
 var f0 = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
     paddingTop: 4,
@@ -351,22 +339,20 @@ var f0 = function (e) {
   }, React.createElement(I.FlexWP, {
     align: "start",
     gap: 6,
-    className: "omlms-page-feature-settings-layout"
+    className: "ohmylms-page-feature-settings-layout"
   }, React.createElement(I.FlexItemWP, {
     style: {
       width: "".concat(40, "%")
     },
-    className: "omlms-page-feature-settings-sidebar"
+    className: "ohmylms-page-feature-settings-sidebar"
   }, React.createElement(tX, e)), React.createElement(I.FlexItemWP, {
     style: {
       width: "".concat(60, "%")
     },
-    className: "omlms-page-feature-settings-view"
+    className: "ohmylms-page-feature-settings-view"
   }, React.createElement(p0, e)))));
 };
-
 const v0 = (0, g.memo)(f0);
-
 function g0() {
   return g0 = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -376,7 +362,6 @@ function g0() {
     return e;
   }, g0.apply(null, arguments);
 }
-
 function h0(e) {
   return function (e) {
     if (Array.isArray(e)) return y0(e);
@@ -392,34 +377,32 @@ function h0(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function y0(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var b0 = function () {
   var e,
     t,
-    n = (0, L.useIsPro)(),
+    n = true,
     r = (0, y.useDispatch)(T.default),
     a = (0, y.useSelect)(function (e) {
       return e(T.default).getDesignSettings();
     }, []),
-    o = (null == a || null === (e = a.creator_lms_single_course_page_features) || void 0 === e ? void 0 : e.value) || [],
-    i = (null == a || null === (t = a.creator_lms_single_course_page_layout) || void 0 === t ? void 0 : t.value) || "layout_2",
+    o = (null == a || null === (e = a.ohmylms_single_course_page_features) || void 0 === e ? void 0 : e.value) || [],
+    i = (null == a || null === (t = a.ohmylms_single_course_page_layout) || void 0 === t ? void 0 : t.value) || "layout_2",
     l = (0, g.useMemo)(function () {
       return ["level", "review", "students", "available_seat", "duration", "total_lesson", "resources", "membership", "author", "category", "tag"];
     }, []),
     c = (0, g.useCallback)(function (e, t) {
-      n ? r.updateDesignSettings({
-        creator_lms_single_course_page_features: {
+      r.updateDesignSettings({
+        ohmylms_single_course_page_features: {
           value: e ? [].concat(h0(o), [t]) : o.filter(function (e) {
             return e !== t;
           })
         }
-      }) : r.setIsProModalOpen(!0);
+      });
     }, [o, r]),
     u = (0, g.useMemo)(function () {
       return l.reduce(function (e, t) {
@@ -437,9 +420,7 @@ var b0 = function () {
     template: i
   }));
 };
-
 const _0 = (0, g.memo)(b0);
-
 function w0() {
   return w0 = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -449,7 +430,6 @@ function w0() {
     return e;
   }, w0.apply(null, arguments);
 }
-
 function E0(e) {
   return function (e) {
     if (Array.isArray(e)) return S0(e);
@@ -465,23 +445,21 @@ function E0(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function S0(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var R0 = function () {
   var e,
     t,
-    n = (0, L.useIsPro)(),
+    n = true,
     r = (0, y.useDispatch)(T.default),
     a = (0, y.useSelect)(function (e) {
       return e(T.default).getDesignSettings();
     }, []),
-    o = (null == a || null === (e = a.creator_lms_single_course_page_features) || void 0 === e ? void 0 : e.value) || [],
-    i = (null == a || null === (t = a.creator_lms_single_course_page_layout) || void 0 === t ? void 0 : t.value) || "layout_2",
+    o = (null == a || null === (e = a.ohmylms_single_course_page_features) || void 0 === e ? void 0 : e.value) || [],
+    i = (null == a || null === (t = a.ohmylms_single_course_page_layout) || void 0 === t ? void 0 : t.value) || "layout_2",
     l = (0, g.useMemo)(function () {
       var e;
       return [{
@@ -523,19 +501,19 @@ var R0 = function () {
       }, {
         prop: "progress_bar",
         key: "progress_bar_with_enroll"
-      }].concat(E0(null != a && null !== (e = a.creator_lms_leaderboard_settings) && void 0 !== e && null !== (e = e.value) && void 0 !== e && e.enable ? [{
+      }].concat(E0(null != a && null !== (e = a.ohmylms_leaderboard_settings) && void 0 !== e && null !== (e = e.value) && void 0 !== e && e.enable ? [{
         prop: "leaderboard",
         key: "leaderboard_with_enroll"
       }] : []));
     }, []),
     c = (0, g.useCallback)(function (e, t) {
-      n ? r.updateDesignSettings({
-        creator_lms_single_course_page_features: {
+      r.updateDesignSettings({
+        ohmylms_single_course_page_features: {
           value: e ? [].concat(E0(o), [t]) : o.filter(function (e) {
             return e !== t;
           })
         }
-      }) : r.setIsProModalOpen(!0);
+      });
     }, [o, r]),
     u = (0, g.useMemo)(function () {
       return l.reduce(function (e, t) {
@@ -552,9 +530,7 @@ var R0 = function () {
     template: i
   }));
 };
-
 const x0 = (0, g.memo)(R0);
-
 var C0 = function () {
   var e = (0, f.g)(),
     t = e.tab,
@@ -577,13 +553,13 @@ var C0 = function () {
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     marginBottom: 0,
-    className: "omlms-page-feature-settings"
+    className: "ohmylms-page-feature-settings"
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0
   }, React.createElement(Ea, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-page-features-settings-card"
+    className: "ohmylms-page-features-settings-card"
   }, React.createElement(bJ, {
     title: (0, b.__)("Layout Settings", "ohmylms"),
     options: o,
@@ -595,31 +571,29 @@ var C0 = function () {
     gap: 8,
     spacerPadding: 0
   }), React.createElement("div", {
-    className: "omlms-page-features-settings-tab"
+    className: "ohmylms-page-features-settings-tab"
   }, "unenroll-view" === r ? React.createElement(_0, null) : React.createElement(x0, null)))))));
 };
-
 const P0 = (0, g.memo)(C0);
-
 var O0 = function () {
   var e,
-    t = (0, L.useIsPro)(),
+    t = true,
     n = (0, y.useDispatch)(T.default),
     r = (0, y.useSelect)(function (e) {
       return e(T.default).getDesignSettings();
     }, []),
-    a = (null == r || null === (e = r.creator_lms_single_course_page_layout) || void 0 === e ? void 0 : e.value) || "layout_2",
+    a = (null == r || null === (e = r.ohmylms_single_course_page_layout) || void 0 === e ? void 0 : e.value) || "layout_2",
     o = (0, g.useMemo)(function () {
       return [{
         label: (0, b.__)("Layout 1", "ohmylms"),
         value: "layout_2"
       }, {
-        label: (0, b.__)("Layout 2 ".concat(t ? "" : "(Pro)"), "ohmylms"),
+        label: (0, b.__)("Layout 2 ".concat(""), "ohmylms"),
         value: "layout_1",
         className: "is-pro-feature",
         disabled: !t
       }, {
-        label: (0, b.__)("Layout 3 ".concat(t ? "" : "(Pro)"), "ohmylms"),
+        label: (0, b.__)("Layout 3 ".concat(""), "ohmylms"),
         value: "layout_3",
         className: "is-pro-feature",
         disabled: !t
@@ -627,14 +601,14 @@ var O0 = function () {
     }, []),
     i = (0, g.useCallback)(function (e) {
       n.updateDesignSettings({
-        creator_lms_single_course_page_layout: {
+        ohmylms_single_course_page_layout: {
           value: e
         }
       });
     }, []);
   return React.createElement(React.Fragment, null, React.createElement(Ea, {
     isBorderless: !0,
-    className: "omlms-course-details-layout-settings"
+    className: "ohmylms-course-details-layout-settings"
   }, React.createElement(I.SpacerWP, {
     marginTop: 2.5,
     padding: 2,
@@ -652,5 +626,4 @@ var O0 = function () {
     showSearch: !1
   }), React.createElement(P0, null))));
 };
-
 const k0 = (0, g.memo)(O0);

@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Utility;
+namespace OhMyLMS\Utility;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,10 +34,10 @@ public static function validate_course_for_export($course_id) {
         $course = get_post($course_id);
 
         // Check if course exists
-        if (!$course || $course->post_type !== CREATOR_LMS_COURSE_CPT) {
+        if (!$course || $course->post_type !== OHMYLMS_COURSE_CPT) {
             return [
                 'valid' => false,
-                'message' => sprintf(__('Course ID %d does not exist or is not a valid course.', 'creator-lms-pro'), $course_id),
+                'message' => sprintf(__('Course ID %d does not exist or is not a valid course.', 'ohmylms-pro'), $course_id),
             ];
         }
 
@@ -45,27 +45,27 @@ public static function validate_course_for_export($course_id) {
         if (!in_array($course->post_status, ['publish', 'draft', 'pending'])) {
             return [
                 'valid' => false,
-                'message' => sprintf(__('Course "%s" has invalid status: %s', 'creator-lms-pro'), $course->post_title, $course->post_status),
+                'message' => sprintf(__('Course "%s" has invalid status: %s', 'ohmylms-pro'), $course->post_title, $course->post_status),
             ];
         }
 
         // Check if course has content
         global $wpdb;
         $chapter_count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}omlms_chapter_relationship WHERE course_id = %d",
+            "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id = %d",
             $course_id
         ));
 
         if ($chapter_count == 0) {
             return [
                 'valid' => false,
-                'message' => sprintf(__('Course "%s" has no chapters. Please add content before exporting.', 'creator-lms-pro'), $course->post_title),
+                'message' => sprintf(__('Course "%s" has no chapters. Please add content before exporting.', 'ohmylms-pro'), $course->post_title),
             ];
         }
 
         return [
             'valid' => true,
-            'message' => __('Course is valid for export.', 'creator-lms-pro'),
+            'message' => __('Course is valid for export.', 'ohmylms-pro'),
         ];
     }
 
@@ -77,21 +77,21 @@ public static function check_system_requirements($strict_mode = false) {
 
         // Check ZIP extension (CRITICAL - always required)
         $results['checks']['zip'] = [
-            'name' => __('PHP ZIP Extension', 'creator-lms-pro'),
+            'name' => __('PHP ZIP Extension', 'ohmylms-pro'),
             'passed' => class_exists('ZipArchive'),
             'message' => class_exists('ZipArchive') 
-                ? __('Available', 'creator-lms-pro')
-                : __('Not available. Please enable the ZIP extension.', 'creator-lms-pro'),
+                ? __('Available', 'ohmylms-pro')
+                : __('Not available. Please enable the ZIP extension.', 'ohmylms-pro'),
             'critical' => true,
         ];
 
         // Check DOM extension (CRITICAL - always required)
         $results['checks']['dom'] = [
-            'name' => __('PHP DOM Extension', 'creator-lms-pro'),
+            'name' => __('PHP DOM Extension', 'ohmylms-pro'),
             'passed' => class_exists('DOMDocument'),
             'message' => class_exists('DOMDocument') 
-                ? __('Available', 'creator-lms-pro')
-                : __('Not available. Please enable the DOM extension.', 'creator-lms-pro'),
+                ? __('Available', 'ohmylms-pro')
+                : __('Not available. Please enable the DOM extension.', 'ohmylms-pro'),
             'critical' => true,
         ];
 
@@ -101,11 +101,11 @@ public static function check_system_requirements($strict_mode = false) {
         $memory_ok = $memory_limit_bytes >= 256 * 1024 * 1024 || $memory_limit == '-1';
 
         $results['checks']['memory'] = [
-            'name' => __('PHP Memory Limit', 'creator-lms-pro'),
+            'name' => __('PHP Memory Limit', 'ohmylms-pro'),
             'passed' => $memory_ok,
             'message' => $memory_ok 
-                ? sprintf(__('Sufficient: %s', 'creator-lms-pro'), $memory_limit)
-                : sprintf(__('Low: %s (recommended: 256M or higher)', 'creator-lms-pro'), $memory_limit),
+                ? sprintf(__('Sufficient: %s', 'ohmylms-pro'), $memory_limit)
+                : sprintf(__('Low: %s (recommended: 256M or higher)', 'ohmylms-pro'), $memory_limit),
             'critical' => false, // Can be increased at runtime
         ];
 
@@ -114,11 +114,11 @@ public static function check_system_requirements($strict_mode = false) {
         $time_ok = $max_execution >= 300 || $max_execution == 0;
 
         $results['checks']['execution_time'] = [
-            'name' => __('Max Execution Time', 'creator-lms-pro'),
+            'name' => __('Max Execution Time', 'ohmylms-pro'),
             'passed' => $time_ok,
             'message' => $time_ok 
-                ? sprintf(__('Sufficient: %s seconds', 'creator-lms-pro'), $max_execution == 0 ? 'unlimited' : $max_execution)
-                : sprintf(__('Low: %s seconds (recommended: 300 or higher)', 'creator-lms-pro'), $max_execution),
+                ? sprintf(__('Sufficient: %s seconds', 'ohmylms-pro'), $max_execution == 0 ? 'unlimited' : $max_execution)
+                : sprintf(__('Low: %s seconds (recommended: 300 or higher)', 'ohmylms-pro'), $max_execution),
             'critical' => false, // Can be increased at runtime
         ];
 
@@ -127,11 +127,11 @@ public static function check_system_requirements($strict_mode = false) {
         $writable = wp_is_writable($upload_dir['basedir']);
 
         $results['checks']['writable'] = [
-            'name' => __('Upload Directory Writable', 'creator-lms-pro'),
+            'name' => __('Upload Directory Writable', 'ohmylms-pro'),
             'passed' => $writable,
             'message' => $writable 
-                ? __('Writable', 'creator-lms-pro')
-                : __('Not writable. Please check directory permissions.', 'creator-lms-pro'),
+                ? __('Writable', 'ohmylms-pro')
+                : __('Not writable. Please check directory permissions.', 'ohmylms-pro'),
             'critical' => true,
         ];
 
@@ -141,19 +141,19 @@ public static function check_system_requirements($strict_mode = false) {
         // Handle case where disk_free_space() returns false
         if ($free_space === false) {
             $results['checks']['disk_space'] = [
-                'name' => __('Available Disk Space', 'creator-lms-pro'),
+                'name' => __('Available Disk Space', 'ohmylms-pro'),
                 'passed' => true, // Don't block if we can't determine
-                'message' => __('Unable to determine disk space (this is common on some hosting environments)', 'creator-lms-pro'),
+                'message' => __('Unable to determine disk space (this is common on some hosting environments)', 'ohmylms-pro'),
                 'critical' => false,
             ];
         } else {
             $space_ok = $free_space > 100 * 1024 * 1024; // 100MB minimum
             
             $results['checks']['disk_space'] = [
-                'name' => __('Available Disk Space', 'creator-lms-pro'),
+                'name' => __('Available Disk Space', 'ohmylms-pro'),
                 'passed' => $space_ok,
-                'message' => sprintf(__('Available: %s', 'creator-lms-pro'), size_format($free_space)) . 
-                            ($space_ok ? '' : ' ' . __('(low - recommended: 100MB or higher)', 'creator-lms-pro')),
+                'message' => sprintf(__('Available: %s', 'ohmylms-pro'), size_format($free_space)) . 
+                            ($space_ok ? '' : ' ' . __('(low - recommended: 100MB or higher)', 'ohmylms-pro')),
                 'critical' => false, // Warning only
             ];
         }
@@ -233,7 +233,7 @@ public static function estimate_export_size($course_id) {
 
         // Get chapters and contents
         $chapters = $wpdb->get_results($wpdb->prepare(
-            "SELECT chapter_id FROM {$wpdb->prefix}omlms_chapter_relationship WHERE course_id = %d",
+            "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id = %d",
             $course_id
         ), ARRAY_A);
 
@@ -250,7 +250,7 @@ public static function estimate_export_size($course_id) {
 
             // Get contents
             $contents = $wpdb->get_results($wpdb->prepare(
-                "SELECT content_id FROM {$wpdb->prefix}omlms_content_relationship WHERE chapter_id = %d",
+                "SELECT content_id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d",
                 $chapter['chapter_id']
             ), ARRAY_A);
 

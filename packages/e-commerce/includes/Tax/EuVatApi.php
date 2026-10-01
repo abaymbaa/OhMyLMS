@@ -81,7 +81,7 @@ class EuVatApi
     {
         try {
 
-            $cache_key = md5('creator_lms_eu_vat_vies_' . $country_code . '_' . $vat_number . '_' . $vat_prefix_for_country);
+            $cache_key = md5('ohmylms_eu_vat_vies_' . $country_code . '_' . $vat_number . '_' . $vat_prefix_for_country);
 
             $response = get_transient($cache_key);
 

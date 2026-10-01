@@ -151,24 +151,21 @@ var sr = function (e) {
   }, React.createElement(I.ButtonWP, {
     variant: "primary",
     onClick: x,
-    className: "omlms-file-uploader-"
+    className: "ohmylms-file-uploader-"
   }, (0, b.__)("Save URL", "ohmylms")), React.createElement(I.ButtonWP, {
     variant: "secondary",
     onClick: function () {
       return d(!1);
     },
-    className: "omlms-file-uploader-cancel"
+    className: "ohmylms-file-uploader-cancel"
   }, (0, b.__)("Cancel", "ohmylms")))))) : React.createElement(I.DropdownMenuWP, {
     title: "Upload",
     controls: E,
     icon: React.createElement(C, null)
   }), React.createElement("p", null, (0, b.__)("Supported Files:", "ohmylms"), " ", o.join(", "))))));
 };
-
 const dr = (0, g.memo)(sr);
-
 var mr = ["Icon", "buttonText", "onCancel", "onOK", "alertTitle", "alertDescription", "modalPosition", "iconOnly"];
-
 function pr() {
   return pr = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -178,13 +175,11 @@ function pr() {
     return e;
   }, pr.apply(null, arguments);
 }
-
 function fr(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var vr = function (e) {
   var t = e.Icon,
     n = void 0 === t ? We : t,
@@ -282,11 +277,8 @@ var vr = function (e) {
     isDelete: !0
   }));
 };
-
 const gr = (0, g.memo)(vr);
-
 var hr = ["mediaUrl", "sectionType", "setMediaURL", "handleExternalMedia", "setIsExternalMedia"];
-
 function yr() {
   return yr = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -296,7 +288,6 @@ function yr() {
     return e;
   }, yr.apply(null, arguments);
 }
-
 var br = function (e) {
   var t = e.mediaUrl,
     n = e.sectionType,
@@ -418,12 +409,9 @@ var br = function (e) {
     title: (0, b.__)("Embedded Media", "ohmylms")
   })));
 };
-
 const _r = (0, g.memo)(br);
-
 var wr = n(98243),
   Er = n(52770);
-
 function Sr(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -463,15 +451,13 @@ function Sr(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Rr(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var xr = function (e) {
-  var t = (0, L.useIsPro)();
+  var t = true;
   M().noConflict();
   var n = e.limit,
     r = void 0 === n ? 1 : n,
@@ -609,15 +595,15 @@ var xr = function (e) {
     };
   return (0, g.useEffect)(function () {
     var e = function (e) {
-      !ie || !ae.current || ae.current.contains(e.target) || e.target.closest(".omlms-history-list") || e.target.closest(".omlms-tooltip-box") || e.target.closest(".omlms-ai-image-prompt") || (le(!1), Ee(null));
+      !ie || !ae.current || ae.current.contains(e.target) || e.target.closest(".ohmylms-history-list") || e.target.closest(".ohmylms-tooltip-box") || e.target.closest(".ohmylms-ai-image-prompt") || (le(!1), Ee(null));
     };
     return document.addEventListener("mousedown", e), function () {
       document.removeEventListener("mousedown", e);
     };
   }, [ie]), React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-media-uploader ".concat(j || N || z ? "omlms-has-media" : "")
+    className: "ohmylms-media-uploader ".concat(j || N || z ? "ohmylms-has-media" : "")
   }, React.createElement("div", {
-    className: "omlms-media-contents ".concat(E),
+    className: "ohmylms-media-contents ".concat(E),
     style: {
       position: "relative",
       maxHeight: "350px",
@@ -647,7 +633,7 @@ var xr = function (e) {
   }), "video" === E && React.createElement(React.Fragment, null, Boolean(N) && !Y ? H ? React.createElement(_r, {
     mediaUrl: N,
     sectionType: "video",
-    className: "omlms-external-video",
+    className: "ohmylms-external-video",
     setMediaURL: D,
     handleExternalMedia: be,
     setIsExternalMedia: U
@@ -670,7 +656,7 @@ var xr = function (e) {
     showInput: Y,
     value: N
   }))), "audio" === E && React.createElement(React.Fragment, null, Boolean(z) && !Y ? H ? React.createElement("div", {
-    className: "omlms-media-audio-wrapper"
+    className: "ohmylms-media-audio-wrapper"
   }, React.createElement(_r, {
     mediaUrl: z,
     sectionType: "audio",
@@ -694,7 +680,7 @@ var xr = function (e) {
     alertDescription: (0, b.__)("Are you sure you want to remove this audio?", "ohmylms"),
     modalPosition: "top"
   }))) : React.createElement("div", {
-    className: "omlms-media-audio-wrapper"
+    className: "ohmylms-media-audio-wrapper"
   }, React.createElement("audio", {
     src: z,
     controls: !0
@@ -772,7 +758,7 @@ var xr = function (e) {
     align: "center",
     justify: "center" === _ ? "center" : "right" === _ ? "flex-end" : "flex-start",
     gap: 0,
-    className: "omlms-media-uploader-buttons ".concat(j || N ? "omlms-has-media" : "")
+    className: "ohmylms-media-uploader-buttons ".concat(j || N ? "ohmylms-has-media" : "")
   }, React.createElement(I.FlexWP, {
     gap: 2,
     justify: "flex-start",
@@ -782,7 +768,7 @@ var xr = function (e) {
   }, ("image" === d || "both" === d) && !Boolean(j) && "image_video" === E && React.createElement(React.Fragment, null, React.createElement(I.ButtonWP, {
     variant: "secondary",
     icon: React.createElement(ar, null),
-    className: "omlms-media-uploader-button",
+    className: "ohmylms-media-uploader-button",
     onClick: function () {
       return fe("image");
     }
@@ -794,8 +780,7 @@ var xr = function (e) {
     onClick: function () {
       return function () {
         var e;
-        if (t) return null != me && null !== (e = me.ai_model) && void 0 !== e && e.is_enable ? null != de && de.self || "anthropic" !== (null == de ? void 0 : de.platform) ? null != de && de.self || null != de && de.api_key ? void le(!0) : (O.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (O.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), O.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (se(!0), O.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void O.updateProModalButtonText(null));
-        se(!0);
+        return null != me && null !== (e = me.ai_model) && void 0 !== e && e.is_enable ? null != de && de.self || "anthropic" !== (null == de ? void 0 : de.platform) ? null != de && de.self || null != de && de.api_key ? void le(!0) : (O.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (O.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), O.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (se(!0), O.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void O.updateProModalButtonText(null));
       }();
     }
   }, (0, b.__)("Generate AI Photo", "ohmylms"))), ie && React.createElement(Er.default, {
@@ -816,7 +801,6 @@ var xr = function (e) {
     onClose: se
   })));
 };
-
 const Cr = (0, g.memo)(xr),
   Pr = function (e) {
     var t = e.titleName,
@@ -848,7 +832,7 @@ const Cr = (0, g.memo)(xr),
       O = void 0 === P || P,
       k = e.editorFor;
     return h().createElement("div", {
-      className: "common-entity-form omlms-".concat(p)
+      className: "common-entity-form ohmylms-".concat(p)
     }, ("image_video" === v || "image" === v) && h().createElement(h().Fragment, null, h().createElement(Cr, {
       src: i,
       videoSrc: l,
@@ -886,7 +870,7 @@ const Cr = (0, g.memo)(xr),
     }), h().createElement(I.SpacerWP, {
       marginBottom: 4
     }), h().createElement("div", {
-      className: "omlms-title-input-wrapper omlms-course-title"
+      className: "ohmylms-title-input-wrapper ohmylms-course-title"
     }, h().createElement(I.InputWP, {
       type: "text",
       value: Ge("Untitled" !== n ? n : ""),

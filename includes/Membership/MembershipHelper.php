@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Membership;
+namespace OhMyLMS\Membership;
 
 /**
  * Responsible to handle all course related calculations
@@ -26,7 +26,7 @@ class MembershipHelper {
 		 * @param array $membership_plans membership plans
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_save_membership_details', $membership_id, $membership_plans );
+		do_action( 'ohmylms_before_save_membership_details', $membership_id, $membership_plans );
 
 		$membership_id = (int) sanitize_text_field( $membership_id );
 
@@ -39,7 +39,7 @@ class MembershipHelper {
 			}
 		}
 
-		update_post_meta( $membership_id, 'omlms_membership_plans', $membership_plans );
+		update_post_meta( $membership_id, 'ohmylms_membership_plans', $membership_plans );
 
 		/**
 		 * Fires after membership details save
@@ -48,7 +48,7 @@ class MembershipHelper {
 		 * @param array $membership_plans membership plans
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_save_membership_details', $membership_id, $membership_plans );
+		do_action( 'ohmylms_after_save_membership_details', $membership_id, $membership_plans );
 
 		return array(
 			'status'  => 'success',
@@ -65,7 +65,7 @@ class MembershipHelper {
 	public static function get_courses_for_membership_plans(): array {
 		$courses = get_posts(
 			array(
-				'post_type'   => 'omlms-course',
+				'post_type'   => 'ohmylms-course',
 				'post_status' => 'publish',
 				'numberposts' => -1,
 			)
@@ -120,7 +120,7 @@ class MembershipHelper {
 	 * @since 1.0.0
 	 */
 	public static function get_plan_details( $membership_id, $plan_id ) {
-		$membership_details = get_post_meta( $membership_id, 'omlms_membership_plans', true );
+		$membership_details = get_post_meta( $membership_id, 'ohmylms_membership_plans', true );
 		foreach ( $membership_details as $index => $plan_details ) {
 			if ( $plan_details['plan_id'] == $plan_id ) {
 				return $plan_details;
@@ -139,7 +139,7 @@ class MembershipHelper {
 	 * @since 1.0.0
 	 */
 	public static function get_plan_price( $membership_id ): ?float {
-		$price = get_post_meta( $membership_id, 'omlms_membership_regular_price', true );
+		$price = get_post_meta( $membership_id, 'ohmylms_membership_regular_price', true );
 
 		if ( $price ) {
 			return number_format( $price, 2 );
@@ -184,7 +184,7 @@ class MembershipHelper {
 	 * @since 1.0.0
 	 */
 	public static function generate_billing_cycles( $order ): array {
-		$billing_period = get_post_meta( $order->id, 'omlms_membership_billing_period', true );
+		$billing_period = get_post_meta( $order->id, 'ohmylms_membership_billing_period', true );
 		$interval_unit  = self::get_interval_unit_by_frequency( $billing_period );
 
 		return array(
@@ -199,7 +199,7 @@ class MembershipHelper {
 				'pricing_scheme' => array(
 					'fixed_price' => array(
 						'value'         => number_format( $order->amount, 2 ),
-						'currency_code' => get_omlms_currency(),
+						'currency_code' => get_ohmylms_currency(),
 					),
 				),
 			),
@@ -217,7 +217,7 @@ class MembershipHelper {
 			'auto_bill_outstanding'     => true,
 			'setup_fee'                 => array(
 				'value'         => '0',
-				'currency_code' => get_omlms_currency(),
+				'currency_code' => get_ohmylms_currency(),
 			),
 			'setup_fee_failure_action'  => 'CANCEL',
 			'payment_failure_threshold' => 3,

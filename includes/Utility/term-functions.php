@@ -11,12 +11,12 @@
  *
  * @since 1.0.0
  */
-function creator_lms_get_course_terms( $course_id, $taxonomy, $args = array() ) {
+function ohmylms_get_course_terms( $course_id, $taxonomy, $args = array() ) {
 	if ( ! taxonomy_exists( $taxonomy ) ) {
 		return array();
 	}
 
-	$cache_key   = 'omlms_' . $taxonomy . md5( wp_json_encode( $args ) );
+	$cache_key   = 'ohmylms_' . $taxonomy . md5( wp_json_encode( $args ) );
 	$cache_group = 'course-single-' . $course_id;
 	$terms       = wp_cache_get( $cache_key, $cache_group );
 
@@ -44,7 +44,7 @@ function creator_lms_get_course_terms( $course_id, $taxonomy, $args = array() ) 
  *
  * @since 1.0.0
  */
-function creator_lms_get_object_terms( $object_id, $taxonomy, $field = null, $index_key = null ) {
+function ohmylms_get_object_terms( $object_id, $taxonomy, $field = null, $index_key = null ) {
 	$terms = get_the_terms( $object_id, $taxonomy );
 	if ( ! $terms || is_wp_error( $terms ) ) {
 		return array();

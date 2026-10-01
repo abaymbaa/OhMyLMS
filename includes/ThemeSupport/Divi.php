@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\ThemeSupport;
+namespace OhMyLMS\ThemeSupport;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,14 +11,14 @@ defined( 'ABSPATH' ) || exit;
  */
 class Divi {
 	public function init() {
-		add_filter( 'creator_lms_enqueue_styles', array( $this, 'enqueue_styles' ) );
+		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
 	public function enqueue_styles( $styles ) {
-		$styles['omlms-general'] = array(
-			'src'     => CREATOR_LMS_ASSETS_URL . ( '/theme-support/theme-divi.css' ),
+		$styles['ohmylms-general'] = array(
+			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-divi.css' ),
 			'deps'    => array(),
-			'version' => CREATOR_LMS_VERSION,
+			'version' => OHMYLMS_VERSION,
 			'media'   => 'all',
 			'has_rtl' => true,
 		);

@@ -2,13 +2,13 @@
 /**
  * WPBakery Manager
  *
- * Manages all WPBakery Page Builder elements for CreatorLMS
+ * Manages all WPBakery Page Builder elements for OhMyLMS
  *
- * @package OMLMS\WPBakery
+ * @package OhMyLMS\WPBakery
  * @since 1.0.0
  */
 
-namespace OMLMS\WPBakery;
+namespace OhMyLMS\WPBakery;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -43,11 +43,11 @@ class WPBakeryManager {
 		// Use multiple hooks to ensure elements are registered
 		add_action( 'vc_before_init', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'init' ), 20 );
-		add_filter( 'is_creator_lms_page', array( $this, 'filter_is_creator_lms_page' ) );
-		add_filter( 'is_creator_lms_checkout_page', array( $this, 'filter_is_creator_lms_page' ) );
+		add_filter( 'is_ohmylms_page', array( $this, 'filter_is_ohmylms_page' ) );
+		add_filter( 'is_ohmylms_checkout_page', array( $this, 'filter_is_ohmylms_page' ) );
 		
 		// Add WPBakery preview mode filter
-		add_filter( 'creator_lms_wpbakery_preview_mode', array( $this, 'is_wpbakery_preview_mode' ) );
+		add_filter( 'ohmylms_wpbakery_preview_mode', array( $this, 'is_wpbakery_preview_mode' ) );
 		
 		// Add script to handle real-time preview updates in WPBakery backend editor
 		add_action( 'admin_footer', array( $this, 'add_backend_editor_refresh_script' ) );
@@ -113,29 +113,27 @@ class WPBakeryManager {
 		// Define elements to register
 		$elements = array(
 			array(
-				'file'  => CREATOR_LMS_PATH . '/includes/WPBakery/Elements/CourseListElement.php',
-				'class' => '\OMLMS\WPBakery\Elements\CourseListElement',
+				'file'  => OHMYLMS_PATH . '/includes/WPBakery/Elements/CourseListElement.php',
+				'class' => '\OhMyLMS\WPBakery\Elements\CourseListElement',
 			),
 			array(
-				'file'  => CREATOR_LMS_PATH . '/includes/WPBakery/Elements/CheckoutElement.php',
-				'class' => '\OMLMS\WPBakery\Elements\CheckoutElement',
+				'file'  => OHMYLMS_PATH . '/includes/WPBakery/Elements/CheckoutElement.php',
+				'class' => '\OhMyLMS\WPBakery\Elements\CheckoutElement',
 			),
 		);
 
-		// Add pro elements if license is active
-		if ( creator_lms_is_pro_license() ) {
+		// Buy now and offer button elements
 			$elements[] = array(
-				'file'  => CREATOR_LMS_PATH . '/includes/WPBakery/Elements/BuyNowElement.php',
-				'class' => '\OMLMS\WPBakery\Elements\BuyNowElement',
+				'file'  => OHMYLMS_PATH . '/includes/WPBakery/Elements/BuyNowElement.php',
+				'class' => '\OhMyLMS\WPBakery\Elements\BuyNowElement',
 			);
 			$elements[] = array(
-				'file'  => CREATOR_LMS_PATH . '/includes/WPBakery/Elements/OfferButtonElement.php',
-				'class' => '\OMLMS\WPBakery\Elements\OfferButtonElement',
+				'file'  => OHMYLMS_PATH . '/includes/WPBakery/Elements/OfferButtonElement.php',
+				'class' => '\OhMyLMS\WPBakery\Elements\OfferButtonElement',
 			);
-		}
 
 		// Allow filtering of elements
-		$elements = apply_filters( 'creator_lms/wpbakery_elements', $elements );
+		$elements = apply_filters( 'ohmylms/wpbakery_elements', $elements );
 
 		// Include and register elements
 		foreach ( $elements as $element ) {
@@ -151,12 +149,12 @@ class WPBakeryManager {
 	}
 
     /**
-     * Filter to modify is_creator_lms_page check
+     * Filter to modify is_ohmylms_page check
      *
-     * @param bool $is_creator_lms_page Current value.
+     * @param bool $is_ohmylms_page Current value.
      * @return bool Modified value.
      */
-    public function filter_is_creator_lms_page( $is_creator_lms_page ) {
+    public function filter_is_ohmylms_page( $is_ohmylms_page ) {
         if( defined( 'WPB_VC_VERSION' ) ) {
 			return true;
 		}
@@ -166,7 +164,7 @@ class WPBakeryManager {
             if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
                 return true;
             }else {
-                return $is_creator_lms_page;
+                return $is_ohmylms_page;
             }
         }
 
@@ -174,21 +172,21 @@ class WPBakeryManager {
         if ( $screen && in_array( $screen->id, array( 'page', 'post' ) ) && defined( 'WPB_VC_VERSION' ) ) {
             // Check if WPBakery is active on this post/page
             global $post;
-            if ( $post && has_shortcode( $post->post_content, 'creator_lms_course_list' ) ) {
+            if ( $post && has_shortcode( $post->post_content, 'ohmylms_course_list' ) ) {
                 return true;
             }
-            if ( $post && has_shortcode( $post->post_content, 'creator_lms_checkout' ) ) {
+            if ( $post && has_shortcode( $post->post_content, 'ohmylms_checkout' ) ) {
                 return true;
             }
-            if ( $post && has_shortcode( $post->post_content, 'creator_lms_buy_now' ) ) {
+            if ( $post && has_shortcode( $post->post_content, 'ohmylms_buy_now' ) ) {
                 return true;
             }
-            if ( $post && has_shortcode( $post->post_content, 'creator_lms_offer_button' ) ) {
+            if ( $post && has_shortcode( $post->post_content, 'ohmylms_offer_button' ) ) {
                 return true;
             }
         }
         
-        return $is_creator_lms_page;
+        return $is_ohmylms_page;
     }
     
     /**
@@ -212,20 +210,20 @@ class WPBakeryManager {
                     if (view && view.model) {
                         var shortcode = view.model.get('shortcode');
                         // Handle Course List updates
-                        if (shortcode === 'creator_lms_course_list') {
+                        if (shortcode === 'ohmylms_course_list') {
                             setTimeout(function() {
                                 view.renderContent();
                             }, 100);
                         }
                         // Handle Checkout updates
-                        if (shortcode === 'creator_lms_checkout') {
+                        if (shortcode === 'ohmylms_checkout') {
                             setTimeout(function() {
                                 view.renderContent();
                                
                             }, 100);
                         }
                         // Handle Offer Button updates
-                        if (shortcode === 'creator_lms_offer_button') {
+                        if (shortcode === 'ohmylms_offer_button') {
                             setTimeout(function() {
                                 view.renderContent();
                             }, 100);
@@ -238,19 +236,19 @@ class WPBakeryManager {
                     if (view && view.model) {
                         var shortcode = view.model.get('shortcode');
                         // Handle Course List ready
-                        if (shortcode === 'creator_lms_course_list') {
+                        if (shortcode === 'ohmylms_course_list') {
                             setTimeout(function() {
                                 view.renderContent();
                             }, 100);
                         }
                         // Handle Checkout ready
-                        if (shortcode === 'creator_lms_checkout') {
+                        if (shortcode === 'ohmylms_checkout') {
                             setTimeout(function() {
                                 view.renderContent();
                             }, 100);
                         }
                         // Handle Offer Button ready
-                        if (shortcode === 'creator_lms_offer_button') {
+                        if (shortcode === 'ohmylms_offer_button') {
                             setTimeout(function() {
                                 view.renderContent();
                             }, 100);

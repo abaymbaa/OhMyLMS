@@ -2,16 +2,16 @@
 /**
  * SessionReminderScheduler class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes;
 
 /**
  * Class SessionReminderScheduler
  *
- * @package OMLMS\Integrations\GoogleMeet
+ * @package OhMyLMS\Integrations\GoogleMeet
  * @since 1.0.0
  */
 class SessionReminderScheduler {
@@ -24,14 +24,14 @@ class SessionReminderScheduler {
 	 */
 	public static function init() {
 		// Schedule reminders for upcoming sessions
-		\add_action( 'creatorlms_googlemeet_send_reminder', array( __CLASS__, 'send_session_reminder' ) );
+		\add_action( 'ohmylms_googlemeet_send_reminder', array( __CLASS__, 'send_session_reminder' ) );
 		
 		// Check for upcoming sessions every hour
-		if ( ! \wp_next_scheduled( 'creatorlms_googlemeet_check_sessions' ) ) {
-			\wp_schedule_event( time(), 'hourly', 'creatorlms_googlemeet_check_sessions' );
+		if ( ! \wp_next_scheduled( 'ohmylms_googlemeet_check_sessions' ) ) {
+			\wp_schedule_event( time(), 'hourly', 'ohmylms_googlemeet_check_sessions' );
 		}
 		
-		\add_action( 'creatorlms_googlemeet_check_sessions', array( __CLASS__, 'check_upcoming_sessions' ) );
+		\add_action( 'ohmylms_googlemeet_check_sessions', array( __CLASS__, 'check_upcoming_sessions' ) );
 	}
 
 	/**

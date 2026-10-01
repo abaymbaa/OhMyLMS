@@ -87,7 +87,7 @@ class CouponController extends RestController {
 
 	public function get_items( $request ) {
 		$args = array(
-			'post_type'      => 'omlms_coupon',
+			'post_type'      => 'ohmylms_coupon',
 			'posts_per_page' => !empty( $request['per_page'] ) ? intval( $request['per_page'] ) : -1,
 			'paged'          => !empty( $request['page'] ) ? intval( $request['page'] ) : 1,
 			'post_status'    => array( 'draft', 'publish' )
@@ -131,7 +131,7 @@ class CouponController extends RestController {
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
 			/* translators: %s: post type */
-			return new \WP_Error( 'creator_lms_rest_omlms_coupon_exists', __( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms_coupon_exists', __( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$coupon_id = $this->save_coupon( $request );
@@ -157,12 +157,12 @@ class CouponController extends RestController {
 		$status = isset( $request['status'] ) ? sanitize_key( $request['status'] ) : 'publish';
 
 		if ( ! $id || empty( $status ) ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_params', __( 'Invalid coupon ID or status.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_invalid_params', __( 'Invalid coupon ID or status.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$post = get_post( $id );
-		if ( ! $post || $post->post_type !== 'omlms_coupon' ) {
-			return new \WP_Error( 'creator_lms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+			return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$updated = wp_update_post( array(
@@ -192,7 +192,7 @@ class CouponController extends RestController {
 	public function update_item( $request ) {
 		if ( empty( $request['id'] ) ) {
 			/* translators: %s: post type */
-			return new \WP_Error( 'creator_lms_rest_omlms_coupon_not_exists', __( 'Cannot update %s.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms_coupon_not_exists', __( 'Cannot update %s.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$coupon_id = $this->save_coupon( $request );
@@ -224,12 +224,12 @@ class CouponController extends RestController {
 	public function get_item( $request ) {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		if ( ! $id ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_id', __( 'Invalid coupon ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'ohmylms_rest_invalid_id', __( 'Invalid coupon ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$post = get_post( $id );
-		if ( ! $post || $post->post_type !== 'omlms_coupon' ) {
-			return new \WP_Error( 'creator_lms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+			return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$response = $this->prepare_item_for_response( $post, $request );
@@ -247,18 +247,18 @@ class CouponController extends RestController {
 	public function delete_item( $request ) {
 		$ids = isset( $request['ids'] ) ? $request['ids'] : [];
 		if ( ! $ids ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_id', __( 'Invalid coupon ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'ohmylms_rest_invalid_id', __( 'Invalid coupon ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		foreach ( $ids as $id ) {
 			$post = get_post( $id );
-			if ( ! $post || $post->post_type !== 'omlms_coupon' ) {
-				return new \WP_Error( 'creator_lms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
+			if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+				return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 			}
 
 			$deleted = wp_delete_post( $id, true );
 			if ( ! $deleted ) {
-				return new \WP_Error( 'creator_lms_rest_cannot_delete', __( 'Could not delete coupon.', 'ohmylms' ), array( 'status' => 500 ) );
+				return new \WP_Error( 'ohmylms_rest_cannot_delete', __( 'Could not delete coupon.', 'ohmylms' ), array( 'status' => 500 ) );
 			}
 		}
 
@@ -313,7 +313,7 @@ class CouponController extends RestController {
 						$id_from_code = ecommerce_get_coupon_id_by_code( $coupon_code, $id );
 
 						if ( $id_from_code ) {
-							return new \WP_Error( 'creator_lms_rest_coupon_code_already_exists', __( 'The coupon code already exists', 'ohmylms' ), array( 'status' => 400 ) );
+							return new \WP_Error( 'ohmylms_rest_coupon_code_already_exists', __( 'The coupon code already exists', 'ohmylms' ), array( 'status' => 400 ) );
 						}
 						$coupon->set_code( $coupon_code );
 						break;
@@ -373,7 +373,7 @@ class CouponController extends RestController {
 
 		// Format decimal values.
 		foreach ( $format_decimal as $key ) {
-			$_data[ $key ] = omlms_format_decimal( $_data[ $key ], 2 );
+			$_data[ $key ] = ohmylms_format_decimal( $_data[ $key ], 2 );
 		}
 
 		// Format null values.

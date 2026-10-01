@@ -2,9 +2,9 @@ const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 const path=require('node:path');
 test('Communities React source loads, edits, validates and retries saving',async({page})=>{
- const credentials=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const credentials=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(credentials.username);await page.locator('#user_pass').fill(credentials.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
- for(const file of ['sdk/extensions.js','assets/dist/admin/creatorlms.js'])await page.route('**/build/'+file+'*',route=>route.fulfill({path:path.resolve('build/'+file),contentType:'application/javascript'}));
+ for(const file of ['sdk/extensions.js','assets/dist/admin/ohmylms.js'])await page.route('**/build/'+file+'*',route=>route.fulfill({path:path.resolve('build/'+file),contentType:'application/javascript'}));
  let community={id:912,title:'React community fixture',name:'React community fixture',slug:'react-community-fixture',description:'Study together',parent_id:null,visibility:'public',members:4,posts:2};
  let attempts=0;
  await page.route(/\/communities(?:\?|$)/,route=>route.fulfill({json:[community]}));
@@ -18,7 +18,7 @@ test('Communities React source loads, edits, validates and retries saving',async
  });
  await page.route(/\/courses\?search=/,route=>route.fulfill({json:[{id:913,name:'React course fixture',has_community:'no'}]}));
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms#/communities');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/communities');
  await expect.poll(()=>page.evaluate(()=>Object.keys(window.ohmylms?.extensions?.communityComponents||{}).length)).toBe(5);
  await expect(page.getByText('Community Spaces',{exact:true})).toBeVisible();
  await page.getByText('React community fixture',{exact:true}).click();

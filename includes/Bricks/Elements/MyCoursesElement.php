@@ -1,19 +1,19 @@
 <?php
 /**
- * CreatorLMS My Courses Element for Bricks Builder
+ * OhMyLMS My Courses Element for Bricks Builder
  *
  * Styling is handled entirely by ShortCodeMyCourses::output_custom_styles(),
  * which injects a scoped <style> block using the shortcode attrs. No Bricks
  * native CSS generation ('css' key) is used for style controls — that would
  * conflict with the shortcode's !important inline styles.
  *
- * @package OMLMS\Bricks\Elements
+ * @package OhMyLMS\Bricks\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\Bricks\Elements;
+namespace OhMyLMS\Bricks\Elements;
 
-use OMLMS\Shortcodes\ShortCodeMyCourses;
+use OhMyLMS\Shortcodes\ShortCodeMyCourses;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -22,15 +22,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class MyCoursesElement extends \Bricks\Element {
 
-	public $category = 'creator-lms';
-	public $name     = 'creator-lms-my-courses';
+	public $category = 'ohmylms';
+	public $name     = 'ohmylms-my-courses';
 	public $icon     = 'ti-id-badge';
 	public $keywords = array( 'my-courses', 'student', 'dashboard', 'creator', 'lms' );
-	public $scripts  = array( 'omlms-frontend' );
-	public $styles   = array( 'omlms-frontend' );
+	public $scripts  = array( 'ohmylms-frontend' );
+	public $styles   = array( 'ohmylms-frontend' );
 
 	public function get_label() {
-		return esc_html__( 'CreatorLMS My Courses', 'ohmylms' );
+		return esc_html__( 'OhMyLMS My Courses', 'ohmylms' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -569,7 +569,7 @@ class MyCoursesElement extends \Bricks\Element {
 	/**
 	 * Render element output.
 	 *
-	 * Wraps output in .creator-lms-page so the shortcode's CSS selectors match.
+	 * Wraps output in .ohmylms-page so the shortcode's CSS selectors match.
 	 *
 	 * @return void
 	 */
@@ -579,11 +579,11 @@ class MyCoursesElement extends \Bricks\Element {
 		$shortcode_attrs = $this->build_shortcode_attrs( $settings );
 
 		if ( $is_edit_mode ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
-			add_filter( 'creator_lms_bricks_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 		}
 
-		echo '<div class="creator-lms-page creator-lms">';
+		echo '<div class="ohmylms-page ohmylms">';
 
 		try {
 			ob_start();
@@ -593,8 +593,8 @@ class MyCoursesElement extends \Bricks\Element {
 			if ( '' !== $output ) {
 				echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} elseif ( $is_edit_mode ) {
-				echo '<div class="creator-lms-bricks-preview-notice">';
-				echo '<p>' . esc_html__( 'CreatorLMS My Courses — preview requires a logged-in student account.', 'ohmylms' ) . '</p>';
+				echo '<div class="ohmylms-bricks-preview-notice">';
+				echo '<p>' . esc_html__( 'OhMyLMS My Courses — preview requires a logged-in student account.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
 		} catch ( \Throwable $e ) {
@@ -602,17 +602,17 @@ class MyCoursesElement extends \Bricks\Element {
 				ob_end_clean();
 			}
 			if ( $is_edit_mode ) {
-				echo '<div class="creator-lms-bricks-preview-notice">';
-				echo '<p>' . esc_html__( 'CreatorLMS My Courses — render error.', 'ohmylms' ) . '</p>';
+				echo '<div class="ohmylms-bricks-preview-notice">';
+				echo '<p>' . esc_html__( 'OhMyLMS My Courses — render error.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
 		} finally {
 			if ( $is_edit_mode ) {
-				remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
-				remove_filter( 'creator_lms_bricks_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 			}
 		}
 
-		echo '</div>'; // .creator-lms-page
+		echo '</div>'; // .ohmylms-page
 	}
 }

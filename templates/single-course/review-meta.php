@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/review-meta.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version 1.0.0
  */
 
@@ -18,7 +18,7 @@ $rating_percentage = ($rating / 5) * 100;
 ?>
 <?php if ( '0' === $comment->comment_approved ) { ?>
 	<!-- <p class="meta">
-		<em class="creator-lms-review__awaiting-approval">
+		<em class="ohmylms-review__awaiting-approval">
 			<?php //esc_html_e( 'Your review is awaiting approval', 'ohmylms' ); ?>
 		</em>
 	</p> -->
@@ -27,5 +27,5 @@ $rating_percentage = ($rating / 5) * 100;
 <div class="review-content">
 	<p class="author-name"><?php echo get_comment_author($comment); ?></p>
 
-	<?php do_action('creator_lms_review_rating_area', $comment); ?>
+	<?php do_action('ohmylms_review_rating_area', $comment); ?>
 </div>

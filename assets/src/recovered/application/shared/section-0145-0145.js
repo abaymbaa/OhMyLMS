@@ -20,8 +20,8 @@ var iJ = function (e) {
     _ = function (e, t) {
       var n;
       v.updatePermalinkSettings({
-        creator_lms_permalink: {
-          value: aJ(aJ({}, null == h || null === (n = h.creator_lms_permalink) || void 0 === n ? void 0 : n.value), {}, oJ({}, t, e))
+        ohmylms_permalink: {
+          value: aJ(aJ({}, null == h || null === (n = h.ohmylms_permalink) || void 0 === n ? void 0 : n.value), {}, oJ({}, t, e))
         }
       });
     },
@@ -37,7 +37,7 @@ var iJ = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return v.setLoadingSetting(!0), e.n = 1, l()({
-                  path: "creator-lms/v1/settings/permalink"
+                  path: "ohmylms/v1/settings/permalink"
                 });
               case 1:
                 t = e.v, v.setPermalinkSettings(t), v.setLoadingSetting(!1);
@@ -67,7 +67,7 @@ var iJ = function (e) {
   }, []), React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     marginTop: 0,
@@ -81,9 +81,9 @@ var iJ = function (e) {
     marginBottom: 4
   }, React.createElement(Pf, {
     title: (0, b.__)("Course Base", "ohmylms"),
-    description: 'https://yoursite.com/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (t = h.creator_lms_permalink) || void 0 === t || null === (t = t.value) || void 0 === t ? void 0 : t.course_base, "}</code>/sample-course"),
+    description: 'https://yoursite.com/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (t = h.ohmylms_permalink) || void 0 === t || null === (t = t.value) || void 0 === t ? void 0 : t.course_base, "}</code>/sample-course"),
     inputType: "text",
-    value: (null == h || null === (n = h.creator_lms_permalink) || void 0 === n || null === (n = n.value) || void 0 === n ? void 0 : n.course_base) || "",
+    value: (null == h || null === (n = h.ohmylms_permalink) || void 0 === n || null === (n = n.value) || void 0 === n ? void 0 : n.course_base) || "",
     onChange: function (e) {
       return _(w(e), "course_base");
     },
@@ -97,9 +97,9 @@ var iJ = function (e) {
     color: "#EDF2FB"
   })), React.createElement(Pf, {
     title: (0, b.__)("Category Base", "ohmylms"),
-    description: 'https://yoursite.com/courses/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (r = h.creator_lms_permalink) || void 0 === r || null === (r = r.value) || void 0 === r ? void 0 : r.category_base, "}</code>/sample-category/"),
+    description: 'https://yoursite.com/courses/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (r = h.ohmylms_permalink) || void 0 === r || null === (r = r.value) || void 0 === r ? void 0 : r.category_base, "}</code>/sample-category/"),
     inputType: "text",
-    value: (null == h || null === (a = h.creator_lms_permalink) || void 0 === a || null === (a = a.value) || void 0 === a ? void 0 : a.category_base) || "",
+    value: (null == h || null === (a = h.ohmylms_permalink) || void 0 === a || null === (a = a.value) || void 0 === a ? void 0 : a.category_base) || "",
     onChange: function (e) {
       return _(w(e), "category_base");
     },
@@ -113,9 +113,9 @@ var iJ = function (e) {
     color: "#EDF2FB"
   })), React.createElement(Pf, {
     title: (0, b.__)("Lesson Base", "ohmylms"),
-    description: 'https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (o = h.creator_lms_permalink) || void 0 === o || null === (o = o.value) || void 0 === o ? void 0 : o.lesson_base, "}</code>/sample-lesson/"),
+    description: 'https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (o = h.ohmylms_permalink) || void 0 === o || null === (o = o.value) || void 0 === o ? void 0 : o.lesson_base, "}</code>/sample-lesson/"),
     inputType: "text",
-    value: (null == h || null === (i = h.creator_lms_permalink) || void 0 === i || null === (i = i.value) || void 0 === i ? void 0 : i.lesson_base) || "",
+    value: (null == h || null === (i = h.ohmylms_permalink) || void 0 === i || null === (i = i.value) || void 0 === i ? void 0 : i.lesson_base) || "",
     onChange: function (e) {
       return _(w(e), "lesson_base");
     },
@@ -129,9 +129,9 @@ var iJ = function (e) {
     color: "#EDF2FB"
   })), React.createElement(Pf, {
     title: (0, b.__)("Quiz Base", "ohmylms"),
-    description: ' https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (c = h.creator_lms_permalink) || void 0 === c || null === (c = c.value) || void 0 === c ? void 0 : c.quiz_base, "}</code>/sample-quiz/"),
+    description: ' https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(null == h || null === (c = h.ohmylms_permalink) || void 0 === c || null === (c = c.value) || void 0 === c ? void 0 : c.quiz_base, "}</code>/sample-quiz/"),
     inputType: "text",
-    value: (null == h || null === (u = h.creator_lms_permalink) || void 0 === u || null === (u = u.value) || void 0 === u ? void 0 : u.quiz_base) || "",
+    value: (null == h || null === (u = h.ohmylms_permalink) || void 0 === u || null === (u = u.value) || void 0 === u ? void 0 : u.quiz_base) || "",
     onChange: function (e) {
       return _(w(e), "quiz_base");
     },
@@ -144,9 +144,7 @@ var iJ = function (e) {
     isSaving: f
   }))));
 };
-
 const lJ = (0, g.memo)(iJ);
-
 function cJ() {
   var e,
     t,
@@ -233,7 +231,6 @@ function cJ() {
     };
   })();
 }
-
 function uJ(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -255,7 +252,6 @@ function uJ(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, uJ(e, t, n, r);
 }
-
 function sJ(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -265,7 +261,6 @@ function sJ(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function dJ(e) {
   return function () {
     var t = this,
@@ -282,7 +277,6 @@ function dJ(e) {
     });
   };
 }
-
 function mJ(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -322,13 +316,11 @@ function mJ(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function pJ(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var fJ = function (e) {
   var t = e.activeTab,
     n = e.handleSave,
@@ -353,7 +345,7 @@ var fJ = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return i.setLoadingSetting(!0), e.p = 1, e.n = 2, l()({
-                path: "creator-lms/v1/settings/advanced"
+                path: "ohmylms/v1/settings/advanced"
               });
             case 2:
               t = e.v, i.setAdvancedSettings(t), e.n = 4;
@@ -378,7 +370,7 @@ var fJ = function (e) {
       return cJ().w(function (e) {
         for (;;) switch (e.p = e.n) {
           case 0:
-            return p(!0), e.p = 1, (r = new URLSearchParams()).append("action", "omlms_delete_transient_cache"), r.append("nonce", (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.delete_cache_nonce) || ""), e.n = 2, fetch((null === (n = window.creator_lms_params) || void 0 === n ? void 0 : n.ajax_url) || "/wp-admin/admin-ajax.php", {
+            return p(!0), e.p = 1, (r = new URLSearchParams()).append("action", "ohmylms_delete_transient_cache"), r.append("nonce", (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.delete_cache_nonce) || ""), e.n = 2, fetch((null === (n = window.ohmylms_params) || void 0 === n ? void 0 : n.ajax_url) || "/wp-admin/admin-ajax.php", {
               method: "POST",
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -406,7 +398,7 @@ var fJ = function (e) {
         for (;;) switch (e.p = e.n) {
           case 0:
             return h(!0), e.p = 1, e.n = 2, l()({
-              path: "/creator-lms/v1/restore-default-pages",
+              path: "/ohmylms/v1/restore-default-pages",
               method: "POST"
             });
           case 2:
@@ -424,7 +416,7 @@ var fJ = function (e) {
   return React.createElement(React.Fragment, null, s, React.createElement(Ea, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     marginTop: 0,
@@ -484,11 +476,8 @@ var fJ = function (e) {
     isSaving: o
   }))));
 };
-
 const vJ = (0, g.memo)(fJ);
-
 var gJ = ["title", "description", "options", "defaultValue", "onChange", "radioType", "className", "headerFontSize", "spacerPadding", "gap"];
-
 function hJ() {
   return hJ = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -498,7 +487,6 @@ function hJ() {
     return e;
   }, hJ.apply(null, arguments);
 }
-
 var yJ = function (e) {
   var t = e.title,
     n = e.description,
@@ -543,9 +531,9 @@ var yJ = function (e) {
     justify: "space-between",
     className: "".concat(s)
   }, React.createElement(I.FlexItemWP, {
-    className: "omlms-advanced-radio-card-info-wrapper"
+    className: "ohmylms-advanced-radio-card-info-wrapper"
   }, React.createElement("div", {
-    className: "omlms-advanced-radio-card-info"
+    className: "ohmylms-advanced-radio-card-info"
   }, t && React.createElement(React.Fragment, null, React.createElement(I.HeadingWP, {
     level: "4",
     color: "#000D25",
@@ -556,21 +544,19 @@ var yJ = function (e) {
     color: "#687784",
     size: "14px"
   }, n))), React.createElement(I.FlexItemWP, {
-    className: "omlms-advanced-radio-card-wrapper"
+    className: "ohmylms-advanced-radio-card-wrapper"
   }, React.createElement(ls, hJ({
     options: a,
     defaultValue: o,
     onChange: i,
-    className: "omlms-advanced-radio-card ".concat(c),
+    className: "ohmylms-advanced-radio-card ".concat(c),
     radioType: c
   }, h))))));
 };
-
 const bJ = (0, g.memo)(yJ);
-
 var _J = ["title", "isItProFeature", "level"],
   wJ = function (e) {
-    (0, L.useIsPro)();
+    true;
     var t = e.title,
       n = (e.isItProFeature, e.level),
       r = void 0 === n ? 4 : n;
@@ -595,9 +581,7 @@ var _J = ["title", "isItProFeature", "level"],
       level: r
     }, t));
   };
-
 const EJ = (0, g.memo)(wJ);
-
 var SJ = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -619,15 +603,12 @@ var SJ = function () {
     transform: "matrix(-1 0 0 1 12 0)"
   })))));
 };
-
 const RJ = (0, g.memo)(SJ);
-
 function xJ(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var CJ = [{
     label: "Free Courses",
     value: "free"
@@ -718,7 +699,7 @@ var CJ = [{
       onClick: function () {
         return u(!0);
       },
-      className: "omlms-remove-row"
+      className: "ohmylms-remove-row"
     }))), React.createElement(I.SpacerWP, {
       margin: 0,
       marginBottom: 2
@@ -726,13 +707,13 @@ var CJ = [{
       placeholder: (0, b.__)("Select Course Display Criteria", "ohmylms"),
       defaultValue: null == t ? void 0 : t.row_display_criteria,
       value: null == t ? void 0 : t.row_display_criteria,
-      className: "omlms-global-settings-layout-config-select omlms-row-display-criteria",
+      className: "ohmylms-global-settings-layout-config-select ohmylms-row-display-criteria",
       onChange: function (e) {
         return r(e, n);
       },
       suffixIcon: React.createElement(HU, null),
       getPopupContainer: function () {
-        return document.getElementById("omlms-ant-group-dropdown-container");
+        return document.getElementById("ohmylms-ant-group-dropdown-container");
       },
       options: CJ
     })), React.createElement(EJ, {
@@ -743,7 +724,7 @@ var CJ = [{
       marginBottom: 2
     }), React.createElement(I.InputWP, {
       placeholder: (0, b.__)("Enter Row Heading", "ohmylms"),
-      className: "omlms-global-settings-row-heading",
+      className: "ohmylms-global-settings-row-heading",
       value: null == t ? void 0 : t.row_heading,
       onChange: function (e) {
         return a(e, n);
@@ -762,9 +743,7 @@ var CJ = [{
       isDelete: !0
     }));
   };
-
 const OJ = (0, g.memo)(PJ);
-
 function kJ(e) {
   return kJ = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -772,7 +751,6 @@ function kJ(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, kJ(e);
 }
-
 function jJ(e) {
   return function (e) {
     if (Array.isArray(e)) return AJ(e);
@@ -788,13 +766,11 @@ function jJ(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function AJ(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function MJ(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -805,7 +781,6 @@ function MJ(e, t) {
   }
   return n;
 }
-
 function TJ(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -817,7 +792,6 @@ function TJ(e) {
   }
   return e;
 }
-
 function IJ(e, t, n) {
   return (t = function (e) {
     var t = function (e) {

@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Pages;
+namespace OhMyLMS\Admin\Pages;
 
-use OMLMS\Abstracts\SettingsPage;
+use OhMyLMS\Abstracts\SettingsPage;
 use Gateways\Gateways;
 use function CodeRex\Ecommerce\ecommerce;
 
@@ -52,7 +52,7 @@ class PaymentGatewaySettings extends SettingsPage {
 			array(
 				'title'         => __( 'Guest checkout', 'ohmylms' ),
 				'desc'          => __( 'Enable guest checkout', 'ohmylms' ),
-				'id'            => 'creator_lms_guest_checkout',
+				'id'            => 'ohmylms_guest_checkout',
 				'default'       => 'no',
 				'type'          => 'checkbox',
 				'checkboxgroup' => 'start',
@@ -60,7 +60,7 @@ class PaymentGatewaySettings extends SettingsPage {
 			array(
 				'title'         => __( 'Content Protection', 'ohmylms' ),
 				'desc'          => __( 'Enable content protection', 'ohmylms' ),
-				'id'            => 'creator_lms_content_protection',
+				'id'            => 'ohmylms_content_protection',
 				'default'       => 'no',
 				'type'          => 'checkbox',
 				'checkboxgroup' => 'start',
@@ -68,14 +68,14 @@ class PaymentGatewaySettings extends SettingsPage {
 			array(
 				'title'         => __( 'Account login', 'ohmylms' ),
 				'desc'          => __( 'Enable login form for checkout', 'ohmylms' ),
-				'id'            => 'creator_lms_enable_login',
+				'id'            => 'ohmylms_enable_login',
 				'default'       => 'yes',
 				'type'          => 'checkbox',
 				'checkboxgroup' => 'start',
 			),array(
 				'title'         => __( 'Allow purchase without login', 'ohmylms' ),
 				'desc'          => __( 'Allow purchase without login', 'ohmylms' ),
-				'id'            => 'creator_lms_allow_purchase_without_login',
+				'id'            => 'ohmylms_allow_purchase_without_login',
 				'default'       => 'yes',
 				'type'          => 'checkbox',
 				'checkboxgroup' => 'start',
@@ -85,7 +85,7 @@ class PaymentGatewaySettings extends SettingsPage {
 				'id'   => 'payment_general_settings',
 			),
 		);
-		return apply_filters( 'creator_lms_payment_general_settings', $settings );
+		return apply_filters( 'ohmylms_payment_general_settings', $settings );
 	}
 
 
@@ -95,17 +95,17 @@ class PaymentGatewaySettings extends SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function output() {
-		global $creator_lms_current_section;
+		global $ohmylms_current_section;
 		// Load gateways so we can show any global options they may have.
 		$gateways = ecommerce()->gateways();
 
-		if ( $creator_lms_current_section ) {
+		if ( $ohmylms_current_section ) {
 			foreach ( $gateways->payment_gateways as $gateway ) {
-				if ( in_array( $creator_lms_current_section, array( $gateway->id, sanitize_title( get_class( $gateway ) ) ), true ) ) {
+				if ( in_array( $ohmylms_current_section, array( $gateway->id, sanitize_title( get_class( $gateway ) ) ), true ) ) {
 					if ( isset( $_GET['toggle_enabled'] ) ) {
 						$enabled = $gateway->get_option( 'enabled' );
 						if ( $enabled ) {
-							$gateway->settings['enabled'] = omlms_string_to_bool( $enabled ) ? 'no' : 'yes';
+							$gateway->settings['enabled'] = ohmylms_string_to_bool( $enabled ) ? 'no' : 'yes';
 						}
 					}
 					$gateway->admin_options();
@@ -123,21 +123,21 @@ class PaymentGatewaySettings extends SettingsPage {
 	 * @since 1.0.0
 	 */
 	public function save() {
-		global $creator_lms_current_section;
+		global $ohmylms_current_section;
 
 		$payment_gateways = ecommerce()->gateways();
 
 		$this->save_settings_for_current_section();
 
-		if ( ! $creator_lms_current_section ) {
+		if ( ! $ohmylms_current_section ) {
 			// If section is empty, we're on the main settings page. This makes sure 'gateway ordering' is saved.
 			$payment_gateways->process_admin_options();
 			$payment_gateways->init();
 		} else {
 			// There is a section - this may be a gateway or custom section.
 			foreach ( $payment_gateways->payment_gateways() as $gateway ) {
-				if ( in_array( $creator_lms_current_section, array( $gateway->id, sanitize_title( get_class( $gateway ) ) ), true ) ) {
-					do_action( 'creator_lms_update_options_payment_gateways_' . $gateway->id );
+				if ( in_array( $ohmylms_current_section, array( $gateway->id, sanitize_title( get_class( $gateway ) ) ), true ) ) {
+					do_action( 'ohmylms_update_options_payment_gateways_' . $gateway->id );
 					$payment_gateways->init();
 				}
 			}

@@ -1,10 +1,10 @@
 <?php 
 
-namespace OMLMS\Integrations\AIModel;
+namespace OhMyLMS\Integrations\AIModel;
 
 if (!defined('ABSPATH')) exit;
 
-use \OMLMS\Integrations\AIModel\Includes\Hooks;
+use \OhMyLMS\Integrations\AIModel\Includes\Hooks;
 
 class AIModel {
 
@@ -32,11 +32,11 @@ class AIModel {
     public function init_classes() {
         \add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\AIModel\Includes\Rest\AISettingsController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\AIModel\Includes\Rest\AISettingsController::instance(), 'register_routes' )
         );
         \add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\AIModel\Includes\Rest\ClaudeRequestController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\AIModel\Includes\Rest\ClaudeRequestController::instance(), 'register_routes' )
         );
         new Hooks();
     }

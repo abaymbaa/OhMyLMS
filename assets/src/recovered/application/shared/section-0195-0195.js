@@ -56,7 +56,7 @@ var H9 = function () {
       progression_delay: "",
       progression_state: "",
       card_class: "",
-      iconColor: "var(--omlms-primary-color)"
+      iconColor: "var(--ohmylms-primary-color)"
     }, {
       label: (0, b.__)("Total posts", "ohmylms"),
       value: "-",
@@ -131,7 +131,7 @@ var H9 = function () {
               return t.a(2);
             case 1:
               return t.p = 1, w(!0), t.n = 2, l()({
-                path: "/creatorlms/v1/community/spaces/".concat(n),
+                path: "/ohmylms/v1/community/spaces/".concat(n),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -241,7 +241,7 @@ var H9 = function () {
     }];
   return (0, g.useEffect)(function () {
     l()({
-      path: "/creatorlms/v1/communities/analytics",
+      path: "/ohmylms/v1/communities/analytics",
       method: "GET"
     }).then(function (e) {
       var t, n, a, o, l, c;
@@ -254,7 +254,7 @@ var H9 = function () {
         progression_delay: "",
         progression_state: "success",
         card_class: "card-earning",
-        iconColor: "var(--omlms-primary-color)"
+        iconColor: "var(--ohmylms-primary-color)"
       }, {
         label: (0, b.__)("Total posts", "ohmylms"),
         tooltip: (0, b.__)("Total posts in the community", "ohmylms"),
@@ -296,12 +296,12 @@ var H9 = function () {
   }, h().createElement(I.FlexWP, {
     gap: 4,
     align: "stretch",
-    className: "omlms-overview-cards-wrapper"
+    className: "ohmylms-overview-cards-wrapper"
   }, h().createElement(I.FlexItemWP, {
     style: {
       flex: "9"
     },
-    className: "omlms-overview-left-cards"
+    className: "ohmylms-overview-left-cards"
   }, h().createElement(I.FlexWP, {
     direction: "column",
     align: "space-between",
@@ -360,7 +360,7 @@ var H9 = function () {
       variant: "muted"
     }, e.label), e.tooltip && h().createElement(V.A, {
       text: e.tooltip,
-      className: "omlms-tooltip",
+      className: "ohmylms-tooltip",
       placement: "top"
     }, h().createElement(h().Fragment, null, h().createElement(Mt.A, null)))), h().createElement("span", {
       style: {

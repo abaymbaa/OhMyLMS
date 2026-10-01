@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Integrations;
+namespace OhMyLMS\Integrations;
 
 use Mint\MRM\DataBase\Tables\AutomationMetaSchema;
 use Mint\MRM\DataBase\Tables\AutomationSchema;
@@ -11,7 +11,7 @@ use MintMail\App\Internal\Automation\AutomationModel;
  *
  * Handles the creation, updating, deletion, and status management of automations in MailMint.
  *
- * @package OMLMS\Integrations
+ * @package OhMyLMS\Integrations
  * @since 1.0.0
  */
 class MailMint {
@@ -79,7 +79,7 @@ class MailMint {
                     {$search_terms} {$condition} meta.meta_key = %s AND meta.meta_value = %s 
                     ORDER BY automation.$order_by $order_type 
                     LIMIT %d, %d", 
-                    array( 'source', 'omlms', $offset, $limit )
+                    array( 'source', 'ohmylms', $offset, $limit )
                 ), ARRAY_A );
               
                 $count_query  = $wpdb->get_var( $wpdb->prepare(
@@ -87,7 +87,7 @@ class MailMint {
                     FROM $automation_table as automation 
                     LEFT JOIN $automation_meta_table AS meta ON automation.id = meta.automation_id 
                     {$search_terms} {$condition} meta.meta_key  = %s AND  meta.meta_value  = %s", 
-                    array( 'source', 'omlms' )
+                    array( 'source', 'ohmylms' )
                 ) );
             } else {
                 $select_query = $wpdb->get_results( $wpdb->prepare(
@@ -98,7 +98,7 @@ class MailMint {
                     AND automation.status = %s 
                     ORDER BY automation.$order_by $order_type 
                     LIMIT %d, %d", 
-                    array( 'source', 'omlms', $status, $offset, $limit )
+                    array( 'source', 'ohmylms', $status, $offset, $limit )
                 ), ARRAY_A );
     
                 $count_query  = $wpdb->get_var( $wpdb->prepare(
@@ -107,7 +107,7 @@ class MailMint {
                     LEFT JOIN $automation_meta_table AS meta ON automation.id = meta.automation_id 
                     {$search_terms} {$condition} meta.meta_key  = %s AND  meta.meta_value  = %s 
                     AND automation.status = %s", 
-                    array( 'source', 'omlms', $status )
+                    array( 'source', 'ohmylms', $status )
                 ) );
             }
     
@@ -195,7 +195,7 @@ class MailMint {
             $stat             = !empty( $data['showAnalyticsStat'] ) ? $data['showAnalyticsStat'] : false;
 
             // Update automation meta in MailMint
-            \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $automation_id, 'source', 'omlms' );
+            \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $automation_id, 'source', 'ohmylms' );
             \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $automation_id, 'enable_stats', $stat );
             \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $automation_id, '_at_most_date', maybe_serialize( $get_at_most_date ) );
 
@@ -360,7 +360,7 @@ class MailMint {
         if ( !$new_automation_id ) {
             return false;
         }
-        \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $new_automation_id, 'source', 'omlms' );
+        \MintMail\App\Internal\Automation\HelperFunctions::update_automation_meta( $new_automation_id, 'source', 'ohmylms' );
         $step_data = [];
 
         foreach ($automations['steps'] as $key => $step) {

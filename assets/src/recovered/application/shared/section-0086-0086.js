@@ -35,14 +35,14 @@ var sW = function (e) {
                   for (;;) switch (e.p = e.n) {
                     case 0:
                       return a = i.value, e.p = 1, e.n = 2, l()({
-                        path: "/creatorlms/v1/".concat(a.value, "/triggers")
+                        path: "/ohmylms/v1/".concat(a.value, "/triggers")
                       });
                     case 2:
                       null != (o = e.v) && o.success && null != o && o.data && (c = {
-                        course: ["creator_lms_course_completed", "creator_lms_manual_student_enrollment", "creator_lms_student_unenrolled"],
-                        lesson: ["creator_lms_lesson_completed"],
-                        quiz: ["creator_lms_quiz_submission", "creator_lms_quiz_completed"],
-                        assignment: ["creator_lms_after_assignment_submitted"]
+                        course: ["ohmylms_course_completed", "ohmylms_manual_student_enrollment", "ohmylms_student_unenrolled"],
+                        lesson: ["ohmylms_lesson_completed"],
+                        quiz: ["ohmylms_quiz_submission", "ohmylms_quiz_completed"],
+                        assignment: ["ohmylms_after_assignment_submitted"]
                       }[t] || [], u = o.data.filter(function (e) {
                         var r = "multiple" === e.trigger_event || c.includes(e.trigger_event),
                           a = e.content_type === t,
@@ -133,36 +133,36 @@ var sW = function (e) {
       };
     }();
   return u || f ? React.createElement("div", {
-    className: "omlms-integration-modal"
+    className: "ohmylms-integration-modal"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header"
+    className: "ohmylms-integration-modal__header"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header-left"
+    className: "ohmylms-integration-modal__header-left"
   }, React.createElement("h2", {
-    className: "omlms-integration-modal__title"
+    className: "ohmylms-integration-modal__title"
   }, (0, b.__)("Integrations", "ohmylms"))), React.createElement(I.ButtonWP, {
     icon: React.createElement(q.Icon, {
       icon: uN.A
     }),
     variant: "tertiary",
     onClick: c,
-    className: "omlms-integration-modal__close-btn"
+    className: "ohmylms-integration-modal__close-btn"
   })), React.createElement("div", {
-    className: "omlms-integration-modal__content"
+    className: "ohmylms-integration-modal__content"
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     title: !1,
     rows: 8
   }))) : React.createElement("div", {
-    className: "omlms-integration-modal"
+    className: "ohmylms-integration-modal"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header"
+    className: "ohmylms-integration-modal__header"
   }, React.createElement("div", {
-    className: "omlms-integration-modal__header-left"
+    className: "ohmylms-integration-modal__header-left"
   }, React.createElement("h2", {
-    className: "omlms-integration-modal__title"
+    className: "ohmylms-integration-modal__title"
   }, (0, b.__)("Integrations", "ohmylms"))), React.createElement("div", {
-    className: "omlms-integration-modal__header-right"
+    className: "ohmylms-integration-modal__header-right"
   }, React.createElement(I.ButtonWP, {
     icon: React.createElement(nf, null),
     variant: "primary",
@@ -177,7 +177,7 @@ var sW = function (e) {
     variant: "tertiary",
     onClick: c
   }))), React.createElement("div", {
-    className: "omlms-integration-modal__content"
+    className: "ohmylms-integration-modal__content"
   }, 0 === o.length ? React.createElement(I.CardWP, {
     variant: "secondary",
     isBorderless: !0,
@@ -188,7 +188,7 @@ var sW = function (e) {
     description: (0, b.__)("Please connect to a CRM integration (like WP Fusion) before setting up course integrations.", "ohmylms"),
     ctaText: (0, b.__)("Go to Integrations", "ohmylms"),
     ctaHandler: function () {
-      window.location.href = "/wp-admin/admin.php?page=creator-lms#/integrations";
+      window.location.href = "/wp-admin/admin.php?page=ohmylms#/integrations";
     }
   })) : 0 === d.length ? React.createElement(I.CardWP, {
     variant: "secondary",
@@ -211,7 +211,7 @@ var sW = function (e) {
     padding: "20px",
     margin: "0"
   }, React.createElement("table", {
-    className: "omlms-integration-list-table"
+    className: "ohmylms-integration-list-table"
   }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, (0, b.__)("Name", "ohmylms")), React.createElement("th", null, (0, b.__)("CRM", "ohmylms")), React.createElement("th", null, (0, b.__)("Action", "ohmylms")), React.createElement("th", null, (0, b.__)("Status", "ohmylms")), React.createElement("th", null, (0, b.__)("Actions", "ohmylms")))), React.createElement("tbody", null, d.map(function (e) {
     return React.createElement("tr", {
       key: e.id

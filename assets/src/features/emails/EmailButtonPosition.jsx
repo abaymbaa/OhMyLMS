@@ -25,7 +25,7 @@ export function createEmailButtonPosition(readRuntime) {
           justify={'space-between'}
           align={'start'}
           gap={'4'}
-          className={'omlms-email-button-position-wrapper'}
+          className={'ohmylms-email-button-position-wrapper'}
         >
           <Controls.FlexItemWP
             style={{
@@ -48,13 +48,13 @@ export function createEmailButtonPosition(readRuntime) {
             style={{
               marginLeft: 'auto',
             }}
-            className={'omlms-email-button-position-options'}
+            className={'ohmylms-email-button-position-options'}
           >
             <Controls.RadioGroupWP
               onChange={function (e) {
                 return (function (e, n, r) {
                   t(
-                    'creator_lms_email_button_possition',
+                    'ohmylms_email_button_possition',
                     (function (e, t, n) {
                       return (
                         (t = (function (e) {
@@ -83,7 +83,7 @@ export function createEmailButtonPosition(readRuntime) {
                   );
                 })(0, 0, e);
               }}
-              value={null == e ? void 0 : e.creator_lms_email_button_possition}
+              value={null == e ? void 0 : e.ohmylms_email_button_possition}
               options={[
                 {
                   value: 'left',

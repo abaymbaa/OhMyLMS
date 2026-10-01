@@ -2,18 +2,18 @@
 jQuery(function ($) {
     'use strict';
 
-    if (typeof Stripe === 'undefined' || typeof omlms_stripe_intents_params === 'undefined') {
-        console.error('Stripe.js or omlms_stripe_intents_params not loaded.');
+    if (typeof Stripe === 'undefined' || typeof ohmylms_stripe_intents_params === 'undefined') {
+        console.error('Stripe.js or ohmylms_stripe_intents_params not loaded.');
         $('#stripe-error-message').text('Error: Payment gateway script not loaded correctly. Please contact support.');
         return;
     }
 
     let stripe;
     let elements;
-    let paymentForm = $('form.creator-lms-checkout-form');
-    const isThankYouPage = window.location.pathname.includes('cr-order-received');
+    let paymentForm = $('form.ohmylms-checkout-form');
+    const isThankYouPage = (window.location.pathname.includes('ohmylms-order-received') || window.location.pathname.includes('cr-order-received'));
     $('#payment_method_stripe').on('change', async function () {
-        stripe = Stripe(omlms_stripe_intents_params.publishableKey);
+        stripe = Stripe(ohmylms_stripe_intents_params.publishableKey);
         if (!paymentForm.length) {
             paymentForm = $('#payment-element').closest('form');
         }
@@ -31,8 +31,8 @@ jQuery(function ($) {
         if (!isThankYouPage) {
             elements = stripe.elements({
                 mode: 'payment',
-                amount: parseInt(omlms_stripe_intents_params.amount_in_cents || 100),
-                currency: omlms_stripe_intents_params.currency || 'usd',
+                amount: parseInt(ohmylms_stripe_intents_params.amount_in_cents || 100),
+                currency: ohmylms_stripe_intents_params.currency || 'usd',
                 loader: 'always',
                 paymentMethodCreation: 'manual',
             });
@@ -99,10 +99,10 @@ jQuery(function ($) {
 
             try {
                 const response = await $.ajax({
-                    url: omlms_stripe_intents_params.ajax_url,
+                    url: ohmylms_stripe_intents_params.ajax_url,
                     type: 'POST',
                     dataType: 'json',
-                    data: paymentForm.serialize() + '&action=creator_lms_checkout&payment_method=stripe&stripe_source=' + paymentMethod.id
+                    data: paymentForm.serialize() + '&action=ohmylms_checkout&payment_method=stripe&stripe_source=' + paymentMethod.id
                 });
 
                 if (response.result === 'requires_action') {
@@ -117,14 +117,14 @@ jQuery(function ($) {
                     if (error) {
                         let errorMsg = error.message;
                         if (error.type === "card_error" || error.type === "validation_error") {
-                            $('.creator-lms-place-order-button .creator-lms-loader').hide();
-                            $('.creator-lms-place-order-button').prop('disabled', false);
-                            $('.omlms-notices-wrapper').empty();
+                            $('.ohmylms-place-order-button .ohmylms-loader').hide();
+                            $('.ohmylms-place-order-button').prop('disabled', false);
+                            $('.ohmylms-notices-wrapper').empty();
                             submit_error(error.message);
                         } else {
-                            $('.creator-lms-place-order-button .creator-lms-loader').hide();
-                            $('.creator-lms-place-order-button').prop('disabled', false);
-                            $('.omlms-notices-wrapper').empty();
+                            $('.ohmylms-place-order-button .ohmylms-loader').hide();
+                            $('.ohmylms-place-order-button').prop('disabled', false);
+                            $('.ohmylms-notices-wrapper').empty();
                             submit_error(error.message);
                         }
                         setLoading(false);
@@ -133,15 +133,15 @@ jQuery(function ($) {
                     if (paymentIntent) {
                         handleServerResponse(paymentIntent);
                     } else {
-                        showMessage(omlms_stripe_intents_params.error_prefix + "Payment requires action but no redirect occurred and no payment intent was returned.");
+                        showMessage(ohmylms_stripe_intents_params.error_prefix + "Payment requires action but no redirect occurred and no payment intent was returned.");
                         setLoading(false);
                     }
                     return; // Exit after handling requires_action
 
                 } else if (response.result === 'succeeded' || response.result === 'processing' || response.result === 'requires_capture') {
                     showMessage("Payment processed! Redirecting...");
-                    if (omlms_stripe_intents_params.return_url) {
-                        window.location.href = omlms_stripe_intents_params.return_url +
+                    if (ohmylms_stripe_intents_params.return_url) {
+                        window.location.href = ohmylms_stripe_intents_params.return_url +
                                 '&payment_intent=' + (response.payment_intent_id || '') +
                                 '&payment_intent_client_secret=' + (response.client_secret || '');
                     }
@@ -150,23 +150,23 @@ jQuery(function ($) {
                 } else if (response.success) {
                     window.location.href = response.redirect;
                 }else {
-                    $('.creator-lms-place-order-button .creator-lms-loader').hide();
-                    $('.creator-lms-place-order-button').prop('disabled', false);
-                    $('.omlms-notices-wrapper').empty();
+                    $('.ohmylms-place-order-button .ohmylms-loader').hide();
+                    $('.ohmylms-place-order-button').prop('disabled', false);
+                    $('.ohmylms-notices-wrapper').empty();
                     submit_error(response.message);
                     return;
                 }
 
                 if ( response.message ) {
-                    $('.creator-lms-place-order-button .creator-lms-loader').hide();
-                    $('.creator-lms-place-order-button').prop('disabled', false);
-                    $('.omlms-notices-wrapper').empty();
+                    $('.ohmylms-place-order-button .ohmylms-loader').hide();
+                    $('.ohmylms-place-order-button').prop('disabled', false);
+                    $('.ohmylms-notices-wrapper').empty();
                     submit_error(response.message);
                 }
             } catch (error) {
-                $('.creator-lms-place-order-button .creator-lms-loader').hide();
-                $('.creator-lms-place-order-button').prop('disabled', false);
-                $('.omlms-notices-wrapper').empty();
+                $('.ohmylms-place-order-button .ohmylms-loader').hide();
+                $('.ohmylms-place-order-button').prop('disabled', false);
+                $('.ohmylms-notices-wrapper').empty();
                 submit_error(error.message);
                 console.log('Error during AJAX request:', error);
                 return;
@@ -192,9 +192,9 @@ jQuery(function ($) {
         // If we have a redirect status, handle it immediately
         if (redirectStatus) {
             if (redirectStatus === 'failed') {
-                if (window.location.pathname.includes('cr-order-received')) {
-                    $('.creator-lms-thankyou-title').text(omlms_stripe_intents_params.error_prefix + "Payment was not completed. Please try again.");
-                    $('.creator-lms-thankyou-text, .creator-lms-thankyou-content, .creator-lms-btn-area').remove();
+                if ((window.location.pathname.includes('ohmylms-order-received') || window.location.pathname.includes('cr-order-received'))) {
+                    $('.ohmylms-thankyou-title').text(ohmylms_stripe_intents_params.error_prefix + "Payment was not completed. Please try again.");
+                    $('.ohmylms-thankyou-text, .ohmylms-thankyou-content, .ohmylms-btn-area').remove();
                 }
                 return;
             }
@@ -208,7 +208,7 @@ jQuery(function ($) {
         if (paymentIntent) {
             handleServerResponse(paymentIntent);
         } else {
-            showMessage(omlms_stripe_intents_params.error_prefix + "Could not retrieve Payment Intent status.");
+            showMessage(ohmylms_stripe_intents_params.error_prefix + "Could not retrieve Payment Intent status.");
             setLoading(false);
         }
     }
@@ -223,8 +223,8 @@ jQuery(function ($) {
             case "succeeded":
                 showMessage("Payment succeeded! Redirecting...");
                 // The server-side process_payment function will handle order updates upon return_url hit
-                if (omlms_stripe_intents_params.return_url) {
-                    window.location.href = omlms_stripe_intents_params.return_url + '&payment_intent=' + paymentIntent.id + '&payment_intent_client_secret=' + paymentIntent.client_secret;
+                if (ohmylms_stripe_intents_params.return_url) {
+                    window.location.href = ohmylms_stripe_intents_params.return_url + '&payment_intent=' + paymentIntent.id + '&payment_intent_client_secret=' + paymentIntent.client_secret;
                 }
                 break;
             case "processing":
@@ -240,18 +240,18 @@ jQuery(function ($) {
                     window.location.href = paymentIntent.next_action.redirect_to_url.url; // Redirect to Stripe for authentication
                 } else {
                     // Fallback message if no specific redirect action
-                    showMessage(omlms_stripe_intents_params.error_prefix + "Payment requires further action but no redirect URL was provided.");
+                    showMessage(ohmylms_stripe_intents_params.error_prefix + "Payment requires further action but no redirect URL was provided.");
                 }
                 break;
             case "requires_capture":
                  showMessage("Payment authorized and requires capture. Redirecting...");
                  // The server-side process_payment function will handle order updates upon return_url hit
-                 if (omlms_stripe_intents_params.return_url) {
-                    window.location.href = omlms_stripe_intents_params.return_url + '&payment_intent=' + paymentIntent.id + '&payment_intent_client_secret=' + paymentIntent.client_secret;
+                 if (ohmylms_stripe_intents_params.return_url) {
+                    window.location.href = ohmylms_stripe_intents_params.return_url + '&payment_intent=' + paymentIntent.id + '&payment_intent_client_secret=' + paymentIntent.client_secret;
                 }
                 break;
             default:
-                showMessage(omlms_stripe_intents_params.error_prefix + "Unexpected payment status: " + paymentIntent.status);
+                showMessage(ohmylms_stripe_intents_params.error_prefix + "Unexpected payment status: " + paymentIntent.status);
                 break;
         }
     }
@@ -282,31 +282,31 @@ jQuery(function ($) {
 
     function submit_error( error_message ) {
         console.log( error_message );
-        $( '.omlms-notices-wrapper' ).empty();
-        $( '.omlms-NoticeGroup-checkout, .omlms-error, .omlms-message, .is-error, .is-success' ).remove();
-        $( '.omlms-notices-wrapper' ).prepend( '<div class="creator-lms-checkout-notice">' + error_message + '</div>' );
+        $( '.ohmylms-notices-wrapper' ).empty();
+        $( '.ohmylms-NoticeGroup-checkout, .ohmylms-error, .ohmylms-message, .is-error, .is-success' ).remove();
+        $( '.ohmylms-notices-wrapper' ).prepend( '<div class="ohmylms-checkout-notice">' + error_message + '</div>' );
 
-        if( $(".omlms-NoticeGroup .omlms-error li").length > 0 ){
-            let getErrorLength = $(".omlms-NoticeGroup .omlms-error li").length;
+        if( $(".ohmylms-NoticeGroup .ohmylms-error li").length > 0 ){
+            let getErrorLength = $(".ohmylms-NoticeGroup .ohmylms-error li").length;
             if(getErrorLength == 1){
-                $(".creator-lms-checkout-notice").addClass('single-error');
+                $(".ohmylms-checkout-notice").addClass('single-error');
 
             }else {
-                $(".creator-lms-checkout-notice").removeClass('single-error');
+                $(".ohmylms-checkout-notice").removeClass('single-error');
             }
 
             if(2 < getErrorLength){
-                $(".creator-lms-checkout-notice").addClass('more-then-two-error');
+                $(".ohmylms-checkout-notice").addClass('more-then-two-error');
 
             }else {
-                $(".creator-lms-checkout-notice").removeClass('more-then-two-error');
+                $(".ohmylms-checkout-notice").removeClass('more-then-two-error');
             }
         }
         scroll_to_notices();
     }
 
     function scroll_to_notices() {
-        var scrollElement   = $( '.omlms-NoticeGroup-updateOrderReview, .omlms-notices-wrapper' );
+        var scrollElement   = $( '.ohmylms-NoticeGroup-updateOrderReview, .ohmylms-notices-wrapper' );
 
         if ( ! scrollElement.length ) {
             scrollElement = $( 'form.checkout' );

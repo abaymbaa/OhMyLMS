@@ -217,12 +217,12 @@
     label: '900 - Black',
     value: 900
   }];
-  registerBlockType('creator-lms/my-courses', {
+  registerBlockType('ohmylms/my-courses', {
     title: __('OhMyLMS My Courses', 'ohmylms'),
     description: __('Display the OhMyLMS student my courses page with course management functionality.', 'ohmylms'),
     icon: 'book',
-    category: 'creator-lms',
-    keywords: [__('my courses', 'ohmylms'), __('courses', 'ohmylms'), __('student', 'ohmylms'), __('enrolled', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],
+    category: 'ohmylms',
+    keywords: [__('my courses', 'ohmylms'), __('courses', 'ohmylms'), __('student', 'ohmylms'), __('enrolled', 'ohmylms'), __('ohmylms', 'ohmylms'), __('ohmylms', 'ohmylms')],
     supports: {
       align: true,
       html: false
@@ -234,12 +234,12 @@
 
       // Apply my courses block styles immediately when editor loads
       wp.element.useEffect(function () {
-        var styleId = document.getElementById('creator-lms-my-courses-block-style');
+        var styleId = document.getElementById('ohmylms-my-courses-block-style');
         if (!styleId) {
           styleId = document.createElement('style');
-          styleId.id = 'creator-lms-my-courses-block-style';
+          styleId.id = 'ohmylms-my-courses-block-style';
           styleId.innerHTML = `
-						.wp-block-creator-lms-my-courses .creator-lms-dashboard {
+						.wp-block-ohmylms-my-courses .ohmylms-dashboard {
 							min-height: 400px;
 						}
 					`;
@@ -797,17 +797,17 @@
 
       // Use ServerSideRender to show the real my courses in editor
       var serverSideRender = createElement(ServerSideRender, {
-        block: 'creator-lms/my-courses',
+        block: 'ohmylms/my-courses',
         attributes: validatedAttributes,
         httpMethod: 'POST'
       });
       return createElement(Fragment, {}, inspectorControls,
       // The block's own editor-only <style> override (rendered server-side
-      // in MyCoursesBlock::render_block()) is scoped to `.wp-block-creator-lms-my-courses`,
+      // in MyCoursesBlock::render_block()) is scoped to `.wp-block-ohmylms-my-courses`,
       // which WordPress only ever attaches via useBlockProps() - this block doesn't
       // use it, so without this wrapper that CSS never matches anything.
       createElement('div', {
-        className: 'wp-block-creator-lms-my-courses'
+        className: 'wp-block-ohmylms-my-courses'
       }, serverSideRender));
     },
     save: function () {

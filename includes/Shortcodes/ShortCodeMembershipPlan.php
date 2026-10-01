@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,13 +11,13 @@ defined( 'ABSPATH' ) || exit;
  * membership archive page (templates/archive-membership.php), so the
  * shortcode matches that page's design wherever it's placed.
  *
- * Usage: [creator_lms_membership_plan title="Pick a plan"]
+ * Usage: [ohmylms_membership_plan title="Pick a plan"]
  * `title` overrides the "Select plan that works best for you." heading
  * for this instance only.
  *
  * Class ShortCodeMembershipPlan
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 class ShortCodeMembershipPlan {
@@ -43,40 +43,40 @@ class ShortCodeMembershipPlan {
 				'title' => '',
 			),
 			$atts,
-			'creator_lms_membership_plan'
+			'ohmylms_membership_plan'
 		);
 
 		$title_filter = self::apply_custom_title( $atts['title'] );
 
-		do_action( 'creator_lms_membership_before_main_content' );
+		do_action( 'ohmylms_membership_before_main_content' );
 		?>
-		<section class="creator-lms-membership">
-			<div class="creator-lms-container">
+		<section class="ohmylms-membership">
+			<div class="ohmylms-container">
 				<?php
-				do_action( 'creator_lms_membership_section_header' );
+				do_action( 'ohmylms_membership_section_header' );
 
 				$query = new \WP_Query(
 					array(
-						'post_type'      => CREATOR_LMS_MEMBERSHIP_CPT,
+						'post_type'      => OHMYLMS_MEMBERSHIP_CPT,
 						'posts_per_page' => 10,
 					)
 				);
 
 				if ( $query->have_posts() ) {
-					do_action( 'creator_lms_before_membership_loop' );
+					do_action( 'ohmylms_before_membership_loop' );
 
-					creator_lms_membership_loop_start();
+					ohmylms_membership_loop_start();
 
 					while ( $query->have_posts() ) {
 						$query->the_post();
-						omlms_get_template_part( 'content', 'membership' );
+						ohmylms_get_template_part( 'content', 'membership' );
 					}
 
-					creator_lms_membership_loop_end();
+					ohmylms_membership_loop_end();
 
-					do_action( 'creator_lms_after_membership_loop' );
+					do_action( 'ohmylms_after_membership_loop' );
 				} else {
-					do_action( 'creator_lms_no_membership' );
+					do_action( 'ohmylms_no_membership' );
 				}
 
 				wp_reset_postdata();
@@ -84,7 +84,7 @@ class ShortCodeMembershipPlan {
 			</div>
 		</section>
 		<?php
-		do_action( 'creator_lms_membership_after_main_content' );
+		do_action( 'ohmylms_membership_after_main_content' );
 
 		self::remove_custom_title( $title_filter );
 	}
@@ -104,7 +104,7 @@ class ShortCodeMembershipPlan {
 		$filter = function () use ( $title ) {
 			return $title;
 		};
-		add_filter( 'creator_lms_membership_archive_title', $filter );
+		add_filter( 'ohmylms_membership_archive_title', $filter );
 
 		return $filter;
 	}
@@ -118,12 +118,12 @@ class ShortCodeMembershipPlan {
 	 */
 	public static function remove_custom_title( $filter ): void {
 		if ( $filter ) {
-			remove_filter( 'creator_lms_membership_archive_title', $filter );
+			remove_filter( 'ohmylms_membership_archive_title', $filter );
 		}
 	}
 
 	/**
-	 * Read the `title` attribute out of a raw [creator_lms_membership_plan]
+	 * Read the `title` attribute out of a raw [ohmylms_membership_plan]
 	 * shortcode string, even when that shortcode is never executed via
 	 * do_shortcode() (e.g. the default membership page's content is bypassed
 	 * by TemplateLoader in favor of archive-membership.php).
@@ -133,11 +133,11 @@ class ShortCodeMembershipPlan {
 	 * @since 1.0.0
 	 */
 	public static function extract_title_from_content( string $content ): string {
-		if ( '' === $content || ! has_shortcode( $content, 'creator_lms_membership_plan' ) ) {
+		if ( '' === $content || ! has_shortcode( $content, 'ohmylms_membership_plan' ) ) {
 			return '';
 		}
 
-		$pattern = get_shortcode_regex( array( 'creator_lms_membership_plan' ) );
+		$pattern = get_shortcode_regex( array( 'ohmylms_membership_plan' ) );
 		if ( ! preg_match( '/' . $pattern . '/s', $content, $matches ) ) {
 			return '';
 		}

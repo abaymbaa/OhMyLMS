@@ -2,9 +2,9 @@
 /**
  * Template for displaying login form.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/form-login.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/form-login.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -19,10 +19,10 @@ if ( is_user_logged_in() ) {
 
 <?php
 
-creator_lms_login_form(
+ohmylms_login_form(
 	array(
 		'message'     => '',
-		'redirect_to' => creator_lms_get_checkout_url(),
+		'redirect_to' => ohmylms_get_checkout_url(),
 		'hidden'      => true,
 	)
 );

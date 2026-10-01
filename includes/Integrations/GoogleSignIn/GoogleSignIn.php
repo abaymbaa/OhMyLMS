@@ -2,13 +2,13 @@
 /**
  * Google Sign-In addon bootstrap.
  *
- * @package OMLMS\Integrations\GoogleSignIn
+ * @package OhMyLMS\Integrations\GoogleSignIn
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleSignIn;
+namespace OhMyLMS\Integrations\GoogleSignIn;
 
-use OMLMS\Rest\V1\AuthController;
+use OhMyLMS\Rest\V1\AuthController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

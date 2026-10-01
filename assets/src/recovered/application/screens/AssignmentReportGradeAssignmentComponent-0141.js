@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var fK = function () {
-  HG("creator-lms", "assignments");
+  HG("ohmylms", "assignments");
   var e = (0, y.useDispatch)(T.default),
     t = mK((0, g.useState)([]), 2),
     n = t[0],
@@ -37,7 +37,7 @@ var fK = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, s(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/assignment/".concat(m, "/report/").concat(p),
+                path: "/ohmylms/v1/assignment/".concat(m, "/report/").concat(p),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -81,7 +81,7 @@ var fK = function () {
                 note: E,
                 status: (null == o ? void 0 : o.pass_marks) <= h ? "passed" : "failed"
               }], t.n = 1, l()({
-                path: "/creator-lms/v1/assignment/".concat(m, "/report/").concat(p),
+                path: "/ohmylms/v1/assignment/".concat(m, "/report/").concat(p),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"

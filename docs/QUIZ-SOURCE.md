@@ -28,4 +28,4 @@ Creation fixtures and question selection in this browser test use REST/store API
 
 Edit the native files, then run `npm run build`, `npm test`, `npm run lint`, and the browser suite using isolated credentials. See DEVELOPMENT.md for the source-asset switch and rollback. Never rerun `extract-quiz-components.mjs` over authored edits; it is a one-time migration utility, not a build step.
 
-The quiz components currently ship through the existing whole-application `OMLMS_SOURCE_ASSETS` switch; there is no quiz-only production switch. Do not enable it on math until the remaining acceptance gates and site smoke test pass. The latest read-only math homepage request, including an elevated retry, obtained no HTTP response.
+The quiz components currently ship through the existing whole-application `OHMYLMS_SOURCE_ASSETS` switch; there is no quiz-only production switch. Do not enable it on math until the remaining acceptance gates and site smoke test pass. The latest read-only math homepage request, including an elevated retry, obtained no HTTP response.

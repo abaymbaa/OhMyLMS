@@ -4,8 +4,8 @@ function crator_lms_get_question_ans_by_question_id($id){return array_values(arr
 function check($condition,$message){if(!$condition)throw new RuntimeException($message);}
 $GLOBALS['options']=[['id'=>1,'answer'=>'A','is_correct'=>1],['id'=>2,'answer'=>'B','is_correct'=>1]];
 $q=new class {function get_id(){return 1;} function get_questions(){return $GLOBALS['options'];}};
-use OMLMS\Extensions\QuestionTypes as Q;
-use OMLMS\Extensions\Registry as R;
+use OhMyLMS\Extensions\QuestionTypes as Q;
+use OhMyLMS\Extensions\Registry as R;
 Q::register_defaults();
 check(count(R::all('question'))===9,'All built-in types registered');
 check(Q::grade_builtin('multiple-choice',['2','1'],$q)['correct'],'Choice order must not affect grade');

@@ -32,7 +32,7 @@ var T8 = function () {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, m(!0), e.n = 1, l()({
-                  path: "/creator-lms/v1/courses?search=".concat(t, "&post_status=publish"),
+                  path: "/ohmylms/v1/courses?search=".concat(t, "&post_status=publish"),
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"
@@ -103,7 +103,7 @@ var T8 = function () {
     u(t);
   }, []), React.createElement(I.SpacerWP, {
     marginTop: 4,
-    className: "omlms-membership-plan-course-section"
+    className: "ohmylms-membership-plan-course-section"
   }, React.createElement(Ea, {
     isBorderless: !0,
     variant: "secondary"

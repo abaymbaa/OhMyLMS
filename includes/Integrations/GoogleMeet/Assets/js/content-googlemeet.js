@@ -52,7 +52,7 @@
          * Auto-refresh page when meeting status changes
          */
         initAutoRefresh: function() {
-            const contentEl = $('.creatorlms-googlemeet-content');
+            const contentEl = $('.ohmylms-googlemeet-content');
             
             if (!contentEl.length) {
                 return;
@@ -68,7 +68,7 @@
          * Check if meeting status has changed
          */
         checkMeetingStatus: function() {
-            const meetingId = $('.creatorlms-googlemeet-content').data('meeting-id');
+            const meetingId = $('.ohmylms-googlemeet-content').data('meeting-id');
             
             if (!meetingId) {
                 return;

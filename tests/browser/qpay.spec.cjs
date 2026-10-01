@@ -12,19 +12,19 @@ async function setup(page) {
     if (route.request().url().endsWith('/admin-ajax.php')) {
       const data = new URLSearchParams(route.request().postData());
       let json;
-      if (data.get('action') === 'creator_lms_checkout') { calls.checkout++; json = pending; }
+      if (data.get('action') === 'ohmylms_checkout') { calls.checkout++; json = pending; }
       else {
         expect(data.get('payment_token')).toBe('test-capability');
-        if (data.get('action') === 'omlms_qpay_resume') { calls.resume++; json={success:true,data:pending}; }
+        if (data.get('action') === 'ohmylms_qpay_resume') { calls.resume++; json={success:true,data:pending}; }
         else { calls.poll++; json={success:true,data:paid?{status:'paid',redirect_url:'http://qpay.test/thanks'}:{status:'pending'}}; }
       }
       await route.fulfill({json}); return;
     }
-    await route.fulfill({contentType:'text/html',body:`<!doctype html><html><body><div class="omlms-notices-wrapper"></div><form class="checkout creator-lms-checkout-form" id="creator-lms-checkout-form"><label><input type="radio" name="payment_method" value="qpay" checked>QPay</label><input name="action" value="creator_lms_checkout" type="hidden"><input name="email" value="student@example.invalid"><input name="account_password" type="password" value="must-not-be-stored"><button class="creator-lms-place-order-button" type="submit">Place order<span class="creator-lms-loader"></span></button></form></body></html>`});
+    await route.fulfill({contentType:'text/html',body:`<!doctype html><html><body><div class="ohmylms-notices-wrapper"></div><form class="checkout ohmylms-checkout-form" id="ohmylms-checkout-form"><label><input type="radio" name="payment_method" value="qpay" checked>QPay</label><input name="action" value="ohmylms_checkout" type="hidden"><input name="email" value="student@example.invalid"><input name="account_password" type="password" value="must-not-be-stored"><button class="ohmylms-place-order-button" type="submit">Place order<span class="ohmylms-loader"></span></button></form></body></html>`});
   });
   await page.goto('http://qpay.test/checkout');
   await page.addScriptTag({path:jquery});
-  await page.evaluate(i18n => { window.wp={i18n:{__:s=>s}}; window.omlms_checkout_params={ajax_url:'http://qpay.test/admin-ajax.php'}; window.omlms_qpay_params={ajax_url:'http://qpay.test/admin-ajax.php',nonce:'nonce',i18n}; }, i18n);
+  await page.evaluate(i18n => { window.wp={i18n:{__:s=>s}}; window.ohmylms_checkout_params={ajax_url:'http://qpay.test/admin-ajax.php'}; window.ohmylms_qpay_params={ajax_url:'http://qpay.test/admin-ajax.php',nonce:'nonce',i18n}; }, i18n);
   await page.addStyleTag({path:path.join(root,'packages/e-commerce/assets/css/qpay-checkout.css')});
   await page.addScriptTag({path:path.join(root,'assets/dist/frontend/checkout.js')});
   await page.addScriptTag({path:path.join(root,'packages/e-commerce/assets/js/qpay-checkout.js')});
@@ -39,7 +39,7 @@ for (const width of [1280,390]) test(`QPay native checkout, safe resume and QR l
   const modal=page.getByRole('dialog'); await expect(modal).toBeVisible();
   await expect(page.getByRole('link',{name:'Khan Bank'})).toHaveAttribute('href','khanbank://payment/test');
   await expect(page.getByRole('link',{name:'Unsafe',exact:true})).toHaveCount(0);
-  expect(await page.locator('.omlms-qpay-banks img').count()).toBe(0);
+  expect(await page.locator('.ohmylms-qpay-banks img').count()).toBe(0);
   const box=await modal.boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x+box.width).toBeLessThanOrEqual(width);
   expect(calls.checkout).toBe(1); expect(page.url()).toContain('/checkout');
   const stored=await page.evaluate(()=>sessionStorage.getItem('ohmylms.qpay./checkout'));
@@ -81,7 +81,7 @@ test('explicit payment check recovers a paid invoice without a callback',async({
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.route('http://qpay.test/admin-ajax.php',async route=>{
     const data=new URLSearchParams(route.request().postData());
-    if(data.get('action')!=='omlms_qpay_resume') { await route.fallback(); return; }
+    if(data.get('action')!=='ohmylms_qpay_resume') { await route.fallback(); return; }
     expect(data.get('payment_token')).toBe('test-capability');
     await route.fulfill({json:{success:true,data:{status:'paid',redirect_url:'http://qpay.test/thanks'}}});
   });

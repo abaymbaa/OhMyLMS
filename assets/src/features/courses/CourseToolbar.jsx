@@ -22,7 +22,7 @@ export function createCourseToolbar(readRuntime) {
       tz,
       y: WordPressData,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)(),
+    var t = true,
       activeStep = props.activeStep,
       r = (props.setActiveStep, props.courseDescription),
       setLocalCourse = props.setLocalCourse,
@@ -95,16 +95,16 @@ export function createCourseToolbar(readRuntime) {
       <React.Fragment>
         <Controls.CardWP
           padding={'10px 10px 10px 20px'}
-          className={'omlms-top-navigation '
-            .concat(v ? ' ai-course' : '', ' creatorlms-active-step-')
+          className={'ohmylms-top-navigation '
+            .concat(v ? ' ai-course' : '', ' ohmylms-active-step-')
             .concat(activeStep)}
         >
           <Controls.FlexWP
             align={'center'}
             justify={'space-between'}
-            className={'omlms-top-navigation-inner omlms-steps-'.concat(totalSteps)}
+            className={'ohmylms-top-navigation-inner ohmylms-steps-'.concat(totalSteps)}
           >
-            <Controls.FlexItemWP flex={1} className={'omlms-back-button-wrapper'}>
+            <Controls.FlexItemWP flex={1} className={'ohmylms-back-button-wrapper'}>
               <Controls.TooltipWP title={(0, I18n.__)('Exit the builder', 'ohmylms')}>
                 <Nr
                   onClick={function () {
@@ -113,18 +113,18 @@ export function createCourseToolbar(readRuntime) {
                 />
               </Controls.TooltipWP>
             </Controls.FlexItemWP>
-            <Controls.FlexItemWP flex={2} className={'omlms-course-single-steps-item'}>
+            <Controls.FlexItemWP flex={2} className={'ohmylms-course-single-steps-item'}>
               <Controls.FlexWP
                 align={'center'}
                 justify={'center'}
                 gap={10}
-                className={'omlms-course-single-steps-container'}
+                className={'ohmylms-course-single-steps-container'}
               >
                 {steps.map(function (e, t) {
                   return (
                     <div
                       key={e.id}
-                      className={'omlms-course-single-steps-wrapper '
+                      className={'ohmylms-course-single-steps-wrapper '
                         .concat(activeStep === e.id ? 'active' : '', ' ')
                         .concat(
                           steps.findIndex(function (e) {
@@ -160,7 +160,7 @@ export function createCourseToolbar(readRuntime) {
                           var t;
                         }}
                         disabled={v || loading}
-                        className={'omlms-course-single-steps '
+                        className={'ohmylms-course-single-steps '
                           .concat(activeStep === e.id ? 'active' : '', ' ')
                           .concat(
                             steps.findIndex(function (e) {
@@ -172,7 +172,7 @@ export function createCourseToolbar(readRuntime) {
                           )
                           .concat(O ? 'completed' : '')}
                       >
-                        <div className={'omlms-course-single-steps-indicator'}>
+                        <div className={'ohmylms-course-single-steps-indicator'}>
                           {steps.findIndex(function (e) {
                             return e.id === activeStep;
                           }) > t || O ? (
@@ -188,7 +188,7 @@ export function createCourseToolbar(readRuntime) {
                 })}
               </Controls.FlexWP>
             </Controls.FlexItemWP>
-            <Controls.FlexItemWP flex={1} className={'omlms-course-actions-wrapper'}>
+            <Controls.FlexItemWP flex={1} className={'ohmylms-course-actions-wrapper'}>
               <Controls.FlexWP align={'center'} justify={'flex-end'} gap={1}>
                 {'content' === activeStep && (
                   <React.Fragment>
@@ -253,17 +253,15 @@ export function createCourseToolbar(readRuntime) {
                   </React.Fragment>
                 )}
                 <Controls.DropdownMenuWP
-                  className={'omlms-more-options-dropdown'}
-                  contentClassName={'omlms-more-options-dropdown-content'}
+                  className={'ohmylms-more-options-dropdown'}
+                  contentClassName={'ohmylms-more-options-dropdown-content'}
                   icon={<q.Icon icon={Sc.A} />}
                   controls={[
                     {
                       title: (0, I18n.__)('Integrations', 'ohmylms'),
                       onClick: function () {
                         v ||
-                          (t
-                            ? handleIntegration && handleIntegration('course', courseId, courseName)
-                            : S(!0));
+                          (handleIntegration && handleIntegration('course', courseId, courseName));
                       },
                     },
                     {
@@ -271,28 +269,26 @@ export function createCourseToolbar(readRuntime) {
                       onClick: function () {
                         var e;
                         if (!v) {
-                          if (t)
-                            return null !== (e = window) &&
-                              void 0 !== e &&
-                              null !== (e = e.creator_lms_params) &&
-                              void 0 !== e &&
-                              e.is_mailmint_active
-                              ? void handleAutomation('course', courseId, courseName)
-                              : (S(!0),
-                                p.updateProModalTitle(
-                                  (0, I18n.__)('Missing Mail Mint Plugin!', 'ohmylms'),
+                          return null !== (e = window) &&
+                            void 0 !== e &&
+                            null !== (e = e.ohmylms_params) &&
+                            void 0 !== e &&
+                            e.is_mailmint_active
+                            ? void handleAutomation('course', courseId, courseName)
+                            : (S(!0),
+                              p.updateProModalTitle(
+                                (0, I18n.__)('Missing Mail Mint Plugin!', 'ohmylms'),
+                              ),
+                              p.updateProModalContent(
+                                (0, I18n.__)(
+                                  'Mail Mint is required to enable automation. Please install and activate the plugin.',
+                                  'ohmylms',
                                 ),
-                                p.updateProModalContent(
-                                  (0, I18n.__)(
-                                    'Mail Mint is required to enable automation. Please install and activate the plugin.',
-                                    'ohmylms',
-                                  ),
-                                ),
-                                p.updateProModalButtonText(
-                                  (0, I18n.__)('Install and Activate', 'ohmylms'),
-                                ),
-                                void p.updateProModalButtonAction('activate-mail-mint'));
-                          S(!0);
+                              ),
+                              p.updateProModalButtonText(
+                                (0, I18n.__)('Install and Activate', 'ohmylms'),
+                              ),
+                              void p.updateProModalButtonAction('activate-mail-mint'));
                         }
                       },
                     },

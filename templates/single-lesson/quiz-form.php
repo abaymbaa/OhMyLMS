@@ -3,9 +3,9 @@
 /**
  * The template for displaying lesson's quiz
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-quiz.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-quiz.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if (\OMLMS\Extensions\Layouts::render('quiz', get_the_ID(), creator_lms_get_course_by_content_id(get_the_ID()))) return;
+if (\OhMyLMS\Extensions\Layouts::render('quiz', get_the_ID(), ohmylms_get_course_by_content_id(get_the_ID()))) return;
 
 $quiz_start = isset($_GET['quiz']) && $_GET['quiz'] == 'start' ? true : false;
-$quiz 		= omlms_get_quiz(get_the_ID());
-$questions = array_values(array_filter($quiz->get_questions(), static function($q){return \OMLMS\Extensions\Registry::get('question',$q['settings']['type'] ?? '');}));
+$quiz 		= ohmylms_get_quiz(get_the_ID());
+$questions = array_values(array_filter($quiz->get_questions(), static function($q){return \OhMyLMS\Extensions\Registry::get('question',$q['settings']['type'] ?? '');}));
 $attempt 	= $quiz->get_quiz_attempt(get_current_user_id());
 $timer = $quiz->get_timer();
 if ($timer > 0 && !empty($attempt['start_date'])) $timer = max(0, ($timer * 60 - (current_time('timestamp') - strtotime($attempt['start_date']))) / 60);
@@ -30,23 +30,23 @@ $questions_per_group = '';
 $totalGroups = '';
 $supported_question_count = 0;
 foreach ($questions as $index => $question){
-    $supported_question_types = array_keys(\OMLMS\Extensions\Registry::all('question'));
-    $supported_question_types = apply_filters('creator_lms_supported_question_types', $supported_question_types);
+    $supported_question_types = array_keys(\OhMyLMS\Extensions\Registry::all('question'));
+    $supported_question_types = apply_filters('ohmylms_supported_question_types', $supported_question_types);
     if( in_array( $question['settings']['type'], $supported_question_types ) ){
         $supported_question_count++;
     }
 }
 
 if('all_questions_in_one_page' === $quiz_layout){
-    $layout_class = 'creator-lms-all-questions';
+    $layout_class = 'ohmylms-all-questions';
 
 }else if ('number_of_questions_per_page' === $quiz_layout){
-    $layout_class = 'creator-lms-grouped-questions';
+    $layout_class = 'ohmylms-grouped-questions';
     $questions_per_group = max(1, (int)($settings['question_in_one_page'] ?? 1)); // Get the number of questions per group
     $totalGroups = ceil($supported_question_count / $questions_per_group); // Calculate the total number of groups
 
 }else {
-    $layout_class = 'creator-lms-one-question-per-page';
+    $layout_class = 'ohmylms-one-question-per-page';
 }
 
 if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
@@ -56,12 +56,12 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 
 ?>
 
-<input type="hidden" class="creator_lms_quiz_id" value="<?php echo get_the_ID(); ?>">
+<input type="hidden" class="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
 <input type="hidden" class="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
 
-<section class="creator-lms-quiz <?php echo $layout_class; ?>">
-    <div class="creator-lms-quiz-header">
-        <div class="creator-lms-container">
+<section class="ohmylms-quiz <?php echo $layout_class; ?>">
+    <div class="ohmylms-quiz-header">
+        <div class="ohmylms-container">
             <div class="quiz-header-wrapper">
                 <div class="quiz-header-left">
                     <p class="header-title">
@@ -78,7 +78,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
         </div>
     </div>
 
-    <div class="creator-lms-quiz-alert" >
+    <div class="ohmylms-quiz-alert" >
         <div class="quiz-alert-inner">
             <div class="quiz-alert-wrapper">
                 <div class="quiz-alert-body">
@@ -97,17 +97,17 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                 </div>
 
                 <div class="quiz-alert-footer">
-                    <button class="creator-lms-button quiz-alert-cancel" tabindex="0">
+                    <button class="ohmylms-button quiz-alert-cancel" tabindex="0">
                         <?php echo __('Cancel', 'ohmylms'); ?>
                     </button>
 
                     <form action="" method="post">
-                        <input type="hidden" name="action" value="creator-lms-quiz-exit-submission">
-                        <input type="hidden" name="creator_lms_quiz_id" value="<?php echo get_the_ID(); ?>">
+                        <input type="hidden" name="action" value="ohmylms-quiz-exit-submission">
+                        <input type="hidden" name="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
                         <input type="hidden" name="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
                         <?php wp_nonce_field( 'save_quiz_exit_submit', 'save-quiz-exit-submit-nonce' ); ?>
 
-                        <button type="submit" class="creator-lms-button quiz-alert-ok" tabindex="0">
+                        <button type="submit" class="ohmylms-button quiz-alert-ok" tabindex="0">
                             <?php echo __('Exit', 'ohmylms'); ?>
                         </button>
                     </form>
@@ -117,7 +117,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
     </div>
 
     <?php if ($is_timer){ ?>
-        <div class="creator-lms-quiz-timeup-text">
+        <div class="ohmylms-quiz-timeup-text">
             <?php
                 echo sprintf(
                     __('Your quiz submission time has expired. <a href="%s">Please try again.</a>', 'ohmylms'),
@@ -126,12 +126,12 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
             ?>
         </div>
 
-        <div class="creator-lms-quiz-timer">
-            <div class="creator-lms-container">
-                <div class="creator-lms-timer-wrapper">
-                    <div class="creator-lms-timer">
+        <div class="ohmylms-quiz-timer">
+            <div class="ohmylms-container">
+                <div class="ohmylms-timer-wrapper">
+                    <div class="ohmylms-timer">
                         <span class="clock">
-                            <?php include(CREATOR_LMS_DIR . '/assets/images/icon/clock-icon.php'); ?>
+                            <?php include(OHMYLMS_DIR . '/assets/images/icon/clock-icon.php'); ?>
                             <span class="timer-display" data-timer="<?php echo $timer ?>">0.00</span>
                         </span>
 
@@ -146,9 +146,9 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
         </div>
     <?php } ?>
 
-    <!-- <div class="creator-lms-quiz-timer">
-        <div class="creator-lms-container">
-            <div class="creator-lms-quiz-result">
+    <!-- <div class="ohmylms-quiz-timer">
+        <div class="ohmylms-container">
+            <div class="ohmylms-quiz-result">
                 use "failed" class with the "success-title" class if quiz is failed then remove this comment
                 <p class="success-title">
                   <?php //echo __('You passed the quiz', 'ohmylms'); ?>
@@ -168,18 +168,18 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
     </div> -->
 
     <form action="" method="post">
-        <div class="creator-lms-quiz-form">
+        <div class="ohmylms-quiz-form">
 			<input type="hidden" name="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
-            <div class="creator-lms-container">
-                <div class="creator-lms-quiz-form-wrapper">
-                    <!-- add "wrong-answered" class with the "creator-lms-quiz-box" class if quiz is failed and then remove this comment -->
+            <div class="ohmylms-container">
+                <div class="ohmylms-quiz-form-wrapper">
+                    <!-- add "wrong-answered" class with the "ohmylms-quiz-box" class if quiz is failed and then remove this comment -->
 
 					<?php
 					$count = 0;
 					foreach ($questions as $index => $question){
-                        $get_question = omlms_get_question($question['id']);
-                        $supported_question_types = array_keys(\OMLMS\Extensions\Registry::all('question'));
-                        $supported_question_types = apply_filters('creator_lms_supported_question_types', $supported_question_types);
+                        $get_question = ohmylms_get_question($question['id']);
+                        $supported_question_types = array_keys(\OhMyLMS\Extensions\Registry::all('question'));
+                        $supported_question_types = apply_filters('ohmylms_supported_question_types', $supported_question_types);
 
                         if( !in_array( $question['settings']['type'], $supported_question_types ) ){
                             continue;
@@ -195,11 +195,11 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                             }
                             // Start a new group div
                             $groupNumber = floor($index / $questions_per_group) + 1;
-                            echo "<div class='creator-lms-question-group question-group-{$groupNumber} " . ($groupNumber == 1 ? 'active' : '') . "'>";
+                            echo "<div class='ohmylms-question-group question-group-{$groupNumber} " . ($groupNumber == 1 ? 'active' : '') . "'>";
                         }
 						?>
 
-                        <div class="creator-lms-quiz-box question-<?php echo $count; ?> <?php echo ('one_question_per_page' === $quiz_layout && $count == 1) ? 'active' : ''; ?>">
+                        <div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ('one_question_per_page' === $quiz_layout && $count == 1) ? 'active' : ''; ?>">
 							<div class="quiz-box-header">
 								<span class="question-number">
 									<?php echo sprintf(__('Question %d', 'ohmylms'), $count); ?>
@@ -237,7 +237,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                                 shuffle($question['questions']);
                             }
 
-                            \OMLMS\Extensions\QuestionTypes::render($question, $attempt);
+                            \OhMyLMS\Extensions\QuestionTypes::render($question, $attempt);
                             ?>
                             <?php if (!empty($question['settings']['required'])) : ?>
                                 <span class="required-question"><?php esc_html_e('The question must be answered','ohmylms'); ?></span>
@@ -256,37 +256,37 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
             </div>
         </div>
 
-        <div class="creator-lms-quiz-footer">
-            <div class="creator-lms-container">
-                <div class="creator-lms-footer-wrapper">
-                    <div class="creator-lms-quiz-footer-left">
-						<?php if(!empty(omlms_get_next_content_permalink(get_the_ID()))){ ?>
-							<a href="<?php echo omlms_get_next_content_permalink(get_the_ID()) ?>" class="skiptop-next">
+        <div class="ohmylms-quiz-footer">
+            <div class="ohmylms-container">
+                <div class="ohmylms-footer-wrapper">
+                    <div class="ohmylms-quiz-footer-left">
+						<?php if(!empty(ohmylms_get_next_content_permalink(get_the_ID()))){ ?>
+							<a href="<?php echo ohmylms_get_next_content_permalink(get_the_ID()) ?>" class="skiptop-next">
 								<?php echo __('Skip to Next Lesson', 'ohmylms'); ?>
 							</a>
 						<?php } ?>
                     </div>
 
-                    <div class="creator-lms-quiz-footer-right">
-						<input type="hidden" name="action" value="creator-lms-quiz-submission">
-						<input type="hidden" name="creator_lms_quiz_id" value="<?php echo get_the_ID(); ?>">
+                    <div class="ohmylms-quiz-footer-right">
+						<input type="hidden" name="action" value="ohmylms-quiz-submission">
+						<input type="hidden" name="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
 						<?php wp_nonce_field( 'save_quiz_submit', 'save-quiz-submit-nonce' ); ?>
 
                         <?php
                             if('all_questions_in_one_page' === $quiz_layout){
                                 ?>
-                                <button type="submit" class="creator-lms-button quiz-submit">
+                                <button type="submit" class="ohmylms-button quiz-submit">
                                     <?php echo __('Submit ', 'ohmylms'); ?>
                                 </button>
                                 <?php
 
                             }else if ('number_of_questions_per_page' === $quiz_layout){
                                 // ------start grouped questions------
-                                $layout_class = 'creator-lms-grouped-questions';
+                                $layout_class = 'ohmylms-grouped-questions';
 
                                 if($totalGroups > 1) {
                                     ?>
-                                    <button type="button" class="creator-lms-button creator-lms-previous-quiz-group outline" current-group="1" previous-group="" total-group="<?php echo $totalGroups; ?>" disabled >
+                                    <button type="button" class="ohmylms-button ohmylms-previous-quiz-group outline" current-group="1" previous-group="" total-group="<?php echo $totalGroups; ?>" disabled >
                                         <?php echo __('Previous', 'ohmylms'); ?>
                                     </button>
                                     <?php
@@ -294,17 +294,17 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 
                                 if($totalGroups > 1) {
                                     ?>
-                                    <button type="button" class="creator-lms-button creator-lms-next-quiz-group" current-group="1" next-group="2" total-group="<?php echo $totalGroups ?>">
+                                    <button type="button" class="ohmylms-button ohmylms-next-quiz-group" current-group="1" next-group="2" total-group="<?php echo $totalGroups ?>">
                                         <?php echo __('Next', 'ohmylms'); ?>
                                     </button>
 
-                                    <button type="submit" class="creator-lms-button quiz-submit" style="display: none">
+                                    <button type="submit" class="ohmylms-button quiz-submit" style="display: none">
                                         <?php echo __('Submit ', 'ohmylms'); ?>
                                     </button>
                                     <?php
                                 } else {
                                     ?>
-                                    <button type="submit" class="creator-lms-button quiz-submit">
+                                    <button type="submit" class="ohmylms-button quiz-submit">
                                         <?php echo __('Submit ', 'ohmylms'); ?>
                                     </button>
                                     <?php
@@ -313,14 +313,14 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 
                             }else {
                                 ?>
-                                <button type="button" class="creator-lms-button creator-lms-previous-quiz outline" current-question="1" previous-question="" total-questions="<?php echo $count; ?>" disabled>
+                                <button type="button" class="ohmylms-button ohmylms-previous-quiz outline" current-question="1" previous-question="" total-questions="<?php echo $count; ?>" disabled>
                                     <?php echo __('Previous', 'ohmylms'); ?>
                                 </button>
 
                                 <?php
                                 if($count > 1) {
                                     ?>
-                                    <button type="button" class="creator-lms-button creator-lms-next-quiz" current-question="1" next-question="2" total-questions="<?php echo $count; ?>">
+                                    <button type="button" class="ohmylms-button ohmylms-next-quiz" current-question="1" next-question="2" total-questions="<?php echo $count; ?>">
                                         <?php echo __('Next', 'ohmylms'); ?>
                                     </button>
                                     <?php
@@ -328,13 +328,13 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 
                                 if($count > 1) {
                                     ?>
-                                    <button type="submit" class="creator-lms-button quiz-submit" style="display: none">
+                                    <button type="submit" class="ohmylms-button quiz-submit" style="display: none">
                                         <?php echo __('Submit ', 'ohmylms'); ?>
                                     </button>
                                     <?php
                                 } else {
                                     ?>
-                                    <button type="submit" class="creator-lms-button quiz-submit">
+                                    <button type="submit" class="ohmylms-button quiz-submit">
                                         <?php echo __('Submit ', 'ohmylms'); ?>
                                     </button>
                                     <?php

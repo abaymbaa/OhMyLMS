@@ -4,11 +4,11 @@
  * 
  * This class handles the reward system settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
-use OMLMS\Engagement\Achievements;
+use OhMyLMS\Engagement\Achievements;
 
 class Reward {
     
@@ -18,8 +18,8 @@ class Reward {
      * @return array
      */
     public static function get_rules() {
-        $settings = get_option( 'creator_lms_reward_settings', array() );
-        return apply_filters( 'creator_lms_reward_settings', $settings );
+        $settings = get_option( 'ohmylms_reward_settings', array() );
+        return apply_filters( 'ohmylms_reward_settings', $settings );
     }
 
     /**

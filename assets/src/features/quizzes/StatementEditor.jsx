@@ -3,7 +3,7 @@ import { createElement } from '@wordpress/element';
 export function createStatementEditor(readRuntime) {
   return function StatementEditor() {
     const { L: Entitlements, React, T: StoreModule, y: WordPressData } = readRuntime();
-    (0, Entitlements.useIsPro)();
+    true;
     var questionId = (0, WordPressData.useSelect)(function (e) {
       return e(StoreModule.default).selectSelectedQuestionId();
     }, []);

@@ -2,9 +2,9 @@
 /**
  * Template for displaying Order details
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/order/order-details.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/order/order-details.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  *
  * @var \CodeRex\Ecommerce\Data\Order $order Order object.
@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit();
 			$is_course = true;
 			if( !$course ){
 				$id = $item->get_course_id();
-				$course = omlms_get_membership($id);
+				$course = ohmylms_get_membership($id);
 				if( !$course ){
 					continue;
 				}
@@ -36,19 +36,19 @@ defined( 'ABSPATH' ) || exit();
 				<td>
 					<div class="course-title-wrapper">
 						<?php if( $is_course && $course->get_thumbnail_url() ) : ?>
-							<figure class="creator-lms-course-img">
+							<figure class="ohmylms-course-img">
 								<img src="<?php echo esc_url($course->get_thumbnail_url());?>" alt="course image">
 							</figure>
 						<?php endif; ?>
 
-						<p class="creator-lms-course-title" title="<?php echo esc_attr($item->get_name()); ?>">
+						<p class="ohmylms-course-title" title="<?php echo esc_attr($item->get_name()); ?>">
 							<?php echo esc_html( $item->get_name() ); ?>
 						</p>
 					</div>
 				</td>
 
 				<td>
-					<span class="creator-lms-price">
+					<span class="ohmylms-price">
 						<?php echo $maybe_by_point ? $points.' Pts' : $order->get_formatted_line_subtotal( $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</span>
 				</td>
@@ -114,7 +114,7 @@ defined( 'ABSPATH' ) || exit();
 							continue;
 						}
 						?>
-						<td class="creator-lms-tax-rate">
+						<td class="ohmylms-tax-rate">
 							<?php echo esc_html( $points . ' Pts' ); ?>
 						</td>
 					<?php else : ?>
@@ -122,7 +122,7 @@ defined( 'ABSPATH' ) || exit();
 							<?php
 							if( 'order_total' === $key ) {
 								$total = $order->get_total();
-								$formatted_total = omlms_price( $total );
+								$formatted_total = ohmylms_price( $total );
 								echo wp_kses_post( $formatted_total );
 							}else{
 								echo wp_kses_post( $total['value'] );
@@ -134,4 +134,4 @@ defined( 'ABSPATH' ) || exit();
 		<?php } ?>
 	</tfoot>
 </table>
-<?php do_action('creator_lms_after_order_details', $order); ?>
+<?php do_action('ohmylms_after_order_details', $order); ?>

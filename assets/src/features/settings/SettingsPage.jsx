@@ -32,8 +32,8 @@ export function createSettingsPage(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)();
-    HG('creator-lms', 'settings');
+    var e = true;
+    HG('ohmylms', 'settings');
     var t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).isSettingsLoading();
@@ -95,7 +95,7 @@ export function createSettingsPage(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/settings/'.concat(n),
+                          path: '/ohmylms/v1/settings/'.concat(n),
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -125,20 +125,20 @@ export function createSettingsPage(readRuntime) {
       })(),
       M = function () {
         t.updateDesignSettings({
-          creator_lms_archive_page_layout_style: {
+          ohmylms_archive_page_layout_style: {
             value: 'grid-style1',
           },
-          creator_lms_archive_page_row: {
+          ohmylms_archive_page_row: {
             value: [],
           },
-          creator_lms_archive_page_category_is_enabled: {
+          ohmylms_archive_page_category_is_enabled: {
             value: 'no',
           },
         });
       },
       F = function () {
         t.updateDesignSettings({
-          creator_lms_single_course_page_layout: {
+          ohmylms_single_course_page_layout: {
             value: 'layout_2',
           },
         });
@@ -162,50 +162,10 @@ export function createSettingsPage(readRuntime) {
                         (g = !0),
                         (h =
                           'layout_2' !==
-                            (null == m ? void 0 : m.creator_lms_single_course_page_layout) ||
+                            (null == m ? void 0 : m.ohmylms_single_course_page_layout) ||
                           'grid-style1' !==
-                            (null == m ? void 0 : m.creator_lms_archive_page_layout_style)),
-                        !e &&
-                          h &&
-                          'design-settings' === x &&
-                          (t.setIsProModalOpen(!0),
-                          (g = !1),
-                          'layout_2' !==
-                            (null == m ? void 0 : m.creator_lms_single_course_page_layout) &&
-                          'grid-style1' !==
-                            (null == m ? void 0 : m.creator_lms_archive_page_layout_style)
-                            ? (t.updateProModalContent(
-                                (0, I18n.__)(
-                                  'This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.',
-                                  'ohmylms',
-                                ),
-                              ),
-                              (m.creator_lms_archive_page_layout_style = 'grid-style1'),
-                              (m.creator_lms_archive_page_row = []),
-                              (m.creator_lms_archive_page_category_is_enabled = 'no'),
-                              M(),
-                              (m.creator_lms_single_course_page_layout = 'layout_2'),
-                              F())
-                            : 'layout_2' !==
-                                (null == m ? void 0 : m.creator_lms_single_course_page_layout)
-                              ? (t.updateProModalContent(
-                                  (0, I18n.__)(
-                                    'This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.',
-                                    'ohmylms',
-                                  ),
-                                ),
-                                (m.creator_lms_single_course_page_layout = 'layout_2'),
-                                F())
-                              : (t.updateProModalContent(
-                                  (0, I18n.__)(
-                                    'This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.',
-                                    'ohmylms',
-                                  ),
-                                ),
-                                (m.creator_lms_archive_page_layout_style = 'grid-style1'),
-                                (m.creator_lms_archive_page_row = []),
-                                (m.creator_lms_archive_page_category_is_enabled = 'no'),
-                                M())),
+                            (null == m ? void 0 : m.ohmylms_archive_page_layout_style)),
+                        false,
                         (n.p = 1),
                         k(!0),
                         (n.n = 2),
@@ -408,7 +368,7 @@ export function createSettingsPage(readRuntime) {
         },
       ].concat(
         S6(
-          window.creator_lms_params.is_gamification_enabled
+          window.ohmylms_params.is_gamification_enabled
             ? [
                 {
                   label: <React.Fragment>{(0, I18n.__)('Gamification', 'ohmylms')}</React.Fragment>,
@@ -419,7 +379,7 @@ export function createSettingsPage(readRuntime) {
             : [],
         ),
         S6(
-          window.creator_lms_params.is_webhook_enabled
+          window.ohmylms_params.is_webhook_enabled
             ? [
                 {
                   label: <React.Fragment>{(0, I18n.__)('Webhooks', 'ohmylms')}</React.Fragment>,
@@ -453,7 +413,7 @@ export function createSettingsPage(readRuntime) {
           <YG title={(0, I18n.__)('Settings', 'ohmylms')} showAddButton={!1} />
           <Controls.CardWP
             isBorderless={!0}
-            className={'omlms-full-screen-height omlms-settings-page'}
+            className={'ohmylms-full-screen-height ohmylms-settings-page'}
           >
             <Controls.SpacerWP marginBottom={0} padding={7.5}>
               {n && !O && (

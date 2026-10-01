@@ -10,13 +10,13 @@
   },
   "autoload": {
     "psr-4": {
-      "OMLMS\\": "includes/"
+      "OhMyLMS\\": "includes/"
     },
     "classmap": [
       "packages"
     ],
     "exclude-from-classmap": [
-      "includes/OMLMS.php"
+      "includes/OhMyLMS.php"
     ]
   },
   "config": {

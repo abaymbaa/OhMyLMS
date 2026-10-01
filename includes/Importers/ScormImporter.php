@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Importers;
+namespace OhMyLMS\Importers;
 
-use OMLMS\Utility\ScormHelper;
+use OhMyLMS\Utility\ScormHelper;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -410,11 +410,11 @@ class ScormImporter {
 					if ( strpos( $keyword_text, 'content-type:' ) === 0 ) {
 						$item_data['content_type'] = str_replace( 'content-type:', '', $keyword_text );
 
-						if ( $item_data['content_type'] === 'omlms-assignment' ) {
+						if ( $item_data['content_type'] === 'ohmylms-assignment' ) {
 							$item_data['type'] = 'assignment';
-						} elseif ( $item_data['content_type'] === 'omlms-quiz' ) {
+						} elseif ( $item_data['content_type'] === 'ohmylms-quiz' ) {
 							$item_data['type'] = 'quiz';
-						} elseif ( $item_data['content_type'] === 'omlms-lesson' ) {
+						} elseif ( $item_data['content_type'] === 'ohmylms-lesson' ) {
 							$item_data['type'] = 'lesson';
 						}
 						break;
@@ -550,7 +550,7 @@ class ScormImporter {
 			'post_title'   => $title,
 			'post_content' => $description,
 			'post_status'  => 'draft',
-			'post_type'    => CREATOR_LMS_COURSE_CPT,
+			'post_type'    => OHMYLMS_COURSE_CPT,
 		] );
 
 		if ( is_wp_error( $course_id ) ) {
@@ -621,7 +621,7 @@ class ScormImporter {
 		$chapter_id = wp_insert_post( [
 			'post_title'  => __( 'Course Content', 'ohmylms' ),
 			'post_status' => 'publish',
-			'post_type'   => CREATOR_LMS_CHAPTER_CPT,
+			'post_type'   => OHMYLMS_CHAPTER_CPT,
 		] );
 
 		if ( is_wp_error( $chapter_id ) ) {
@@ -630,7 +630,7 @@ class ScormImporter {
 
 		global $wpdb;
 		$wpdb->insert(
-			"{$wpdb->prefix}omlms_chapter_relationship",
+			"{$wpdb->prefix}ohmylms_chapter_relationship",
 			[
 				'course_id'    => $course_id,
 				'chapter_id'   => $chapter_id,
@@ -677,7 +677,7 @@ class ScormImporter {
 			'post_title'   => $item['title'],
 			'post_content' => $item['description'] ?? '',
 			'post_status'  => 'publish',
-			'post_type'    => CREATOR_LMS_CHAPTER_CPT,
+			'post_type'    => OHMYLMS_CHAPTER_CPT,
 		] );
 
 		if ( is_wp_error( $chapter_id ) ) {
@@ -690,7 +690,7 @@ class ScormImporter {
 
 		global $wpdb;
 		$wpdb->insert(
-			"{$wpdb->prefix}omlms_chapter_relationship",
+			"{$wpdb->prefix}ohmylms_chapter_relationship",
 			[
 				'course_id'    => $course_id,
 				'chapter_id'   => $chapter_id,
@@ -768,7 +768,7 @@ class ScormImporter {
 			'post_title'   => $item['title'],
 			'post_content' => $content,
 			'post_status'  => 'publish',
-			'post_type'    => 'omlms-lesson',
+			'post_type'    => 'ohmylms-lesson',
 		] );
 
 		if ( is_wp_error( $lesson_id ) ) {
@@ -796,7 +796,7 @@ class ScormImporter {
 
 		global $wpdb;
 		$result = $wpdb->insert(
-			"{$wpdb->prefix}omlms_content_relationship",
+			"{$wpdb->prefix}ohmylms_content_relationship",
 			[
 				'chapter_id'   => $chapter_id,
 				'content_id'   => $lesson_id,
@@ -971,7 +971,7 @@ class ScormImporter {
 			'post_title'   => $item['title'],
 			'post_content' => $quiz_description,
 			'post_status'  => 'publish',
-			'post_type'    => 'omlms-quiz',
+			'post_type'    => 'ohmylms-quiz',
 		] );
 
 		if ( is_wp_error( $quiz_id ) ) {
@@ -994,7 +994,7 @@ class ScormImporter {
 
 		global $wpdb;
 		$result = $wpdb->insert(
-			"{$wpdb->prefix}omlms_content_relationship",
+			"{$wpdb->prefix}ohmylms_content_relationship",
 			[
 				'chapter_id'   => $chapter_id,
 				'content_id'   => $quiz_id,
@@ -1055,7 +1055,7 @@ class ScormImporter {
 			'post_title'   => $item['title'],
 			'post_content' => $content,
 			'post_status'  => 'publish',
-			'post_type'    => 'omlms-assignment',
+			'post_type'    => 'ohmylms-assignment',
 		] );
 
 		if ( is_wp_error( $assignment_id ) ) {
@@ -1076,7 +1076,7 @@ class ScormImporter {
 
 		global $wpdb;
 		$wpdb->insert(
-			"{$wpdb->prefix}omlms_content_relationship",
+			"{$wpdb->prefix}ohmylms_content_relationship",
 			[
 				'chapter_id'   => $chapter_id,
 				'content_id'   => $assignment_id,
@@ -1850,7 +1850,7 @@ class ScormImporter {
 			$question_id = wp_insert_post( [
 				'post_title'  => $question_title,
 				'post_status' => 'publish',
-				'post_type'   => 'omlms-question',
+				'post_type'   => 'ohmylms-question',
 			] );
 
 			if ( is_wp_error( $question_id ) ) {
@@ -1883,7 +1883,7 @@ class ScormImporter {
 
 			foreach ( $question['answers'] as $answer ) {
 				$insert_result = $wpdb->insert(
-					"{$wpdb->prefix}omlms_question_answers",
+					"{$wpdb->prefix}ohmylms_question_answers",
 					[
 						'question_id'  => $question_id,
 						'answer'       => $answer['answer'],
@@ -1907,7 +1907,7 @@ class ScormImporter {
 			}
 
 			$link_result = $wpdb->insert(
-				"{$wpdb->prefix}omlms_quiz_questions_relationship",
+				"{$wpdb->prefix}ohmylms_quiz_questions_relationship",
 				[
 					'quiz_id'      => $quiz_id,
 					'question_id'  => $question_id,

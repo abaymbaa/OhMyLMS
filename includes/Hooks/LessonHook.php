@@ -2,15 +2,15 @@
 /**
  * Hook for Lesson
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
 class LessonHook
 {
     public function register_hooks(){
-        add_filter('creatorlms_get_content_object', array($this, 'get_content_object'), 10, 3);
+        add_filter('ohmylms_get_content_object', array($this, 'get_content_object'), 10, 3);
     }
 
     /**
@@ -24,10 +24,10 @@ class LessonHook
      */
     public function get_content_object( $default, $content_type, $lesson_id ) {
         if ( 'assignment' === $content_type ) {
-            return omlms_get_assignment( $lesson_id );
+            return ohmylms_get_assignment( $lesson_id );
         }
         if ( 'session' === $content_type ) {
-            return omlms_get_session( $lesson_id );
+            return ohmylms_get_session( $lesson_id );
         }
         return $default;
     }

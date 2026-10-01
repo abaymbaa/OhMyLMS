@@ -18,7 +18,7 @@ class OrderItemCourseStore extends OrderItemStore {
 		global $wpdb;
 
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_order_items',
+			$wpdb->prefix . 'ohmylms_order_items',
 			array(
 				'order_item_name' => $item->get_name(),
 				'order_item_type' => $item->get_type(),

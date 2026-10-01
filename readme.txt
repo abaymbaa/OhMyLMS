@@ -1,6 +1,6 @@
 === OhMyLMS - WordPress LMS Plugin for Coaches, Cohorts & Course Creators ===
 Contributors: coderexltd, getwpfunnels, coderexco
-Donate link: https://creatorlms.net/
+Donate link: https://ohmylms.com/
 Tags: lms, coaching, cohort, course builder, online course
 Requires at least: 6.0
 Tested up to: 7.2
@@ -19,7 +19,7 @@ Trusted by 100+ coaches and educators worldwide. Rated ⭐⭐⭐⭐⭐ 5 stars o
 
 The core plugin is **100% free forever** — unlimited courses, unlimited students, native Stripe checkout, quizzes, and certificates included at no cost.
 
-🚀 [Live Demo](https://creatorlms.net/) | 📘 [Documentation](https://creatorlms.net/docs/) | 🎥 [Video Tutorials](https://www.youtube.com/playlist?list=PLvw5RepmoKUuQ_9HzV75zGjrzmO7CUIjA) | 🎬 [Setup Tutorial](https://www.youtube.com/playlist?list=PLvw5RepmoKUvdX0IGzMzULJaWgpTb7e_j) | 💁‍♂️ [Facebook Community](https://www.facebook.com/groups/814125387973883/) | 🗺️ [Roadmap](https://creatorlms.net/creator-lms-roadmap/)
+🚀 [Live Demo](https://ohmylms.com/) | 📘 [Documentation](https://ohmylms.com/docs/) | 🎥 [Video Tutorials](https://www.youtube.com/playlist?list=PLvw5RepmoKUuQ_9HzV75zGjrzmO7CUIjA) | 🎬 [Setup Tutorial](https://www.youtube.com/playlist?list=PLvw5RepmoKUvdX0IGzMzULJaWgpTb7e_j) | 💁‍♂️ [Facebook Community](https://www.facebook.com/groups/814125387973883/) | 🗺️ [Roadmap](https://ohmylms.com/ohmylms-roadmap/)
 
 [youtube https://youtu.be/ENT4kK88gNs?si=sMoxE9SN-pwUPRt4]
 
@@ -364,7 +364,7 @@ OhMyLMS has a 100% five-star rating on WordPress.org.
 
 **"Native checkout is a game-changer"** — No WooCommerce, no complexity — just sell my coaching programs.
 
-👉 [Read all reviews](https://wordpress.org/support/plugin/creatorlms/reviews/) | [Leave a review](https://wordpress.org/support/plugin/creatorlms/reviews/#new-post)
+👉 [Read all reviews](https://wordpress.org/support/plugin/ohmylms/reviews/) | [Leave a review](https://wordpress.org/support/plugin/ohmylms/reviews/#new-post)
 
 If OhMyLMS has helped your coaching business, please take 2 minutes to leave a review. It helps other coaches find the plugin and helps us keep improving it. 🙏
 
@@ -465,11 +465,7 @@ Yes. OhMyLMS is fully responsive on mobile browsers. Students can access coachin
 
 = How do I get support? =
 
-Free users get community forum support at WordPress.org. Pro users get priority email support with faster response times. Visit [documentation](https://creatorlms.net/docs/) or the [support forum](https://wordpress.org/support/plugin/creatorlms/).
-
-= Why does the free version show a "Powered by OhMyLMS" badge? =
-
-Since 1.2.12, a small credit link appears on your OhMyLMS pages (course dashboard, checkout, my courses, profile) in the free version only — never on the rest of your site. It disappears automatically as soon as a Pro license is activated, and developers can disable it entirely with the `creator_lms_show_powered_by_badge` filter.
+Free users get community forum support at WordPress.org. Pro users get priority email support with faster response times. Visit [documentation](https://ohmylms.com/docs/) or the [support forum](https://wordpress.org/support/plugin/ohmylms/).
 
 = Where do I report security bugs? =
 
@@ -578,9 +574,9 @@ New Gutenberg blocks for Student Dashboard, My Courses, and Student Profile page
 
 - Added: Automatic Lesson Recording Attachment - Save time after every live class by attaching Zoom or Google Meet session recordings directly to course lessons. Students can easily access replays without manual sharing.
 
-- Added: Free Version "Powered by OhMyLMS" Badge - A small, unobtrusive credit link now appears only on your OhMyLMS pages (course dashboard, checkout, my courses, etc.) in the free version. It never appears on the rest of your site, disappears automatically the moment a Pro license is active, and can be turned off with the `creator_lms_show_powered_by_badge` filter.
+- Added: Free Version "Powered by OhMyLMS" Badge - A small, unobtrusive credit link now appears only on your OhMyLMS pages (course dashboard, checkout, my courses, etc.) in the free version. It never appears on the rest of your site, disappears automatically the moment a Pro license is active, and can be turned off with the `ohmylms_show_powered_by_badge` filter.
 
-- Added: Dedicated omlms_student Role with Automatic Migration for Existing Students - Introduced a dedicated omlms_student user role to better separate student permissions, with automatic migration of existing learners during update.
+- Added: Dedicated ohmylms_student Role with Automatic Migration for Existing Students - Introduced a dedicated ohmylms_student user role to better separate student permissions, with automatic migration of existing learners during update.
 
 ✨ Improvements
 

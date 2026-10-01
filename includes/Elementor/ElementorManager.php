@@ -2,13 +2,13 @@
 /**
  * Elementor Manager
  *
- * Manages all Elementor widgets for CreatorLMS
+ * Manages all Elementor widgets for OhMyLMS
  *
- * @package OMLMS\Elementor
+ * @package OhMyLMS\Elementor
  * @since 1.0.0
  */
 
-namespace OMLMS\Elementor;
+namespace OhMyLMS\Elementor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -61,12 +61,12 @@ class ElementorManager {
 			return;
 		}
 
-		// Tell FrontendAssets this is a CreatorLMS page when an Elementor page
-		// contains our widget — so omlms-frontend gets enqueued via the normal path.
-		add_filter( 'is_creator_lms_page', array( $this, 'is_creator_lms_page_for_elementor' ) );
+		// Tell FrontendAssets this is a OhMyLMS page when an Elementor page
+		// contains our widget — so ohmylms-frontend gets enqueued via the normal path.
+		add_filter( 'is_ohmylms_page', array( $this, 'is_ohmylms_page_for_elementor' ) );
 
-		// Add creator-lms-page body class on Elementor pages so all scoped CSS rules apply.
-		add_filter( 'body_class', array( $this, 'add_creator_lms_body_class' ) );
+		// Add ohmylms-page body class on Elementor pages so all scoped CSS rules apply.
+		add_filter( 'body_class', array( $this, 'add_ohmylms_body_class' ) );
 
 		// Initialize when Elementor is ready
 		add_action( 'elementor/init', array( $this, 'elementor_init' ) );
@@ -74,31 +74,31 @@ class ElementorManager {
 
 	/**
 	 * Return true when the current page is an Elementor page that contains
-	 * the My Courses widget, so FrontendAssets enqueues omlms-frontend.
+	 * the My Courses widget, so FrontendAssets enqueues ohmylms-frontend.
 	 *
-	 * @param bool $is_creator_lms_page
+	 * @param bool $is_ohmylms_page
 	 * @return bool
 	 */
-	public function is_creator_lms_page_for_elementor( $is_creator_lms_page ) {
-		if ( $is_creator_lms_page ) {
+	public function is_ohmylms_page_for_elementor( $is_ohmylms_page ) {
+		if ( $is_ohmylms_page ) {
 			return true;
 		}
-		// If Elementor is active on this request, treat it as a creator-lms page
+		// If Elementor is active on this request, treat it as a ohmylms page
 		// so the main CSS/JS bundle is always enqueued.
 		if ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
 			return true;
 		}
-		// On the published frontend, treat any singular page as a creator-lms page when Elementor is active.
+		// On the published frontend, treat any singular page as a ohmylms page when Elementor is active.
 		if ( defined( 'ELEMENTOR_VERSION' ) && is_singular() ) {
 			return true;
 		}
-		return $is_creator_lms_page;
+		return $is_ohmylms_page;
 	}
 
 	/**
-	 * Add the `creator-lms-page` body class on any page built with Elementor.
+	 * Add the `ohmylms-page` body class on any page built with Elementor.
 	 *
-	 * All CSS rules in style.css are scoped to `.creator-lms-page`. Without this
+	 * All CSS rules in style.css are scoped to `.ohmylms-page`. Without this
 	 * class on the <body>, every scoped rule is inactive and the widget renders
 	 * completely unstyled. The Gutenberg block works because it adds this class
 	 * via a different mechanism; we replicate that here for Elementor.
@@ -106,21 +106,21 @@ class ElementorManager {
 	 * @param array $classes Existing body classes.
 	 * @return array
 	 */
-	public function add_creator_lms_body_class( array $classes ): array {
+	public function add_ohmylms_body_class( array $classes ): array {
 		// Already present — nothing to do.
-		if ( in_array( 'creator-lms-page', $classes, true ) ) {
+		if ( in_array( 'ohmylms-page', $classes, true ) ) {
 			return $classes;
 		}
 
 		// Editor preview iframe.
 		if ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
-			$classes[] = 'creator-lms-page';
+			$classes[] = 'ohmylms-page';
 			return $classes;
 		}
 
 		// Published frontend: add on any singular page when Elementor is active.
 		if ( defined( 'ELEMENTOR_VERSION' ) && is_singular() ) {
-			$classes[] = 'creator-lms-page';
+			$classes[] = 'ohmylms-page';
 		}
 
 		return $classes;
@@ -132,7 +132,7 @@ class ElementorManager {
 	 * @return void
 	 */
 	public function elementor_init() {
-		// Add new category for CreatorLMS widgets
+		// Add new category for OhMyLMS widgets
 		add_action( 'elementor/elements/categories_registered', array( $this, 'register_widget_categories' ) );
 
 		// Register widgets
@@ -142,7 +142,7 @@ class ElementorManager {
 		add_action( 'elementor/frontend/after_enqueue_styles', array( $this, 'enqueue_frontend_styles' ) );
 		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 
-		// Enqueue omlms-frontend assets inside the Elementor editor preview iframe
+		// Enqueue ohmylms-frontend assets inside the Elementor editor preview iframe
 		add_action( 'elementor/preview/enqueue_styles', array( $this, 'enqueue_preview_assets' ) );
 		add_action( 'elementor/preview/enqueue_scripts', array( $this, 'enqueue_preview_assets' ) );
 	}
@@ -155,9 +155,9 @@ class ElementorManager {
 	 */
 	public function register_widget_categories( $elements_manager ) {
 		$elements_manager->add_category(
-			'creator-lms',
+			'ohmylms',
 			array(
-				'title' => esc_html__( 'CreatorLMS', 'ohmylms' ),
+				'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
 				'icon'  => 'fa fa-graduation-cap',
 			)
 		);
@@ -180,15 +180,13 @@ class ElementorManager {
 		$widgets_manager->register( new Widgets\DashboardWidget() );
 		$widgets_manager->register( new Widgets\ProfileWidget() );
 
-		if( creator_lms_is_pro_license() ) {
 			$widgets_manager->register( new Widgets\BuyNowWidget() );
 			$widgets_manager->register( new Widgets\OfferButtonWidget() );
-		}
 
 		// Also initialize Gutenberg blocks if not already done
-		if ( ! did_action( 'creator_lms_blocks_initialized' ) ) {
+		if ( ! did_action( 'ohmylms_blocks_initialized' ) ) {
 			$this->init_blocks();
-			do_action( 'creator_lms_blocks_initialized' );
+			do_action( 'ohmylms_blocks_initialized' );
 		}
 	}
 
@@ -198,13 +196,13 @@ class ElementorManager {
 	 * @return void
 	 */
 	   private function include_widgets() {
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/CheckoutWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/CourseListWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/BuyNowWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/OfferButtonWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/MyCoursesWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/DashboardWidget.php';
-		require_once CREATOR_LMS_PATH . '/includes/Elementor/Widgets/ProfileWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/CheckoutWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/CourseListWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/BuyNowWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/OfferButtonWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/MyCoursesWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/DashboardWidget.php';
+		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/ProfileWidget.php';
 	   }
 
 	/**
@@ -213,14 +211,14 @@ class ElementorManager {
 	 * @return void
 	 */
 	private function init_blocks() {
-		if ( file_exists( CREATOR_LMS_PATH . '/includes/Blocks/BlocksManager.php' ) ) {
-			require_once CREATOR_LMS_PATH . '/includes/Blocks/BlocksManager.php';
-			\OMLMS\Blocks\BlocksManager::instance();
+		if ( file_exists( OHMYLMS_PATH . '/includes/Blocks/BlocksManager.php' ) ) {
+			require_once OHMYLMS_PATH . '/includes/Blocks/BlocksManager.php';
+			\OhMyLMS\Blocks\BlocksManager::instance();
 		}
 	}
 
 	/**
-	 * Register and enqueue omlms-frontend assets.
+	 * Register and enqueue ohmylms-frontend assets.
 	 * Called on both the published frontend and the editor preview iframe.
 	 * We register the handles here so we are not dependent on FrontendAssets
 	 * having already run (it only enqueues on page-detection conditions that
@@ -228,25 +226,25 @@ class ElementorManager {
 	 *
 	 * @return void
 	 */
-	private function register_and_enqueue_omlms_assets() {
+	private function register_and_enqueue_ohmylms_assets() {
 		$suffix  = '';
-		$version = defined( 'CREATOR_LMS_VERSION' ) ? CREATOR_LMS_VERSION : '1.0.0';
-		$url     = defined( 'CREATOR_LMS_URL' ) ? CREATOR_LMS_URL : plugins_url( '', CREATOR_LMS_FILE );
+		$version = defined( 'OHMYLMS_VERSION' ) ? OHMYLMS_VERSION : '1.0.0';
+		$url     = defined( 'OHMYLMS_URL' ) ? OHMYLMS_URL : plugins_url( '', OHMYLMS_FILE );
 
 		// Register if not already registered (FrontendAssets may have done it first).
-		if ( ! wp_script_is( 'omlms-frontend', 'registered' ) ) {
+		if ( ! wp_script_is( 'ohmylms-frontend', 'registered' ) ) {
 			wp_register_script(
-				'omlms-frontend',
-				$url . '/assets/dist/frontend/creator-lms' . $suffix . '.js',
+				'ohmylms-frontend',
+				$url . '/assets/dist/frontend/ohmylms' . $suffix . '.js',
 				array( 'wp-i18n', 'jquery' ),
 				$version,
 				true
 			);
 		}
 
-		if ( ! wp_style_is( 'omlms-frontend', 'registered' ) ) {
+		if ( ! wp_style_is( 'ohmylms-frontend', 'registered' ) ) {
 			wp_register_style(
-				'omlms-frontend',
+				'ohmylms-frontend',
 				$url . '/assets/css/style.css',
 				array(),
 				$version,
@@ -254,14 +252,14 @@ class ElementorManager {
 			);
 		}
 
-		wp_enqueue_script( 'omlms-frontend' );
-		wp_enqueue_style( 'omlms-frontend' );
+		wp_enqueue_script( 'ohmylms-frontend' );
+		wp_enqueue_style( 'ohmylms-frontend' );
 
 		// Localize if not already done.
-		if ( ! wp_script_is( 'omlms-frontend', 'done' ) ) {
+		if ( ! wp_script_is( 'ohmylms-frontend', 'done' ) ) {
 			wp_localize_script(
-				'omlms-frontend',
-				'omlms_frontend_params',
+				'ohmylms-frontend',
+				'ohmylms_frontend_params',
 				array(
 					'ajax_url'         => admin_url( 'admin-ajax.php' ),
 					'current_student_id' => get_current_user_id(),
@@ -273,12 +271,12 @@ class ElementorManager {
 	}
 
 	/**
-	 * Enqueue omlms-frontend assets inside the Elementor editor preview iframe.
+	 * Enqueue ohmylms-frontend assets inside the Elementor editor preview iframe.
 	 *
 	 * @return void
 	 */
 	public function enqueue_preview_assets() {
-		$this->register_and_enqueue_omlms_assets();
+		$this->register_and_enqueue_ohmylms_assets();
 	}
 
 	/**
@@ -287,13 +285,13 @@ class ElementorManager {
 	 * @return void
 	 */
 	public function enqueue_frontend_styles() {
-		$this->register_and_enqueue_omlms_assets();
+		$this->register_and_enqueue_ohmylms_assets();
 
 		wp_enqueue_style(
-			'creator-lms-elementor-widgets',
-			CREATOR_LMS_URL . '/assets/css/elementor-widgets.css',
-			array( 'omlms-frontend' ),
-			CREATOR_LMS_VERSION
+			'ohmylms-elementor-widgets',
+			OHMYLMS_URL . '/assets/css/elementor-widgets.css',
+			array( 'ohmylms-frontend' ),
+			OHMYLMS_VERSION
 		);
 	}
 
@@ -304,10 +302,10 @@ class ElementorManager {
 	 */
 	public function enqueue_frontend_scripts() {
 		wp_enqueue_script(
-			'creator-lms-elementor-widgets',
-			CREATOR_LMS_URL . '/assets/js/elementor-widgets.js',
-			array( 'jquery', 'omlms-frontend' ),
-			CREATOR_LMS_VERSION,
+			'ohmylms-elementor-widgets',
+			OHMYLMS_URL . '/assets/js/elementor-widgets.js',
+			array( 'jquery', 'ohmylms-frontend' ),
+			OHMYLMS_VERSION,
 			true
 		);
 	}
@@ -325,7 +323,7 @@ class ElementorManager {
 		$message = sprintf(
 			/* translators: 1: Plugin name 2: Elementor */
 			esc_html__( '"%1$s" requires "%2$s" to be installed and activated.', 'ohmylms' ),
-			'<strong>' . esc_html__( 'CreatorLMS Elementor Widgets', 'ohmylms' ) . '</strong>',
+			'<strong>' . esc_html__( 'OhMyLMS Elementor Widgets', 'ohmylms' ) . '</strong>',
 			'<strong>' . esc_html__( 'Elementor', 'ohmylms' ) . '</strong>'
 		);
 
@@ -345,7 +343,7 @@ class ElementorManager {
 		$message = sprintf(
 			/* translators: 1: Plugin name 2: Elementor 3: Required Elementor version */
 			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'ohmylms' ),
-			'<strong>' . esc_html__( 'CreatorLMS Elementor Widgets', 'ohmylms' ) . '</strong>',
+			'<strong>' . esc_html__( 'OhMyLMS Elementor Widgets', 'ohmylms' ) . '</strong>',
 			'<strong>' . esc_html__( 'Elementor', 'ohmylms' ) . '</strong>',
 			'3.0.0'
 		);

@@ -39,7 +39,7 @@ export function createCommunityList(readRuntime) {
             progression_delay: '',
             progression_state: '',
             card_class: '',
-            iconColor: 'var(--omlms-primary-color)',
+            iconColor: 'var(--ohmylms-primary-color)',
           },
           {
             label: (0, I18n.__)('Total posts', 'ohmylms'),
@@ -141,7 +141,7 @@ export function createCommunityList(readRuntime) {
                         w(!0),
                         (t.n = 2),
                         l()({
-                          path: '/creatorlms/v1/community/spaces/'.concat(n),
+                          path: '/ohmylms/v1/community/spaces/'.concat(n),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -283,7 +283,7 @@ export function createCommunityList(readRuntime) {
     return (
       (0, ReactHooks.useEffect)(function () {
         l()({
-          path: '/creatorlms/v1/communities/analytics',
+          path: '/ohmylms/v1/communities/analytics',
           method: 'GET',
         }).then(function (e) {
           var t, n, a, o, l, c;
@@ -301,7 +301,7 @@ export function createCommunityList(readRuntime) {
               progression_delay: '',
               progression_state: 'success',
               card_class: 'card-earning',
-              iconColor: 'var(--omlms-primary-color)',
+              iconColor: 'var(--ohmylms-primary-color)',
             },
             {
               label: (0, I18n.__)('Total posts', 'ohmylms'),
@@ -355,13 +355,13 @@ export function createCommunityList(readRuntime) {
                   <Controls.FlexWP
                     gap={4}
                     align={'stretch'}
-                    className={'omlms-overview-cards-wrapper'}
+                    className={'ohmylms-overview-cards-wrapper'}
                   >
                     <Controls.FlexItemWP
                       style={{
                         flex: '9',
                       }}
-                      className={'omlms-overview-left-cards'}
+                      className={'ohmylms-overview-left-cards'}
                     >
                       <Controls.FlexWP
                         direction={'column'}
@@ -428,7 +428,7 @@ export function createCommunityList(readRuntime) {
                                                 {e.tooltip && (
                                                   <V.A
                                                     text={e.tooltip}
-                                                    className={'omlms-tooltip'}
+                                                    className={'ohmylms-tooltip'}
                                                     placement={'top'}
                                                   >
                                                     <React.Fragment>

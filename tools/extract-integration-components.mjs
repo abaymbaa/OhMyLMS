@@ -11,7 +11,7 @@ const generate=generatorModule.default||generatorModule;
 const root=path.resolve(import.meta.dirname,'..');
 const source=path.join(root,'assets/src/recovered');
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
-const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/creatorlms.js').factories.find(item=>item.id==='1841');
+const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/ohmylms.js').factories.find(item=>item.id==='1841');
 const ast=parse(factory.fragments.map(file=>fs.readFileSync(path.join(source,file),'utf8')).join('\n'));
 const declarations=new Map();
 for(const statement of ast.program.body){

@@ -495,7 +495,7 @@ var Fc = function (e) {
     O = {
       borderRadius: "2px",
       width: "100%",
-      boxShadow: (null == n ? void 0 : n.id) === (null == i ? void 0 : i.id) ? "0 0 0 1px var(--omlms-primary-color)" : "0 0 0 1px rgba(0, 0, 0, 0.1)"
+      boxShadow: (null == n ? void 0 : n.id) === (null == i ? void 0 : i.id) ? "0 0 0 1px var(--ohmylms-primary-color)" : "0 0 0 1px rgba(0, 0, 0, 0.1)"
     };
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     style: O,
@@ -549,7 +549,7 @@ var Fc = function (e) {
     align: "center",
     justify: "flex-start"
   }, React.createElement("p", {
-    className: "omlms-quiz-question-title"
+    className: "ohmylms-quiz-question-title"
   }, r + 1 < 10 ? "0" + (r + 1) : r + 1), React.createElement(u, null))))), React.createElement(I.DropdownMenuWP, {
     controls: P,
     icon: React.createElement(q.Icon, {
@@ -566,7 +566,7 @@ var Fc = function (e) {
     },
     onDelete: x,
     isOpen: d,
-    wrapClassName: "omlms-delete-question-modal",
+    wrapClassName: "ohmylms-delete-question-modal",
     isDelete: !0
   }));
 };
@@ -638,8 +638,8 @@ var zc = function () {
     n || e.setSelectedQuestionId(null === (r = t[0]) || void 0 === r ? void 0 : r.id);
   }, [n]), (0, g.useEffect)(function () {
     var e;
-    return !l && t.length > a && (e = document.getElementById("omlms-question-list")) && (e.scrollTop = e.scrollHeight), o(t.length), c(!1), function () {
-      var e = document.getElementById("omlms-question-list");
+    return !l && t.length > a && (e = document.getElementById("ohmylms-question-list")) && (e.scrollTop = e.scrollHeight), o(t.length), c(!1), function () {
+      var e = document.getElementById("ohmylms-question-list");
       e && (e.scrollTop = 0);
     };
   }, [t]);
@@ -654,7 +654,7 @@ var zc = function () {
     justify: "flex-start",
     align: "flex-start",
     gap: 4,
-    id: "omlms-question-list"
+    id: "ohmylms-question-list"
   }, t && t.map(function (e, n) {
     var r;
     return React.createElement(Nc, {
@@ -908,9 +908,9 @@ var qc = function () {
   return (0, g.useEffect)(function () {
     0 === r.length && l();
   }, [r]), React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-editor-left-sidebar"
+    className: "ohmylms-editor-left-sidebar"
   }, React.createElement("div", {
-    className: "omlms-add-question-wrapper"
+    className: "ohmylms-add-question-wrapper"
   }, React.createElement(I.ButtonWP, {
     variant: "secondary",
     icon: React.createElement(uc, null),

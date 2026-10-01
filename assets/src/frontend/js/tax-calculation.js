@@ -40,11 +40,11 @@
             const vat_number = $('input[name="vat_number"]').val();
     
             $.ajax({
-                url: omlms_tax_calculation_params.ajax_url,
+                url: ohmylms_tax_calculation_params.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'creator_lms_calculate_tax',
-                    nonce: omlms_tax_calculation_params.nonce,
+                    action: 'ohmylms_calculate_tax',
+                    nonce: ohmylms_tax_calculation_params.nonce,
                     country: country,
                     state: state || '',
                     vat_number: vat_number || ''
@@ -75,11 +75,11 @@
 
             if(value) {
                 $.ajax({
-                    url: omlms_tax_calculation_params.ajax_url,
+                    url: ohmylms_tax_calculation_params.ajax_url,
                     type: 'POST',
                     data: {
-                        action: 'creator_lms_get_states_by_country',
-                        nonce: omlms_tax_calculation_params.nonce,
+                        action: 'ohmylms_get_states_by_country',
+                        nonce: ohmylms_tax_calculation_params.nonce,
                         country_code: value
                     },
                     success: function(response) {
@@ -100,12 +100,12 @@
                                 const select = $('<select>', {
                                     id: 'state',
                                     name: 'state',
-                                    class: 'creator-lms-input-select creator-lms-input-text',
+                                    class: 'ohmylms-input-select ohmylms-input-text',
                                     html: options.join('')
                                 });
 
                                 $stateField.replaceWith(select);
-                                $stateFieldParent.addClass('creator-lms-folded');
+                                $stateFieldParent.addClass('ohmylms-folded');
                                 $requiredField.css('display', 'inline');
                             } else {
                                 // Just update existing <select>
@@ -120,11 +120,11 @@
                                     type: 'text',
                                     id: 'state',
                                     name: 'state',
-                                    class: 'creator-lms-input-text',
+                                    class: 'ohmylms-input-text',
                                 });
 
                                 $stateField.replaceWith(input);
-                                $stateFieldParent.removeClass('creator-lms-folded validate-required');
+                                $stateFieldParent.removeClass('ohmylms-folded validate-required');
                                 $requiredField.css('display', 'none');
                             }
                         }

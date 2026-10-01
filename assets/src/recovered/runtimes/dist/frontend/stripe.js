@@ -120,7 +120,7 @@
     "use strict";
 
     try {
-      var o = Stripe(omlms_stripe_params.key);
+      var o = Stripe(ohmylms_stripe_params.key);
     } catch (e) {
       return void console.error(e);
     }
@@ -186,7 +186,7 @@
           d.reset();
         },
         reset: function () {
-          t(".omlms-stripe-error, .stripe-source").remove();
+          t(".ohmylms-stripe-error, .stripe-source").remove();
         },
         updateCardBrand: function (e) {
           var r = {
@@ -206,12 +206,12 @@
         },
         payment_method_selected: function (e) {
           if (t(".payment_methods input.input-radio").length > 1) {
-            var r = t(this).parents(".creator-lms-single-payment").find("div.payment_box." + t(this).attr("ID")),
+            var r = t(this).parents(".ohmylms-single-payment").find("div.payment_box." + t(this).attr("ID")),
               o = t(this).is(":checked");
-            o && !r.is(":visible") && (t(this).parents(".creator-lms-single-payment").find("div.payment_box").filter(":visible").slideUp(), o && (t(this).parents(".creator-lms-single-payment").siblings().find("div.payment_box").slideUp(), r.slideDown()));
-          } else t(this).parents(".creator-lms-single-payment").siblings().find("div.payment_box").slideUp(), t(this).parents(".creator-lms-single-payment").find("div.payment_box").slideDown();
+            o && !r.is(":visible") && (t(this).parents(".ohmylms-single-payment").find("div.payment_box").filter(":visible").slideUp(), o && (t(this).parents(".ohmylms-single-payment").siblings().find("div.payment_box").slideUp(), r.slideDown()));
+          } else t(this).parents(".ohmylms-single-payment").siblings().find("div.payment_box").slideUp(), t(this).parents(".ohmylms-single-payment").find("div.payment_box").slideDown();
           t(this).data("order_button_text") ? t("#place_order").text(t(this).data("order_button_text")) : t("#place_order").text(t("#place_order").data("value"));
-          var n = t('.creator-lms-checkout-form input[name="payment_method"]:checked').attr("id");
+          var n = t('.ohmylms-checkout-form input[name="payment_method"]:checked').attr("id");
           n !== d.selectedPaymentMethod && t(document.body).trigger("payment_method_selected"), d.selectedPaymentMethod = n;
         },
         submit: (i = e().m(function r(a) {
@@ -232,13 +232,13 @@
                   e.n = 3;
                   break;
                 }
-                if ("payment_method_stripe" === t('.creator-lms-checkout-form input[name="payment_method"]:checked').attr("id")) {
+                if ("payment_method_stripe" === t('.ohmylms-checkout-form input[name="payment_method"]:checked').attr("id")) {
                   e.n = 2;
                   break;
                 }
                 return e.a(2);
               case 2:
-                return t(".creator-lms-place-order-button .creator-lms-loader").hide(), t(".creator-lms-place-order-button").prop("disabled", !1), t(".omlms-notices-wrapper").empty(), p = '\n\t\t\t\t\t<div class="omlms-notices-wrapper omlms-error-notices">\n\t\t\t\t\t\t<div class="omlms-NoticeGroup">\n\t\t\t\t\t\t\t<ul class="omlms-error" role="alert">\n\t\t\t\t\t\t\t\t<li data-id="email">\n\t\t\t\t\t\t\t\t\t'.concat(m.message, "\n\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"), d.submit_error(p), e.a(2);
+                return t(".ohmylms-place-order-button .ohmylms-loader").hide(), t(".ohmylms-place-order-button").prop("disabled", !1), t(".ohmylms-notices-wrapper").empty(), p = '\n\t\t\t\t\t<div class="ohmylms-notices-wrapper ohmylms-error-notices">\n\t\t\t\t\t\t<div class="ohmylms-NoticeGroup">\n\t\t\t\t\t\t\t<ul class="ohmylms-error" role="alert">\n\t\t\t\t\t\t\t\t<li data-id="email">\n\t\t\t\t\t\t\t\t\t'.concat(m.message, "\n\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"), d.submit_error(p), e.a(2);
               case 3:
                 d.formSubmit(u);
               case 4:
@@ -262,35 +262,35 @@
           return s.apply(this, arguments);
         }),
         scroll_to_notices: function () {
-          var e = t(".omlms-NoticeGroup-updateOrderReview, .omlms-notices-wrapper");
+          var e = t(".ohmylms-NoticeGroup-updateOrderReview, .ohmylms-notices-wrapper");
           e.length || (e = t("form.checkout")), t.scroll_to_notices(e);
         },
         submit_error: function (e) {
-          if (t(".omlms-notices-wrapper").empty(), t(".omlms-NoticeGroup-checkout, .omlms-error, .omlms-message, .is-error, .is-success").remove(), t(".omlms-notices-wrapper").prepend('<div class="creator-lms-checkout-notice">' + e + "</div>"), t(".omlms-NoticeGroup .omlms-error li").length > 0) {
-            var r = t(".omlms-NoticeGroup .omlms-error li").length;
-            1 == r ? t(".creator-lms-checkout-notice").addClass("single-error") : t(".creator-lms-checkout-notice").removeClass("single-error"), 2 < r ? t(".creator-lms-checkout-notice").addClass("more-then-two-error") : t(".creator-lms-checkout-notice").removeClass("more-then-two-error");
+          if (t(".ohmylms-notices-wrapper").empty(), t(".ohmylms-NoticeGroup-checkout, .ohmylms-error, .ohmylms-message, .is-error, .is-success").remove(), t(".ohmylms-notices-wrapper").prepend('<div class="ohmylms-checkout-notice">' + e + "</div>"), t(".ohmylms-NoticeGroup .ohmylms-error li").length > 0) {
+            var r = t(".ohmylms-NoticeGroup .ohmylms-error li").length;
+            1 == r ? t(".ohmylms-checkout-notice").addClass("single-error") : t(".ohmylms-checkout-notice").removeClass("single-error"), 2 < r ? t(".ohmylms-checkout-notice").addClass("more-then-two-error") : t(".ohmylms-checkout-notice").removeClass("more-then-two-error");
           }
           d.scroll_to_notices();
         },
         formSubmit: function (e) {
           var r = this;
           if (this.$checkout_form.isBancontactChosen()) return !0;
-          this.$checkout_form.append(t('<input type="hidden" />').addClass("stripe-source").attr("name", "stripe_source").val(e.id)), this.$checkout_form.append(t('<input type="hidden" />').addClass("payment-method").attr("name", "payment_method").val("stripe")), this.$checkout_form.find(".creator-lms-place-order-button .creator-lms-loader").show(), this.$checkout_form.addClass("processing"), this.$checkout_form.find(".creator-lms-place-order-button").prop("disabled", !0), t.ajax({
+          this.$checkout_form.append(t('<input type="hidden" />').addClass("stripe-source").attr("name", "stripe_source").val(e.id)), this.$checkout_form.append(t('<input type="hidden" />').addClass("payment-method").attr("name", "payment_method").val("stripe")), this.$checkout_form.find(".ohmylms-place-order-button .ohmylms-loader").show(), this.$checkout_form.addClass("processing"), this.$checkout_form.find(".ohmylms-place-order-button").prop("disabled", !0), t.ajax({
             type: "POST",
-            url: omlms_checkout_params.ajax_url,
-            data: this.$checkout_form.serialize() + "&action=creator_lms_checkout&stripe_source=" + e.id + "&payment_method=stripe",
+            url: ohmylms_checkout_params.ajax_url,
+            data: this.$checkout_form.serialize() + "&action=ohmylms_checkout&stripe_source=" + e.id + "&payment_method=stripe",
             dataType: "json",
             success: function (e) {
-              r.$checkout_form.find(".creator-lms-place-order-button .creator-lms-loader").hide(), r.$checkout_form.removeClass("processing"), r.$checkout_form.find(".creator-lms-place-order-button").prop("disabled", !1), e.success && (window.location.href = e.redirect), e.messages && (t(".creator-lms-place-order-button .creator-lms-loader").hide(), t(".creator-lms-place-order-button").prop("disabled", !1), t(".omlms-notices-wrapper").empty(), d.submit_error(e.messages));
+              r.$checkout_form.find(".ohmylms-place-order-button .ohmylms-loader").hide(), r.$checkout_form.removeClass("processing"), r.$checkout_form.find(".ohmylms-place-order-button").prop("disabled", !1), e.success && (window.location.href = e.redirect), e.messages && (t(".ohmylms-place-order-button .ohmylms-loader").hide(), t(".ohmylms-place-order-button").prop("disabled", !1), t(".ohmylms-notices-wrapper").empty(), d.submit_error(e.messages));
             }
           });
         },
         init: function () {
           t.ajax({
             type: "POST",
-            url: omlms_checkout_params.ajax_url,
+            url: ohmylms_checkout_params.ajax_url,
             data: {
-              security: omlms_checkout_params.stripe_nonce,
+              security: ohmylms_checkout_params.stripe_nonce,
               action: "create_stripe_payment_intent"
             },
             dataType: "json",

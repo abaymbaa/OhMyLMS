@@ -4,21 +4,21 @@
  *
  * Handles WP Fusion authentication, connection, and disconnection
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes\Rest;
+namespace OhMyLMS\Integrations\WPFusion\Includes\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use OMLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
+use OhMyLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
 
 /**
  * Class WPFusionAuthController
  *
- * @package OMLMS\Integrations\WPFusion\Includes\Rest
+ * @package OhMyLMS\Integrations\WPFusion\Includes\Rest
  * @since 1.0.0
  */
 class WPFusionAuthController {
@@ -42,7 +42,7 @@ class WPFusionAuthController {
      *
      * @var string
      */
-    protected $namespace = 'creatorlms/v1';
+    protected $namespace = 'ohmylms/v1';
 
     /**
      * Get instance
@@ -165,7 +165,7 @@ class WPFusionAuthController {
             'connected_at' => current_time( 'mysql' ),
         );
         
-        \update_option( 'creatorlms_wpfusion_credentials', $credentials );
+        \update_option( 'ohmylms_wpfusion_credentials', $credentials );
 
         return new \WP_REST_Response(
             array(
@@ -194,8 +194,8 @@ class WPFusionAuthController {
      */
     public function get_status( $request ) {
         try {
-            // Check if WP Fusion integration is enabled in CreatorLMS settings
-            $integration_settings = get_option( 'creatorlms_integrations', array() );
+            // Check if WP Fusion integration is enabled in OhMyLMS settings
+            $integration_settings = get_option( 'ohmylms_integrations', array() );
             $is_enabled = isset( $integration_settings['wpfusion']['is_enable'] ) && 
                           1 === (int) $integration_settings['wpfusion']['is_enable'];
 
@@ -288,7 +288,7 @@ class WPFusionAuthController {
      * @return WP_REST_Response
      */
     public function disconnect( WP_REST_Request $request ) {
-        \delete_option( 'creatorlms_wpfusion_credentials' );
+        \delete_option( 'ohmylms_wpfusion_credentials' );
 
         return new \WP_REST_Response(
             array(

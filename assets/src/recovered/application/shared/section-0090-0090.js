@@ -4,7 +4,7 @@ var Uz,
   Yz,
   Qz,
   Zz,
-  $z = (null === (Uz = window.creator_lms_params) || void 0 === Uz ? void 0 : Uz.plugin_assets) + "images/",
+  $z = (null === (Uz = window.ohmylms_params) || void 0 === Uz ? void 0 : Uz.plugin_assets) + "images/",
   Kz = $z + "seal.svg",
   Jz = $z + "instructor-signature.png",
   Xz = $z + "director-signature.png",
@@ -239,7 +239,7 @@ var Uz,
       }]
     }
   },
-  nB = (null === (qz = window.creator_lms_params) || void 0 === qz ? void 0 : qz.plugin_assets) + "images/certificate2/",
+  nB = (null === (qz = window.ohmylms_params) || void 0 === qz ? void 0 : qz.plugin_assets) + "images/certificate2/",
   rB = nB + "certificate-2-divider.svg",
   aB = nB + "certificate-2-best-quality-logo.svg",
   oB = nB + "director-signature.svg",
@@ -562,7 +562,7 @@ var Uz,
       }]
     }
   },
-  lB = (null === (Yz = window.creator_lms_params) || void 0 === Yz ? void 0 : Yz.plugin_assets) + "images/certificate3/",
+  lB = (null === (Yz = window.ohmylms_params) || void 0 === Yz ? void 0 : Yz.plugin_assets) + "images/certificate3/",
   cB = lB + "certificate-3-border.svg",
   uB = lB + "certificate-3-best-quality-logo.svg",
   sB = lB + "director-signature.svg",
@@ -909,7 +909,7 @@ var Uz,
       }]
     }
   },
-  mB = (null === (Qz = window.creator_lms_params) || void 0 === Qz ? void 0 : Qz.plugin_assets) + "images/certificate4/",
+  mB = (null === (Qz = window.ohmylms_params) || void 0 === Qz ? void 0 : Qz.plugin_assets) + "images/certificate4/",
   pB = mB + "certificate-4-best-quality-logo.svg",
   fB = mB + "director-signature.svg",
   vB = {
@@ -1221,7 +1221,7 @@ var Uz,
       }]
     }
   },
-  gB = (null === (Zz = window.creator_lms_params) || void 0 === Zz ? void 0 : Zz.plugin_assets) + "images/",
+  gB = (null === (Zz = window.ohmylms_params) || void 0 === Zz ? void 0 : Zz.plugin_assets) + "images/",
   hB = [{
     id: 1,
     image_src: gB + "default-certificate-template.png",

@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/leaderboard-layout3.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 if( !$student ){
     return;
 }
@@ -24,11 +24,11 @@ if( !$maybe_enrolled ){
     return;
 }
 $students = $course->get_students();
-$students = apply_filters( 'creator_lms_leaderboard_students', $students, $course->get_id() );
+$students = apply_filters( 'ohmylms_leaderboard_students', $students, $course->get_id() );
 if( empty($students) || !is_array($students) ){
     return;
 }
-if( class_exists( '\OMLMS\Engagement\Leaderboard' ) && !\OMLMS\Engagement\Leaderboard::maybe_enable() ) {
+if( class_exists( '\OhMyLMS\Engagement\Leaderboard' ) && !\OhMyLMS\Engagement\Leaderboard::maybe_enable() ) {
     return;
 }
 
@@ -43,7 +43,7 @@ if ( 'yes' === $leaderboard_disabled ) {
 ?>
 
 <!-- course leaderboard widget -->
-<div class="creator-lms-sidebar-widget creator-lms-widget-leaderboard-v2">
+<div class="ohmylms-sidebar-widget ohmylms-widget-leaderboard-v2">
     <h3 class="sidebar-widget-title">
         <?php echo __( 'Leaderboard', 'ohmylms' ); ?>
         <span class="your-rank">
@@ -62,14 +62,14 @@ if ( 'yes' === $leaderboard_disabled ) {
         </span>
     </h3>
 
-    <div class="creator-lms-leaderboard-wrapper">
+    <div class="ohmylms-leaderboard-wrapper">
         <?php foreach( $students as $leader ): 
             if ( $current_user_name == $leader['name'] ) {
                 $my_rank = $leader['position_in_text'];
             }
             ?>
-            <div class="creator-lms-single-leaderboard <?php echo $current_user_name == $leader['name'] ? 'its-me': '' ;?>">
-                <div class="creator-lms-leaderboard-content">
+            <div class="ohmylms-single-leaderboard <?php echo $current_user_name == $leader['name'] ? 'its-me': '' ;?>">
+                <div class="ohmylms-leaderboard-content">
                     <figure>
                         <img src="<?php echo $leader['profile_image']; ?>" alt="student avater">
                     </figure>
@@ -83,16 +83,16 @@ if ( 'yes' === $leaderboard_disabled ) {
                     </p>
                 </div>
 
-                <span class="creator-lms-leaderboard-position">
+                <span class="ohmylms-leaderboard-position">
                     <?php 
                         if ( $leader['position_in_text'] === '1st' ) {
-                            echo '<img src="'.CREATOR_LMS_URL . '/assets/images/leaderboard-pos1.webp'.'" alt="position1 badge">';
+                            echo '<img src="'.OHMYLMS_URL . '/assets/images/leaderboard-pos1.webp'.'" alt="position1 badge">';
 
                         } elseif ( $leader['position_in_text'] === '2nd' ) {
-                            echo '<img src="'.CREATOR_LMS_URL . '/assets/images/leaderboard-pos2.webp'.'" alt="position2 badge">';
+                            echo '<img src="'.OHMYLMS_URL . '/assets/images/leaderboard-pos2.webp'.'" alt="position2 badge">';
 
                         } elseif ( $leader['position_in_text'] === '3rd' ) {
-                            echo '<img src="'.CREATOR_LMS_URL . '/assets/images/leaderboard-pos3.webp'.'" alt="position3 badge">';
+                            echo '<img src="'.OHMYLMS_URL . '/assets/images/leaderboard-pos3.webp'.'" alt="position3 badge">';
                              
                         }else {
                             echo $leader['position_in_text'];

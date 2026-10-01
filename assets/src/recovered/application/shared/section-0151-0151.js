@@ -85,7 +85,6 @@ function t1() {
     };
   })();
 }
-
 function n1(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function n1(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, n1(e, t, n, r);
 }
-
 function r1(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -117,7 +115,6 @@ function r1(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function a1(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -128,7 +125,6 @@ function a1(e, t) {
   }
   return n;
 }
-
 function o1(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -140,7 +136,6 @@ function o1(e) {
   }
   return e;
 }
-
 function i1(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -161,15 +156,13 @@ function i1(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function l1(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var c1 = function (e) {
-  (0, L.useIsPro)();
+  true;
   var t = e.gateway,
     n = (e.onSave, e.onCancel, e.settings),
     r = e.showTooltip,
@@ -223,12 +216,12 @@ var c1 = function (e) {
     d = (t.title, t.settings_fields),
     m = void 0 === d ? [] : d,
     p = function (e, t) {
-      var n = (null == c ? void 0 : c["creatorlms_".concat(s, "_settings")]) || {},
+      var n = (null == c ? void 0 : c["ohmylms_".concat(s, "_settings")]) || {},
         r = (null == n ? void 0 : n.value) || {},
         a = o1(o1({}, n), {}, {
           value: o1(o1({}, r), {}, i1({}, t, e))
         });
-      l.updatePaymentSettings(i1({}, "creatorlms_".concat(s, "_settings"), a));
+      l.updatePaymentSettings(i1({}, "ohmylms_".concat(s, "_settings"), a));
     },
     f = function () {
       var e,
@@ -237,9 +230,9 @@ var c1 = function (e) {
           return t1().w(function (e) {
             for (;;) switch (e.n) {
               case 0:
-                return r = (null == c ? void 0 : c["creatorlms_".concat(s, "_settings")]) || {}, a = (null == r ? void 0 : r.value) || {}, o = o1(o1({}, r), {}, {
+                return r = (null == c ? void 0 : c["ohmylms_".concat(s, "_settings")]) || {}, a = (null == r ? void 0 : r.value) || {}, o = o1(o1({}, r), {}, {
                   value: o1(o1({}, a), {}, i1({}, n, t ? "yes" : "no"))
-                }), e.n = 1, l.updatePaymentSettings(i1({}, "creatorlms_".concat(s, "_settings"), o));
+                }), e.n = 1, l.updatePaymentSettings(i1({}, "ohmylms_".concat(s, "_settings"), o));
               case 1:
                 return e.a(2);
             }
@@ -263,13 +256,13 @@ var c1 = function (e) {
       };
     }(),
     v = function (e) {
-      var t = (null == c ? void 0 : c["creatorlms_".concat(s, "_settings")]) || {};
+      var t = (null == c ? void 0 : c["ohmylms_".concat(s, "_settings")]) || {};
       return ((null == t ? void 0 : t.value) || {})[e] || "";
     };
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-dynamic-gateway-config omlms-gateway-".concat(s)
+    className: "ohmylms-dynamic-gateway-config ohmylms-gateway-".concat(s)
   }, React.createElement(I.SpacerWP, {
     padding: 2,
     margin: 0,
@@ -318,7 +311,7 @@ var c1 = function (e) {
         return f(e, r);
       },
       isChecked: "yes" === (null == n ? void 0 : n.value[r]),
-      customClass: "omlms-switcher-".concat(r),
+      customClass: "ohmylms-switcher-".concat(r),
       isDefaultStyle: !0,
       variant: "secondary"
     }));
@@ -336,7 +329,7 @@ var c1 = function (e) {
         return p(e, r);
       },
       placeholder: "e.g ".concat(l),
-      className: "omlms-input-".concat(r)
+      className: "ohmylms-input-".concat(r)
     }));
     if ("textarea" === o) return React.createElement(qt, {
       key: t,
@@ -351,7 +344,7 @@ var c1 = function (e) {
       onChange: function (e) {
         return p(e, r);
       },
-      className: "omlms-payment-instructions omlms-input-".concat(r)
+      className: "ohmylms-payment-instructions ohmylms-input-".concat(r)
     }));
     if ("select" === o || "dropdown" === o) return React.createElement(qt, {
       key: t,
@@ -367,7 +360,7 @@ var c1 = function (e) {
         return p(e, r);
       },
       options: e.options || [],
-      className: "omlms-input-".concat(r)
+      className: "ohmylms-input-".concat(r)
     }));
     if ("number" === o) return React.createElement(qt, {
       key: t,
@@ -383,7 +376,7 @@ var c1 = function (e) {
         return p(e, r);
       },
       placeholder: "e.g ".concat(l),
-      className: "omlms-input-".concat(r)
+      className: "ohmylms-input-".concat(r)
     }));
     if ("checkbox" === o) return React.createElement(qt, {
       key: t,
@@ -397,7 +390,7 @@ var c1 = function (e) {
         return f(e, r);
       },
       isChecked: "yes" === (null == n ? void 0 : n.value[r]),
-      customClass: "omlms-checkbox-".concat(r),
+      customClass: "ohmylms-checkbox-".concat(r),
       isDefaultStyle: !0,
       variant: "secondary"
     }));
@@ -448,7 +441,7 @@ var c1 = function (e) {
           return f(e, r);
         },
         disabled: !y,
-        className: "omlms-checkbox-".concat(r)
+        className: "ohmylms-checkbox-".concat(r)
       }), !y && React.createElement("span", {
         style: {
           background: "#FFF9E5",
@@ -475,9 +468,7 @@ var c1 = function (e) {
     return null;
   }))));
 };
-
 const u1 = (0, g.memo)(c1);
-
 function s1(e) {
   return s1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -485,7 +476,6 @@ function s1(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, s1(e);
 }
-
 function d1() {
   var e,
     t,
@@ -572,7 +562,6 @@ function d1() {
     };
   })();
 }
-
 function m1(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -594,7 +583,6 @@ function m1(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, m1(e, t, n, r);
 }
-
 function p1(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -604,7 +592,6 @@ function p1(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function f1(e) {
   return function () {
     var t = this,
@@ -621,7 +608,6 @@ function f1(e) {
     });
   };
 }
-
 function v1(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -661,13 +647,11 @@ function v1(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function g1(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var h1 = function (e) {
   var t = e.handleSave,
     n = e.isLoading,
@@ -701,7 +685,7 @@ var h1 = function (e) {
         for (;;) switch (e.n) {
           case 0:
             return o.setLoadingSetting(!0), e.n = 1, l()({
-              path: "creator-lms/v1/settings/payment-gateway"
+              path: "ohmylms/v1/settings/payment-gateway"
             });
           case 1:
             t = e.v, o.setPaymentSettings(t), o.setLoadingSetting(!1), v(!1);
@@ -732,7 +716,7 @@ var h1 = function (e) {
   }, React.createElement(I.ButtonWP, {
     variant: "secondary",
     onClick: E,
-    className: "omlms-back-button ".concat(null == d ? void 0 : d.id),
+    className: "ohmylms-back-button ".concat(null == d ? void 0 : d.id),
     "aria-label": (0, b.__)("Back to payment gateways", "ohmylms")
   }, React.createElement("svg", {
     width: "17",
@@ -753,7 +737,7 @@ var h1 = function (e) {
   }), function () {
     if (!d) return null;
     if ((r = d).settings_fields && Array.isArray(r.settings_fields) && r.settings_fields.length > 0) {
-      var e = "creatorlms_".concat(d.id, "_settings"),
+      var e = "ohmylms_".concat(d.id, "_settings"),
         n = a[e] || {};
       return React.createElement(u1, {
         gateway: d,
@@ -778,16 +762,16 @@ var h1 = function (e) {
     justify: "flex-start",
     gap: 5,
     wrap: !0,
-    className: "omlms-payment-wrapper"
+    className: "ohmylms-payment-wrapper"
   }, (w = function () {
     var e,
-      t = (null === (e = window) || void 0 === e || null === (e = e.creator_lms_params) || void 0 === e ? void 0 : e.payment_gateways) || {},
+      t = (null === (e = window) || void 0 === e || null === (e = e.ohmylms_params) || void 0 === e ? void 0 : e.payment_gateways) || {},
       n = [];
     return Array.isArray(t) ? n = t : "object" === s1(t) && null !== t && (n = Object.values(t)), n.filter(function (e) {
       return !!(e && e.id && e.title);
     });
   }(), f ? React.createElement(I.FlexBlockWP, {
-    className: "omlms-payment-flex-item"
+    className: "ohmylms-payment-flex-item"
   }, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
@@ -798,7 +782,7 @@ var h1 = function (e) {
   }, React.createElement(I.TextWP, {
     align: "center"
   }, (0, b.__)("Loading payment gateways...", "ohmylms"))))) : 0 === w.length ? React.createElement(I.FlexBlockWP, {
-    className: "omlms-payment-flex-item"
+    className: "ohmylms-payment-flex-item"
   }, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
@@ -810,11 +794,11 @@ var h1 = function (e) {
     align: "center",
     color: "#666"
   }, (0, b.__)("No payment gateways available. Please check your configuration.", "ohmylms"))))) : w.map(function (e) {
-    var t = "creatorlms_".concat(e.id, "_settings"),
+    var t = "ohmylms_".concat(e.id, "_settings"),
       n = a[t] || {};
     return React.createElement(I.FlexBlockWP, {
       key: e.id,
-      className: "omlms-payment-flex-item"
+      className: "ohmylms-payment-flex-item"
     }, React.createElement(J0, {
       gateway: e,
       config: h,
@@ -822,9 +806,7 @@ var h1 = function (e) {
     }));
   })))))));
 };
-
 const y1 = (0, g.memo)(h1);
-
 function b1(e) {
   return b1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -832,7 +814,6 @@ function b1(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, b1(e);
 }
-
 function _1() {
   var e,
     t,
@@ -919,7 +900,6 @@ function _1() {
     };
   })();
 }
-
 function w1(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -941,7 +921,6 @@ function w1(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, w1(e, t, n, r);
 }
-
 function E1(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -951,7 +930,6 @@ function E1(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function S1(e) {
   return function () {
     var t = this,
@@ -968,7 +946,6 @@ function S1(e) {
     });
   };
 }
-
 function R1(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -1008,7 +985,6 @@ function R1(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function x1(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

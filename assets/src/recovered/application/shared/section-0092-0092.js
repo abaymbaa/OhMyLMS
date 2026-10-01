@@ -1,7 +1,7 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var tL = function (e) {
   var t,
-    n = (0, L.useIsPro)(),
+    n = true,
     r = e.selected,
     a = e.setShowEditor,
     o = e.setSelected,
@@ -84,11 +84,10 @@ var tL = function (e) {
         return qB().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (n || !(3 <= s.length)) {
+              {
                 e.n = 1;
                 break;
               }
-              return c.setIsProModalOpen(!0), c.updateProModalContent((0, b.__)("This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature", "ohmylms")), e.a(2);
             case 1:
               return e.p = 1, h(!0), i = {
                 name: "Untitled",
@@ -96,7 +95,7 @@ var tL = function (e) {
                 contents: (null == t ? void 0 : t.contents) || {},
                 html_contents: CB(null == t || null === (r = t.contents) || void 0 === r ? void 0 : r.elements)
               }, e.n = 2, l()({
-                path: "/creator-lms/v1/certificates",
+                path: "/ohmylms/v1/certificates",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -107,7 +106,7 @@ var tL = function (e) {
               null != (d = e.v) && d.id && (c.setCourse(KB(KB({}, u), {}, {
                 certificate_id: d.id,
                 certificate: {}
-              })), c.setCertificate(d), a(!0), o("custom"), (m = document.querySelector(".omlms-course-settings-modal-wrap")) && (m.style.display = "block"), E(!1)), e.n = 4;
+              })), c.setCertificate(d), a(!0), o("custom"), (m = document.querySelector(".ohmylms-course-settings-modal-wrap")) && (m.style.display = "block"), E(!1)), e.n = 4;
               break;
             case 3:
               e.p = 3, p = e.v, console.error(p);
@@ -142,7 +141,7 @@ var tL = function (e) {
                 certificate: {}
               }));
             case 3:
-              E(!1), (n = document.querySelector(".omlms-course-settings-modal-wrap")) && (n.style.display = "block");
+              E(!1), (n = document.querySelector(".ohmylms-course-settings-modal-wrap")) && (n.style.display = "block");
             case 4:
               return e.a(2);
           }
@@ -157,9 +156,9 @@ var tL = function (e) {
   }, [r, i]), (0, g.useEffect)(function () {
     P();
   }, []), React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-course-certificate-templates ".concat(v ? "omlms-loading" : "", " ").concat(0 === m.length ? "omlms-no-templates" : "")
+    className: "ohmylms-course-certificate-templates ".concat(v ? "ohmylms-loading" : "", " ").concat(0 === m.length ? "ohmylms-no-templates" : "")
   }, v ? React.createElement(React.Fragment, null, React.createElement(I.SkeletonWP, {
-    className: "omlms-skeleton",
+    className: "ohmylms-skeleton",
     active: !0,
     rows: 6
   })) : React.createElement(React.Fragment, null, m.length > 0 ? React.createElement(I.FlexWP, {
@@ -167,18 +166,18 @@ var tL = function (e) {
     align: "stretch",
     justify: "flex-start",
     wrap: !0,
-    className: "omlms-certificate-templates-list"
+    className: "ohmylms-certificate-templates-list"
   }, null === (t = m.filter(function (e) {
     return null == e ? void 0 : e.image_src;
   })) || void 0 === t ? void 0 : t.map(function (e, t) {
     var n, i;
     return React.createElement(I.CardWP, {
-      className: "omlms-template-item ".concat(R === (null == e ? void 0 : e.id) ? "omlms-template-item-selected" : ""),
+      className: "ohmylms-template-item ".concat(R === (null == e ? void 0 : e.id) ? "ohmylms-template-item-selected" : ""),
       key: t,
       style: {
         width: "calc(100% / 4 - 15px)",
         border: "2px solid transparent",
-        borderColor: (null == e ? void 0 : e.id) == (null == u ? void 0 : u.certificate_id) || (null == e ? void 0 : e.id) == (null == u || null === (n = u.certificate) || void 0 === n ? void 0 : n.id) ? "var(--omlms-primary-color)" : "transparent"
+        borderColor: (null == e ? void 0 : e.id) == (null == u ? void 0 : u.certificate_id) || (null == e ? void 0 : e.id) == (null == u || null === (n = u.certificate) || void 0 === n ? void 0 : n.id) ? "var(--ohmylms-primary-color)" : "transparent"
       }
     }, ((null == e ? void 0 : e.id) == (null == u ? void 0 : u.certificate_id) || (null == e ? void 0 : e.id) == (null == u || null === (i = u.certificate) || void 0 === i ? void 0 : i.id)) && React.createElement("span", {
       className: "template-selected-indicator",
@@ -189,7 +188,7 @@ var tL = function (e) {
         width: "32px",
         height: "32px",
         borderRadius: "0 7px",
-        backgroundColor: "var(--omlms-primary-color)",
+        backgroundColor: "var(--ohmylms-primary-color)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -245,12 +244,9 @@ var tL = function (e) {
     isLoading: v
   }));
 };
-
 const nL = (0, g.memo)(tL);
-
 var rL,
-  aL = (null === (rL = window.creator_lms_params) || void 0 === rL ? void 0 : rL.plugin_assets) + "packages/";
-
+  aL = (null === (rL = window.ohmylms_params) || void 0 === rL ? void 0 : rL.plugin_assets) + "packages/";
 function oL() {
   return new Promise(function (e, t) {
     if (aL) {
@@ -268,10 +264,9 @@ function oL() {
           t(new Error("Failed to load script from ".concat(r.src, ".")));
         }, document.head.appendChild(r);
       }
-    } else t(new Error("The 'dir' variable is undefined. Ensure 'window.creator_lms_params.plugin_assets' is set correctly."));
+    } else t(new Error("The 'dir' variable is undefined. Ensure 'window.ohmylms_params.plugin_assets' is set correctly."));
   });
 }
-
 function iL() {
   var e,
     t,
@@ -358,7 +353,6 @@ function iL() {
     };
   })();
 }
-
 function lL(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -380,7 +374,6 @@ function lL(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, lL(e, t, n, r);
 }
-
 function cL(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -390,7 +383,6 @@ function cL(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function uL(e) {
   return function () {
     var t = this,
@@ -407,7 +399,6 @@ function uL(e) {
     });
   };
 }
-
 var sL = function () {
     var e = uL(iL().m(function e(t) {
       return iL().w(function (e) {
@@ -509,7 +500,6 @@ var sL = function () {
       return e.apply(this, arguments);
     };
   }();
-
 function pL() {
   var e,
     t,
@@ -596,7 +586,6 @@ function pL() {
     };
   })();
 }
-
 function fL(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -618,7 +607,6 @@ function fL(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, fL(e, t, n, r);
 }
-
 function vL(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -628,7 +616,6 @@ function vL(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function gL(e) {
   return function () {
     var t = this,
@@ -645,7 +632,6 @@ function gL(e) {
     });
   };
 }
-
 function hL(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -685,13 +671,11 @@ function hL(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function yL(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var bL = function (e) {
   e.saveAsPDF, e.isLoading;
   var t = e.elementRef,
@@ -912,9 +896,7 @@ var bL = function (e) {
     }
   }, (0, b.__)("Update", "ohmylms"))))))));
 };
-
 const _L = (0, g.memo)(bL);
-
 function wL(e) {
   return wL = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -922,9 +904,7 @@ function wL(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, wL(e);
 }
-
 var EL = ["label", "value", "color", "onValueChange", "onColorChange", "placeholder", "presets", "isItProFeature"];
-
 function SL() {
   return SL = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -934,7 +914,6 @@ function SL() {
     return e;
   }, SL.apply(null, arguments);
 }
-
 function RL(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -945,7 +924,6 @@ function RL(e, t) {
   }
   return n;
 }
-
 function xL(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -957,7 +935,6 @@ function xL(e) {
   }
   return e;
 }
-
 function CL(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -978,7 +955,6 @@ function CL(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function PL(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

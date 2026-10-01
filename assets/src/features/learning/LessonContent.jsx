@@ -13,7 +13,7 @@ function createBuiltinLessonContent(readRuntime) {
       onExternalUploadComplete = props.onExternalUploadComplete;
     return (
       <React.Fragment>
-        <div className={'omlms-lesson-content-wrapper'}>
+        <div className={'ohmylms-lesson-content-wrapper'}>
           <LearningContentForm
             titleValue={
               null !== (t = null == lesson ? void 0 : lesson.title) && void 0 !== t

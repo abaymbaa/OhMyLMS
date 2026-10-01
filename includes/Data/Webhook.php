@@ -1,15 +1,15 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
+use OhMyLMS\Abstracts\Data;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Webhook
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Webhook extends Data {
@@ -64,7 +64,7 @@ class Webhook extends Data {
 			$this->set_id( $webhook->id );
 		}
 
-		$this->data_store = \OMLMS\DataStores\DataStores::load( $this->data_store_name );
+		$this->data_store = \OhMyLMS\DataStores\DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {
 			$this->data_store->read( $this );
@@ -269,7 +269,7 @@ class Webhook extends Data {
 	 * @return array
 	 */
 	public static function get_available_triggers() {
-		return apply_filters( 'creator_lms_webhook_triggers', array(
+		return apply_filters( 'ohmylms_webhook_triggers', array(
 			'course_purchase'      => __( 'Course Purchase', 'ohmylms' ),
 			'course_enrollment'    => __( 'Course Enrollment', 'ohmylms' ),
 			'course_completion'    => __( 'Course Completion', 'ohmylms' ),
@@ -345,8 +345,8 @@ class Webhook extends Data {
 		}
 
 		// Add webhook signature for security
-		$args['headers']['X-Creator-LMS-Signature'] = hash_hmac( 'sha256', $args['body'], wp_hash( 'creator_lms_webhook_' . $this->get_id() ) );
-		$args['headers']['X-Creator-LMS-Event'] = $this->get_trigger_event();
+		$args['headers']['X-OhMyLMS-Signature'] = hash_hmac( 'sha256', $args['body'], wp_hash( 'ohmylms_webhook_' . $this->get_id() ) );
+		$args['headers']['X-OhMyLMS-Event'] = $this->get_trigger_event();
 
 		$response = wp_remote_request( $this->get_webhook_url(), $args );
 

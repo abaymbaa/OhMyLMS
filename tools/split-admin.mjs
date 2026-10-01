@@ -7,7 +7,7 @@ import generatorModule from '@babel/generator';
 const traverse=traverseModule.default||traverseModule,generate=generatorModule.default||generatorModule;
 const root=path.resolve(import.meta.dirname,'../assets/src/recovered');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));
-const asset=manifest.assets.find(a=>a.output==='assets/dist/admin/creatorlms.js');
+const asset=manifest.assets.find(a=>a.output==='assets/dist/admin/ohmylms.js');
 const factory=asset.factories.find(f=>f.id==='1841');
 if(factory.fragments)throw new Error('Application is already split. Edit its feature files directly.');
 const ast=parse(fs.readFileSync(path.join(root,factory.source),'utf8'));

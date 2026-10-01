@@ -154,7 +154,7 @@ export function createPrerequisiteSettings(readRuntime) {
         <Kt
           title={title}
           tooltip={tooltip}
-          customClass={'omlms-lesson-settings-prerequisites-button'}
+          customClass={'ohmylms-lesson-settings-prerequisites-button'}
           onChange={onChange}
           isChecked={isChecked}
           showDivider={u}

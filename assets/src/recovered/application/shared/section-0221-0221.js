@@ -29,13 +29,13 @@ var vre = {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, e.n = 1, m({
-                  path: "creator-lms/v1/setup-wizard/onboarding-skipped",
+                  path: "ohmylms/v1/setup-wizard/onboarding-skipped",
                   method: "POST",
                   data: {
                     step: t
                   },
                   headers: {
-                    nonce: window.creator_lms_params.setup_wizard_nonce
+                    nonce: window.ohmylms_params.setup_wizard_nonce
                   }
                 });
               case 1:
@@ -56,10 +56,10 @@ var vre = {
       }();
     return (0, g.useEffect)(function () {
       m({
-        path: "creator-lms/v1/setup-wizard/onboarding-started",
+        path: "ohmylms/v1/setup-wizard/onboarding-started",
         method: "POST",
         headers: {
-          nonce: window.creator_lms_params.setup_wizard_nonce
+          nonce: window.ohmylms_params.setup_wizard_nonce
         }
       }).catch(function (e) {
         console.error("Failed to track onboarding started:", e);
@@ -72,7 +72,7 @@ var vre = {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.n = 1, (0, Nte.nb)({
-                  plugin: "creator-lms",
+                  plugin: "ohmylms",
                   version: "1.1.16",
                   theme: {
                     color: "#6E42D3"
@@ -131,10 +131,10 @@ var vre = {
                           for (;;) switch (e.p = e.n) {
                             case 0:
                               return e.p = 0, e.n = 1, m({
-                                path: "creator-lms/v1/setup-wizard/onboarding-completed",
+                                path: "ohmylms/v1/setup-wizard/onboarding-completed",
                                 method: "POST",
                                 headers: {
-                                  nonce: window.creator_lms_params.setup_wizard_nonce
+                                  nonce: window.ohmylms_params.setup_wizard_nonce
                                 }
                               });
                             case 1:
@@ -178,10 +178,10 @@ var vre = {
                       for (;;) switch (e.p = e.n) {
                         case 0:
                           return e.p = 0, e.n = 1, m({
-                            path: "creator-lms/v1/setup-wizard/onboarding-completed",
+                            path: "ohmylms/v1/setup-wizard/onboarding-completed",
                             method: "POST",
                             headers: {
-                              nonce: window.creator_lms_params.setup_wizard_nonce
+                              nonce: window.ohmylms_params.setup_wizard_nonce
                             }
                           });
                         case 1:
@@ -198,11 +198,11 @@ var vre = {
                     return e.apply(this, arguments);
                   };
                 }()), i.setLoadingSetting(!0), e.p = 3, e.n = 4, m({
-                  path: "creator-lms/v1/settings/design"
+                  path: "ohmylms/v1/settings/design"
                 });
               case 4:
                 return t = e.v, i.setDesignSettings(t), e.n = 5, m({
-                  path: "creator-lms/v1/settings/currency"
+                  path: "ohmylms/v1/settings/currency"
                 });
               case 5:
                 r = e.v, i.setCurrencySettings(r), a = {}, null == r || r.forEach(function (e) {

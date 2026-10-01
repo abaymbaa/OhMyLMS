@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Loop Duration
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/duration.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/duration.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $course;
-$course_settings = get_post_meta( $course->get_id(),'omlms_course_settings',true );
+$course_settings = get_post_meta( $course->get_id(),'ohmylms_course_settings',true );
 ?>
 <?php if ( is_array($course_settings) && isset($course_settings['duration'] ) ) : ?>
     <div class="duration"><?php echo __('Duration: ','ohmylms'). $course_settings['duration'].__(' Weeks','ohmylms'); ?></div>

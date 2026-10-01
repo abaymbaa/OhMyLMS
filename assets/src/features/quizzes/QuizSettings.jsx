@@ -20,7 +20,7 @@ export function createQuizSettings(readRuntime) {
                 >
                   <Controls.FlexWP justify={'start'} gap={2}>
                     <svg
-                      className={'omlms-back-arrow-btn-icon'}
+                      className={'ohmylms-back-arrow-btn-icon'}
                       width={'19'}
                       height={'16'}
                       fill={'none'}

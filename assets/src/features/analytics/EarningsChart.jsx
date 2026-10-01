@@ -284,7 +284,7 @@ export function createEarningsChart(readRuntime) {
                   p ||
                   (null === (d = window) ||
                   void 0 === d ||
-                  null === (d = d.creator_lms_params) ||
+                  null === (d = d.ohmylms_params) ||
                   void 0 === d
                     ? void 0
                     : d.currency)

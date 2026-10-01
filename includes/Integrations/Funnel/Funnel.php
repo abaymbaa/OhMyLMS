@@ -1,10 +1,10 @@
 <?php 
 
-namespace OMLMS\Integrations\Funnel;
+namespace OhMyLMS\Integrations\Funnel;
 
-use OMLMS\Integrations\Funnel\Includes\Hooks;
-use OMLMS\Integrations\Funnel\Includes\FunnelManager;
-use OMLMS\Integrations\Funnel\Includes\FunnelEndpoint;
+use OhMyLMS\Integrations\Funnel\Includes\Hooks;
+use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
+use OhMyLMS\Integrations\Funnel\Includes\FunnelEndpoint;
 
 class Funnel {
 

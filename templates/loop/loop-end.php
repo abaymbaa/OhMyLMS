@@ -2,9 +2,9 @@
 /**
  * Course Loop End
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/loop-end.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/loop-end.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -16,8 +16,8 @@ if( isset( $atts) && is_array( $atts )  && !empty($atts) ) {
 	$layout = isset( $atts['layout'] ) ? $atts['layout'] : 'grid';
 	$layout_style = isset( $atts['layout_style'] ) ? $atts['layout_style'] : 'grid-style1';
 } else {
-	$layout = get_option( 'creator_lms_archive_page_layout', 'grid' );
-	$layout_style = get_option('creator_lms_archive_page_layout_style','grid-style1');
+	$layout = get_option( 'ohmylms_archive_page_layout', 'grid' );
+	$layout_style = get_option('ohmylms_archive_page_layout_style','grid-style1');
 }
 
 // Check if we're in a block context by looking for block attributes
@@ -30,9 +30,9 @@ $is_block_context = isset($atts) && is_array($atts) && (
 
 ?>
 </div>
-<!-- .creator-lms-course-cards end. it start in loop-start.php -->
+<!-- .ohmylms-course-cards end. it start in loop-start.php -->
 
 <?php if( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) ){ ?>
 	</div>
-<!-- .creator-lms-carousel-outer end. it start in loop-start.php -->
+<!-- .ohmylms-carousel-outer end. it start in loop-start.php -->
 <?php } ?>

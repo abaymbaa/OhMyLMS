@@ -2,16 +2,16 @@
 /**
  * ZoomApiInterface class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Api;
+namespace OhMyLMS\Integrations\Zoom\Includes\Api;
 
 /**
  * Interface ZoomApiInterface
  *
- * @package OMLMS\Integrations\Zoom\Interfaces
+ * @package OhMyLMS\Integrations\Zoom\Interfaces
  * @since 1.0.0
  */
 interface ZoomApiInterface {

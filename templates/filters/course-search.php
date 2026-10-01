@@ -2,9 +2,9 @@
 /**
  * Template for displaying course content within loop.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/filters/course-search.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/filters/course-search.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

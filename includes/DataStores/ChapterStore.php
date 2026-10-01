@@ -1,17 +1,17 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Chapter;
-use OMLMS\Data\Student;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Chapter;
+use OhMyLMS\Data\Student;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class ChapterStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class ChapterStore extends DataStore {
@@ -54,13 +54,13 @@ class ChapterStore extends DataStore {
 			$slug = $chapter->get_name( 'edit' );
 		}
 
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_CHAPTER_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_CHAPTER_CPT );
 
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_chapter_data',
+				'ohmylms_new_chapter_data',
 				array(
-					'post_type'     => CREATOR_LMS_CHAPTER_CPT,
+					'post_type'     => OHMYLMS_CHAPTER_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => $chapter->get_status() ? $chapter->get_status() : 'draft',
 					'post_title'    => $chapter->get_name() ? $chapter->get_name() : __( 'Untitled', 'ohmylms' ),
@@ -89,7 +89,7 @@ class ChapterStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_after_creating_new_chapter', $id, $chapter );
+			do_action( 'ohmylms_after_creating_new_chapter', $id, $chapter );
 		}
 	}
 
@@ -104,7 +104,7 @@ class ChapterStore extends DataStore {
 	 */
 	public function read( &$chapter ) {
 		$post_object = get_post( $chapter->get_id() );
-		if ( ! $chapter->get_id() || ! $post_object || CREATOR_LMS_CHAPTER_CPT !== $post_object->post_type ) {
+		if ( ! $chapter->get_id() || ! $post_object || OHMYLMS_CHAPTER_CPT !== $post_object->post_type ) {
 			return;
 		}
 
@@ -134,14 +134,14 @@ class ChapterStore extends DataStore {
 	 */
 	public function update( &$chapter ) {
 		$slug = $chapter->get_slug( 'edit' );
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_CHAPTER_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_CHAPTER_CPT );
 
 		$post_data = array(
 			'post_content' => $chapter->get_description( 'edit' ),
 			'post_title'   => $chapter->get_name( 'edit' ),
 			'post_status'  => $chapter->get_status( 'edit' ) ? $chapter->get_status( 'edit' ) : 'publish',
 			'post_name'    => sanitize_title( $chapter->get_name() ),
-			'post_type'    => CREATOR_LMS_CHAPTER_CPT,
+			'post_type'    => OHMYLMS_CHAPTER_CPT,
 			'post_parent'  => $chapter->get_parent_id( 'edit' ),
 		);
 		if ( $chapter->get_date_created( 'edit' ) ) {
@@ -163,7 +163,7 @@ class ChapterStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_update_chapter', $chapter->get_id(), $chapter );
+		do_action( 'ohmylms_update_chapter', $chapter->get_id(), $chapter );
 	}
 
 
@@ -209,7 +209,7 @@ class ChapterStore extends DataStore {
 				 *
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_deleting_a_chapter' );
+				do_action( 'ohmylms_after_deleting_a_chapter' );
 			}
 		}
 	}
@@ -223,7 +223,7 @@ class ChapterStore extends DataStore {
 	 */
 	public function set_session( $chapter, $session ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 		$wpdb->insert(
 			$table_name,
@@ -252,7 +252,7 @@ class ChapterStore extends DataStore {
 			return;
 		}
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 		$values     = array();
 		foreach ( $lessons as $index => $lesson ) {
@@ -330,7 +330,7 @@ class ChapterStore extends DataStore {
 	 */
 	protected function update_chapter_meta( &$chapter, $force = false ) {
 		$meta_key_to_props = array();
-		$meta_key_to_props = apply_filters( 'creator_lms_chapter_meta_key_to_props', $meta_key_to_props );
+		$meta_key_to_props = apply_filters( 'ohmylms_chapter_meta_key_to_props', $meta_key_to_props );
 		$props_to_update   = $meta_key_to_props;
 
 		foreach ( $props_to_update as $meta_key => $prop ) {
@@ -361,7 +361,7 @@ class ChapterStore extends DataStore {
 		// Check if raw database results are cached
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'omlms_content_relationship';
+			$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
@@ -377,19 +377,19 @@ class ChapterStore extends DataStore {
 			foreach ( $lessons as $lesson ) {
 				$lesson_obj = null;
 				if ( 'assignment' === $lesson->content_type ) {
-					if ( function_exists( 'omlms_get_assignment' ) ) {
-						$lesson_obj = omlms_get_assignment( $lesson->content_id );
+					if ( function_exists( 'ohmylms_get_assignment' ) ) {
+						$lesson_obj = ohmylms_get_assignment( $lesson->content_id );
 					}
 				} elseif ( 'quiz' === $lesson->content_type ) {
-					if ( function_exists( 'omlms_get_quiz' ) ) {
-						$lesson_obj = omlms_get_quiz( $lesson->content_id );
+					if ( function_exists( 'ohmylms_get_quiz' ) ) {
+						$lesson_obj = ohmylms_get_quiz( $lesson->content_id );
 					}
 				} elseif ( 'session' === $lesson->content_type ) {
-					if ( function_exists( 'omlms_get_session' ) ) {
-						$lesson_obj = omlms_get_session( $lesson->content_id );
+					if ( function_exists( 'ohmylms_get_session' ) ) {
+						$lesson_obj = ohmylms_get_session( $lesson->content_id );
 					}
 				} elseif ( in_array( $lesson->content_type, array( 'text', 'video', 'audio' ) ) ) {
-						$lesson_obj = omlms_get_lesson( $lesson->content_id );
+						$lesson_obj = ohmylms_get_lesson( $lesson->content_id );
 				}
 
 				if ( $lesson_obj && 'publish' !== $lesson_obj->get_status() ) {
@@ -452,13 +452,13 @@ class ChapterStore extends DataStore {
 	 */
 	public function search_lessons_in_chapter( &$chapter, $term ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 
 		// Prepare the SQL query with search terms.
 		$sql = "SELECT * FROM {$table_name} WHERE chapter_id = %d";
 		if ( ! empty( $term ) ) {
-			$sql    .= " AND content_id IN (SELECT ID FROM {$wpdb->posts} WHERE post_type = 'omlms-lesson' AND post_title LIKE %s)";
+			$sql    .= " AND content_id IN (SELECT ID FROM {$wpdb->posts} WHERE post_type = 'ohmylms-lesson' AND post_title LIKE %s)";
 			$search  = '%' . $wpdb->esc_like( $term ) . '%';
 			$lessons = $wpdb->get_results( $wpdb->prepare( $sql . ' ORDER BY order_number ASC', $chapter_id, $search ) );
 		} else {
@@ -468,7 +468,7 @@ class ChapterStore extends DataStore {
 		$filtered_lessons = array();
 		if ( $lessons ) {
 			foreach ( $lessons as $lesson ) {
-				$lesson_obj         = omlms_get_lesson( $lesson->content_id );
+				$lesson_obj         = ohmylms_get_lesson( $lesson->content_id );
 				$filtered_lessons[] = array(
 					'value' => $lesson_obj->get_id(),
 					'label' => $lesson_obj->get_name(),
@@ -489,7 +489,7 @@ class ChapterStore extends DataStore {
 		// Check if raw database results are cached
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'omlms_content_relationship';
+			$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
@@ -513,7 +513,7 @@ class ChapterStore extends DataStore {
 
 	public function get_lesson_count( &$chapter ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 		$lessons    = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE chapter_id = %d AND content_type IN ("text", "video", "audio", "session") ORDER BY order_number ASC', $table_name, $chapter_id ) );
 		return count( $lessons );
@@ -527,7 +527,7 @@ class ChapterStore extends DataStore {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$posts_table = $wpdb->posts;
 
 		$count = $wpdb->get_var(
@@ -548,7 +548,7 @@ class ChapterStore extends DataStore {
 
 	public function get_content_by_order( &$chapter, $order ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 		$lesson = $wpdb->get_row(
 			$wpdb->prepare(
@@ -568,19 +568,19 @@ class ChapterStore extends DataStore {
 			$content_type = $content->content_type;
 			$lesson_obj   = null;
 			if ( 'assignment' === $content_type ) {
-				if ( function_exists( 'omlms_get_assignment' ) ) {
-					$lesson_obj = omlms_get_assignment( $content_id );
+				if ( function_exists( 'ohmylms_get_assignment' ) ) {
+					$lesson_obj = ohmylms_get_assignment( $content_id );
 				}
 			} elseif ( 'quiz' === $content_type ) {
-				if ( function_exists( 'omlms_get_quiz' ) ) {
-					$lesson_obj = omlms_get_quiz( $content_id );
+				if ( function_exists( 'ohmylms_get_quiz' ) ) {
+					$lesson_obj = ohmylms_get_quiz( $content_id );
 				}
 			} elseif ( 'session' === $content_type ) {
-				if ( function_exists( 'omlms_get_session' ) ) {
-					$lesson_obj = omlms_get_session( $content_id );
+				if ( function_exists( 'ohmylms_get_session' ) ) {
+					$lesson_obj = ohmylms_get_session( $content_id );
 				}
-			} elseif ( function_exists( 'omlms_get_lesson' ) ) {
-				$lesson_obj = omlms_get_lesson( $content_id );
+			} elseif ( function_exists( 'ohmylms_get_lesson' ) ) {
+				$lesson_obj = ohmylms_get_lesson( $content_id );
 			}
 
 			if ( $lesson_obj ) {

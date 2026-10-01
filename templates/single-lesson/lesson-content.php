@@ -4,9 +4,9 @@
 /**
  * The template for displaying lesson's quiz
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-quiz.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-quiz.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -18,56 +18,56 @@ $current_post_type = get_post_type();
 
 <?php
 /**
- * hook: creator_lms_before_lesson_main_content.
+ * hook: ohmylms_before_lesson_main_content.
  * 
- * hooked: creator_lms_show_toast_notices (5).
+ * hooked: ohmylms_show_toast_notices (5).
  */
-do_action( 'creator_lms_before_lesson_main_content' );
+do_action( 'ohmylms_before_lesson_main_content' );
 ?>
 
-<section class="creator-lms-lesson-details">
-	<?php omlms_get_template( 'global/creator-lms-celebration.php' ); ?>
+<section class="ohmylms-lesson-details">
+	<?php ohmylms_get_template( 'global/ohmylms-celebration.php' ); ?>
 	
-	<span class="creator-lms-lesson-details-hamburger">
-		<?php include(CREATOR_LMS_DIR . '/assets/images/icon/hamburger-icon.php'); ?>
+	<span class="ohmylms-lesson-details-hamburger">
+		<?php include(OHMYLMS_DIR . '/assets/images/icon/hamburger-icon.php'); ?>
 	</span>
 	
-	<div class="creator-lms-container">
-		<div class="creator-lms-lesson-content-wrapper">
-			<div class="creator-lms-lesson-content">
+	<div class="ohmylms-container">
+		<div class="ohmylms-lesson-content-wrapper">
+			<div class="ohmylms-lesson-content">
 				<?php
-				$content_drip_protection_message = apply_filters( 'creator_lms_drip_protection_message', '', get_the_ID(), $current_post_type, get_current_user_id() );
+				$content_drip_protection_message = apply_filters( 'ohmylms_drip_protection_message', '', get_the_ID(), $current_post_type, get_current_user_id() );
 				if ( empty( $content_drip_protection_message ) ) {
-					if('omlms-lesson' === $current_post_type){
-						omlms_get_template( 'single-lesson/content-lesson.php' );
+					if('ohmylms-lesson' === $current_post_type){
+						ohmylms_get_template( 'single-lesson/content-lesson.php' );
 					}
 	
-					if ('omlms-assignment' === $current_post_type) {
-						omlms_get_template( 'single-lesson/content-assignment.php');
+					if ('ohmylms-assignment' === $current_post_type) {
+						ohmylms_get_template( 'single-lesson/content-assignment.php');
 					}
 	
-					if ('omlms-quiz' === $current_post_type) {
-						omlms_get_template( 'single-lesson/content-quiz.php',array('quiz' => omlms_get_quiz(get_the_ID())) );
+					if ('ohmylms-quiz' === $current_post_type) {
+						ohmylms_get_template( 'single-lesson/content-quiz.php',array('quiz' => ohmylms_get_quiz(get_the_ID())) );
 					}
-					if('omlms-session' === $current_post_type) {
-						omlms_get_template('single-lesson/content-session');
+					if('ohmylms-session' === $current_post_type) {
+						ohmylms_get_template('single-lesson/content-session');
 					}
 					
-					omlms_get_template( 'single-lesson/content-navigation.php' );
+					ohmylms_get_template( 'single-lesson/content-navigation.php' );
 				} else {
 					echo esc_html( $content_drip_protection_message );
 				}
 				?>
 			</div>
 
-			<?php omlms_get_template('single-lesson/sidebar/sidebar.php'); ?>
+			<?php ohmylms_get_template('single-lesson/sidebar/sidebar.php'); ?>
 		</div>
 	</div>
 </section>
 
 <?php
 /**
- * creator_lms_after_lesson_main_content hook.
+ * ohmylms_after_lesson_main_content hook.
  */
-do_action( 'creator_lms_after_lesson_main_content' );
+do_action( 'ohmylms_after_lesson_main_content' );
 ?>

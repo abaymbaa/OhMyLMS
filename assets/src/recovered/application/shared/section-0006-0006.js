@@ -9,7 +9,7 @@ var Or = function (e) {
     l = e.chapterId,
     c = e.onExternalUploadComplete;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-lesson-content-wrapper"
+    className: "ohmylms-lesson-content-wrapper"
   }, React.createElement(Pr, {
     titleValue: null !== (t = null == n ? void 0 : n.title) && void 0 !== t ? t : null == n ? void 0 : n.name,
     imageSrc: null == n ? void 0 : n.image_src,
@@ -38,7 +38,7 @@ const kr = (0, g.memo)(Or);
 var jr = n(47406),
   Ar = function () {
     return React.createElement(React.Fragment, null, React.createElement(q.Icon, {
-      className: "omlms-back-arrow-btn-icon",
+      className: "ohmylms-back-arrow-btn-icon",
       icon: jr.A,
       width: "24px",
       height: "24px"
@@ -480,20 +480,20 @@ var Jr = function (e) {
   return h().createElement(h().Fragment, null, !o && r, !E || null != u && u.id ? h().createElement(h().Fragment, null, !o && h().createElement(Wr, {
     title: (0, b.__)("Lesson Outline", "ohmylms"),
     redirection: "/lessons",
-    className: "omlms-lesson-editor-page-header",
+    className: "ohmylms-lesson-editor-page-header",
     rightContent: h().createElement(h().Fragment, null, h().createElement(I.ButtonWP, {
       onClick: function () {
         null != u && u.preview_url && window.open(null == u ? void 0 : u.preview_url, "_blank");
       },
       icon: h().createElement(Br, null),
       iconPosition: "right",
-      className: "omlms-preview-btn"
+      className: "ohmylms-preview-btn"
     }, (0, b.__)("Preview", "ohmylms")), h().createElement(I.ButtonWP, {
       onClick: P,
-      className: "omlms-lesson-save-btn"
+      className: "ohmylms-lesson-save-btn"
     }, (0, b.__)("Save", "ohmylms")))
   }), h().createElement(I.FlexWP, {
-    className: Vr()("omlms-lesson-editor-wrapper", !o && "omlms-lesson-editor-page"),
+    className: Vr()("ohmylms-lesson-editor-wrapper", !o && "ohmylms-lesson-editor-page"),
     justify: "space-between",
     gap: 5
   }, h().createElement(I.FlexItemWP, {
@@ -639,7 +639,7 @@ var na = function (e) {
     variant: u,
     type: l,
     icon: n || null,
-    className: "omlms-preview-btn omlms-action-button ".concat(r),
+    className: "ohmylms-preview-btn ohmylms-action-button ".concat(r),
     onClick: o
   }, s), t));
 };
@@ -659,14 +659,14 @@ var aa = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     align: "center",
     justify: "space-between",
-    className: "omlms-lesson-create-modal-header",
+    className: "ohmylms-lesson-create-modal-header",
     gap: 3
   }, React.createElement("p", {
-    className: "omlms-lesson-create-title"
+    className: "ohmylms-lesson-create-title"
   }, t), l && l, !l && React.createElement(React.Fragment, null, o && o, React.createElement(ra, {
     label: (0, b.__)("Preview", "ohmylms"),
     icon: React.createElement(Br, null),
-    customClass: "omlms-lesson-create-modal-header-preview-btn",
+    customClass: "ohmylms-lesson-create-modal-header-preview-btn",
     onClick: r
   }))));
 };
@@ -721,7 +721,7 @@ var ca = function (e) {
       maxWidth: "1500px",
       background: "#F5F5F5"
     },
-    className: "omlms-create-modal-wrapper"
+    className: "ohmylms-create-modal-wrapper"
   }, o), r));
 };
 

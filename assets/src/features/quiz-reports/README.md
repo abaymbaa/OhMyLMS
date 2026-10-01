@@ -22,7 +22,7 @@ Successful saves retain the existing reload behavior.
 These are editable reconstructed JSX modules integrated with the recovered application.
 Shared controls, icons, date utilities and some transpiler helpers still come from that
 runtime. Recovered files remain the parity baseline. Do not rerun the extraction tool
-over manual edits. The existing `OMLMS_SOURCE_ASSETS` setting controls activation;
+over manual edits. The existing `OHMYLMS_SOURCE_ASSETS` setting controls activation;
 building does not enable source assets on a site.
 
 Validation: `npm run build`, `npm run lint`, and `npm test`. The quiz report tests compare

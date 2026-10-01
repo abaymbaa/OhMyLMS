@@ -23,7 +23,7 @@ export function createEmailEditorHeader(readRuntime) {
                 align={'center'}
                 justify={'start'}
                 gap={4}
-                className={'omlms-email-editor-responsieve-switcher'}
+                className={'ohmylms-email-editor-responsieve-switcher'}
               >
                 <Controls.RadioGroupIconWP
                   onChange={function (e) {

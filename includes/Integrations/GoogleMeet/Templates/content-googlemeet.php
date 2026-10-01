@@ -2,7 +2,7 @@
 /**
  * Template for displaying Google Meet lesson content.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
@@ -30,7 +30,7 @@ if ( $now >= $start_time && $now <= $end_time ) {
 }
 ?>
 
-<div class="creatorlms-googlemeet-content" data-meeting-id="<?php echo esc_attr( $meeting_id ); ?>">
+<div class="ohmylms-googlemeet-content" data-meeting-id="<?php echo esc_attr( $meeting_id ); ?>">
 	<div class="googlemeet-header">
 		<div class="googlemeet-icon">
 			<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,7 +105,7 @@ if ( $now >= $start_time && $now <= $end_time ) {
 					</p>
 				<?php endif; ?>
 				<a href="<?php echo esc_url( add_query_arg( array(
-					'action' => 'creatorlms_googlemeet_add_to_calendar',
+					'action' => 'ohmylms_googlemeet_add_to_calendar',
 					'meeting_id' => $meeting_id,
 				), admin_url( 'admin-ajax.php' ) ) ); ?>"
 				   class="button googlemeet-calendar-button"
@@ -143,7 +143,7 @@ if ( $now >= $start_time && $now <= $end_time ) {
 </div>
 
 <style>
-.creatorlms-googlemeet-content {
+.ohmylms-googlemeet-content {
 	padding: 20px;
 	background: #fff;
 	border-radius: 8px;

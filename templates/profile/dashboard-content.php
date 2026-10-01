@@ -2,12 +2,12 @@
 /**
  * Template for displaying dashboard content of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/dashboard-content.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/dashboard-content.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \OMLMS\Data\Student $student
- * @global \OMLMS\Data\Course $course
+ * @global \OhMyLMS\Data\Student $student
+ * @global \OhMyLMS\Data\Course $course
  */
 
 defined( 'ABSPATH' ) || exit();
@@ -21,9 +21,9 @@ foreach ( $get_courses as $course ){
 
 $in_progress_courses = $student->get_progress_course();
 ?>
-<?php omlms_get_template( 'global/creator-lms-celebration.php' ); ?>
-<div class="creator-lms-course-statistics-card">
-	<div class="creator-lms-statistics-single-card enrolled-courses">
+<?php ohmylms_get_template( 'global/ohmylms-celebration.php' ); ?>
+<div class="ohmylms-course-statistics-card">
+	<div class="ohmylms-statistics-single-card enrolled-courses">
 		<div class="stat-content">
 			<p class="stat-number"><?php echo $student->get_enrolled_course_count(); ?></p>
 
@@ -33,11 +33,11 @@ $in_progress_courses = $student->get_progress_course();
 		</div>
 
 		<span class="icon">
-			<?php include(CREATOR_LMS_DIR . '/assets/images/icon/card-document-image.php'); ?>
+			<?php include(OHMYLMS_DIR . '/assets/images/icon/card-document-image.php'); ?>
        </span>
 	</div>
 
-	<div class="creator-lms-statistics-single-card in-progress-courses">
+	<div class="ohmylms-statistics-single-card in-progress-courses">
 		<div class="stat-content">
 			<p class="stat-number"><?php echo $no_of_inprogress; ?></p>
 
@@ -47,11 +47,11 @@ $in_progress_courses = $student->get_progress_course();
 		</div>
 
 		<span class="icon">
-			<?php include(CREATOR_LMS_DIR . '/assets/images/icon/card-in-progress-image.php'); ?>
+			<?php include(OHMYLMS_DIR . '/assets/images/icon/card-in-progress-image.php'); ?>
 		</span>
 	</div>
 
-	<div class="creator-lms-statistics-single-card completed-courses">
+	<div class="ohmylms-statistics-single-card completed-courses">
 		<div class="stat-content">
 			<p class="stat-number">
 				<?php echo $student->get_completed_course_count(); ?>
@@ -63,11 +63,11 @@ $in_progress_courses = $student->get_progress_course();
 		</div>
 
 		<span class="icon">
-			<?php include(CREATOR_LMS_DIR . '/assets/images/icon/card-completed-image.php'); ?>
+			<?php include(OHMYLMS_DIR . '/assets/images/icon/card-completed-image.php'); ?>
 		</span>
 	</div>
-	<?php if(creator_lms_is_pro()): ?>
-		<div class="creator-lms-statistics-single-card membership-courses">
+	<?php if(ohmylms_is_pro()): ?>
+		<div class="ohmylms-statistics-single-card membership-courses">
 			<div class="stat-content">
 				<p class="stat-number">
 					<?php echo count($student->get_enrolled_memberships()); ?>
@@ -79,7 +79,7 @@ $in_progress_courses = $student->get_progress_course();
 			</div>
 
 			<span class="icon">
-				<?php include(CREATOR_LMS_DIR . '/assets/images/icon/card-membership-image.php'); ?>
+				<?php include(OHMYLMS_DIR . '/assets/images/icon/card-membership-image.php'); ?>
 			</span>
 		</div>
 	<?php endif;?>
@@ -91,14 +91,14 @@ $in_progress_courses = $student->get_progress_course();
 </h2>
 
 <?php if( !empty( $in_progress_courses ) ) { ?>
-	<div class="creator-lms-dashboard-courses">
+	<div class="ohmylms-dashboard-courses">
 		<?php
 		$is_empty = true;
 		foreach ( $in_progress_courses as $course ):?>
 			<?php if ( $student->is_course_in_progress( $course->get_id() ) ): 
 				$is_empty = false;	
 			?>
-				<?php omlms_get_template('profile/loop/course.php',
+				<?php ohmylms_get_template('profile/loop/course.php',
 					array(
 						'student' => $student,
 						'course' => $course
@@ -110,7 +110,7 @@ $in_progress_courses = $student->get_progress_course();
 		<?php
 		if ( $is_empty ) {?>
 			<div class="no-course-data no-course-section">
-				<?php include(CREATOR_LMS_DIR. '/assets/images/icon/no-course-found-image.php');?>
+				<?php include(OHMYLMS_DIR. '/assets/images/icon/no-course-found-image.php');?>
 				<p>
 					<?php echo __( 'No In-Progress Courses.', 'ohmylms' );?>
 				</p>
@@ -119,7 +119,7 @@ $in_progress_courses = $student->get_progress_course();
 	</div>
 <?php } else { ?>
 	<div class="no-course-data no-course-section">
-		<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+		<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 		<p>
 			<?php echo __( 'No In-Progress Courses.', 'ohmylms' ); ?>
 		</p>
@@ -132,17 +132,17 @@ $in_progress_courses = $student->get_progress_course();
 	$memeberships = $student->get_enrolled_memberships();
 ?>
 <?php
-	if(creator_lms_is_pro()):
+	if(ohmylms_is_pro()):
 ?>
 <h2 class="my-membership-title">
 	<?php echo __( 'Membership', 'ohmylms' ); ?>
 </h2>
 
 <?php  if( !empty( $memeberships ) ) { ?>
-	<div class="creator-lms-dashboard-membership">
+	<div class="ohmylms-dashboard-membership">
 		<?php 
 			foreach( $memeberships as $memebership ) {
-				omlms_get_template('profile/loop/membership-card.php', array(
+				ohmylms_get_template('profile/loop/membership-card.php', array(
 					'memebership' => $memebership
 				));
 			}
@@ -151,7 +151,7 @@ $in_progress_courses = $student->get_progress_course();
 	
 <?php }else { ?>
 	<div class="no-course-data no-membership-data">
-		<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-membership-found-image.php'); ?>
+		<?php include(OHMYLMS_DIR . '/assets/images/icon/no-membership-found-image.php'); ?>
 		<p>
 			<?php echo __( 'No Membership Yet.', 'ohmylms' ); ?>
 		</p>

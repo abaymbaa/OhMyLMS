@@ -6,7 +6,7 @@ add_action('ohmylms_register_extensions', function () {
         'render'=>function($args){
             echo '<div class="ohmylms-example-layout"><p>Example quiz layout</p>';
             // Recursion guard delegates to the built-in quiz form.
-            omlms_get_template('single-lesson/quiz-form.php');
+            ohmylms_get_template('single-lesson/quiz-form.php');
             echo '</div>';
         },
     ]);

@@ -16,7 +16,7 @@ export function createEmailSettingsPage(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'emails');
+    HG('ohmylms', 'emails');
     var e = (function (e, t) {
         return (
           (function (e) {
@@ -88,7 +88,7 @@ export function createEmailSettingsPage(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
               <Buttons.A

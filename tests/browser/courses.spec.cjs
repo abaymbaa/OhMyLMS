@@ -1,13 +1,13 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 test.beforeEach(async({page})=>{
- const credentials=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const credentials=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(credentials.username);await page.locator('#user_pass').fill(credentials.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
 });
 test('course list creates a course through the source dialog',async({page})=>{
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms#/courses');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/courses');
  await page.getByRole('button',{name:'Add Course',exact:true}).first().click();
  const selfPaced=page.getByRole('button',{name:/Self.Paced/});
  if(await selfPaced.count())await selfPaced.first().click();
@@ -23,12 +23,12 @@ test('course list creates a course through the source dialog',async({page})=>{
   await expect(page.getByPlaceholder('Enter Course Title')).toBeVisible();
   await page.getByPlaceholder('Enter Course Title').fill('Created from source dialog');
   await page.getByRole('button',{name:'Add Chapter',exact:true}).first().click();
-  await expect.poll(()=>page.evaluate(()=>wp.data.select('creator-lms/store').getCourseChapters().allIds.length)).toBe(2);
-  await page.locator('.omlms-more-options-dropdown button').click();
+  await expect.poll(()=>page.evaluate(()=>wp.data.select('ohmylms/store').getCourseChapters().allIds.length)).toBe(2);
+  await page.locator('.ohmylms-more-options-dropdown button').click();
   const saved=page.waitForResponse(response=>response.url().includes(`/courses/${course.id}/chapters`)&&response.request().method()==='POST');
   await page.getByRole('menuitem',{name:'Save as Draft',exact:true}).click();expect((await saved).ok()).toBe(true);
   await page.reload();await expect(page.getByPlaceholder('Enter Course Title')).toHaveValue('Created from source dialog');
-  await expect.poll(()=>page.evaluate(()=>wp.data.select('creator-lms/store').getCourseChapters().allIds.length)).toBe(2);
+  await expect.poll(()=>page.evaluate(()=>wp.data.select('ohmylms/store').getCourseChapters().allIds.length)).toBe(2);
   expect(errors).toEqual([]);
  }finally{
   await page.evaluate(async id=>{
@@ -50,22 +50,22 @@ test('course source authoring preserves curriculum and settings',async({page},te
   return {course,chapter,lesson};
  });
  try{
-  await page.goto(`/wp-admin/admin.php?page=creator-lms#/course-edit/${fixture.course.id}/content`);
+  await page.goto(`/wp-admin/admin.php?page=ohmylms#/course-edit/${fixture.course.id}/content`);
   await expect(page.getByPlaceholder('Enter Course Title')).toHaveValue('Course source fixture',{timeout:20000});
-  await expect(page.locator('.omlms-course-builder-wrapper')).toBeVisible();
+  await expect(page.locator('.ohmylms-course-builder-wrapper')).toBeVisible();
   expect(await page.evaluate(()=>Object.keys(window.ohmylms.extensions.courseComponents).length)).toBe(25);
   await expect(page.getByRole('heading',{name:'Course source lesson Lesson',exact:true})).toBeVisible();
   await page.getByPlaceholder('Enter Course Title').fill('Saved React course');
   await page.getByPlaceholder('Enter chapter name').fill('Renamed source chapter');
-  await page.locator('.omlms-course-content-info [contenteditable="true"]').fill('Saved course description');
-  await page.locator('.omlms-more-options-dropdown button').click();
+  await page.locator('.ohmylms-course-content-info [contenteditable="true"]').fill('Saved course description');
+  await page.locator('.ohmylms-more-options-dropdown button').click();
   const saved=page.waitForResponse(response=>response.url().includes(`/courses/${fixture.course.id}/chapters`)&&response.request().method()==='POST');
   await page.getByRole('menuitem',{name:'Save as Draft',exact:true}).click();
   expect((await saved).ok()).toBe(true);
   await expect(page.getByText('Course has been saved as draft successfully').first()).toBeVisible();
   await page.reload();
   await expect(page.getByPlaceholder('Enter Course Title')).toHaveValue('Saved React course');
-  await expect(page.locator('.omlms-course-content-info [contenteditable="true"]')).toContainText('Saved course description');
+  await expect(page.locator('.ohmylms-course-content-info [contenteditable="true"]')).toContainText('Saved course description');
   const persisted=await page.evaluate(id=>wp.apiFetch({path:`/ohmylms/v1/courses/${id}`}),fixture.course.id);
   expect(persisted.chapters.map(chapter=>Number(chapter.id))).toEqual([Number(fixture.chapter.id)]);
   expect(persisted.chapters[0].name).toBe('Renamed source chapter');
@@ -73,8 +73,8 @@ test('course source authoring preserves curriculum and settings',async({page},te
   await page.screenshot({path:testInfo.outputPath('course-content.png'),fullPage:true});
   await page.getByRole('button',{name:'2 Settings',exact:true}).click();
   await page.getByRole('radio',{name:'Paid',exact:true}).check();
-  await page.locator('input.omlms-course-settings-pricing-input-regular, .omlms-course-settings-pricing-input-regular input').fill('120');
-  await page.locator('input.omlms-course-settings-pricing-input-discount, .omlms-course-settings-pricing-input-discount input').first().fill('90');
+  await page.locator('input.ohmylms-course-settings-pricing-input-regular, .ohmylms-course-settings-pricing-input-regular input').fill('120');
+  await page.locator('input.ohmylms-course-settings-pricing-input-discount, .ohmylms-course-settings-pricing-input-discount input').first().fill('90');
   await page.getByRole('heading',{name:'Pricing',exact:true}).click();
   for(const tab of ['Resources','Organize','Engagement','Basics']){
    await page.getByRole('tab',{name:tab,exact:true}).click();
@@ -84,10 +84,10 @@ test('course source authoring preserves curriculum and settings',async({page},te
   // A chapter write failure must preserve editor data and not mark publication complete.
   const chapterRoute=new RegExp(`/courses/${fixture.course.id}/chapters`);
   await page.route(chapterRoute,route=>route.request().method()==='POST'?route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({code:'test_chapter_failure',message:'Simulated chapter failure',data:{status:500}})}):route.continue());
-  await page.locator('.omlms-more-options-dropdown button').click();
+  await page.locator('.ohmylms-more-options-dropdown button').click();
   await page.getByRole('menuitem',{name:'Save as Draft',exact:true}).click();
   await expect(page.getByRole('alert').filter({hasText:'chapters could not be saved'})).toBeVisible();
-  expect(Number(await page.evaluate(()=>wp.data.select('creator-lms/store').getCourse().regular_price))).toBe(120);
+  expect(Number(await page.evaluate(()=>wp.data.select('ohmylms/store').getCourse().regular_price))).toBe(120);
   await page.unroute(chapterRoute);
   await page.getByRole('button',{name:/3 Preview/}).click();
   await expect(page.getByText('Review Course Summary',{exact:true})).toBeVisible();

@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Assignment;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Assignment;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class AssignmentStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class AssignmentStore extends DataStore {
@@ -30,12 +30,12 @@ class AssignmentStore extends DataStore {
 
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_assignment_data',
+				'ohmylms_new_assignment_data',
 				array(
-					'post_type'     => CREATOR_LMS_ASSIGNMENT_CPT,
+					'post_type'     => OHMYLMS_ASSIGNMENT_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => 'publish',
-					'post_title'    => $assignment->get_name() ? $assignment->get_name() : __( 'Untitled', 'creator-lms' ),
+					'post_title'    => $assignment->get_name() ? $assignment->get_name() : __( 'Untitled', 'ohmylms' ),
 					'post_content'  => $assignment->get_description(),
 					'post_name'     => $assignment->get_slug( 'edit' ),
 					'post_date'     => gmdate( 'Y-m-d H:i:s', $assignment->get_date_created( 'edit' )->getOffsetTimestamp() ),
@@ -60,7 +60,7 @@ class AssignmentStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_after_creating_new_assignment', $id, $assignment );
+			do_action( 'ohmylms_after_creating_new_assignment', $id, $assignment );
 		}
 	}
 
@@ -75,8 +75,8 @@ class AssignmentStore extends DataStore {
 	 */
 	public function read( &$assignment ) {
 		$post_object = get_post( $assignment->get_id() );
-		if ( ! $assignment->get_id() || ! $post_object || CREATOR_LMS_ASSIGNMENT_CPT !== $post_object->post_type ) {
-			return ( __( 'Invalid Assignment.', 'creator-lms' ) );
+		if ( ! $assignment->get_id() || ! $post_object || OHMYLMS_ASSIGNMENT_CPT !== $post_object->post_type ) {
+			return ( __( 'Invalid Assignment.', 'ohmylms' ) );
 		}
 
 		$assignment->set_props(
@@ -112,7 +112,7 @@ class AssignmentStore extends DataStore {
 			'post_title'   => $assignment->get_name( 'edit' ),
 			'post_status'  => $assignment->get_status( 'edit' ) ? $assignment->get_status( 'edit' ) : 'publish',
 			'post_name'    => sanitize_title( $assignment->get_name() ),
-			'post_type'    => CREATOR_LMS_ASSIGNMENT_CPT,
+			'post_type'    => OHMYLMS_ASSIGNMENT_CPT,
 		);
 		if ( $assignment->get_date_created( 'edit' ) ) {
 			$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $assignment->get_date_created( 'edit' )->getOffsetTimestamp() );
@@ -133,7 +133,7 @@ class AssignmentStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_updating_assignment', $assignment->get_id(), $assignment );
+		do_action( 'ohmylms_after_updating_assignment', $assignment->get_id(), $assignment );
 	}
 
 
@@ -178,7 +178,7 @@ class AssignmentStore extends DataStore {
 	/**
 	 * Delete a Assignment.
 	 *
-	 * This function deletes a Assignment by its ID and triggers the 'creator_lms_after_deleting_a_assignment' action hook.
+	 * This function deletes a Assignment by its ID and triggers the 'ohmylms_after_deleting_a_assignment' action hook.
 	 *
 	 * @param Assignment $assignment The Assignment object to be deleted.
 	 * @param array      $args   Optional. Additional arguments for the delete operation. Default empty array.
@@ -197,7 +197,7 @@ class AssignmentStore extends DataStore {
 				 *
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_deleting_a_assignment' );
+				do_action( 'ohmylms_after_deleting_a_assignment' );
 			}
 		}
 	}
@@ -269,7 +269,7 @@ class AssignmentStore extends DataStore {
 			'_max_file_size_limit'    => 'max_file_size_limit',
 			'_drip_settings'          => 'drip_settings',
 		);
-		$meta_key_to_props = apply_filters( 'creator_lms_assignment_meta_key_to_props', $meta_key_to_props );
+		$meta_key_to_props = apply_filters( 'ohmylms_assignment_meta_key_to_props', $meta_key_to_props );
 		$props_to_update   = $meta_key_to_props;
 
 		foreach ( $props_to_update as $meta_key => $prop ) {
@@ -285,14 +285,14 @@ class AssignmentStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_assignment_meta_updated', $assignment );
+		do_action( 'ohmylms_assignment_meta_updated', $assignment );
 	}
 
 	public function get_submission( $assignment, $user_id ) {
 		// Query to get the submission
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'omlms_assignment_attempts'; // Replace with your actual table name
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts'; // Replace with your actual table name
 
 		$query = $wpdb->prepare(
 			"SELECT * FROM $table_name WHERE user_id = %d AND assignment_id = %d",
@@ -307,7 +307,7 @@ class AssignmentStore extends DataStore {
 
 	public function submit_file_submission( $assignment, $student_id, $course_id, $data ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_assignment_attempts';
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts';
 
 		$data = array(
 			'user_id'       => $student_id,
@@ -326,7 +326,7 @@ class AssignmentStore extends DataStore {
 
 	public function get_report( $assignment ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_assignment_attempts';
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts';
 
 		$query = $wpdb->prepare(
 			"SELECT attempts.*, u.user_email, u.display_name, attempts.start_date AS submitted_date
@@ -362,7 +362,7 @@ class AssignmentStore extends DataStore {
 
 	public function get_assignment_attempts( $assignment, $student_id ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_assignment_attempts';
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts';
 
 		$query = $wpdb->prepare(
 			"SELECT attempts.*, u.user_email, u.display_name, attempts.start_date AS submitted_date
@@ -380,7 +380,7 @@ class AssignmentStore extends DataStore {
 			$submission['files'] = maybe_unserialize( $submission['files'] );
 			$submission_file_name = isset( $submission['files']['file'] ) ? basename( $submission['files']['file'] ) : '';
 			$submission_file_size = isset( $submission['files']['file'] ) ? filesize( $submission['files']['file'] ) : 0;
-			$submission_file_size = omlms_format_file_size( $submission_file_size );
+			$submission_file_size = ohmylms_format_file_size( $submission_file_size );
 			$submission['files']['file_name'] = $submission_file_name;
 			$submission['files']['file_size'] = $submission_file_size;
 			$key                 = $submission['user_id'] . '_' . $submission['course_id'] . '_' . $submission['assignment_id'];
@@ -404,7 +404,7 @@ class AssignmentStore extends DataStore {
 
 	public function update_assignment_attempts( $assignment, $student_id, $attempt_data ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_assignment_attempts';
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts';
 		foreach ( $attempt_data as $key => $value){
 			$data = array(
 				'note' => !empty($value['note']) ? $value['note'] : '',

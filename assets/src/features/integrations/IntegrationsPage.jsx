@@ -24,7 +24,7 @@ export function createIntegrationsPage(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'integrations');
+    HG('ohmylms', 'integrations');
     var e = (0, WordPressData.useDispatch)(StoreModule.default),
       t = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getIntegrations();
@@ -123,30 +123,12 @@ export function createIntegrationsPage(readRuntime) {
                 for (;;)
                   switch ((n.p = n.n)) {
                     case 0:
-                      if (null != r && r.is_valid) {
-                        n.n = 1;
-                        break;
-                      }
-                      return (
-                        m(!0),
-                        e.updateProModalTitle((0, I18n.__)('Upgrade Your Plan!', 'ohmylms')),
-                        e.updateProModalContent(
-                          (0, I18n.__)(
-                            'This feature is on '.concat(
-                              null == r ? void 0 : r.required_plan,
-                              ' plan. Please upgrade your plan for access to this feature!',
-                            ),
-                            'ohmylms',
-                          ),
-                        ),
-                        n.a(2)
-                      );
                     case 1:
                       if (
                         'wpfusion' !== r.key ||
                         (null !== (a = window) &&
                           void 0 !== a &&
-                          null !== (a = a.creator_lms_params) &&
+                          null !== (a = a.ohmylms_params) &&
                           void 0 !== a &&
                           a.is_wpfusion_active)
                       ) {
@@ -212,20 +194,6 @@ export function createIntegrationsPage(readRuntime) {
         };
       })(),
       j = function (t) {
-        if (null == t || !t.is_valid)
-          return (
-            m(!0),
-            e.updateProModalTitle((0, I18n.__)('Upgrade Your Plan!', 'ohmylms')),
-            void e.updateProModalContent(
-              (0, I18n.__)(
-                'This feature is on '.concat(
-                  null == t ? void 0 : t.required_plan,
-                  '. Please upgrade your plan!',
-                ),
-                'ohmylms',
-              ),
-            )
-          );
         R(t);
       },
       A = C.filter(function (e) {
@@ -279,7 +247,7 @@ export function createIntegrationsPage(readRuntime) {
                     onCancel={function () {
                       return R(null);
                     }}
-                    className={'omlms-integrations-config'}
+                    className={'ohmylms-integrations-config'}
                   />
                 ) : (
                   <React.Fragment>

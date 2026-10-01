@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Bricks\Elements;
+namespace OhMyLMS\Bricks\Elements;
 
 use Bricks\Element;
 
@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class BuyNowElement extends Element {
 
-    public $category     = 'creator-lms';
-    public $name         = 'creatorlms-buy-now';
+    public $category     = 'ohmylms';
+    public $name         = 'ohmylms-buy-now';
     public $icon         = 'ti-shopping-cart';
-    public $css_selector = '.creatorlms-buy-now';
+    public $css_selector = '.ohmylms-buy-now';
 
     public function get_label() {
         return __( 'Buy Now Button', 'ohmylms' );
@@ -171,7 +171,7 @@ class BuyNowElement extends Element {
 
     private function get_courses_dropdown() {
         $courses = get_posts([
-            'post_type'   => 'omlms-course',
+            'post_type'   => 'ohmylms-course',
             'post_status' => 'publish',
             'numberposts' => -1,
             'orderby'     => 'title',
@@ -187,8 +187,8 @@ class BuyNowElement extends Element {
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script( 'omlms-frontend' );
-        wp_enqueue_script( 'omlms-add-to-cart' );
+        wp_enqueue_script( 'ohmylms-frontend' );
+        wp_enqueue_script( 'ohmylms-add-to-cart' );
     }
 
     public function render() {
@@ -288,11 +288,11 @@ class BuyNowElement extends Element {
 			$settings['border_radius'] = $border_radius;
 		}
 
-		$this->set_attribute('_root', 'class', 'creatorlms-buy-now ' . esc_attr($settings['class']));
+		$this->set_attribute('_root', 'class', 'ohmylms-buy-now ' . esc_attr($settings['class']));
 		echo '<div '.$this->render_attributes('_root').'>';
 		echo do_shortcode(
 			sprintf(
-				'[creator_lms_buy_now course_id="%s" btn_text="%s" class="%s" background="%s" color="%s" padding="%s" border_radius="%s" font_size="%s" text_decoration="%s" line_height="%s" width="%s" max_width="%s" min_width="%s" height="%s" display="%s" vertical_align="%s" margin="%s" box_sizing="%s"]',
+				'[ohmylms_buy_now course_id="%s" btn_text="%s" class="%s" background="%s" color="%s" padding="%s" border_radius="%s" font_size="%s" text_decoration="%s" line_height="%s" width="%s" max_width="%s" min_width="%s" height="%s" display="%s" vertical_align="%s" margin="%s" box_sizing="%s"]',
 				esc_attr($settings['course_id']),
 				esc_attr($settings['btn_text']),
 				esc_attr($settings['class']),

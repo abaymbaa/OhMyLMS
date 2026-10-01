@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Course;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Course;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;

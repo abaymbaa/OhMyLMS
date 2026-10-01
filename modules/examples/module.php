@@ -1,5 +1,5 @@
 <?php
-// Disabled unless OMLMS_ENABLED_MODULES contains 'examples'.
+// Disabled unless OHMYLMS_ENABLED_MODULES contains 'examples'.
 add_action('ohmylms_register_extensions', static function () {
     ohmylms_register_extension_settings('example-benefit', [
         'contexts'=>['membership'],
@@ -23,7 +23,7 @@ add_action('ohmylms_register_extensions', static function () {
     ]);
     ohmylms_register_layout('example-frame', [
         'label'=>'Example frame','contexts'=>['course','lesson','quiz'],
-        'render'=>static function($args){$templates=['course'=>'content-single-course.php','lesson'=>'single-lesson/content-lesson.php','quiz'=>'single-lesson/quiz-form.php'];echo '<section class="ohmylms-example-frame">';omlms_get_template($templates[$args['context']], $args);echo '</section>';},
+        'render'=>static function($args){$templates=['course'=>'content-single-course.php','lesson'=>'single-lesson/content-lesson.php','quiz'=>'single-lesson/quiz-form.php'];echo '<section class="ohmylms-example-frame">';ohmylms_get_template($templates[$args['context']], $args);echo '</section>';},
     ]);
     ohmylms_register_checkout_field('example-reference', [
         'label'=>'Order reference','type'=>'text','required'=>false,

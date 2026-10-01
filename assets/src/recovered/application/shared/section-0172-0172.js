@@ -317,7 +317,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
       style: {
         marginTop: "24px"
       },
-      className: "omlms-migration-details"
+      className: "ohmylms-migration-details"
     }, React.createElement("div", {
       style: {
         flexShrink: 0,
@@ -328,7 +328,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
         boxSizing: "border-box",
         boxShadow: "0px 1px 1px 0px rgba(0,0,0,0.03), 0px 1px 2px 0px rgba(0,0,0,0.02), 0px 3px 3px 0px rgba(0,0,0,0.02), 0px 4px 4px 0px rgba(0,0,0,0.01)"
       },
-      className: "omlms-migration-left-panel"
+      className: "ohmylms-migration-left-panel"
     }, React.createElement(I.FlexWP, {
       direction: "column",
       gap: 3,
@@ -427,7 +427,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
       style: {
         width: "100%"
       },
-      className: "omlms-migration-right-panel"
+      className: "ohmylms-migration-right-panel"
     }, React.createElement("div", {
       style: {
         background: "white",
@@ -437,7 +437,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
         boxSizing: "border-box",
         minHeight: "405px"
       },
-      className: "omlms-migration-right-inner-panel"
+      className: "ohmylms-migration-right-inner-panel"
     }, React.createElement("div", {
       style: q4(q4({
         background: "#FFFFFF",
@@ -449,7 +449,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
         padding: "24px 24px 0"
       }, "height", "56px"), "boxSizing", "border-box")
     }, React.createElement("div", {
-      className: "omlms-setup-wizard-checkbox",
+      className: "ohmylms-setup-wizard-checkbox",
       onClick: o,
       style: {
         position: "relative",
@@ -532,7 +532,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
           return a(e.id);
         }
       }, React.createElement("div", {
-        className: "omlms-setup-wizard-checkbox",
+        className: "ohmylms-setup-wizard-checkbox",
         onClick: function (t) {
           t.stopPropagation(), a(e.id);
         },
@@ -634,7 +634,7 @@ var Y4 = "M1.32788 4.74275L4.14909 7.56396L9.73284 1.02771",
               for (;;) switch (e.p = e.n) {
                 case 0:
                   return m(!0), e.p = 1, e.n = 2, l()({
-                    path: "/creator-lms/v1/migrations/".concat(t, "/courses")
+                    path: "/ohmylms/v1/migrations/".concat(t, "/courses")
                   });
                 case 2:
                   null != (n = e.v) && n.courses && (o(n.courses), u(n.courses.map(function (e) {

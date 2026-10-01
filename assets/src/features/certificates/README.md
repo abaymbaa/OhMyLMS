@@ -16,7 +16,7 @@ Edit the JSX files in this directory and run `npm run build` from the plugin roo
 
 The components continue to use the existing WordPress data store, REST endpoints, shared controls, certificate templates, HTML-to-image/PDF helpers, styles, permissions, and Pro gating. Some transpiler helpers are still supplied by the recovered runtime, so these are editable named React modules rather than a standalone application.
 
-Source activation remains controlled by `OMLMS_SOURCE_ASSETS`. Building does not change site configuration.
+Source activation remains controlled by `OHMYLMS_SOURCE_ASSETS`. Building does not change site configuration.
 
 ## Validation
 

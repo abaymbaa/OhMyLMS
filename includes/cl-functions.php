@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $country_code The country code.
  * @return array An array of states.
  */
-function creatorlms_get_states( $country_code ) {
+function ohmylms_get_states( $country_code ) {
 	if ( empty( $country_code ) ) {
 		return array();
 	}
@@ -2238,8 +2238,8 @@ function creatorlms_get_states( $country_code ) {
  * @return string URL
  * @since 1.2.5
  */
-function omlms_get_nav_link_url( $link_type ) {
-	$option_key = 'creator_lms_nav_my_' . $link_type . '_url';
+function ohmylms_get_nav_link_url( $link_type ) {
+	$option_key = 'ohmylms_nav_my_' . $link_type . '_url';
 	$page_id = get_option( $option_key );
 	
 	if ( $page_id ) {
@@ -2251,9 +2251,9 @@ function omlms_get_nav_link_url( $link_type ) {
 	
 	// Fallback to default pages
 	if ( $link_type === 'profile' ) {
-		return omlms_get_account_endpoint_url( 'profile' );
+		return ohmylms_get_account_endpoint_url( 'profile' );
 	} elseif ( $link_type === 'courses' ) {
-		return omlms_get_account_endpoint_url( 'my-courses' );
+		return ohmylms_get_account_endpoint_url( 'my-courses' );
 	}
 	
 	return home_url();

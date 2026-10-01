@@ -34,11 +34,8 @@ var ha = function (e) {
     editorFor: "assignment"
   })));
 };
-
 const ya = (0, g.memo)(ha);
-
 var ba = ["children", "className"];
-
 function _a() {
   return _a = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -48,7 +45,6 @@ function _a() {
     return e;
   }, _a.apply(null, arguments);
 }
-
 var wa = function (e) {
   var t = e.children,
     n = e.className,
@@ -73,14 +69,11 @@ var wa = function (e) {
       return a;
     }(e, ba);
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, _a({
-    className: "omlms-card-wrapper ".concat(r)
+    className: "ohmylms-card-wrapper ".concat(r)
   }, a), t));
 };
-
 const Ea = (0, g.memo)(wa);
-
 var Sa = ["value", "handleChange", "title", "type", "error", "errorMessage", "variant"];
-
 function Ra() {
   return Ra = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -90,7 +83,6 @@ function Ra() {
     return e;
   }, Ra.apply(null, arguments);
 }
-
 var xa = function (e) {
   var t = e.value,
     n = e.handleChange,
@@ -123,11 +115,11 @@ var xa = function (e) {
       return a;
     }(e, Sa);
   return React.createElement(React.Fragment, null, React.createElement(Ea, {
-    className: "omlms-assignment-input-card",
+    className: "ohmylms-assignment-input-card",
     isBorderless: !0,
     variant: d
   }, React.createElement(I.TextWP, {
-    className: "omlms-input-card-title"
+    className: "ohmylms-input-card-title"
   }, r), React.createElement(I.SpacerWP, null), React.createElement(I.InputWP, Ra({
     value: t,
     onChange: n,
@@ -135,12 +127,10 @@ var xa = function (e) {
   }, m)), React.createElement(qt, {
     isVisible: l
   }, React.createElement("p", {
-    className: "omlms-input-card-error omlms-error-msg"
+    className: "ohmylms-input-card-error ohmylms-error-msg"
   }, u))));
 };
-
 const Ca = (0, g.memo)(xa);
-
 function Pa(e) {
   return Pa = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -148,7 +138,6 @@ function Pa(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Pa(e);
 }
-
 function Oa(e) {
   return function (e) {
     if (Array.isArray(e)) return ka(e);
@@ -164,13 +153,11 @@ function Oa(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ka(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function ja(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -181,7 +168,6 @@ function ja(e, t) {
   }
   return n;
 }
-
 function Aa(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -193,7 +179,6 @@ function Aa(e) {
   }
   return e;
 }
-
 function Ma(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -214,7 +199,6 @@ function Ma(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Ta() {
   var e,
     t,
@@ -301,7 +285,6 @@ function Ta() {
     };
   })();
 }
-
 function Ia(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -323,7 +306,6 @@ function Ia(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Ia(e, t, n, r);
 }
-
 function Fa(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -333,7 +315,6 @@ function Fa(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 var Na = function (e) {
   var t,
     n,
@@ -348,7 +329,7 @@ var Na = function (e) {
     m,
     p,
     f,
-    v = (0, L.useIsPro)(),
+    v = true,
     h = e.assignment,
     _ = e.chapterId,
     w = e.setOpenModal,
@@ -372,7 +353,7 @@ var Na = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return e.n = 1, l()({
-                  path: "/creator-lms/v1/chapters/".concat(_, "/search-contents?term=").concat(t),
+                  path: "/ohmylms/v1/chapters/".concat(_, "/search-contents?term=").concat(t),
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"
@@ -473,7 +454,7 @@ var Na = function (e) {
   }), React.createElement(Pn, {
     onChange: function () {
       var e;
-      if (v) {
+      {
         var t = !(null != h && null !== (e = h.drip_settings) && void 0 !== e && e.enable);
         S.setAssignment(Aa(Aa({}, h), {}, {
           drip_settings: Aa(Aa({}, null == h ? void 0 : h.drip_settings), {}, {
@@ -486,7 +467,7 @@ var Na = function (e) {
     },
     isChecked: null !== (a = null == h || null === (o = h.drip_settings) || void 0 === o ? void 0 : o.enable) && void 0 !== a && a,
     onDripFeedTypeChange: function (e) {
-      if (v) {
+      {
         var t,
           n,
           r = Aa(Aa({}, null == h ? void 0 : h.drip_settings), {}, {
@@ -529,7 +510,7 @@ var Na = function (e) {
     },
     isChecked: null !== (d = null == h ? void 0 : h.enable_time_limit) && void 0 !== d && d,
     showDivider: !1,
-    customClass: "omlms-assignment-settings-time-limit-button",
+    customClass: "ohmylms-assignment-settings-time-limit-button",
     conditionalChild: React.createElement(Ea, {
       isBorderless: !0,
       variant: "secondary",
@@ -540,7 +521,7 @@ var Na = function (e) {
       type: "number",
       min: 1,
       placeholder: (0, b.__)("Enter time limit", "ohmylms"),
-      className: "omlms-assignment-settings-time-limit-input",
+      className: "ohmylms-assignment-settings-time-limit-input",
       onChange: function (e) {
         /^\d*\.?\d*$/.test(e) && P("time_limit", e);
       },
@@ -552,7 +533,7 @@ var Na = function (e) {
       }
     }), React.createElement(I.SpacerWP, null), React.createElement(_n, {
       placeholder: (0, b.__)("Select option", "ohmylms"),
-      customClass: "omlms-assignment-settings-time-limit-type-select",
+      customClass: "ohmylms-assignment-settings-time-limit-type-select",
       options: O,
       value: null == h ? void 0 : h.time_limit_type,
       onChange: function (e) {
@@ -569,7 +550,7 @@ var Na = function (e) {
     title: (0, b.__)("Set the maximum points a student can score", "ohmylms"),
     error: Number(null == h ? void 0 : h.total_points) < 1,
     errorMessage: (0, b.__)("Total points should be greater than 0", "ohmylms"),
-    className: "omlms-assignment-settings-total-points-input",
+    className: "ohmylms-assignment-settings-total-points-input",
     handleChange: function (e) {
       var t = e;
       /^\d*\.?\d*$/.test(t) && P("total_points", t);
@@ -591,7 +572,7 @@ var Na = function (e) {
     title: (0, b.__)("Set the minimum points required for the student to pass this assignment.", "ohmylms"),
     error: Number(null == h ? void 0 : h.maximum_pass_points) < 0 || Number(null == h ? void 0 : h.maximum_pass_points) > Number(null == h ? void 0 : h.total_points),
     errorMessage: (0, b.__)("Minimum pass points should be greater than 0 and less than or equal to total points", "ohmylms"),
-    className: "omlms-assignment-settings-pass-points-input",
+    className: "ohmylms-assignment-settings-pass-points-input",
     handleChange: function (e) {
       var t = e;
       /^\d*\.?\d*$/.test(t) && P("maximum_pass_points", t);
@@ -609,14 +590,14 @@ var Na = function (e) {
       return P("allow_upload_files", e);
     },
     isChecked: null !== (m = null == h ? void 0 : h.allow_upload_files) && void 0 !== m && m,
-    customClass: "omlms-assignment-settings-submission-attempts-button",
+    customClass: "ohmylms-assignment-settings-submission-attempts-button",
     showDivider: !1,
     conditionalChild: React.createElement(Ca, {
       value: (null == h ? void 0 : h.number_of_files) || "",
       title: (0, b.__)("Define the number of attempts that a student is allowed in this assignment.", "ohmylms"),
       error: Number(null == h ? void 0 : h.number_of_files) < 1,
       errorMessage: (0, b.__)("Number of files should be greater than 0", "ohmylms"),
-      className: "omlms-assignment-settings-number-of-files-input",
+      className: "ohmylms-assignment-settings-number-of-files-input",
       handleChange: function (e) {
         var t = e;
         /^\d*\.?\d*$/.test(t) && P("number_of_files", t);
@@ -636,13 +617,13 @@ var Na = function (e) {
     },
     isChecked: null !== (p = null == h ? void 0 : h.enable_file_size_limit) && void 0 !== p && p,
     showDivider: !1,
-    customClass: "omlms-assignment-settings-file-size-limit-button",
+    customClass: "ohmylms-assignment-settings-file-size-limit-button",
     conditionalChild: React.createElement(Ca, {
       value: (null == h ? void 0 : h.max_file_size_limit) || "",
       title: (0, b.__)("Define the maximum file size attachment that a student can upload in MB", "ohmylms"),
       error: Number(null == h ? void 0 : h.max_file_size_limit) < 1,
       errorMessage: (0, b.__)("File size limit should be greater than 0", "ohmylms"),
-      className: "omlms-assignment-settings-file-size-limit-input",
+      className: "ohmylms-assignment-settings-file-size-limit-input",
       handleChange: function (e) {
         var t = e;
         /^\d*\.?\d*$/.test(t) && P("max_file_size_limit", t);
@@ -689,9 +670,7 @@ var Na = function (e) {
     alertDescription: (0, b.__)("Are you sure you want to delete this assignment?", "ohmylms")
   })));
 };
-
 const Da = (0, g.memo)(Na);
-
 var Wa = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -715,9 +694,7 @@ var Wa = function () {
     d: "M0 0h16v16H0z"
   })))));
 };
-
 const za = (0, g.memo)(Wa);
-
 function Ba(e) {
   return Ba = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -725,7 +702,6 @@ function Ba(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ba(e);
 }
-
 var La = function (e) {
     if (!e || "object" !== Ba(e)) return !1;
     for (var t = 0, n = ["time_limit", "total_points", "maximum_pass_points", "number_of_files", "max_file_size_limit"]; t < n.length; t++) {
@@ -735,7 +711,6 @@ var La = function (e) {
     return !(Number(e.maximum_pass_points) > Number(e.total_points));
   },
   Va = n(69986);
-
 function Ha(e) {
   return Ha = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -743,7 +718,6 @@ function Ha(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ha(e);
 }
-
 function Ga(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -754,7 +728,6 @@ function Ga(e, t) {
   }
   return n;
 }
-
 function Ua(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -766,7 +739,6 @@ function Ua(e) {
   }
   return e;
 }
-
 function qa(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -787,7 +759,6 @@ function qa(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Ya() {
   var e,
     t,

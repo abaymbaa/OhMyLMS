@@ -2,15 +2,15 @@
 /**
  * Recurring Totals Template
  *
- * This template can be overridden by copying it to yourtheme/creatorlms/checkout/recurring-totals.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/recurring-totals.php.
  *
- * @package   CreatorLmsPro
+ * @package   OhMyLMSPro
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<table class="creator-lms-checkout-order-review-table">
+<table class="ohmylms-checkout-order-review-table">
     <tbody>
 <tr class="recurring-totals">
     <td><?php esc_html_e( 'Recurring totals', 'ohmylms' ); ?></td>
@@ -21,10 +21,10 @@ defined( 'ABSPATH' ) || exit;
          *
          * @since 1.0.0
          */
-        do_action( 'creatorlms_recurring_totals_subtotals', $membership );
+        do_action( 'ohmylms_recurring_totals_subtotals', $membership );
 
 
-        do_action( 'creatorlms_recurring_subscription_totals', $membership );
+        do_action( 'ohmylms_recurring_subscription_totals', $membership );
 ?>
     </td>
 </tr>

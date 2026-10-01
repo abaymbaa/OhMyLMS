@@ -1,11 +1,11 @@
-.creator-lms-membership-wrapper *,
+.ohmylms-membership-wrapper *,
 .membership-section-title * {
     margin: 0;
     padding: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-membership {
+.ohmylms-page {
+    .ohmylms-membership {
         background-color: #F9FAFD;
         padding: 50px 0 60px;
     }
@@ -15,14 +15,14 @@
         margin: 0 0 50px;
 
         h2 {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 40px;
             font-weight: 700;
             line-height: 1.3;
         }
     }
 
-    .creator-lms-membership-wrapper {
+    .ohmylms-membership-wrapper {
         display: flex;
         flex-flow: row wrap;
         gap: 30px;
@@ -43,7 +43,7 @@
             font-size: 26px;
             font-weight: 600;
             margin: 0;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
 
             @media screen and (max-width: 991px) {
                 font-size: 22px;
@@ -53,7 +53,7 @@
         p {
             font-size: 16px;
             margin: 20px 0 0;
-            color: var(--creator-lms-body-text-color);
+            color: var(--ohmylms-body-text-color);
 
             @media screen and (max-width: 991px) {
                 font-size: 15px;
@@ -61,7 +61,7 @@
         }
     }
 
-    .creator-lms-single-membership {
+    .ohmylms-single-membership {
         border-radius: 14px;
         border: 1px solid #EBEBEF;
         background: #FFF;
@@ -87,7 +87,7 @@
             }
 
             .membership-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 24px;
                 font-weight: 600;
                 line-height: 1.2;
@@ -96,7 +96,7 @@
             }
     
             .membership-discount-price {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 40px;
                 font-weight: 700;
                 line-height: 1;
@@ -138,7 +138,7 @@
             }
     
             .membership-description {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 leading-trim: both;
                 text-edge: cap;
                 font-size: 15px;
@@ -157,7 +157,7 @@
                 margin: 0;
     
                 li:not(.im-strong) {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.6;
@@ -183,21 +183,21 @@
                         font-size: 15px;
                         text-decoration: none;
                         outline: none;
-                        color: var(--creator-lms-body-text-color);
+                        color: var(--ohmylms-body-text-color);
                         transition: all 0.3s ease;
     
                         &:hover {
-                            color: var(--creator-lms-primary-color);
+                            color: var(--ohmylms-primary-color);
                         }
 
                         &:focus {
-                            outline: 1px dotted var(--creator-lms-heading-color);
+                            outline: 1px dotted var(--ohmylms-heading-color);
                         }
                     }
                 }
     
                 li.im-strong {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 14px;
                     font-weight: 700;
                     line-height: 1.5;
@@ -211,7 +211,7 @@
         .membership-footer {
             margin-top: auto;
 
-            .creator-lms-button {
+            .ohmylms-button {
                 display: block;
                 width: 100%;
                 font-size: 18px;
@@ -228,7 +228,7 @@
         margin: 0 auto;
         width: 100%;
 
-        .creator-lms-single-membership {
+        .ohmylms-single-membership {
             width: calc(50% - 15px);
         }
     }
@@ -237,7 +237,7 @@
         flex-direction: column;
         align-items: center;
 
-        .creator-lms-single-membership {
+        .ohmylms-single-membership {
             width: 500px;
         }
     }
@@ -246,108 +246,108 @@
 
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .membership-section-title {
+    .ohmylms-page .membership-section-title {
         margin-bottom: 40px;
     }
-    .creator-lms-page .membership-section-title h2 {
+    .ohmylms-page .membership-section-title h2 {
         font-size: 36px;
     }
 
-    .creator-lms-page .creator-lms-single-membership {
+    .ohmylms-page .ohmylms-single-membership {
         border-radius: 10px;
         padding: 18px 24px;
     }
-    .creator-lms-page .creator-lms-membership-wrapper {
+    .ohmylms-page .ohmylms-membership-wrapper {
         gap: 20px;
     }
-    .creator-lms-page .creator-lms-single-membership {
+    .ohmylms-page .ohmylms-single-membership {
         width: calc(33.333% - 14px);
     }
 
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-title {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-title {
         font-size: 22px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-discount-price {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-discount-price {
         font-size: 36px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-footer .creator-lms-button {
+    .ohmylms-page .ohmylms-single-membership .membership-footer .ohmylms-button {
         font-size: 16px;
     }
 
     // --------membership-col-2------
-    .creator-lms-page .membership-col-2 {
+    .ohmylms-page .membership-col-2 {
         max-width: 830px;
         margin: 0 auto;
         width: 100%;
     }
-    .creator-lms-page .membership-col-2 .creator-lms-single-membership {
+    .ohmylms-page .membership-col-2 .ohmylms-single-membership {
         width: calc(50% - 10px);
     }
 
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .membership-section-title {
+    .ohmylms-page .membership-section-title {
         margin-bottom: 30px;
     }
-    .creator-lms-page .membership-section-title h2 {
+    .ohmylms-page .membership-section-title h2 {
         font-size: 30px;
     }
 
-    .creator-lms-page .creator-lms-single-membership {
+    .ohmylms-page .ohmylms-single-membership {
         padding: 17px 20px 20px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header {
+    .ohmylms-page .ohmylms-single-membership .membership-header {
         margin-bottom: 18px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-title {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-title {
         font-size: 20px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-discount-price {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-discount-price {
         font-size: 30px;
         margin-bottom: 12px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-regular-price {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-regular-price {
         font-size: 14px;
     }
 
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-description {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-description {
         font-size: 14px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-footer .creator-lms-button {
+    .ohmylms-page .ohmylms-single-membership .membership-footer .ohmylms-button {
         font-size: 14px;
         padding: 11px 20px;
     }
 
-    .creator-lms-page .membership-col-1 .creator-lms-single-membership {
+    .ohmylms-page .membership-col-1 .ohmylms-single-membership {
         width: 410px;
     }
 
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-single-membership {
+    .ohmylms-page .ohmylms-single-membership {
         width: calc(50% - 10px);
     }
 
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-title {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-title {
         font-size: 17px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-header .membership-discount-price {
+    .ohmylms-page .ohmylms-single-membership .membership-header .membership-discount-price {
         font-size: 26px;
     }
 
-    .creator-lms-page .creator-lms-single-membership .membership-body .membership-courses li:not(.im-strong) {
+    .ohmylms-page .ohmylms-single-membership .membership-body .membership-courses li:not(.im-strong) {
         font-size: 14px;
         margin-bottom: 10px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-body .membership-courses li:not(.im-strong) a {
+    .ohmylms-page .ohmylms-single-membership .membership-body .membership-courses li:not(.im-strong) a {
         font-size: 14px;
     }
-    .creator-lms-page .creator-lms-single-membership .membership-body .membership-courses li.im-strong {
+    .ohmylms-page .ohmylms-single-membership .membership-body .membership-courses li.im-strong {
         margin-bottom: 10px;
     }
     
@@ -355,20 +355,20 @@
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .membership-section-title h2 {
+    .ohmylms-page .membership-section-title h2 {
         font-size: 26px;
     }
     
-    .creator-lms-page .creator-lms-single-membership {
+    .ohmylms-page .ohmylms-single-membership {
         width: 100%;
         max-width: 410px;
         margin: 0 auto;
     }
-    .creator-lms-page .membership-col-2 .creator-lms-single-membership {
+    .ohmylms-page .membership-col-2 .ohmylms-single-membership {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-single-membership .membership-body {
+    .ohmylms-page .ohmylms-single-membership .membership-body {
         margin-bottom: 40px;
     }
 }

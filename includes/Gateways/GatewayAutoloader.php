@@ -6,12 +6,12 @@
  * Automatically loads gateway files based on folder names.
  * For example, if a folder is named "Mollie", it will try to load "mollie.php"
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  * @since      1.0.0
  */
 
- namespace OMLMS\Gateways;
+ namespace OhMyLMS\Gateways;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -32,7 +32,7 @@ class GatewayAutoloader {
      * @param string $base_dir The base directory for the plugin
      */
     public function __construct( $base_dir = null ) {
-        $this->base_dir = $base_dir ?: dirname( CREATORLMS_PRO_FILE );
+        $this->base_dir = $base_dir ?: dirname( OHMYLMS_PRO_FILE );
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
 /**
  * OhMyLMS Data Exception Class
  *
  * Extends Exception to provide additional data.
  *
- * @package OMLMS\Classes
+ * @package OhMyLMS\Classes
  * @since   1.0.0
  */
 
@@ -35,7 +35,7 @@ class DataException extends \Exception {
 	/**
 	 * Setup exception.
 	 *
-	 * @param string $code             Machine-readable error code, e.g `creator_lms_invalid_course_id`.
+	 * @param string $code             Machine-readable error code, e.g `ohmylms_invalid_course_id`.
 	 * @param string $message          User-friendly translated error message, e.g. 'Course ID is invalid'.
 	 * @param int    $http_status_code Proper HTTP status code to respond with, e.g. 400.
 	 * @param array  $data             Extra error data.

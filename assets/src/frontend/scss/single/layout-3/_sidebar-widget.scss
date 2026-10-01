@@ -1,8 +1,8 @@
-.creator-lms-single-course-layout3 {
+.ohmylms-single-course-layout3 {
     position: relative;
 
     .sidebar-widget-title {
-        color: var(--creator-lms-heading-color);
+        color: var(--ohmylms-heading-color);
         font-size: 26px;
         font-weight: 600;
         line-height: 1.2;
@@ -11,13 +11,13 @@
     }
 
     // --- widget pricebox and course meta --- //
-    .creator-lms-course-pricebox-and-meta {
+    .ohmylms-course-pricebox-and-meta {
         border-radius: 16px;
         background-color: #F4F5F7;
         padding: 18px;
         margin-bottom: 24px;
 
-        .creator-lms-widget-course-meta {
+        .ohmylms-widget-course-meta {
             border-radius: 0;
             box-shadow: none;
             padding: 0;
@@ -25,41 +25,41 @@
             margin-bottom: 30px;
         }
 
-        .creator-lms-course-meta {
+        .ohmylms-course-meta {
             li {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
 
                 &.course-capacity,
                 &.course-additional-resource,
                 &.course-count,
                 &.course-rating {
                     path {
-                        fill: var(--creator-lms-primary-color);
+                        fill: var(--ohmylms-primary-color);
                     }
                 }
 
                 &.experience {
                     path:first-child {
-                        fill: var(--creator-lms-primary-color);
-                        stroke: var(--creator-lms-primary-color);
+                        fill: var(--ohmylms-primary-color);
+                        stroke: var(--ohmylms-primary-color);
                     }
 
                     path:last-child {
-                        fill: rgba(var(--creator-lms-primary-color-rgb), 0.5)
+                        fill: rgba(var(--ohmylms-primary-color-rgb), 0.5)
                     }
                 }
 
                 &.course-lesson-count,
                 &.course-duration {
                     path {
-                        fill: var(--creator-lms-primary-color);
-                        stroke: var(--creator-lms-primary-color);
+                        fill: var(--ohmylms-primary-color);
+                        stroke: var(--ohmylms-primary-color);
                     }
                 }
             }
         }
 
-        .creator-lms-widget-pricebox {
+        .ohmylms-widget-pricebox {
             border-radius: 12px;
 
             &.with-gray-color {
@@ -103,23 +103,23 @@
 
             }
 
-            .creator-lms-btn-area .creator-lms-button {
+            .ohmylms-btn-area .ohmylms-button {
                 height: 55px;
             }
 
-            .price-discount-area > .omlms-price-amount, 
+            .price-discount-area > .ohmylms-price-amount, 
             .price-discount-area .free, 
             .price-discount-area ins {
                 font-size: 35px;
             }
         }
 
-        .creator-lms-widget-continue-learn {
+        .ohmylms-widget-continue-learn {
             border-radius: 12px;
             background-color: #ffffff;
             padding: 13px;
 
-            .creator-lms-button {
+            .ohmylms-button {
                 display: block;
                 width: 100%;
                 padding: 16px 20px;
@@ -130,14 +130,14 @@
                 margin-bottom: 30px;
 
                 .progressbar-title {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 18px;
                     font-weight: 600;
                     line-height: 1.2;
                     margin: 0 0 13px;
                 }
 
-                .creator-lms-progressbar-outer {
+                .ohmylms-progressbar-outer {
                     width: calc(100% - 110px);
                     height: 6px;
                     display: block;
@@ -155,16 +155,16 @@
                     margin: 0;
                 }
 
-                .creator-lms-progressbar-inner {
+                .ohmylms-progressbar-inner {
                     height: 100%;
-                    background-color: var(--creator-lms-progressbar-color);
+                    background-color: var(--ohmylms-progressbar-color);
                     display: block;
                     border-radius: 100px;
                     transition: width 0.3s linear;
                 }
 
                 .progressbar-percentage {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     text-align: right;
                     font-size: 12px;
                     font-weight: 600;
@@ -175,7 +175,7 @@
     }
 
     // --- widget global --- //
-    .creator-lms-sidebar-widget {
+    .ohmylms-sidebar-widget {
         box-shadow: none;
         border-radius: 16px;
         padding: 18px;
@@ -191,19 +191,19 @@
     }
 
     // --- widget membership --- //
-    .creator-lms-widget-membership {
+    .ohmylms-widget-membership {
         .sidebar-widget-title {
             font-size: 18px;
         }
 
         .membership-tag {
             border-radius: 4px;
-            background: rgba(var(--creator-lms-primary-color-rgb), 0.08);
+            background: rgba(var(--ohmylms-primary-color-rgb), 0.08);
         }
 
-        .creator-lms-button-area .creator-lms-button {
+        .ohmylms-button-area .ohmylms-button {
             background-color: #ffffff;
-            color: var(--creator-lms-primary-color);
+            color: var(--ohmylms-primary-color);
             border: none;
             font-weight: 600;
             padding: 18px 24px;
@@ -218,7 +218,7 @@
     }
 
     // --- widget leaderboard --- //
-    .creator-lms-widget-leaderboard-v2 {
+    .ohmylms-widget-leaderboard-v2 {
         .your-rank {
             display: block;
             color: #444D5E;
@@ -228,13 +228,13 @@
             margin-top: 3px;
         }
         
-        .creator-lms-leaderboard-wrapper {
+        .ohmylms-leaderboard-wrapper {
             display: flex;
             flex-flow: row wrap;
             gap: 8px;
         }
 
-        .creator-lms-single-leaderboard {
+        .ohmylms-single-leaderboard {
             width: 100%;
             padding: 12px 12px;
             border-radius: 12px;
@@ -247,7 +247,7 @@
             border: 1px solid transparent;
 
             &.its-me {
-                border-color: var(--creator-lms-primary-color);
+                border-color: var(--ohmylms-primary-color);
             }
             
             &:nth-child(1),
@@ -257,7 +257,7 @@
                 border-color: transparent;
             }
 
-            .creator-lms-leaderboard-content {
+            .ohmylms-leaderboard-content {
                 width: calc(100% - 65px);
                 display: flex;
                 align-items: center;
@@ -279,7 +279,7 @@
             }
 
             .student-name {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 14px;
                 font-weight: 500;
                 line-height: 1.1;
@@ -295,7 +295,7 @@
                 }
             }
 
-            .creator-lms-leaderboard-position {
+            .ohmylms-leaderboard-position {
                 border-radius: 5px;
                 background: #f1f6f7;
                 width: 50px;
@@ -314,7 +314,7 @@
     }
 
     // --- widget texonomy --- //
-    .creator-lms-widget-course-taxonomy {
+    .ohmylms-widget-course-taxonomy {
         border-radius: 0;
         padding: 0;
         background: transparent;
@@ -351,21 +351,21 @@
 
                 &:hover {
                     background-color: #F4F5F7;
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                 }
             }
         }
     }
 
     // --- widget drop course --- //
-    .creator-lms-widget-drop-course {
+    .ohmylms-widget-drop-course {
         .sidebar-widget-title {
             font-size: 18px;
         }
         .drop-course-wrapper {
             margin-top: 30px;
         }
-        .creator-lms-button {
+        .ohmylms-button {
             height: 55px;
             color: #DE2134;
             border-color: #DE2134;
@@ -381,37 +381,37 @@
 
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-single-course-layout3 .creator-lms-course-pricebox-and-meta .creator-lms-widget-continue-learn .creator-lms-button {
+    .ohmylms-single-course-layout3 .ohmylms-course-pricebox-and-meta .ohmylms-widget-continue-learn .ohmylms-button {
         padding: 12px 16px;
         font-size: 15px;
     }
 
-    .creator-lms-single-course-layout3 .creator-lms-widget-membership .creator-lms-button-area .creator-lms-button {
+    .ohmylms-single-course-layout3 .ohmylms-widget-membership .ohmylms-button-area .ohmylms-button {
         padding: 12px 16px;
         font-size: 15px;
     }
 
-    .creator-lms-single-course-layout3 .creator-lms-sidebar-widget .sidebar-widget-title {
+    .ohmylms-single-course-layout3 .ohmylms-sidebar-widget .sidebar-widget-title {
         font-size: 22px;
     }
-    .creator-lms-single-course-layout3 .creator-lms-widget-drop-course .sidebar-widget-title {
+    .ohmylms-single-course-layout3 .ohmylms-widget-drop-course .sidebar-widget-title {
         font-size: 18px;
     }
-    .creator-lms-single-course-layout3 .creator-lms-widget-membership .sidebar-widget-title {
+    .ohmylms-single-course-layout3 .ohmylms-widget-membership .sidebar-widget-title {
         font-size: 18px;
     }
     
-    .creator-lms-single-course-layout3 .creator-lms-widget-drop-course .creator-lms-button {
+    .ohmylms-single-course-layout3 .ohmylms-widget-drop-course .ohmylms-button {
         height: 44px;
     }
     
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-single-course-layout3 .creator-lms-course-pricebox-and-meta .creator-lms-widget-continue-learn .layout3-progressbar-box .progressbar-title {
+    .ohmylms-single-course-layout3 .ohmylms-course-pricebox-and-meta .ohmylms-widget-continue-learn .layout3-progressbar-box .progressbar-title {
         font-size: 15px;
     }
-    .creator-lms-single-course-layout3 .creator-lms-sidebar-widget .sidebar-widget-title {
+    .ohmylms-single-course-layout3 .ohmylms-sidebar-widget .sidebar-widget-title {
         font-size: 20px;
     }
     

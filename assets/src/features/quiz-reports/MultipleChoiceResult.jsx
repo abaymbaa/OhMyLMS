@@ -38,7 +38,9 @@ export function createMultipleChoiceResult(readRuntime) {
       })(data);
     return (
       <React.Fragment>
-        <div className={'omlms-question-types omlms-multiple-choice-question omlms-'.concat(o)}>
+        <div
+          className={'ohmylms-question-types ohmylms-multiple-choice-question ohmylms-'.concat(o)}
+        >
           <QuizQuestionHeader data={data} index={index} />
           <div>
             <Controls.TextWP as={'p'} size={14} variant={'muted'}>
@@ -80,12 +82,12 @@ export function createMultipleChoiceResult(readRuntime) {
                                   null !== (i = data.given_answer) &&
                                   void 0 !== i &&
                                   i.includes(null == e ? void 0 : e.id))
-                                ? 'omlms-selected'
+                                ? 'ohmylms-selected'
                                 : '',
                               '\n                                                    ',
                             )
                             .concat(
-                              1 == (null == e ? void 0 : e.is_correct) ? 'omlms-correct' : '',
+                              1 == (null == e ? void 0 : e.is_correct) ? 'ohmylms-correct' : '',
                               '\n                                            ',
                             )}
                           label={null == e ? void 0 : e.answer}

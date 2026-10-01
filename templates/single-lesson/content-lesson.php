@@ -2,28 +2,28 @@
 /**
  * The template for displaying lesson's Audio, Video, Text content
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-lesson.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-lesson.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-if (\OMLMS\Extensions\Layouts::render('lesson', get_the_ID(), creator_lms_get_course_by_content_id(get_the_ID()))) return;
+if (\OhMyLMS\Extensions\Layouts::render('lesson', get_the_ID(), ohmylms_get_course_by_content_id(get_the_ID()))) return;
 ?>
 
 <?php while ( have_posts() ) : ?>
 	<?php the_post(); ?>
 
-    <div class="creator-lms-lesson-content-body creator-lms-wysiwyg-content" 
+    <div class="ohmylms-lesson-content-body ohmylms-wysiwyg-content" 
          data-lesson-id="<?php echo esc_attr( get_the_ID() ); ?>"
-         data-course-id="<?php echo esc_attr( creator_lms_get_course_by_content_id( get_the_ID() ) ); ?>">
+         data-course-id="<?php echo esc_attr( ohmylms_get_course_by_content_id( get_the_ID() ) ); ?>">
        <h1><?php echo get_the_title() ?></h1>
 		<?php
 
-$lesson = omlms_get_lesson(get_the_ID());
+$lesson = ohmylms_get_lesson(get_the_ID());
 		$lesson_id = $lesson->get_id();
 		$video_settings = method_exists( $lesson, 'get_video_settings' ) ? $lesson->get_video_settings() : [];
 
@@ -41,22 +41,22 @@ $lesson = omlms_get_lesson(get_the_ID());
 			$controls = !empty($video_settings['controls']) ? 1 : 0;
 			
 			// Get global setting for custom video player
-			$use_custom_player = get_option('creator_lms_use_custom_video_player', 'yes') === 'yes' ? 1 : 0;
-			$logo_bg_color = get_option( 'creator_lms_video_player_logo_bg_color', '#6E42D3' );
+			$use_custom_player = get_option('ohmylms_use_custom_video_player', 'yes') === 'yes' ? 1 : 0;
+			$logo_bg_color = get_option( 'ohmylms_video_player_logo_bg_color', '#6E42D3' );
 
 			if ($use_custom_player) {
 				// Use Custom Video Player for self-hosted videos
 				?>
-				<style>.creator-lms-page img.omlms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
+				<style>.ohmylms-page img.ohmylms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
 				<div
-					class="omlms-custom-video-player omlms-responsive-video-wrapper"
+					class="ohmylms-custom-video-player ohmylms-responsive-video-wrapper"
 					style="aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;"
 					data-video-url="<?php echo esc_url($video); ?>"
 					data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
 					data-loop="<?php echo $loop ? 'true' : 'false'; ?>"
 					data-muted="<?php echo $autoplay ? 'true' : 'false'; ?>"
 					data-poster="<?php echo $cover_image ? esc_url($cover_image) : ''; ?>"
-					data-logo-url="<?php echo esc_url( get_option( 'creator_lms_video_player_logo', '' ) ); ?>"
+					data-logo-url="<?php echo esc_url( get_option( 'ohmylms_video_player_logo', '' ) ); ?>"
 				>
 					<!-- Player will be initialized by video-player.js -->
 				</div>
@@ -64,7 +64,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 			} else {
 				// Use standard HTML5 video player
 				?>
-				<div class="creator-lms-video-player omlms-responsive-video-wrapper" tabindex="1" style="max-width: 100%; margin: 0 auto; aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;">
+				<div class="ohmylms-video-player ohmylms-responsive-video-wrapper" tabindex="1" style="max-width: 100%; margin: 0 auto; aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;">
 					<video 
 						class="the-video" 
 						tabindex="2"
@@ -89,11 +89,11 @@ $lesson = omlms_get_lesson(get_the_ID());
 						Your browser does not support the video tag.
 					</video>
 					<?php if($cover_image && !$autoplay){ ?>
-						<div class="creator-lms-video-player-cover" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+						<div class="ohmylms-video-player-cover" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
 							<img src="<?php echo esc_url($cover_image); ?>" alt="<?php echo esc_attr($cover_image_alt ? $cover_image_alt : $cover_image_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
 
-							<button type="button" title="Play" aria-label="Play video" class="creator-lms-video-player-play" tabindex="0">
-								<svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path fill="var(--creator-lms-primary-color)" d="M2.977.309C1.715-.415.69.178.69 1.632v10.735c0 1.456 1.024 2.048 2.286 1.325l9.382-5.381c1.263-.724 1.263-1.898 0-2.622L2.977.31z"/></svg>
+							<button type="button" title="Play" aria-label="Play video" class="ohmylms-video-player-play" tabindex="0">
+								<svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path fill="var(--ohmylms-primary-color)" d="M2.977.309C1.715-.415.69.178.69 1.632v10.735c0 1.456 1.024 2.048 2.286 1.325l9.382-5.381c1.263-.724 1.263-1.898 0-2.622L2.977.31z"/></svg>
 							</button>
 						</div>
 					<?php } ?>
@@ -124,7 +124,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 				$spotify_id    = ! empty( $spotify_matches[1] ) ? $spotify_matches[1] : '';
 				$spotify_embed = $spotify_id ? 'https://open.spotify.com/embed/track/' . $spotify_id : $external_url;
 				?>
-				<div class="creator-lms-lesson-audio creator-lms-lesson-external-audio">
+				<div class="ohmylms-lesson-audio ohmylms-lesson-external-audio">
 					<iframe
 						src="<?php echo esc_url( $spotify_embed ); ?>"
 						width="100%"
@@ -138,7 +138,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 				<?php
 			} elseif ( $is_soundcloud ) {
 				?>
-				<div class="creator-lms-lesson-audio creator-lms-lesson-external-audio">
+				<div class="ohmylms-lesson-audio ohmylms-lesson-external-audio">
 					<iframe
 						src="<?php echo esc_url( 'https://w.soundcloud.com/player/?url=' . rawurlencode( $external_url ) . '&auto_play=false&color=%23ff5500&hide_related=true&show_comments=false&show_user=true&show_reposts=false' ); ?>"
 						width="100%"
@@ -152,7 +152,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 				<?php
 			} elseif ( $is_audio_file ) {
 				?>
-				<div class="creator-lms-lesson-audio">
+				<div class="ohmylms-lesson-audio">
 					<audio controls controlsList="nodownload" style="width:100%;">
 						<source src="<?php echo esc_url( $external_url ); ?>">
 						<?php esc_html_e( 'Your browser does not support the audio element.', 'ohmylms' ); ?>
@@ -162,7 +162,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 			} else {
 				// Unknown audio external URL — try generic iframe.
 				?>
-				<div class="creator-lms-lesson-audio creator-lms-lesson-external-audio">
+				<div class="ohmylms-lesson-audio ohmylms-lesson-external-audio">
 					<iframe
 						src="<?php echo esc_url( $external_url ); ?>"
 						width="100%"
@@ -188,7 +188,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 			$hide_related_videos = !empty($video_settings['hide_related_videos']) ? 1 : 0;
 
 			// Get global setting for custom video player (from Advanced settings)
-			$use_custom_player = get_option('creator_lms_use_custom_video_player', 'yes') === 'yes' ? 1 : 0;
+			$use_custom_player = get_option('ohmylms_use_custom_video_player', 'yes') === 'yes' ? 1 : 0;
 
 			// Check platform types
 			$is_youtube = strpos($external_video, 'youtube.com') !== false || strpos($external_video, 'youtu.be') !== false;
@@ -204,27 +204,27 @@ $lesson = omlms_get_lesson(get_the_ID());
 			}
 			
 			// Debug output (remove in production)
-			error_log('CreatorLMS Video Debug - URL: ' . $external_video);
-			error_log('CreatorLMS Video Debug - use_custom_player: ' . ($use_custom_player ? 'yes' : 'no'));
-			error_log('CreatorLMS Video Debug - is_youtube: ' . ($is_youtube ? 'yes' : 'no'));
-			error_log('CreatorLMS Video Debug - is_vimeo: ' . ($is_vimeo ? 'yes' : 'no'));
-			error_log('CreatorLMS Video Debug - is_direct_video: ' . ($is_direct_video ? 'yes' : 'no'));
+			error_log('OhMyLMS Video Debug - URL: ' . $external_video);
+			error_log('OhMyLMS Video Debug - use_custom_player: ' . ($use_custom_player ? 'yes' : 'no'));
+			error_log('OhMyLMS Video Debug - is_youtube: ' . ($is_youtube ? 'yes' : 'no'));
+			error_log('OhMyLMS Video Debug - is_vimeo: ' . ($is_vimeo ? 'yes' : 'no'));
+			error_log('OhMyLMS Video Debug - is_direct_video: ' . ($is_direct_video ? 'yes' : 'no'));
 			
 			// Only use custom player when explicitly enabled
 			if ($use_custom_player && ($is_youtube || $is_vimeo || $is_direct_video)) {
 				// Use Custom Video Player
-				$logo_bg_color = get_option( 'creator_lms_video_player_logo_bg_color', '#6E42D3' );
+				$logo_bg_color = get_option( 'ohmylms_video_player_logo_bg_color', '#6E42D3' );
 				?>
-				<style>.creator-lms-page img.omlms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
+				<style>.ohmylms-page img.ohmylms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
 				<div
-					class="omlms-custom-video-player omlms-responsive-video-wrapper"
+					class="ohmylms-custom-video-player ohmylms-responsive-video-wrapper"
 					style="aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;"
 					data-video-url="<?php echo esc_attr($external_video); ?>"
 					data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
 					data-loop="<?php echo $loop ? 'true' : 'false'; ?>"
 					data-muted="<?php echo $autoplay ? 'true' : 'false'; ?>"
 					data-poster="<?php echo $cover_image ? esc_url($cover_image) : ''; ?>"
-					data-logo-url="<?php echo esc_url( get_option( 'creator_lms_video_player_logo', '' ) ); ?>"
+					data-logo-url="<?php echo esc_url( get_option( 'ohmylms_video_player_logo', '' ) ); ?>"
 				>
 					<!-- Player will be initialized by video-player.js -->
 				</div>
@@ -321,7 +321,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 				
 				// Use iframe for other embed sources
 				?>
-				<div class="omlms-lesson-external-video omlms-responsive-video-wrapper" style="aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;">
+				<div class="ohmylms-lesson-external-video ohmylms-responsive-video-wrapper" style="aspect-ratio: <?php echo esc_attr($aspect_ratio); ?>;">
 					<iframe
 						src="<?php echo esc_url($modified_url); ?>" 
 						frameborder="0" 
@@ -340,7 +340,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 		$audio = wp_get_attachment_url( $lesson->get_audio_id() );
 		if($audio){
 			?>
-			<div class="creator-lms-lesson-audio">
+			<div class="ohmylms-lesson-audio">
 				<audio id="audio" controls controlsList="nodownload">
 					<source src="<?php echo esc_url($audio); ?>" type="audio/mpeg">
 					Your browser does not support the audio element.
@@ -350,7 +350,7 @@ $lesson = omlms_get_lesson(get_the_ID());
 		}
 		?>
 
-        <?php \OMLMS\Extensions\Bootstrap::lesson($lesson); ?>
+        <?php \OhMyLMS\Extensions\Bootstrap::lesson($lesson); ?>
 
     </div>
 
@@ -358,26 +358,26 @@ $lesson = omlms_get_lesson(get_the_ID());
 
 
 <?php
-$lesson = omlms_get_lesson(get_the_ID());
+$lesson = ohmylms_get_lesson(get_the_ID());
 $lesson_id = $lesson->get_id();
 $lesson_resources = method_exists( $lesson, 'get_download_resource' ) ? $lesson->get_download_resource() : [];
 if(!empty($lesson_resources['file'])) {
 	?>
-	<ul class="creator-lms-resources-list">
+	<ul class="ohmylms-resources-list">
 		<?php
 		foreach ($lesson_resources['file'] as $resource) {
 			?>
 			<li>
-				<div class="omlms-single-resource-info">
+				<div class="ohmylms-single-resource-info">
 					<span class="resource-icon">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/file-icon.php'); ?>
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/file-icon.php'); ?>
 					</span>
 					<span class="resource-name"><?php echo esc_html($resource['name']); ?></span>
 					<span class="resource-size"><?php echo esc_html($resource['size']); ?></span>
 				</div>
 				
 				<a href="<?php echo esc_url($resource['url']); ?>" class="resource-action" download>
-					<?php include(CREATOR_LMS_DIR . '/assets/images/icon/download-icon.php'); ?>
+					<?php include(OHMYLMS_DIR . '/assets/images/icon/download-icon.php'); ?>
 				</a>
 			</li>
 			<?php

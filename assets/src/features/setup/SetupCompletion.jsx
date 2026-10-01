@@ -34,10 +34,10 @@ export function createSetupCompletion(readRuntime) {
                       (Nte.Hi.completeStep(),
                         Nte.Ft.emit('step_completed', {
                           stepId: 'completion',
-                          plugin: 'creator-lms',
+                          plugin: 'ohmylms',
                         }),
                         Nte.Ft.emit('onboarding_completed', {
-                          plugin: 'creator-lms',
+                          plugin: 'ohmylms',
                           version: '1.1.16',
                         }));
                     case 1:
@@ -152,7 +152,7 @@ export function createSetupCompletion(readRuntime) {
             </svg>
           ),
           label: (0, I18n.__)('Blog & Tutorials', 'ohmylms'),
-          url: 'https://creatorlms.net/blog/',
+          url: 'https://ohmylms.com/blog/',
         },
         {
           icon: (
@@ -201,7 +201,7 @@ export function createSetupCompletion(readRuntime) {
             </svg>
           ),
           label: (0, I18n.__)('Support', 'ohmylms'),
-          url: 'https://creatorlms.net/contact-us/',
+          url: 'https://ohmylms.com/contact-us/',
         },
         {
           icon: (
@@ -221,7 +221,7 @@ export function createSetupCompletion(readRuntime) {
             </svg>
           ),
           label: (0, I18n.__)('Documentation', 'ohmylms'),
-          url: 'https://creatorlms.net/docs/',
+          url: 'https://ohmylms.com/docs/',
         },
       ];
     return (
@@ -471,7 +471,7 @@ export function createSetupCompletion(readRuntime) {
                       {(0, I18n.__)('Unlock more with OhMyLMS.', 'ohmylms')}
                     </Controls.TextWP>
                     <v.Link
-                      to={'https://creatorlms.net/creatorlms-features/'}
+                      to={'https://ohmylms.com/ohmylms-features/'}
                       target={'_blank'}
                       rel={'noopener noreferrer'}
                       style={{

@@ -5,7 +5,7 @@ var eU = function (e) {
     n = (e.showBackButton, e.courseType),
     r = e.loading,
     a = (0, y.useDispatch)(T.default),
-    o = (0, L.useIsPro)(),
+    o = true,
     i = (0, f.Zp)(),
     l = function (e, t) {
       return function (e) {
@@ -73,7 +73,7 @@ var eU = function (e) {
     align: "stretch"
   }, React.createElement(I.ButtonWP, {
     onClick: t,
-    className: "omlms-course-type-btn omlms-manual-course",
+    className: "ohmylms-course-type-btn ohmylms-manual-course",
     isBusy: r
   }, r && React.createElement(I.FlexWP, {
     align: "center",
@@ -84,7 +84,7 @@ var eU = function (e) {
       left: "0",
       width: "100%",
       height: "100%",
-      background: "color-mix(in srgb, var(--omlms-primary-color) 50%, transparent)",
+      background: "color-mix(in srgb, var(--ohmylms-primary-color) 50%, transparent)",
       borderRadius: "4px"
     }
   }, React.createElement(I.SpinWP, {
@@ -107,13 +107,13 @@ var eU = function (e) {
   }, (0, b.__)("Build your course from the ground up with complete control over every aspect of the content and structure.", "ohmylms"))), React.createElement(I.ButtonWP, {
     onClick: function () {
       var e;
-      return o ? null != d && null !== (e = d.ai_model) && void 0 !== e && e.is_enable ? null != s && s.self || null != s && s.api_key ? void i("/ai-course-outline-gen", {
+      return null != d && null !== (e = d.ai_model) && void 0 !== e && e.is_enable ? null != s && s.self || null != s && s.api_key ? void i("/ai-course-outline-gen", {
         state: {
           courseType: n
         }
-      }) : (a.updateProModalTitle((0, b.__)("API Key is not set to AI Model", "ohmylms")), a.updateProModalContent((0, b.__)("Please set the API Key for the AI Model to use this feature.", "ohmylms")), a.updateProModalButtonText((0, b.__)("Upgrade Now", "ohmylms")), void u(!0)) : (a.updateProModalTitle((0, b.__)("AI Suite is not enabled", "ohmylms")), a.updateProModalContent((0, b.__)("Please enable the AI Suite integration to use this feature.", "ohmylms")), a.updateProModalButtonText(null), void u(!0)) : (a.updateProModalTitle((0, b.__)("Upgrade to Pro", "ohmylms")), a.updateProModalContent((0, b.__)("This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.", "ohmylms")), a.updateProModalButtonText((0, b.__)("Upgrade Now", "ohmylms")), void u(!0));
+      }) : (a.updateProModalTitle((0, b.__)("API Key is not set to AI Model", "ohmylms")), a.updateProModalContent((0, b.__)("Please set the API Key for the AI Model to use this feature.", "ohmylms")), a.updateProModalButtonText(null), void u(!0)) : (a.updateProModalTitle((0, b.__)("AI Suite is not enabled", "ohmylms")), a.updateProModalContent((0, b.__)("Please enable the AI Suite integration to use this feature.", "ohmylms")), a.updateProModalButtonText(null), void u(!0));
     },
-    className: "omlms-course-type-btn omlms-ai-course",
+    className: "ohmylms-course-type-btn ohmylms-ai-course",
     disabled: r
   }, React.createElement(I.FlexWP, {
     gap: 2,
@@ -140,9 +140,7 @@ var eU = function (e) {
     onClose: u
   })));
 };
-
 const tU = (0, g.memo)(eU);
-
 function nU() {
   var e,
     t,
@@ -229,7 +227,6 @@ function nU() {
     };
   })();
 }
-
 function rU(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -251,7 +248,6 @@ function rU(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, rU(e, t, n, r);
 }
-
 function aU(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -261,7 +257,6 @@ function aU(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function oU(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -301,13 +296,11 @@ function oU(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function iU(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const lU = function (e) {
   var t,
     n = e.isOpen,
@@ -330,7 +323,7 @@ const lU = function (e) {
     w = h[1],
     E = (0, y.useDispatch)(T.default),
     S = (0, f.Zp)(),
-    R = (0, L.useFeatureAccess)("cohort");
+    R = true;
   (0, g.useEffect)(function () {
     v || w(2);
   }, [v]);
@@ -409,9 +402,9 @@ const lU = function (e) {
       gap: 0
     }, React.createElement(I.ButtonWP, {
       onClick: function () {
-        1 == 1 && w(1);
+        w(1);
       },
-      className: "omlms-course-type-indicator ".concat(1 === _ ? "omlms-step-active" : "", " ").concat(2 === _ ? "omlms-step-done" : "")
+      className: "ohmylms-course-type-indicator ".concat(1 === _ ? "ohmylms-step-active" : "", " ").concat(2 === _ ? "ohmylms-step-done" : "")
     }, React.createElement(I.BadgeWP, {
       isRounded: !0,
       width: "30px",
@@ -427,7 +420,7 @@ const lU = function (e) {
       style: {
         cursor: "default"
       },
-      className: "omlms-course-type-indicator last-step ".concat(2 === _ ? "omlms-step-active" : "")
+      className: "ohmylms-course-type-indicator last-step ".concat(2 === _ ? "ohmylms-step-active" : "")
     }, React.createElement(I.BadgeWP, {
       isRounded: !0,
       width: "30px",
@@ -446,7 +439,7 @@ const lU = function (e) {
       maxWidth: "790px",
       background: "#FFFFFF"
     },
-    className: "omlms-course-type-modal ".concat(v ? "" : "omlms-no-cohort-type")
+    className: "ohmylms-course-type-modal ".concat(v ? "" : "ohmylms-no-cohort-type")
   }, 1 === _ && React.createElement(JG, {
     setCourseType: function (e) {
       ("cohort-based" !== e || R) && (l(e), w(2));
@@ -470,7 +463,6 @@ const lU = function (e) {
     loading: d
   }));
 };
-
 function cU() {
   var e,
     t,
@@ -557,7 +549,6 @@ function cU() {
     };
   })();
 }
-
 function uU(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -579,7 +570,6 @@ function uU(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, uU(e, t, n, r);
 }
-
 function sU(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -589,7 +579,6 @@ function sU(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function dU(e) {
   return function () {
     var t = this,
@@ -606,7 +595,6 @@ function dU(e) {
     });
   };
 }
-
 function mU(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -646,7 +634,6 @@ function mU(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function pU(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

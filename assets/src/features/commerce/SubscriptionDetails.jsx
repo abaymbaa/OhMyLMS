@@ -97,13 +97,13 @@ export function createSubscriptionDetails(readRuntime) {
           <Controls.CardWP isBorderless={!0}>
             <Controls.SpacerWP padding={6} marginBottom={0}>
               <Controls.FlexWP
-                className={'omlms-subscription-details'}
+                className={'ohmylms-subscription-details'}
                 justify={'start'}
                 align={'start'}
                 gap={3}
               >
                 <Controls.FlexItemWP
-                  className={'omlms-subscription-details-left'}
+                  className={'ohmylms-subscription-details-left'}
                   style={{
                     width: 'calc(70% - 12px)',
                   }}
@@ -120,7 +120,7 @@ export function createSubscriptionDetails(readRuntime) {
                         <Controls.TextWP>
                           {(0, I18n.__)('Linked to Order ', 'ohmylms')}
                           <Controls.ButtonWP
-                            href={'/wp-admin/admin.php?page=creator-lms#/order-edit/'.concat(
+                            href={'/wp-admin/admin.php?page=ohmylms#/order-edit/'.concat(
                               null == d ? void 0 : d.original_order_id,
                             )}
                             variant={'link'}
@@ -254,7 +254,7 @@ export function createSubscriptionDetails(readRuntime) {
                     )}
                 </Controls.FlexItemWP>
                 <Controls.FlexItemWP
-                  className={'omlms-subscription-details-right'}
+                  className={'ohmylms-subscription-details-right'}
                   style={{
                     width: '30%',
                   }}

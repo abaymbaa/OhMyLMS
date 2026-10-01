@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 /** Schema-validated, namespaced extension settings for LMS content. */
 final class Settings {
@@ -29,7 +29,7 @@ final class Settings {
     }
     public static function permission($request) {
         $post = get_post((int) $request['id']);
-        if (!in_array($request['type'], self::$contexts, true) || !$post || $post->post_type !== 'omlms-' . $request['type']) {
+        if (!in_array($request['type'], self::$contexts, true) || !$post || $post->post_type !== 'ohmylms-' . $request['type']) {
             return new \WP_Error('ohmylms_invalid_content', 'Invalid LMS content.', ['status' => 404]);
         }
         return current_user_can('edit_post', $post->ID) ? true : new \WP_Error('ohmylms_forbidden', 'You cannot edit this content.', ['status' => rest_authorization_required_code()]);
@@ -65,7 +65,7 @@ final class Settings {
         return $saved;
     }
     private static function content_type($request) {
-        if (!preg_match('#^/(?:ohmylms|creator-lms)/v1/(courses|lessons|quiz|question|membership|assignment|certificates)(?:/\d+)?/?$#', $request->get_route(), $match)) { return null; }
+        if (!preg_match('#^/(?:ohmylms|ohmylms)/v1/(courses|lessons|quiz|question|membership|assignment|certificates)(?:/\d+)?/?$#', $request->get_route(), $match)) { return null; }
         return ['courses'=>'course', 'lessons'=>'lesson', 'certificates'=>'certificate'][$match[1]] ?? $match[1];
     }
     public static function before_content($response, $handler, $request) {
@@ -83,7 +83,7 @@ final class Settings {
         $data = $response->get_data();
         $id = is_array($data) ? (int) ($data['id'] ?? 0) : 0;
         // Extension settings are author-only; never attach them to public responses.
-        if (!$id || get_post_type($id) !== 'omlms-' . $type || !current_user_can('edit_post', $id)) { return $response; }
+        if (!$id || get_post_type($id) !== 'ohmylms-' . $type || !current_user_can('edit_post', $id)) { return $response; }
         $saved = (array) get_post_meta($id, '_ohmylms_extension_settings', true);
         if (in_array($request->get_method(), ['POST','PUT','PATCH'], true) && $request->has_param('extension_settings')) {
             $saved = self::prepare($type, $request['extension_settings'], $saved);

@@ -1,5 +1,5 @@
 <?php
-    $single_course_layout = get_option('creator_lms_single_course_page_layout','layout_1');
+    $single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
 
     if( 'layout_3' === $single_course_layout ){
         ?>

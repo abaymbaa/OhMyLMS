@@ -1,10 +1,10 @@
 <?php
 
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Webhook;
-use OMLMS\DataStores\WebhookStore;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Webhook;
+use OhMyLMS\DataStores\WebhookStore;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -23,7 +23,7 @@ class WebhookController extends RestController {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * The base route for webhook endpoints.
@@ -136,7 +136,7 @@ class WebhookController extends RestController {
 	 */
 	public function get_items_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_view', __( 'Sorry, you are not allowed to view webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_view', __( 'Sorry, you are not allowed to view webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -149,7 +149,7 @@ class WebhookController extends RestController {
 	 */
 	public function get_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_view', __( 'Sorry, you are not allowed to view webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_view', __( 'Sorry, you are not allowed to view webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -162,7 +162,7 @@ class WebhookController extends RestController {
 	 */
 	public function create_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_create', __( 'Sorry, you are not allowed to create webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_create', __( 'Sorry, you are not allowed to create webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -175,7 +175,7 @@ class WebhookController extends RestController {
 	 */
 	public function update_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_edit', __( 'Sorry, you are not allowed to edit webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_edit', __( 'Sorry, you are not allowed to edit webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -188,7 +188,7 @@ class WebhookController extends RestController {
 	 */
 	public function delete_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_delete', __( 'Sorry, you are not allowed to delete webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_delete', __( 'Sorry, you are not allowed to delete webhooks.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}

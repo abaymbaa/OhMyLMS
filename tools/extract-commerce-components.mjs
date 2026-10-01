@@ -9,7 +9,7 @@ const traverse=traverseModule.default||traverseModule,generate=generatorModule.d
 const root=path.resolve(import.meta.dirname,'..');
 const source=path.join(root,'assets/src/recovered');
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
-const factory=manifest.assets.find(a=>a.output==='assets/dist/admin/creatorlms.js').factories.find(f=>f.id==='1841');
+const factory=manifest.assets.find(a=>a.output==='assets/dist/admin/ohmylms.js').factories.find(f=>f.id==='1841');
 const ast=parse(factory.fragments.map(f=>fs.readFileSync(path.join(source,f),'utf8')).join('\n'));
 const declarations=new Map();
 for(const statement of ast.program.body)if(t.isVariableDeclaration(statement))for(const d of statement.declarations)if(t.isIdentifier(d.id))declarations.set(d.id.name,d.init);

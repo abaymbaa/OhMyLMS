@@ -267,13 +267,13 @@ var kre = function (e) {
                   description: p,
                   date_expires: {
                     date: moment(B).format("YYYY-MM-DDTHH:mm:ss"),
-                    timezone: null === (t = window) || void 0 === t || null === (t = t.creator_lms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
-                    timezone_type: null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type
+                    timezone: null === (t = window) || void 0 === t || null === (t = t.ohmylms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
+                    timezone_type: null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type
                   },
                   date_start: {
                     date: moment(D).format("YYYY-MM-DDTHH:mm:ss"),
-                    timezone: null === (o = window) || void 0 === o || null === (o = o.creator_lms_params) || void 0 === o || null === (o = o.timezone) || void 0 === o ? void 0 : o.timezone_string,
-                    timezone_type: null === (i = window) || void 0 === i || null === (i = i.creator_lms_params) || void 0 === i || null === (i = i.timezone) || void 0 === i ? void 0 : i.timezone_type
+                    timezone: null === (o = window) || void 0 === o || null === (o = o.ohmylms_params) || void 0 === o || null === (o = o.timezone) || void 0 === o ? void 0 : o.timezone_string,
+                    timezone_type: null === (i = window) || void 0 === i || null === (i = i.ohmylms_params) || void 0 === i || null === (i = i.timezone) || void 0 === i ? void 0 : i.timezone_type
                   },
                   individual_use: "no",
                   exclude_sale_items: [],
@@ -369,7 +369,7 @@ var kre = function (e) {
     level: "4"
   }, (0, b.__)("Coupon Code", "ohmylms")), React.createElement(I.TextWP, null, (0, b.__)("A unique code that customers can enter during checkout to receive a discount.", "ohmylms"))), React.createElement(I.FlexItemWP, {
     isBlock: !0,
-    className: "omlms-coupon-generate"
+    className: "ohmylms-coupon-generate"
   }, React.createElement(I.FlexWP, {
     gap: 2
   }, React.createElement(I.FlexItemWP, {
@@ -385,7 +385,7 @@ var kre = function (e) {
       ("" === t || /[a-zA-Z]/.test(t)) && X(t);
     }
   }), React.createElement(I.ButtonWP, {
-    className: "omlms-coupon-generate-btn ".concat(l && "is-generating"),
+    className: "ohmylms-coupon-generate-btn ".concat(l && "is-generating"),
     onClick: function () {
       c(!0), setTimeout(function () {
         var e = $();

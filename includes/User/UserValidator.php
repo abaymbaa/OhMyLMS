@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\User;
+namespace OhMyLMS\User;
 
 /**
  * Responsible to handle all user and enrollment related validation

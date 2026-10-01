@@ -10,13 +10,13 @@ var Us = function (e) {
       viewBox: "0 0 23 19",
       xmlns: "http://www.w3.org/2000/svg"
     }, React.createElement("path", {
-      fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
-      stroke: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+      fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
+      stroke: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
       strokeWidth: ".3",
       d: "M10.72 11.42a.86.86 0 00.505.434.892.892 0 00.942-.252.853.853 0 00.21-.626.842.842 0 00-.093-.323l-4.812-9.43A.864.864 0 007.15.879a.889.889 0 00-1.243.346l-4.812 9.429a.844.844 0 00.117.95.871.871 0 00.602.294.892.892 0 00.638-.211.86.86 0 00.208-.267l1.508-2.955H9.21l1.508 2.955zM5.042 6.75l1.645-3.226L8.336 6.75H5.043z"
     }), React.createElement("path", {
-      fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
-      stroke: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+      fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
+      stroke: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
       strokeWidth: ".3",
       d: "M21.743 8.715a.884.884 0 00-1.237 0l-8.13 7.966L8.618 13a.878.878 0 00-.622-.261.89.89 0 00-.626.25.857.857 0 00-.256.614.842.842 0 00.267.61l4.375 4.285a.884.884 0 001.237 0l8.75-8.572a.849.849 0 000-1.212z"
     })));
@@ -31,7 +31,7 @@ var Us = function (e) {
     }, React.createElement("rect", {
       width: "133",
       height: "12",
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       rx: "2"
     }), React.createElement("path", {
       fill: "#fff",
@@ -61,7 +61,6 @@ var Us = function (e) {
       type: "single"
     }));
   };
-
 const Qs = {
   name: "Single Choice",
   type: "single-choice",
@@ -76,7 +75,6 @@ const Qs = {
   },
   isPro: !1
 };
-
 var Zs = function (e) {
     var t = e.isHover,
       n = void 0 !== t && t,
@@ -88,14 +86,14 @@ var Zs = function (e) {
       viewBox: "0 0 23 23",
       xmlns: "http://www.w3.org/2000/svg"
     }, React.createElement("path", {
-      stroke: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+      stroke: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
       strokeLinecap: "round",
       strokeLinejoin: "round",
       strokeMiterlimit: "10",
       strokeWidth: "1.6",
       d: "M4.43 10.263l1.716 1.715L8.72 9.405m5.832 0l3.43 3.431m-3.43 0l3.43-3.43m-3.43-5.146h1.286m0 13.722h-1.286"
     }), React.createElement("path", {
-      stroke: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+      stroke: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
       strokeLinecap: "round",
       strokeLinejoin: "round",
       strokeMiterlimit: "10",
@@ -126,35 +124,35 @@ var Zs = function (e) {
       height: "37",
       x: ".5",
       y: "28.5",
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       fillOpacity: ".1",
-      stroke: "var(--omlms-primary-color)",
+      stroke: "var(--ohmylms-primary-color)",
       rx: "3.5"
     }), React.createElement("rect", {
       width: "49",
       height: "37",
       x: "57.5",
       y: "28.5",
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       fillOpacity: ".1",
-      stroke: "var(--omlms-primary-color)",
+      stroke: "var(--ohmylms-primary-color)",
       rx: "3.5"
     }), React.createElement("g", {
       clipPath: "url(#clip0_2999_51)"
     }, React.createElement("path", {
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       d: "M30.675 36.47a1.174 1.174 0 00-1.57 0l-7.068 6.547-3.141-2.91a1.174 1.174 0 00-1.57 0 .976.976 0 000 1.455l3.926 3.638c.216.2.5.301.785.301.284 0 .568-.1.785-.301l7.853-7.276a.976.976 0 000-1.455z"
     })), React.createElement("path", {
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       d: "M16.38 59v-6.31h-2.09V52h5.02v.69h-2.09V59h-.84zm3.34 0v-4.96h.76l.07.95c.153-.327.386-.587.7-.78.313-.193.7-.29 1.16-.29v.88h-.23c-.294 0-.564.053-.81.16-.247.1-.444.273-.59.52-.147.247-.22.587-.22 1.02V59h-.84zm5.442.12c-.587 0-1.053-.177-1.4-.53-.347-.36-.52-.91-.52-1.65v-2.9h.84v2.81c0 1.033.423 1.55 1.27 1.55.433 0 .79-.153 1.07-.46.287-.313.43-.757.43-1.33v-2.57h.84V59h-.76l-.06-.89c-.153.313-.383.56-.69.74-.3.18-.64.27-1.02.27zm6.143 0a2.46 2.46 0 01-1.26-.32 2.38 2.38 0 01-.87-.91c-.207-.387-.31-.843-.31-1.37 0-.52.103-.973.31-1.36.206-.393.493-.697.86-.91.373-.22.803-.33 1.29-.33.48 0 .893.11 1.24.33.353.213.623.497.81.85a2.405 2.405 0 01.27 1.36v.25h-3.95c.02.38.106.697.26.95.16.247.356.433.59.56.24.127.493.19.76.19.346 0 .636-.08.87-.24.233-.16.403-.377.51-.65h.83a2.26 2.26 0 01-.77 1.15c-.374.3-.854.45-1.44.45zm0-4.49c-.4 0-.757.123-1.07.37-.307.24-.484.593-.53 1.06h3.12c-.02-.447-.174-.797-.46-1.05-.287-.253-.64-.38-1.06-.38z"
     }), React.createElement("path", {
-      stroke: "var(--omlms-primary-color)",
+      stroke: "var(--ohmylms-primary-color)",
       strokeLinecap: "round",
       strokeLinejoin: "round",
       strokeWidth: "2",
       d: "M86 37l-8 8m0-8l8 8"
     }), React.createElement("path", {
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       d: "M70.74 59v-7H75v.69h-3.42v2.46h2.91v.68h-2.91V59h-.84zm6.6.12c-.413 0-.757-.07-1.03-.21a1.428 1.428 0 01-.81-1.32c0-.507.193-.897.58-1.17.387-.273.913-.41 1.58-.41H79v-.06c0-.433-.113-.76-.34-.98-.227-.227-.53-.34-.91-.34-.327 0-.61.083-.85.25-.233.16-.38.397-.44.71h-.86a1.61 1.61 0 01.36-.91c.213-.247.477-.433.79-.56.313-.133.647-.2 1-.2.693 0 1.213.187 1.56.56.353.367.53.857.53 1.47V59h-.75l-.05-.89c-.14.28-.347.52-.62.72-.267.193-.627.29-1.08.29zm.13-.71c.32 0 .593-.083.82-.25.233-.167.41-.383.53-.65.12-.267.18-.547.18-.84v-.01h-1.27c-.493 0-.843.087-1.05.26-.2.167-.3.377-.3.63 0 .26.093.47.28.63.193.153.463.23.81.23zm3.63.59v-7.2h.84V59h-.84zm4.117.12c-.593 0-1.087-.15-1.48-.45-.393-.3-.623-.707-.69-1.22h.86c.053.26.19.487.41.68.227.187.53.28.91.28.353 0 .613-.073.78-.22a.712.712 0 00.25-.54c0-.3-.11-.5-.33-.6-.213-.1-.517-.19-.91-.27a5.15 5.15 0 01-.8-.23 1.85 1.85 0 01-.67-.42c-.18-.187-.27-.43-.27-.73 0-.433.16-.787.48-1.06.327-.28.767-.42 1.32-.42.527 0 .957.133 1.29.4.34.26.537.633.59 1.12h-.83a.84.84 0 00-.33-.59c-.18-.147-.423-.22-.73-.22-.3 0-.533.063-.7.19a.607.607 0 00-.24.5c0 .2.103.357.31.47.213.113.5.21.86.29.307.067.597.15.87.25.28.093.507.237.68.43.18.187.27.46.27.82.007.447-.163.817-.51 1.11-.34.287-.803.43-1.39.43zm5.33 0a2.46 2.46 0 01-1.26-.32 2.38 2.38 0 01-.87-.91c-.207-.387-.31-.843-.31-1.37 0-.52.103-.973.31-1.36.207-.393.493-.697.86-.91.373-.22.803-.33 1.29-.33.48 0 .893.11 1.24.33.353.213.623.497.81.85a2.405 2.405 0 01.27 1.36v.25h-3.95c.02.38.107.697.26.95.16.247.357.433.59.56.24.127.493.19.76.19.347 0 .637-.08.87-.24.233-.16.403-.377.51-.65h.83c-.133.46-.39.843-.77 1.15-.373.3-.853.45-1.44.45zm0-4.49c-.4 0-.757.123-1.07.37-.307.24-.483.593-.53 1.06h3.12c-.02-.447-.173-.797-.46-1.05-.287-.253-.64-.38-1.06-.38z"
     }), React.createElement("defs", null, React.createElement("clipPath", {
       id: "clip0_2999_51"
@@ -164,7 +162,6 @@ var Zs = function (e) {
       transform: "translate(17 35)"
     })))));
   };
-
 function Ks(e) {
   return Ks = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -172,7 +169,6 @@ function Ks(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ks(e);
 }
-
 function Js(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -183,7 +179,6 @@ function Js(e, t) {
   }
   return n;
 }
-
 function Xs(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -195,7 +190,6 @@ function Xs(e) {
   }
   return e;
 }
-
 function ed(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -216,7 +210,6 @@ function ed(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var td = function () {
   var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
@@ -230,15 +223,15 @@ var td = function () {
     r = (0, y.useDispatch)(T.default),
     a = r.addContentToQuestion;
   return r.updateQuestion, React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-options-list omlms-options-list-true-false"
+    className: "ohmylms-options-list ohmylms-options-list-true-false"
   }, t.map(function (r, o) {
     var i, l;
     return React.createElement("div", {
-      className: "omlms-option-item-wrapper omlms-quiz-option-item omlms-quiz-option-item-".concat(o),
+      className: "ohmylms-option-item-wrapper ohmylms-quiz-option-item ohmylms-quiz-option-item-".concat(o),
       key: (null == r ? void 0 : r.id) || o
     }, React.createElement(I.CardWP, {
       isBorderless: !0,
-      className: "omlms-option-item ".concat(1 == (null == r ? void 0 : r.is_correct) ? "omlms-option-item--correct" : "")
+      className: "ohmylms-option-item ".concat(1 == (null == r ? void 0 : r.is_correct) ? "ohmylms-option-item--correct" : "")
     }, React.createElement(I.FlexWP, null, React.createElement(V.A, {
       title: (0, b.__)("Mark as correct answer", "ohmylms")
     }, React.createElement(I.RadioWP, {
@@ -265,21 +258,20 @@ var td = function () {
         width: "100%"
       }
     })))), !n || null != r && null !== (i = r.answer) && void 0 !== i && i.trim() ? React.createElement(React.Fragment, null) : React.createElement("div", {
-      className: "omlms-option-correct",
+      className: "ohmylms-option-correct",
       style: {
         color: "red",
         marginTop: 4
       }
     }, (0, b.__)("Field cannot be empty", "ohmylms")), 1 == r.is_correct && Boolean(null == r || null === (l = r.answer) || void 0 === l ? void 0 : l.trim()) && React.createElement("span", {
-      className: "omlms-option-correct"
+      className: "ohmylms-option-correct"
     }, (0, b.__)("This answer is correct", "ohmylms")));
   }), n && !t.some(function (e) {
     return 1 == e.is_correct;
   }) && React.createElement("p", {
-    className: "omlms-option-error-msg"
+    className: "ohmylms-option-error-msg"
   }, (0, b.__)("Please select at least one correct answer", "ohmylms"))));
 };
-
 const nd = {
   name: "True / False",
   type: "true-false",
@@ -293,7 +285,6 @@ const nd = {
   },
   isPro: !1
 };
-
 var rd = function (e) {
   var t = e.isHover,
     n = void 0 !== t && t,
@@ -305,13 +296,11 @@ var rd = function (e) {
     viewBox: "0 0 20 15",
     xmlns: "http://www.w3.org/2000/svg"
   }, React.createElement("path", {
-    fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+    fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
     d: "M19.023 2.005H.977C-.326 2.005-.326 0 .977 0h18.046c1.303 0 1.303 2.005 0 2.005zM16.015 8.02H.977c-1.303 0-1.303-2.005 0-2.005h15.038c1.303 0 1.303 2.005 0 2.005zM10 14.035H.977c-1.303 0-1.303-2.005 0-2.005H10c1.303 0 1.303 2.005 0 2.005z"
   })));
 };
-
 const ad = (0, g.memo)(rd);
-
 var od = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -328,7 +317,7 @@ var od = function () {
     width: "113",
     height: "8",
     y: "18",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "2"
   }), React.createElement("rect", {
     width: "82",
@@ -338,28 +327,21 @@ var od = function () {
     rx: "2"
   })));
 };
-
 const id = (0, g.memo)(od);
-
 var ld = n(75809),
   cd = function (e) {
     var t = e.message,
       n = void 0 === t ? (0, b.__)("No options are necessary for this question type", "ohmylms") : t;
     return React.createElement(React.Fragment, null, React.createElement("div", {
-      className: "omlms-quiz-warning"
+      className: "ohmylms-quiz-warning"
     }, React.createElement(ld.A, null), n));
   };
-
 const ud = (0, g.memo)(cd);
-
 var sd = function () {
   return React.createElement(React.Fragment, null, React.createElement(ud, null));
 };
-
 const dd = (0, g.memo)(sd);
-
 var md = ["value", "onChange", "placeholder", "className"];
-
 function pd() {
   return pd = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -369,7 +351,6 @@ function pd() {
     return e;
   }, pd.apply(null, arguments);
 }
-
 var fd = function (e) {
   var t = e.value,
     n = e.onChange,
@@ -397,7 +378,7 @@ var fd = function (e) {
       return a;
     }(e, md);
   return React.createElement(React.Fragment, null, React.createElement(W.A, pd({
-    className: "omlms-quiz-explanation-field ".concat(i),
+    className: "ohmylms-quiz-explanation-field ".concat(i),
     value: t,
     placeholder: a,
     onChange: function (e) {
@@ -405,9 +386,7 @@ var fd = function (e) {
     }
   }, l)));
 };
-
 const vd = (0, g.memo)(fd);
-
 function gd(e) {
   return gd = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -415,7 +394,6 @@ function gd(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, gd(e);
 }
-
 var hd = function () {
   var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
@@ -452,7 +430,6 @@ var hd = function () {
     value: (null == t ? void 0 : t.explanation) || ""
   }));
 };
-
 const yd = {
   name: "Short Text",
   type: "short-text",
@@ -467,7 +444,6 @@ const yd = {
   },
   isPro: !1
 };
-
 var bd = function (e) {
     var t = e.isHover,
       n = void 0 !== t && t,
@@ -479,7 +455,7 @@ var bd = function (e) {
       viewBox: "0 0 24 24",
       xmlns: "http://www.w3.org/2000/svg"
     }, React.createElement("path", {
-      fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+      fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
       d: "M3 4h18a1 1 0 100-2H3a1 1 0 000 2zm0 6h12a1 1 0 100-2H3a1 1 0 000 2zm0 6h18a1 1 0 000-2H3a1 1 0 000 2zm0 6h12a1 1 0 000-2H3a1 1 0 000 2z"
     })));
   },
@@ -499,7 +475,7 @@ var bd = function (e) {
       width: "113",
       height: "6",
       y: "28",
-      fill: "var(--omlms-primary-color)",
+      fill: "var(--ohmylms-primary-color)",
       rx: "2"
     }), React.createElement("rect", {
       width: "82",
@@ -518,7 +494,6 @@ var bd = function (e) {
   wd = function () {
     return React.createElement(React.Fragment, null, React.createElement(ud, null));
   };
-
 function Ed(e) {
   return Ed = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -526,7 +501,6 @@ function Ed(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ed(e);
 }
-
 var Sd = function () {
   var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
@@ -563,7 +537,6 @@ var Sd = function () {
     value: (null == t ? void 0 : t.explanation) || ""
   }));
 };
-
 const Rd = {
   name: "Long Text",
   type: "long-text",
@@ -578,7 +551,6 @@ const Rd = {
   },
   isPro: !1
 };
-
 var xd = function (e) {
     var t = e.isHover,
       n = void 0 !== t && t,
@@ -590,7 +562,7 @@ var xd = function (e) {
       viewBox: "0 0 20 15",
       xmlns: "http://www.w3.org/2000/svg"
     }, React.createElement("path", {
-      fill: "".concat(r || "var(--omlms-primary-color)"),
+      fill: "".concat(r || "var(--ohmylms-primary-color)"),
       d: "M11.883.154h7.531c.324 0 .586.263.586.586v7.531a.586.586 0 01-.586.586h-3.18v5.063a.586.586 0 01-.586.586h-1.882a.586.586 0 01-.556-.4l-1.883-5.65a.584.584 0 01-.03-.185V.741c0-.324.262-.587.586-.587zm.586 8.022l1.719 5.158h.875V8.27c0-.323.262-.586.585-.586h3.18V1.327h-6.36v6.85zM.586.154h7.531c.324 0 .586.263.586.586v7.531a.586.586 0 01-.586.586h-3.18v5.063a.586.586 0 01-.585.586H2.469a.586.586 0 01-.556-.4L.03 8.455A.589.589 0 010 8.272V.741C0 .416.263.153.586.153zm.586 8.022l1.72 5.158h.874V8.27c0-.323.262-.586.586-.586h3.18V1.327h-6.36v6.85z"
     }))) : React.createElement(React.Fragment, null, React.createElement("svg", {
       fill: "none",
@@ -629,7 +601,7 @@ var xd = function (e) {
     })));
   },
   Pd = function () {
-    (0, L.useIsPro)();
+    true;
     var e = (0, y.useSelect)(function (e) {
       return e(T.default).selectSelectedQuestionId();
     }, []);
@@ -637,7 +609,6 @@ var xd = function (e) {
       return e(T.default).getQuestionContents();
     }, [e]), (0, y.useDispatch)(T.default).addContentToQuestion, (0, y.useDispatch)(T.default), React.createElement(React.Fragment, null);
   };
-
 const Od = {
   name: "Statement",
   type: "statement",
@@ -651,7 +622,6 @@ const Od = {
   },
   isPro: !0
 };
-
 var kd = function (e) {
   var t = e.isHover,
     n = void 0 !== t && t,
@@ -663,14 +633,12 @@ var kd = function (e) {
     viewBox: "0 0 19 18",
     xmlns: "http://www.w3.org/2000/svg"
   }, React.createElement("path", {
-    fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
-    stroke: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36"),
+    fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
+    stroke: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36"),
     d: "M17.196 8.288h0c.463.52.72 1.19.72 1.885v3.914c0 1.576-1.294 2.848-2.874 2.848H3.958c-1.58 0-2.875-1.272-2.875-2.848v-3.914c0-1.576 1.295-2.848 2.875-2.848h3.167a.287.287 0 00.292-.282.287.287 0 00-.292-.283H3.958C2.046 6.76.5 8.297.5 10.173v3.914c0 1.876 1.546 3.413 3.458 3.413h11.084c1.912 0 3.458-1.537 3.458-3.413v-3.914c0-.83-.306-1.63-.863-2.255a.299.299 0 00-.415-.026l-.026.396zm0 0a.277.277 0 01.026-.396l-.026.396zM10.78 5.509h0l4.518-4.467a1.896 1.896 0 012.656 0c.354.35.547.813.547 1.305s-.194.955-.548 1.305L13.435 8.12a2.666 2.666 0 01-1.888.773h-1.255A.287.287 0 0110 8.609v0-1.242c0-.702.275-1.36.78-1.858zm-.196 2.316v.5h.964a2.08 2.08 0 001.471-.603l4.518-4.466-.351-.356.351.356a1.273 1.273 0 000-1.818l-.351.355.351-.355a1.298 1.298 0 00-1.822 0h0l-4.518 4.467h0a2.07 2.07 0 00-.613 1.462v.458zm-5.437 4.979a.681.681 0 01-.688-.674c0-.367.303-.674.688-.674.385 0 .687.308.687.674a.681.681 0 01-.687.674zm4.646-.674a.681.681 0 01-.688.674.681.681 0 01-.687-.674.68.68 0 01.687-.674c.385 0 .688.308.688.674z"
   })));
 };
-
 const jd = (0, g.memo)(kd);
-
 var Ad = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -681,7 +649,7 @@ var Ad = function () {
   }, React.createElement("rect", {
     width: "30",
     height: "30",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "6"
   }), React.createElement("rect", {
     width: "30",
@@ -693,7 +661,7 @@ var Ad = function () {
     width: "30",
     height: "30",
     x: "75",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "6"
   }), React.createElement("rect", {
     width: "30",
@@ -715,9 +683,7 @@ var Ad = function () {
     d: "M124.658 20v-1.372l4.508-6.93H124.7V10.2h6.538v1.372l-4.536 6.93h4.564V20h-6.608z"
   })));
 };
-
 const Md = (0, g.memo)(Ad);
-
 function Td(e) {
   return Td = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -725,7 +691,6 @@ function Td(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Td(e);
 }
-
 function Id(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -736,7 +701,6 @@ function Id(e, t) {
   }
   return n;
 }
-
 function Fd(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -748,7 +712,6 @@ function Fd(e) {
   }
   return e;
 }
-
 function Nd(e, t, n) {
   return (t = function (e) {
     var t = function (e) {

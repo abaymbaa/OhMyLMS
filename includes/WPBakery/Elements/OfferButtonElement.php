@@ -2,11 +2,11 @@
 /**
  * WPBakery Offer Button Element
  *
- * @package OMLMS\WPBakery\Elements
+ * @package OhMyLMS\WPBakery\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\WPBakery\Elements;
+namespace OhMyLMS\WPBakery\Elements;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,7 +33,7 @@ class OfferButtonElement {
 	 * @return string Modified output.
 	 */
 	public function disable_cache_for_preview( $output, $shortcode ) {
-		if ( 'creator_lms_offer_button' === $shortcode ) {
+		if ( 'ohmylms_offer_button' === $shortcode ) {
 			// Add a timestamp to force cache bypass in editor
 			if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 				$output .= '<!-- vc-no-cache:' . time() . ' -->';
@@ -55,9 +55,9 @@ class OfferButtonElement {
 		vc_map(
 			array(
 				'name'        => __( 'Offer Button', 'ohmylms' ),
-				'base'        => 'creator_lms_offer_button',
-				'icon'        => 'icon-wpb-creatorlms',
-				'category'    => __( 'CreatorLMS', 'ohmylms' ),
+				'base'        => 'ohmylms_offer_button',
+				'icon'        => 'icon-wpb-ohmylms',
+				'category'    => __( 'OhMyLMS', 'ohmylms' ),
 				'description' => __( 'Add an offer accept/decline button for funnels', 'ohmylms' ),
 				'params'      => array(
 					// Action

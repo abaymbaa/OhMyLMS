@@ -1,6 +1,5 @@
 import { createElement } from '@wordpress/element';
 import { validateCommunity } from './model.mjs';
-
 export function createCommunityEditor(readRuntime) {
   return function CommunityEditor({ isOpen, setIsOpen, isLoading, onSuccess }) {
     const {
@@ -25,7 +24,6 @@ export function createCommunityEditor(readRuntime) {
     const [errors, setErrors] = ReactHooks.useState({});
     const [showPro, setShowPro] = ReactHooks.useState(false);
     const savingRef = ReactHooks.useRef(false);
-
     function validate(value) {
       const nextErrors = validateCommunity(value, I18n.__);
       setErrors(nextErrors);
@@ -40,10 +38,6 @@ export function createCommunityEditor(readRuntime) {
       if (savingRef.current || isLoading || !validate(community)) return;
       if (activeTab === '1') {
         setActiveTab('2');
-        return;
-      }
-      if (!Entitlements.isProActive) {
-        setShowPro(true);
         return;
       }
       savingRef.current = true;
@@ -103,11 +97,14 @@ export function createCommunityEditor(readRuntime) {
         {isOpen && (
           <Controls.ModalWP
             title={I18n.__('Add Community', 'ohmylms')}
-            style={{ width: '830px', background: '#F5F5F5' }}
+            style={{
+              width: '830px',
+              background: '#F5F5F5',
+            }}
             onRequestClose={close}
             shouldCloseOnEsc
             shouldCloseOnClickOutside
-            className="omlms-full-height-modal"
+            className="ohmylms-full-height-modal"
             size="fill"
           >
             {isLoading ? (
@@ -118,7 +115,7 @@ export function createCommunityEditor(readRuntime) {
                   items={tabs}
                   activekey={activeTab}
                   onChange={setActiveTab}
-                  className="omlms-tab-has-custom-navigation"
+                  className="ohmylms-tab-has-custom-navigation"
                 />
                 <Controls.DividerWP marginStart={4} />
                 <Controls.SpacerWP marginTop={4}>

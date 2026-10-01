@@ -85,7 +85,6 @@ function Pu() {
     };
   })();
 }
-
 function Ou(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function Ou(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Ou(e, t, n, r);
 }
-
 function ku(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -118,7 +116,6 @@ function ku(e, t) {
   }
   return n;
 }
-
 function ju(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -130,7 +127,6 @@ function ju(e) {
   }
   return e;
 }
-
 function Au(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -151,7 +147,6 @@ function Au(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Mu(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -161,7 +156,6 @@ function Mu(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Tu(e) {
   return function () {
     var t = this,
@@ -178,20 +172,18 @@ function Tu(e) {
     });
   };
 }
-
 function Iu(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Fu = function (e) {
   var t,
     n,
     r,
     a,
     o = e.chapterId,
-    i = (0, L.useIsPro)(),
+    i = true,
     l = function () {
       var e = (0, y.useSelect)(function (e) {
           return e(T.default).getQuizTypes();
@@ -339,11 +331,10 @@ var Fu = function (e) {
               }
               return e.a(2);
             case 1:
-              if (i || !A.includes(C)) {
+              {
                 e.n = 2;
                 break;
               }
-              return s.setIsProModalOpen(!0), e.a(2);
             case 2:
               (t = ju({}, m)).order_number = p.length + 1, t.id = new Date().getTime(), t.temp = !0, s.setQuestion(t), s.setQuestions(t), s.setSelectedQuestionId(t.id);
             case 3:
@@ -380,16 +371,16 @@ var Fu = function (e) {
       };
     }();
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-editor-wrapper"
+    className: "ohmylms-quiz-editor-wrapper"
   }, React.createElement("div", {
-    className: "omlms-quiz-editor-body"
+    className: "ohmylms-quiz-editor-body"
   }, c && (u ? React.createElement(c, null) : React.createElement(React.Fragment, null, React.createElement(ou, null, React.createElement(I.FlexWP, {
     align: "center",
     justify: "space-between"
   }, React.createElement(I.FlexBlockWP, null, React.createElement(lu, {
     icon: O,
     label: null == k ? void 0 : k.name,
-    iconColor: "var(--omlms-primary-color)"
+    iconColor: "var(--ohmylms-primary-color)"
   })), React.createElement(I.FlexBlockWP, null, React.createElement(du, {
     handleCopy: M,
     handleDelete: function () {
@@ -400,23 +391,23 @@ var Fu = function (e) {
     question: "Untitled" === E ? "" : E,
     description: P,
     onChange: function (e, t) {
-      i || !A.includes(C) ? s.updateQuestionData(x, Au({}, e, t)) : s.setIsProModalOpen(!0);
+      s.updateQuestionData(x, Au({}, e, t));
     },
     onImgUpload: function () {
       var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
         t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "";
-      i || !A.includes(C) ? s.updateQuestionData(x, {
+      s.updateQuestionData(x, {
         image_src: e,
         thumbnail_id: t
-      }) : s.setIsProModalOpen(!0);
+      });
     },
     onVideoUpload: function () {
       var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
         t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "";
-      i || !A.includes(C) ? s.updateQuestionData(x, {
+      s.updateQuestionData(x, {
         video_src: e,
         video_id: t
-      }) : s.setIsProModalOpen(!0);
+      });
     },
     videoSrc: S,
     imgSrc: R,
@@ -431,15 +422,13 @@ var Fu = function (e) {
     },
     onDelete: F,
     isOpen: h,
-    wrapClassName: "omlms-delete-question-modal",
+    wrapClassName: "ohmylms-delete-question-modal",
     isDelete: !0
   }));
 };
-
 const Nu = (0, g.memo)(Fu);
-
 var Du = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.handleHover,
     r = e.setHovered,
     a = e.handleDragStart,
@@ -447,7 +436,7 @@ var Du = function (e) {
     i = e.quiz,
     l = e.icon;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-block",
+    className: "ohmylms-quiz-block",
     onMouseEnter: function () {
       n(i), r(!0);
     },
@@ -476,39 +465,35 @@ var Du = function (e) {
     },
     role: "button",
     "aria-label": "Quiz: ".concat(i.name),
-    "aria-disabled": !t && i.isPro
+    "aria-disabled": false
   }, React.createElement("div", {
-    className: "omlms-quiz-block-icon"
+    className: "ohmylms-quiz-block-icon"
   }, l), React.createElement("p", {
-    className: "omlms-quiz-block-title"
+    className: "ohmylms-quiz-block-title"
   }, i.name)));
 };
-
 const Wu = (0, g.memo)(Du);
-
 var zu = function (e) {
   var t = e.hoveredItem;
-  return (0, L.useIsPro)(), React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-blocks-hovered"
+  return true, React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "ohmylms-quiz-blocks-hovered"
   }, React.createElement("div", {
-    className: "omlms-quiz-block-icon"
+    className: "ohmylms-quiz-block-icon"
   }, React.createElement(t.thumbIcon, null)), React.createElement("div", {
-    className: "omlms-quiz-block-info"
+    className: "ohmylms-quiz-block-info"
   }, React.createElement("div", {
-    className: "omlms-quiz-block-hover-icon"
+    className: "ohmylms-quiz-block-hover-icon"
   }, React.createElement(t.icon, {
     isHover: !0
   })), React.createElement("div", {
-    className: "omlms-quiz-block-title-des"
+    className: "ohmylms-quiz-block-title-des"
   }, React.createElement("p", {
-    className: "omlms-quiz-block-title"
+    className: "ohmylms-quiz-block-title"
   }, t.name), React.createElement("p", {
-    className: "omlms-quiz-block-description"
+    className: "ohmylms-quiz-block-description"
   }, t.subTitle)))));
 };
-
 const Bu = (0, g.memo)(zu);
-
 var Lu = function (e) {
   var t = e.handleHover,
     n = e.setHovered,
@@ -519,7 +504,7 @@ var Lu = function (e) {
       return e(T.default).getQuizTypes();
     }, []);
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-blocks-wrapper omlms-quiz-blocks-wrapper-classic"
+    className: "ohmylms-quiz-blocks-wrapper ohmylms-quiz-blocks-wrapper-classic"
   }, i && i.map(function (e, o) {
     var i = e.icon;
     return React.createElement(Wu, {
@@ -535,9 +520,7 @@ var Lu = function (e) {
     hoveredItem: o
   })));
 };
-
 const Vu = (0, g.memo)(Lu);
-
 var Hu = function (e) {
   var t = e.handleHover,
     n = e.setHovered,
@@ -548,7 +531,7 @@ var Hu = function (e) {
       return e(T.default).getInteractiveQuizTypes();
     }, []);
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-blocks-wrapper omlms-quiz-blocks-wrapper-interactive"
+    className: "ohmylms-quiz-blocks-wrapper ohmylms-quiz-blocks-wrapper-interactive"
   }, i && i.map(function (e, o) {
     var i = e.icon;
     return React.createElement(Wu, {
@@ -564,9 +547,7 @@ var Hu = function (e) {
     hoveredItem: o
   })));
 };
-
 const Gu = (0, g.memo)(Hu);
-
 function Uu() {
   var e,
     t,
@@ -653,7 +634,6 @@ function Uu() {
     };
   })();
 }
-
 function qu(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -675,7 +655,6 @@ function qu(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, qu(e, t, n, r);
 }
-
 function Yu(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -685,7 +664,6 @@ function Yu(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Qu(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -725,16 +703,14 @@ function Qu(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Zu(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var $u = function (e) {
   var t = e.setHovered,
-    n = (0, L.useIsPro)(),
+    n = true,
     r = (0, y.useDispatch)(T.default),
     a = (0, y.useSelect)(function (e) {
       return e(T.default).selectQuestion();
@@ -765,7 +741,7 @@ var $u = function (e) {
         borderRadius: "10px"
       };
     }, []);
-  wc(".omlms-quiz-block", m);
+  wc(".ohmylms-quiz-block", m);
   var p = function (e) {
       c(e);
     },
@@ -779,11 +755,10 @@ var $u = function (e) {
           return Uu().w(function (e) {
             for (;;) switch (e.n) {
               case 0:
-                if (n || null == t || !t.isPro) {
+                {
                   e.n = 1;
                   break;
                 }
-                return r.setIsProModalOpen(!0), e.a(2);
               case 1:
                 i = [{
                   id: Date.now(),
@@ -924,9 +899,7 @@ var $u = function (e) {
     activekey: s
   }));
 };
-
 const Ku = (0, g.memo)($u);
-
 function Ju(e) {
   return function (e) {
     if (Array.isArray(e)) return Xu(e);
@@ -942,13 +915,11 @@ function Ju(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Xu(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function es(e) {
   return es = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -956,9 +927,7 @@ function es(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, es(e);
 }
-
 var ts = ["options", "defaultValue", "onChange", "className", "radioType"];
-
 function ns() {
   return ns = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -968,7 +937,6 @@ function ns() {
     return e;
   }, ns.apply(null, arguments);
 }
-
 function rs(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -979,7 +947,6 @@ function rs(e, t) {
   }
   return n;
 }
-
 function as(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -991,7 +958,6 @@ function as(e) {
   }
   return e;
 }
-
 function os(e, t, n) {
   return (t = function (e) {
     var t = function (e) {

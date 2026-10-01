@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Emails\CreatorsEmail;
+namespace OhMyLMS\Emails\CreatorsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 
 class AssignmentSubmitted {
 
 	public function __construct() {
-		add_action( 'creator_lms_after_assignment_submitted', array( $this, 'trigger' ), 10, 3 );
-		add_action( 'omlms_send_assignment_submission_digest', array( $this, 'send_digest' ) );
+		add_action( 'ohmylms_after_assignment_submitted', array( $this, 'trigger' ), 10, 3 );
+		add_action( 'ohmylms_send_assignment_submission_digest', array( $this, 'send_digest' ) );
 	}
 
 	public function basic_settings(): array {
@@ -44,14 +44,14 @@ class AssignmentSubmitted {
 		}
 
 		if ( isset( $settings['delivery_type'] ) && 'digest' === $settings['delivery_type'] ) {
-			$queue   = get_option( 'omlms_assignment_submission_queue', array() );
+			$queue   = get_option( 'ohmylms_assignment_submission_queue', array() );
 			$queue[] = array(
 				'assignment_id' => $assignment_id,
 				'course_id'     => $course_id,
 				'student_id'    => $student_id,
 				'time'          => current_time( 'mysql' ),
 			);
-			update_option( 'omlms_assignment_submission_queue', $queue, false );
+			update_option( 'ohmylms_assignment_submission_queue', $queue, false );
 			return;
 		}
 
@@ -65,12 +65,12 @@ class AssignmentSubmitted {
 			return;
 		}
 
-		$queue = get_option( 'omlms_assignment_submission_queue', array() );
+		$queue = get_option( 'ohmylms_assignment_submission_queue', array() );
 		if ( empty( $queue ) ) {
 			return;
 		}
 
-		update_option( 'omlms_assignment_submission_queue', array(), false );
+		update_option( 'ohmylms_assignment_submission_queue', array(), false );
 
 		$by_course = array();
 		foreach ( $queue as $item ) {
@@ -88,7 +88,7 @@ class AssignmentSubmitted {
 			return;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -105,10 +105,10 @@ class AssignmentSubmitted {
 		$subject = isset( $settings['subject'] ) ? $settings['subject'] : '';
 		$subject = $this->replace_tags( $subject, $student->display_name, $course->get_name(), $assignment_title );
 
-		$settings['button_link'] = admin_url( 'admin.php?page=creator-lms#/assignment-report/' . $assignment_id . '/grade-assignment/' . $student_id );
+		$settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/assignment-report/' . $assignment_id . '/grade-assignment/' . $student_id );
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/instructor-assignment-submitted',
 			array(
 				'student'          => $student,
@@ -127,7 +127,7 @@ class AssignmentSubmitted {
 	}
 
 	private function send_digest_for_course( $course_id, $items, $settings ) {
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -154,15 +154,15 @@ class AssignmentSubmitted {
 				'student_name'     => $s ? $s->display_name : __( 'Unknown Student', 'ohmylms' ),
 				'assignment_title' => $a ? $a->post_title : __( 'Unknown Assignment', 'ohmylms' ),
 				'time'             => $item['time'],
-				'grade_link'       => admin_url( 'admin.php?page=creator-lms#/assignment-report/' . $item['assignment_id'] . '/grade-assignment/' . $item['student_id'] ),
+				'grade_link'       => admin_url( 'admin.php?page=ohmylms#/assignment-report/' . $item['assignment_id'] . '/grade-assignment/' . $item['student_id'] ),
 			);
 		}
 
 		$digest_settings = $settings;
-		$digest_settings['button_link'] = admin_url( 'admin.php?page=creator-lms#/assignment-report' );
+		$digest_settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/assignment-report' );
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/instructor-assignment-submitted',
 			array(
 				'student'          => null,
@@ -203,8 +203,8 @@ class AssignmentSubmitted {
 
 	private function send_email( $to, $subject, $body, $email_settings ) {
 		$headers      = array( 'MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8' );
-		$sender_name  = $email_settings['creator_lms_email_sender_name'];
-		$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+		$sender_name  = $email_settings['ohmylms_email_sender_name'];
+		$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 		if ( $sender_email && $sender_name ) {
 			$headers[] = 'From: ' . $sender_name . ' <' . $sender_email . '>';
 		}

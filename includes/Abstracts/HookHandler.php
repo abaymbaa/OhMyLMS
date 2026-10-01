@@ -1,11 +1,11 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 /**
  * Abstract class HookHandler
  *
- * This class provides a template for registering hooks in the CreatorLMS plugin.
+ * This class provides a template for registering hooks in the OhMyLMS plugin.
  */
 abstract class HookHandler {
 

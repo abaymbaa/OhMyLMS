@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 final class Bootstrap {
     public static function init() {
@@ -8,7 +8,7 @@ final class Bootstrap {
             'label'=>ucfirst($type),'render'=>static function(){ the_content(); },'editor'=>['format'=>'wordpress-content'],
         ]);
         do_action('ohmylms_register_extensions');
-        add_filter('creator_lms_supported_question_types',static function(){return array_keys(Registry::all('question'));},100);
+        add_filter('ohmylms_supported_question_types',static function(){return array_keys(Registry::all('question'));},100);
         add_filter('ohmylms_lesson_types',static function(){return array_keys(Registry::all('lesson'));},100);
         add_shortcode('ohmylms_activity',[__CLASS__,'activity']);
         register_block_type('ohmylms/activity',[
@@ -27,8 +27,8 @@ final class Bootstrap {
             ]);
         });
         Editor::init();
-        add_action('creator_lms_lesson_completed',static function($lesson,$course,$student){do_action('ohmylms_lesson_completed',['lesson_id'=>(int)$lesson,'course_id'=>(int)$course,'student_id'=>(int)$student]);},10,3);
-        add_action('creator_lms_course_completed',static function($student,$course,$order){do_action('ohmylms_course_completed',['student_id'=>(int)$student,'course_id'=>(int)$course,'order_id'=>(int)$order]);},10,3);
+        add_action('ohmylms_lesson_completed',static function($lesson,$course,$student){do_action('ohmylms_lesson_completed',['lesson_id'=>(int)$lesson,'course_id'=>(int)$course,'student_id'=>(int)$student]);},10,3);
+        add_action('ohmylms_course_completed',static function($student,$course,$order){do_action('ohmylms_course_completed',['student_id'=>(int)$student,'course_id'=>(int)$course,'order_id'=>(int)$order]);},10,3);
     }
     public static function activity($attributes, $content='') {
         $definition=Registry::get('activity',$attributes['type'] ?? '');

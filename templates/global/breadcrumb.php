@@ -2,9 +2,9 @@
 /**
  * The template for displaying single course breadcrumb
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/global/breadcrumb.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/global/breadcrumb.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! empty( $breadcrumb ) ) {
 
-	echo '<nav class="creator-lms-breadcrumb"><div class="creator-lms-container"><ul>';
+	echo '<nav class="ohmylms-breadcrumb"><div class="ohmylms-container"><ul>';
 
 	foreach ( $breadcrumb as $key => $crumb ) {
 

@@ -19,7 +19,7 @@ this is editable React source integrated into OhMyLMS, not a standalone applicat
 
 Keep the recovered files as the parity baseline. Do not rerun the extraction script over
 manual edits, particularly MembershipEditor. Deploy the complete modified plugin and build;
-source assets require OMLMS_SOURCE_ASSETS enabled.
+source assets require OHMYLMS_SOURCE_ASSETS enabled.
 
 Validation: `npm run lint`, `npm test`, `npm run build`, and
 `npm run test:browser -- tests/browser/memberships.spec.cjs` with the isolated test credentials.

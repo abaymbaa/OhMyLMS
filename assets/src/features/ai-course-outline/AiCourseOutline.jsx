@@ -82,7 +82,7 @@ export function createAiCourseOutline(readRuntime) {
       ),
       (
         <React.Fragment>
-          <Controls.FlexWP align={'stretch'} className={'omlms-ai-course-content-wrapper'}>
+          <Controls.FlexWP align={'stretch'} className={'ohmylms-ai-course-content-wrapper'}>
             <Controls.FlexItemWP flex={3}>
               <MemoAiChapterList
                 data={t}

@@ -68,7 +68,7 @@ export function createCustomerProfile(readRuntime) {
                 <Controls.ButtonWP
                   variant="secondary"
                   style={{ backgroundColor: '#fff' }}
-                  href={`/wp-admin/admin.php?page=creator-lms#/students/${student_id}/report`}
+                  href={`/wp-admin/admin.php?page=ohmylms#/students/${student_id}/report`}
                   rel="noopener noreferrer"
                 >
                   {I18n.__('View profile', 'ohmylms')}

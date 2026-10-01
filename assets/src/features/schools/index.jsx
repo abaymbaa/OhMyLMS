@@ -1,5 +1,6 @@
 import { createElement, createRoot, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { PeopleTabs } from './PeopleTabs';
 import { request, exportCsv } from './api.mjs';
 
 const config = window.ohmylmsSchools;
@@ -39,7 +40,7 @@ function Remote({ state, children }) {
   if (state.loading && state.data === null) return <p role="status">{t('Loading…')}</p>;
   if (state.error)
     return (
-      <p role="alert" className="omlms-error">
+      <p role="alert" className="ohmylms-error">
         {state.error}
       </p>
     );
@@ -53,7 +54,7 @@ function Form({ title, fields, submit = 'Save', onSubmit, disabled = false }) {
   return (
     <form
       ref={form}
-      className="omlms-school-form"
+      className="ohmylms-school-form"
       onSubmit={async (event) => {
         event.preventDefault();
         if (busy) return;
@@ -78,7 +79,7 @@ function Form({ title, fields, submit = 'Save', onSubmit, disabled = false }) {
       <fieldset disabled={busy || disabled}>
         <legend>{t(title)}</legend>
         {fields.map((field) => (
-          <label key={field.name} className={field.hidden ? 'omlms-honeypot' : ''}>
+          <label key={field.name} className={field.hidden ? 'ohmylms-honeypot' : ''}>
             <span>
               {t(field.label)}
               {field.required ? ' *' : ''}
@@ -124,7 +125,7 @@ function Form({ title, fields, submit = 'Save', onSubmit, disabled = false }) {
         ))}
         <button type="submit">{busy ? t('Saving…') : t(submit)}</button>
         {error && (
-          <p role="alert" className="omlms-error">
+          <p role="alert" className="ohmylms-error">
             {error}
           </p>
         )}
@@ -146,9 +147,9 @@ const roleLabel = (role) =>
   })[role] || role;
 
 function Table({ rows, columns, actions }) {
-  if (!rows?.length) return <p className="omlms-empty">{t('No records yet.')}</p>;
+  if (!rows?.length) return <p className="ohmylms-empty">{t('No records yet.')}</p>;
   return (
-    <div className="omlms-table-scroll">
+    <div className="ohmylms-table-scroll">
       <table>
         <thead>
           <tr>
@@ -168,7 +169,7 @@ function Table({ rows, columns, actions }) {
               ))}
               {actions && (
                 <td>
-                  <div className="omlms-row-actions">{actions(row)}</div>
+                  <div className="ohmylms-row-actions">{actions(row)}</div>
                 </td>
               )}
             </tr>
@@ -181,7 +182,7 @@ function Table({ rows, columns, actions }) {
 
 function Pager({ page, setPage, count }) {
   return (
-    <div className="omlms-pager">
+    <div className="ohmylms-pager">
       <button disabled={page === 1} onClick={() => setPage(page - 1)}>
         {t('Previous')}
       </button>
@@ -201,7 +202,7 @@ function Signup({ initialRole = 'student', onDone }) {
     <section>
       <h2>{t('Create your account')}</h2>
       <p>{t('Start with an account. No course selection or purchase is required.')}</p>
-      <div className="omlms-tabs">
+      <div className="ohmylms-tabs">
         {['student', 'parent'].map((kind) => (
           <button aria-pressed={role === kind} key={kind} onClick={() => setRole(kind)}>
             {kind === 'parent' ? t('Parent / guardian') : t('Student')}
@@ -231,7 +232,7 @@ function Signup({ initialRole = 'student', onDone }) {
         }}
       />
       {config.googleUrl && (
-        <a className="omlms-school-button secondary" href={config.googleUrl}>
+        <a className="ohmylms-school-button secondary" href={config.googleUrl}>
           {t('Continue with Google')}
         </a>
       )}
@@ -250,7 +251,7 @@ function Signup({ initialRole = 'student', onDone }) {
 function Invitation({ token, onDone }) {
   const [activation, setActivation] = useState(false);
   return (
-    <section className="omlms-card">
+    <section className="ohmylms-card">
       <h2>{t('You have an OhMyLMS invitation')}</h2>
       <p>
         {t(
@@ -333,7 +334,9 @@ function Work({ revision, child = null }) {
 
 function Family({ revision }) {
   const children = useRemote('children', revision);
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    () => new URLSearchParams(window.location.search).get('school') || '',
+  );
   return (
     <section>
       <h2>{t('My children')}</h2>
@@ -570,7 +573,9 @@ function ClassView({ classroom, isAdmin, revision, run }) {
 
 function Grading({ classroom, revision, run }) {
   const submissions = useRemote(`classes/${classroom.id}/submissions`, revision);
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    () => new URLSearchParams(window.location.search).get('school') || '',
+  );
   return (
     <section>
       <h4>{t('Review submissions')}</h4>
@@ -594,7 +599,7 @@ function Grading({ classroom, revision, run }) {
                 )}
               />
               {current && (
-                <div className="omlms-card">
+                <div className="ohmylms-card">
                   <h4>
                     {current.student_name} · {current.title}
                   </h4>
@@ -700,7 +705,7 @@ function ImportRoster({ school, run }) {
   );
 }
 
-function SchoolView({ school, me, revision, run }) {
+function SchoolView({ school, me, revision, run, section = 'classes', management = false }) {
   const [inviteRole, setInviteRole] = useState('');
   const isAdmin =
     me.platform_admin ||
@@ -714,9 +719,11 @@ function SchoolView({ school, me, revision, run }) {
       (membership) =>
         Number(membership.school_id) === Number(school.id) && membership.role === 'teacher',
     );
-  const [tab, setTab] = useState('classes');
+  const [tab, setTab] = useState(!isAdmin && section === 'roster' ? 'classes' : section);
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    () => new URLSearchParams(window.location.search).get('school') || '',
+  );
   const [search, setSearch] = useState('');
   const classes = useRemote(`schools/${school.id}/classes?page=${page}`, revision);
   const years = useRemote(staff ? `schools/${school.id}/years` : null, revision);
@@ -745,7 +752,7 @@ function SchoolView({ school, me, revision, run }) {
       <p>
         {t('School timezone')}: {school.timezone}
       </p>
-      <nav className="omlms-tabs" aria-label={t('School sections')}>
+      <nav className="ohmylms-tabs" aria-label={t('School sections')}>
         {[
           'classes',
           ...(isAdmin ? ['roster', 'invitations', 'guardians', 'years', 'report', 'import'] : []),
@@ -759,7 +766,13 @@ function SchoolView({ school, me, revision, run }) {
               setSelected('');
             }}
           >
-            {t(name.charAt(0).toUpperCase() + name.slice(1))}
+            {t(
+              management && name === 'classes'
+                ? 'Class list'
+                : management && name === 'roster'
+                  ? 'Student roster'
+                  : name.charAt(0).toUpperCase() + name.slice(1),
+            )}
           </button>
         ))}
       </nav>
@@ -1102,22 +1115,125 @@ function SchoolView({ school, me, revision, run }) {
   );
 }
 
+function Users({ revision, role = '' }) {
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const users = useRemote(
+    `users?page=${page}&role=${role}&search=${encodeURIComponent(search)}`,
+    revision,
+  );
+  return (
+    <section>
+      <h2>{t(role === 'teacher' ? 'Teachers' : role === 'parent' ? 'Parents' : 'All accounts')}</h2>
+      {config.usersUrl && (
+        <p>
+          <a href={config.usersUrl}>{t('Add user')}</a>
+        </p>
+      )}
+      <label>
+        {t('Search users')}
+        <input
+          value={search}
+          onChange={(event) => {
+            setSearch(event.target.value);
+            setPage(1);
+          }}
+        />
+      </label>
+      <Remote state={users}>
+        {(rows) => (
+          <>
+            <Table
+              rows={rows}
+              columns={[
+                ['display_name', 'Name'],
+                ['user_login', 'Username'],
+                ['email', 'Email'],
+                ['roles', 'Roles'],
+              ]}
+              actions={(row) => row.edit_url && <a href={row.edit_url}>{t('Edit user')}</a>}
+            />
+            <Pager page={page} setPage={setPage} count={rows.length} />
+          </>
+        )}
+      </Remote>
+    </section>
+  );
+}
+
+function IndependentClasses({ revision, run }) {
+  const [page, setPage] = useState(1);
+  const classes = useRemote(`classes?page=${page}`, revision);
+  return (
+    <section>
+      <h2>{t('Independent classes')}</h2>
+      <p>{t('Create and manage your own classes without a school or academic year.')}</p>
+      <Remote state={classes}>
+        {(rows) => (
+          <>
+            <Table
+              rows={rows}
+              columns={[
+                ['name', 'Class'],
+                ['subject', 'Subject'],
+                ['grade', 'Grade'],
+                ['status', 'Status'],
+              ]}
+              actions={(row) =>
+                row.status === 'active' && (
+                  <button
+                    onClick={() => {
+                      if (window.confirm(t('Archive this class?')))
+                        run(`classes/${row.id}/archive`, {});
+                    }}
+                  >
+                    {t('Archive class')}
+                  </button>
+                )
+              }
+            />
+            <Pager page={page} setPage={setPage} count={rows.length} />
+          </>
+        )}
+      </Remote>
+      <Form
+        title="Create independent class"
+        fields={[
+          field('name', 'Class name'),
+          field('subject', 'Subject', 'text', false),
+          field('grade', 'Grade', 'text', false),
+        ]}
+        onSubmit={(data) => run('classes', data, 'POST', true)}
+      />
+    </section>
+  );
+}
+
 function App({ view }) {
+  const management = view === 'admin-management';
   const [revision, setRevision] = useState(0);
   const [message, setMessage] = useState('');
   const [failure, setFailure] = useState('');
   const [link, setLink] = useState('');
   const [tab, setTab] = useState(
-    view === 'parent-dashboard' ? 'family' : view === 'student-assignments' ? 'work' : 'schools',
+    management
+      ? new URLSearchParams(window.location.search).get('tab') || 'schools'
+      : view === 'parent-dashboard'
+        ? 'family'
+        : view === 'student-assignments'
+          ? 'work'
+          : 'schools',
   );
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    () => new URLSearchParams(window.location.search).get('school') || '',
+  );
   const [page, setPage] = useState(1);
   const [token, setToken] = useState(() => {
     const url = new URL(window.location.href);
-    const incoming = url.searchParams.get('omlms_invite');
+    const incoming = url.searchParams.get('ohmylms_invite');
     if (incoming) {
       sessionStorage.setItem('ohmylms-school-invite', incoming);
-      url.searchParams.delete('omlms_invite');
+      url.searchParams.delete('ohmylms_invite');
       window.history.replaceState(null, '', url);
     }
     return sessionStorage.getItem('ohmylms-school-invite') || '';
@@ -1140,26 +1256,26 @@ function App({ view }) {
     }
   };
   return (
-    <div className="omlms-school-shell">
+    <div className="ohmylms-school-shell">
       <header>
         <div>
-          <p className="omlms-eyebrow">OhMyLMS</p>
-          <h1>{t('School & family learning')}</h1>
+          <p className="ohmylms-eyebrow">OhMyLMS</p>
+          <h1>{t(management ? 'Students' : 'School & family learning')}</h1>
         </div>
         {config.loggedIn && <a href={config.logoutUrl}>{t('Sign out')}</a>}
       </header>
       {message && (
-        <p role="status" className="omlms-success">
+        <p role="status" className="ohmylms-success">
           {message}
         </p>
       )}
       {failure && (
-        <p role="alert" className="omlms-error">
+        <p role="alert" className="ohmylms-error">
           {failure}
         </p>
       )}
       {link && (
-        <div className="omlms-success">
+        <div className="ohmylms-success">
           <p>
             {t(
               'Copy this invitation and share it privately with the intended recipient. It expires in 48 hours.',
@@ -1197,20 +1313,56 @@ function App({ view }) {
               <p>
                 {t('Welcome')}, {person.name}.
               </p>
-              <nav className="omlms-tabs" aria-label={t('Learning views')}>
-                {[
-                  ['schools', 'My schools'],
-                  ['family', 'My children'],
-                  ['work', 'My assignments'],
-                ].map(([key, title]) => (
-                  <button key={key} aria-pressed={tab === key} onClick={() => setTab(key)}>
-                    {t(title)}
-                  </button>
-                ))}
-              </nav>
+              {management ? (
+                <PeopleTabs
+                  active={tab}
+                  studentsUrl={config.studentsUrl}
+                  canListUsers={person.can_list_users}
+                />
+              ) : (
+                <nav className="ohmylms-tabs" aria-label={t('Learning views')}>
+                  {(management
+                    ? [
+                        ...(person.can_list_users ? [['users', 'Users']] : []),
+                        ['students', 'Students'],
+                        ['classes', 'Classes'],
+                        ['schools', 'Schools'],
+                      ]
+                    : [
+                        ...(person.can_create_class ? [['classes', 'My classes']] : []),
+                        ['schools', 'My schools'],
+                        ['family', 'My children'],
+                        ['work', 'My assignments'],
+                      ]
+                  ).map(([key, title]) => (
+                    <button key={key} aria-pressed={tab === key} onClick={() => setTab(key)}>
+                      {t(title)}
+                    </button>
+                  ))}
+                </nav>
+              )}
+              {management &&
+                ['users', 'teachers', 'parents'].includes(tab) &&
+                person.can_list_users && (
+                  <Users
+                    key={tab}
+                    revision={revision}
+                    role={tab === 'teachers' ? 'teacher' : tab === 'parents' ? 'parent' : ''}
+                  />
+                )}
+              {tab === 'classes' && person.can_create_class && (
+                <IndependentClasses revision={revision} run={run} />
+              )}
+              {management && tab === 'students' && config.studentsUrl && (
+                <p>
+                  <a href={config.studentsUrl}>
+                    {t('Open course enrollments and student progress')}
+                  </a>
+                </p>
+              )}
               {tab === 'family' && <Family revision={revision} />}
               {tab === 'work' && <Work revision={revision} />}
-              {tab === 'schools' && (
+              {(tab === 'schools' || (management && ['students', 'classes'].includes(tab))) && (
                 <Remote state={schools}>
                   {(rows) => {
                     const school = rows.find((row) => String(row.id) === selected) || rows[0];
@@ -1232,11 +1384,19 @@ function App({ view }) {
                               </select>
                             </label>
                             <SchoolView
-                              key={school.id}
+                              key={`${school.id}-${tab}`}
                               school={school}
                               me={person}
                               revision={revision}
                               run={run}
+                              management={management}
+                              section={
+                                tab === 'students'
+                                  ? 'roster'
+                                  : management && tab === 'schools'
+                                    ? 'years'
+                                    : 'classes'
+                              }
                             />
                           </>
                         ) : (
@@ -1247,7 +1407,7 @@ function App({ view }) {
                           </p>
                         )}
                         <Pager page={page} setPage={setPage} count={rows.length} />
-                        {person.platform_admin && (
+                        {person.platform_admin && tab === 'schools' && (
                           <Form
                             title="Create school"
                             fields={[

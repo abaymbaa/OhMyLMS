@@ -2,16 +2,16 @@
 /**
  * TokenService class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Services;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Services;
 
 /**
  * Class TokenService
  *
- * @package OMLMS\Integrations\GoogleMeet\Services
+ * @package OhMyLMS\Integrations\GoogleMeet\Services
  * @since 1.0.0
  */
 class TokenService {
@@ -24,8 +24,8 @@ class TokenService {
 	 */
 	public function get_valid_access_token() {
 		$user_id = \get_current_user_id();
-		$access_token = \get_user_meta( $user_id, 'creatorlms_googlemeet_access_token', true );
-		$expires_at = \get_user_meta( $user_id, 'creatorlms_googlemeet_token_expires', true );
+		$access_token = \get_user_meta( $user_id, 'ohmylms_googlemeet_access_token', true );
+		$expires_at = \get_user_meta( $user_id, 'ohmylms_googlemeet_token_expires', true );
 
 		// If token exists and not expired, return it
 		if ( $access_token && $expires_at && time() < $expires_at - 300 ) { // 5 min buffer
@@ -45,8 +45,8 @@ class TokenService {
 	 */
 	private function refresh_access_token() {
 		$user_id = \get_current_user_id();
-		$refresh_token = \get_user_meta( $user_id, 'creatorlms_googlemeet_refresh_token', true );
-		$credentials = \get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
+		$refresh_token = \get_user_meta( $user_id, 'ohmylms_googlemeet_refresh_token', true );
+		$credentials = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 		if ( ! $refresh_token || empty( $credentials['client_id'] ) || empty( $credentials['client_secret'] ) ) {
 			return false;
@@ -70,8 +70,8 @@ class TokenService {
 
 		if ( isset( $body['access_token'] ) ) {
 			$new_access_token = $body['access_token'];
-			\update_user_meta( $user_id, 'creatorlms_googlemeet_access_token', $new_access_token );
-			\update_user_meta( $user_id, 'creatorlms_googlemeet_token_expires', time() + $body['expires_in'] );
+			\update_user_meta( $user_id, 'ohmylms_googlemeet_access_token', $new_access_token );
+			\update_user_meta( $user_id, 'ohmylms_googlemeet_token_expires', time() + $body['expires_in'] );
 			
 			return $new_access_token;
 		}
@@ -88,7 +88,7 @@ class TokenService {
 	 */
 	public function get_authorization_url() {
 		$user_id = \get_current_user_id();
-		$credentials = \get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
+		$credentials = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 		if ( empty( $credentials['client_id'] ) || empty( $credentials['redirect_uri'] ) ) {
 			return false;
@@ -115,7 +115,7 @@ class TokenService {
 	 */
 	public function revoke_token() {
 		$user_id = \get_current_user_id();
-		$access_token = \get_user_meta( $user_id, 'creatorlms_googlemeet_access_token', true );
+		$access_token = \get_user_meta( $user_id, 'ohmylms_googlemeet_access_token', true );
 
 		if ( ! $access_token ) {
 			return false;
@@ -129,9 +129,9 @@ class TokenService {
 		) );
 
 		// Clear stored tokens
-		\delete_user_meta( $user_id, 'creatorlms_googlemeet_access_token' );
-		\delete_user_meta( $user_id, 'creatorlms_googlemeet_refresh_token' );
-		\delete_user_meta( $user_id, 'creatorlms_googlemeet_token_expires' );
+		\delete_user_meta( $user_id, 'ohmylms_googlemeet_access_token' );
+		\delete_user_meta( $user_id, 'ohmylms_googlemeet_refresh_token' );
+		\delete_user_meta( $user_id, 'ohmylms_googlemeet_token_expires' );
 
 		return ! \is_wp_error( $response );
 	}

@@ -4,9 +4,9 @@
  * 
  * This class handles the leaderboard settings and functionality.
  * @since 1.0.0
- * @package CreatorLmsPro
+ * @package OhMyLMSPro
  */
-namespace OMLMS\Engagement;
+namespace OhMyLMS\Engagement;
 
 class Leaderboard {
 
@@ -16,8 +16,8 @@ class Leaderboard {
      * @return array
      */
     public static function get_settings() {
-        $settings = get_option( 'creator_lms_leaderboard_settings', array() );
-        return apply_filters( 'creator_lms_leaderboard_settings', $settings );
+        $settings = get_option( 'ohmylms_leaderboard_settings', array() );
+        return apply_filters( 'ohmylms_leaderboard_settings', $settings );
     }
 
     /**
@@ -153,7 +153,7 @@ class Leaderboard {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT total 
-                FROM {$wpdb->prefix}omlms_quiz_attempts 
+                FROM {$wpdb->prefix}ohmylms_quiz_attempts 
                 WHERE student_id = %d 
                 AND quiz_id = %d 
                 AND status = 'completed'",
@@ -197,7 +197,7 @@ class Leaderboard {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT score 
-                FROM {$wpdb->prefix}omlms_assignment_attempts 
+                FROM {$wpdb->prefix}ohmylms_assignment_attempts 
                 WHERE user_id = %d 
                 AND assignment_id = %d",
                 $student_id,
@@ -232,7 +232,7 @@ class Leaderboard {
 
         global $wpdb;
 
-        $course = omlms_get_course( $course_id );
+        $course = ohmylms_get_course( $course_id );
         if ( ! $course ) {
             return $students;
         }
@@ -257,10 +257,10 @@ class Leaderboard {
             $wpdb->prepare(
                 "SELECT a.student_id, a.quiz_id,
                     AVG(LEAST(100, GREATEST(0, 100.0 * a.total / marks.possible))) AS average_percent
-                FROM {$wpdb->prefix}omlms_quiz_attempts a
+                FROM {$wpdb->prefix}ohmylms_quiz_attempts a
                 INNER JOIN (
                     SELECT quiz_attempt_id, SUM(question_marks) AS possible
-                    FROM {$wpdb->prefix}omlms_quiz_attempts_answers
+                    FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers
                     GROUP BY quiz_attempt_id
                 ) marks ON marks.quiz_attempt_id = a.id
                 WHERE a.quiz_id IN ($quiz_ids_sql)

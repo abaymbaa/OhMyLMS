@@ -33,7 +33,7 @@ export function createQuizSettingsFields(readRuntime) {
       l,
       c,
       u,
-      s = (0, Entitlements.useIsPro)(),
+      s = true,
       d =
         (props.chapterId,
         (0, WordPressData.useSelect)(function (e) {
@@ -71,28 +71,24 @@ export function createQuizSettingsFields(readRuntime) {
         'long_text_limit',
       ],
       x = function (e, t) {
-        s || !R.includes(e)
-          ? setQuiz({
-              settings: Um(Um({}, d), {}, qm({}, e, t)),
-            })
-          : S(!0);
+        setQuiz({
+          settings: Um(Um({}, d), {}, qm({}, e, t)),
+        });
       },
       C = function (e, t, n) {
-        s || !R.includes(e)
-          ? setQuiz(
-              n
-                ? {
-                    settings: Um(
-                      Um({}, d),
-                      {},
-                      qm({}, e, Um(Um({}, null == d ? void 0 : d[e]), {}, qm({}, n, t))),
-                    ),
-                  }
-                : {
-                    settings: Um(Um({}, d), {}, qm({}, e, t)),
-                  },
-            )
-          : S(!0);
+        setQuiz(
+          n
+            ? {
+                settings: Um(
+                  Um({}, d),
+                  {},
+                  qm({}, e, Um(Um({}, null == d ? void 0 : d[e]), {}, qm({}, n, t))),
+                ),
+              }
+            : {
+                settings: Um(Um({}, d), {}, qm({}, e, t)),
+              },
+        );
       },
       P = (0, ReactHooks.useCallback)(
         function (e) {
@@ -153,7 +149,7 @@ export function createQuizSettingsFields(readRuntime) {
                 'Choose whether to publish this quiz for members or save it as a draft to keep editing.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-visibility-settings',
+              className: 'ohmylms-quiz-visibility-settings',
             },
             <vn.A
               value={null == quiz ? void 0 : quiz.status}
@@ -164,13 +160,13 @@ export function createQuizSettingsFields(readRuntime) {
               }}
               options={Zm}
               placeholder={(0, I18n.__)('Select Visibility', 'ohmylms')}
-              className={'omlms-quiz-visibility-select'}
+              className={'ohmylms-quiz-visibility-select'}
             />,
           )}
           <Pn
             onChange={function () {
               var e;
-              if (s) {
+              {
                 var t = !(
                   null != quiz &&
                   null !== (e = quiz.drip_settings) &&
@@ -195,13 +191,13 @@ export function createQuizSettingsFields(readRuntime) {
                     },
                   ),
                 );
-              } else S(!0);
+              }
             }}
             isChecked={
               null == quiz || null === (t = quiz.drip_settings) || void 0 === t ? void 0 : t.enable
             }
             onDripFeedTypeChange={function (e) {
-              if (s) {
+              {
                 var t,
                   n,
                   r = Um(
@@ -239,7 +235,7 @@ export function createQuizSettingsFields(readRuntime) {
                     },
                   ),
                 );
-              } else S(!0);
+              }
             }}
             handleDripDatePickerChange={function (e, t) {
               setQuiz(
@@ -305,7 +301,7 @@ export function createQuizSettingsFields(readRuntime) {
                 'Set a time limit for how long students have to complete the quiz.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-time-limit-settings',
+              className: 'ohmylms-quiz-time-limit-settings',
             },
             <Controls.FlexWP justify={'flex-end'} align={'center'} gap={2}>
               <Controls.InputNumberWP
@@ -317,7 +313,7 @@ export function createQuizSettingsFields(readRuntime) {
                 style={{
                   width: 100,
                 }}
-                className={'omlms-time-limit-input'}
+                className={'ohmylms-time-limit-input'}
                 onChange={function (e) {
                   var t = e;
                   /^\d*\.?\d*$/.test(t) && C('time_limit', t, 'value');
@@ -348,7 +344,7 @@ export function createQuizSettingsFields(readRuntime) {
                 options={$m}
                 placeholder={(0, I18n.__)('Select Time Type', 'ohmylms')}
                 disabled={!s}
-                className={'omlms-time-limit-type-select'}
+                className={'ohmylms-time-limit-type-select'}
               />
             </Controls.FlexWP>,
           )}
@@ -368,12 +364,12 @@ export function createQuizSettingsFields(readRuntime) {
                 'Keep the correct answers hidden after quiz completion to focus students on learning.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-hide-answers-settings',
+              className: 'ohmylms-quiz-hide-answers-settings',
             },
             <div
               style={{
                 display: 'inline-block',
-                opacity: s ? 1 : 0.3,
+                opacity: 1,
                 cursor: 'pointer',
               }}
             >
@@ -382,7 +378,7 @@ export function createQuizSettingsFields(readRuntime) {
                 onChange={function (e) {
                   return x('hide_answers', e);
                 }}
-                className={'omlms-hide-answers-switch'}
+                className={'ohmylms-hide-answers-switch'}
               />
             </div>,
           )}
@@ -394,12 +390,12 @@ export function createQuizSettingsFields(readRuntime) {
                 'Allow students to continue to the next section even if they don’t pass the quiz.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-move-next-settings',
+              className: 'ohmylms-quiz-move-next-settings',
             },
             <div
               style={{
                 display: 'inline-block',
-                opacity: s ? 1 : 0.3,
+                opacity: 1,
                 cursor: 'pointer',
               }}
             >
@@ -408,7 +404,7 @@ export function createQuizSettingsFields(readRuntime) {
                 onChange={function (e) {
                   return x('move_to_next_section', e);
                 }}
-                className={'omlms-move-next-switch'}
+                className={'ohmylms-move-next-switch'}
               />
             </div>,
           )}
@@ -420,12 +416,12 @@ export function createQuizSettingsFields(readRuntime) {
                 'Shuffle the question order to create a different quiz experience each time.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-randomize-questions-settings',
+              className: 'ohmylms-quiz-randomize-questions-settings',
             },
             <div
               style={{
                 display: 'inline-block',
-                opacity: s ? 1 : 0.3,
+                opacity: 1,
                 cursor: 'pointer',
               }}
             >
@@ -434,7 +430,7 @@ export function createQuizSettingsFields(readRuntime) {
                 onChange={function (e) {
                   return x('randomize_questions', e);
                 }}
-                className={'omlms-randomize-questions-switch'}
+                className={'ohmylms-randomize-questions-switch'}
               />
             </div>,
           )}
@@ -446,7 +442,7 @@ export function createQuizSettingsFields(readRuntime) {
                 'Limit the number of times a student can retake the quiz for better evaluation.',
                 'ohmylms',
               ),
-              className: 'omlms-quiz-attempts-allowed-settings',
+              className: 'ohmylms-quiz-attempts-allowed-settings',
             },
             <Controls.InputNumberWP
               type={'number'}
@@ -472,7 +468,7 @@ export function createQuizSettingsFields(readRuntime) {
               onBlur={function () {
                 (null == d ? void 0 : d.allow_attempts) < 0 && x('allow_attempts', 0);
               }}
-              className={'omlms-attempts-allowed-input'}
+              className={'ohmylms-attempts-allowed-input'}
             />,
           )}
           {React.createElement(
@@ -484,9 +480,9 @@ export function createQuizSettingsFields(readRuntime) {
                 'ohmylms',
               ),
               isItProFeature: !0,
-              className: 'omlms-quiz-layout-settings-card',
+              className: 'ohmylms-quiz-layout-settings-card',
             },
-            <div className={'omlms-quiz-layout-settings'}>
+            <div className={'ohmylms-quiz-layout-settings'}>
               <vn.A
                 value={(null == d ? void 0 : d.layout) || 'one_question_per_page'}
                 onChange={function (e) {
@@ -497,7 +493,7 @@ export function createQuizSettingsFields(readRuntime) {
                 showSearch={!1}
                 classNames={{
                   popup: {
-                    root: 'omlms-ant-select-dropdown',
+                    root: 'ohmylms-ant-select-dropdown',
                   },
                 }}
                 disabled={!s}
@@ -536,7 +532,7 @@ export function createQuizSettingsFields(readRuntime) {
                       (null == d ? void 0 : d.question_in_one_page) < 0 &&
                         x('question_in_one_page', value);
                     }}
-                    className={'omlms-questions-per-page-input'}
+                    className={'ohmylms-questions-per-page-input'}
                   />
                 </React.Fragment>
               )}
@@ -547,12 +543,12 @@ export function createQuizSettingsFields(readRuntime) {
             {
               title: (0, I18n.__)('Hide Question Number', 'ohmylms'),
               isItProFeature: !0,
-              className: 'omlms-quiz-hide-question-number-settings',
+              className: 'ohmylms-quiz-hide-question-number-settings',
             },
             <div
               style={{
                 display: 'inline-block',
-                opacity: s ? 1 : 0.3,
+                opacity: 1,
                 cursor: 'pointer',
               }}
             >
@@ -561,7 +557,7 @@ export function createQuizSettingsFields(readRuntime) {
                 onChange={function (e) {
                   return x('hide_question_number', e);
                 }}
-                className={'omlms-hide-question-number-switch'}
+                className={'ohmylms-hide-question-number-switch'}
               />
             </div>,
           )}
@@ -570,7 +566,7 @@ export function createQuizSettingsFields(readRuntime) {
             {
               title: (0, I18n.__)('Set Character Limit for Short Answers', 'ohmylms'),
               isItProFeature: !0,
-              className: 'omlms-quiz-short-answer-limit-settings',
+              className: 'ohmylms-quiz-short-answer-limit-settings',
             },
             <Controls.InputNumberWP
               type={'number'}
@@ -598,7 +594,7 @@ export function createQuizSettingsFields(readRuntime) {
                 (null == d ? void 0 : d.short_text_limit) < 0 && x('short_text_limit', 0);
               }}
               disabled={!s}
-              className={'omlms-short-answer-limit-input'}
+              className={'ohmylms-short-answer-limit-input'}
             />,
           )}
           {React.createElement(
@@ -607,7 +603,7 @@ export function createQuizSettingsFields(readRuntime) {
               title: (0, I18n.__)('Set Character Limit for Long Answers', 'ohmylms'),
               showDivider: !1,
               isItProFeature: !0,
-              className: 'omlms-quiz-long-answer-limit-settings',
+              className: 'ohmylms-quiz-long-answer-limit-settings',
             },
             <Controls.InputNumberWP
               type={'number'}
@@ -635,7 +631,7 @@ export function createQuizSettingsFields(readRuntime) {
                 (null == d ? void 0 : d.long_text_limit) < 0 && x('long_text_limit', 0);
               }}
               disabled={!s}
-              className={'omlms-long-answer-limit-input'}
+              className={'ohmylms-long-answer-limit-input'}
             />,
           )}
           {E && (

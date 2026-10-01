@@ -10,7 +10,7 @@ import {loadDashboard, sortRecentCourses} from '../../assets/src/features/analyt
 const generate = generatorModule.default || generatorModule;
 const source = 'assets/src/recovered/';
 const manifest = JSON.parse(fs.readFileSync(source + 'manifest.json'));
-const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/creatorlms.js').factories.find(f => f.id === '1841');
+const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/ohmylms.js').factories.find(f => f.id === '1841');
 const ast = parse(factory.fragments.map(file => fs.readFileSync(source + file, 'utf8')).join('\n'));
 const declarations = new Map();
 for (const statement of ast.program.body) {
@@ -56,7 +56,7 @@ function harness(states = []) {
   globals.g.Suspense='Suspense';
   globals.actions={setDashboardLoader:value=>updates.set('loading',value),setDashboardOverview:value=>updates.set('overview',value),setDashboardAll:value=>updates.set('all',value)};
   globals.y={useDispatch:()=>globals.actions,useSelect:fn=>fn(()=>({selectCourses:()=>[],getDashboardLoader:()=>globals.loading,getDashboardOverview:()=>globals.overview,getDashboardFilter:()=>globals.filter,getNotificationMessage:()=>'',getNotificationStatus:()=>''}))};
-  globals.window.creator_lms_params={currency:'$',plugin_assets:'/assets/'};globals.creator_lms_params=globals.window.creator_lms_params;
+  globals.window.ohmylms_params={currency:'$',plugin_assets:'/assets/'};globals.ohmylms_params=globals.window.ohmylms_params;
   for(const name of ['YG','NG','VG','lU','nf','kf','mG','wG','MG','_G','PG','lf','yG','Br','uf','df','SB','vG','gU','yU','_U','EU','RU','CU','OU','MU','jU','IU','YH','LU','cq','BU','eq','Cm','ZU','UU','JU','Dq','Fq','dc','Rq'])globals[name]=name;  const context = vm.createContext(globals);
   for (const [name, declaration] of declarations) {
     if (name in globals) continue;
@@ -90,7 +90,7 @@ test('dashboard sorting leaves store data unchanged and loader recovers from fai
  assert.deepEqual(sortRecentCourses(input).map(item=>item.id),[2,1]);assert.deepEqual(input.map(item=>item.id),[1,2]);
  const events=[];const actions={setDashboardLoader:v=>events.push(['loading',v]),setDashboardOverview:v=>events.push(['overview',v]),setDashboardAll:v=>events.push(['all',v])};
  const requests=[];await loadDashboard(async request=>{requests.push(request);return {id:1};},actions,{type:'custom',startDate:{date:'2026/09/01'},endDate:{date:'2026/09/25'}},date=>date.replaceAll('/','-')).done;
- assert.equal(requests[0].path,'creator-lms/v1/dashboard?filter=custom&start_date=2026-09-01&end_date=2026-09-25');assert.deepEqual(events.at(-1),['loading',false]);
+ assert.equal(requests[0].path,'ohmylms/v1/dashboard?filter=custom&start_date=2026-09-01&end_date=2026-09-25');assert.deepEqual(events.at(-1),['loading',false]);
  const errors=[];await loadDashboard(async()=>{throw Error('offline');},actions,{type:'monthly'},String,error=>errors.push(error.message)).done;
  assert.deepEqual(errors,['offline']);assert.deepEqual(events.at(-1),['loading',false]);
  let resolve;const request=loadDashboard(()=>new Promise(done=>resolve=done),actions,{type:'monthly'},String);request.cancel();const count=events.length;resolve({stale:true});await request.done;assert.equal(events.length,count);
@@ -101,13 +101,12 @@ test('dashboard retains earnings and course-list navigation',()=>{
 });
 test('course report keeps request filters and releases loading state',async()=>{
  const h=harness();h.globals.response={title:'Course',students:[]};h.render('CourseReport');h.effects[0]();await flush();
- const request=h.requests[0];assert.equal(request.method,'GET');assert.ok(request.path.startsWith('/creator-lms/v1/analytics/course/123?'));assert.ok(request.path.includes('completion_type=all'));assert.ok(request.path.includes('sort_by=DESC'));assert.equal(h.updates.get(1),false);assert.deepEqual(h.updates.get(0),h.globals.response);
+ const request=h.requests[0];assert.equal(request.method,'GET');assert.ok(request.path.startsWith('/ohmylms/v1/analytics/course/123?'));assert.ok(request.path.includes('completion_type=all'));assert.ok(request.path.includes('sort_by=DESC'));assert.equal(h.updates.get(1),false);assert.deepEqual(h.updates.get(0),h.globals.response);
 });
-test('earnings reports retain data filters and free-version demo behavior',async()=>{
+test('earnings reports retain data filters',async()=>{
  const h=harness();h.globals.response={earning_graph:{total_revenue:90},order_by_country:{Mongolia:90},transactions:[],count_unchecked_orders:2,currency:'$',currency_pos:'left'};
  const tree=h.render('EarningsReport');h.effects[0]();await flush();assert.ok(h.requests[0].path.includes('data_type=all'));assert.equal(h.updates.get(0),false);assert.deepEqual(h.updates.get(4),h.globals.response.earning_graph);
  find(tree,'ZU').props.onChange('current_year');await flush();assert.ok(h.requests.at(-1).path.includes('filter=current_year'));assert.ok(h.requests.at(-1).path.includes('data_type=earning'));
- const free=harness();free.globals.pro=false;free.render('EarningsReport');free.effects[0]();await flush();assert.equal(free.requests.length,0);assert.deepEqual(free.updates.get(6),[]);assert.equal(free.updates.get(0),false);
 });
 
 

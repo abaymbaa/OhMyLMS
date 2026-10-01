@@ -4,13 +4,13 @@
  *
  * Gutenberg block for OhMyLMS student profile functionality
  *
- * @package OMLMS\Blocks
+ * @package OhMyLMS\Blocks
  * @since 1.2.5
  */
 
-namespace OMLMS\Blocks;
+namespace OhMyLMS\Blocks;
 
-use OMLMS\Shortcodes\ShortCodeProfile;
+use OhMyLMS\Shortcodes\ShortCodeProfile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,7 +24,7 @@ class ProfileGutenbergBlock {
 	 *
 	 * @var string
 	 */
-	const BLOCK_NAME = 'creator-lms/profile';
+	const BLOCK_NAME = 'ohmylms/profile';
 
 	/**
 	 * Constructor
@@ -42,9 +42,9 @@ class ProfileGutenbergBlock {
 		register_block_type( self::BLOCK_NAME, array(
 			'attributes' => $this->get_block_attributes(),
 			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+			'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
 		) );
 	}
 
@@ -367,39 +367,39 @@ class ProfileGutenbergBlock {
 		
 		// Enable preview mode for Gutenberg editor to show profile even when not logged in
 		if ( $is_editor ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		// Add editor-specific styling for proper profile rendering
 		if ( $is_editor ) {
 			?>
 			<style>
-				.wp-block-creator-lms-profile .creator-lms {
+				.wp-block-ohmylms-profile .ohmylms {
 					max-width: 100% !important;
 					background-color: #F9FAFD !important;
 					width: 100% !important;
 				}
-				.wp-block-creator-lms-profile .creator-lms-dashboard {
+				.wp-block-ohmylms-profile .ohmylms-dashboard {
 					padding: 30px !important;
 					background-color: #fff !important;
 					border-radius: 12px !important;
 					box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 				}
-				.wp-block-creator-lms-profile .creator-lms-student-profile {
+				.wp-block-ohmylms-profile .ohmylms-student-profile {
 					display: flex !important;
 					gap: 30px !important;
 				}
-				.wp-block-creator-lms-profile .creator-lms-student-profile-sidebar {
+				.wp-block-ohmylms-profile .ohmylms-student-profile-sidebar {
 					min-width: 250px !important;
 				}
-				.wp-block-creator-lms-profile .creator-lms-student-profile-sidebar-content {
+				.wp-block-ohmylms-profile .ohmylms-student-profile-sidebar-content {
 					flex: 1 !important;
 				}
 				@media (max-width: 768px) {
-					.wp-block-creator-lms-profile .creator-lms-dashboard {
+					.wp-block-ohmylms-profile .ohmylms-dashboard {
 						padding: 20px !important;
 					}
-					.wp-block-creator-lms-profile .creator-lms-student-profile {
+					.wp-block-ohmylms-profile .ohmylms-student-profile {
 						flex-direction: column !important;
 					}
 				}
@@ -426,16 +426,16 @@ class ProfileGutenbergBlock {
 		}
 
 		// Add proper wrapper classes for consistency with frontend
-		$wrapper_classes = array( 'creator-lms' );
+		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
-			$wrapper_classes[] = 'creator-lms-page';
+			$wrapper_classes[] = 'ohmylms-page';
 		}
 		
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 		
 		// Add preview notice in editor mode
 		if ( $is_editor ) {
-			echo '<div class="creator-lms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
+			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the student profile will appear to logged-in users.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
@@ -443,7 +443,7 @@ class ProfileGutenbergBlock {
 		// Output the profile
 		ShortCodeProfile::output( $shortcode_attrs );
 
-		echo '</div>'; // Close creator-lms wrapper
+		echo '</div>'; // Close ohmylms wrapper
 		
 		// Close alignment wrapper only if it was opened (frontend only)
 		if ( ! $is_editor && ! empty( $wrapper_attributes ) ) {
@@ -452,7 +452,7 @@ class ProfileGutenbergBlock {
 		
 		// Remove preview mode filter if it was set
 		if ( $is_editor ) {
-			remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		return ob_get_clean();

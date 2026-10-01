@@ -15,7 +15,7 @@ var O4 = function () {
       fill: "#FF4955"
     })),
     label: (0, b.__)("Blog & Tutorials", "ohmylms"),
-    url: "https://creatorlms.net/blog/"
+    url: "https://ohmylms.com/blog/"
   }, {
     icon: React.createElement("svg", {
       xmlns: "http://www.w3.org/2000/svg",
@@ -28,7 +28,7 @@ var O4 = function () {
       fill: "#42ACD3"
     })),
     label: (0, b.__)("Documentation", "ohmylms"),
-    url: "https://creatorlms.net/docs/"
+    url: "https://ohmylms.com/docs/"
   }, {
     icon: React.createElement("svg", {
       xmlns: "http://www.w3.org/2000/svg",
@@ -51,7 +51,7 @@ var O4 = function () {
       fill: "white"
     })))),
     label: (0, b.__)("Support", "ohmylms"),
-    url: "https://creatorlms.net/contact-us/"
+    url: "https://ohmylms.com/contact-us/"
   }, {
     icon: React.createElement("svg", {
       xmlns: "http://www.w3.org/2000/svg",
@@ -329,7 +329,7 @@ var I4 = function (e) {
       viewBox: "0 0 20 20",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className: "omlms-spin"
+      className: "ohmylms-spin"
     }, React.createElement("circle", {
       cx: "10",
       cy: "10",

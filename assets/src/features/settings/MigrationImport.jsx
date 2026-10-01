@@ -32,7 +32,7 @@ export function createMigrationImport(readRuntime) {
       d = u[1],
       m = (0, WordPressData.useDispatch)(StoreModule.default),
       p = (0, Router.Zp)(),
-      v = (0, Entitlements.useIsPro)(),
+      v = true,
       h = (function () {
         var e,
           t =

@@ -1,72 +1,72 @@
-body.creator-lms-page.theme-hestia:not(.woocommerce-page) button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.close), 
-body.creator-lms-page.theme-hestia:not(.woocommerce-page) .button:not([class^="fl-"]):not(hestia-scroll-to-top):not(.navbar-toggle):not(.add_to_cart_button):not(.product_type_grouped):not(.product_type_external), 
-.creator-lms-page.theme-hestia div.wpforms-container .wpforms-form button[type=submit].wpforms-submit, 
-.creator-lms-page.theme-hestia input[type="submit"], 
-.creator-lms-page.theme-hestia input[type="button"], 
-.creator-lms-page.theme-hestia .btn.btn-primary {
+body.ohmylms-page.theme-hestia:not(.woocommerce-page) button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.close), 
+body.ohmylms-page.theme-hestia:not(.woocommerce-page) .button:not([class^="fl-"]):not(hestia-scroll-to-top):not(.navbar-toggle):not(.add_to_cart_button):not(.product_type_grouped):not(.product_type_external), 
+.ohmylms-page.theme-hestia div.wpforms-container .wpforms-form button[type=submit].wpforms-submit, 
+.ohmylms-page.theme-hestia input[type="submit"], 
+.ohmylms-page.theme-hestia input[type="button"], 
+.ohmylms-page.theme-hestia .btn.btn-primary {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
 
-body.creator-lms-page.theme-hestia:not(.woocommerce-page) .button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.add_to_cart_button):hover, 
-body.creator-lms-page.theme-hestia:not(.woocommerce-page) button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.close):hover {
+body.ohmylms-page.theme-hestia:not(.woocommerce-page) .button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.add_to_cart_button):hover, 
+body.ohmylms-page.theme-hestia:not(.woocommerce-page) button:not([class^="fl-"]):not(.hestia-scroll-to-top):not(.navbar-toggle):not(.close):hover {
     -webkit-box-shadow: none;
     box-shadow: none;
-    color: var(--creator-lms-primary-color);
+    color: var(--ohmylms-primary-color);
 }
 
-.creator-lms-page.theme-hestia a:not(.btn):not(.button):not(.added_to_cart):hover {
+.ohmylms-page.theme-hestia a:not(.btn):not(.button):not(.added_to_cart):hover {
     opacity: 1;
 }
 
-.creator-lms-page.theme-hestia .creator-lms-course-reviews-form .comment-form .comment-form-comment textarea {
+.ohmylms-page.theme-hestia .ohmylms-course-reviews-form .comment-form .comment-form-comment textarea {
     background-image: none;
 }
 
-.creator-lms-page.theme-hestia .header nav.navbar {
+.ohmylms-page.theme-hestia .header nav.navbar {
     margin: 0;
     box-shadow: 0px 1px 2px 0px #DBDDE1;
     position: relative;
 }
 
-.creator-lms-checkout.theme-hestia .main .blog-post > .container {
+.ohmylms-checkout.theme-hestia .main .blog-post > .container {
     width: 100%;
     padding: 0;
 }
-.creator-lms-checkout.theme-hestia article.section {
+.ohmylms-checkout.theme-hestia article.section {
     padding-top: 0;
 }
 
-.creator-lms-checkout.theme-hestia article.section > .row > .page-content-wrap {
+.ohmylms-checkout.theme-hestia article.section > .row > .page-content-wrap {
     width: 100%;
     margin: 0;
 }
-.creator-lms-checkout.theme-hestia article.section .creator-lms {
+.ohmylms-checkout.theme-hestia article.section .ohmylms {
     border-radius: 6px 6px 0 0;
 }
-.creator-lms-checkout.theme-hestia article.section .creator-lms-checkout-form-outer::before {
+.ohmylms-checkout.theme-hestia article.section .ohmylms-checkout-form-outer::before {
     border-top-left-radius: 6px;
 }
 
 
-.creator-lms-checkout.theme-hestia .creator-lms-checkout-form-wrapper .customer-info-title-wrapper .creator-lms-checkout-title {
+.ohmylms-checkout.theme-hestia .ohmylms-checkout-form-wrapper .customer-info-title-wrapper .ohmylms-checkout-title {
     margin-bottom: 0!important;
 }
-.creator-lms-checkout.theme-hestia .form-control, 
-.creator-lms-checkout.theme-hestia .form-group .form-control, 
-.creator-lms-checkout.theme-hestia .woocommerce form .form-row input.input-text, 
-.creator-lms-checkout.theme-hestia .woocommerce form .form-row textarea {
+.ohmylms-checkout.theme-hestia .form-control, 
+.ohmylms-checkout.theme-hestia .form-group .form-control, 
+.ohmylms-checkout.theme-hestia .woocommerce form .form-row input.input-text, 
+.ohmylms-checkout.theme-hestia .woocommerce form .form-row textarea {
     background-image: none!important;
     box-shadow: none !important;
     outline: none !important;
     margin: 0;
 }
-.creator-lms-page.theme-hestia .form-group:not(.creator-lms-form)  {
+.ohmylms-page.theme-hestia .form-group:not(.ohmylms-form)  {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-checkout.theme-hestia .creator-lms-input-text {
+.ohmylms-checkout.theme-hestia .ohmylms-input-text {
     border: 1px solid #EBEBEF;
     margin: 0;
     box-shadow: none !important;
@@ -79,40 +79,40 @@ body.creator-lms-page.theme-hestia:not(.woocommerce-page) button:not([class^="fl
     border-radius: 10px;
 }
 
-.creator-lms-checkout.theme-hestia .creator-lms-checkout-customer-details .creator-lms-form-row {
+.ohmylms-checkout.theme-hestia .ohmylms-checkout-customer-details .ohmylms-form-row {
     margin: 0!important;
     padding: 0;
 }
-.creator-lms-page.theme-hestia .creator-lms-input-wrapper {
+.ohmylms-page.theme-hestia .ohmylms-input-wrapper {
     margin: 0;
     padding: 0;
 }
 
-.creator-lms-checkout.theme-hestia .creator-lms-order-review-toggle .order-review-toggle-head .review-toggle-title {
+.ohmylms-checkout.theme-hestia .ohmylms-order-review-toggle .order-review-toggle-head .review-toggle-title {
     margin: 0;
 }
 
-.creator-lms-checkout.theme-hestia .creator-lms-no-cart-data {
+.ohmylms-checkout.theme-hestia .ohmylms-no-cart-data {
     border-radius: 6px 6px 0 0;
 }
-.creator-lms-checkout.theme-hestia .creator-lms-form-signup .forgote-pasword-row, 
-.creator-lms-checkout.theme-hestia .creator-lms-form-login .forgote-pasword-row {
+.ohmylms-checkout.theme-hestia .ohmylms-form-signup .forgote-pasword-row, 
+.ohmylms-checkout.theme-hestia .ohmylms-form-login .forgote-pasword-row {
     margin-bottom: 0!important;
 }
 
-.creator-lms-page.theme-hestia .creator-lms-form-group input[type=text], 
-.creator-lms-page.theme-hestia .creator-lms-form-group input[type=email], 
-.creator-lms-page.theme-hestia .creator-lms-form-group input[type=password], 
-.creator-lms-page.theme-hestia .creator-lms-form-group input[type=number], 
-.creator-lms-page.theme-hestia .creator-lms-form-group input[type=date], 
-.creator-lms-page.theme-hestia .creator-lms-form-group select, 
-.creator-lms-page.theme-hestia .creator-lms-form-group textarea {
+.ohmylms-page.theme-hestia .ohmylms-form-group input[type=text], 
+.ohmylms-page.theme-hestia .ohmylms-form-group input[type=email], 
+.ohmylms-page.theme-hestia .ohmylms-form-group input[type=password], 
+.ohmylms-page.theme-hestia .ohmylms-form-group input[type=number], 
+.ohmylms-page.theme-hestia .ohmylms-form-group input[type=date], 
+.ohmylms-page.theme-hestia .ohmylms-form-group select, 
+.ohmylms-page.theme-hestia .ohmylms-form-group textarea {
     background-image: none !important;
 }
 
 
 @media screen and (max-width: 991px) {
-    .creator-lms-checkout.theme-hestia .creator-lms-checkout-form-outer {
+    .ohmylms-checkout.theme-hestia .ohmylms-checkout-form-outer {
         border-radius: 6px 6px 0 0;
     }
 }

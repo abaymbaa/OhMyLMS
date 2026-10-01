@@ -3,25 +3,25 @@
  * Google Auth Service
  *
  * Handles the "Sign in with Google" OAuth 2.0 authorization-code flow for the
- * core CreatorLMS plugin: building the consent URL, exchanging the code for
+ * core OhMyLMS plugin: building the consent URL, exchanging the code for
  * tokens, fetching the user's profile, and resolving/creating the matching
  * WordPress user.
  *
  * The Community plugin has its own copy of this flow (its own callback route
  * and its own settings option) but automatically borrows these credentials
  * once they're configured here — see
- * CreatorLMS_Community\Services\GoogleAuthService::get_settings(). Both
+ * OhMyLMS_Community\Services\GoogleAuthService::get_settings(). Both
  * plugins deliberately share the same Google-identity meta key
  * (META_GOOGLE_ID) so a user linked via either entry point is recognized by
  * the other and never re-triggers account creation or the reclaim flow below.
  *
- * @package OMLMS\Services
+ * @package OhMyLMS\Services
  * @since 1.0.0
  */
 
-namespace OMLMS\Services;
+namespace OhMyLMS\Services;
 
-use OMLMS\Integrations\GoogleSignIn\Hooks as GoogleSignInHooks;
+use OhMyLMS\Integrations\GoogleSignIn\Hooks as GoogleSignInHooks;
 use WP_Error;
 use WP_User;
 
@@ -35,10 +35,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GoogleAuthService {
     private static $link_user_id = 0;
 
-	const OPTION_KEY        = 'creatorlms_google_oauth';
-	const STATE_TRANSIENT   = 'omlms_lms_google_state_';
+	const OPTION_KEY        = 'ohmylms_google_oauth';
+	const STATE_TRANSIENT   = 'ohmylms_lms_google_state_';
 	const STATE_TTL         = 600; // 10 minutes.
-	const META_GOOGLE_ID    = '_creatorlms_google_id'; // Shared with the Community plugin — do not change without updating both.
+	const META_GOOGLE_ID    = '_ohmylms_google_id'; // Shared with the Community plugin — do not change without updating both.
 	const AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 	const TOKEN_URL         = 'https://oauth2.googleapis.com/token';
 	const USERINFO_URL      = 'https://www.googleapis.com/oauth2/v3/userinfo';
@@ -86,7 +86,7 @@ class GoogleAuthService {
 	 * @return string
 	 */
 	public static function get_redirect_uri() {
-		return rest_url( 'creator-lms/v1/auth/google/callback' );
+		return rest_url( 'ohmylms/v1/auth/google/callback' );
 	}
 
 	/**
@@ -107,7 +107,7 @@ class GoogleAuthService {
 
 		$state = wp_generate_password( 32, false );
 		// Bind this authorization attempt to the browser that started it.
-		setcookie( 'omlms_google_state', $state, array( 'expires' => time() + self::STATE_TTL, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
+		setcookie( 'ohmylms_google_state', $state, array( 'expires' => time() + self::STATE_TTL, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
 		set_transient( self::STATE_TRANSIENT . $state, array( 'redirect_to' => $redirect_to, 'link_user_id' => get_current_user_id() ), self::STATE_TTL );
 
 		$args = array(
@@ -132,14 +132,14 @@ class GoogleAuthService {
 	 */
 	public static function consume_state( $state ) {
 		self::$link_user_id = 0;
-		if ( empty( $state ) || empty( $_COOKIE['omlms_google_state'] ) || ! hash_equals( (string) $_COOKIE['omlms_google_state'], (string) $state ) ) {
+		if ( empty( $state ) || empty( $_COOKIE['ohmylms_google_state'] ) || ! hash_equals( (string) $_COOKIE['ohmylms_google_state'], (string) $state ) ) {
 			return false;
 		}
 
 		$key   = self::STATE_TRANSIENT . $state;
 		$value = get_transient( $key );
 		delete_transient( $key );
-		setcookie( 'omlms_google_state', '', array( 'expires' => time() - HOUR_IN_SECONDS, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
+		setcookie( 'ohmylms_google_state', '', array( 'expires' => time() - HOUR_IN_SECONDS, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
 
 		if ( false === $value ) {
 			return false;
@@ -249,7 +249,7 @@ class GoogleAuthService {
 		if ( self::$link_user_id && ( ! $user || (int) $user->ID !== self::$link_user_id ) ) {
 			return new WP_Error( 'google_link_mismatch', __( 'Choose the Google account with the same email as your signed-in account.', 'ohmylms' ) );
 		}
-		if ( $user && 'yes' === get_user_meta( $user->ID, '_omlms_banned_student', true ) ) {
+		if ( $user && 'yes' === get_user_meta( $user->ID, '_ohmylms_banned_student', true ) ) {
 			return new WP_Error( 'google_account_disabled', __( 'This account is disabled.', 'ohmylms' ) );
 		}
 		if ( $user && ! $linked ) {
@@ -274,7 +274,7 @@ class GoogleAuthService {
 	}
 
 	/**
-	 * Create a new WordPress user (and CreatorLMS student profile picture)
+	 * Create a new WordPress user (and OhMyLMS student profile picture)
 	 * from a Google profile. Only runs for brand-new accounts — never for a
 	 * returning user, so this is the only place a Google login writes name,
 	 * email, or avatar data.
@@ -289,7 +289,7 @@ class GoogleAuthService {
 		$first_name   = sanitize_text_field( $profile['given_name'] ?? '' );
 		$last_name    = sanitize_text_field( $profile['family_name'] ?? '' );
 		$display_name = sanitize_text_field( $profile['name'] ?? trim( $first_name . ' ' . $last_name ) ) ?: $username;
-		$student_role = function_exists( 'creator_lms_get_assignable_student_role' ) ? creator_lms_get_assignable_student_role() : 'subscriber';
+		$student_role = function_exists( 'ohmylms_get_assignable_student_role' ) ? ohmylms_get_assignable_student_role() : 'subscriber';
 
 		$user_id = wp_insert_user(
 			array(
@@ -310,8 +310,8 @@ class GoogleAuthService {
 		// Google already verified this email address, skip our own verification flow.
 		update_user_meta( $user_id, EmailVerificationService::META_VERIFIED, 'yes' );
 
-		if ( ! empty( $profile['picture'] ) && class_exists( '\OMLMS\Data\Student' ) ) {
-			$student = new \OMLMS\Data\Student( $user_id );
+		if ( ! empty( $profile['picture'] ) && class_exists( '\OhMyLMS\Data\Student' ) ) {
+			$student = new \OhMyLMS\Data\Student( $user_id );
 			$student->set_profile_image( esc_url_raw( $profile['picture'] ) );
 			$student->save();
 		}

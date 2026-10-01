@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Admin\Pages;
+namespace OhMyLMS\Admin\Pages;
 
-use OMLMS\Abstracts\SettingsPage;
+use OhMyLMS\Abstracts\SettingsPage;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,10 +20,10 @@ class GeneralSettings extends SettingsPage {
 
 	public function get_settings_for_default_section() {
 
-		$currency_code_options = get_omlms_currencies();
+		$currency_code_options = get_ohmylms_currencies();
 
 		foreach ( $currency_code_options as $code => $name ) {
-			$currency_code_options[ $code ] = $name . ' (' . get_omlms_currency_symbol( $code ) . ')';
+			$currency_code_options[ $code ] = $name . ' (' . get_ohmylms_currency_symbol( $code ) . ')';
 		}
 
 		$settings = array(
@@ -35,16 +35,16 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'All course page', 'ohmylms' ),
-				'id'       => 'creator_lms_course_page_id',
+				'id'       => 'ohmylms_course_page_id',
 				'type'     => 'single_select_page_with_search',
 				'default'  => '',
-				'class'    => 'omlms-page-search',
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
-							omlms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'myaccount' ),
 						),
 				),
 				'desc_tip' => true,
@@ -52,15 +52,15 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Student Dashboard Page', 'ohmylms' ),
-				'id'       => 'creator_lms_student_dashboard_page_id',
+				'id'       => 'ohmylms_student_dashboard_page_id',
 				'type'     => 'single_select_page_with_search',
-				'default'  => omlms_get_page_id( 'student_dashboard' ),
-				'class'    => 'omlms-page-search',
+				'default'  => ohmylms_get_page_id( 'student_dashboard' ),
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'desc_tip' => true,
@@ -68,15 +68,15 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Student My Profile Page', 'ohmylms' ),
-				'id'       => 'creator_lms_student_profile_page_id',
+				'id'       => 'ohmylms_student_profile_page_id',
 				'type'     => 'single_select_page_with_search',
-				'default'  => omlms_get_page_id( 'student_profile' ),
-				'class'    => 'omlms-page-search',
+				'default'  => ohmylms_get_page_id( 'student_profile' ),
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'desc_tip' => true,
@@ -84,15 +84,15 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Student My Courses Page', 'ohmylms' ),
-				'id'       => 'creator_lms_student_courses_page_id',
+				'id'       => 'ohmylms_student_courses_page_id',
 				'type'     => 'single_select_page_with_search',
-				'default'  => omlms_get_page_id( 'student_courses' ),
-				'class'    => 'omlms-page-search',
+				'default'  => ohmylms_get_page_id( 'student_courses' ),
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'desc_tip' => true,
@@ -100,16 +100,16 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Checkout page', 'ohmylms' ),
-				'id'       => 'creator_lms_checkout_page_id',
+				'id'       => 'ohmylms_checkout_page_id',
 				'type'     => 'single_select_page_with_search',
 				'default'  => '',
-				'class'    => 'omlms-page-search',
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'course' ),
-							omlms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'course' ),
+							ohmylms_get_page_id( 'myaccount' ),
 						),
 				),
 				'desc_tip' => true,
@@ -117,17 +117,17 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Thank you/Order confirm page', 'ohmylms' ),
-				'id'       => 'creator_lms_thank_you_page_id',
+				'id'       => 'ohmylms_thank_you_page_id',
 				'type'     => 'single_select_page_with_search',
 				'default'  => '',
-				'class'    => 'omlms-page-search',
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'course' ),
-							omlms_get_page_id( 'myaccount' ),
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'course' ),
+							ohmylms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'desc_tip' => true,
@@ -135,15 +135,15 @@ class GeneralSettings extends SettingsPage {
 			),
 			array(
 				'title'    => __( 'Terms and condition page', 'ohmylms' ),
-				'id'       => 'creator_lms_terms_page_id',
+				'id'       => 'ohmylms_terms_page_id',
 				'type'     => 'single_select_page_with_search',
 				'default'  => '',
-				'class'    => 'omlms-page-search',
+				'class'    => 'ohmylms-page-search',
 				'css'      => 'min-width:300px;',
 				'args'     => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'desc_tip' => true,
@@ -165,10 +165,10 @@ class GeneralSettings extends SettingsPage {
 			array(
 				'title'    => __( 'Currency', 'ohmylms' ),
 				'desc'     => __( 'This controls what currency prices are listed at in the catalog and which currency gateways will take payments in.', 'ohmylms' ),
-				'id'       => 'creator_lms_currency',
+				'id'       => 'ohmylms_currency',
 				'default'  => 'USD',
 				'type'     => 'select',
-				'class'    => 'omlms-select2',
+				'class'    => 'ohmylms-select2',
 				'desc_tip' => true,
 				'options'  => $currency_code_options,
 			),
@@ -176,8 +176,8 @@ class GeneralSettings extends SettingsPage {
 			array(
 				'title'    => __( 'Currency position', 'ohmylms' ),
 				'desc'     => __( 'This controls the position of the currency symbol.', 'ohmylms' ),
-				'id'       => 'creator_lms_currency_pos',
-				'class'    => 'omlms-select2',
+				'id'       => 'ohmylms_currency_pos',
+				'class'    => 'ohmylms-select2',
 				'default'  => 'left',
 				'type'     => 'select',
 				'options'  => array(
@@ -192,7 +192,7 @@ class GeneralSettings extends SettingsPage {
 			array(
 				'title'    => __( 'Thousand separator', 'ohmylms' ),
 				'desc'     => __( 'This sets the thousand separator of displayed prices.', 'ohmylms' ),
-				'id'       => 'creator_lms_price_thousand_sep',
+				'id'       => 'ohmylms_price_thousand_sep',
 				'css'      => 'width:50px;',
 				'default'  => ',',
 				'type'     => 'text',
@@ -202,7 +202,7 @@ class GeneralSettings extends SettingsPage {
 			array(
 				'title'    => __( 'Decimal separator', 'ohmylms' ),
 				'desc'     => __( 'This sets the decimal separator of displayed prices.', 'ohmylms' ),
-				'id'       => 'creator_lms_price_decimal_sep',
+				'id'       => 'ohmylms_price_decimal_sep',
 				'css'      => 'width:50px;',
 				'default'  => '.',
 				'type'     => 'text',
@@ -212,7 +212,7 @@ class GeneralSettings extends SettingsPage {
 			array(
 				'title'             => __( 'Number of decimals', 'ohmylms' ),
 				'desc'              => __( 'This sets the number of decimal points shown in displayed prices.', 'ohmylms' ),
-				'id'                => 'creator_lms_price_num_decimals',
+				'id'                => 'ohmylms_price_num_decimals',
 				'css'               => 'width:50px;',
 				'default'           => '2',
 				'desc_tip'          => true,
@@ -228,6 +228,6 @@ class GeneralSettings extends SettingsPage {
 				'id'   => 'pricing_options',
 			),
 		);
-		return apply_filters( 'creator_lms_settings_pages', $settings );
+		return apply_filters( 'ohmylms_settings_pages', $settings );
 	}
 }

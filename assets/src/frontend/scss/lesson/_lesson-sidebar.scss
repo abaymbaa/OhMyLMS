@@ -1,6 +1,6 @@
-.creator-lms-page {
-    .creator-lms-lesson-sidebar {
-        .creator-lms-lesson-tab-nav {
+.ohmylms-page {
+    .ohmylms-lesson-sidebar {
+        .ohmylms-lesson-tab-nav {
             list-style: none;
             margin: 0 auto 15px;
             padding: 0;
@@ -11,7 +11,7 @@
             width: calc(100% - 20px);
 
             li {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 14px;
                 font-weight: 500;
                 line-height: 1.14;
@@ -28,7 +28,7 @@
                     bottom: 0;
                     width: 100%;
                     height: 2px;
-                    background-color: var(--creator-lms-primary-color);
+                    background-color: var(--ohmylms-primary-color);
                     transition: transform 0.4s ease;
                     transform: scaleX(0);
                     transform-origin: bottom right;
@@ -42,7 +42,7 @@
             }
         }
 
-        .creator-lms-lesson-single-tab-content {
+        .ohmylms-lesson-single-tab-content {
             display: none;
 
             &.active {
@@ -50,7 +50,7 @@
             }
         }
 
-        .creator-lms-accordion-item {
+        .ohmylms-accordion-item {
             border-top: 1px solid #EBEBEF;
             padding: 18px 12px;
             transition: all 0.3s ease;
@@ -59,7 +59,7 @@
                 border-top: none;
             }
 
-            .creator-lms-accordion-head {
+            .ohmylms-accordion-head {
                 display: flex;
                 flex-flow: row wrap;
                 justify-content: space-between;
@@ -69,8 +69,8 @@
                 padding-right: 8px;
             }
 
-            .creator-lms-accordion-title {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-accordion-title {
+                color: var(--ohmylms-heading-color);
                 font-size: 14px;
                 font-weight: 500;
                 line-height: 1.5;
@@ -107,7 +107,7 @@
                 }
             }
 
-            .creator-lms-circle-progressbar {
+            .ohmylms-circle-progressbar {
                 position: relative;
                 width: 36px;
                 display: block;
@@ -129,7 +129,7 @@
                 }
             }
 
-            .creator-lms-accordion-body {
+            .ohmylms-accordion-body {
                 display: none;
                 padding-top: 15px;
             }
@@ -143,7 +143,7 @@
                     border-bottom-color: transparent;
                 }
 
-                .creator-lms-accordion-title {
+                .ohmylms-accordion-title {
                     &::before {
                         transform: rotate(90deg);
                     }
@@ -154,12 +154,12 @@
                 }
             }
 
-            &.active + .creator-lms-accordion-item {
+            &.active + .ohmylms-accordion-item {
                 border-top-color: transparent;
             }
         }
 
-        .creator-lms-lesson-list {
+        .ohmylms-lesson-list {
             margin: 0;
             padding: 0;
             list-style: none;
@@ -172,7 +172,7 @@
 
                 a {
                     display: block;
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.25;
@@ -198,7 +198,7 @@
                     }
 
                     &:focus {
-                        border-color: var(--creator-lms-primary-color);
+                        border-color: var(--ohmylms-primary-color);
                     }
                 }
 
@@ -254,7 +254,7 @@
 
                 &:hover a,
                 &.active a {
-                    border-color: var(--creator-lms-primary-color);
+                    border-color: var(--ohmylms-primary-color);
                     box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.07);
                 }
             }
@@ -267,39 +267,39 @@
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list .lesson-item .lesson-status .checkbox:before {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list .lesson-item .lesson-status .checkbox:before {
         left: 0px;
     }
 }
 
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-sidebar {
         padding: 10px 0 0;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-accordion-item.active {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-accordion-item.active {
         border-radius: 0;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-tab-nav {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-tab-nav {
         gap: 12px;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-accordion-item .creator-lms-accordion-title {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-accordion-item .ohmylms-accordion-title {
         font-size: 13px;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list .lesson-item a {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list .lesson-item a {
         font-size: 13px;
         padding: 13px 37px 13px 33px;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list .lesson-item a:before {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list .lesson-item a:before {
         left: 9px;
     }
 
-    .creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list .lesson-item .lesson-status {
+    .ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list .lesson-item .lesson-status {
         right: 10px;
     }
 

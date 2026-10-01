@@ -2,11 +2,11 @@
 /**
  * Email Verification Service
  *
- * @package OMLMS\Services
+ * @package OhMyLMS\Services
  * @since   1.0.0
  */
 
-namespace OMLMS\Services;
+namespace OhMyLMS\Services;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,10 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class EmailVerificationService {
 
-	const META_VERIFIED = '_omlms_email_verified';
-	const META_TOKEN    = '_omlms_email_verify_token';
-	const META_EXPIRES  = '_omlms_email_verify_token_expires';
-	const OPTION_KEY    = 'omlms_require_email_verification';
+	const META_VERIFIED = '_ohmylms_email_verified';
+	const META_TOKEN    = '_ohmylms_email_verify_token';
+	const META_EXPIRES  = '_ohmylms_email_verify_token_expires';
+	const OPTION_KEY    = 'ohmylms_require_email_verification';
 	const TOKEN_TTL     = DAY_IN_SECONDS; // 24 hours
 
 	/**
@@ -127,14 +127,14 @@ class EmailVerificationService {
 			return false;
 		}
 
-		$cooldown_key = 'omlms_verify_cooldown_' . $user_id;
+		$cooldown_key = 'ohmylms_verify_cooldown_' . $user_id;
 		if ( get_transient( $cooldown_key ) ) {
 			return false;
 		}
 		set_transient( $cooldown_key, 1, 2 * MINUTE_IN_SECONDS );
 
 		$token = self::generate_token( $user_id );
-		do_action( 'omlms_send_email_verification', $user_id, $token );
+		do_action( 'ohmylms_send_email_verification', $user_id, $token );
 		return true;
 	}
 
@@ -145,7 +145,7 @@ class EmailVerificationService {
 	public static function get_verification_url( string $token ): string {
 		return add_query_arg(
 			array(
-				'omlms_verify_email' => rawurlencode( $token ),
+				'ohmylms_verify_email' => rawurlencode( $token ),
 			),
 			home_url( '/' )
 		);
@@ -157,8 +157,8 @@ class EmailVerificationService {
 	public static function get_resend_url(): string {
 		return add_query_arg(
 			array(
-				'action' => 'creator_lms_resend_verification',
-				'nonce'  => wp_create_nonce( 'omlms_resend_verification' ),
+				'action' => 'ohmylms_resend_verification',
+				'nonce'  => wp_create_nonce( 'ohmylms_resend_verification' ),
 			),
 			admin_url( 'admin-ajax.php' )
 		);

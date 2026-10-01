@@ -2,11 +2,11 @@
 /**
  * GoogleMeetSettingsController class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Rest;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
@@ -15,7 +15,7 @@ use WP_REST_Server;
 class GoogleMeetSettingsController {
 	protected static $instance = null;
 	protected $base = 'googlemeet/settings';
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -135,14 +135,14 @@ class GoogleMeetSettingsController {
 			'client_secret' => $client_secret,
 			'redirect_url'  => $redirect_url,
 		);
-		\update_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', $settings );
+		\update_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', $settings );
 		return new WP_REST_Response( [ 'success' => true, 'message' => __( 'Settings saved successfully', 'ohmylms' ) ], 200 );
 	}
 
 	public function get_credentials( $request ) {
 		$user_id  = \get_current_user_id();
-		$settings = \get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
-		$tokens = \get_user_meta( $user_id, 'creatorlms_googlemeet_tokens', true );
+		$settings = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+		$tokens = \get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		$settings['tokens'] = $tokens;
 		return new WP_REST_Response( [ 'success' => true, 'data' => $settings ?: [] ], 200 );
 	}
@@ -152,7 +152,7 @@ class GoogleMeetSettingsController {
 	// -------------------------
 	public function get_auth_url() {
 		$user_id = \get_current_user_id();
-		$credentials = \get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
+		$credentials = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 		
 		if ( empty( $credentials ) || empty( $credentials['client_id'] ) || empty( $credentials['redirect_url'] ) ) {
 			return new \WP_REST_Response(
@@ -193,7 +193,7 @@ class GoogleMeetSettingsController {
 	public function handle_oauth_callback( WP_REST_Request $request ) {
 		$code     = $request->get_param( 'code' );
 		$user_id  = get_current_user_id();
-		$creds    = get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
+		$creds    = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 		if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
 			return new WP_REST_Response( [ 'success' => false, 'message' => 'Missing client credentials' ], 400 );
@@ -215,7 +215,7 @@ class GoogleMeetSettingsController {
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( isset( $body['access_token'] ) ) {
-			update_user_meta( $user_id, 'creatorlms_googlemeet_tokens', [
+			update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', [
 				'access_token'  => $body['access_token'],
 				'refresh_token' => $body['refresh_token'] ?? '',
 				'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
@@ -231,8 +231,8 @@ class GoogleMeetSettingsController {
 	// TOKEN HELPER
 	// -------------------------
 	private function refresh_access_token( $user_id ) {
-		$creds  = get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
-		$tokens = get_user_meta( $user_id, 'creatorlms_googlemeet_tokens', true );
+		$creds  = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 
 		if ( empty( $tokens['refresh_token'] ) ) {
 			return false;
@@ -256,7 +256,7 @@ class GoogleMeetSettingsController {
 		if ( isset( $body['access_token'] ) ) {
 			$tokens['access_token'] = $body['access_token'];
 			$tokens['expires_in']   = time() + ( $body['expires_in'] ?? 3600 );
-			update_user_meta( $user_id, 'creatorlms_googlemeet_tokens', $tokens );
+			update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', $tokens );
 			return $tokens['access_token'];
 		}
 
@@ -264,7 +264,7 @@ class GoogleMeetSettingsController {
 	}
 
 	private function get_valid_token( $user_id ) {
-		$tokens = get_user_meta( $user_id, 'creatorlms_googlemeet_tokens', true );
+		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		if ( empty( $tokens['access_token'] ) ) return false;
 
 		if ( time() > ( $tokens['expires_in'] ?? 0 ) ) {

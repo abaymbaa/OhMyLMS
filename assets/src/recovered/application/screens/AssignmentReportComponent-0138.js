@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var $$ = function () {
-  HG("creator-lms", "assignments");
+  HG("ohmylms", "assignments");
   var e = Q$((0, g.useState)(""), 2),
     t = e[0],
     n = e[1],
@@ -25,7 +25,7 @@ var $$ = function () {
             for (;;) switch (e.p = e.n) {
               case 0:
                 return e.p = 0, m(!0), e.n = 1, l()({
-                  path: "/creator-lms/v1/assignment/".concat(y, "/report"),
+                  path: "/ohmylms/v1/assignment/".concat(y, "/report"),
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"

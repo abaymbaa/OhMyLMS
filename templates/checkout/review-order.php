@@ -3,9 +3,9 @@
 /**
  * Template for displaying order review.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/review-order.php
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/review-order.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -16,12 +16,12 @@ defined('ABSPATH') || exit;
 $total_savings = 0;
 ?>
 
-<div class="creator-lms-order-review-table-wrapper">
-	<table class="creator-lms-checkout-order-review-table">
+<div class="ohmylms-order-review-table-wrapper">
+	<table class="ohmylms-checkout-order-review-table">
 		<thead>
 			<tr>
-				<th class="creator-lms-course-name"><?php esc_html_e( 'Course', 'ohmylms' ); ?></th>
-				<th class="creator-lms-course-total"><?php esc_html_e( 'Subtotal', 'ohmylms'); ?></th>
+				<th class="ohmylms-course-name"><?php esc_html_e( 'Course', 'ohmylms' ); ?></th>
+				<th class="ohmylms-course-total"><?php esc_html_e( 'Subtotal', 'ohmylms'); ?></th>
 			</tr>
 		</thead>
 
@@ -38,28 +38,28 @@ $total_savings = 0;
 						
 						// If the course is purchased by point, we can skip the
 						?>
-						<tr class="creator-lms-cart-item">
-							<td class="creator-lms-course-name">
-								<div class="creator-lms-course-info-wrapper">
+						<tr class="ohmylms-cart-item">
+							<td class="ohmylms-course-name">
+								<div class="ohmylms-course-info-wrapper">
 									<?php if( $_course->get_thumbnail_url() ) : ?>
-										<figure class="creator-lms-course-thumbnail">
+										<figure class="ohmylms-course-thumbnail">
 											<img src="<?php echo esc_url($_course->get_thumbnail_url());?>" alt="course image">
 										</figure>
 									<?php endif; ?>
 
-								<div class="creator-lms-course-title" title="<?php echo esc_attr($_course->get_name()); ?>">
+								<div class="ohmylms-course-title" title="<?php echo esc_attr($_course->get_name()); ?>">
 									<?php echo $_course->get_name() . '&nbsp;'; ?>
 								</div>
 							</div>
 						</td>
 
-							<td class="creator-lms-course-total">
+							<td class="ohmylms-course-total">
 								<?php
 									if( $by_point ) {
 										echo $_course->get_purchase_point() .' Pts';
 									} else {
 										$course_price = $_course->is_on_sale() && $_course->validate_on_sale() ? $_course->get_price() : $_course->get_regular_price();
-										$price_html = omlms_price( $course_price );
+										$price_html = ohmylms_price( $course_price );
 										/**
 										 * Filter the course price HTML in the checkout review order table.
 										 *
@@ -67,7 +67,7 @@ $total_savings = 0;
 										 * @param float $course_price The raw price value.
 										 * @param object $_course The course object.
 										 */
-										echo apply_filters( 'creator_lms_checkout_course_price_html', $price_html, $course_price, $_course );
+										echo apply_filters( 'ohmylms_checkout_course_price_html', $price_html, $course_price, $_course );
 									}
 									
 								?>
@@ -88,14 +88,14 @@ $total_savings = 0;
 				? $_course->get_price()
 				: $_course->get_regular_price();
 
-			omlms_price($price);
+			ohmylms_price($price);
 
 				// Only show coupon form if price is greater than 0
 				if ( floatval( $price ) > 0 && ! $by_point ) :
 				?>
 				<tr class="coupon-tr">
 					<td colspan="2">
-						<form id="" method="post" class="creator-lms-checkout-coupon checkout_coupon">
+						<form id="" method="post" class="ohmylms-checkout-coupon checkout_coupon">
 							<input name="coupon_code" type="text" id="apply-coupon" class="apply-coupon" placeholder="Coupon code">
 							<button type="submit" id="apply-coupon-btn" class="apply-coupon-btn">
 								<?php echo __('Apply', 'ohmylms') ?>
@@ -111,7 +111,7 @@ $total_savings = 0;
 					<?php 
 					if( ! $by_point ) {
 						$cart_subtotal = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('subtotal');
-						echo apply_filters('creator_lms_checkout_cart_subtotal', omlms_price($cart_subtotal), $cart_subtotal, $_course);
+						echo apply_filters('ohmylms_checkout_cart_subtotal', ohmylms_price($cart_subtotal), $cart_subtotal, $_course);
 					} else {
 						echo $_course->get_purchase_point() .' Pts';
 					}
@@ -127,10 +127,10 @@ $total_savings = 0;
 				<tr class="cart-discount coupon-<?php echo esc_attr(sanitize_title($code)); ?>">
 					<th>
 						<span class="coupon-th">
-							<?php omlmse_cart_totals_coupon_label($coupon); ?>
+							<?php ohmylmse_cart_totals_coupon_label($coupon); ?>
 						</span>
 					</th>
-					<td><?php omlmse_cart_totals_coupon_html($coupon); ?></td>
+					<td><?php ohmylmse_cart_totals_coupon_html($coupon); ?></td>
 				</tr>
 			<?php endforeach; ?>
 
@@ -150,7 +150,7 @@ $total_savings = 0;
 					<td>
 						<?php
 						$tax_amount = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('tax_amount');
-						echo apply_filters('creator_lms_checkout_order_total', omlms_price($tax_amount), $tax_amount, $_course);
+						echo apply_filters('ohmylms_checkout_order_total', ohmylms_price($tax_amount), $tax_amount, $_course);
 						?>
 					</td>
 				</tr>
@@ -160,14 +160,14 @@ $total_savings = 0;
 				<th>
 					<?php esc_html_e('Total', 'ohmylms'); ?>
 					<?php if( $is_including_tax) :?>
-						<span class="total-savings"><?php echo sprintf('( Including tax : %s )', omlms_price(\CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('tax_amount'))); ?></span>
+						<span class="total-savings"><?php echo sprintf('( Including tax : %s )', ohmylms_price(\CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('tax_amount'))); ?></span>
 					<?php endif; ?>
 				</th>
 				<td>
 					<?php
 					if( ! $by_point ) {
 						$total = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('total');
-						echo apply_filters( 'creator_lms_checkout_order_total', omlms_price( $total ), $total, $_course );
+						echo apply_filters( 'ohmylms_checkout_order_total', ohmylms_price( $total ), $total, $_course );
 					}else{
 						echo $_course->get_purchase_point() .' Pts';
 					}
@@ -176,7 +176,7 @@ $total_savings = 0;
 				</td>
 			</tr>
 
-			<?php do_action('creator_lms_after_review_order', $_course); ?>
+			<?php do_action('ohmylms_after_review_order', $_course); ?>
 		</tfoot>
 	</table>
 </div>

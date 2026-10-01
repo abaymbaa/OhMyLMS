@@ -2,16 +2,16 @@
 /**
  * BuyNowBlock
  *
- * @package OMLMS\Blocks\Blocks
+ * @package OhMyLMS\Blocks\Blocks
  */
 
-namespace OMLMS\Blocks\Blocks;
+namespace OhMyLMS\Blocks\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class BuyNowBlock {
     public static function register() {
-        register_block_type( 'creator-lms/buy-now', [
+        register_block_type( 'ohmylms/buy-now', [
             'attributes'      => [
                 'courseId'       => [ 'type' => 'integer', 'default' => 0 ],
                 'btnText'        => [ 'type' => 'string', 'default' => 'Buy Now' ],
@@ -49,7 +49,7 @@ class BuyNowBlock {
             'height'         => isset($attributes['height']) ? $attributes['height'] : '',
             'class'          => isset($attributes['className']) ? $attributes['className'] : '',
         ];
-        $shortcode = '[creator_lms_buy_now';
+        $shortcode = '[ohmylms_buy_now';
         foreach ($atts as $k => $v) {
             if ($v !== '' && $v !== null) {
                 $shortcode .= ' ' . $k . '="' . esc_attr($v) . '"';

@@ -29,7 +29,7 @@ const $re = function (e) {
     a = e.onPrevious,
     o = e.onDotClick;
   return t <= 2 ? null : (document.dir, React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-prompt-carousel-navigation",
+    className: "ohmylms-prompt-carousel-navigation",
     style: {
       marginTop: "15px",
       display: "flex",
@@ -41,11 +41,11 @@ const $re = function (e) {
   }, React.createElement("button", {
     onClick: a,
     "aria-label": (0, b.__)("Previous templates", "ohmylms"),
-    className: "omlms-carousel-arrow-button"
+    className: "ohmylms-carousel-arrow-button"
   }, React.createElement(Zre, {
     direction: "left"
   })), React.createElement("div", {
-    className: "omlms-carousel-dots",
+    className: "ohmylms-carousel-dots",
     style: {
       display: "flex",
       margin: "0 10px"
@@ -59,17 +59,17 @@ const $re = function (e) {
         return o(t);
       },
       "aria-label": "".concat((0, b.__)("Go to template set", "ohmylms"), " ").concat(t + 1),
-      className: "omlms-carousel-dot ".concat(n === t ? "active" : "")
+      className: "ohmylms-carousel-dot ".concat(n === t ? "active" : "")
     });
   })), React.createElement("button", {
     onClick: r,
     "aria-label": (0, b.__)("Next templates", "ohmylms"),
-    className: "omlms-carousel-arrow-button"
+    className: "ohmylms-carousel-arrow-button"
   }, React.createElement(Zre, {
     direction: "right"
   }))), React.createElement("style", {
     scoped: !0
-  }, "\n                .omlms-carousel-arrow-button {\n                    background: transparent;\n                    border: none;\n                    cursor: pointer;\n                    padding: 8px;\n                    border-radius: 50%;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                    color: #7A8B9A; /* Default arrow color */\n                    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;\n                }\n                .omlms-carousel-arrow-button:hover {\n                    background-color: #e0e0e0;\n                    color: var(--omlms-primary-hover-color, #5331A1); /* Use primary hover color */\n                }\n                .omlms-carousel-arrow-button:focus-visible {\n                    outline: 2px solid var(--omlms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                    color: var(--omlms-primary-color, #6e42d3);\n                }\n\n                .omlms-carousel-dots button.omlms-carousel-dot {\n                    height: 10px;\n                    width: 10px;\n                    background-color: #cccccc;\n                    border-radius: 50%;\n                    display: inline-block;\n                    margin: 0 4px;\n                    cursor: pointer;\n                    border: none;\n                    padding: 0;\n                    transition: background-color 0.2s ease-in-out;\n                }\n                .omlms-carousel-dots button.omlms-carousel-dot.active {\n                    background-color: var(--omlms-primary-color, #6e42d3); /* Use primary color */\n                }\n                .omlms-carousel-dots button.omlms-carousel-dot:focus-visible {\n                    outline: 2px solid var(--omlms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                }\n            ")));
+  }, "\n                .ohmylms-carousel-arrow-button {\n                    background: transparent;\n                    border: none;\n                    cursor: pointer;\n                    padding: 8px;\n                    border-radius: 50%;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                    color: #7A8B9A; /* Default arrow color */\n                    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;\n                }\n                .ohmylms-carousel-arrow-button:hover {\n                    background-color: #e0e0e0;\n                    color: var(--ohmylms-primary-hover-color, #5331A1); /* Use primary hover color */\n                }\n                .ohmylms-carousel-arrow-button:focus-visible {\n                    outline: 2px solid var(--ohmylms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                    color: var(--ohmylms-primary-color, #6e42d3);\n                }\n\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot {\n                    height: 10px;\n                    width: 10px;\n                    background-color: #cccccc;\n                    border-radius: 50%;\n                    display: inline-block;\n                    margin: 0 4px;\n                    cursor: pointer;\n                    border: none;\n                    padding: 0;\n                    transition: background-color 0.2s ease-in-out;\n                }\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot.active {\n                    background-color: var(--ohmylms-primary-color, #6e42d3); /* Use primary color */\n                }\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot:focus-visible {\n                    outline: 2px solid var(--ohmylms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                }\n            ")));
 };
 
 function Kre(e, t) {
@@ -128,7 +128,7 @@ var Jre = function (e) {
     isBorderless: !0,
     variant: "secondary",
     padding: "12px 16px",
-    className: "omlms-single-prompt-template",
+    className: "ohmylms-single-prompt-template",
     onMouseEnter: function () {
       i(!0);
     },
@@ -146,7 +146,7 @@ var Jre = function (e) {
   }, null == n ? void 0 : n.description), o && React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     align: "center",
     justify: "center",
-    className: "omlms-prompt-template-edit-btn-wrapper"
+    className: "ohmylms-prompt-template-edit-btn-wrapper"
   }, React.createElement(I.ButtonWP, {
     icon: React.createElement(pG.A, {
       width: "14",
@@ -158,7 +158,7 @@ var Jre = function (e) {
     size: "small"
   }, (0, b.__)("Edit Prompt", "ohmylms"))))), React.createElement("style", {
     scoped: !0
-  }, '\n                    .omlms-single-prompt-template {\n                        position: relative;\n                        animation: fadeIn 0.3s ease-in-out;\n                    }\n\n                    .omlms-prompt-template-edit-btn-wrapper {\n                        position: absolute;\n                        width: 100%;\n                        bottom: 0;\n                        height: 60%;\n                        left: 0;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper .components-button {\n                        background: #000D25;\n                        color: #FFFFFF;\n                        padding: 4px 6px;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper .components-button:hover {\n                        color: #FFFFFF;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper:before {\n                        content: "";\n                        height: 100%;\n                        width: 100%;\n                        position: absolute;\n                        background: linear-gradient(0deg, rgba(255, 255, 255, 0.60) 0%, rgba(244, 245, 247, 0.00) 204.29%);\n                        backdrop-filter: blur(2px);\n                        border-radius: 0 0 4px 4px;\n                    }\n\n                    @keyframes fadeIn {\n                        0% {\n                            opacity: 0;\n                        }\n                        100% {\n                            opacity: 1;\n                        }\n                    }\n                '));
+  }, '\n                    .ohmylms-single-prompt-template {\n                        position: relative;\n                        animation: fadeIn 0.3s ease-in-out;\n                    }\n\n                    .ohmylms-prompt-template-edit-btn-wrapper {\n                        position: absolute;\n                        width: 100%;\n                        bottom: 0;\n                        height: 60%;\n                        left: 0;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper .components-button {\n                        background: #000D25;\n                        color: #FFFFFF;\n                        padding: 4px 6px;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper .components-button:hover {\n                        color: #FFFFFF;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper:before {\n                        content: "";\n                        height: 100%;\n                        width: 100%;\n                        position: absolute;\n                        background: linear-gradient(0deg, rgba(255, 255, 255, 0.60) 0%, rgba(244, 245, 247, 0.00) 204.29%);\n                        backdrop-filter: blur(2px);\n                        border-radius: 0 0 4px 4px;\n                    }\n\n                    @keyframes fadeIn {\n                        0% {\n                            opacity: 0;\n                        }\n                        100% {\n                            opacity: 1;\n                        }\n                    }\n                '));
 };
 
 const Xre = (0, g.memo)(Jre),
@@ -180,7 +180,7 @@ const Xre = (0, g.memo)(Jre),
     var u = "rtl" === document.dir,
       s = u ? 326 * n : 326 * -n;
     return React.createElement(React.Fragment, null, React.createElement("div", {
-      className: "omlms-templates-view-container",
+      className: "ohmylms-templates-view-container",
       style: {
         width: "100%",
         maxWidth: "".concat(310 * o + 16 * (o - 1), "px"),
@@ -189,7 +189,7 @@ const Xre = (0, g.memo)(Jre),
         direction: u ? "rtl" : "ltr"
       }
     }, React.createElement("div", {
-      className: "omlms-templates-slider",
+      className: "ohmylms-templates-slider",
       style: {
         display: "flex",
         transform: "translateX(".concat(s, "px)"),
@@ -199,7 +199,7 @@ const Xre = (0, g.memo)(Jre),
     }, t.map(function (e, t) {
       return React.createElement("div", {
         key: e.id || t,
-        className: "omlms-template-item-wrapper",
+        className: "ohmylms-template-item-wrapper",
         style: {
           minWidth: "".concat(310, "px"),
           width: "".concat(310, "px"),
@@ -302,7 +302,7 @@ var iae = function (e) {
     var t = e.rotate,
       n = void 0 === t ? "0" : t;
     return React.createElement("svg", {
-      className: "omlms-back-arrow-btn-icon",
+      className: "ohmylms-back-arrow-btn-icon",
       style: {
         transform: "rotate(".concat(n, "deg)")
       },
@@ -367,7 +367,7 @@ var iae = function (e) {
           isVisible: l
         }, React.createElement(I.CardWP, {
           padding: "".concat(2 < t.length ? "16px 16px 0" : "16px"),
-          className: "omlms-templates-card-container"
+          className: "ohmylms-templates-card-container"
         }, React.createElement(eae, {
           templates: t,
           currentIndex: s,
@@ -397,7 +397,7 @@ var iae = function (e) {
         width: "100%"
       }, a);
     return React.createElement(React.Fragment, null, React.createElement("div", {
-      className: "omlms-prompt-template-wrapper",
+      className: "ohmylms-prompt-template-wrapper",
       style: E
     }, React.createElement(I.FlexWP, {
       justify: "flex-end"
@@ -416,7 +416,7 @@ var iae = function (e) {
     }, (0, b.__)("Use templates", "ohmylms"))), !(null != o && o.current) && w()), (null == o ? void 0 : o.current) && w(), React.createElement("style", {
       jsx: "true",
       scoped: !0
-    }, "\n                .omlms-templates-card-container {\n                    animation: omlms-templates-card-container-animation 0.5s ease-in-out;\n                }\n                @keyframes omlms-templates-card-container-animation {\n                    0% {\n                        height: 0;\n                        opacity: 0;\n                    }\n                    100% {\n                        height: 100%;\n                        opacity: 1;\n                    }\n                }\n            "));
+    }, "\n                .ohmylms-templates-card-container {\n                    animation: ohmylms-templates-card-container-animation 0.5s ease-in-out;\n                }\n                @keyframes ohmylms-templates-card-container-animation {\n                    0% {\n                        height: 0;\n                        opacity: 0;\n                    }\n                    100% {\n                        height: 100%;\n                        opacity: 1;\n                    }\n                }\n            "));
   };
 
 const cae = (0, g.memo)(lae);
@@ -508,7 +508,7 @@ var mae = function (e) {
   return React.createElement(I.FlexWP, {
     justify: "space-between",
     align: "center",
-    className: "omlms-ai-course-preview-modal-header"
+    className: "ohmylms-ai-course-preview-modal-header"
   }, React.createElement(Nr, {
     onClick: function () {
       t && "function" == typeof t && t();
@@ -528,7 +528,7 @@ var mae = function (e) {
     length: a
   }).map(function (e, t) {
     return React.createElement(I.ButtonWP, {
-      className: "omlms-ai-course-pagination-btn ".concat(l === t ? "active" : ""),
+      className: "ohmylms-ai-course-pagination-btn ".concat(l === t ? "active" : ""),
       onClick: function () {
         return function (e) {
           c(e), n && "function" == typeof n && n(e);
@@ -611,7 +611,7 @@ var gae = function (e) {
   }, t, n && React.createElement(I.BadgeWP, {
     isBorderLess: !0,
     variant: "secondary",
-    color: "var(--omlms-primary-color)",
+    color: "var(--ohmylms-primary-color)",
     style: {
       marginInlineStart: "10px"
     }
@@ -752,7 +752,7 @@ var Sae = function (e) {
     isBorderless: !0,
     variant: "secondary",
     padding: "8px",
-    className: "omlms-ai-chapters-wrapper",
+    className: "ohmylms-ai-chapters-wrapper",
     borderRadius: "0",
     style: {
       overflow: "auto",
@@ -839,7 +839,7 @@ var Cae = function (e) {
     null != t && t.length && a(null == t || null === (e = t[0]) || void 0 === e ? void 0 : e.content);
   }, [t]), React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     align: "stretch",
-    className: "omlms-ai-course-content-wrapper"
+    className: "ohmylms-ai-course-content-wrapper"
   }, React.createElement(I.FlexItemWP, {
     flex: 3
   }, React.createElement(Rae, {

@@ -52,7 +52,7 @@ export function createCourseCommunity(readRuntime) {
                               (e.p = 0),
                               (e.n = 1),
                               l()({
-                                path: '/creatorlms/v1/communities/space/course/'.concat(courseId),
+                                path: '/ohmylms/v1/communities/space/course/'.concat(courseId),
                                 method: 'GET',
                               })
                             );
@@ -150,7 +150,7 @@ export function createCourseCommunity(readRuntime) {
         ],
       ),
       (
-        <Controls.ContainerWP className={'omlms-community-settings'}>
+        <Controls.ContainerWP className={'ohmylms-community-settings'}>
           <Controls.SpacerWP marginBottom={0} paddingY={10}>
             <Controls.CardWP variant={'secondary'} isBorderless={!0}>
               <Controls.SpacerWP padding={10} marginBottom={0}>
@@ -198,7 +198,9 @@ export function createCourseCommunity(readRuntime) {
                                     </Controls.FlexItemWP>
                                     <Controls.FlexItemWP
                                       isBlock={!0}
-                                      className={'omlms-coupon-generate omlms-community-generate'}
+                                      className={
+                                        'ohmylms-coupon-generate ohmylms-community-generate'
+                                      }
                                     >
                                       <Controls.FlexWP gap={2}>
                                         <Controls.FlexItemWP
@@ -210,7 +212,7 @@ export function createCourseCommunity(readRuntime) {
                                           <Controls.InputWP type={'text'} value={u} readOnly={!0} />
                                           <Controls.ButtonWP
                                             className={
-                                              'omlms-coupon-generate-btn omlms-community-generate-btn'
+                                              'ohmylms-coupon-generate-btn ohmylms-community-generate-btn'
                                             }
                                             onClick={function () {
                                               return window.open(u, '_blank');

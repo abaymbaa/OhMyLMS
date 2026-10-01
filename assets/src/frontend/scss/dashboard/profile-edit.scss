@@ -1,7 +1,7 @@
-.creator-lms-page {
-    .creator-lms-student-profile {
+.ohmylms-page {
+    .ohmylms-student-profile {
         .student-profile-edit {
-            .creator-lms-profile-cover {
+            .ohmylms-profile-cover {
                 .hoverlay {
                     position: absolute;
                     top: 0;
@@ -29,7 +29,7 @@
                         border-radius: 8px;
                         border: 1px solid #EBEBEF;
                         background: #FFF;
-                        color: var(--creator-lms-heading-color);
+                        color: var(--ohmylms-heading-color);
                         font-size: 14px;
                         font-weight: 500;
                         letter-spacing: -0.14px;
@@ -61,7 +61,7 @@
                 }
             }
 
-            .creator-lms-profile-avatar {
+            .ohmylms-profile-avatar {
                 .edit-avatar {
                     position: absolute;
                     top: 0;
@@ -112,7 +112,7 @@
             }
 
             .account-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 18px;
                 font-weight: 600;
                 line-height: 1.2;
@@ -121,28 +121,28 @@
                 text-transform: none;
             }
 
-            .creator-lms-student-account,
-            .creator-lms-student-basic-info {
+            .ohmylms-student-account,
+            .ohmylms-student-basic-info {
                 border-radius: 8px;
                 background-color: #FFF;
                 box-shadow: 0px 1px 4px 0px #D3D6DD;
                 padding: 21px 30px 24px;
             }
 
-            .creator-lms-student-basic-info {
+            .ohmylms-student-basic-info {
                 margin-top: 65px;
                 margin-bottom: 24px;
             }
 
-            .creator-lms-form-group.bio textarea {
+            .ohmylms-form-group.bio textarea {
                 min-height: 145px;
             }
 
-            .creator-lms-form-group.interests textarea {
+            .ohmylms-form-group.interests textarea {
                 min-height: 74px;
             }
 
-            .creator-lms-password-strength {
+            .ohmylms-password-strength {
                 margin-top: 8px;
                 display: none;
             }
@@ -154,36 +154,36 @@
 
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-account, 
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-basic-info {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-account, 
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-basic-info {
         border-radius: 10px;
         padding: 17px 20px 20px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-profile-cover .hoverlay {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-profile-cover .hoverlay {
         border-radius: 10px;
     }
 
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-profile-avatar .edit-avatar small {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-profile-avatar .edit-avatar small {
         font-size: 10px;
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-profile-cover .hoverlay {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-profile-cover .hoverlay {
         align-items: flex-start;
         justify-content: flex-end;
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-profile-cover .hoverlay {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-profile-cover .hoverlay {
         border-radius: 0;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-account, 
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-basic-info {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-account, 
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-basic-info {
         padding: 14px 16px;
     }
     
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-student-basic-info {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-student-basic-info {
         margin-top: 56px;
         padding: 14px 16px;
     }
@@ -192,7 +192,7 @@
 
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-student-profile .student-profile-edit .creator-lms-form-group.bio textarea {
+    .ohmylms-page .ohmylms-student-profile .student-profile-edit .ohmylms-form-group.bio textarea {
         min-height: 92px;
     }
 

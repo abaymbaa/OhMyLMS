@@ -1,63 +1,63 @@
-.theme-astra.creator-lms-page .site-content > .ast-container {
+.theme-astra.ohmylms-page .site-content > .ast-container {
     max-width: 100%;
     width: 100%;
     display: block;
     padding: 0;
 }
 
-.theme-astra.creator-lms-checkout .site-content #primary {
+.theme-astra.ohmylms-checkout .site-content #primary {
     margin: 0;
 }
-.creator-lms-page.ast-theme-transparent-header #masthead {
+.ohmylms-page.ast-theme-transparent-header #masthead {
     position: relative;
 }
 
-.theme-astra.creator-lms-checkout .site-content #primary .entry-header {
+.theme-astra.ohmylms-checkout .site-content #primary .entry-header {
     display: none;
 }
 
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper form .form-row textarea,
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=email],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=number],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=password],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=reset],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=search],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=tel],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=text],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=url],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper textarea,
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper form .form-row textarea,
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=email],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=number],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=password],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=reset],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=search],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=tel],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=text],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=url],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper textarea {
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper form .form-row textarea,
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=email],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=number],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=password],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=reset],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=search],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=tel],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=text],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=url],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper textarea,
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper form .form-row textarea,
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=email],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=number],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=password],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=reset],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=search],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=tel],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=text],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=url],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper textarea {
     border-color: #ebebef;
     background-color: transparent;
     border-radius: 10px;
 }
 
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="text"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="number"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="email"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="url"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="password"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type="search"],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=reset],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=tel],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper input[type=date],
-.theme-astra.creator-lms-page .creator-lms-checkout-form-wrapper select {
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="text"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="number"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="email"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="url"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="password"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type="search"],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=reset],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=tel],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper input[type=date],
+.theme-astra.ohmylms-page .ohmylms-checkout-form-wrapper select {
     height: inherit;
 }
 
-/* .theme-astra.creator-lms-page .creator-lms-password-show .show-password-icon {
+/* .theme-astra.ohmylms-page .ohmylms-password-show .show-password-icon {
     top: 17px;
 }
 
-.theme-astra.creator-lms-page .creator-lms-password-show .eye-off {
+.theme-astra.ohmylms-page .ohmylms-password-show .eye-off {
     top: -1px;
 } */

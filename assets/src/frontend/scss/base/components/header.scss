@@ -1,17 +1,17 @@
-.creator-lms-page {
-    .creator-lms-header {
+.ohmylms-page {
+    .ohmylms-header {
         background-color: #000D2C;
         padding: 17px 0;
     }
 
-    .creator-lms-header-wrapper {
+    .ohmylms-header-wrapper {
         display: flex;
         flex-flow: row wrap;
         align-items: center;
         justify-content: space-between;
     }
 
-    .creator-lms-header-left {
+    .ohmylms-header-left {
         display: flex;
         align-items: center;
         gap: 20px;
@@ -48,18 +48,18 @@
                 outline: none;
 
                 &:focus {
-                    border-color: var(--creator-lms-primary-color);
+                    border-color: var(--ohmylms-primary-color);
                 }
             }
         }
     }
 
-    .creator-lms-header-right {
+    .ohmylms-header-right {
         display: flex;
         align-items: center;
         gap: 20px;
 
-        .creator-lms-notification {
+        .ohmylms-notification {
             a {
                 position: relative;
                 top: 2px;
@@ -86,7 +86,7 @@
             }
         }
         
-        .creator-lms-user-avatar {
+        .ohmylms-user-avatar {
             width: 36px;
             height: 36px;
             display: block;

@@ -1,5 +1,5 @@
-.creator-lms-page {
-    .creator-lms-scroll-to-top {
+.ohmylms-page {
+    .ohmylms-scroll-to-top {
         position: fixed;
         bottom: 50px;
         right: 10%;
@@ -14,7 +14,7 @@
         }
 
         button {
-            background-color: var(--creator-lms-primary-color);
+            background-color: var(--ohmylms-primary-color);
             border: none;
             box-shadow: none;
             width: 50px;
@@ -37,16 +37,16 @@
 
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-scroll-to-top {
+    .ohmylms-page .ohmylms-scroll-to-top {
         bottom: 20px;
         right: 20px;
     }
 
-    .creator-lms-page .creator-lms-scroll-to-top button {
+    .ohmylms-page .ohmylms-scroll-to-top button {
         width: 40px;
         height: 40px;
     }
-    .creator-lms-page .creator-lms-scroll-to-top button svg {
+    .ohmylms-page .ohmylms-scroll-to-top button svg {
         width: 18px;
     }
     
@@ -54,14 +54,14 @@
 
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-scroll-to-top {
+    .ohmylms-page .ohmylms-scroll-to-top {
         bottom: 110px;
     }
     
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-scroll-to-top {
+    .ohmylms-page .ohmylms-scroll-to-top {
         bottom: 130px;
     }
     

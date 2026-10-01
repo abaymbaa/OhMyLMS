@@ -2,8 +2,8 @@
 
 namespace CodeRex\Ecommerce\DataStore;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\Abstracts\DataStore;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\Abstracts\DataStore;
 
 class CouponStore extends DataStore {
 
@@ -19,7 +19,7 @@ class CouponStore extends DataStore {
 
 		$coupon_id = wp_insert_post(
 			array(
-				'post_type'     => 'omlms_coupon',
+				'post_type'     => 'ohmylms_coupon',
 				'post_status'   => 'publish',
 				'post_author'   => get_current_user_id(),
 				'post_title'    => $coupon->get_code( 'edit' ),
@@ -34,7 +34,7 @@ class CouponStore extends DataStore {
 		if ( $coupon_id ) {
 			$coupon->set_id( $coupon_id );
 			$this->update_post_meta( $coupon );
-			do_action( 'creator_lms_new_coupon', $coupon_id, $coupon );
+			do_action( 'ohmylms_new_coupon', $coupon_id, $coupon );
 		}
 	}
 
@@ -48,7 +48,7 @@ class CouponStore extends DataStore {
 	public function read( &$coupon ) {
 		$coupon_id   = $coupon->get_id();
 		$post_object = get_post( $coupon->get_id() );
-		if( ! $post_object || 'omlms_coupon' !== $post_object->post_type ) {
+		if( ! $post_object || 'ohmylms_coupon' !== $post_object->post_type ) {
 			\CodeRex\Ecommerce\ecommerce()->session->set( 'applied_coupons', [] );
 			return false;
 		}
@@ -105,7 +105,7 @@ class CouponStore extends DataStore {
 
 		if ( $coupon->get_id() ) {
 			$this->update_post_meta( $coupon );
-			do_action( 'creator_lms_update_coupon', $coupon->get_id(), $coupon );
+			do_action( 'ohmylms_update_coupon', $coupon->get_id(), $coupon );
 		}
 	}
 
@@ -134,7 +134,7 @@ class CouponStore extends DataStore {
 		global $wpdb;
 		return $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = 'omlms_coupon' AND post_status = 'publish' ORDER BY post_date DESC",
+				"SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = 'ohmylms_coupon' AND post_status = 'publish' ORDER BY post_date DESC",
 				ecommerce_format_coupon_code( $code )
 			)
 		);

@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/pricebox.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 if( !$student ){
     return;
 }
@@ -26,7 +26,7 @@ if( $maybe_enrolled ){
 ?>
 
 <!-- course price widget -->
-<div class="creator-lms-sidebar-widget with-gray-color creator-lms-widget-pricebox">
+<div class="ohmylms-sidebar-widget with-gray-color ohmylms-widget-pricebox">
     <div class="price-discount-area">
         <?php echo $course->get_price_html(); ?>
 
@@ -40,10 +40,10 @@ if( $maybe_enrolled ){
 
     </div>
 
-    <div class="creator-lms-btn-area">
+    <div class="ohmylms-btn-area">
 		<?php
 			if ($maybe_enrolled) {
-				omlms_get_template('single-course/continue-course.php');
+				ohmylms_get_template('single-course/continue-course.php');
 			}else {
                 if( $course->get_type() === 'cohort-based' ) {
                     $cohorts = $course->get_cohort();
@@ -87,18 +87,18 @@ if( $maybe_enrolled ){
                    
                     // Determine what template to show based on conditions
                     if ( ! $has_active_enrollment || $all_expired ) {
-                        omlms_get_template( 'single-course/exceed-deadline.php', $args );
+                        ohmylms_get_template( 'single-course/exceed-deadline.php', $args );
                     } else if ( ! $has_capacity ) {
-                        omlms_get_template( 'single-course/exceed-capacity.php', $args );
+                        ohmylms_get_template( 'single-course/exceed-capacity.php', $args );
                     } else {
                         // All conditions are met, show add to cart
-                        omlms_get_template( 'single-course/add-to-cart.php', $args );
+                        ohmylms_get_template( 'single-course/add-to-cart.php', $args );
                     }
 
                 }elseif( ! $course->get_has_capacity() || ( $course->get_has_capacity() && $course->get_capacity() > $course->get_total_enrolled_users() ) ) {
-                    omlms_get_template( 'single-course/add-to-cart.php', $args );
+                    ohmylms_get_template( 'single-course/add-to-cart.php', $args );
                 }else{
-                    omlms_get_template( 'single-course/exceed-capacity.php', $args );
+                    ohmylms_get_template( 'single-course/exceed-capacity.php', $args );
                 }
             }
 
@@ -107,7 +107,7 @@ if( $maybe_enrolled ){
 
     <!-- <p class="discount-countdown">
         This offer ends in
-        <span class="creator-lms-course-discount-timer">
+        <span class="ohmylms-course-discount-timer">
             <span class="hour">00</span>h : <span class="min">00</span>m : <span class="second">00</span>s
         </span>
     </p> -->

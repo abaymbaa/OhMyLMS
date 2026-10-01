@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
 use WP_Query;
 
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Class ShortcodeCourseList
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 class ShortcodeCourseList {
@@ -38,7 +38,7 @@ class ShortcodeCourseList {
 		
 		if ( file_exists( $css_path ) ) {
 			wp_enqueue_style(
-				'omlms-shortcode-course-list',
+				'ohmylms-shortcode-course-list',
 				$css_file,
 				array(),
 				filemtime( $css_path )
@@ -55,20 +55,20 @@ class ShortcodeCourseList {
 	private static function get_default_atts() {
 		return array(
 			// Content settings
-			'posts_per_page' => get_option( 'creator_lms_courses_per_page', 10 ),
+			'posts_per_page' => get_option( 'ohmylms_courses_per_page', 10 ),
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'category' => '',
 			
 			// Layout settings
-			'layout' => get_option( 'creator_lms_archive_page_layout', 'grid' ),
-			'layout_style' => get_option( 'creator_lms_archive_page_layout_style', 'grid-style1' ),
-			'show_filter' => get_option( 'creator_lms_archive_page_filter_is_enabled', 'no' ),
-			'show_search' => get_option( 'creator_lms_archive_page_search_is_enabled', 'no' ),
-			'show_sort' => get_option( 'creator_lms_archive_page_sorting_is_enabled', 'no' ),
-			'columns' => get_option( 'creator_lms_columns_per_row', 'no' ),
-			'is_enable_category' => get_option( 'creator_lms_archive_page_category_is_enabled', 'no' ),
-			'course_rows' => get_option( 'creator_lms_archive_page_row', array() ),
+			'layout' => get_option( 'ohmylms_archive_page_layout', 'grid' ),
+			'layout_style' => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
+			'show_filter' => get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' ),
+			'show_search' => get_option( 'ohmylms_archive_page_search_is_enabled', 'no' ),
+			'show_sort' => get_option( 'ohmylms_archive_page_sorting_is_enabled', 'no' ),
+			'columns' => get_option( 'ohmylms_columns_per_row', 'no' ),
+			'is_enable_category' => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ),
+			'course_rows' => get_option( 'ohmylms_archive_page_row', array() ),
 
 			// 1. Wrapper Style
 			'wrapper_background' => '',
@@ -224,15 +224,15 @@ class ShortcodeCourseList {
 	 */
 	private static function course_list( $atts ) {
 		// Parse attributes with defaults
-		$atts = shortcode_atts( self::get_default_atts(), $atts, 'creator_lms_course_list' );
+		$atts = shortcode_atts( self::get_default_atts(), $atts, 'ohmylms_course_list' );
 		
 		// Store attributes globally for CSS generation
-		global $omlms_course_list_attributes;
-		$omlms_course_list_attributes = $atts;
+		global $ohmylms_course_list_attributes;
+		$ohmylms_course_list_attributes = $atts;
 		
 		// Build query arguments
 		$args = array(
-			'post_type'      => 'omlms-course',
+			'post_type'      => 'ohmylms-course',
 			'post_status'    => 'publish',
 			'posts_per_page' => intval( $atts['posts_per_page'] ),
 			'orderby'        => sanitize_text_field( $atts['orderby'] ),
@@ -274,10 +274,10 @@ class ShortcodeCourseList {
 			try {
 				include $template_path;
 			} catch ( Exception $e ) {
-				echo '<p class="creator-lms-error">' . esc_html__( 'Error loading course template.', 'ohmylms' ) . '</p>';
+				echo '<p class="ohmylms-error">' . esc_html__( 'Error loading course template.', 'ohmylms' ) . '</p>';
 			}
 		} else {
-			echo '<p class="creator-lms-no-template">' . esc_html__( 'Course template not found.', 'ohmylms' ) . '</p>';
+			echo '<p class="ohmylms-no-template">' . esc_html__( 'Course template not found.', 'ohmylms' ) . '</p>';
 		}
 
 		// Restore original query
@@ -293,16 +293,16 @@ class ShortcodeCourseList {
 	 * @since 1.0.0
 	 */
 	private static function inject_custom_styles() {
-		global $omlms_course_list_attributes;
+		global $ohmylms_course_list_attributes;
 		
-		if ( empty( $omlms_course_list_attributes ) ) {
+		if ( empty( $ohmylms_course_list_attributes ) ) {
 			return;
 		}
 
-		$css = self::generate_custom_css( $omlms_course_list_attributes );
+		$css = self::generate_custom_css( $ohmylms_course_list_attributes );
 		
 		if ( ! empty( $css ) ) {
-			echo '<style type="text/css" id="omlms-course-list-custom-styles">' . $css . '</style>';
+			echo '<style type="text/css" id="ohmylms-course-list-custom-styles">' . $css . '</style>';
 		}
 	}
 
@@ -320,7 +320,7 @@ class ShortcodeCourseList {
 		$wrapper_styles = array();
 		if ( ! empty( $attrs['wrapper_background'] ) ) {
 			$wrapper_styles[] = 'background: ' . esc_attr( $attrs['wrapper_background'] ) . ' !important';
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-courses { background: ' . esc_attr( $attrs['wrapper_background'] ) . ' !important; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-courses { background: ' . esc_attr( $attrs['wrapper_background'] ) . ' !important; }' . "\n";
 		}
 		if ( ! empty( $attrs['wrapper_margin'] ) ) {
 			$wrapper_styles[] = 'margin: ' . esc_attr( $attrs['wrapper_margin'] ) . ' !important';
@@ -338,12 +338,12 @@ class ShortcodeCourseList {
 		}
 		
 		if ( ! empty( $wrapper_styles ) ) {
-			$css .= '.creator-lms-container, .creator-lms-course-cards { ' . implode( '; ', $wrapper_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-container, .ohmylms-course-cards { ' . implode( '; ', $wrapper_styles ) . '; }' . "\n";
 		}
 		
 		// Grid gap
 		if ( ! empty( $attrs['grid_gap'] ) ) {
-			$css .= '.creator-lms-course-cards { gap: ' . esc_attr( $attrs['grid_gap'] ) . ' !important; }' . "\n";
+			$css .= '.ohmylms-course-cards { gap: ' . esc_attr( $attrs['grid_gap'] ) . ' !important; }' . "\n";
 		}
 		
 		// 2. Card Style
@@ -407,17 +407,17 @@ class ShortcodeCourseList {
 		}
 		
 		if ( ! empty( $card_header_styles ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link figure, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link img { ' . implode( '; ', $card_header_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link figure, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link img { ' . implode( '; ', $card_header_styles ) . '; }' . "\n";
 		}
 		
 		// Card Header Image Border Radius
 		if ( ! empty( $attrs['card_header_image_border_radius'] ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link figure, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-loop-course-thumbnail-link img { border-radius: ' . esc_attr( $attrs['card_header_image_border_radius'] ) . '}' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link figure, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link img { border-radius: ' . esc_attr( $attrs['card_header_image_border_radius'] ) . '}' . "\n";
 		}
 		
 		// 4. Card Content Style
 		if ( ! empty( $attrs['card_content_background'] ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .course-info { background: ' . esc_attr( $attrs['card_content_background'] ) . '; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .course-info { background: ' . esc_attr( $attrs['card_content_background'] ) . '; }' . "\n";
 		}
 		
 		// 4.1 Title Typography and Styles
@@ -436,7 +436,7 @@ class ShortcodeCourseList {
 		}
 		
 		if ( ! empty( $title_styles ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .course-info .creator-lms-loop-course-title { ' . implode( '; ', $title_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .course-info .ohmylms-loop-course-title { ' . implode( '; ', $title_styles ) . '; }' . "\n";
 		}
 		
 		// 4.2 Description Typography and Styles
@@ -598,7 +598,7 @@ class ShortcodeCourseList {
 		}
 		
 		if ( ! empty( $button_styles ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-button, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-loadmore-area .creator-lms-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-button, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-loadmore-area .ohmylms-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
 		}
 		
 		// Button Hover Styles
@@ -617,7 +617,7 @@ class ShortcodeCourseList {
 		}
 		
 		if ( ! empty( $button_hover_styles ) ) {
-			$css .= '.creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-cards .course-card .creator-lms-button:hover, .creator-lms-page.creator-lms-course-list-shortcode .creator-lms-course-loadmore-area .creator-lms-button:hover { ' . implode( '; ', $button_hover_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-button:hover, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-loadmore-area .ohmylms-button:hover { ' . implode( '; ', $button_hover_styles ) . '; }' . "\n";
 		}
 		
 		return $css;

@@ -4,11 +4,11 @@ namespace CodeRex\Ecommerce;
 
 use CodeRex\Ecommerce\Data\OrderItemCoupon;
 use CodeRex\Ecommerce\Data\OrderItemCourse;
-use OMLMS\Integrations\Funnel\Includes\FunnelManager;
-use OMLMS\Data\Student;
-use OMLMS\Membership\MembershipHelper;
-use OMLMS\user\UserHelper;
-use OMLMS\user\UserRepository;
+use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
+use OhMyLMS\Data\Student;
+use OhMyLMS\Membership\MembershipHelper;
+use OhMyLMS\user\UserHelper;
+use OhMyLMS\user\UserRepository;
 use CodeRex\Ecommerce\Data\Order;
 use CodeRex\Ecommerce\SubscriptionManager;
 
@@ -37,15 +37,15 @@ class Checkout {
     public static function instance() {
         if ( is_null( self::$instance ) ) {
             self::$instance = new self();
-            add_action( 'creator_lms_checkout_contact', array( self::$instance, 'checkout_form_contact' ) );
-            add_action( 'creator_lms_checkout_billing', array( self::$instance, 'checkout_form_billing' ) );
+            add_action( 'ohmylms_checkout_contact', array( self::$instance, 'checkout_form_contact' ) );
+            add_action( 'ohmylms_checkout_billing', array( self::$instance, 'checkout_form_billing' ) );
 
             /**
             * Trigger when OhMyLMS checkout is first initiated
             *
             * @since 1.0.0
             */
-            do_action( 'creator_lms_checkout_init', self::$instance );
+            do_action( 'ohmylms_checkout_init', self::$instance );
         }
         return self::$instance;
     }
@@ -70,7 +70,7 @@ class Checkout {
             'account' => $this->get_account_fields(),
         );
 
-        $this->fields = apply_filters( 'creator_lms_checkout_fields', $this->fields );
+        $this->fields = apply_filters( 'ohmylms_checkout_fields', $this->fields );
 
         return $this->fields;
     }
@@ -84,9 +84,9 @@ class Checkout {
     */
 
     public function is_allow_purchase_without_login() {
-        $option  = get_option( 'creator_lms_allow_purchase_without_login', 'yes' );
+        $option  = get_option( 'ohmylms_allow_purchase_without_login', 'yes' );
         $default = 'yes' === $option;
-        return apply_filters( 'creator_lms_allow_purchase_without_login', $default );
+        return apply_filters( 'ohmylms_allow_purchase_without_login', $default );
     }
 
     /**
@@ -97,7 +97,7 @@ class Checkout {
     */
 
     public function is_registration_enabled() {
-        return apply_filters( 'creator_lms_checkout_registration_required', 'yes' === get_option( 'creator_lms_guest_checkout' ) );
+        return apply_filters( 'ohmylms_checkout_registration_required', 'yes' === get_option( 'ohmylms_guest_checkout' ) );
     }
 
     /**
@@ -108,7 +108,7 @@ class Checkout {
     */
 
     public function is_login_enabled() {
-        return apply_filters( 'creator_lms_checkout_login_required', 'yes' === get_option( 'creator_lms_enable_login' ) );
+        return apply_filters( 'ohmylms_checkout_login_required', 'yes' === get_option( 'ohmylms_enable_login' ) );
     }
 
     /**
@@ -116,7 +116,7 @@ class Checkout {
     */
 
     public function checkout_form_billing() {
-        omlms_get_template( 'checkout/form-billing.php', array( 'checkout' => $this ) );
+        ohmylms_get_template( 'checkout/form-billing.php', array( 'checkout' => $this ) );
     }
 
     /**
@@ -124,7 +124,7 @@ class Checkout {
     */
 
     public function checkout_form_contact() {
-        omlms_get_template( 'checkout/form-contact.php', array( 'checkout' => $this ) );
+        ohmylms_get_template( 'checkout/form-contact.php', array( 'checkout' => $this ) );
     }
 
     /**
@@ -167,7 +167,7 @@ class Checkout {
         $default_country = isset( $locale_parts[ 1 ] ) ? $locale_parts[ 1 ] : 'US';
 
         $country = ! empty( $_POST[ 'country' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'country' ] ) ) : $default_country;
-        $states = creatorlms_get_states( $country );
+        $states = ohmylms_get_states( $country );
 
         $fields = array(
             'first_name' => array(
@@ -193,7 +193,7 @@ class Checkout {
                 'label'       => __( 'Country', 'ohmylms' ),
                 'placeholder' => __( 'Country', 'ohmylms' ),
                 'required'    => true,
-                'options'     => creator_lms_get_countries(),
+                'options'     => ohmylms_get_countries(),
                 'default'     => $default_country,
             ),
             'state'    => array(
@@ -240,7 +240,7 @@ class Checkout {
          *   'hidden'             - removed from checkout entirely (a gateway that needs
          *                          phone then simply cannot enforce it - see validate_checkout()).
          */
-        $phone_field_mode = get_option( 'creator_lms_checkout_phone_field', 'optional' );
+        $phone_field_mode = get_option( 'ohmylms_checkout_phone_field', 'optional' );
         if ( 'hidden' === $phone_field_mode ) {
             unset( $fields['phone'] );
         } elseif ( 'required' === $phone_field_mode && isset( $fields['phone'] ) ) {
@@ -249,7 +249,7 @@ class Checkout {
 
         // Only add VAT number field if tax is enabled
         if ( \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->is_tax_enabled() ) {
-            $vat_label = get_option( 'creator_lms_vat_number_label', __( 'VAT Number', 'ohmylms' ) );
+            $vat_label = get_option( 'ohmylms_vat_number_label', __( 'VAT Number', 'ohmylms' ) );
 
             $fields[ 'vat_number' ] = array(
                 'type'        => 'text',
@@ -343,11 +343,11 @@ class Checkout {
             // Check if there is an active logged-in user
             if ( ! is_user_logged_in() && ! $this->is_allow_purchase_without_login() ) {
                 $message = __( 'Please log in to purchase.', 'ohmylms' );
-                omlmse_add_notice( $message, 'error', array() );
+                ohmylmse_add_notice( $message, 'error', array() );
                 $this->send_ajax_failure_response();
             }
 
-            do_action( 'creator_lms_before_checkout_process' );
+            do_action( 'ohmylms_before_checkout_process' );
             $posted_data = $this->get_posted_data();
 
             $user_id = null;
@@ -364,7 +364,7 @@ class Checkout {
                 $student = new Student( $user_id );
                 if ( $student->maybe_banned() ) {
                     $message = __( 'Your account has been restricted and is not eligible to make purchases.', 'ohmylms' );
-                    omlmse_add_notice( $message, 'error', array() );
+                    ohmylmse_add_notice( $message, 'error', array() );
                     $this->send_ajax_failure_response();
                 }
             }
@@ -388,14 +388,14 @@ class Checkout {
 
             $student_id = $this->process_student( $posted_data );
 
-            $integrations = get_option( 'creatorlms_integrations', array() );
-            if ( creator_lms_is_pro() && isset( $integrations[ 'gamification' ][ 'is_enable' ] ) && $integrations[ 'gamification' ][ 'is_enable' ] ) {
+            $integrations = get_option( 'ohmylms_integrations', array() );
+            if ( ohmylms_is_pro() && isset( $integrations[ 'gamification' ][ 'is_enable' ] ) && $integrations[ 'gamification' ][ 'is_enable' ] ) {
                 $points = $this->get_total_points( $cart_data );
-                $user_available_point = \OMLMS\Engagement\Point::get_total_points( $student_id );
+                $user_available_point = \OhMyLMS\Engagement\Point::get_total_points( $student_id );
 
                 if ( $maybe_by_point && $points > $user_available_point ) {
                     $message = __( 'You do not have enough points to purchase this course.', 'ohmylms' );
-                    omlmse_add_notice( $message, 'error', array() );
+                    ohmylmse_add_notice( $message, 'error', array() );
                     $this->send_ajax_failure_response();
                 }
             }
@@ -403,16 +403,16 @@ class Checkout {
             foreach ( $errors->errors as $code => $messages ) {
                 $data = $errors->get_error_data( $code );
                 foreach ( $messages as $message ) {
-                    omlmse_add_notice( $message, 'error', $data );
+                    ohmylmse_add_notice( $message, 'error', $data );
                 }
             }
 
-            if ( 0 === omlmse_notice_count( 'error' ) ) {
+            if ( 0 === ohmylmse_notice_count( 'error' ) ) {
                 $order_id = $this->create_order( $posted_data );
                 $order    = ecommerce_get_order( $order_id );
                 if ( ! $order_id ) {
                     $message = __( 'Failed to create order.', 'ohmylms' );
-                    omlmse_add_notice( $message, 'error', array() );
+                    ohmylmse_add_notice( $message, 'error', array() );
                 }
 
                 if ( ! $maybe_by_point && $order->needs_payment() ) {
@@ -439,7 +439,7 @@ class Checkout {
                 }
                 if ( is_wp_error( $result ) ) {
                     $message = __( 'Failed to process order due to payment.', 'ohmylms' );
-                    omlmse_add_notice( $result->get_error_message() ?: $message, 'error', array() );
+                    ohmylmse_add_notice( $result->get_error_message() ?: $message, 'error', array() );
                     wp_trash_post( $order_id );
                     // Clean up failed order
                     $this->send_ajax_failure_response();
@@ -447,7 +447,7 @@ class Checkout {
 
                 if ( is_array( $result ) && isset( $result[ 'result' ] ) && 'failure' === $result[ 'result' ] ) {
                     $message = __( 'Failed to process order due to payment.', 'ohmylms' );
-                    omlmse_add_notice( $result[ 'message' ] ?? $message, 'error', array() );
+                    ohmylmse_add_notice( $result[ 'message' ] ?? $message, 'error', array() );
                     wp_trash_post( $order_id );
                     // Clean up failed order
                     $this->send_ajax_failure_response();
@@ -489,14 +489,14 @@ class Checkout {
 				}
 				
 				if ( $payment_confirmed ) {
-					do_action( 'creator_lms_checkout_after_create_order', $order, $posted_data );
+					do_action( 'ohmylms_checkout_after_create_order', $order, $posted_data );
 				}
 
 				// If payment was successful, and it's a membership, create the subscription
                 // Only for confirmed payments, not for pending/awaiting redirects
                 if ( $payment_confirmed ) {
                     if ( ! empty( $posted_data[ 'membership_id' ] ) && class_exists( 'CodeRex\Ecommerce\SubscriptionManager' ) ) {
-                        $membership = omlms_get_membership( $posted_data[ 'membership_id' ] );
+                        $membership = ohmylms_get_membership( $posted_data[ 'membership_id' ] );
                         if ( $membership && 'one_time' !== $membership->get_subscription_period() ) {
                             $gateway_meta_data = isset( $result[ 'gateway_meta' ] ) && is_array( $result[ 'gateway_meta' ] ) ? $result[ 'gateway_meta' ] : array();
                             $subscription_id = SubscriptionManager::create_subscription( $order, $posted_data[ 'membership_id' ], $gateway_meta_data );
@@ -518,7 +518,7 @@ class Checkout {
                     
                     if ( empty( $existing_subscription_id ) ) {
                         // Fallback: create subscription if not already created
-                        $membership = omlms_get_membership( $posted_data[ 'membership_id' ] );
+                        $membership = ohmylms_get_membership( $posted_data[ 'membership_id' ] );
                         if ( $membership && 'one_time' !== $membership->get_subscription_period() ) {
                             $gateway_meta_data = isset( $result[ 'gateway_meta' ] ) && is_array( $result[ 'gateway_meta' ] ) ? $result[ 'gateway_meta' ] : array();
                             $subscription_id = SubscriptionManager::create_subscription( $order, $posted_data[ 'membership_id' ], $gateway_meta_data );
@@ -536,16 +536,16 @@ class Checkout {
                 $this->set_student_to_order( $order, $student_id );
                 $this->process_enrollment( $order_id, $posted_data );
 
-                if ( creator_lms_is_pro() && $maybe_by_point ) {
+                if ( ohmylms_is_pro() && $maybe_by_point ) {
                     $order->add_order_note( sprintf( __( 'Purchased by bonus point(%1$d PTS)', 'ohmylms' ), $points ) );
-                    \OMLMS\Engagement\Point::deduct_points( $student_id, 'point', $points, 'purchase_course' );
+                    \OhMyLMS\Engagement\Point::deduct_points( $student_id, 'point', $points, 'purchase_course' );
                     update_post_meta( $order_id, '_purchased_by', 'point' );
                     update_post_meta( $order_id, '_purchased_point', $points );
                     $order->set_total( 0 );
                     $order->save();
                 }
                 if ( ! $payment_pending ) {
-                    do_action( 'creator_lms_after_checkout_process', $order );
+                    do_action( 'ohmylms_after_checkout_process', $order );
                 }
                 update_post_meta( $order_id, '_student_ip_address', $user_ip );
                 update_post_meta( $order_id, '_student_user_agent', $user_agent );
@@ -572,9 +572,9 @@ class Checkout {
                     $result = $funnel_result;
                 }
 
-                $result = apply_filters( 'creator_lms_checkout_process_result', $result, $order_id, $posted_data );
+                $result = apply_filters( 'ohmylms_checkout_process_result', $result, $order_id, $posted_data );
                 if ( ! $payment_pending ) {
-                    \omlms_empty_cart();
+                    \ohmylms_empty_cart();
                 }
 
                 // Send JSON response if we have a valid result ( success or redirect )
@@ -585,11 +585,11 @@ class Checkout {
             }
 
             // Only show failure response if we don't have a valid result
-			if ( 0 !== omlmse_notice_count( 'error' ) || ! isset( $has_valid_result ) || ! $has_valid_result ) {
+			if ( 0 !== ohmylmse_notice_count( 'error' ) || ! isset( $has_valid_result ) || ! $has_valid_result ) {
 				$this->send_ajax_failure_response();
 			}
 		} catch ( \Exception $e ) {
-			omlmse_add_notice( $e->getMessage(), 'error' );
+			ohmylmse_add_notice( $e->getMessage(), 'error' );
 			$this->send_ajax_failure_response();
 		}
 	}
@@ -631,7 +631,7 @@ class Checkout {
 		foreach ( $cart_items as $cart_item ) {
 			if ( isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point' ) {
 				if( isset( $cart_item['course_id'] ) ) {
-					$course = omlms_get_course( $cart_item['course_id'] );
+					$course = ohmylms_get_course( $cart_item['course_id'] );
 					if ( $course && $course->get_purchase_point() ) {
 						$total_points += $course->get_purchase_point();
 					}
@@ -651,7 +651,7 @@ class Checkout {
 	 */
 	protected function send_ajax_failure_response() {
 		if ( wp_doing_ajax() ) {
-			$messages = omlmse_print_notices( true );
+			$messages = ohmylmse_print_notices( true );
 			$response = array(
 				'result'   => 'failure',
 				'message' => isset( $messages ) ? $messages : '',
@@ -673,8 +673,8 @@ class Checkout {
 	 */
 	private function maybe_process_funnel( $order_id, $posted_data, $payment_result ) {
 		// Use our FunnelManager class if it exists
-		if ( class_exists( '\OMLMS\Integrations\Funnel\Includes\FunnelManager' ) ) {
-			$funnel_manager = new \OMLMS\Integrations\Funnel\Includes\FunnelManager();
+		if ( class_exists( '\OhMyLMS\Integrations\Funnel\Includes\FunnelManager' ) ) {
+			$funnel_manager = new \OhMyLMS\Integrations\Funnel\Includes\FunnelManager();
 			return $funnel_manager->maybe_process_funnel( $order_id, $posted_data, $payment_result );
 		}
 		return $payment_result;
@@ -687,13 +687,13 @@ class Checkout {
 	 */
 	public function is_admin_allow_to_enroll() {
 		/**
-		 * Retrieves the value of the 'creator_lms_allow_admin_to_enroll' option and applies the 'creator_lms_allow_admin_to_enroll' filter.
+		 * Retrieves the value of the 'ohmylms_allow_admin_to_enroll' option and applies the 'ohmylms_allow_admin_to_enroll' filter.
 		 *
-		 * @return bool Returns true if the 'creator_lms_allow_admin_to_enroll' option is set to 'yes', false otherwise.
+		 * @return bool Returns true if the 'ohmylms_allow_admin_to_enroll' option is set to 'yes', false otherwise.
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_allow_admin_to_enroll', 'yes' === get_option( 'creator_lms_allow_admin_to_enroll' ) );
+		return apply_filters( 'ohmylms_allow_admin_to_enroll', 'yes' === get_option( 'ohmylms_allow_admin_to_enroll' ) );
 	}
 
 	/**
@@ -746,7 +746,7 @@ class Checkout {
 				$response = self::attempt_course_enrollment( $course_id, $order_id );
 
 				if ( $response['status'] == 'error' ) {
-					omlms_add_notice( $response['message'], $response['status'] );
+					ohmylms_add_notice( $response['message'], $response['status'] );
 					return $response;
 				}
 			}
@@ -829,7 +829,7 @@ class Checkout {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_checkout_validation', $data, $errors );
+		do_action( 'ohmylms_after_checkout_validation', $data, $errors );
 	}
 
 
@@ -893,14 +893,14 @@ class Checkout {
 	/**
 	 * Check the items in the cart.
 	 *
-	 * This function triggers the 'creator_lms_check_cart_items' action to allow
+	 * This function triggers the 'ohmylms_check_cart_items' action to allow
 	 * custom validation or processing of cart items.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
 	protected function check_cart_items() {
-		do_action( 'creator_lms_check_cart_items' );
+		do_action( 'ohmylms_check_cart_items' );
 	}
 
 
@@ -968,7 +968,7 @@ class Checkout {
 		);
 
 		if ( ! empty( $_POST['membership_id'] ) ) {
-			$data['membership_id'] = omlms_clean( wp_unslash( $_POST['membership_id'] ) );
+			$data['membership_id'] = ohmylms_clean( wp_unslash( $_POST['membership_id'] ) );
 		}
 
 		foreach ( $this->get_checkout_fields() as $fieldset_key => $fieldset ) {
@@ -976,7 +976,7 @@ class Checkout {
 				if ( ! isset( $_POST[ $field_key ] ) ) {
 					continue;
 				}
-				$data[ $field_key ] = omlms_clean( wp_unslash( $_POST[ $field_key ] ) );
+				$data[ $field_key ] = ohmylms_clean( wp_unslash( $_POST[ $field_key ] ) );
 			}
 		}
 		return $data;
@@ -1046,7 +1046,7 @@ class Checkout {
 				'last_name'     => ! empty( $data['last_name'] ) ? $data['last_name'] : '',
 				'display_name'  => $display_name,
 			);
-			$student_id = creator_lms_create_new_student(
+			$student_id = ohmylms_create_new_student(
 				$data['email'],
 				$username,
 				$password,
@@ -1065,7 +1065,7 @@ class Checkout {
 
 			// Manually trigger WordPress login hooks
 			do_action( 'wp_login', $user->user_login, $user );
-			update_user_meta( $user->ID, '_creatorlms_last_login', current_time( 'mysql' ) );
+			update_user_meta( $user->ID, '_ohmylms_last_login', current_time( 'mysql' ) );
 
 			// Update session.
 			ecommerce()->session->init_session_cookie();
@@ -1073,7 +1073,7 @@ class Checkout {
 			// Send email to student with username and password
 			$to = $data['email'];
 			$subject = __( 'Your account has been created', 'ohmylms' );
-			$profile_url = omlms_get_account_endpoint_url( 'dashboard' );
+			$profile_url = ohmylms_get_account_endpoint_url( 'dashboard' );
 			$student_name = '';
 			if ( $user ) {
 				$student_name = trim( $user->first_name . ' ' . $user->last_name );
@@ -1099,7 +1099,7 @@ class Checkout {
 		}
 
 		if ( $student_id && is_multisite() && is_user_logged_in() && ! is_user_member_of_blog() ) {
-			add_user_to_blog( get_current_blog_id(), $student_id, function_exists( 'creator_lms_get_assignable_student_role' ) ? creator_lms_get_assignable_student_role() : 'subscriber' );
+			add_user_to_blog( get_current_blog_id(), $student_id, function_exists( 'ohmylms_get_assignable_student_role' ) ? ohmylms_get_assignable_student_role() : 'subscriber' );
 		}
 
 		if ( $student_id ) {
@@ -1136,7 +1136,7 @@ class Checkout {
 
 			$student->save();
 
-			update_user_meta( $student_id, '_is_creator_lms_student', 'yes' );
+			update_user_meta( $student_id, '_is_ohmylms_student', 'yes' );
 		}
 		return $student_id;
 	}
@@ -1175,11 +1175,11 @@ class Checkout {
 			}
 
 			$order->set_total( ecommerce()->cart->get_total( 'edit' ) );
-			$order->set_currency( get_omlms_currency() );
+			$order->set_currency( get_ohmylms_currency() );
 			$order->set_payment_method( isset( $available_gateways[ $data['payment_method'] ] ) ? $available_gateways[ $data['payment_method'] ] : $data['payment_method'] );
 			$order->set_cart_hash( $cart_hash );
 			$order->set_student_id( get_current_user_id() );
-			$order->set_order_version(CREATOR_LMS_VERSION);
+			$order->set_order_version(OHMYLMS_VERSION);
 
 			/**
 			 * Fires before the order is created during checkout.
@@ -1189,7 +1189,7 @@ class Checkout {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_checkout_create_order', $order, $data );
+			do_action( 'ohmylms_checkout_create_order', $order, $data );
 			$this->set_data_from_cart( $order );
 			$order_id = $order->save();
 			
@@ -1206,7 +1206,7 @@ class Checkout {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_checkout_order_created', $order );
+			do_action( 'ohmylms_checkout_order_created', $order );
 
 			return $order_id;
 		} catch ( \Exception $e ) {
@@ -1228,8 +1228,8 @@ class Checkout {
 	private function process_enrollment( $order_id, $posted_data ) {
 		
 		global $wpdb;
-		$enrollment_table  = $wpdb->prefix . 'omlms_user_enrollment';
-		$membership_table  = $wpdb->prefix . 'omlms_user_membership';
+		$enrollment_table  = $wpdb->prefix . 'ohmylms_user_enrollment';
+		$membership_table  = $wpdb->prefix . 'ohmylms_user_membership';
 		$student_id        = get_current_user_id();
 		$cart_items        = ecommerce()->cart->get_cart_contents();
 		$order             = ecommerce_get_order( $order_id );
@@ -1258,7 +1258,7 @@ class Checkout {
 				}
 
 				
-				if( creator_lms_is_pro() ){
+				if( ohmylms_is_pro() ){
 					// Check if the record exists
 					$existing_record = $wpdb->get_var(
 						$wpdb->prepare(
@@ -1314,7 +1314,7 @@ class Checkout {
 				if ( $cohort_id ) {
 					$enrollment_data['cohort_id'] = $cohort_id;
 				}
-				$student         = new \OMLMS\Data\Student( get_current_user_id() );
+				$student         = new \OhMyLMS\Data\Student( get_current_user_id() );
 
 				// For a cohort-based enrollment, "already enrolled" is scoped to this
 				// specific batch — students can independently enroll in more than one
@@ -1366,13 +1366,13 @@ class Checkout {
 					}
 
 					if ( 'enrolled' === $enrollment_status ) {
-						do_action( 'creator_lms_after_enrolled_student', $order_id );
+						do_action( 'ohmylms_after_enrolled_student', $order_id );
 					}
 				}
 
 				if ( ! empty( $posted_data['membership_id'] ) ) {
-					$membership = omlms_get_membership( $posted_data['membership_id'] );
-					if ( ! $membership->is_already_purchased() && creator_lms_is_pro() ) {
+					$membership = ohmylms_get_membership( $posted_data['membership_id'] );
+					if ( ! $membership->is_already_purchased() && ohmylms_is_pro() ) {
 						$enrollment_data['membership_id'] 	= $posted_data['membership_id'];
 						$enrollment_data['subscription_id'] = get_post_meta( $order_id, '_subscription_id', true );
 						unset( $enrollment_data['course_id'] );
@@ -1411,7 +1411,7 @@ class Checkout {
 			}
 		}
 
-		do_action( 'creatorlms_after_enrollment_processed', $student_id, $order, $item_id );
+		do_action( 'ohmylms_after_enrollment_processed', $student_id, $order, $item_id );
 	}
 
 
@@ -1464,7 +1464,7 @@ class Checkout {
 						'name'      => $course->get_name(),
 						'course_id' => $course->get_id(),
 						'subtotal'  => apply_filters(
-							'creator_lms_order_item_subtotal',
+							'ohmylms_order_item_subtotal',
 							$course->is_on_sale() && $course->validate_on_sale() ? $course->get_price( 'edit' ) : $course->get_regular_price( 'edit' ),
 							$course,
 							$order
@@ -1512,7 +1512,7 @@ class Checkout {
 		$is_subscription = false;
 		$membership_id = isset( $posted_data['membership_id'] ) ? $posted_data['membership_id'] : 0;
 		if( $membership_id ) {
-			$membership = omlms_get_membership( $membership_id );
+			$membership = ohmylms_get_membership( $membership_id );
 			if( $membership && 'one_time' !== $membership->get_subscription_period() ) {
 				$is_subscription = true;
 			}
@@ -1528,7 +1528,7 @@ class Checkout {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creatorlms_after_order_payment', $order_id, $posted_data, $result );
+		do_action( 'ohmylms_after_order_payment', $order_id, $posted_data, $result );
 
 		return $result;
 	}
@@ -1542,8 +1542,8 @@ class Checkout {
 	 */
 	public static function handle_offline_payment( $order_id ): array {
 		$order = ecommerce()->order( $order_id );
-		$order->update_order_meta( 'omlms_order_payment_method', 'offline_payment' );
-		$order->update_order_meta( 'omlms_order_status', 'pending' );
+		$order->update_order_meta( 'ohmylms_order_payment_method', 'offline_payment' );
+		$order->update_order_meta( 'ohmylms_order_status', 'pending' );
 
 		return array(
 			'status'  => 'success',

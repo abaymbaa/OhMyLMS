@@ -4,11 +4,11 @@
  *
  * Handles video watch progress tracking and persistence.
  *
- * @package OMLMS\VideoProgress
+ * @package OhMyLMS\VideoProgress
  * @since 1.1.0
  */
 
-namespace OMLMS\VideoProgress;
+namespace OhMyLMS\VideoProgress;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -36,15 +36,15 @@ class VideoProgressTracker {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$this->table_name = $wpdb->prefix . 'omlms_video_progress';
+		$this->table_name = $wpdb->prefix . 'ohmylms_video_progress';
 		
 		// Get threshold from settings, default to 90
-		$threshold = (int) get_option( 'creator_lms_video_completion_threshold', 90 );
+		$threshold = (int) get_option( 'ohmylms_video_completion_threshold', 90 );
 		
 		// Ensure threshold is within valid range
 		$threshold = max( 1, min( 100, $threshold ) );
 		
-		$this->completion_threshold = apply_filters( 'creatorlms_video_completion_threshold', $threshold );
+		$this->completion_threshold = apply_filters( 'ohmylms_video_completion_threshold', $threshold );
 	}
 
 	/**
@@ -221,7 +221,7 @@ class VideoProgressTracker {
 	public function is_user_enrolled( $user_id, $course_id ) {
 		global $wpdb;
 
-		$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
+		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$enrollment_table} WHERE user_id = %d AND course_id = %d AND status = %s",
@@ -251,11 +251,11 @@ class VideoProgressTracker {
 		}
 
 		// Use existing lesson completion logic
-		$student = new \OMLMS\Data\Student( $user_id );
+		$student = new \OhMyLMS\Data\Student( $user_id );
 		$result = $student->complete_lesson( $lesson_id, $course_id );
 
 		if ( $result ) {
-			do_action( 'creatorlms_video_lesson_completed', $lesson_id, $course_id, $user_id, $progress );
+			do_action( 'ohmylms_video_lesson_completed', $lesson_id, $course_id, $user_id, $progress );
 		}
 
 		return (bool) $result;

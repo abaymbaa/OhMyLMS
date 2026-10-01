@@ -1,11 +1,11 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Lesson;
-use OMLMS\DataException;
-use OMLMS\Lesson\LessonHelper;
-use OMLMS\Lesson\LessonValidator;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Lesson;
+use OhMyLMS\DataException;
+use OhMyLMS\Lesson\LessonHelper;
+use OhMyLMS\Lesson\LessonValidator;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -148,7 +148,7 @@ class LessonController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_LESSON_CPT,
+			'post_type'           => OHMYLMS_LESSON_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 		);
 
@@ -165,7 +165,7 @@ class LessonController extends RestController {
 			unset( $args['filter'] );
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_lesson_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_lesson_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -229,7 +229,7 @@ class LessonController extends RestController {
 	public function create_item( $request ){
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with object name.
-			return new WP_Error( 'creator_lms_rest_lesson_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Lesson' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_lesson_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Lesson' ), array( 'status' => 400 ) );
 		}
 		try {
 			$lesson_id = $this->save_lesson( $request );
@@ -244,7 +244,7 @@ class LessonController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_lesson', $post, $request, true );
+			do_action( 'ohmylms_rest_insert_lesson', $post, $request, true );
 
 			$request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response( $post, $request );
@@ -269,8 +269,8 @@ class LessonController extends RestController {
 
 		$post_id = (int) $request['id'];
 
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_LESSON_CPT ) {
-			return new WP_Error( 'creator_lms_rest_lesson_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_LESSON_CPT ) {
+			return new WP_Error( 'ohmylms_rest_lesson_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -280,7 +280,7 @@ class LessonController extends RestController {
 			$this->update_post_meta_fields( $post, $request );
 			$request->set_param( 'context', 'edit' );
 			if ( isset( $request['status'] ) ) {
-				$lesson = omlms_get_lesson( $lesson_id );
+				$lesson = ohmylms_get_lesson( $lesson_id );
 				$lesson->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
 				$lesson->save();
 			}
@@ -306,11 +306,11 @@ class LessonController extends RestController {
 		$lesson_ids = $request->get_param( 'lesson_ids' );
 		if ( is_array( $lesson_ids ) ) {
 			foreach ( $lesson_ids as $lesson_id ) {
-				if ( get_post_type( $lesson_id ) !== 'omlms-lesson' ) {
+				if ( get_post_type( $lesson_id ) !== 'ohmylms-lesson' ) {
 					return new \WP_REST_Response( array( 'message' => 'Invalid lesson ID.' ), 400 );
 				}
 				wp_trash_post( $lesson_id );
-				do_action( 'creator_lms_rest_delete_lesson', $lesson_id );
+				do_action( 'ohmylms_rest_delete_lesson', $lesson_id );
 			}
 			return new \WP_REST_Response( array( 'message' => 'Deleted Successfully' ), 200 );
 		}
@@ -331,7 +331,7 @@ class LessonController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$lesson = omlms_get_lesson( $post );
+		$lesson = ohmylms_get_lesson( $post );
 		if ( isset( $request['image_id'] ) && ! empty( $request['image_id'] ) ) {
 			$lesson = $this->set_lesson_cover_image( $lesson, $request['image_id'] );
 		} else {
@@ -363,7 +363,7 @@ class LessonController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_lesson_meta_updated', $lesson );
+		do_action( 'ohmylms_rest_lesson_meta_updated', $lesson );
 
 		return $lesson;
 	}
@@ -382,7 +382,7 @@ class LessonController extends RestController {
 	protected function set_lesson_cover_image( $lesson, $attachment_id ) {
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_lesson_invalid_cover_image_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_lesson_invalid_cover_image_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$lesson->set_cover_image_id( $attachment_id );
@@ -403,7 +403,7 @@ class LessonController extends RestController {
 
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_lesson_invalid_thumbnail_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_lesson_invalid_thumbnail_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$lesson->set_thumbnail_id( $attachment_id );
@@ -423,7 +423,7 @@ class LessonController extends RestController {
 	protected function set_lesson_video_id( $lesson, $attachment_id ) {
 		if ( ! wp_attachment_is( 'video', $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_lesson_invalid_video_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_lesson_invalid_video_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$lesson->set_video_id( $attachment_id );
@@ -443,7 +443,7 @@ class LessonController extends RestController {
 	protected function set_lesson_audio_id( $lesson, $attachment_id ) {
 		if ( ! wp_attachment_is( 'audio', $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_lesson_invalid_audio_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_lesson_invalid_audio_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$lesson->set_audio_id( $attachment_id );
@@ -522,8 +522,8 @@ class LessonController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_LESSON_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_lesson_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_LESSON_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_lesson_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data     = $this->prepare_item_for_response( $post, $request );
@@ -547,25 +547,25 @@ class LessonController extends RestController {
 	public function delete_item( $request ) {
 		$lesson_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 		if ( ! $lesson_id ) {
-			return new WP_Error( 'creator_lms_rest_lesson_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_lesson_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$lesson = omlms_get_lesson( $lesson_id );
+		$lesson = ohmylms_get_lesson( $lesson_id );
 
 		if ( ! ( $lesson instanceof Lesson ) ) {
-			return new WP_Error( 'creator_lms_rest_lesson_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_lesson_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$lesson->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_lesson' action hook.
+		 * Executes the 'ohmylms_rest_delete_lesson' action hook.
 		 * This hook is triggered when a lesson is being deleted via the REST API.
 		 *
 		 * @param array $request The request array.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_lesson', $lesson_id );
+		do_action( 'ohmylms_rest_delete_lesson', $lesson_id );
 
 		$response = array(
 			'id'      => $lesson_id,
@@ -599,9 +599,9 @@ class LessonController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$lesson = omlms_get_lesson( $id );
+			$lesson = ohmylms_get_lesson( $id );
 		} else {
-			$lesson = creator_lms_is_pro() ? new \OMLMS\Data\Lesson() : new Lesson();
+			$lesson = ohmylms_is_pro() ? new \OhMyLMS\Data\Lesson() : new Lesson();
 		}
 
 		if ( isset( $request['name'] ) ) {
@@ -684,7 +684,7 @@ class LessonController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$lesson   = omlms_get_lesson( $post->ID );
+		$lesson   = ohmylms_get_lesson( $post->ID );
 		$data     = $this->get_lesson_data( $lesson, $request );
 		$response = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $lesson, $request ) );
@@ -700,7 +700,7 @@ class LessonController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_lesson', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_lesson', $response, $post, $request );
 	}
 
 
@@ -751,7 +751,7 @@ class LessonController extends RestController {
 				 *
 				 * @param mixed $prepared_args[ $var ] The query_var value.
 				 */
-				$query_args[ $var ] = apply_filters( "creator_lms_rest_query_var-{$var}", $prepared_args[ $var ] );
+				$query_args[ $var ] = apply_filters( "ohmylms_rest_query_var-{$var}", $prepared_args[ $var ] );
 			}
 		}
 
@@ -791,7 +791,7 @@ class LessonController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_LESSON_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_LESSON_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -822,7 +822,7 @@ class LessonController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}

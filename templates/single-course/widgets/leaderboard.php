@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/leaderboard.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 if( !$student ){
     return;
 }
@@ -24,7 +24,7 @@ if( !$maybe_enrolled ){
     return;
 }
 
-if( class_exists( '\OMLMS\Engagement\Leaderboard' ) && !\OMLMS\Engagement\Leaderboard::maybe_enable() ) {
+if( class_exists( '\OhMyLMS\Engagement\Leaderboard' ) && !\OhMyLMS\Engagement\Leaderboard::maybe_enable() ) {
     return;
 }
 
@@ -35,22 +35,22 @@ if ( 'yes' === $leaderboard_disabled ) {
 }
 
 $students = $course->get_students();
-$students = apply_filters( 'creator_lms_leaderboard_students', $students, $course->get_id() );
+$students = apply_filters( 'ohmylms_leaderboard_students', $students, $course->get_id() );
 if( empty($students) || !is_array($students) ){
     return;
 }
 ?>
 
 <!-- course leaderboard widget -->
-<div class="creator-lms-sidebar-widget creator-lms-widget-leaderboard">
+<div class="ohmylms-sidebar-widget ohmylms-widget-leaderboard">
     <h3 class="sidebar-widget-title">
         <?php echo __( 'Leaderboard', 'ohmylms' ); ?>
     </h3>
 
-    <div class="creator-lms-leaderboard-wrapper">
+    <div class="ohmylms-leaderboard-wrapper">
         <?php foreach( $students as $leader ): ?>
-            <div class="creator-lms-leaderboard position-success">
-                <div class="creator-lms-leaderboard-content">
+            <div class="ohmylms-leaderboard position-success">
+                <div class="ohmylms-leaderboard-content">
                     <figure>
                         <img src="<?php echo $leader['profile_image']; ?>" alt="student avater">
                     </figure>
@@ -60,7 +60,7 @@ if( empty($students) || !is_array($students) ){
                     </p>
                 </div>
 
-                <span class="creator-lms-leaderboard-position">
+                <span class="ohmylms-leaderboard-position">
                     <?php echo $leader['position_in_text']; ?>
                 </span>
             </div>

@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * General settings class.
@@ -43,13 +43,13 @@ class General extends Settings {
 
 		$settings = array(
 			array(
-				'id'        => 'creator_lms_navigation_links_section',
+				'id'        => 'ohmylms_navigation_links_section',
 				'type'      => 'title',
 				'title'     => __( 'Navigation Links', 'ohmylms' ),
 				'desc'      => __( 'Configure navigation links for student dashboard, profile, and courses pages. These links will be used globally across all blocks.', 'ohmylms' ),
 			),
 			array(
-				'id'        => 'creator_lms_nav_my_profile_url',
+				'id'        => 'ohmylms_nav_my_profile_url',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
@@ -61,7 +61,7 @@ class General extends Settings {
 				),
 			),
 			array(
-				'id'        => 'creator_lms_nav_my_courses_url',
+				'id'        => 'ohmylms_nav_my_courses_url',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
@@ -73,129 +73,129 @@ class General extends Settings {
 				),
 			),
 			array(
-				'id'   => 'creator_lms_navigation_links_section',
+				'id'   => 'ohmylms_navigation_links_section',
 				'type' => 'sectionend',
 			),
 			array(
-				'id'        => 'creator_lms_course_page_id',
+				'id'        => 'ohmylms_course_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
-							omlms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'myaccount' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'course' ),
 			),
 			array(
-				'id'        => 'creator_lms_profile_page_id',
+				'id'        => 'ohmylms_profile_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'profile' ),
 			),
 			array(
-				'id'        => 'creator_lms_student_dashboard_page_id',
+				'id'        => 'ohmylms_student_dashboard_page_id',
 				'type'      => 'single_select_page_with_search',
-				'default'   => omlms_get_page_id( 'student_dashboard' ),
+				'default'   => ohmylms_get_page_id( 'student_dashboard' ),
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'student_dashboard' ),
 			),
 			array(
-				'id'        => 'creator_lms_student_courses_page_id',
+				'id'        => 'ohmylms_student_courses_page_id',
 				'type'      => 'single_select_page_with_search',
-				'default'   => omlms_get_page_id( 'student_courses' ),
+				'default'   => ohmylms_get_page_id( 'student_courses' ),
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'student_courses' ),
 			),
 			array(
-				'id'        => 'creator_lms_student_profile_page_id',
+				'id'        => 'ohmylms_student_profile_page_id',
 				'type'      => 'single_select_page_with_search',
-				'default'   => omlms_get_page_id( 'student_profile' ),
+				'default'   => ohmylms_get_page_id( 'student_profile' ),
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'student_profile' ),
 			),
 			array(
-				'id'        => 'creator_lms_checkout_page_id',
+				'id'        => 'ohmylms_checkout_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'course' ),
-							omlms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'course' ),
+							ohmylms_get_page_id( 'myaccount' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'checkout' ),
 			),
 			array(
-				'id'        => 'creator_lms_thank_you_page_id',
+				'id'        => 'ohmylms_thank_you_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'course' ),
-							omlms_get_page_id( 'myaccount' ),
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'course' ),
+							ohmylms_get_page_id( 'myaccount' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'thank_you' ),
 			),
 			array(
-				'id'        => 'creator_lms_terms_page_id',
+				'id'        => 'ohmylms_terms_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'terms' ),
 			),
 			array(
-				'id'        => 'creator_lms_privacy_policy_page_id',
+				'id'        => 'ohmylms_privacy_policy_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'privacy_policy' ),
 			),
 			array(
-				'id'        => 'creator_lms_registration_page_id',
+				'id'        => 'ohmylms_registration_page_id',
 				'type'      => 'single_select_page_with_search',
 				'default'   => '',
 				'args'      => array(
 					'exclude' =>
 						array(
-							omlms_get_page_id( 'checkout' ),
+							ohmylms_get_page_id( 'checkout' ),
 						),
 				),
 				'meta_data' => $this->get_page_title( 'registration' ),
@@ -214,7 +214,7 @@ class General extends Settings {
 	 */
 	private function get_page_title( $page_type ) {
 		global $wpdb;
-		$page_id = omlms_get_page_id( $page_type );
+		$page_id = ohmylms_get_page_id( $page_type );
 
 		if ( ! $page_id ) {
 			return '';

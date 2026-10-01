@@ -4,10 +4,10 @@
  * Get lesson object
  *
  * @param $lesson_id
- * @return bool|\OMLMS\Data\Lesson
+ * @return bool|\OhMyLMS\Data\Lesson
  * @throws Exception
  * @since 1.0.0
  */
-function omlms_get_lesson( $lesson_id ) {
-	return OMLMS()->lesson_factory->get_lesson( $lesson_id );
+function ohmylms_get_lesson( $lesson_id ) {
+	return ohmylms()->lesson_factory->get_lesson( $lesson_id );
 }

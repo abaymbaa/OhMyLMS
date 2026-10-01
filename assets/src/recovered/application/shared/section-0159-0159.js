@@ -49,7 +49,7 @@ var B3 = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, p(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/levels",
+                path: "/ohmylms/v1/engagement/levels",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -82,7 +82,7 @@ var B3 = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, p(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/levels",
+                path: "/ohmylms/v1/engagement/levels",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -249,9 +249,7 @@ var B3 = function (e) {
     isBusy: m
   }, null != t && t.slug ? (0, b.__)("Update", "ohmylms") : (0, b.__)("Create", "ohmylms"))))));
 };
-
 const L3 = (0, g.memo)(B3);
-
 function V3() {
   var e,
     t,
@@ -338,7 +336,6 @@ function V3() {
     };
   })();
 }
-
 function H3(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -360,7 +357,6 @@ function H3(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, H3(e, t, n, r);
 }
-
 function G3(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -370,7 +366,6 @@ function G3(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function U3(e) {
   return function () {
     var t = this,
@@ -387,7 +382,6 @@ function U3(e) {
     });
   };
 }
-
 function q3(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -421,7 +415,6 @@ function q3(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Y3(e, t) {
   if (e) {
     if ("string" == typeof e) return Q3(e, t);
@@ -429,13 +422,11 @@ function Y3(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Q3(e, t) : void 0;
   }
 }
-
 function Q3(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Z3 = function (e) {
   var t = e.setLevelList,
     n = q3((0, g.useState)([]), 2),
@@ -541,7 +532,7 @@ var Z3 = function (e) {
               return e.p = 0, c(!0), t = r.filter(function (e) {
                 return e.slug !== h;
               }), e.n = 1, l()({
-                path: "/creator-lms/v1/engagement/levels",
+                path: "/ohmylms/v1/engagement/levels",
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json"
@@ -571,7 +562,7 @@ var Z3 = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, c(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/levels"
+                path: "ohmylms/v1/engagement/levels"
               });
             case 1:
               n = e.v, a(n), t(n), e.n = 3;
@@ -675,9 +666,7 @@ var Z3 = function (e) {
     isDelete: !0
   }));
 };
-
 const $3 = (0, g.memo)(Z3);
-
 function K3(e) {
   return K3 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -685,7 +674,6 @@ function K3(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, K3(e);
 }
-
 function J3(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -696,7 +684,6 @@ function J3(e, t) {
   }
   return n;
 }
-
 function X3(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -708,7 +695,6 @@ function X3(e) {
   }
   return e;
 }
-
 function e5(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -729,7 +715,6 @@ function e5(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function t5() {
   var e,
     t,
@@ -816,7 +801,6 @@ function t5() {
     };
   })();
 }
-
 function n5(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -838,7 +822,6 @@ function n5(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, n5(e, t, n, r);
 }
-
 function r5(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -848,7 +831,6 @@ function r5(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function a5(e) {
   return function () {
     var t = this,
@@ -865,7 +847,6 @@ function a5(e) {
     });
   };
 }
-
 function o5(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -905,15 +886,13 @@ function o5(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function i5(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var l5 = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = o5((0, g.useState)({
       enable: !1,
@@ -960,7 +939,7 @@ var l5 = function () {
           for (;;) switch (e.n) {
             case 0:
               return h(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/settings/level"
+                path: "ohmylms/v1/engagement/settings/level"
               });
             case 1:
               t = e.v, a(t || r), h(!1);
@@ -973,7 +952,7 @@ var l5 = function () {
         return e.apply(this, arguments);
       };
     }();
-    e && t();
+    t();
   }, []), (0, g.useEffect)(function () {
     !v && m && s(p, m);
   }, [m]);
@@ -983,14 +962,14 @@ var l5 = function () {
       return t5().w(function (n) {
         for (;;) switch (n.p = n.n) {
           case 0:
-            if (e) {
+            {
               n.n = 1;
               break;
             }
             return n.a(2);
           case 1:
             return t.setLoadingSetting(!0), E(!0), n.p = 2, a = X3({}, r), 0 < i.length && (a.levels = i), n.n = 3, l()({
-              path: "/creator-lms/v1/engagement/settings/level",
+              path: "/ohmylms/v1/engagement/settings/level",
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -1023,9 +1002,7 @@ var l5 = function () {
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     rows: 15
-  }))) : React.createElement(React.Fragment, null, d, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Level is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms")
-  }), React.createElement(I.CardWP, {
+  }))) : React.createElement(React.Fragment, null, d, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
   }, React.createElement(I.SpacerWP, {
@@ -1054,9 +1031,7 @@ var l5 = function () {
     onClose: x
   })));
 };
-
 const c5 = (0, g.memo)(l5);
-
 function u5(e) {
   return u5 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;

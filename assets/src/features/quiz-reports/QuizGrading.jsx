@@ -25,7 +25,7 @@ export function createQuizGrading(readRuntime) {
       v: RouterLinks,
     } = readRuntime();
     var e, t, n, r, a, o, i, c, u, s, d;
-    useAdminScreen('creator-lms', 'quizzes');
+    useAdminScreen('ohmylms', 'quizzes');
     var m = L$((0, ReactHooks.useState)([]), 2),
       attempt = m[0],
       setAttempt = m[1],
@@ -50,9 +50,7 @@ export function createQuizGrading(readRuntime) {
                         setLoading(!0),
                         (e.n = 1),
                         ApiFetchModule()({
-                          path: '/creator-lms/v1/quiz/'
-                            .concat(quizId, '/report/')
-                            .concat(attemptId),
+                          path: '/ohmylms/v1/quiz/'.concat(quizId, '/report/').concat(attemptId),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -104,9 +102,7 @@ export function createQuizGrading(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         ApiFetchModule()({
-                          path: '/creator-lms/v1/quiz/'
-                            .concat(quizId, '/report/')
-                            .concat(attemptId),
+                          path: '/ohmylms/v1/quiz/'.concat(quizId, '/report/').concat(attemptId),
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -137,7 +133,7 @@ export function createQuizGrading(readRuntime) {
       })();
     return (
       <React.Fragment>
-        <Controls.ContainerWP className={'omlms-quiz-report-details'}>
+        <Controls.ContainerWP className={'ohmylms-quiz-report-details'}>
           <Controls.SpacerWP marginY={5}>
             <Controls.FlexWP gap={3} align={'center'} justify={'space-between'}>
               <Controls.FlexItemWP>
@@ -237,7 +233,7 @@ export function createQuizGrading(readRuntime) {
               </Controls.ButtonWP>
             </Controls.FlexWP>
             <Controls.SpacerWP marginBottom={10} />
-            <div className={'omlms-quiz-report-content-wrapper'}>
+            <div className={'ohmylms-quiz-report-content-wrapper'}>
               {loading ? (
                 <Controls.SkeletonWP active={!0} rows={10} />
               ) : (

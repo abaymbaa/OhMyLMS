@@ -10,11 +10,11 @@
  */
 function ecommerce_get_coupon_id_by_code( $code, $exclude = 0 ) {
 	$data_store = \CodeRex\Ecommerce\DataStores::load( 'coupon' );
-	$ids        = wp_cache_get( 'omlmse_coupon_id_from_code_' . $code, 'coupons' );
+	$ids        = wp_cache_get( 'ohmylmse_coupon_id_from_code_' . $code, 'coupons' );
 	if ( false === $ids ) {
 		$ids = $data_store->get_ids_by_code( $code );
 		if ( $ids ) {
-			wp_cache_set( 'omlmse_coupon_id_from_code_' . $code, $ids, 'coupons' );
+			wp_cache_set( 'ohmylmse_coupon_id_from_code_' . $code, $ids, 'coupons' );
 		}
 	}
 

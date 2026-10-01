@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Question;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Question;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * Class QuestionStore
  * Handles CRUD operations for Question data.
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class QuestionStore extends DataStore {
@@ -38,16 +38,16 @@ class QuestionStore extends DataStore {
 		 * @param string $question question object
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_creating_new_question', $question );
+		do_action( 'ohmylms_before_creating_new_question', $question );
 
 		$question_id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_question_data', // Custom filter hook name
+				'ohmylms_new_question_data', // Custom filter hook name
 				array(
 					'post_title'    => $question->get_name() ? $question->get_name() : __( 'Untitled', 'ohmylms' ),
 					'post_content'  => $question->get_description(),
 					'post_author'   => get_current_user_id(),
-					'post_type'     => CREATOR_LMS_QUESTION_CPT,
+					'post_type'     => OHMYLMS_QUESTION_CPT,
 					'post_status'   => 'publish',
 					'post_name'     => $question->get_slug( 'edit' ),
 					'post_date'     => gmdate( 'Y-m-d H:i:s', $question->get_date_created( 'edit' )->getOffsetTimestamp() ),
@@ -67,13 +67,13 @@ class QuestionStore extends DataStore {
 			 * @param string $question question object
 			 * @since 1.0.0
 			 */
-			do_action( 'omlms_after_creating_new_question', $question );
+			do_action( 'ohmylms_after_creating_new_question', $question );
 		}
 	}
 
 	public function read( &$question ) {
 		$post_object = get_post( $question->get_id() );
-		if ( ! $question->get_id() || ! $post_object || CREATOR_LMS_QUESTION_CPT !== $post_object->post_type ) {
+		if ( ! $question->get_id() || ! $post_object || OHMYLMS_QUESTION_CPT !== $post_object->post_type ) {
 			return ( __( 'Invalid Question.', 'ohmylms' ) );
 		}
 
@@ -105,7 +105,7 @@ class QuestionStore extends DataStore {
 		 * @param Question $question
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_updating_question', $question );
+		do_action( 'ohmylms_before_updating_question', $question );
 
 		$post_data = array(
 			'post_content' => $question->get_description( 'edit' ),
@@ -113,7 +113,7 @@ class QuestionStore extends DataStore {
 			'post_title'   => $question->get_name( 'edit' ),
 			'post_status'  => $question->get_status( 'edit' ) ? $question->get_status( 'edit' ) : 'publish',
 			'post_name'    => $question->get_slug( 'edit' ),
-			'post_type'    => CREATOR_LMS_QUESTION_CPT,
+			'post_type'    => OHMYLMS_QUESTION_CPT,
 		);
 		if ( $question->get_date_created( 'edit' ) ) {
 			$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $question->get_date_created( 'edit' )->getOffsetTimestamp() );
@@ -133,7 +133,7 @@ class QuestionStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_updating_question', $question->get_id(), $question );
+		do_action( 'ohmylms_after_updating_question', $question->get_id(), $question );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class QuestionStore extends DataStore {
 		 * @param Question $question
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_question_delete', $question );
+		do_action( 'ohmylms_before_question_delete', $question );
 
 		wp_delete_post( $question->get_id(), true );
 
@@ -161,7 +161,7 @@ class QuestionStore extends DataStore {
 		 * @param Question $question
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_question_delete', $question );
+		do_action( 'ohmylms_after_question_delete', $question );
 
 		return array(
 			'status'  => 'success',
@@ -197,7 +197,7 @@ class QuestionStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_lesson_meta_updated', $question );
+		do_action( 'ohmylms_lesson_meta_updated', $question );
 	}
 
 	/**
@@ -207,7 +207,7 @@ class QuestionStore extends DataStore {
 	 */
 	protected function question_meta_key() {
 		return apply_filters(
-			'creator_lms_question_meta_key_to_props',
+			'ohmylms_question_meta_key_to_props',
 			array(
 				'_question_settings' => 'settings',
 				'_thumbnail_id'      => 'thumbnail_id',
@@ -221,8 +221,8 @@ class QuestionStore extends DataStore {
 	public function get_questions( $question ) {
 		global $wpdb;
 
-		$answers_table = $wpdb->prefix . 'omlms_question_answers';
-		$meta_table    = $wpdb->prefix . 'omlms_question_answermeta';
+		$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
+		$meta_table    = $wpdb->prefix . 'ohmylms_question_answermeta';
 		$question_id   = $question->get_id();
 
 		$results = $wpdb->get_results(
@@ -265,7 +265,7 @@ class QuestionStore extends DataStore {
 
 	public function save_attempt_answer( $question, $student_id, $data ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_quiz_attempts_answers';
+		$table_name = $wpdb->prefix . 'ohmylms_quiz_attempts_answers';
 		foreach ( $data as $key => $value ) {
 			if ( is_array( $value ) ) {
 				$data[ $key ] = maybe_serialize( $value );
@@ -276,14 +276,14 @@ class QuestionStore extends DataStore {
 
 	public function save_quiz_answer( $question, $questions, $question_id ) {
 
-		$question_data    = omlms_get_question( $question_id );
+		$question_data    = ohmylms_get_question( $question_id );
 		$all_ready_answer = $this->get_questions( $question_data );
 		$answers          = ! empty( $questions['questions'] ) ? $questions['questions'] : array();
 		if ( empty( $answers ) ) {
 			return;
 		}
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_question_answers';
+		$table_name = $wpdb->prefix . 'ohmylms_question_answers';
 
 		$existing_ids = array_column( $all_ready_answer, 'id' );
 		$new_ids      = array_column( $answers, 'id' );

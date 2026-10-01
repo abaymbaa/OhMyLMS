@@ -59,7 +59,7 @@ export function createAiModelSettings(readRuntime) {
                       (e.p = 0),
                       (e.n = 1),
                       l()({
-                        path: '/creatorlms/v1/ai/settings/credentials',
+                        path: '/ohmylms/v1/ai/settings/credentials',
                         method: 'GET',
                       })
                     );
@@ -177,7 +177,7 @@ export function createAiModelSettings(readRuntime) {
                         (e.p = 2),
                         (e.n = 3),
                         l()({
-                          path: '/creatorlms/v1/ai/settings/credentials',
+                          path: '/ohmylms/v1/ai/settings/credentials',
                           method: 'POST',
                           data: a,
                         })

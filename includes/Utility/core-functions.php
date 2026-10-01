@@ -11,15 +11,15 @@ use function CodeRex\Ecommerce\ecommerce;
  * @param string        $default_path
  * @since 1.0.0
  */
-function omlms_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
+function ohmylms_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
 	if ( false === strpos( $template_name, '.php' ) ) {
 		$template_name .= '.php';
 	}
 
-	$template = omlms_locate_template( $template_name, $template_path, $default_path );
+	$template = ohmylms_locate_template( $template_name, $template_path, $default_path );
 
 	// Allow 3rd party plugin filter template file from their plugin.
-	$filter_template = apply_filters( 'creatorlms_get_template', $template, $template_name, $args, $template_path, $default_path );
+	$filter_template = apply_filters( 'ohmylms_get_template', $template, $template_name, $args, $template_path, $default_path );
 
 	if ( $filter_template !== $template ) {
 		if ( ! file_exists( $filter_template ) ) {
@@ -41,7 +41,7 @@ function omlms_get_template( $template_name, $args = array(), $template_path = '
 		if ( isset( $args['action_args'] ) ) {
 			_doing_it_wrong(
 				__FUNCTION__,
-				__( 'action_args should not be overwritten when calling omlms_get_template.', 'ohmylms' ),
+				__( 'action_args should not be overwritten when calling ohmylms_get_template.', 'ohmylms' ),
 				'1.0.0'
 			);
 			unset( $args['action_args'] );
@@ -49,11 +49,11 @@ function omlms_get_template( $template_name, $args = array(), $template_path = '
 		extract( $args ); // @codingStandardsIgnoreLine
 	}
 
-	do_action( 'creator_lms_before_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
+	do_action( 'ohmylms_before_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
 
 	include $action_args['located'];
 
-	do_action( 'creator_lms_after_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
+	do_action( 'ohmylms_after_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
 }
 
 
@@ -66,13 +66,13 @@ function omlms_get_template( $template_name, $args = array(), $template_path = '
  * @return mixed|void
  * @since 1.0.0
  */
-function omlms_locate_template( $template_name, $template_path = '', $default_path = '' ) {
+function ohmylms_locate_template( $template_name, $template_path = '', $default_path = '' ) {
 	if ( ! $template_path ) {
-		$template_path = apply_filters( 'creator_lms_template_path', 'creator-lms/' );
+		$template_path = apply_filters( 'ohmylms_template_path', 'ohmylms/' );
 	}
 
 	if ( ! $default_path ) {
-		$default_path = apply_filters( 'creator_lms_template_path', CREATOR_LMS_PATH ) . '/templates/';
+		$default_path = apply_filters( 'ohmylms_template_path', OHMYLMS_PATH ) . '/templates/';
 	}
 
 	if ( empty( $template ) ) {
@@ -89,7 +89,7 @@ function omlms_locate_template( $template_name, $template_path = '', $default_pa
 	}
 
 	// Return what we found.
-	return apply_filters( 'creator_lms_locate_template', $template, $template_name, $template_path );
+	return apply_filters( 'ohmylms_locate_template', $template, $template_name, $template_path );
 }
 
 
@@ -101,21 +101,21 @@ function omlms_locate_template( $template_name, $template_path = '', $default_pa
  * @param array $atts Variables to pass to the template
  * @since 1.0.0
  */
-function omlms_get_template_part( $slug, $name = '', $atts = null ) {
+function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
 	if ( $name ) {
 		$template = locate_template(
 			array(
 				"{$slug}-{$name}.php",
-				omlms_template_path() . "{$slug}-{$name}.php",
+				ohmylms_template_path() . "{$slug}-{$name}.php",
 			)
 		);
 		if ( ! $template ) {
-			$fallback = CREATOR_LMS_PATH . "/templates/{$slug}-{$name}.php";
+			$fallback = OHMYLMS_PATH . "/templates/{$slug}-{$name}.php";
 			$template = file_exists( $fallback ) ? $fallback : '';
 		}
 	}
 
-	$template = apply_filters( 'omlms_get_template_part', $template, $slug, $name );
+	$template = apply_filters( 'ohmylms_get_template_part', $template, $slug, $name );
 
 	if ( $template ) {
 		// Extract variables to make them available in the template
@@ -138,7 +138,7 @@ function omlms_get_template_part( $slug, $name = '', $atts = null ) {
  * @param bool  $httponly
  * @since 1.0.0
  */
-function omlms_setcookie( $name, $value, $expire = 0, $secure = false, $httponly = false ) {
+function ohmylms_setcookie( $name, $value, $expire = 0, $secure = false, $httponly = false ) {
 	if ( ! headers_sent() ) {
 		$options = array(
 			'expires'  => $expire,
@@ -158,7 +158,7 @@ function omlms_setcookie( $name, $value, $expire = 0, $secure = false, $httponly
  * @since  1.0.0
  * @return bool
  */
-function omlms_site_is_https() {
+function ohmylms_site_is_https() {
 	return false !== strstr( get_option( 'home' ), 'https:' );
 }
 
@@ -172,9 +172,9 @@ function omlms_site_is_https() {
  * @return string
  * @since 1.0.0
  */
-function omlms_help_tip( $tip ) {
+function ohmylms_help_tip( $tip ) {
 	$sanitized_tip = esc_attr( $tip );
-	return apply_filters( 'creator_lms_help_tip', '<span class="omlms-help-tip" tabindex="0" aria-label="' . $sanitized_tip . '" data-tip="' . $sanitized_tip . '"></span>', $sanitized_tip, $tip );
+	return apply_filters( 'ohmylms_help_tip', '<span class="ohmylms-help-tip" tabindex="0" aria-label="' . $sanitized_tip . '" data-tip="' . $sanitized_tip . '"></span>', $sanitized_tip, $tip );
 }
 
 
@@ -183,8 +183,8 @@ function omlms_help_tip( $tip ) {
  * @return mixed|void
  * @since 1.0.0
  */
-function omlms_get_rounding_precision() {
-	$precision = omlms_get_price_decimals() + 2;
+function ohmylms_get_rounding_precision() {
+	$precision = ohmylms_get_price_decimals() + 2;
 	if ( $precision < absint( 6 ) ) {
 		$precision = absint( 6 );
 	}
@@ -199,8 +199,8 @@ function omlms_get_rounding_precision() {
  * @return mixed|null
  * @since 1.0.0
  */
-function omlms_template_path() {
-	return apply_filters( 'creator_lms_template_path', 'creator-lms/' );
+function ohmylms_template_path() {
+	return apply_filters( 'ohmylms_template_path', 'ohmylms/' );
 }
 
 
@@ -210,12 +210,12 @@ function omlms_template_path() {
  * @return array
  * @since 1.0.0
  */
-function omlms_get_permalink_structure() {
-	$saved_permalinks = (array) get_option( 'creator_lms_permalink', array() );
+function ohmylms_get_permalink_structure() {
+	$saved_permalinks = (array) get_option( 'ohmylms_permalink', array() );
 	$permalinks       = wp_parse_args(
 		array_filter( $saved_permalinks ),
 		array(
-			'course_base'     => _x( 'omlms-courses', 'slug', 'ohmylms' ),
+			'course_base'     => _x( 'ohmylms-courses', 'slug', 'ohmylms' ),
 			'lesson_base'     => _x( 'lessons', 'slug', 'ohmylms' ),
 			'category_base'   => _x( 'course-category', 'slug', 'ohmylms' ),
 			'tag_base'        => _x( 'course-tag', 'slug', 'ohmylms' ),
@@ -238,8 +238,8 @@ function omlms_get_permalink_structure() {
  *
  * @return string
  */
-function get_omlms_currency() {
-	return apply_filters( 'creator_lms_currency', get_option( 'creator_lms_currency', 'USD' ) );
+function get_ohmylms_currency() {
+	return apply_filters( 'ohmylms_currency', get_option( 'ohmylms_currency', 'USD' ) );
 }
 
 
@@ -249,8 +249,8 @@ function get_omlms_currency() {
  * @return string
  * @since 1.0.0
  */
-function get_omlms_currency_position() {
-	return apply_filters( 'creator_lms_currency_pos', get_option( 'creator_lms_currency_pos', 'left' ) );
+function get_ohmylms_currency_position() {
+	return apply_filters( 'ohmylms_currency_pos', get_option( 'ohmylms_currency_pos', 'left' ) );
 }
 
 /**
@@ -260,13 +260,13 @@ function get_omlms_currency_position() {
  *
  * @return array
  */
-function get_omlms_currencies() {
+function get_ohmylms_currencies() {
 	static $currencies;
 
 	if ( ! isset( $currencies ) ) {
 		$currencies = array_unique(
 			apply_filters(
-				'creator_lms_currencies',
+				'ohmylms_currencies',
 				array(
 					// Active currencies only
 					'USD' => __( 'United States (US) dollar', 'ohmylms' ),
@@ -450,10 +450,10 @@ function get_omlms_currencies() {
  * @since 4.1.0
  * @return array
  */
-function get_omlms_currency_symbols() {
+function get_ohmylms_currency_symbols() {
 
 	$symbols = apply_filters(
-		'creator_lms_currency_symbols',
+		'ohmylms_currency_symbols',
 		array(
 			'AED' => '&#x62f;.&#x625;',
 			'AFN' => '&#x60b;',
@@ -634,19 +634,19 @@ function get_omlms_currency_symbols() {
  * @param string $currency Currency. (default: '').
  * @return string
  */
-function get_omlms_currency_symbol( $currency = '' ) {
+function get_ohmylms_currency_symbol( $currency = '' ) {
 	if ( ! $currency ) {
-		$currency = get_omlms_currency();
+		$currency = get_ohmylms_currency();
 	}
 
-	$symbols = get_omlms_currency_symbols();
+	$symbols = get_ohmylms_currency_symbols();
 
 	$currency_symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : '';
 
-	return apply_filters( 'creator_lms_currency_symbol', $currency_symbol, $currency );
+	return apply_filters( 'ohmylms_currency_symbol', $currency_symbol, $currency );
 }
 
-function omlms_decode_unicode_sequences( $str ) {
+function ohmylms_decode_unicode_sequences( $str ) {
 	return preg_replace_callback(
 		'/\\\\u([0-9a-fA-F]{4})/',
 		function ( $matches ) {
@@ -696,8 +696,8 @@ function if_theme_support_available() {
 }
 
 
-function creator_lms_placeholder_img() {
-	$placeholder_img = apply_filters( 'creator_lms_placeholder_img', CREATOR_LMS_URL . '/assets/images/course-placeholder-image.svg' );
+function ohmylms_placeholder_img() {
+	$placeholder_img = apply_filters( 'ohmylms_placeholder_img', OHMYLMS_URL . '/assets/images/course-placeholder-image.svg' );
 	return $placeholder_img;
 }
 
@@ -708,11 +708,11 @@ function creator_lms_placeholder_img() {
  * @return string The checkout URL.
  * @since 1.0.0
  */
-function creator_lms_get_checkout_url() {
-	$page_id      = get_option( 'creator_lms_checkout_page_id' );
+function ohmylms_get_checkout_url() {
+	$page_id      = get_option( 'ohmylms_checkout_page_id' );
 	$checkout_url = 0 < $page_id ? get_permalink( $page_id ) : '';
 
-	return apply_filters( 'creator_lms_get_checkout_url', $checkout_url );
+	return apply_filters( 'ohmylms_get_checkout_url', $checkout_url );
 }
 
 /**
@@ -722,7 +722,7 @@ function creator_lms_get_checkout_url() {
  * @return string The formatted duration.
  * @since 1.0.0
  */
-function creator_lms_format_duration( $duration ) {
+function ohmylms_format_duration( $duration ) {
 	$formatted_duration = '';
 	if ( isset( $duration['hour'] ) ) {
 		$formatted_duration .= "{$duration['hour']}hr ";
@@ -734,35 +734,35 @@ function creator_lms_format_duration( $duration ) {
 }
 
 
-function creator_lms_get_membership_url() {
-	$page_id        = get_option( 'creator_lms_membership_page_id' );
+function ohmylms_get_membership_url() {
+	$page_id        = get_option( 'ohmylms_membership_page_id' );
 	$membership_url = 0 < $page_id ? get_permalink( $page_id ) : '';
 
-	return apply_filters( 'omlms_get_membership_url', $membership_url );
+	return apply_filters( 'ohmylms_get_membership_url', $membership_url );
 }
 
 /**
- * Get the WordPress role slug used for CreatorLMS students.
+ * Get the WordPress role slug used for OhMyLMS students.
  *
- * Other CreatorLMS add-ons (Pro, Community) should always read the role
+ * Other OhMyLMS add-ons (Pro, Community) should always read the role
  * through this function (guarded with function_exists()) instead of
- * hardcoding 'omlms_student', so they keep working with older or newer
+ * hardcoding 'ohmylms_student', so they keep working with older or newer
  * versions of this plugin without a fatal error.
  *
  * @return string
  * @since 1.2.12
  */
-if ( ! function_exists( 'creator_lms_get_student_role' ) ) {
-	function creator_lms_get_student_role() {
-		$role = apply_filters( 'creator_lms_student_role', 'omlms_student' );
-		return is_string( $role ) && '' !== $role ? $role : 'omlms_student';
+if ( ! function_exists( 'ohmylms_get_student_role' ) ) {
+	function ohmylms_get_student_role() {
+		$role = apply_filters( 'ohmylms_student_role', 'ohmylms_student' );
+		return is_string( $role ) && '' !== $role ? $role : 'ohmylms_student';
 	}
 }
 
 /**
  * Get the student role slug that is safe to assign to a user right now.
  *
- * Falls back to 'subscriber' while 'omlms_student' is not yet registered
+ * Falls back to 'subscriber' while 'ohmylms_student' is not yet registered
  * (plugin files updated but the upgrade routine hasn't run — e.g. an
  * auto-update with no wp-admin visit yet). Assigning an unregistered role
  * would silently leave the user with no effective role and no capabilities.
@@ -770,18 +770,14 @@ if ( ! function_exists( 'creator_lms_get_student_role' ) ) {
  * @return string
  * @since 1.2.12
  */
-if ( ! function_exists( 'creator_lms_get_assignable_student_role' ) ) {
-	function creator_lms_get_assignable_student_role() {
-		$role = creator_lms_get_student_role();
+if ( ! function_exists( 'ohmylms_get_assignable_student_role' ) ) {
+	function ohmylms_get_assignable_student_role() {
+		$role = ohmylms_get_student_role();
 		return get_role( $role ) ? $role : 'subscriber';
 	}
 }
 
-function creator_lms_is_pro() {
-	return true;
-}
-
-function creator_lms_is_pro_license() {
+function ohmylms_is_pro() {
 	return true;
 }
 
@@ -791,18 +787,18 @@ function creator_lms_is_pro_license() {
  * @return bool
  * @since 1.0.0
  */
-function creator_lms_is_funnel_enabled() {
-	return apply_filters( 'creatorlms_should_show_funnel', false );
+function ohmylms_is_funnel_enabled() {
+	return apply_filters( 'ohmylms_should_show_funnel', false );
 }
 
-function creator_lms_modules() {
+function ohmylms_modules() {
 	$modules = array(
 		'course',
 		'chapter',
 		'lesson',
 		'quiz',
 	);
-	return apply_filters( 'creator_lms_modules', $modules );
+	return apply_filters( 'ohmylms_modules', $modules );
 }
 
 
@@ -812,7 +808,7 @@ function creator_lms_modules() {
  * @return array The list of countries.
  * @since 1.0.0
  */
-function creator_lms_get_countries() {
+function ohmylms_get_countries() {
 	return array(
 		array(
 			'code'  => 'AF',
@@ -1823,8 +1819,8 @@ function creator_lms_get_countries() {
  * @return array
  * @since 1.0.0
  */
-function creator_lms_get_country_name_by_code( $code ) {
-	$countries = creator_lms_get_countries();
+function ohmylms_get_country_name_by_code( $code ) {
+	$countries = ohmylms_get_countries();
 	if ( empty( $countries ) ) {
 		return '';
 	}
@@ -1847,7 +1843,7 @@ function creator_lms_get_country_name_by_code( $code ) {
  * @return string The RGB representation of the given hex color code,
  *                in the format "R, G, B".
  */
-function creator_lms_hex_to_rgb( $hex ) {
+function ohmylms_hex_to_rgb( $hex ) {
 	$hex = str_replace( '#', '', $hex );
 
 	if ( strlen( $hex ) === 3 ) {
@@ -1869,8 +1865,8 @@ function creator_lms_hex_to_rgb( $hex ) {
  * @return string The URL to the dashboard page.
  * @since 1.0.0
  */
-function creatorlms_get_dashboard_url() {
-	return omlms_get_page_url('profile');
+function ohmylms_get_dashboard_url() {
+	return ohmylms_get_page_url('profile');
 }
 
 
@@ -1881,10 +1877,10 @@ function creatorlms_get_dashboard_url() {
  * @return bool True if guest purchases are allowed, false otherwise.
  * @since 1.0.0
  */
-function creatorlms_is_guest_purchase_enabled() {
-	$option  = get_option( 'creator_lms_allow_purchase_without_login', 'yes' );
+function ohmylms_is_guest_purchase_enabled() {
+	$option  = get_option( 'ohmylms_allow_purchase_without_login', 'yes' );
 	$default = 'yes' === $option;
-	return apply_filters( 'creator_lms_allow_purchase_without_login', $default );
+	return apply_filters( 'ohmylms_allow_purchase_without_login', $default );
 }
 
 /**
@@ -1893,9 +1889,9 @@ function creatorlms_is_guest_purchase_enabled() {
  * @return array
  * @since 1.0.0
  */
-function creatorlms_get_payment_gateways_settings() {
+function ohmylms_get_payment_gateways_settings() {
 	$payment_gateways = ecommerce()->gateways()->get_payment_gateway_settings();
-	return apply_filters( 'creatorlms_payment_gateways_settings', $payment_gateways, $payment_gateways );
+	return apply_filters( 'ohmylms_payment_gateways_settings', $payment_gateways, $payment_gateways );
 }
 
 /**
@@ -1907,12 +1903,12 @@ function creatorlms_get_payment_gateways_settings() {
  * @return object The content object.
  * @since 1.0.0
  */
-function creatorlms_get_content_object( $content_type, $content_id ) {
+function ohmylms_get_content_object( $content_type, $content_id ) {
 	$default = null;
     if ( 'quiz' === $content_type ) {
-        $default = omlms_get_quiz( $content_id );
+        $default = ohmylms_get_quiz( $content_id );
     } else {
-        $default = omlms_get_lesson( $content_id );
+        $default = ohmylms_get_lesson( $content_id );
     }
-    return apply_filters( 'creatorlms_get_content_object', $default, $content_type, $content_id );
+    return apply_filters( 'ohmylms_get_content_object', $default, $content_type, $content_id );
 }

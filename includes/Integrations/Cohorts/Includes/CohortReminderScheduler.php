@@ -1,11 +1,11 @@
 <?php
 
-namespace OMLMS\Integrations\Cohorts\Includes;
+namespace OhMyLMS\Integrations\Cohorts\Includes;
 /**
  * Cohort Reminder Scheduler
  * This class handles the reminder for cohort courses
  * 
- * @package OMLMS\Integrations\Cohorts\Includes
+ * @package OhMyLMS\Integrations\Cohorts\Includes
  * @since 1.0.0
  * @author WPFunnels Team
  */
@@ -14,7 +14,7 @@ namespace OMLMS\Integrations\Cohorts\Includes;
 
 
 class CohortReminderScheduler {
-    const ACTION_HOOK = 'creator_lms_send_cohort_start_reminders';
+    const ACTION_HOOK = 'ohmylms_send_cohort_start_reminders';
 
     public static function init() {
         add_action('init', [__CLASS__, 'schedule_reminder']);
@@ -43,7 +43,7 @@ class CohortReminderScheduler {
         $target = $now + DAY_IN_SECONDS;
 
         $args = [
-            'post_type'      => 'omlms-course',
+            'post_type'      => 'ohmylms-course',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'meta_query'     => [
@@ -62,7 +62,7 @@ class CohortReminderScheduler {
         $cohort_placeholders = implode(',', array_fill(0, count($cohort_course_ids), '%d'));
         $sql = $wpdb->prepare(
             "
-            SELECT * FROM {$wpdb->prefix}omlms_cohorts
+            SELECT * FROM {$wpdb->prefix}ohmylms_cohorts
                 WHERE course_id IN ($cohort_placeholders)
                 AND start_date > %s
                 AND start_date <= %s
@@ -82,7 +82,7 @@ class CohortReminderScheduler {
             $course_id = intval($cohort->course_id);
             $students = $wpdb->get_results(
                 $wpdb->prepare(
-                    "SELECT user_id FROM {$wpdb->prefix}omlms_user_enrollment
+                    "SELECT user_id FROM {$wpdb->prefix}ohmylms_user_enrollment
                      WHERE course_id = %d",
                     $course_id
                 )
@@ -102,14 +102,14 @@ class CohortReminderScheduler {
      * Check if email was already sent for this user + cohort
      */
     protected static function has_sent_email($user_id, $cohort_id) {
-        return get_user_meta($user_id, '_omlms_cohort_reminder_' . $cohort_id, true);
+        return get_user_meta($user_id, '_ohmylms_cohort_reminder_' . $cohort_id, true);
     }
 
     /**
      * Mark that email has been sent
      */
     protected static function mark_email_sent($user_id, $cohort_id) {
-        update_user_meta($user_id, '_omlms_cohort_reminder_' . $cohort_id, true);
+        update_user_meta($user_id, '_ohmylms_cohort_reminder_' . $cohort_id, true);
     }
 
     /**

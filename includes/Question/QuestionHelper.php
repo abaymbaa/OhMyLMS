@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Question;
+namespace OhMyLMS\Question;
 
 /**
  * Responsible to handle all quiz related calculations
@@ -25,12 +25,12 @@ class QuestionHelper {
 		 * @param string $content question title
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_add_question', $title, $content );
+		do_action( 'ohmylms_before_add_question', $title, $content );
 
 		$quiz_id = wp_insert_post(
 			array(
 				'post_title'  => $title,
-				'post_type'   => 'omlms-question',
+				'post_type'   => 'ohmylms-question',
 				'post_status' => 'publish',
 			)
 		);
@@ -54,7 +54,7 @@ class QuestionHelper {
 		 * @param string $quiz_id newly inserted question id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_add_question', $title, $content, $quiz_id );
+		do_action( 'ohmylms_after_add_question', $title, $content, $quiz_id );
 
 		return array(
 			'status'  => 'success',
@@ -78,7 +78,7 @@ class QuestionHelper {
 		 * @param array $question_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_question_update', $post_id, $question_data );
+		do_action( 'ohmylms_before_question_update', $post_id, $question_data );
 
 		if ( empty( $question_data['title'] ) ) {
 			return array(
@@ -89,7 +89,7 @@ class QuestionHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post && $post->post_type === 'omlms-question' ) {
+		if ( $post && $post->post_type === 'ohmylms-question' ) {
 			wp_update_post(
 				array(
 					'ID'         => $post_id,
@@ -105,7 +105,7 @@ class QuestionHelper {
 		 * @param array $question_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_question_update', $post_id, $question_data );
+		do_action( 'ohmylms_after_question_update', $post_id, $question_data );
 
 		return array(
 			'status'  => 'success',
@@ -122,7 +122,7 @@ class QuestionHelper {
 	 */
 	public static function delete_question( int $post_id ): array {
 		$post = get_post( $post_id );
-		if ( ! $post || $post->post_type !== 'omlms-question' ) {
+		if ( ! $post || $post->post_type !== 'ohmylms-question' ) {
 
 			return array(
 				'status'  => 'error',
@@ -136,7 +136,7 @@ class QuestionHelper {
 		 * @param string $post_id question id to delete
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_question_delete', $post_id );
+		do_action( 'ohmylms_before_question_delete', $post_id );
 
 		$result = wp_delete_post( $post_id, true );
 
@@ -154,7 +154,7 @@ class QuestionHelper {
 		 * @param string $post_id Deleted Question id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_question_delete', $post_id );
+		do_action( 'ohmylms_after_question_delete', $post_id );
 
 		return array(
 			'status'  => 'success',

@@ -46,7 +46,7 @@ export function createDripSettings(readRuntime) {
               'Schedule this lesson to unlock after a set number of days or a specific date.',
               'ohmylms',
             )}
-            customClass={'omlms-lesson-settings-drip-feed-button'}
+            customClass={'ohmylms-lesson-settings-drip-feed-button'}
             onChange={onChange}
             isChecked={isChecked}
             isItProFeature={!0}

@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Lesson;
+namespace OhMyLMS\Lesson;
 
-use OMLMS\Section\SectionHelper;
+use OhMyLMS\Section\SectionHelper;
 
 /**
  * Responsible to handle all lesson related calculations
@@ -27,12 +27,12 @@ class LessonHelper {
 		 * @param string $content lesson title
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_add_lesson', $title, $content );
+		do_action( 'ohmylms_before_add_lesson', $title, $content );
 
 		$lesson_id = wp_insert_post(
 			array(
 				'post_title'  => $title,
-				'post_type'   => 'omlms-lesson',
+				'post_type'   => 'ohmylms-lesson',
 				'post_status' => 'publish',
 			)
 		);
@@ -56,7 +56,7 @@ class LessonHelper {
 		 * @param string $lesson_id newly inserted lesson id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_add_lesson', $title, $content, $lesson_id );
+		do_action( 'ohmylms_after_add_lesson', $title, $content, $lesson_id );
 
 		$lesson_data = array(
 			'id'    => $lesson_id,
@@ -88,7 +88,7 @@ class LessonHelper {
 		 * @param array $map_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_lesson_update', $post_id, $map_data );
+		do_action( 'ohmylms_before_lesson_update', $post_id, $map_data );
 
 		if ( empty( $map_data['title'] ) ) {
 			return array(
@@ -99,7 +99,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post && $post->post_type === 'omlms-lesson' ) {
+		if ( $post && $post->post_type === 'ohmylms-lesson' ) {
 			wp_update_post(
 				array(
 					'ID'         => $post_id,
@@ -115,7 +115,7 @@ class LessonHelper {
 		 * @param array $map_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_lesson_update', $post_id, $map_data );
+		do_action( 'ohmylms_after_lesson_update', $post_id, $map_data );
 
 		$lesson_data = array(
 			'id'    => $post_id,
@@ -147,7 +147,7 @@ class LessonHelper {
 		 * @param array $lesson_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_lesson_update', $post_id, $lesson_data );
+		do_action( 'ohmylms_before_lesson_update', $post_id, $lesson_data );
 
 		if ( empty( $lesson_data ) ) {
 			return array(
@@ -158,7 +158,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post->post_type !== 'omlms-lesson' ) {
+		if ( $post->post_type !== 'ohmylms-lesson' ) {
 			return array(
 				'status'  => 'error',
 				'message' => __( 'No lesson available. ', 'ohmylms' ),
@@ -190,7 +190,7 @@ class LessonHelper {
 		 * @param array $lesson_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_lesson_update', $post_id, $lesson_data );
+		do_action( 'ohmylms_after_lesson_update', $post_id, $lesson_data );
 
 		return array(
 			'status'  => 'success',
@@ -209,7 +209,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post->post_type !== 'omlms-lesson' ) {
+		if ( $post->post_type !== 'ohmylms-lesson' ) {
 			return array(
 				'status'  => 'error',
 				'message' => __( 'No lesson available. ', 'ohmylms' ),
@@ -247,7 +247,7 @@ class LessonHelper {
 	public static function delete_lesson( int $post_id ): array {
 
 		$post = get_post( $post_id );
-		if ( ! $post || $post->post_type !== 'omlms-lesson' ) {
+		if ( ! $post || $post->post_type !== 'ohmylms-lesson' ) {
 
 			return array(
 				'status'  => 'error',
@@ -261,7 +261,7 @@ class LessonHelper {
 		 * @param string $post_id lesson id to delete
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_lesson_delete', $post_id );
+		do_action( 'ohmylms_before_lesson_delete', $post_id );
 
 		$result = wp_delete_post( $post_id, true );
 
@@ -279,7 +279,7 @@ class LessonHelper {
 		 * @param string $post_id Deleted lesson id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_lesson_delete', $post_id );
+		do_action( 'ohmylms_after_lesson_delete', $post_id );
 
 		return array(
 			'status'  => 'success',

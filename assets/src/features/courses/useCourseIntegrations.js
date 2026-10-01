@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-export function useCourseIntegrations({ actions, isPro, enableSpin }) {
+export function useCourseIntegrations({ actions, enableSpin }) {
   const [automation, setAutomation] = useState(null);
   const [integration, setIntegration] = useState(null);
   const listener = useRef(null);
   function openAutomation(forWhat, contentId, contentName) {
-    if (!isPro) {
-      actions.setIsProModalOpen(true);
-      return;
-    }
-    if (!window.creator_lms_params?.is_mailmint_active) {
+    if (!window.ohmylms_params?.is_mailmint_active) {
       localStorage.setItem('clms_automation_for_what', forWhat);
       localStorage.setItem('clms_automation_content_id', contentId);
       localStorage.setItem('clms_automation_content_name', contentName);
@@ -32,18 +28,17 @@ export function useCourseIntegrations({ actions, isPro, enableSpin }) {
     setAutomation({ forWhat, contentId, contentName });
   }
   function openIntegration(forWhat, contentId, contentName) {
-    if (isPro) setIntegration({ forWhat, contentId, contentName });
-    else actions.setIsProModalOpen(true);
+    setIntegration({ forWhat, contentId, contentName });
   }
   useEffect(() => {
-    if (localStorage.getItem('omlms_automation_modal_open') && !enableSpin) {
+    if (localStorage.getItem('ohmylms_automation_modal_open') && !enableSpin) {
       openAutomation(
         localStorage.getItem('clms_automation_for_what'),
         localStorage.getItem('clms_automation_content_id'),
         localStorage.getItem('clms_automation_content_name'),
       );
       [
-        'omlms_automation_modal_open',
+        'ohmylms_automation_modal_open',
         'clms_automation_for_what',
         'clms_automation_content_id',
         'clms_automation_content_name',

@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Admin\Pages;
+namespace OhMyLMS\Admin\Pages;
 
 class AdminSettings {
 
@@ -18,7 +18,7 @@ class AdminSettings {
 
 		$settings[]     = new GeneralSettings();
 		$settings[]     = new PaymentGatewaySettings();
-		self::$settings = apply_filters( 'creator_lms_get_settings_pages', $settings );
+		self::$settings = apply_filters( 'ohmylms_get_settings_pages', $settings );
 
 		return self::$settings;
 	}
@@ -106,7 +106,7 @@ class AdminSettings {
 					}
 					echo '<table class="form-table">' . "\n\n";
 					if ( ! empty( $value['id'] ) ) {
-						do_action( 'creator_lms_settings_' . sanitize_title( $value['id'] ) );
+						do_action( 'ohmylms_settings_' . sanitize_title( $value['id'] ) );
 					}
 					break;
 
@@ -122,11 +122,11 @@ class AdminSettings {
 				// Section Ends.
 				case 'sectionend':
 					if ( ! empty( $value['id'] ) ) {
-						do_action( 'creator_lms_settings_' . sanitize_title( $value['id'] ) . '_end' );
+						do_action( 'ohmylms_settings_' . sanitize_title( $value['id'] ) . '_end' );
 					}
 					echo '</table>';
 					if ( ! empty( $value['id'] ) ) {
-						do_action( 'creator_lms_settings_' . sanitize_title( $value['id'] ) . '_after' );
+						do_action( 'ohmylms_settings_' . sanitize_title( $value['id'] ) . '_after' );
 					}
 					break;
 
@@ -444,10 +444,10 @@ class AdminSettings {
 						</th>
 						<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
 							<?php echo $description; // WPCS: XSS ok. ?>
-							<button type="button" class="button button-secondary omlms-delete-cache-btn" id="<?php echo esc_attr( $value['id'] ); ?>">
+							<button type="button" class="button button-secondary ohmylms-delete-cache-btn" id="<?php echo esc_attr( $value['id'] ); ?>">
 								<?php esc_html_e( 'Delete Cache', 'ohmylms' ); ?>
 							</button>
-							<span class="omlms-delete-cache-status" style="margin-left: 10px; display: none;"></span>
+							<span class="ohmylms-delete-cache-status" style="margin-left: 10px; display: none;"></span>
 						</td>
 					</tr>
 					<?php
@@ -455,7 +455,7 @@ class AdminSettings {
 
 				// Default: run an action.
 				default:
-					do_action( 'creator_lms_admin_field_' . $value['type'], $value );
+					do_action( 'ohmylms_admin_field_' . $value['type'], $value );
 					break;
 			}
 		}
@@ -552,15 +552,15 @@ class AdminSettings {
 	 * Save the settings.
 	 */
 	public static function save() {
-		global $creator_lms_current_tab;
-		check_admin_referer( 'creator-lms-settings' );
+		global $ohmylms_current_tab;
+		check_admin_referer( 'ohmylms-settings' );
 
 		// Trigger actions.
-		do_action( 'creator_lms_settings_save_' . $creator_lms_current_tab );
-		do_action( 'creator_lms_update_options_' . $creator_lms_current_tab );
-		do_action( 'creator_lms_update_options' );
+		do_action( 'ohmylms_settings_save_' . $ohmylms_current_tab );
+		do_action( 'ohmylms_update_options_' . $ohmylms_current_tab );
+		do_action( 'ohmylms_update_options' );
 
-		do_action( 'creator_lms_settings_saved' );
+		do_action( 'ohmylms_settings_saved' );
 	}
 
 
@@ -615,7 +615,7 @@ class AdminSettings {
 					break;
 				case 'multiselect':
 				case 'multi_select_countries':
-					$value = array_filter( array_map( 'omlms_clean', (array) $raw_value ) );
+					$value = array_filter( array_map( 'ohmylms_clean', (array) $raw_value ) );
 					break;
 				case 'select':
 					$allowed_values = empty( $option['options'] ) ? array() : array_map( 'strval', array_keys( $option['options'] ) );
@@ -636,14 +636,14 @@ class AdminSettings {
 			 *
 			 * @since 1.0.0
 			 */
-			$value = apply_filters( 'creator_lms_admin_settings_sanitize_option', $value, $option, $raw_value );
+			$value = apply_filters( 'ohmylms_admin_settings_sanitize_option', $value, $option, $raw_value );
 
 			/**
 			 * Sanitize the value of an option by option name.
 			 *
 			 * @since 1.0.0
 			 */
-			$value = apply_filters( "creator_lms_admin_settings_sanitize_option_$option_name", $value, $option, $raw_value );
+			$value = apply_filters( "ohmylms_admin_settings_sanitize_option_$option_name", $value, $option, $raw_value );
 
 			if ( is_null( $value ) ) {
 				continue;
@@ -664,7 +664,7 @@ class AdminSettings {
 
 			$autoload_options[ $option_name ] = isset( $option['autoload'] ) ? (bool) $option['autoload'] : true;
 
-			do_action( 'creator_lms_update_option', $option );
+			do_action( 'ohmylms_update_option', $option );
 		}
 
 		foreach ( $update_options as $name => $value ) {

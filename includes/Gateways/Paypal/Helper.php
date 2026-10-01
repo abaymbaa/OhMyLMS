@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Gateways\Paypal;
+namespace OhMyLMS\Gateways\Paypal;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -37,11 +37,11 @@ export function createBrandingSettings(readRuntime) {
         return e(StoreModule.default).getDesignSettings();
       }, []),
       v =
-        (null == f || null === (t = f.creator_lms_video_player_logo) || void 0 === t
+        (null == f || null === (t = f.ohmylms_video_player_logo) || void 0 === t
           ? void 0
           : t.value) || '',
       h =
-        (null == f || null === (n = f.creator_lms_video_player_logo_bg_color) || void 0 === n
+        (null == f || null === (n = f.ohmylms_video_player_logo_bg_color) || void 0 === n
           ? void 0
           : n.value) || '#6E42D3',
       _ = (function (e, t) {
@@ -110,7 +110,7 @@ export function createBrandingSettings(readRuntime) {
           return {
             primary:
               null == f ||
-              null === (e = f.creator_lms_primary_color_scheme) ||
+              null === (e = f.ohmylms_primary_color_scheme) ||
               void 0 === e ||
               null === (e = e.value) ||
               void 0 === e
@@ -118,7 +118,7 @@ export function createBrandingSettings(readRuntime) {
                 : e.toLowerCase(),
             heading:
               null == f ||
-              null === (t = f.creator_lms_heading_color_scheme) ||
+              null === (t = f.ohmylms_heading_color_scheme) ||
               void 0 === t ||
               null === (t = t.value) ||
               void 0 === t
@@ -126,7 +126,7 @@ export function createBrandingSettings(readRuntime) {
                 : t.toLowerCase(),
             text:
               null == f ||
-              null === (n = f.creator_lms_body_text_color_scheme) ||
+              null === (n = f.ohmylms_body_text_color_scheme) ||
               void 0 === n ||
               null === (n = n.value) ||
               void 0 === n
@@ -134,7 +134,7 @@ export function createBrandingSettings(readRuntime) {
                 : n.toLowerCase(),
             progress:
               null == f ||
-              null === (r = f.creator_lms_body_progress_color_scheme) ||
+              null === (r = f.ohmylms_body_progress_color_scheme) ||
               void 0 === r ||
               null === (r = r.value) ||
               void 0 === r
@@ -150,15 +150,13 @@ export function createBrandingSettings(readRuntime) {
         if (
           !S.current &&
           null != f &&
-          null !== (e = f.creator_lms_primary_color_scheme) &&
+          null !== (e = f.ohmylms_primary_color_scheme) &&
           void 0 !== e &&
           e.value
         ) {
           S.current = !0;
           var n =
-            null == f || null === (t = f.creator_lms_color_preset) || void 0 === t
-              ? void 0
-              : t.value;
+            null == f || null === (t = f.ohmylms_color_preset) || void 0 === t ? void 0 : t.value;
           if (
             n &&
             GK.find(function (e) {
@@ -230,19 +228,19 @@ export function createBrandingSettings(readRuntime) {
             t &&
               (E(e),
               p.updateDesignSettings({
-                creator_lms_color_preset: {
+                ohmylms_color_preset: {
                   value: e,
                 },
-                creator_lms_primary_color_scheme: {
+                ohmylms_primary_color_scheme: {
                   value: t.colors.primary,
                 },
-                creator_lms_heading_color_scheme: {
+                ohmylms_heading_color_scheme: {
                   value: t.colors.heading,
                 },
-                creator_lms_body_text_color_scheme: {
+                ohmylms_body_text_color_scheme: {
                   value: t.colors.text,
                 },
-                creator_lms_body_progress_color_scheme: {
+                ohmylms_body_progress_color_scheme: {
                   value: t.colors.progress,
                 },
               }));
@@ -269,12 +267,12 @@ export function createBrandingSettings(readRuntime) {
           isShowResetBtn: !0,
           defaultColor: k.primary,
           initialColor:
-            null == f || null === (r = f.creator_lms_primary_color_scheme) || void 0 === r
+            null == f || null === (r = f.ohmylms_primary_color_scheme) || void 0 === r
               ? void 0
               : r.value,
           onChange: function (e) {
             p.updateDesignSettings({
-              creator_lms_primary_color_scheme: {
+              ohmylms_primary_color_scheme: {
                 value: e,
               },
             });
@@ -286,12 +284,12 @@ export function createBrandingSettings(readRuntime) {
           isShowResetBtn: !0,
           defaultColor: k.heading,
           initialColor:
-            null == f || null === (a = f.creator_lms_heading_color_scheme) || void 0 === a
+            null == f || null === (a = f.ohmylms_heading_color_scheme) || void 0 === a
               ? void 0
               : a.value,
           onChange: function (e) {
             p.updateDesignSettings({
-              creator_lms_heading_color_scheme: {
+              ohmylms_heading_color_scheme: {
                 value: e,
               },
             });
@@ -303,12 +301,12 @@ export function createBrandingSettings(readRuntime) {
           isShowResetBtn: !0,
           defaultColor: k.text,
           initialColor:
-            null == f || null === (o = f.creator_lms_body_text_color_scheme) || void 0 === o
+            null == f || null === (o = f.ohmylms_body_text_color_scheme) || void 0 === o
               ? void 0
               : o.value,
           onChange: function (e) {
             p.updateDesignSettings({
-              creator_lms_body_text_color_scheme: {
+              ohmylms_body_text_color_scheme: {
                 value: e,
               },
             });
@@ -320,12 +318,12 @@ export function createBrandingSettings(readRuntime) {
           isShowResetBtn: !0,
           defaultColor: k.progress,
           initialColor:
-            null == f || null === (i = f.creator_lms_body_progress_color_scheme) || void 0 === i
+            null == f || null === (i = f.ohmylms_body_progress_color_scheme) || void 0 === i
               ? void 0
               : i.value,
           onChange: function (e) {
             p.updateDesignSettings({
-              creator_lms_body_progress_color_scheme: {
+              ohmylms_body_progress_color_scheme: {
                 value: e,
               },
             });
@@ -344,7 +342,7 @@ export function createBrandingSettings(readRuntime) {
           var t = e.state().get('selection').first().toJSON();
           'image' === t.type &&
             p.updateDesignSettings({
-              creator_lms_video_player_logo: {
+              ohmylms_video_player_logo: {
                 value: t.url,
               },
             });
@@ -366,7 +364,7 @@ export function createBrandingSettings(readRuntime) {
                           p.setLoadingSetting(!0),
                           (e.n = 1),
                           l()({
-                            path: 'creator-lms/v1/settings/design',
+                            path: 'ohmylms/v1/settings/design',
                           })
                         );
                       case 1:
@@ -401,7 +399,7 @@ export function createBrandingSettings(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
               <Controls.CardWP isBorderless={!0}>
@@ -480,7 +478,7 @@ export function createBrandingSettings(readRuntime) {
                         handleEdit: A,
                         handleDelete: function () {
                           p.updateDesignSettings({
-                            creator_lms_video_player_logo: {
+                            ohmylms_video_player_logo: {
                               value: '',
                             },
                           });
@@ -512,7 +510,7 @@ export function createBrandingSettings(readRuntime) {
                           initialColor: h,
                           onChange: function (e) {
                             return p.updateDesignSettings({
-                              creator_lms_video_player_logo_bg_color: {
+                              ohmylms_video_player_logo_bg_color: {
                                 value: e,
                               },
                             });

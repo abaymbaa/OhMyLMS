@@ -38,7 +38,7 @@ class StripeApi {
 	 */
 	public static function get_secret_key() {
 		if ( ! self::$secret_key ) {
-			$options         = get_option( 'creatorlms_stripe_settings' );
+			$options         = get_option( 'ohmylms_stripe_settings' );
 			$secret_key      = $options['secret_key'] ?? '';
 			$test_secret_key = $options['sandbox_secret_key'] ?? '';
 
@@ -60,7 +60,7 @@ class StripeApi {
 			'application'      => array(
 				'name'    => 'OhMyLMS',
 				'version' => '1.0.0',
-				'url'     => 'https://creator-lms.com',
+				'url'     => 'https://ohmylms.com',
 			),
 			'bindings_version' => '1.0.0',
 			'lang'             => 'php',
@@ -115,7 +115,7 @@ class StripeApi {
 			if ( null === $idempotency_key && isset( $request_body['metadata']['order_id'] ) ) {
 				// Generate a basic idempotency key if not provided and order_id is available
 				// This can be made more robust or specific if needed.
-				$idempotency_key = 'omlms-' . $request_body['metadata']['order_id'] . '-' . $api . '-request-' . uniqid();
+				$idempotency_key = 'ohmylms-' . $request_body['metadata']['order_id'] . '-' . $api . '-request-' . uniqid();
 			}
 			if ( $idempotency_key ) {
 				$headers['Idempotency-Key'] = $idempotency_key;

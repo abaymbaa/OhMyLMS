@@ -26,11 +26,11 @@ class Helper {
 		if ( in_array( $currency, self::no_decimal_currencies(), true ) ) {
 			return absint( $total );
 		} elseif ( in_array( $currency, self::three_decimal_currencies(), true ) ) {
-			$price_decimals = omlms_get_price_decimals();
-			$amount         = absint( omlms_format_decimal( ( (float) $total * 1000 ), $price_decimals ) ); // For tree decimal currencies.
+			$price_decimals = ohmylms_get_price_decimals();
+			$amount         = absint( ohmylms_format_decimal( ( (float) $total * 1000 ), $price_decimals ) ); // For tree decimal currencies.
 			return $amount - ( $amount % 10 ); // Round the last digit down. See https://docs.stripe.com/currencies?presentment-currency=AE#three-decimal
 		} else {
-			return absint( omlms_format_decimal( ( (float) $total * 100 ), omlms_get_price_decimals() ) ); // In cents.
+			return absint( ohmylms_format_decimal( ( (float) $total * 100 ), ohmylms_get_price_decimals() ) ); // In cents.
 		}
 	}
 

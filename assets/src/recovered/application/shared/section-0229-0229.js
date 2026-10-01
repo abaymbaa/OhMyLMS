@@ -85,7 +85,6 @@ function Mae() {
     };
   })();
 }
-
 function Tae(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function Tae(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Tae(e, t, n, r);
 }
-
 function Iae(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -117,7 +115,6 @@ function Iae(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Fae(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -157,13 +154,11 @@ function Fae(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Nae(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Dae = function (e) {
   var t,
     n = e.isOpen,
@@ -235,7 +230,7 @@ var Dae = function (e) {
     c.length && h(c[c.length - 1]);
   }, [c]), React.createElement(React.Fragment, null, React.createElement(I.ModalWP, {
     __experimentalHideHeader: !0,
-    className: "omlms-ai-course-preview-modal ".concat(a ? "omlms-ai-course-preview-modal--creating" : ""),
+    className: "ohmylms-ai-course-preview-modal ".concat(a ? "ohmylms-ai-course-preview-modal--creating" : ""),
     size: "fill",
     style: {
       maxWidth: "902px",
@@ -255,7 +250,7 @@ var Dae = function (e) {
     direction: "column",
     gap: 6,
     ref: _,
-    className: "omlms-ai-course-preview-content"
+    className: "ohmylms-ai-course-preview-content"
   }, React.createElement(pae, {
     onClose: function () {
       s || r && "function" == typeof r && r();
@@ -286,9 +281,7 @@ var Dae = function (e) {
     isLoading: s
   }))));
 };
-
 const Wae = (0, g.memo)(Dae);
-
 function zae() {
   var e,
     t,
@@ -375,7 +368,6 @@ function zae() {
     };
   })();
 }
-
 function Bae(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -397,7 +389,6 @@ function Bae(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Bae(e, t, n, r);
 }
-
 function Lae(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -407,7 +398,6 @@ function Lae(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Vae(e) {
   return function () {
     var t = this,
@@ -424,7 +414,6 @@ function Vae(e) {
     });
   };
 }
-
 function Hae(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -464,13 +453,11 @@ function Hae(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Gae(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Uae = function () {
   var e,
     t = (0, y.useDispatch)(T.default),
@@ -506,7 +493,7 @@ var Uae = function () {
     O = (0, y.useSelect)(function (e) {
       return e(T.default).getAllIntegrations();
     }, []),
-    k = (0, L.useIsPro)();
+    k = true;
   function j(e, t) {
     var n,
       r,
@@ -624,7 +611,7 @@ var Uae = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, (a = j(t)).course_type = null !== (n = null == w || null === (r = w.state) || void 0 === r ? void 0 : r.courseType) && void 0 !== n ? n : "self-paced", e.n = 1, l()({
-                path: "/creator-lms/v1/ai/course",
+                path: "/ohmylms/v1/ai/course",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -649,7 +636,7 @@ var Uae = function () {
         return e.apply(this, arguments);
       };
     }();
-  return k && null != O && null !== (e = O.ai_model) && void 0 !== e && e.is_enable && (null != P && P.self || null != P && P.api_key) ? React.createElement(React.Fragment, null, C, React.createElement(I.SurfaceWP, {
+  return null != O && null !== (e = O.ai_model) && void 0 !== e && e.is_enable && (null != P && P.self || null != P && P.api_key) ? React.createElement(React.Fragment, null, C, React.createElement(I.SurfaceWP, {
     minHeight: "calc(100vh - 32px)"
   }, React.createElement(I.ContainerWP, null, React.createElement(I.SpacerWP, {
     paddingY: 5
@@ -754,5 +741,4 @@ var Uae = function () {
     to: "/courses"
   });
 };
-
 const qae = (0, g.memo)(Uae);

@@ -7,6 +7,6 @@ export function createOrdersPage(readRuntime) {
       HG,
       React
     } = readRuntime();
-    return HG("creator-lms", "orders"), <React.Fragment><$Y /></React.Fragment>;
+    return HG("ohmylms", "orders"), <React.Fragment><$Y /></React.Fragment>;
   };
 }

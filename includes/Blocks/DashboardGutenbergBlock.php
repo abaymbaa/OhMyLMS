@@ -4,13 +4,13 @@
  *
  * Gutenberg block for OhMyLMS student dashboard functionality
  *
- * @package OMLMS\Blocks
+ * @package OhMyLMS\Blocks
  * @since 1.0.0
  */
 
-namespace OMLMS\Blocks;
+namespace OhMyLMS\Blocks;
 
-use OMLMS\Shortcodes\ShortCodeDashboard;
+use OhMyLMS\Shortcodes\ShortCodeDashboard;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -25,7 +25,7 @@ class DashboardGutenbergBlock {
 	 *
 	 * @var string
 	 */
-	const BLOCK_NAME = 'creator-lms/dashboard';
+	const BLOCK_NAME = 'ohmylms/dashboard';
 
 	/**
 	 * Constructor
@@ -43,9 +43,9 @@ class DashboardGutenbergBlock {
 		register_block_type( self::BLOCK_NAME, array(
 			'attributes' => $this->get_block_attributes(),
 			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+			'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
 		) );
 	}
 
@@ -264,73 +264,73 @@ class DashboardGutenbergBlock {
 		
 		// Enable preview mode for Gutenberg editor to show dashboard even when not logged in
 		if ( $is_editor ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		// Add editor-specific styling for proper dashboard rendering
 		if ( $is_editor ) {
 			?>
 			<style>
-				.wp-block-creator-lms-dashboard .creator-lms {
+				.wp-block-ohmylms-dashboard .ohmylms {
 					max-width: 100% !important;
 					background-color: #F9FAFD !important;
 					width: 100% !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard {
 					padding: 30px !important;
 					background-color: #fff !important;
 					border-radius: 12px !important;
 					box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-header {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-header {
 					margin-bottom: 30px !important;
 					padding-bottom: 20px !important;
 					border-bottom: 1px solid #eee !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-title {
-					color: var(--creator-lms-heading-color, #1e1e1e) !important;
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-title {
+					color: var(--ohmylms-heading-color, #1e1e1e) !important;
 					font-size: 24px !important;
 					font-weight: 600 !important;
 					line-height: 1.3 !important;
 					margin: 0 0 10px !important;
 					letter-spacing: 0 !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-subtitle {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-subtitle {
 					color: #666 !important;
 					font-size: 16px !important;
 					font-weight: 400 !important;
 					line-height: 1.5 !important;
 					margin: 0 !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-stats {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-stats {
 					display: grid !important;
 					grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
 					gap: 20px !important;
 					margin-bottom: 30px !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-stat-card {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-stat-card {
 					background-color: #f8f9fa !important;
 					padding: 20px !important;
 					border-radius: 8px !important;
 					text-align: center !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-stat-value {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-stat-value {
 					font-size: 28px !important;
 					font-weight: 700 !important;
 					color: #6E42D3 !important;
 					margin-bottom: 5px !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-stat-label {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-stat-label {
 					font-size: 14px !important;
 					color: #666 !important;
 					font-weight: 500 !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-actions {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-actions {
 					display: flex !important;
 					gap: 15px !important;
 					flex-wrap: wrap !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-button {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-button {
 					background-color: #6E42D3 !important;
 					color: #fff !important;
 					padding: 12px 24px !important;
@@ -342,14 +342,14 @@ class DashboardGutenbergBlock {
 					cursor: pointer !important;
 					transition: all 0.3s ease !important;
 				}
-				.wp-block-creator-lms-dashboard .creator-lms-dashboard-button:hover {
+				.wp-block-ohmylms-dashboard .ohmylms-dashboard-button:hover {
 					background-color: #5a32c2 !important;
 				}
 				@media (max-width: 768px) {
-					.wp-block-creator-lms-dashboard .creator-lms-dashboard {
+					.wp-block-ohmylms-dashboard .ohmylms-dashboard {
 						padding: 20px !important;
 					}
-					.wp-block-creator-lms-dashboard .creator-lms-dashboard-stats {
+					.wp-block-ohmylms-dashboard .ohmylms-dashboard-stats {
 						grid-template-columns: 1fr !important;
 					}
 				}
@@ -376,17 +376,17 @@ class DashboardGutenbergBlock {
 		}
 
 		// Add proper wrapper classes for consistency with frontend
-		$wrapper_classes = array( 'creator-lms' );
+		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
-			$wrapper_classes[] = 'creator-lms-page';
-			$wrapper_classes[] = 'creator-lms-dashboard';
+			$wrapper_classes[] = 'ohmylms-page';
+			$wrapper_classes[] = 'ohmylms-dashboard';
 		}
 		
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 		
 		// Add preview notice in editor mode
 		if ( $is_editor ) {
-			echo '<div class="creator-lms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
+			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the student dashboard will appear to logged-in users.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
@@ -394,7 +394,7 @@ class DashboardGutenbergBlock {
 		// Output the dashboard
 		ShortCodeDashboard::output( $shortcode_attrs );
 
-		echo '</div>'; // Close creator-lms wrapper
+		echo '</div>'; // Close ohmylms wrapper
 		
 		// Close alignment wrapper only if it was opened (frontend only)
 		if ( ! $is_editor && ! empty( $wrapper_attributes ) ) {
@@ -403,7 +403,7 @@ class DashboardGutenbergBlock {
 		
 		// Remove preview mode filter if it was set
 		if ( $is_editor ) {
-			remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		return ob_get_clean();

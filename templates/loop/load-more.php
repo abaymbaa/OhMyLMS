@@ -2,9 +2,9 @@
 /**
  * Load more template
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/load-more.php
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/load-more.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -22,12 +22,12 @@ if ( $total <= 1 ) {
 	return;
 }
 
-$loadmor_text = apply_filters( 'creator_lms_course_loadmore_text', 'See More Courses' );
+$loadmor_text = apply_filters( 'ohmylms_course_loadmore_text', 'See More Courses' );
 ?>
 
-<div class="creator-lms-course-loadmore-area">
+<div class="ohmylms-course-loadmore-area">
 	<button
-		class="creator-lms-course-loadmore-btn creator-lms-button"
+		class="ohmylms-course-loadmore-btn ohmylms-button"
 		type="button"
 		aria-label="<?php echo esc_attr( $loadmor_text ); ?>"
 		data-paged="<?php echo absint( $paged ); ?>"
@@ -35,6 +35,6 @@ $loadmor_text = apply_filters( 'creator_lms_course_loadmore_text', 'See More Cou
 		data-total="<?php echo $total; ?>"
 	>
 		<?php echo $loadmor_text; ?>
-		<span class="creator-lms-loader"></span>
+		<span class="ohmylms-loader"></span>
 	</button>
 </div>

@@ -15,9 +15,9 @@ var Ine = function (e) {
               case 0:
                 Nte.Hi.completeStep(), Nte.Ft.emit("step_completed", {
                   stepId: "completion",
-                  plugin: "creator-lms"
+                  plugin: "ohmylms"
                 }), Nte.Ft.emit("onboarding_completed", {
-                  plugin: "creator-lms",
+                  plugin: "ohmylms",
                   version: "1.1.16"
                 });
               case 1:
@@ -92,7 +92,7 @@ var Ine = function (e) {
         fill: "#FF4955"
       })),
       label: (0, b.__)("Blog & Tutorials", "ohmylms"),
-      url: "https://creatorlms.net/blog/"
+      url: "https://ohmylms.com/blog/"
     }, {
       icon: React.createElement("svg", {
         xmlns: "http://www.w3.org/2000/svg",
@@ -128,7 +128,7 @@ var Ine = function (e) {
         fill: "white"
       })))),
       label: (0, b.__)("Support", "ohmylms"),
-      url: "https://creatorlms.net/contact-us/"
+      url: "https://ohmylms.com/contact-us/"
     }, {
       icon: React.createElement("svg", {
         xmlns: "http://www.w3.org/2000/svg",
@@ -141,7 +141,7 @@ var Ine = function (e) {
         fill: "#42ACD3"
       })),
       label: (0, b.__)("Documentation", "ohmylms"),
-      url: "https://creatorlms.net/docs/"
+      url: "https://ohmylms.com/docs/"
     }];
   return React.createElement(React.Fragment, null, React.createElement(I.ContainerWP, null, React.createElement(I.SpacerWP, {
     marginBottom: 0,
@@ -313,7 +313,7 @@ var Ine = function (e) {
     weight: "400",
     color: "#687784"
   }, (0, b.__)("Unlock more with OhMyLMS.", "ohmylms")), React.createElement(v.Link, {
-    to: "https://creatorlms.net/creatorlms-features/",
+    to: "https://ohmylms.com/ohmylms-features/",
     target: "_blank",
     rel: "noopener noreferrer",
     style: {

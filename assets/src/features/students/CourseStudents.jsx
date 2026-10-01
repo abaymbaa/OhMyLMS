@@ -36,13 +36,13 @@ export function createCourseStudents(readRuntime) {
       z: Notifications,
       zn,
     } = readRuntime();
-    HG('creator-lms', 'courses');
+    HG('ohmylms', 'courses');
     var e = (0, WordPressData.useDispatch)(StoreModule.default),
       t = (0, Router.Zp)(),
       n = (0, Notifications.A)(),
       openNotificationWithIcon = n.openNotificationWithIcon,
       contextHolder = n.contextHolder,
-      o = (0, Entitlements.useIsPro)(),
+      o = true,
       i = (0, Router.g)().id,
       c = vee((0, ReactHooks.useState)(!0), 2),
       u = c[0],
@@ -117,11 +117,11 @@ export function createCourseStudents(readRuntime) {
                 {null != t && t.student_img ? (
                   <gG.A size={40} src={null == t ? void 0 : t.student_img} />
                 ) : (
-                  <span className={'omlms-col-avatar'}>
+                  <span className={'ohmylms-col-avatar'}>
                     <JU />
                   </span>
                 )}
-                <span className={'omlms-title-text'}>{null == t ? void 0 : t.student_name}</span>
+                <span className={'ohmylms-title-text'}>{null == t ? void 0 : t.student_name}</span>
               </Controls.FlexWP>
             );
           },
@@ -153,7 +153,7 @@ export function createCourseStudents(readRuntime) {
                 <Controls.ButtonWP
                   variant={'link'}
                   icon={React.createElement(zn, null)}
-                  className={'omlms-delete-btn'}
+                  className={'ohmylms-delete-btn'}
                   onClick={function () {
                     return ie(null == t ? void 0 : t.user_id);
                   }}
@@ -182,7 +182,7 @@ export function createCourseStudents(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses/'.concat(i, '/enroll/').concat(X[0]),
+                          path: '/ohmylms/v1/courses/'.concat(i, '/enroll/').concat(X[0]),
                           method: 'DELETE',
                         })
                       );
@@ -235,7 +235,7 @@ export function createCourseStudents(readRuntime) {
         }, [])),
       se = (0, ReactHooks.useCallback)(
         function () {
-          o ? D(!0) : re(!0);
+          D(!0);
         },
         [o, e],
       ),
@@ -276,7 +276,7 @@ export function createCourseStudents(readRuntime) {
                         )),
                         (e.n = 2),
                         l()({
-                          path: (0, lN.addQueryArgs)('/creator-lms/v1/students', a),
+                          path: (0, lN.addQueryArgs)('/ohmylms/v1/students', a),
                           method: 'GET',
                           parse: !1,
                           headers: {
@@ -377,13 +377,13 @@ export function createCourseStudents(readRuntime) {
                   {(0, I18n.__)('Enroll a Student', 'ohmylms')}
                 </Controls.ButtonWP>
               </Controls.FlexWP>
-              <Controls.CardWP className={'omlms-data-table-wrapper'}>
+              <Controls.CardWP className={'ohmylms-data-table-wrapper'}>
                 <Controls.SpacerWP padding={5} marginTop={4}>
                   <Controls.FlexWP gap={4} justify={'space-between'}>
                     <Cm placeholder={(0, I18n.__)('Search Students', 'ohmylms')} onChange={me} />
                     <vn.A
                       placeholder={(0, I18n.__)('Sort', 'ohmylms')}
-                      className={'omlms-selectbox-filter'}
+                      className={'ohmylms-selectbox-filter'}
                       onChange={ue}
                       value={G}
                       options={ae}

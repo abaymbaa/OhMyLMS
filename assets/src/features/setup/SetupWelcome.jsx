@@ -116,12 +116,12 @@ export function createSetupWelcome(readRuntime) {
             </Controls.SpacerWP>
             <Controls.SpacerWP
               align={'center'}
-              className={'omlms-setup-wizard-welcome-image-wrapper'}
+              className={'ohmylms-setup-wizard-welcome-image-wrapper'}
             >
               <Controls.FlexWP
                 items={'center'}
                 justify={'center'}
-                className={'omlms-setup-wizard-welcome-image-flex'}
+                className={'ohmylms-setup-wizard-welcome-image-flex'}
               >
                 <img
                   src={Yte + 'setup-wizard-img.webp'}
@@ -183,7 +183,7 @@ export function createSetupWelcome(readRuntime) {
                   }}
                   label={(0, I18n.__)('Send me tips to build my OhMyLMS faster', 'ohmylms')}
                   checked={i.isOptEnabled}
-                  className={'omlms-setup-wizard-optin-checkbox'}
+                  className={'ohmylms-setup-wizard-optin-checkbox'}
                 />
                 <Controls.TextWP
                   as={'p'}

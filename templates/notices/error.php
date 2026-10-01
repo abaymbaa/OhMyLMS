@@ -10,14 +10,14 @@ if ( ! $notices ) {
 $className = count($notices) === 1 ? 'only-one-error' : '';
 
 ?>
-<div class="omlms-error-notices">
-	<div class="omlms-NoticeGroup">
-		<ul class="omlms-error <?php echo $className;?>" role="alert">
+<div class="ohmylms-error-notices">
+	<div class="ohmylms-NoticeGroup">
+		<ul class="ohmylms-error <?php echo $className;?>" role="alert">
 			<?php foreach ( $notices as $notice ) :
 				?>
 				<li
-					<?php echo \CodeRex\Ecommerce\omlmse_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> >
-					<?php echo \CodeRex\Ecommerce\omlmse_kses_notice( $notice['notice'] ); ?>
+					<?php echo \CodeRex\Ecommerce\ohmylmse_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> >
+					<?php echo \CodeRex\Ecommerce\ohmylmse_kses_notice( $notice['notice'] ); ?>
 				</li>
 			<?php endforeach; ?>
 		</ul>

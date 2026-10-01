@@ -19,7 +19,7 @@ class Helper {
      * @return string|false Organization ID (e.g. org_12345) or false on failure.
      */
     public static function get_organization_id( $api_key ) {
-        $transient_key = 'creator_lms_mollie_org_id';
+        $transient_key = 'ohmylms_mollie_org_id';
 
         // Try cache first
         $org_id = get_transient( $transient_key );

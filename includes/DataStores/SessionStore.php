@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Session;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Session;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class SessionStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  */
 class SessionStore extends DataStore {
 
@@ -26,10 +26,10 @@ class SessionStore extends DataStore {
         }
         $id = wp_insert_post(
             array(
-                'post_type'     => 'omlms-session',
+                'post_type'     => 'ohmylms-session',
                 'post_author'   => get_current_user_id(),
                 'post_status'   => $session->get_status() ? $session->get_status() : 'publish',
-                'post_title'    => $session->get_name() ? $session->get_name() : __( 'Untitled', 'creator-lms' ),
+                'post_title'    => $session->get_name() ? $session->get_name() : __( 'Untitled', 'ohmylms' ),
                 'post_content'  => $session->get_description(),
                 'post_date'     => gmdate( 'Y-m-d H:i:s', $session->get_date_created( 'edit' ) ),
                 'post_date_gmt' => gmdate( 'Y-m-d H:i:s', $session->get_date_created( 'edit' ) ),
@@ -44,7 +44,7 @@ class SessionStore extends DataStore {
              *
              * @since 1.0.0
              */
-            do_action('creatorlms_session_created', $session);
+            do_action('ohmylms_session_created', $session);
         }
     }
 
@@ -56,7 +56,7 @@ class SessionStore extends DataStore {
      */
     public function read( &$session ) {
         $post_object = get_post( $session->get_id() );
-        if ( ! $session->get_id() || ! $post_object || 'omlms-session' !== $post_object->post_type ) {
+        if ( ! $session->get_id() || ! $post_object || 'ohmylms-session' !== $post_object->post_type ) {
             return;
         }
         $session->set_props(
@@ -82,7 +82,7 @@ class SessionStore extends DataStore {
             'post_content' => $session->get_description( 'edit' ),
             'post_title'   => $session->get_name( 'edit' ),
             'post_status'  => $session->get_status( 'edit' ) ? $session->get_status( 'edit' ) : 'publish',
-            'post_type'    => 'omlms-session',
+            'post_type'    => 'ohmylms-session',
         );
         if ( $session->get_date_created( 'edit' ) ) {
             $post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $session->get_date_created( 'edit' ) );

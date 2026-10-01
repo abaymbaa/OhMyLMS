@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Blocks\Blocks;
+namespace OhMyLMS\Blocks\Blocks;
 
-use OMLMS\Shortcodes\ShortcodeCourseList;
+use OhMyLMS\Shortcodes\ShortcodeCourseList;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class CourseListBlock {
 
-	const BLOCK_NAME = 'creator-lms/course-list';
+	const BLOCK_NAME = 'ohmylms/course-list';
 
 	public function __construct() {
 		$this->register_block();
@@ -25,9 +25,9 @@ class CourseListBlock {
 		register_block_type( self::BLOCK_NAME, array(
 			'attributes' => $this->get_block_attributes(),
 			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+			'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
 		) );
 	}
 
@@ -366,16 +366,16 @@ class CourseListBlock {
 
 	public function render_block( $attributes, $content = '' ) {
 		// Always enqueue necessary CSS for course list blocks
-		wp_enqueue_style( 'omlms-frontend' );
-		wp_enqueue_style( 'omlms-general' );
+		wp_enqueue_style( 'ohmylms-frontend' );
+		wp_enqueue_style( 'ohmylms-general' );
 		
 		// Check if layout style is grid-style3 or grid-style4 and enqueue slick.js
 		$layout_style = isset( $attributes['layoutStyle'] ) ? $attributes['layoutStyle'] : 'grid-style1';
 		$layout = isset( $attributes['layout'] ) ? $attributes['layout'] : 'grid';
 		
 		if ( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) ) {
-			wp_enqueue_script( 'omlms-slick' );
-			wp_enqueue_script( 'omlms-frontend' );
+			wp_enqueue_script( 'ohmylms-slick' );
+			wp_enqueue_script( 'ohmylms-frontend' );
 			
 			// Check if we're in admin/editor context and add specific initialization
 			if ( is_admin() || (defined('REST_REQUEST') && REST_REQUEST) || wp_is_json_request() ) {
@@ -385,7 +385,7 @@ class CourseListBlock {
 				jQuery(document).ready(function($) {
 					function initSlickCarousel() {
 						if (typeof $.fn.slick !== 'undefined') {
-							$('.creator-lms-course-cards-carousel').each(function(){
+							$('.ohmylms-course-cards-carousel').each(function(){
 								if (!$(this).hasClass('slick-initialized')) {
 									let colPerRow = $(this).data('col') || {$columns};
 									$(this).slick({
@@ -414,7 +414,7 @@ class CourseListBlock {
 												}
 											}
 										]
-									}).addClass('creator-lms-initialized').css('display', 'block');
+									}).addClass('ohmylms-initialized').css('display', 'block');
 								}
 							});
 						} else {
@@ -436,7 +436,7 @@ class CourseListBlock {
 						mutations.forEach(function(mutation) {
 							if (mutation.type === 'childList') {
 								var addedNodes = $(mutation.addedNodes);
-								if (addedNodes.find('.creator-lms-course-cards-carousel').length || addedNodes.hasClass('creator-lms-course-cards-carousel')) {
+								if (addedNodes.find('.ohmylms-course-cards-carousel').length || addedNodes.hasClass('ohmylms-course-cards-carousel')) {
 									setTimeout(initSlickCarousel, 300);
 								}
 							}
@@ -449,26 +449,26 @@ class CourseListBlock {
 					});
 				});
 				";
-				wp_add_inline_script( 'omlms-slick', $inline_script );
+				wp_add_inline_script( 'ohmylms-slick', $inline_script );
 			}
 			
 			// Add inline CSS for editor context to ensure carousel is visible
 			$inline_css = "
-			.creator-lms-course-cards-carousel {
+			.ohmylms-course-cards-carousel {
 				display: block !important;
 				opacity: 1 !important;
 			}
-			.creator-lms-course-cards-carousel .slick-list {
+			.ohmylms-course-cards-carousel .slick-list {
 				overflow: visible;
 			}
 			";
-			wp_add_inline_style( 'omlms-frontend', $inline_css );
+			wp_add_inline_style( 'ohmylms-frontend', $inline_css );
 		}
 		
 		// Add body classes for proper styling
 		add_filter( 'body_class', function( $classes ) {
-			$classes[] = 'creator-lms-page';
-			$classes[] = 'creator-lms-course-list-shortcode';
+			$classes[] = 'ohmylms-page';
+			$classes[] = 'ohmylms-course-list-shortcode';
 			return $classes;
 		});
 		

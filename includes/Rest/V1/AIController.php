@@ -1,13 +1,13 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Course;
-use OMLMS\Data\Chapter;
-use OMLMS\Data\Lesson;
-use OMLMS\Data\Quiz;
-use OMLMS\Data\Assignment;
-use OMLMS\DataException;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Course;
+use OhMyLMS\Data\Chapter;
+use OhMyLMS\Data\Lesson;
+use OhMyLMS\Data\Quiz;
+use OhMyLMS\Data\Assignment;
+use OhMyLMS\DataException;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -86,7 +86,7 @@ class AIController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creatorlms_rest_insert_course', $post, $request );
+			do_action( 'ohmylms_rest_insert_course', $post, $request );
            
             if( $course_id ) {
                 $this->delete_exiting_contents( $course_id );
@@ -106,7 +106,7 @@ class AIController extends RestController {
             			 *
             			 * @since 1.0.0
             			 */
-            			do_action( 'creator_lms_rest_insert_chapter', $post, $request );
+            			do_action( 'ohmylms_rest_insert_chapter', $post, $request );
 
                         $contents = isset( $chapter['contents'] )? $chapter['contents'] : array();
                         $lessons   = array();
@@ -123,7 +123,7 @@ class AIController extends RestController {
                                  *
                                  * @since 1.0.0
                                  */
-                                do_action( 'creator_lms_rest_insert_content', $post, $request );
+                                do_action( 'ohmylms_rest_insert_content', $post, $request );
                                 $order_number++;
 
                                 $content = array(
@@ -137,7 +137,7 @@ class AIController extends RestController {
             				}
             			}
                        
-                        $chapter_obj = omlms_get_chapter( $chapter_id );
+                        $chapter_obj = ohmylms_get_chapter( $chapter_id );
                         $chapter_obj->set_contents( $lessons );
                         $chapter_obj->set_parent_id( $course_id );
                         $chapter_obj->save();
@@ -151,12 +151,12 @@ class AIController extends RestController {
                         $course_chapters[] = $chapter;
             		}
             	}
-                $course_obj = omlms_get_course( $course_id );
+                $course_obj = ohmylms_get_course( $course_id );
                 $course_obj->set_chapters( $course_chapters );
                 $course_obj->save();
             }
 
-			do_action( 'creatorlms_ai_course_outline_created', $course_id );
+			do_action( 'ohmylms_ai_course_outline_created', $course_id );
 
 			$request->set_param( 'context', 'edit' );
 			
@@ -187,13 +187,13 @@ class AIController extends RestController {
 
 
     public function prepare_content_for_database( $request, $chapter_id  ) {
-        $chapter = omlms_get_chapter( $chapter_id );
+        $chapter = ohmylms_get_chapter( $chapter_id );
         if( $chapter instanceof Chapter ) {
             $lesson_types = apply_filters('ohmylms_lesson_types', ['text','audio','video']);
 
             if( in_array( $request['type'], $lesson_types ) ) {
                 if ( isset( $request['id'] ) ) {
-                    $lesson_obj = omlms_get_lesson( $request['id'] );
+                    $lesson_obj = ohmylms_get_lesson( $request['id'] );
                 } else {
                     $lesson_obj = new Lesson( $chapter );
                 }
@@ -230,7 +230,7 @@ class AIController extends RestController {
 	 */
 	public function prepare_item_for_response( $post, $request ) {
 
-		$course      = omlms_get_course( $post );
+		$course      = ohmylms_get_course( $post );
 		$data        = $this->get_course_data( $course );
 		$chapters    = $course->get_chapters();
 		$certificate = $course->get_certificate();
@@ -251,7 +251,7 @@ class AIController extends RestController {
 		$data['has_automation'] = is_array( $automation ) && count( $automation ) ? true : false;
 		$chapter_id             = is_array( $chapters ) && count( $chapters ) ? $chapters[0]['id'] : '';
 		if ( $chapter_id ) {
-			$chapter = omlms_get_chapter( $chapter_id );
+			$chapter = ohmylms_get_chapter( $chapter_id );
 			if ( ( $chapter instanceof Chapter ) ) {
 				$lessons                       = $chapter->get_lessons();
 				$data['first_chapter_content'] = $lessons;
@@ -272,13 +272,13 @@ class AIController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_course', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_course', $response, $post, $request );
 	}
 
     public function delete_exiting_contents( $course_id ) {
-        $course = omlms_get_course( $course_id );
+        $course = ohmylms_get_course( $course_id );
         global $wpdb;
-        $table_name = $wpdb->prefix. CREATOR_LMS_CHAPTER_RELATIONSHIP;
+        $table_name = $wpdb->prefix. OHMYLMS_CHAPTER_RELATIONSHIP;
         $wpdb->delete(
             $table_name,
             array(
@@ -294,12 +294,12 @@ class AIController extends RestController {
             
             if( $chapters ) {
                 foreach( $chapters as $chapter ) {
-                    $chapter_obj = omlms_get_chapter( $chapter['id'] );
+                    $chapter_obj = ohmylms_get_chapter( $chapter['id'] );
                     if( $chapter_obj instanceof Chapter ) {
                         $lessons = $chapter_obj->get_lessons();
                         if( $lessons ) {
                             foreach( $lessons as $lesson ) {
-                                $lesson_obj = omlms_get_lesson( $lesson['id'] );
+                                $lesson_obj = ohmylms_get_lesson( $lesson['id'] );
                                 if( $lesson_obj instanceof Lesson ) {
                                     $lesson_obj->delete();
                                 }
@@ -339,9 +339,9 @@ class AIController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$course = omlms_get_course( $id );
+			$course = ohmylms_get_course( $id );
 		} else {
-			$course = creator_lms_is_pro() ? new \OMLMS\Data\Course() : new Course();
+			$course = ohmylms_is_pro() ? new \OhMyLMS\Data\Course() : new Course();
 		}
 
 		if ( isset( $request['title'] ) ) {
@@ -375,7 +375,7 @@ class AIController extends RestController {
 	protected function prepare_chapter_for_database( $request ) {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		if ( $id > 0 ) {
-			$chapter = omlms_get_chapter( $id );
+			$chapter = ohmylms_get_chapter( $id );
 		} else {
 			$chapter = new Chapter();
 		}
@@ -406,8 +406,8 @@ class AIController extends RestController {
 
 		$post_id = (int) $request['id'];
 
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_COURSE_CPT ) {
-			return new WP_Error( 'creator_lms_rest_course_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_COURSE_CPT ) {
+			return new WP_Error( 'ohmylms_rest_course_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {

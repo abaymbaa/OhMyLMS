@@ -41,7 +41,7 @@ export function createCourseChapter(readRuntime) {
       b = (props.showEdit, props.setShowEdit, props.handleSaveName),
       w = (0, Router.g)().id,
       S = Ze(),
-      R = (0, WordPressData.useDispatch)('creator-lms/store'),
+      R = (0, WordPressData.useDispatch)('ohmylms/store'),
       x = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getAISuggestedCourses();
       }, []),
@@ -73,7 +73,7 @@ export function createCourseChapter(readRuntime) {
       J = $[1],
       X = (0, WordPressData.useSelect)(
         function (e) {
-          return e('creator-lms/store').getCourseChaptersContent();
+          return e('ohmylms/store').getCourseChaptersContent();
         },
         [chapterId],
       ),
@@ -301,7 +301,7 @@ export function createCourseChapter(readRuntime) {
     return (
       <React.Fragment>
         {activeIndex === chapterId && (
-          <div className={'omlms-single-chapter-content-item'}>
+          <div className={'ohmylms-single-chapter-content-item'}>
             {React.createElement(ie, {
               name: chapter.name || chapter.title,
               description: k,

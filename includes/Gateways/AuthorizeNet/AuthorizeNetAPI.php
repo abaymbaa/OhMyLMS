@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Gateways\AuthorizeNet;
+namespace OhMyLMS\Gateways\AuthorizeNet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -134,7 +134,7 @@ class AuthorizeNetAPI {
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			// Optionally log the error: error_log( 'Authorize.Net API JSON Decode Error: ' . json_last_error_msg() . ' | Body: ' . $body );
-			return new \WP_Error( 'json_decode_error', __( 'Failed to decode API response.', 'creator-lms' ), array( 'status' => wp_remote_retrieve_response_code( $response ) ) );
+			return new \WP_Error( 'json_decode_error', __( 'Failed to decode API response.', 'ohmylms' ), array( 'status' => wp_remote_retrieve_response_code( $response ) ) );
 		}
 
 		return $decoded_body;

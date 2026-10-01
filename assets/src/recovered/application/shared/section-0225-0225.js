@@ -73,7 +73,7 @@ var Hre = function () {
             onClick: function () {
               return ae(t);
             },
-            className: "omlms-coupon-title"
+            className: "ohmylms-coupon-title"
           }, Ge(e) || "N/A");
         }
       }, {
@@ -99,7 +99,7 @@ var Hre = function () {
         render: function (e) {
           return React.createElement(I.SpacerWP, {
             marginBottom: 0,
-            className: "omlms-coupon-code"
+            className: "ohmylms-coupon-code"
           }, React.createElement(I.TagWP, {
             style: Wre(Wre({
               fontSize: "12px",
@@ -197,7 +197,7 @@ var Hre = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/courses?search=".concat(t),
+                path: "/ohmylms/v1/courses?search=".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -238,7 +238,7 @@ var Hre = function () {
               }), P(a), $("success", (0, b.__)("Coupon ".concat(null != t && t.id ? "updated" : "created", " successfully."), "ohmylms")), f(!1), D(null), 1 === B ? ce() : L(1), e.n = 3;
               break;
             case 2:
-              e.p = 2, o = e.v, console.error(o), "creator_lms_rest_coupon_code_already_exists" === (null == o ? void 0 : o.code) ? $("error", null == o ? void 0 : o.message) : $("error", (0, b.__)("Something went wrong!", "ohmylms"));
+              e.p = 2, o = e.v, console.error(o), "ohmylms_rest_coupon_code_already_exists" === (null == o ? void 0 : o.code) ? $("error", null == o ? void 0 : o.message) : $("error", (0, b.__)("Something went wrong!", "ohmylms"));
             case 3:
               return e.a(2);
           }

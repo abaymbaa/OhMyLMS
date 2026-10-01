@@ -37,13 +37,11 @@ export function createPermalinkSettings(readRuntime) {
       _ = function (e, t) {
         var n;
         v.updatePermalinkSettings({
-          creator_lms_permalink: {
+          ohmylms_permalink: {
             value: aJ(
               aJ(
                 {},
-                null == h || null === (n = h.creator_lms_permalink) || void 0 === n
-                  ? void 0
-                  : n.value,
+                null == h || null === (n = h.ohmylms_permalink) || void 0 === n ? void 0 : n.value,
               ),
               {},
               oJ({}, t, e),
@@ -74,7 +72,7 @@ export function createPermalinkSettings(readRuntime) {
                           v.setLoadingSetting(!0),
                           (e.n = 1),
                           l()({
-                            path: 'creator-lms/v1/settings/permalink',
+                            path: 'ohmylms/v1/settings/permalink',
                           })
                         );
                       case 1:
@@ -109,7 +107,7 @@ export function createPermalinkSettings(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
               <Controls.CardWP isBorderless={!0}>
@@ -118,7 +116,7 @@ export function createPermalinkSettings(readRuntime) {
                     title={(0, I18n.__)('Course Base', 'ohmylms')}
                     description={'https://yoursite.com/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
                       null == h ||
-                        null === (t = h.creator_lms_permalink) ||
+                        null === (t = h.ohmylms_permalink) ||
                         void 0 === t ||
                         null === (t = t.value) ||
                         void 0 === t
@@ -129,7 +127,7 @@ export function createPermalinkSettings(readRuntime) {
                     inputType={'text'}
                     value={
                       (null == h ||
-                      null === (n = h.creator_lms_permalink) ||
+                      null === (n = h.ohmylms_permalink) ||
                       void 0 === n ||
                       null === (n = n.value) ||
                       void 0 === n
@@ -148,7 +146,7 @@ export function createPermalinkSettings(readRuntime) {
                     title={(0, I18n.__)('Category Base', 'ohmylms')}
                     description={'https://yoursite.com/courses/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
                       null == h ||
-                        null === (r = h.creator_lms_permalink) ||
+                        null === (r = h.ohmylms_permalink) ||
                         void 0 === r ||
                         null === (r = r.value) ||
                         void 0 === r
@@ -159,7 +157,7 @@ export function createPermalinkSettings(readRuntime) {
                     inputType={'text'}
                     value={
                       (null == h ||
-                      null === (a = h.creator_lms_permalink) ||
+                      null === (a = h.ohmylms_permalink) ||
                       void 0 === a ||
                       null === (a = a.value) ||
                       void 0 === a
@@ -178,7 +176,7 @@ export function createPermalinkSettings(readRuntime) {
                     title={(0, I18n.__)('Lesson Base', 'ohmylms')}
                     description={'https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
                       null == h ||
-                        null === (o = h.creator_lms_permalink) ||
+                        null === (o = h.ohmylms_permalink) ||
                         void 0 === o ||
                         null === (o = o.value) ||
                         void 0 === o
@@ -189,7 +187,7 @@ export function createPermalinkSettings(readRuntime) {
                     inputType={'text'}
                     value={
                       (null == h ||
-                      null === (i = h.creator_lms_permalink) ||
+                      null === (i = h.ohmylms_permalink) ||
                       void 0 === i ||
                       null === (i = i.value) ||
                       void 0 === i
@@ -208,7 +206,7 @@ export function createPermalinkSettings(readRuntime) {
                     title={(0, I18n.__)('Quiz Base', 'ohmylms')}
                     description={' https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
                       null == h ||
-                        null === (c = h.creator_lms_permalink) ||
+                        null === (c = h.ohmylms_permalink) ||
                         void 0 === c ||
                         null === (c = c.value) ||
                         void 0 === c
@@ -219,7 +217,7 @@ export function createPermalinkSettings(readRuntime) {
                     inputType={'text'}
                     value={
                       (null == h ||
-                      null === (u = h.creator_lms_permalink) ||
+                      null === (u = h.ohmylms_permalink) ||
                       void 0 === u ||
                       null === (u = u.value) ||
                       void 0 === u

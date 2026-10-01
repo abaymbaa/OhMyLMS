@@ -2,9 +2,9 @@
 /**
  * The template for displaying matching question
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/quiz-loop/matching.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/quiz-loop/matching.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

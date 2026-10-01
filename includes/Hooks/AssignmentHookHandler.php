@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Abstracts\HookHandler;
-use OMLMS\Data\Lesson;
+use OhMyLMS\Abstracts\HookHandler;
+use OhMyLMS\Data\Lesson;
 
 /**
  * Handles hooks related to lessons in the OhMyLMS plugin.
@@ -13,8 +13,8 @@ use OMLMS\Data\Lesson;
 class AssignmentHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		add_action( 'creator_lms_rest_insert_assignment', array( $this, 'link_assignment_with_chapter' ), 10, 2 );
-		add_action( 'creator_lms_rest_delete_assignment', array( $this, 'unlink_chapter_from_assignment' ), 10 );
+		add_action( 'ohmylms_rest_insert_assignment', array( $this, 'link_assignment_with_chapter' ), 10, 2 );
+		add_action( 'ohmylms_rest_delete_assignment', array( $this, 'unlink_chapter_from_assignment' ), 10 );
 	}
 
 
@@ -56,7 +56,7 @@ class AssignmentHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		// Check if the relationship already exists
 		$exists = $wpdb->get_var(
@@ -101,7 +101,7 @@ class AssignmentHookHandler extends HookHandler {
 		 * @param int $chapter_id The ID of the chapter.
 		 * @param int $lesson_id The ID of the lesson.
 		 */
-		do_action( 'creator_lms_chapter_lesson_relationship_created', $chapter_id, $lesson_id );
+		do_action( 'ohmylms_chapter_lesson_relationship_created', $chapter_id, $lesson_id );
 	}
 
 
@@ -121,7 +121,7 @@ class AssignmentHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		$wpdb->delete(
 			$table_name,
@@ -134,7 +134,7 @@ class AssignmentHookHandler extends HookHandler {
 			)
 		);
 
-		$table_name = $wpdb->prefix . 'omlms_user_progress';
+		$table_name = $wpdb->prefix . 'ohmylms_user_progress';
 		$wpdb->delete(
 			$table_name,
 			array(

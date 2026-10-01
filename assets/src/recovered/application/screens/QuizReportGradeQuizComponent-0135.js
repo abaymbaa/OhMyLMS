@@ -1,7 +1,7 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var H$ = function () {
   var e, t, n, r, a, o, i, c, u, s, d;
-  HG("creator-lms", "quizzes");
+  HG("ohmylms", "quizzes");
   var m = L$((0, g.useState)([]), 2),
     p = m[0],
     h = m[1],
@@ -19,7 +19,7 @@ var H$ = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, w(!0), e.n = 1, l()({
-                path: "/creator-lms/v1/quiz/".concat(R, "/report/").concat(x),
+                path: "/ohmylms/v1/quiz/".concat(R, "/report/").concat(x),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -59,7 +59,7 @@ var H$ = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/quiz/".concat(R, "/report/").concat(x),
+                path: "/ohmylms/v1/quiz/".concat(R, "/report/").concat(x),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -81,7 +81,7 @@ var H$ = function () {
       };
     }();
   return React.createElement(React.Fragment, null, React.createElement(I.ContainerWP, {
-    className: "omlms-quiz-report-details"
+    className: "ohmylms-quiz-report-details"
   }, React.createElement(I.SpacerWP, {
     marginY: 5
   }, React.createElement(I.FlexWP, {
@@ -141,7 +141,7 @@ var H$ = function () {
   }, (0, b.__)("Upgrade Grade", "ohmylms"))), React.createElement(I.SpacerWP, {
     marginBottom: 10
   }), React.createElement("div", {
-    className: "omlms-quiz-report-content-wrapper"
+    className: "ohmylms-quiz-report-content-wrapper"
   }, _ ? React.createElement(I.SkeletonWP, {
     active: !0,
     rows: 10

@@ -1,14 +1,14 @@
 /**
- * CreatorLMS Custom Video Player Styles
+ * OhMyLMS Custom Video Player Styles
  * 
  * Styles for the custom video player with YouTube, Vimeo, and self-hosted support
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  * @version 1.0.0
  */
 
 /* Main Video Player Container */
-.omlms-custom-video-player {
+.ohmylms-custom-video-player {
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -36,7 +36,7 @@
 }
 
 /* Video Player Container */
-.omlms-video-player-container {
+.ohmylms-video-player-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -71,7 +71,7 @@
         }
     }
 
-    .omlms-html5-video {
+    .ohmylms-html5-video {
         width: 100%;
         height: 100%;
         object-fit: contain;
@@ -79,14 +79,14 @@
 }
 
 /* YouTube Poster Image - Shows before iframe loads */
-.omlms-youtube-poster {
+.ohmylms-youtube-poster {
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
 }
 
 /* Branding Blocker Overlays - Cover YouTube UI elements */
-.omlms-branding-blocker-top {
+.ohmylms-branding-blocker-top {
     position: absolute;
     top: 0;
     left: 0;
@@ -98,7 +98,7 @@
     cursor: default;
 }
 
-.omlms-branding-blocker-bottom-right {
+.ohmylms-branding-blocker-bottom-right {
     position: absolute;
     bottom: 80px; // Position above custom controls
     right: 0;
@@ -111,7 +111,7 @@
 }
 
 // Add a full video area blocker that sits between video and controls
-.omlms-video-interaction-blocker {
+.ohmylms-video-interaction-blocker {
     position: absolute;
     top: 0;
     left: 0;
@@ -125,7 +125,7 @@
 
 /* Full-screen click blocker for YouTube to prevent YouTube's play button and hover UI from being clicked */
 /* Only active before first play - gets hidden once video starts */
-.omlms-youtube-click-blocker {  
+.ohmylms-youtube-click-blocker {  
     position: absolute;
     top: 0;
     left: 0;
@@ -138,7 +138,7 @@
 }
 
 /* Custom Big Play Button - YouTube style rounded rectangle */
-.omlms-big-play-button {
+.ohmylms-big-play-button {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -151,7 +151,7 @@
     // YouTube-style rounded rectangle button
     width: 68px;
     height: 48px;
-    background: var(--creator-lms-primary-color, #4F46E5);
+    background: var(--ohmylms-primary-color, #4F46E5);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -185,20 +185,20 @@
 }
 
 // Prevent clicks on YouTube controls - force use of custom controls
-.omlms-custom-video-player {
+.ohmylms-custom-video-player {
     // Ensure proper stacking context
     position: relative;
     isolation: isolate;
     
     // Allow interaction with video through blocker
-    .omlms-branding-blocker-top {
+    .ohmylms-branding-blocker-top {
         &:hover {
             cursor: pointer;
         }
     }
     
     // Allow interaction with our custom controls
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         position: absolute;
         z-index: 10000 !important; // Above the blocker
         pointer-events: auto !important;
@@ -206,7 +206,7 @@
 }
 
 /* Custom Controls Container */
-.omlms-custom-controls {
+.ohmylms-custom-controls {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -225,14 +225,14 @@
 }
 
 /* Progress Container */
-.omlms-controls-progress-container {
+.ohmylms-controls-progress-container {
     width: 100%;
     display: flex;
     flex-direction: column;
 }
 
 /* Progress Bar */
-.omlms-progress-bar {
+.ohmylms-progress-bar {
     position: relative;
     width: 100%;
     height: 5px;
@@ -246,8 +246,8 @@
         height: 7px;
     }
 
-    &:hover .omlms-progress-handle,
-    &:active .omlms-progress-handle {
+    &:hover .ohmylms-progress-handle,
+    &:active .ohmylms-progress-handle {
         opacity: 1;
         transform: translateY(-50%) translateX(-50%) scale(1);
     }
@@ -256,19 +256,19 @@
     &.is-seeking {
         height: 7px;
         
-        .omlms-progress-handle {
+        .ohmylms-progress-handle {
             opacity: 1;
             transform: translateY(-50%) translateX(-50%) scale(1.2);
         }
     }
 }
 
-.omlms-progress-filled {
+.ohmylms-progress-filled {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
-    background-color: var(--creator-lms-primary-color, #4F46E5);
+    background-color: var(--ohmylms-primary-color, #4F46E5);
     border-radius: 3px;
     transition: width 0.05s linear;
     will-change: width;
@@ -279,7 +279,7 @@
     }
 }
 
-.omlms-progress-handle {
+.ohmylms-progress-handle {
     position: absolute;
     top: 50%;
     left: 0;
@@ -301,7 +301,7 @@
 }
 
 /* Time Display */
-.omlms-time-display {
+.ohmylms-time-display {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -313,13 +313,13 @@
     white-space: nowrap;
     flex-shrink: 0;
 
-    .omlms-separator {
+    .ohmylms-separator {
         opacity: 0.7;
         margin: 0 2px;
     }
 
-    .omlms-current-time,
-    .omlms-duration {
+    .ohmylms-current-time,
+    .ohmylms-duration {
         font-weight: 500;
         min-width: 40px;
         text-align: center;
@@ -327,7 +327,7 @@
 }
 
 /* Controls Bottom Row */
-.omlms-controls-bottom {
+.ohmylms-controls-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -335,8 +335,8 @@
     flex-wrap: nowrap;
 }
 
-.omlms-controls-left,
-.omlms-controls-right {
+.ohmylms-controls-left,
+.ohmylms-controls-right {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -344,7 +344,7 @@
 }
 
 /* Control Buttons */
-.omlms-control-btn {
+.ohmylms-control-btn {
     background: none;
     border: none;
     color: #fff;
@@ -366,7 +366,7 @@
     }
 
     &:focus-visible {
-        outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+        outline: 2px solid var(--ohmylms-primary-color, #4F46E5);
         outline-offset: 2px;
     }
 
@@ -378,7 +378,7 @@
 }
 
 /* Play/Pause Button */
-.omlms-play-pause {
+.ohmylms-play-pause {
     position: relative;
     width: 40px;
     height: 40px;
@@ -390,18 +390,18 @@
 }
 
 /* Volume Control */
-.omlms-volume-control {
+.ohmylms-volume-control {
     display: flex;
     align-items: center;
     gap: 8px;
     position: relative;
 
-    .omlms-volume-btn {
+    .ohmylms-volume-btn {
         position: relative;
         z-index: 2;
     }
 
-    .omlms-volume-slider {
+    .ohmylms-volume-slider {
         width: 0;
         opacity: 0;
         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -411,14 +411,14 @@
         position: relative;
     }
 
-    &:hover .omlms-volume-slider {
+    &:hover .ohmylms-volume-slider {
         width: 100px;
         opacity: 1;
     }
 }
 
 // Custom div-based volume slider (no input conflicts)
-.omlms-volume-track {
+.ohmylms-volume-track {
     position: relative;
     width: 100px;
     height: 4px;
@@ -443,14 +443,14 @@
     &.is-dragging {
         height: 6px;
         
-        .omlms-volume-thumb {
+        .ohmylms-volume-thumb {
             transform: translate(-50%, -50%) scale(1.4);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.15);
         }
     }
 }
 
-.omlms-volume-fill {
+.ohmylms-volume-fill {
     position: absolute;
     left: 0;
     top: 0;
@@ -462,7 +462,7 @@
     transition: width 0.1s ease;
 }
 
-.omlms-volume-thumb {
+.ohmylms-volume-thumb {
     position: absolute;
     top: 50%;
     left: 100%;
@@ -478,34 +478,34 @@
     opacity: 0.9;
 }
 
-.omlms-volume-track:hover .omlms-volume-thumb,
-.omlms-volume-track:focus .omlms-volume-thumb,
-.omlms-volume-track:focus-visible .omlms-volume-thumb {
+.ohmylms-volume-track:hover .ohmylms-volume-thumb,
+.ohmylms-volume-track:focus .ohmylms-volume-thumb,
+.ohmylms-volume-track:focus-visible .ohmylms-volume-thumb {
     transform: translate(-50%, -50%) scale(1.25);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.1);
     opacity: 1;
 }
 
-.omlms-volume-track:active .omlms-volume-thumb {
+.ohmylms-volume-track:active .ohmylms-volume-thumb {
     transform: translate(-50%, -50%) scale(1.1);
 }
 
 /* Speed Control */
-.omlms-speed-control {
+.ohmylms-speed-control {
     position: relative;
 }
 
-.omlms-speed-btn {
+.ohmylms-speed-btn {
     min-width: 48px;
     
-    .omlms-speed-text {
+    .ohmylms-speed-text {
         font-size: 14px;
         font-weight: 600;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 }
 
-.omlms-speed-menu {
+.ohmylms-speed-menu {
     position: absolute;
     bottom: 100%;
     right: 0;
@@ -547,19 +547,19 @@
         }
 
         &.active {
-            background-color: var(--creator-lms-primary-color, #4F46E5);
+            background-color: var(--ohmylms-primary-color, #4F46E5);
             font-weight: 600;
         }
 
         &:focus-visible {
-            outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+            outline: 2px solid var(--ohmylms-primary-color, #4F46E5);
             outline-offset: -2px;
         }
     }
 }
 
 /* Fullscreen Button */
-.omlms-fullscreen-btn {
+.ohmylms-fullscreen-btn {
     svg {
         width: 26px;
         height: 26px;
@@ -567,14 +567,14 @@
 }
 
 /* Logo Overlay — replaces big play button when set */
-.creator-lms-page img.omlms-player-logo {
+.ohmylms-page img.ohmylms-player-logo {
     position: absolute;
     z-index: 9999;
     display: block;
     cursor: pointer;
     width: 74px !important;
     height: 48px !important;
-    background-color: var(--creator-lms-primary-color, #4F46E5);
+    background-color: var(--ohmylms-primary-color, #4F46E5);
     padding: 12px;
     border-radius: 12px;
     box-sizing: border-box;
@@ -593,7 +593,7 @@
 }
 
 /* Error Message */
-.omlms-video-error {
+.ohmylms-video-error {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -615,7 +615,7 @@
 }
 
 /* Loading State */
-.omlms-video-loading {
+.ohmylms-video-loading {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -628,11 +628,11 @@
 
 /* Responsive Adjustments */
 @media screen and (max-width: 768px) {
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         padding: 16px 12px 10px;
     }
 
-    .omlms-control-btn {
+    .ohmylms-control-btn {
         padding: 4px;
 
         svg {
@@ -641,7 +641,7 @@
         }
     }
 
-    .omlms-play-pause {
+    .ohmylms-play-pause {
         width: 32px;
         height: 32px;
 
@@ -651,41 +651,41 @@
         }
     }
 
-    .omlms-time-display {
+    .ohmylms-time-display {
         font-size: 12px;
     }
 
-    .omlms-volume-control {
-        .omlms-volume-slider {
+    .ohmylms-volume-control {
+        .ohmylms-volume-slider {
             width: 0 !important;
             display: none;
         }
     }
 
-    .omlms-speed-btn {
+    .ohmylms-speed-btn {
         min-width: 40px;
         
-        .omlms-speed-text {
+        .ohmylms-speed-text {
             font-size: 13px;
         }
     }
 
-    .omlms-controls-bottom {
+    .ohmylms-controls-bottom {
         gap: 6px;
     }
 
-    .omlms-controls-left,
-    .omlms-controls-right {
+    .ohmylms-controls-left,
+    .ohmylms-controls-right {
         gap: 4px;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         padding: 12px 8px px;
     }
 
-    .omlms-progress-bar {
+    .ohmylms-progress-bar {
         height: 4px;
 
         &:hover {
@@ -693,16 +693,16 @@
         }
     }
 
-    .omlms-time-display {
+    .ohmylms-time-display {
         font-size: 11px;
 
-        .omlms-current-time,
-        .omlms-duration {
+        .ohmylms-current-time,
+        .ohmylms-duration {
             min-width: 30px;
         }
     }
 
-    .omlms-speed-menu {
+    .ohmylms-speed-menu {
         right: auto;
         left: 50%;
         transform: translateX(-50%) translateY(10px);
@@ -719,15 +719,15 @@
 }
 
 /* Fullscreen Mode Adjustments */
-.omlms-custom-video-player:fullscreen,
-.omlms-custom-video-player:-webkit-full-screen,
-.omlms-custom-video-player:-moz-full-screen,
-.omlms-custom-video-player:-ms-fullscreen {
-    .omlms-custom-controls {
+.ohmylms-custom-video-player:fullscreen,
+.ohmylms-custom-video-player:-webkit-full-screen,
+.ohmylms-custom-video-player:-moz-full-screen,
+.ohmylms-custom-video-player:-ms-fullscreen {
+    .ohmylms-custom-controls {
         padding: 24px 20px 16px;
     }
 
-    .omlms-progress-bar {
+    .ohmylms-progress-bar {
         height: 6px;
 
         &:hover {
@@ -735,7 +735,7 @@
         }
     }
 
-    .omlms-control-btn {
+    .ohmylms-control-btn {
         padding: 8px;
 
         svg {
@@ -744,7 +744,7 @@
         }
     }
 
-    .omlms-play-pause {
+    .ohmylms-play-pause {
         width: 44px;
         height: 44px;
 
@@ -754,18 +754,18 @@
         }
     }
 
-    .omlms-time-display {
+    .ohmylms-time-display {
         font-size: 16px;
     }
 
-    .omlms-volume-control:hover .omlms-volume-slider {
+    .ohmylms-volume-control:hover .ohmylms-volume-slider {
         width: 100px;
     }
 }
 
 /* Keyboard Control Indicators */
-.omlms-volume-indicator,
-.omlms-seek-indicator {
+.ohmylms-volume-indicator,
+.ohmylms-seek-indicator {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -799,21 +799,21 @@
     }
 }
 
-.omlms-volume-indicator {
-    .omlms-volume-text {
+.ohmylms-volume-indicator {
+    .ohmylms-volume-text {
         display: flex;
         flex-direction: column;
         gap: 4px;
         align-items: flex-start;
     }
 
-    .omlms-volume-current {
+    .ohmylms-volume-current {
         font-size: 28px;
         font-weight: 700;
         line-height: 1;
     }
 
-    .omlms-volume-delta {
+    .ohmylms-volume-delta {
         font-size: 16px;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.8);
@@ -821,7 +821,7 @@
     }
 }
 
-.omlms-seek-indicator {
+.ohmylms-seek-indicator {
     font-size: 20px;
     padding: 24px 36px;
     
@@ -848,9 +848,9 @@
 }
 
 /* Make video player focusable with keyboard */
-.omlms-custom-video-player {
+.ohmylms-custom-video-player {
     &:focus {
-        outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+        outline: 2px solid var(--ohmylms-primary-color, #4F46E5);
         outline-offset: 2px;
     }
     
@@ -860,48 +860,48 @@
 }
 
 /* Accessibility Improvements */
-.omlms-custom-video-player:focus-within {
-    outline: 2px solid var(--creator-lms-primary-color, #4F46E5);
+.ohmylms-custom-video-player:focus-within {
+    outline: 2px solid var(--ohmylms-primary-color, #4F46E5);
     outline-offset: 2px;
 }
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
-    .omlms-custom-controls,
-    .omlms-progress-bar,
-    .omlms-progress-handle,
-    .omlms-volume-slider,
-    .omlms-speed-menu,
-    .omlms-control-btn {
+    .ohmylms-custom-controls,
+    .ohmylms-progress-bar,
+    .ohmylms-progress-handle,
+    .ohmylms-volume-slider,
+    .ohmylms-speed-menu,
+    .ohmylms-control-btn {
         transition: none;
     }
 }
 
 /* Dark mode support (if theme supports it) */
 @media (prefers-color-scheme: dark) {
-    .omlms-custom-video-player {
+    .ohmylms-custom-video-player {
         background-color: #000;
     }
 }
 
 /* Hide native controls when using custom controls */
-.omlms-custom-video-player video::-webkit-media-controls {
+.ohmylms-custom-video-player video::-webkit-media-controls {
     display: none !important;
 }
 
-.omlms-custom-video-player video::-webkit-media-controls-enclosure {
+.ohmylms-custom-video-player video::-webkit-media-controls-enclosure {
     display: none !important;
 }
 
 /* Pointer cursor for interactive elements */
-.omlms-progress-bar,
-.omlms-control-btn,
-.omlms-speed-menu button {
+.ohmylms-progress-bar,
+.ohmylms-control-btn,
+.ohmylms-speed-menu button {
     cursor: pointer;
 }
 
 /* Prevent text selection on controls */
-.omlms-custom-controls {
+.ohmylms-custom-controls {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -911,32 +911,32 @@
 /* Mobile-specific improvements */
 @media (max-width: 768px), (hover: none) {
     // Make video player container responsive
-    .omlms-custom-video-player {
+    .ohmylms-custom-video-player {
         margin-bottom: 16px;
         border-radius: 8px;
     }
     
     // Ensure YouTube iframe is touchable on mobile
-    .omlms-video-player-container iframe {
+    .ohmylms-video-player-container iframe {
         pointer-events: auto !important;
         touch-action: auto !important;
     }
     
     // Remove YouTube click blocker on mobile to allow direct iframe interaction
-    .omlms-youtube-click-blocker {
+    .ohmylms-youtube-click-blocker {
         display: none !important;
     }
     
     // Adjust branding blockers for mobile
-    .omlms-branding-blocker-top,
-    .omlms-branding-blocker-bottom-right,
-    .omlms-video-interaction-blocker {
+    .ohmylms-branding-blocker-top,
+    .ohmylms-branding-blocker-bottom-right,
+    .ohmylms-video-interaction-blocker {
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
     }
     
     // Compact touch targets for controls on mobile
-    .omlms-control-btn {
+    .ohmylms-control-btn {
         min-width: 36px;
         min-height: 36px;
         padding: 8px 6px;
@@ -948,7 +948,7 @@
     }
     
     // YouTube-style button on mobile - sized to cover YT's button
-    .omlms-big-play-button {
+    .ohmylms-big-play-button {
         width: 72px;
         height: 50px;
         border-radius: 12px;
@@ -962,7 +962,7 @@
     }
     
     // Compact progress bar for mobile
-    .omlms-progress-bar {
+    .ohmylms-progress-bar {
         height: 4px;
         margin-bottom: 6px;
         touch-action: manipulation;
@@ -975,32 +975,32 @@
         }
         
         // Always show handle on mobile for easier dragging
-        .omlms-progress-handle {
+        .ohmylms-progress-handle {
             opacity: 1;
             transform: translateY(-50%) translateX(-50%) scale(1);
             width: 12px;
             height: 12px;
         }
         
-        &:active .omlms-progress-handle,
-        &.is-seeking .omlms-progress-handle {
+        &:active .ohmylms-progress-handle,
+        &.is-seeking .ohmylms-progress-handle {
             transform: translateY(-50%) translateX(-50%) scale(1.2);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
     }
     
-    .omlms-progress-filled {
+    .ohmylms-progress-filled {
         border-radius: 2px;
     }
     
     // Compact volume slider for mobile
-    .omlms-volume-track {
+    .ohmylms-volume-track {
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
         height: 4px;
         width: 50px;
         
-        .omlms-volume-thumb {
+        .ohmylms-volume-thumb {
             width: 10px;
             height: 10px;
             margin-left: -5px;
@@ -1008,30 +1008,30 @@
         }
     }
     
-    .omlms-volume-control {
-        .omlms-volume-slider {
+    .ohmylms-volume-control {
+        .ohmylms-volume-slider {
             display: none; // Hide slider on mobile, only show mute button
         }
     }
     
     // Compact time display for mobile
-    .omlms-time-display {
+    .ohmylms-time-display {
         font-size: 11px;
         gap: 2px;
         
-        .omlms-current-time,
-        .omlms-duration {
+        .ohmylms-current-time,
+        .ohmylms-duration {
             min-width: 28px;
             font-size: 11px;
         }
         
-        .omlms-separator {
+        .ohmylms-separator {
             font-size: 10px;
         }
     }
     
     // Compact control visibility and spacing on mobile
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         opacity: 1 !important;
         transform: translateY(0) !important;
         padding: 10px 10px 6px;
@@ -1043,36 +1043,36 @@
         overflow: visible;
     }
     
-    .omlms-controls-progress-container {
+    .ohmylms-controls-progress-container {
         gap: 4px;
     }
     
-    .omlms-controls-bottom {
+    .ohmylms-controls-bottom {
         gap: 4px;
         flex-wrap: nowrap;
         overflow: hidden;
     }
     
-    .omlms-controls-left,
-    .omlms-controls-right {
+    .ohmylms-controls-left,
+    .ohmylms-controls-right {
         gap: 4px;
         flex-shrink: 1;
         min-width: 0;
     }
     
     // Speed control adjustments for mobile
-    .omlms-speed-control {
-        .omlms-speed-btn {
+    .ohmylms-speed-control {
+        .ohmylms-speed-btn {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
             
-            .omlms-speed-text {
+            .ohmylms-speed-text {
                 font-size: 11px;
                 min-width: 24px;
             }
         }
         
-        .omlms-speed-menu {
+        .ohmylms-speed-menu {
             bottom: calc(100% + 8px);
             right: 0;
             min-width: 70px;
@@ -1087,36 +1087,36 @@
     }
     
     // Prevent double-tap zoom on interactive elements
-    .omlms-custom-video-player,
-    .omlms-big-play-button,
-    .omlms-control-btn,
-    .omlms-progress-bar,
-    .omlms-volume-track,
-    .omlms-speed-menu button {
+    .ohmylms-custom-video-player,
+    .ohmylms-big-play-button,
+    .ohmylms-control-btn,
+    .ohmylms-progress-bar,
+    .ohmylms-volume-track,
+    .ohmylms-speed-menu button {
         touch-action: manipulation;
     }
     
     // Compact indicators on mobile
-    .omlms-volume-indicator,
-    .omlms-seek-indicator {
+    .ohmylms-volume-indicator,
+    .ohmylms-seek-indicator {
         svg {
             width: 32px;
             height: 32px;
         }
     }
     
-    .omlms-volume-indicator {
-        .omlms-volume-text {
+    .ohmylms-volume-indicator {
+        .ohmylms-volume-text {
             font-size: 14px;
             margin-top: 6px;
             
-            .omlms-volume-delta {
+            .ohmylms-volume-delta {
                 font-size: 11px;
             }
         }
     }
     
-    .omlms-seek-indicator {
+    .ohmylms-seek-indicator {
         font-size: 14px;
         gap: 6px;
     }
@@ -1124,12 +1124,12 @@
 
 /* Small mobile devices (portrait phones) */
 @media (max-width: 480px) {
-    .omlms-custom-video-player {
+    .ohmylms-custom-video-player {
         border-radius: 6px;
         margin-bottom: 12px;
     }
     
-    .omlms-big-play-button {
+    .ohmylms-big-play-button {
         width: 68px;
         height: 48px;
         border-radius: 10px;
@@ -1140,11 +1140,11 @@
         }
     }
     
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         padding: 0px 6px 0px;
     }
     
-    .omlms-control-btn {
+    .ohmylms-control-btn {
         padding: 6px 4px;
         min-width: 32px;
         min-height: 32px;
@@ -1155,39 +1155,39 @@
         }
     }
     
-    .omlms-time-display {
+    .ohmylms-time-display {
         font-size: 10px;
         
-        .omlms-current-time,
-        .omlms-duration {
+        .ohmylms-current-time,
+        .ohmylms-duration {
             min-width: 24px;
         }
     }
     
-    .omlms-progress-bar {
+    .ohmylms-progress-bar {
         height: 3px;
         margin-bottom: 4px;
         
-        .omlms-progress-handle {
+        .ohmylms-progress-handle {
             width: 10px;
             height: 10px;
         }
     }
     
     // Stack controls on very small screens if needed
-    .omlms-controls-bottom {
+    .ohmylms-controls-bottom {
         gap: 2px;
     }
     
-    .omlms-controls-left,
-    .omlms-controls-right {
+    .ohmylms-controls-left,
+    .ohmylms-controls-right {
         gap: 2px;
     }
 }
 
 /* Landscape mobile devices */
 @media (max-width: 768px) and (orientation: landscape) {
-    .omlms-custom-video-player {
+    .ohmylms-custom-video-player {
         margin-bottom: 0;
         border-radius: 0;
         
@@ -1196,7 +1196,7 @@
         }
     }
     
-    .omlms-big-play-button {
+    .ohmylms-big-play-button {
         width: 68px;
         height: 48px;
         border-radius: 10px;
@@ -1207,15 +1207,15 @@
         }
     }
     
-    .omlms-custom-controls {
+    .ohmylms-custom-controls {
         padding: 8px 12px 4px;
     }
     
-    .omlms-controls-progress-container {
+    .ohmylms-controls-progress-container {
         margin-bottom: 4px;
     }
     
-    .omlms-control-btn {
+    .ohmylms-control-btn {
         min-width: 34px;
         min-height: 34px;
         padding: 6px 5px;
@@ -1229,19 +1229,19 @@
 
 /* iOS-specific fixes */
 @supports (-webkit-touch-callout: none) {
-    .omlms-video-player-container iframe {
+    .ohmylms-video-player-container iframe {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
     }
     
     // Ensure video container is properly touchable
-    .omlms-custom-video-player {
+    .ohmylms-custom-video-player {
         -webkit-overflow-scrolling: touch;
     }
     
     // Fix iOS touch issues
-    .omlms-progress-bar,
-    .omlms-volume-track {
+    .ohmylms-progress-bar,
+    .ohmylms-volume-track {
         -webkit-tap-highlight-color: transparent;
     }
 }

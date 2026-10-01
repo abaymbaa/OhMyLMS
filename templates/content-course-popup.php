@@ -2,19 +2,19 @@
 /**
  * Template for displaying course content in popup. It is used for layout style 'grid-style3' course archive page.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/content-course-popup.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/content-course-popup.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit();
 
 if( isset($atts) && is_array($atts) && isset($atts['course_rows']) ){
-    $data = !empty($atts['course_rows']) ? $atts['course_rows'] : get_option('creator_lms_archive_page_row', []);
+    $data = !empty($atts['course_rows']) ? $atts['course_rows'] : get_option('ohmylms_archive_page_row', []);
 } else {
     // Fallback to default option if shortcode attributes are not set
-    $data = get_option('creator_lms_archive_page_row', []);
+    $data = get_option('ohmylms_archive_page_row', []);
 }
 
 if (empty($data)) {
@@ -39,7 +39,7 @@ foreach ($data as $row) {
 		
 	if( 'all' === $row['row_display_criteria'] ){
 		$args = [
-			'post_type' => CREATOR_LMS_COURSE_CPT,
+			'post_type' => OHMYLMS_COURSE_CPT,
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,  // Adjust as needed
 		];
@@ -60,7 +60,7 @@ foreach ($data as $row) {
 		if ($query->have_posts()) {
 			while ($query->have_posts()) {
 				$query->the_post();
-				omlms_get_template_part( 'course', 'popup-content',isset($atts) && is_array($atts) ? $atts : null ); //calling course-popup-content.php
+				ohmylms_get_template_part( 'course', 'popup-content',isset($atts) && is_array($atts) ? $atts : null ); //calling course-popup-content.php
 			}
 			wp_reset_postdata();
 		} 
@@ -73,7 +73,7 @@ foreach ($data as $row) {
 		if (!empty($course_ids)) {
 			// Create a WP_Query with the course IDs
 			$query = new \WP_Query([
-				'post_type' => 'omlms-course',
+				'post_type' => 'ohmylms-course',
 				'post__in' => $course_ids,
 				'orderby' => 'post__in', // Maintain the order of IDs
 				'posts_per_page' => -1,  // Adjust as needed
@@ -83,7 +83,7 @@ foreach ($data as $row) {
 			if ($query->have_posts()) {
 				while ($query->have_posts()) {
 					$query->the_post();
-					omlms_get_template_part( 'course', 'popup-content', isset($atts) && is_array($atts) ? $atts : null ); //calling course-popup-content.php
+					ohmylms_get_template_part( 'course', 'popup-content', isset($atts) && is_array($atts) ? $atts : null ); //calling course-popup-content.php
 				}
 				wp_reset_postdata();
 			} 

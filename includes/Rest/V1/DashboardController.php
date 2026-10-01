@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Admin\Settings\AdminSettings;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Admin\Settings\AdminSettings;
 use WP_Query;
 
 /**
@@ -112,8 +112,8 @@ class DashboardController extends RestController {
 			p.post_date
 		FROM {$wpdb->posts} p
 		INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-		WHERE p.post_type = 'omlms-order' 
-		AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+		WHERE p.post_type = 'ohmylms-order' 
+		AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 		AND pm.meta_key = '_order_total'";
 
 		$query = $this->get_filter_query( $query, $filter, $start_date, $end_date );
@@ -186,7 +186,7 @@ class DashboardController extends RestController {
 				$date_key = date( 'Y', strtotime( $result['post_date'] ) );
 			}
 
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning              += $line_total;
 				$graph_data[ $date_key ]['net'] += $line_total;
 
@@ -194,11 +194,11 @@ class DashboardController extends RestController {
 
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
-					$graph_data[ $date_key ]['refund'] += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+					$graph_data[ $date_key ]['refund'] += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
 
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 				$total_refund                      += $line_total;
 				$graph_data[ $date_key ]['refund'] += $line_total;
 			}
@@ -211,7 +211,7 @@ class DashboardController extends RestController {
 
 		// Get total Course count
 		$args = array(
-			'post_type'      => 'omlms-course',
+			'post_type'      => 'ohmylms-course',
 			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ), // Exclude 'trash'
 			'posts_per_page' => -1, // Get all posts
 			'fields'         => 'ids', // We only need the IDs
@@ -220,10 +220,10 @@ class DashboardController extends RestController {
 		$query          = new WP_Query( $args );
 		$total_courses  = $query->found_posts;
 		$recent_courses = $this->get_recent_courses_with_30_day_stats();
-		return apply_filters('creatorlms_dashboard_data', array(
+		return apply_filters('ohmylms_dashboard_data', array(
 			'total_earning'          => $total_earning,
-			'currency'               => html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-			'currency_pos'           => get_omlms_currency_position(),
+			'currency'               => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+			'currency_pos'           => get_ohmylms_currency_position(),
 			'total_students'         => $course_data['total_students'],
 			'total_course'           => $course_data['total_course'],
 			'total_reviews'          => $course_data['total_reviews'],
@@ -268,12 +268,12 @@ class DashboardController extends RestController {
 		// $base_query = "SELECT m.meta_value as line_total, pm.meta_value as order_total, p.post_status, p.ID as order_id
 		// 	FROM {$wpdb->posts} p
 		// 	INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-		// 	INNER JOIN {$wpdb->prefix}omlms_order_items oi ON p.ID = oi.order_id
-		// 	INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-		// 	WHERE p.post_type = 'omlms-order'
+		// 	INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
+		// 	INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+		// 	WHERE p.post_type = 'ohmylms-order'
 		// 	AND m.meta_key = '_line_total'
 		// 	AND pm.meta_key = '_order_total'
-		// 	AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+		// 	AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 		// 	AND p.post_date BETWEEN %s AND %s";
 
 		$base_query = "SELECT 
@@ -282,9 +282,9 @@ class DashboardController extends RestController {
 				p.ID as order_id
 			FROM {$wpdb->posts} p
 			INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-			WHERE p.post_type = 'omlms-order'
+			WHERE p.post_type = 'ohmylms-order'
 			AND pm.meta_key = '_order_total'
-			AND p.post_status IN ('omlms-completed', 'omlms-refunded')
+			AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 			AND p.post_date BETWEEN %s AND %s";
 
 		// Get data for current and previous periods
@@ -297,17 +297,17 @@ class DashboardController extends RestController {
 			foreach ( $data as $row ) {
 				$amount = floatval( $row['order_total'] );
 
-				if ( $row['post_status'] === 'omlms-completed' ) {
+				if ( $row['post_status'] === 'ohmylms-completed' ) {
 					$order    = ecommerce_get_order( $row['order_id'] );
 					$earning += $amount;
 					$net     += $amount;
 
 					foreach ( $order->get_refunds() as $single_refund ) {
 						$refund_id = $single_refund->ID;
-						$refund   += omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
-						$net      -= omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() );
+						$refund   += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
+						$net      -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 					}
-				} elseif ( $row['post_status'] === 'omlms-refunded' ) {
+				} elseif ( $row['post_status'] === 'ohmylms-refunded' ) {
 					$earning += $amount;
 					$refund  += $amount;
 				}
@@ -382,8 +382,8 @@ class DashboardController extends RestController {
 		$count_query = "
 			SELECT COUNT(DISTINCT p.ID)
 			FROM {$wpdb->posts} p
-			LEFT JOIN {$wpdb->prefix}omlms_chapter_relationship cr ON p.ID = cr.course_id
-			WHERE p.post_type = 'omlms-course'
+			LEFT JOIN {$wpdb->prefix}ohmylms_chapter_relationship cr ON p.ID = cr.course_id
+			WHERE p.post_type = 'ohmylms-course'
 			AND p.post_status = 'publish'
 		";
 
@@ -418,19 +418,19 @@ class DashboardController extends RestController {
 				SUM(CASE WHEN cr2.content_type = 'quiz' THEN 1 ELSE 0 END) AS quizzes,
 				COALESCE((
 					SELECT SUM(oi_meta_line_total.meta_value)
-					FROM {$wpdb->prefix}omlms_order_items oi
-					INNER JOIN {$wpdb->prefix}omlms_order_itemmeta oi_meta_course ON oi.order_item_id = oi_meta_course.order_item_id
-					INNER JOIN {$wpdb->prefix}omlms_order_itemmeta oi_meta_line_total ON oi.order_item_id = oi_meta_line_total.order_item_id
+					FROM {$wpdb->prefix}ohmylms_order_items oi
+					INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta oi_meta_course ON oi.order_item_id = oi_meta_course.order_item_id
+					INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta oi_meta_line_total ON oi.order_item_id = oi_meta_line_total.order_item_id
 					INNER JOIN {$wpdb->posts} orders ON oi.order_id = orders.ID
 					WHERE oi_meta_course.meta_key = '_course_id'
 					AND oi_meta_course.meta_value = p.ID
 					AND oi_meta_line_total.meta_key = '_line_total'
-					AND orders.post_status IN ('omlms-completed', 'omlms-refunded')
+					AND orders.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 				), 0) AS earnings
 			FROM {$wpdb->posts} p
-			LEFT JOIN {$wpdb->prefix}omlms_chapter_relationship cr ON p.ID = cr.course_id
-			LEFT JOIN {$wpdb->prefix}omlms_content_relationship cr2 ON cr.chapter_id = cr2.chapter_id
-			WHERE p.post_type = 'omlms-course'
+			LEFT JOIN {$wpdb->prefix}ohmylms_chapter_relationship cr ON p.ID = cr.course_id
+			LEFT JOIN {$wpdb->prefix}ohmylms_content_relationship cr2 ON cr.chapter_id = cr2.chapter_id
+			WHERE p.post_type = 'ohmylms-course'
 			AND p.post_status = 'publish'
 		";
 
@@ -455,11 +455,11 @@ class DashboardController extends RestController {
 		// Prepare final output
 		$courses = array();
 		foreach ( $results as $row ) {
-			$course    = omlms_get_course( $row['course_id'] );
+			$course    = ohmylms_get_course( $row['course_id'] );
 			$courses[] = array(
 				'id'           	=> $row['course_id'],
-				'currency'     	=> html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-				'currency_pos' 	=> get_omlms_currency_position(),
+				'currency'     	=> html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+				'currency_pos' 	=> get_ohmylms_currency_position(),
 				'name'         	=> $row['course_name'],
 				'chapters'     	=> (int) $row['chapters'],
 				'lessons'      	=> (int) $row['lessons'],
@@ -515,7 +515,7 @@ class DashboardController extends RestController {
 		// Build query to fetch courses
 		$courses_query = $wpdb->prepare(
 			$query,
-			'omlms-course',
+			'ohmylms-course',
 			$status
 		);
 
@@ -528,7 +528,7 @@ class DashboardController extends RestController {
 		// Build query to fetch courses
 		$courses_query = $wpdb->prepare(
 			$query,
-			'omlms-course',
+			'ohmylms-course',
 			$status
 		);
 		// Execute courses query
@@ -538,7 +538,7 @@ class DashboardController extends RestController {
 		$course_data = array();
 		$course_sold = 0;
 		foreach ( $courses as $course ) {
-			$course_obj = omlms_get_course( $course['ID'] );
+			$course_obj = ohmylms_get_course( $course['ID'] );
 			$price      = $course_obj->get_sale_price() ? $course_obj->get_sale_price() : $course_obj->get_regular_price();
 			if ( 'free' === $course_obj->get_price_type() ) {
 				$price = 'free';
@@ -548,10 +548,10 @@ class DashboardController extends RestController {
 			// Fetch the number of sales for the course
 			$sales_query = $wpdb->prepare(
 				"SELECT COUNT(*) as sales_count
-				 FROM {$wpdb->prefix}omlms_order_items oi
-				 INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+				 FROM {$wpdb->prefix}ohmylms_order_items oi
+				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
 				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.ID
-				 WHERE m.meta_key = %s AND m.meta_value = %d AND p.post_status = 'omlms-completed'",
+				 WHERE m.meta_key = %s AND m.meta_value = %d AND p.post_status = 'ohmylms-completed'",
 				'_course_id',
 				$course['ID']
 			);
@@ -561,14 +561,14 @@ class DashboardController extends RestController {
 			// Fetch the number of enrolled students for the course with 'enrolled' status
 			$enrollment_query = $wpdb->prepare(
 				"SELECT COUNT(*) as enrolled_count
-                 FROM {$wpdb->prefix}omlms_user_enrollment ue
+                 FROM {$wpdb->prefix}ohmylms_user_enrollment ue
                  WHERE ue.course_id = %d AND ue.status = %s",
 				$course['ID'],
 				'enrolled'  // Only count users with 'enrolled' status
 			);
 
 			$enrolled_students_count = $wpdb->get_var( $enrollment_query );
-			$course_obj              = omlms_get_course( $course['ID'] );
+			$course_obj              = ohmylms_get_course( $course['ID'] );
 			// Add course data with sales count and enrolled students count
 			$course_data[] = array(
 				'id'                      => $course['ID'],
@@ -590,7 +590,7 @@ class DashboardController extends RestController {
 		// Fetch the total distinct students count across all courses with 'enrolled' status
 		$total_distinct_students_query = "
             SELECT COUNT(DISTINCT user_id) as total_distinct_students
-            FROM {$wpdb->prefix}omlms_user_enrollment s
+            FROM {$wpdb->prefix}ohmylms_user_enrollment s
             WHERE status = %s";
 
 		// Apply filters
@@ -633,7 +633,7 @@ class DashboardController extends RestController {
 			 WHERE post_type = %s AND post_status = %s
 			 ORDER BY p.post_date DESC
 			 LIMIT 5",
-			'omlms-course',
+			'ohmylms-course',
 			'publish'
 		);
 
@@ -644,7 +644,7 @@ class DashboardController extends RestController {
 		$total_enrollments = 0;
 		$student_ids       = array();
 		foreach ( $courses as $course ) {
-			$course_obj = omlms_get_course( $course['ID'] );
+			$course_obj = ohmylms_get_course( $course['ID'] );
 			$price      = $course_obj->get_sale_price() ? $course_obj->get_sale_price() : $course_obj->get_regular_price();
 
 			if ( 'free' === $course_obj->get_price_type() ) {
@@ -654,12 +654,12 @@ class DashboardController extends RestController {
 			// Sales in the last 30 days including the current day
 			$sales_query = $wpdb->prepare(
 				"SELECT COUNT(*)
-				 FROM {$wpdb->prefix}omlms_order_items oi
-				 INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+				 FROM {$wpdb->prefix}ohmylms_order_items oi
+				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
 				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
 				 WHERE m.meta_key = %s AND m.meta_value = %d
 				 AND p.post_date BETWEEN %s AND %s
-				 AND p.post_status IN ('omlms-completed')",
+				 AND p.post_status IN ('ohmylms-completed')",
 				'_course_id',
 				$course['ID'],
 				$start_30_days . ' 00:00:00', // Start of the 30-day period
@@ -670,7 +670,7 @@ class DashboardController extends RestController {
 			// Enrollments in the last 30 days including the current day
 			$enrollment_query   = $wpdb->prepare(
 				"SELECT COUNT(DISTINCT user_id)
-				 FROM {$wpdb->prefix}omlms_user_enrollment
+				 FROM {$wpdb->prefix}ohmylms_user_enrollment
 				 WHERE course_id = %d AND status = %s
 				 AND start_date BETWEEN %s AND %s",
 				$course['ID'],
@@ -684,8 +684,8 @@ class DashboardController extends RestController {
 			// Fetch sales in the previous 30 days for sales growth calculation
 			$prev_sales_query = $wpdb->prepare(
 				"SELECT COUNT(*)
-				 FROM {$wpdb->prefix}omlms_order_items oi
-				 INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+				 FROM {$wpdb->prefix}ohmylms_order_items oi
+				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
 				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
 				 WHERE m.meta_key = %s AND m.meta_value = %d
 				 AND p.post_date BETWEEN %s AND %s",
@@ -722,8 +722,8 @@ class DashboardController extends RestController {
 		// Fetch total sales in previous 30 days (for growth)
 		$prev_sales_query = $wpdb->prepare(
 			"SELECT COUNT(*)
-			FROM {$wpdb->prefix}omlms_order_items oi
-			INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+			FROM {$wpdb->prefix}ohmylms_order_items oi
+			INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
 			INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
 			WHERE m.meta_key = %s
 			AND p.post_date BETWEEN %s AND %s",
@@ -741,7 +741,7 @@ class DashboardController extends RestController {
 		// Enrollments in the last 30 days including the current day
 		$prev_enrollment_query = $wpdb->prepare(
 			"SELECT COUNT(DISTINCT user_id) as unique_students
-			 FROM {$wpdb->prefix}omlms_user_enrollment
+			 FROM {$wpdb->prefix}ohmylms_user_enrollment
 			 WHERE status = %s
 			 AND start_date BETWEEN %s AND %s",
 			'enrolled',
@@ -777,7 +777,7 @@ class DashboardController extends RestController {
 
 		$query = $wpdb->prepare(
 			"SELECT COUNT(DISTINCT user_id) as unique_students
-            FROM {$wpdb->prefix}omlms_user_enrollment
+            FROM {$wpdb->prefix}ohmylms_user_enrollment
             WHERE status = %s
             AND start_date BETWEEN %s AND %s",
 			'enrolled',
@@ -799,14 +799,14 @@ class DashboardController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_taxonomy_terms( $course_id, $taxonomy = 'category' ) {
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		$terms  = array();
 
 		if ( ! $course ) {
 			return $terms;
 		}
 
-		foreach ( creator_lms_get_object_terms( $course->get_id(), 'course_' . $taxonomy ) as $term ) {
+		foreach ( ohmylms_get_object_terms( $course->get_id(), 'course_' . $taxonomy ) as $term ) {
 			$terms[] = array(
 				'id'   => $term->term_id,
 				'name' => $term->name,
@@ -827,7 +827,7 @@ class DashboardController extends RestController {
 		$top_course_query = $wpdb->prepare(
 			"
 			SELECT course_id, COUNT(*) as enrolled_count
-			FROM {$wpdb->prefix}omlms_user_enrollment
+			FROM {$wpdb->prefix}ohmylms_user_enrollment
 			WHERE status = %s AND start_date >= %s
 			GROUP BY course_id
 			ORDER BY enrolled_count DESC
@@ -851,13 +851,13 @@ class DashboardController extends RestController {
 			return null;
 		}
 
-		$course_obj = omlms_get_course( $course_id );
+		$course_obj = ohmylms_get_course( $course_id );
 
 		// Get completed students count for this course
 		$completed_query = $wpdb->prepare(
 			"
 			SELECT COUNT(*)
-			FROM {$wpdb->prefix}omlms_user_enrollment
+			FROM {$wpdb->prefix}ohmylms_user_enrollment
 			WHERE course_id = %d AND progress = %s AND start_date >= %s
 		",
 			$course_id,

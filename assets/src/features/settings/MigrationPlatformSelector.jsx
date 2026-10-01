@@ -64,7 +64,7 @@ export function createMigrationPlatformSelector(readRuntime) {
                               (e.p = 1),
                               (e.n = 2),
                               l()({
-                                path: '/creator-lms/v1/migrations/'.concat(t, '/courses'),
+                                path: '/ohmylms/v1/migrations/'.concat(t, '/courses'),
                               })
                             );
                           case 2:

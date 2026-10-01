@@ -2,7 +2,6 @@ import { createElement, Fragment, useRef, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { createCourse } from './api.mjs';
-
 export function createCourseCreateDialog(readRuntime) {
   return function CourseCreateDialog({ isOpen, onClose }) {
     const {
@@ -16,7 +15,7 @@ export function createCourseCreateDialog(readRuntime) {
     } = readRuntime();
     const integrations = useSelect((select) => select(store).getAllIntegrations(), [store]);
     const hasCohort = Boolean(integrations?.cohort?.is_enable);
-    const canCreateCohort = Entitlements.useFeatureAccess('cohort');
+    const canCreateCohort = true;
     const actions = useDispatch(store);
     const navigate = Router.Zp();
     const [courseType, setCourseType] = useState('self-paced');
@@ -59,7 +58,7 @@ export function createCourseCreateDialog(readRuntime) {
       <Controls.FlexWP align="center" justify="center" gap={0}>
         <Controls.ButtonWP
           onClick={() => setStep(1)}
-          className={`omlms-course-type-indicator ${step === 1 ? 'omlms-step-active' : ''} ${step === 2 ? 'omlms-step-done' : ''}`}
+          className={`ohmylms-course-type-indicator ${step === 1 ? 'ohmylms-step-active' : ''} ${step === 2 ? 'ohmylms-step-done' : ''}`}
         >
           <Controls.BadgeWP
             isRounded
@@ -72,10 +71,17 @@ export function createCourseCreateDialog(readRuntime) {
           </Controls.BadgeWP>
           {step === 1 ? __('Course Type', 'ohmylms') : typeLabel}
         </Controls.ButtonWP>
-        <Controls.ProgressBarWP value={step === 1 ? 0 : 100} style={{ width: '20px' }} />
+        <Controls.ProgressBarWP
+          value={step === 1 ? 0 : 100}
+          style={{
+            width: '20px',
+          }}
+        />
         <Controls.ButtonWP
-          style={{ cursor: 'default' }}
-          className={`omlms-course-type-indicator last-step ${step === 2 ? 'omlms-step-active' : ''}`}
+          style={{
+            cursor: 'default',
+          }}
+          className={`ohmylms-course-type-indicator last-step ${step === 2 ? 'ohmylms-step-active' : ''}`}
         >
           <Controls.BadgeWP isRounded width="30px" height="30px" style={badgeStyle}>
             2
@@ -96,8 +102,11 @@ export function createCourseCreateDialog(readRuntime) {
         shouldCloseOnClickOutside
         onRequestClose={onClose}
         size="fill"
-        style={{ maxWidth: '790px', background: '#FFFFFF' }}
-        className={`omlms-course-type-modal ${hasCohort ? '' : 'omlms-no-cohort-type'}`}
+        style={{
+          maxWidth: '790px',
+          background: '#FFFFFF',
+        }}
+        className={`ohmylms-course-type-modal ${hasCohort ? '' : 'ohmylms-no-cohort-type'}`}
       >
         {error && <p role="alert">{error}</p>}
         {step === 1 && (
@@ -121,7 +130,11 @@ export function createCourseCreateDialog(readRuntime) {
               <Controls.HeadingWP
                 level={3}
                 weight={600}
-                style={{ maxWidth: '410px', margin: '0 auto', fontSize: '22px' }}
+                style={{
+                  maxWidth: '410px',
+                  margin: '0 auto',
+                  fontSize: '22px',
+                }}
               >
                 {courseType === 'self-paced'
                   ? __(

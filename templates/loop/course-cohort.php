@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Loop Course Meta
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/course-cohort.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/course-cohort.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -65,23 +65,23 @@ if ('cohort-based' !== $course->get_type() ) {
                         <?php
                         if ( $start_date && strtotime($start_date) > $now ) {
                             echo '<span style="display: inline-flex; align-items: center; gap: 4px; line-height: 1.6;">';
-                            include(CREATOR_LMS_DIR . '/assets/images/icon/calendar-icon.php');
+                            include(OHMYLMS_DIR . '/assets/images/icon/calendar-icon.php');
                             echo esc_html__( 'Starts', 'ohmylms' ) . ' ' . esc_html( $start_fmt );
                             echo '</span>';
                             if ( $end_fmt ) {
                                 echo '<br><span style="display: inline-flex; align-items: center; gap: 4px;line-height: 1.6;">';
-                                include(CREATOR_LMS_DIR . '/assets/images/icon/calendar-icon.php');
+                                include(OHMYLMS_DIR . '/assets/images/icon/calendar-icon.php');
                                 echo esc_html__( 'Ends', 'ohmylms' ) . ' ' . esc_html( $end_fmt );
                                 echo '</span>';
                             }
                         } elseif ( $end_date && strtotime($start_date) <= $now && strtotime($end_date) >= $now ) {
                             echo '<span style="display: inline-flex; align-items: center; gap: 4px;">';
-                            include(CREATOR_LMS_DIR . '/assets/images/icon/tick-icon.php');
+                            include(OHMYLMS_DIR . '/assets/images/icon/tick-icon.php');
                             echo esc_html__( 'In Progress', 'ohmylms' ) . ( $end_fmt ? ' – ' . esc_html( $end_fmt ) : '' );
                             echo '</span>';
                         } elseif ( $end_date && strtotime($end_date) < $now ) {
                             echo '<span style="display: inline-flex; align-items: center; gap: 4px;">';
-                            include(CREATOR_LMS_DIR . '/assets/images/icon/calendar-icon.php');
+                            include(OHMYLMS_DIR . '/assets/images/icon/calendar-icon.php');
                             echo esc_html__( 'Course Expired', 'ohmylms' ) . ' ' . esc_html( $end_fmt );
                             echo '</span>';
                         }
@@ -96,7 +96,7 @@ if ('cohort-based' !== $course->get_type() ) {
                             $hours_left = floor( ( $time_left % DAY_IN_SECONDS ) / HOUR_IN_SECONDS );
 
                             echo '<span style="display: inline-flex; align-items: center; gap: 4px;">';
-                            include(CREATOR_LMS_DIR . '/assets/images/icon/enrollment-icon.php');
+                            include(OHMYLMS_DIR . '/assets/images/icon/enrollment-icon.php');
 
                             if ( $days_left > 0 ) {
                                 if ( $hours_left > 0 ) {
@@ -116,7 +116,7 @@ if ('cohort-based' !== $course->get_type() ) {
                              echo '</span>';
                         } elseif( $enroll_deadline_ts && $enroll_deadline_ts <= $now ) {
                             echo '<span style="display: inline-flex; align-items: center; gap: 4px;">';
-                            include(CREATOR_LMS_DIR . '/assets/images/icon/enrollment-icon.php');
+                            include(OHMYLMS_DIR . '/assets/images/icon/enrollment-icon.php');
                             echo esc_html__( 'Enrollment Closed', 'ohmylms' );
                             echo '</span>';
                         }
@@ -130,7 +130,7 @@ if ('cohort-based' !== $course->get_type() ) {
                     <li class="cohort-seats-left">
                         <span class="seats-badge">
                             <span style="display: inline-flex; align-items: center; gap: 4px;">
-                                <?php include(CREATOR_LMS_DIR . '/assets/images/icon/user-icon-white.php'); ?>
+                                <?php include(OHMYLMS_DIR . '/assets/images/icon/user-icon-white.php'); ?>
                                 <span>
                                     <?php
                                     $seats_left > 0 ? printf( esc_html__( '%d/%d seats left', 'ohmylms' ), $seats_left, $capacity ) : printf( esc_html__( 'No seats left', 'ohmylms' ) );

@@ -13,7 +13,7 @@ export function createFillInTheBlankEditor(readRuntime) {
     } = readRuntime();
     var e,
       t,
-      n = (0, Entitlements.useIsPro)(),
+      n = true,
       questionId = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).selectSelectedQuestionId();
       }, []),
@@ -32,7 +32,7 @@ export function createFillInTheBlankEditor(readRuntime) {
       setIsProModalOpen = i.setIsProModalOpen;
     return (
       <React.Fragment>
-        <div className={'omlms-options-list omlms-options-list-statement'}>
+        <div className={'ohmylms-options-list ohmylms-options-list-statement'}>
           <Controls.InputWP
             placeholder={(0, I18n.__)(
               'Enter answer(s) here, separated by commas (e.g., Dhaka, teacher, football)',
@@ -43,22 +43,20 @@ export function createFillInTheBlankEditor(readRuntime) {
               var t;
               return (function (e, t) {
                 e &&
-                  (n
-                    ? addContentToQuestion(
-                        questionId,
-                        a.map(function (n) {
-                          return (null == n ? void 0 : n.id) === e
-                            ? Fd(
-                                Fd({}, n),
-                                {},
-                                {
-                                  answer: t,
-                                },
-                              )
-                            : n;
-                        }),
-                      )
-                    : setIsProModalOpen(!0));
+                  addContentToQuestion(
+                    questionId,
+                    a.map(function (n) {
+                      return (null == n ? void 0 : n.id) === e
+                        ? Fd(
+                            Fd({}, n),
+                            {},
+                            {
+                              answer: t,
+                            },
+                          )
+                        : n;
+                    }),
+                  );
               })(null === (t = a[0]) || void 0 === t ? void 0 : t.id, e);
             }}
           />
@@ -71,7 +69,7 @@ export function createFillInTheBlankEditor(readRuntime) {
             <React.Fragment />
           ) : (
             <div
-              className={'omlms-option-correct'}
+              className={'ohmylms-option-correct'}
               style={{
                 color: 'red',
                 marginTop: 4,

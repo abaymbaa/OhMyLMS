@@ -85,10 +85,10 @@ export function createQuizQuestionHeader(readRuntime) {
                 <Controls.FlexWP
                   gap={2}
                   justify={'flex-start'}
-                  className={'omlms-question-status-wrapper'}
+                  className={'ohmylms-question-status-wrapper'}
                 >
                   <Controls.FlexItemWP>
-                    <Controls.FlexWP gap={2} justify={'flex-start'} className={'omlms-set-marks'}>
+                    <Controls.FlexWP gap={2} justify={'flex-start'} className={'ohmylms-set-marks'}>
                       <Controls.FlexItemWP>
                         <Controls.FlexWP justify={'start'} gap={2}>
                           <Controls.TextWP as={'span'}>
@@ -107,7 +107,7 @@ export function createQuizQuestionHeader(readRuntime) {
                               ),
                               'ohmylms',
                             )}
-                            className={'omlms-tooltip'}
+                            className={'ohmylms-tooltip'}
                           >
                             <InfoIcon.A />
                           </Tooltip.A>
@@ -204,11 +204,11 @@ export function createQuizQuestionHeader(readRuntime) {
           </Controls.FlexItemWP>
         </Controls.FlexWP>
         <Controls.SpacerWP marginY={4}>
-          <Controls.HeadingWP level={3} className={'omlms-question-name'}>
+          <Controls.HeadingWP level={3} className={'ohmylms-question-name'}>
             {decodeHtml(null == data ? void 0 : data.name)}
             {(null == data || null === (o = data.settings) || void 0 === o
               ? void 0
-              : o.required) && <span className={'omlms-required'}>{'*'}</span>}
+              : o.required) && <span className={'ohmylms-required'}>{'*'}</span>}
           </Controls.HeadingWP>
           <Controls.SpacerWP marginBottom={3} />
           {(null == data ? void 0 : data.image) && (

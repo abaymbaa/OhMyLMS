@@ -63,7 +63,7 @@ final class Ecommerce {
 	public $subscription_manager;
 
 
-	public $prefix = 'creator_lms';
+	public $prefix = 'ohmylms';
 
 	/**
 	 * @var Api
@@ -79,7 +79,7 @@ final class Ecommerce {
 	/**
 	 * Singleton instance.
 	 *
-	 * @return CreatorLms
+	 * @return OhMyLMS
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {

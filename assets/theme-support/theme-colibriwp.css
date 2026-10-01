@@ -1,57 +1,57 @@
-html.colibri-wp-theme .theme-colibri-wp.creator-lms-page {
+html.colibri-wp-theme .theme-colibri-wp.ohmylms-page {
     text-align: left;
 }
-.theme-colibri-wp.creator-lms-page {
+.theme-colibri-wp.ohmylms-page {
     text-align: left;
 }
 
-.theme-colibri-wp.creator-lms-page .content > .h-section-global-spacing {
+.theme-colibri-wp.ohmylms-page .content > .h-section-global-spacing {
     padding-top: 0;
     padding-bottom: 0;
 }
 
-.theme-colibri-wp.creator-lms-page .content .h-section-boxed-container {
+.theme-colibri-wp.ohmylms-page .content .h-section-boxed-container {
     max-width: 100%!important;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-checkout-payment .creator-lms-payment-methods {
+.theme-colibri-wp.ohmylms-page .ohmylms-checkout-payment .ohmylms-payment-methods {
     margin-left: 0!important;
     margin-right: 0!important;
 }
 
-.theme-colibri-wp.creator-lms-page #creator-lms-payment {
+.theme-colibri-wp.ohmylms-page #ohmylms-payment {
     text-align: left;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-order-review-toggle .order-review-toggle-head:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-order-review-toggle .order-review-toggle-head:before {
+.theme-colibri-wp.ohmylms-page .ohmylms-order-review-toggle .order-review-toggle-head:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-order-review-toggle .order-review-toggle-head:before {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page div:after,
-.theme-colibri-wp.creator-lms-page div:before {
+.theme-colibri-wp.ohmylms-page div:after,
+.theme-colibri-wp.ohmylms-page div:before {
     position: absolute;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-widget-pricebox .price-discount-area .amount {
-    color: var(--creator-lms-heading-color);
+.theme-colibri-wp.ohmylms-page .ohmylms-widget-pricebox .price-discount-area .amount {
+    color: var(--ohmylms-heading-color);
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-course-details-tab .creator-lms-course-tab-content div:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-course-details-tab .creator-lms-course-tab-content div:before {
+.theme-colibri-wp.ohmylms-page .ohmylms-course-details-tab .ohmylms-course-tab-content div:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-course-details-tab .ohmylms-course-tab-content div:before {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-course-reviews .creator-lms-course-single-review .review-description {
+.theme-colibri-wp.ohmylms-page .ohmylms-course-reviews .ohmylms-course-single-review .review-description {
     margin: 0;
 }
 
-html.colibri-wp-theme #colibri.creator-lms-page .comment-respond {
+html.colibri-wp-theme #colibri.ohmylms-page .comment-respond {
     border: none;
     padding: 0;
 }
 
-#colibri.creator-lms-page .creator-lms-course-reviews-form .comment-form .comment-form-comment textarea {
+#colibri.ohmylms-page .ohmylms-course-reviews-form .comment-form .comment-form-comment textarea {
     padding: 8px 15px;
     font-size: 14px;
     border-radius: 14px;
@@ -61,56 +61,56 @@ html.colibri-wp-theme #colibri.creator-lms-page .comment-respond {
     resize: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-course-reviews-form .comment-form .form-submit #submit {
+.theme-colibri-wp.ohmylms-page .ohmylms-course-reviews-form .comment-form .form-submit #submit {
     font-size: 14px;
     font-weight: 500;
     padding: 7px 20px;
     color: #fff;
     border-radius: 10px;
-    background-color: var(--creator-lms-primary-color);
-    border: 1px solid var(--creator-lms-primary-color);
+    background-color: var(--ohmylms-primary-color);
+    border: 1px solid var(--ohmylms-primary-color);
     text-transform: none;
     letter-spacing: 0;
 }
-.theme-colibri-wp.creator-lms-page .creator-lms-course-reviews-form .comment-form .form-submit #submit:hover {
+.theme-colibri-wp.ohmylms-page .ohmylms-course-reviews-form .comment-form .form-submit #submit:hover {
     
     background-color: transparent;
-    border-color: var(--creator-lms-primary-color);
-    color: var(--creator-lms-primary-color);
+    border-color: var(--ohmylms-primary-color);
+    color: var(--ohmylms-primary-color);
 }
 
 
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-tab-content:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-tab-content:before,
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-lesson-list:before,
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-accordion-item div:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-lesson-sidebar .creator-lms-accordion-item div:before {
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-tab-content:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-tab-content:before,
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-lesson-list:before,
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-accordion-item div:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-lesson-sidebar .ohmylms-accordion-item div:before {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-dashboard .creator-lms-single-tab-content div:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-dashboard .creator-lms-single-tab-content div:before {
+.theme-colibri-wp.ohmylms-page .ohmylms-dashboard .ohmylms-single-tab-content div:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-dashboard .ohmylms-single-tab-content div:before {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-sidebar-widget:before, 
-.theme-colibri-wp.creator-lms-page .creator-lms-sidebar-widget:after {
+.theme-colibri-wp.ohmylms-page .ohmylms-sidebar-widget:before, 
+.theme-colibri-wp.ohmylms-page .ohmylms-sidebar-widget:after {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-course-details-tab:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-course-details-tab:before,
-.theme-colibri-wp.creator-lms-page .creator-lms-course-tab-content:after,
-.theme-colibri-wp.creator-lms-page .creator-lms-course-tab-content:before {
+.theme-colibri-wp.ohmylms-page .ohmylms-course-details-tab:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-course-details-tab:before,
+.theme-colibri-wp.ohmylms-page .ohmylms-course-tab-content:after,
+.theme-colibri-wp.ohmylms-page .ohmylms-course-tab-content:before {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .creator-lms-widget-course-meta .creator-lms-course-meta:before, 
-.theme-colibri-wp.creator-lms-page .creator-lms-widget-course-meta .creator-lms-course-meta:after {
+.theme-colibri-wp.ohmylms-page .ohmylms-widget-course-meta .ohmylms-course-meta:before, 
+.theme-colibri-wp.ohmylms-page .ohmylms-widget-course-meta .ohmylms-course-meta:after {
     display: none;
 }
 
-.theme-colibri-wp.creator-lms-page .grid-style4 .creator-lms-course-cards .course-card .course-info .course-meta:after {
+.theme-colibri-wp.ohmylms-page .grid-style4 .ohmylms-course-cards .course-card .course-info .course-meta:after {
     display: none;
 }

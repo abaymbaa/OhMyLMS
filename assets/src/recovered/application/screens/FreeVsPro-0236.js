@@ -1,6 +1,5 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
-const ooe = (0, g.memo)(aoe),
-  ioe = [{
+const ioe = [{
     path: "/",
     element: fU
   }, {
@@ -9,7 +8,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/courses",
     element: function () {
-      HG("creator-lms", "courses");
+      HG("ohmylms", "courses");
       var e = (0, z.A)(),
         t = e.openNotificationWithIcon,
         n = e.contextHolder,
@@ -72,7 +71,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/course-edit/:id/:step?/:subStep?",
     element: function () {
-      HG("creator-lms", "courses");
+      HG("ohmylms", "courses");
       var e = (0, f.g)().id;
       return (0, g.useEffect)(function () {
         var e = document.createElement("style");
@@ -89,7 +88,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/course-edit/ai-suggestion/:id",
     element: function () {
-      HG("creator-lms", "courses");
+      HG("ohmylms", "courses");
       var e = (0, f.g)().id;
       return (0, g.useEffect)(function () {
         return document.title = "Preview AI Suggested Course || OhMyLMS - Wordpress", function () {
@@ -102,7 +101,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/categories",
     element: function () {
-      HG("creator-lms", "categories");
+      HG("ohmylms", "categories");
       var e = (0, y.useDispatch)(T.default),
         t = (0, z.A)(),
         n = t.openNotificationWithIcon,
@@ -145,7 +144,7 @@ const ooe = (0, g.memo)(aoe),
             for (;;) switch (t.p = t.n) {
               case 0:
                 return s(!0), t.p = 1, t.n = 2, l()({
-                  path: "/creator-lms/v1/categories"
+                  path: "/ohmylms/v1/categories"
                 });
               case 2:
                 r = t.v, i(r || []), a = (r || []).map(function (e) {
@@ -189,7 +188,7 @@ const ooe = (0, g.memo)(aoe),
                     break;
                   }
                   return e.n = 2, l()({
-                    path: "/creator-lms/v1/categories/".concat(R.term_id),
+                    path: "/ohmylms/v1/categories/".concat(R.term_id),
                     method: "PUT",
                     data: {
                       name: t.name,
@@ -201,7 +200,7 @@ const ooe = (0, g.memo)(aoe),
                   break;
                 case 3:
                   return e.n = 4, l()({
-                    path: "/creator-lms/v1/categories",
+                    path: "/ohmylms/v1/categories",
                     method: "POST",
                     data: {
                       name: t.name,
@@ -249,7 +248,7 @@ const ooe = (0, g.memo)(aoe),
                     break;
                   }
                   return e.n = 4, l()({
-                    path: "/creator-lms/v1/categories/".concat(P.term_id),
+                    path: "/ohmylms/v1/categories/".concat(P.term_id),
                     method: "DELETE"
                   });
                 case 4:
@@ -257,7 +256,7 @@ const ooe = (0, g.memo)(aoe),
                   break;
                 case 5:
                   return e.n = 6, l()({
-                    path: "/creator-lms/v1/categories/bulk",
+                    path: "/ohmylms/v1/categories/bulk",
                     method: "DELETE",
                     data: {
                       ids: W
@@ -474,7 +473,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/tags",
     element: function () {
-      HG("creator-lms", "tags");
+      HG("ohmylms", "tags");
       var e = (0, z.A)(),
         t = e.openNotificationWithIcon,
         n = e.contextHolder,
@@ -516,7 +515,7 @@ const ooe = (0, g.memo)(aoe),
             for (;;) switch (e.p = e.n) {
               case 0:
                 return u(!0), e.p = 1, e.n = 2, l()({
-                  path: "/creator-lms/v1/tags"
+                  path: "/ohmylms/v1/tags"
                 });
               case 2:
                 n = e.v, o(n || []), e.n = 4;
@@ -556,7 +555,7 @@ const ooe = (0, g.memo)(aoe),
                     break;
                   }
                   return e.n = 2, l()({
-                    path: "/creator-lms/v1/tags/".concat(E.term_id),
+                    path: "/ohmylms/v1/tags/".concat(E.term_id),
                     method: "PUT",
                     data: {
                       name: n.name
@@ -567,7 +566,7 @@ const ooe = (0, g.memo)(aoe),
                   break;
                 case 3:
                   return e.n = 4, l()({
-                    path: "/creator-lms/v1/tags",
+                    path: "/ohmylms/v1/tags",
                     method: "POST",
                     data: {
                       name: n.name
@@ -614,7 +613,7 @@ const ooe = (0, g.memo)(aoe),
                     break;
                   }
                   return e.n = 4, l()({
-                    path: "/creator-lms/v1/tags/".concat(x.term_id),
+                    path: "/ohmylms/v1/tags/".concat(x.term_id),
                     method: "DELETE"
                   });
                 case 4:
@@ -622,7 +621,7 @@ const ooe = (0, g.memo)(aoe),
                   break;
                 case 5:
                   return e.n = 6, l()({
-                    path: "/creator-lms/v1/tags/bulk",
+                    path: "/ohmylms/v1/tags/bulk",
                     method: "DELETE",
                     data: {
                       ids: F
@@ -844,7 +843,7 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/order-edit/:id",
     element: function () {
-      HG("creator-lms", "orders");
+      HG("ohmylms", "orders");
       var e = (0, f.g)().id;
       return React.createElement(FQ, {
         id: e
@@ -853,17 +852,17 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/quizzes",
     element: function () {
-      return HG("creator-lms", "quizzes"), React.createElement(React.Fragment, null, React.createElement(EZ, null));
+      return HG("ohmylms", "quizzes"), React.createElement(React.Fragment, null, React.createElement(EZ, null));
     }
   }, {
     path: "/sessions",
     element: function () {
-      return HG("creator-lms", "sessions"), React.createElement(React.Fragment, null, React.createElement(OZ, null));
+      return HG("ohmylms", "sessions"), React.createElement(React.Fragment, null, React.createElement(OZ, null));
     }
   }, {
     path: "/lesson-edit/:id",
     element: function () {
-      HG("creator-lms", "lessons");
+      HG("ohmylms", "lessons");
       var e = (0, f.g)().id,
         t = (0, y.useDispatch)(T.default).setSelectedLessonId;
       return (0, g.useEffect)(function () {
@@ -926,12 +925,12 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/assignments",
     element: function () {
-      return HG("creator-lms", "assignments"), React.createElement(React.Fragment, null, React.createElement(Fte, null));
+      return HG("ohmylms", "assignments"), React.createElement(React.Fragment, null, React.createElement(Fte, null));
     }
   }, {
     path: "/assignment-edit/:id",
     element: function () {
-      HG("creator-lms", "assignments");
+      HG("ohmylms", "assignments");
       var e = (0, f.g)().id,
         t = (0, y.useDispatch)(T.default).setSelectedAssignmentId;
       return (0, g.useEffect)(function () {
@@ -952,12 +951,6 @@ const ooe = (0, g.memo)(aoe),
   }, {
     path: "/gamification/:tab",
     element: C5
-  }, {
-    path: "/license",
-    element: $ae
-  }, {
-    path: "/free-vs-pro",
-    element: ooe
   }],
   loe = function (e) {
     var t,
@@ -973,12 +966,12 @@ const ooe = (0, g.memo)(aoe),
     }, React.createElement("div", {
       className: "app-content"
     }, r))) : React.createElement(React.Fragment, null, React.createElement("div", {
-      className: "omlms-layout omlms-dashboard-layout ".concat(null === (n = o.pathname) || void 0 === n ? void 0 : n.split("/")[1])
+      className: "ohmylms-layout ohmylms-dashboard-layout ".concat(null === (n = o.pathname) || void 0 === n ? void 0 : n.split("/")[1])
     }, React.createElement("div", {
       ref: a,
-      id: "omlms-layout-content",
-      className: "omlms-layout-content"
+      id: "ohmylms-layout-content",
+      className: "ohmylms-layout-content"
     }, React.createElement("div", {
-      className: "omlms-content omlms-container-header-fullwidth"
+      className: "ohmylms-content ohmylms-container-header-fullwidth"
     }, r)))));
   };

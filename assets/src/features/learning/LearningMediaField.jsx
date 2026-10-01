@@ -24,7 +24,7 @@ export function createLearningMediaField(readRuntime) {
       wr,
       y: WordPressData,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)();
+    var t = true;
     M().noConflict();
     var limit = props.limit,
       r = void 0 === limit ? 1 : limit,
@@ -240,9 +240,9 @@ export function createLearningMediaField(readRuntime) {
             !ie ||
               !ae.current ||
               ae.current.contains(e.target) ||
-              e.target.closest('.omlms-history-list') ||
-              e.target.closest('.omlms-tooltip-box') ||
-              e.target.closest('.omlms-ai-image-prompt') ||
+              e.target.closest('.ohmylms-history-list') ||
+              e.target.closest('.ohmylms-tooltip-box') ||
+              e.target.closest('.ohmylms-ai-image-prompt') ||
               (le(!1), Ee(null));
           };
           return (
@@ -256,9 +256,9 @@ export function createLearningMediaField(readRuntime) {
       ),
       (
         <React.Fragment>
-          <div className={'omlms-media-uploader '.concat(j || N || z ? 'omlms-has-media' : '')}>
+          <div className={'ohmylms-media-uploader '.concat(j || N || z ? 'ohmylms-has-media' : '')}>
             <div
-              className={'omlms-media-contents '.concat(E)}
+              className={'ohmylms-media-contents '.concat(E)}
               style={{
                 position: 'relative',
                 maxHeight: '350px',
@@ -301,7 +301,7 @@ export function createLearningMediaField(readRuntime) {
                       <_r
                         mediaUrl={N}
                         sectionType={'video'}
-                        className={'omlms-external-video'}
+                        className={'ohmylms-external-video'}
                         setMediaURL={D}
                         handleExternalMedia={be}
                         setIsExternalMedia={U}
@@ -338,7 +338,7 @@ export function createLearningMediaField(readRuntime) {
                 <React.Fragment>
                   {Boolean(z) && !Y ? (
                     H ? (
-                      <div className={'omlms-media-audio-wrapper'}>
+                      <div className={'ohmylms-media-audio-wrapper'}>
                         <_r
                           mediaUrl={z}
                           sectionType={'audio'}
@@ -373,7 +373,7 @@ export function createLearningMediaField(readRuntime) {
                         </Controls.FlexWP>
                       </div>
                     ) : (
-                      <div className={'omlms-media-audio-wrapper'}>
+                      <div className={'ohmylms-media-audio-wrapper'}>
                         <audio src={z} controls={!0} />
                         <Controls.FlexWP gap={4} align={'center'} justify={'flex-end'}>
                           <Controls.ButtonWP
@@ -499,7 +499,9 @@ export function createLearningMediaField(readRuntime) {
               align={'center'}
               justify={'center' === _ ? 'center' : 'right' === _ ? 'flex-end' : 'flex-start'}
               gap={0}
-              className={'omlms-media-uploader-buttons '.concat(j || N ? 'omlms-has-media' : '')}
+              className={'ohmylms-media-uploader-buttons '.concat(
+                j || N ? 'ohmylms-has-media' : '',
+              )}
             >
               <Controls.FlexWP
                 gap={2}
@@ -513,7 +515,7 @@ export function createLearningMediaField(readRuntime) {
                     <Controls.ButtonWP
                       variant={'secondary'}
                       icon={React.createElement(ar, null)}
-                      className={'omlms-media-uploader-button'}
+                      className={'ohmylms-media-uploader-button'}
                       onClick={function () {
                         return fe('image');
                       }}
@@ -530,52 +532,50 @@ export function createLearningMediaField(readRuntime) {
                       onClick={function () {
                         return (function () {
                           var e;
-                          if (t)
-                            return null != me &&
-                              null !== (e = me.ai_model) &&
-                              void 0 !== e &&
-                              e.is_enable
-                              ? (null != de && de.self) ||
-                                'anthropic' !== (null == de ? void 0 : de.platform)
-                                ? (null != de && de.self) || (null != de && de.api_key)
-                                  ? void le(!0)
-                                  : (O.updateProModalTitle(
-                                      (0, I18n.__)('Please configure AI Model API Key', 'ohmylms'),
-                                    ),
-                                    O.updateProModalContent(
-                                      (0, I18n.__)(
-                                        'Go to addons page and configure the AI Model API Key to use this feature.',
-                                        'ohmylms',
-                                      ),
-                                    ),
-                                    O.updateProModalButtonText(null),
-                                    void se(!0))
+                          return null != me &&
+                            null !== (e = me.ai_model) &&
+                            void 0 !== e &&
+                            e.is_enable
+                            ? (null != de && de.self) ||
+                              'anthropic' !== (null == de ? void 0 : de.platform)
+                              ? (null != de && de.self) || (null != de && de.api_key)
+                                ? void le(!0)
                                 : (O.updateProModalTitle(
-                                    (0, I18n.__)(
-                                      'Anthropic does not support image generation',
-                                      'ohmylms',
-                                    ),
+                                    (0, I18n.__)('Please configure AI Model API Key', 'ohmylms'),
                                   ),
                                   O.updateProModalContent(
                                     (0, I18n.__)(
-                                      'Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).',
+                                      'Go to addons page and configure the AI Model API Key to use this feature.',
                                       'ohmylms',
                                     ),
                                   ),
                                   O.updateProModalButtonText(null),
                                   void se(!0))
-                              : (se(!0),
-                                O.updateProModalTitle(
-                                  (0, I18n.__)('Please enable AI Suite', 'ohmylms'),
-                                ),
-                                O.updateProModalContent(
+                              : (O.updateProModalTitle(
                                   (0, I18n.__)(
-                                    'Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.',
+                                    'Anthropic does not support image generation',
                                     'ohmylms',
                                   ),
                                 ),
-                                void O.updateProModalButtonText(null));
-                          se(!0);
+                                O.updateProModalContent(
+                                  (0, I18n.__)(
+                                    'Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).',
+                                    'ohmylms',
+                                  ),
+                                ),
+                                O.updateProModalButtonText(null),
+                                void se(!0))
+                            : (se(!0),
+                              O.updateProModalTitle(
+                                (0, I18n.__)('Please enable AI Suite', 'ohmylms'),
+                              ),
+                              O.updateProModalContent(
+                                (0, I18n.__)(
+                                  'Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.',
+                                  'ohmylms',
+                                ),
+                              ),
+                              void O.updateProModalButtonText(null));
                         })();
                       }}
                     >

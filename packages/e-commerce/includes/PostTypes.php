@@ -12,7 +12,7 @@ class PostTypes {
 	public function register_post_types() {
 
 		$this->register_post_type(
-			'omlms-order',
+			'ohmylms-order',
 			array(
 				'singular_name' => _x( 'Order', 'Post Type Singular Name', 'ohmylms' ),
 				'menu_name'     => _x( 'Orders', 'Admin menu name', 'ohmylms' ),
@@ -28,7 +28,7 @@ class PostTypes {
 		);
 
 		$this->register_post_type(
-			'omlms_order_refund',
+			'ohmylms_order_refund',
 			array(
 				'singular_name' => _x( 'Refunds', 'Post Type Singular Name', 'ohmylms' ),
 			),
@@ -43,7 +43,7 @@ class PostTypes {
 		);
 
 		$this->register_post_type(
-			'omlms_coupons',
+			'ohmylms_coupons',
 			array(
 				'name'          => __( 'Coupons', 'ohmylms' ),
 				'singular_name' => __( 'Coupon', 'ohmylms' ),
@@ -63,7 +63,7 @@ class PostTypes {
 		);
 
 		$this->register_post_type(
-			'omlms-subscription',
+			'ohmylms-subscription',
 			array(
 				'name'          => __( 'Subscriptions', 'ohmylms' ),
 				'singular_name' => __( 'Subscription', 'ohmylms' ),
@@ -96,7 +96,7 @@ class PostTypes {
 		 * Action hook after creating order post types
 		 */
 		do_action( 'rex_after_registering_order_post_types' );
-		do_action( 'creator_lms_after_registering_subscription_post_type' );
+		do_action( 'ohmylms_after_registering_subscription_post_type' );
 	}
 
 
@@ -151,7 +151,7 @@ class PostTypes {
 
 	public function register_post_status() {
 		$order_statuses = array(
-			'omlms-pending'    => array(
+			'ohmylms-pending'    => array(
 				'label'                     => _x( 'Pending payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -159,7 +159,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'Pending payment <span class="count">(%s)</span>', 'Pending payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-processing' => array(
+			'ohmylms-processing' => array(
 				'label'                     => _x( 'Processing payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -167,7 +167,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'Processing payment <span class="count">(%s)</span>', 'Processing payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-on-hold'    => array(
+			'ohmylms-on-hold'    => array(
 				'label'                     => _x( 'On Hold payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -175,7 +175,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'On Hold payment <span class="count">(%s)</span>', 'On Hold payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-failed'     => array(
+			'ohmylms-failed'     => array(
 				'label'                     => _x( 'Failed payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -183,7 +183,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'Failed payment <span class="count">(%s)</span>', 'Failed payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-completed'  => array(
+			'ohmylms-completed'  => array(
 				'label'                     => _x( 'Completed payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -191,7 +191,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'Completed payment <span class="count">(%s)</span>', 'Completed payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-cancelled'  => array(
+			'ohmylms-cancelled'  => array(
 				'label'                     => _x( 'Cancelled payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -199,7 +199,7 @@ class PostTypes {
 				'show_in_admin_status_list' => true,
 				'label_count'               => _n_noop( 'Cancelled payment <span class="count">(%s)</span>', 'Cancelled payment <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'omlms-refunded'   => array(
+			'ohmylms-refunded'   => array(
 				'label'                     => _x( 'Refunded payment', 'Order status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -215,7 +215,7 @@ class PostTypes {
 
 		// Subscription Statuses
 		$subscription_statuses = array(
-			'creatorlms-pending'           => array(
+			'ohmylms-pending'           => array(
 				'label'                     => _x( 'Pending', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -224,7 +224,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Pending <span class="count">(%s)</span>', 'Pending <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'creatorlms-active'            => array(
+			'ohmylms-active'            => array(
 				'label'                     => _x( 'Active', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -233,7 +233,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'creatorlms-on-hold'           => array(
+			'ohmylms-on-hold'           => array(
 				'label'                     => _x( 'On Hold', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -242,7 +242,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'creatorlms-pending-cancel' => array(
+			'ohmylms-pending-cancel' => array(
 				'label'                     => _x( 'Pending Cancellation', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -251,7 +251,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Pending Cancellation <span class="count">(%s)</span>', 'Pending Cancellation <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'creatorlms-cancelled'         => array(
+			'ohmylms-cancelled'         => array(
 				'label'                     => _x( 'Cancelled', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -260,7 +260,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'creatorlms-expired'           => array(
+			'ohmylms-expired'           => array(
 				'label'                     => _x( 'Expired', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,

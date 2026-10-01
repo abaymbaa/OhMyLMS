@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var OL = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.label,
     r = e.value,
     a = e.color,
@@ -100,15 +100,12 @@ var OL = function (e) {
     disabled: c && !t
   })))));
 };
-
 const kL = (0, g.memo)(OL);
-
 function jL(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var AL = function (e) {
   M().noConflict();
   var t = e.thumbnail,
@@ -242,9 +239,7 @@ var AL = function (e) {
     }
   }, (0, b.__)("Select a file", "ohmylms")), React.createElement("p", null, (0, b.__)("Supported files: .png, .jpg, jpeg, .gif", "ohmylms"))))));
 };
-
 const ML = (0, g.memo)(AL);
-
 function TL(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -278,7 +273,6 @@ function TL(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function IL(e, t) {
   if (e) {
     if ("string" == typeof e) return FL(e, t);
@@ -286,15 +280,13 @@ function IL(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? FL(e, t) : void 0;
   }
 }
-
 function FL(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var NL = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = TL((0, g.useState)(D("instructor_signature_img", "src")), 2),
     n = t[0],
     r = t[1],
@@ -407,7 +399,7 @@ var NL = function () {
   }
   var W = [{
       label: (0, b.__)("Document Color", "ohmylms"),
-      colors: ["#FFFFFF", "var(--omlms-primary-color)", "#F6F6F6", "#ED9702", "#000D21"]
+      colors: ["#FFFFFF", "var(--ohmylms-primary-color)", "#F6F6F6", "#ED9702", "#000D21"]
     }, {
       label: (0, b.__)("Default Color", "ohmylms"),
       colors: ["#FFFFFF", "#EBEBEB", "#D6D6D6", "#999999", "#707070", "#474747", "#068EA8", "#08C0DF", "#5BE1E6", "#37B6FE", "#5171FF", "#0049AC", "#04B55F", "#7DD856", "#C0FF72", "#FEDE58", "#FFBC59", "#FF914D", "#5E16EA", "#8C51FF", "#CB6BE5", "#FF57BF", "#FF5756", "#FE3130"]
@@ -418,7 +410,7 @@ var NL = function () {
         key: n,
         value: r
       };
-      !e && ["director_signature_text", "instructor_signature_text"].includes(t) || !e && !t.includes("signature") ? N(!0) : c.updateClassicData(a);
+      c.updateClassicData(a);
     };
   return (0, g.useEffect)(function () {
     r(D("instructor_signature_img", "src")), i(D("director_signature_img", "src"));
@@ -445,7 +437,7 @@ var NL = function () {
     color: D("title_text", "style", "color"),
     value: s,
     onValueChange: function (t) {
-      e ? (d(t), z("title_text", "content", t)) : N(!0);
+      d(t), z("title_text", "content", t);
     },
     onColorChange: function (e) {
       return z("title_text", "style", {
@@ -464,7 +456,7 @@ var NL = function () {
     color: D("subtitle_text", "style", "color"),
     value: p,
     onValueChange: function (t) {
-      e ? (f(t), z("subtitle_text", "content", t)) : N(!0);
+      f(t), z("subtitle_text", "content", t);
     },
     onColorChange: function (e) {
       return z("subtitle_text", "style", {
@@ -483,7 +475,7 @@ var NL = function () {
     color: D("description_text", "style", "color"),
     value: h,
     onValueChange: function (t) {
-      e ? (_(t), z("description_text", "content", t)) : N(!0);
+      _(t), z("description_text", "content", t);
     },
     onColorChange: function (e) {
       return z("description_text", "style", {
@@ -519,7 +511,7 @@ var NL = function () {
     color: D("recognition_text", "style", "color"),
     value: R,
     onValueChange: function (t) {
-      e ? (x(t), z("recognition_text", "content", t)) : N(!0);
+      x(t), z("recognition_text", "content", t);
     },
     onColorChange: function (e) {
       return z("recognition_text", "style", {
@@ -538,7 +530,7 @@ var NL = function () {
     color: D("instructor_signature_text", "style", "color"),
     value: j,
     onValueChange: function (t) {
-      e ? (A(t), z("instructor_signature_text", "content", t)) : N(!0);
+      A(t), z("instructor_signature_text", "content", t);
     },
     onColorChange: function (e) {
       return z("instructor_signature_text", "style", {
@@ -557,7 +549,7 @@ var NL = function () {
     color: D("director_signature_text", "style", "color"),
     value: P,
     onValueChange: function (t) {
-      e ? (O(t), z("director_signature_text", "content", t)) : N(!0);
+      O(t), z("director_signature_text", "content", t);
     },
     onColorChange: function (e) {
       return z("director_signature_text", "style", {
@@ -605,9 +597,7 @@ var NL = function () {
     onClose: N
   })));
 };
-
 const DL = (0, g.memo)(NL);
-
 function WL(e) {
   return WL = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -615,9 +605,7 @@ function WL(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, WL(e);
 }
-
 var zL = ["element_type", "class_name", "style", "src", "alt", "content", "children", "component_name"];
-
 function BL(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -628,7 +616,6 @@ function BL(e, t) {
   }
   return n;
 }
-
 function LL(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -640,7 +627,6 @@ function LL(e) {
   }
   return e;
 }
-
 function VL(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -661,7 +647,6 @@ function VL(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var HL = function (e) {
     return e.replace(/-([a-z])/g, function (e, t) {
       return t.toUpperCase();
@@ -719,13 +704,11 @@ var HL = function (e) {
       return GL(e, "".concat(t, "-").concat(n));
     })) : null;
   };
-
 function UL(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var qL = function (e) {
   var t,
     n = e.certificateRef,
@@ -802,9 +785,7 @@ var qL = function (e) {
     }, GL(e, t.toString()));
   }))));
 };
-
 const YL = (0, g.memo)(qL);
-
 function QL(e) {
   return QL = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -812,7 +793,6 @@ function QL(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, QL(e);
 }
-
 function ZL() {
   var e,
     t,
@@ -899,7 +879,6 @@ function ZL() {
     };
   })();
 }
-
 function $L(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -921,7 +900,6 @@ function $L(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, $L(e, t, n, r);
 }
-
 function KL(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -932,7 +910,6 @@ function KL(e, t) {
   }
   return n;
 }
-
 function JL(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -944,7 +921,6 @@ function JL(e) {
   }
   return e;
 }
-
 function XL(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -965,7 +941,6 @@ function XL(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function eV(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -975,7 +950,6 @@ function eV(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function tV(e) {
   return function () {
     var t = this,

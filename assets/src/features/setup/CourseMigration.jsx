@@ -58,14 +58,12 @@ export function createCourseMigration(readRuntime) {
             r = {
               label: n,
               icon:
-                (null === (e = window.creator_lms_params) || void 0 === e
-                  ? void 0
-                  : e.plugin_assets) + 'images/creator-logo.svg',
+                (null === (e = window.ohmylms_params) || void 0 === e ? void 0 : e.plugin_assets) +
+                'images/creator-logo.svg',
             },
             o =
-              (null === (t = window.creator_lms_params) || void 0 === t
-                ? void 0
-                : t.plugin_assets) + 'images/';
+              (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.plugin_assets) +
+              'images/';
           return (
             'tutorLMS' === n
               ? (r = {
@@ -114,10 +112,7 @@ export function createCourseMigration(readRuntime) {
                           (e.p = 2),
                           (e.n = 3),
                           l()({
-                            path: '/creator-lms/v1/migrations/'.concat(
-                              a.selectedPlatform,
-                              '/courses',
-                            ),
+                            path: '/ohmylms/v1/migrations/'.concat(a.selectedPlatform, '/courses'),
                           })
                         );
                       case 3:
@@ -182,7 +177,7 @@ export function createCourseMigration(readRuntime) {
                       return (
                         (e.n = 3),
                         l()({
-                          path: '/creator-lms/v1/certificates/',
+                          path: '/ohmylms/v1/certificates/',
                           method: 'POST',
                           data: {
                             name: 'Certificate Template '.concat(a.certificate),
@@ -233,11 +228,11 @@ export function createCourseMigration(readRuntime) {
                         (a = une[t].data),
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/setup-wizard/import-course',
+                          path: '/ohmylms/v1/setup-wizard/import-course',
                           method: 'POST',
                           data: a,
                           headers: {
-                            nonce: window.creator_lms_params.setup_wizard_nonce,
+                            nonce: window.ohmylms_params.setup_wizard_nonce,
                           },
                         })
                       );
@@ -282,7 +277,7 @@ export function createCourseMigration(readRuntime) {
                         (y = e.v),
                         (b = {
                           optin: {
-                            creatorlms_allow_tracking: null != a && a.isOptEnabled ? 'yes' : 'no',
+                            ohmylms_allow_tracking: null != a && a.isOptEnabled ? 'yes' : 'no',
                           },
                           language: null !== (t = a.language) && void 0 !== t ? t : 'en_US',
                           certificate: a.certificate,
@@ -290,53 +285,51 @@ export function createCourseMigration(readRuntime) {
                           niche: a.niche ? [a.niche] : [],
                           level: a.level,
                           design: {
-                            creator_lms_archive_page_layout:
+                            ohmylms_archive_page_layout:
                               null !== (n = a.archive_page_layout) && void 0 !== n
                                 ? n
-                                : null === (l = i.creator_lms_archive_page_layout) || void 0 === l
+                                : null === (l = i.ohmylms_archive_page_layout) || void 0 === l
                                   ? void 0
                                   : l.value,
-                            creator_lms_columns_per_row:
+                            ohmylms_columns_per_row:
                               a.courses_per_row ||
-                              (null === (c = i.creator_lms_columns_per_row) || void 0 === c
+                              (null === (c = i.ohmylms_columns_per_row) || void 0 === c
                                 ? void 0
                                 : c.value) ||
                               4,
-                            creator_lms_courses_per_page:
+                            ohmylms_courses_per_page:
                               a.courses_per_page ||
-                              (null === (u = i.creator_lms_courses_per_page) || void 0 === u
+                              (null === (u = i.ohmylms_courses_per_page) || void 0 === u
                                 ? void 0
                                 : u.value) ||
                               10,
                           },
                           currency: {
-                            creator_lms_currency:
+                            ohmylms_currency:
                               null !== (s = a.currency) && void 0 !== s
                                 ? s
-                                : null == o || null === (d = o.creator_lms_currency) || void 0 === d
+                                : null == o || null === (d = o.ohmylms_currency) || void 0 === d
                                   ? void 0
                                   : d.value,
-                            creator_lms_currency_pos:
-                              (null == o ||
-                              null === (m = o.creator_lms_currency_pos) ||
-                              void 0 === m
+                            ohmylms_currency_pos:
+                              (null == o || null === (m = o.ohmylms_currency_pos) || void 0 === m
                                 ? void 0
                                 : m.value) || 'left',
-                            creator_lms_price_thousand_sep:
+                            ohmylms_price_thousand_sep:
                               (null == o ||
-                              null === (p = o.creator_lms_price_thousand_sep) ||
+                              null === (p = o.ohmylms_price_thousand_sep) ||
                               void 0 === p
                                 ? void 0
                                 : p.value) || ',',
-                            creator_lms_price_decimal_sep:
+                            ohmylms_price_decimal_sep:
                               (null == o ||
-                              null === (f = o.creator_lms_price_decimal_sep) ||
+                              null === (f = o.ohmylms_price_decimal_sep) ||
                               void 0 === f
                                 ? void 0
                                 : f.value) || '.',
-                            creator_lms_price_num_decimals:
+                            ohmylms_price_num_decimals:
                               (null == o ||
-                              null === (v = o.creator_lms_price_num_decimals) ||
+                              null === (v = o.ohmylms_price_num_decimals) ||
                               void 0 === v
                                 ? void 0
                                 : v.value) || '2',
@@ -344,13 +337,13 @@ export function createCourseMigration(readRuntime) {
                           contact: {
                             email:
                               null != a && a.isOptEnabled
-                                ? null === (g = window.creator_lms_params) || void 0 === g
+                                ? null === (g = window.ohmylms_params) || void 0 === g
                                   ? void 0
                                   : g.admin_email
                                 : '',
                             name:
                               null != a && a.isOptEnabled
-                                ? null === (h = window.creator_lms_params) || void 0 === h
+                                ? null === (h = window.ohmylms_params) || void 0 === h
                                   ? void 0
                                   : h.admin_name
                                 : '',
@@ -423,7 +416,7 @@ export function createCourseMigration(readRuntime) {
                         (e.p = 4),
                         (e.n = 5),
                         l()({
-                          path: '/creator-lms/v1/migrations/'.concat(a.selectedPlatform),
+                          path: '/ohmylms/v1/migrations/'.concat(a.selectedPlatform),
                           method: 'POST',
                           data: Dne({}, a.selectedPlatform, {
                             course_id: r,
@@ -506,10 +499,12 @@ export function createCourseMigration(readRuntime) {
         />
         <Controls.ContainerWP>
           <div
-            className={'omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper'}
+            className={
+              'ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper'
+            }
           >
-            <div className={'omlms-setup-wizard__container'}>
-              <div className={'omlms-setup-wizard__header'}>
+            <div className={'ohmylms-setup-wizard__container'}>
+              <div className={'ohmylms-setup-wizard__header'}>
                 <Controls.HeadingWP
                   as={'h2'}
                   color={'#000d25'}
@@ -621,7 +616,7 @@ export function createCourseMigration(readRuntime) {
                     }}
                   >
                     <div
-                      className={'omlms-setup-wizard-checkbox'}
+                      className={'ohmylms-setup-wizard-checkbox'}
                       onClick={function () {
                         v.length === u.length
                           ? h([])
@@ -723,7 +718,7 @@ export function createCourseMigration(readRuntime) {
                             }}
                           >
                             <div
-                              className={'omlms-setup-wizard-checkbox'}
+                              className={'ohmylms-setup-wizard-checkbox'}
                               onClick={function () {
                                 return (
                                   (t = e.id),
@@ -895,8 +890,8 @@ export function createCourseMigration(readRuntime) {
           isShowIndicator={!0}
         />
         <Controls.ContainerWP>
-          <div className={'omlms-setup-wizard__container'}>
-            <div className={'omlms-setup-wizard__header'}>
+          <div className={'ohmylms-setup-wizard__container'}>
+            <div className={'ohmylms-setup-wizard__header'}>
               <Controls.HeadingWP
                 as={'h2'}
                 color={'#000d25'}

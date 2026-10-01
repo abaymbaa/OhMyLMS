@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/course-author.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

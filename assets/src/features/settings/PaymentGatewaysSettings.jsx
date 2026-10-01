@@ -58,7 +58,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                       o.setLoadingSetting(!0),
                       (e.n = 1),
                       l()({
-                        path: 'creator-lms/v1/settings/payment-gateway',
+                        path: 'ohmylms/v1/settings/payment-gateway',
                       })
                     );
                   case 1:
@@ -94,7 +94,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                   <Controls.ButtonWP
                     variant={'secondary'}
                     onClick={E}
-                    className={'omlms-back-button '.concat(null == d ? void 0 : d.id)}
+                    className={'ohmylms-back-button '.concat(null == d ? void 0 : d.id)}
                     aria-label={(0, I18n.__)('Back to payment gateways', 'ohmylms')}
                   >
                     <svg
@@ -132,7 +132,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                     Array.isArray(r.settings_fields) &&
                     r.settings_fields.length > 0
                   ) {
-                    var e = 'creatorlms_'.concat(d.id, '_settings'),
+                    var e = 'ohmylms_'.concat(d.id, '_settings'),
                       n = a[e] || {};
                     return React.createElement(u1, {
                       gateway: d,
@@ -159,7 +159,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                   justify={'flex-start'}
                   gap={5}
                   wrap={!0}
-                  className={'omlms-payment-wrapper'}
+                  className={'ohmylms-payment-wrapper'}
                 >
                   {
                     ((w = (function () {
@@ -167,7 +167,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                         t =
                           (null === (e = window) ||
                           void 0 === e ||
-                          null === (e = e.creator_lms_params) ||
+                          null === (e = e.ohmylms_params) ||
                           void 0 === e
                             ? void 0
                             : e.payment_gateways) || {},
@@ -182,7 +182,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                       );
                     })()),
                     f ? (
-                      <Controls.FlexBlockWP className={'omlms-payment-flex-item'}>
+                      <Controls.FlexBlockWP className={'ohmylms-payment-flex-item'}>
                         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
                           <Controls.SpacerWP padding={4} margin={0} marginBottom={0}>
                             <Controls.TextWP align={'center'}>
@@ -192,7 +192,7 @@ export function createPaymentGatewaysSettings(readRuntime) {
                         </Controls.CardWP>
                       </Controls.FlexBlockWP>
                     ) : 0 === w.length ? (
-                      <Controls.FlexBlockWP className={'omlms-payment-flex-item'}>
+                      <Controls.FlexBlockWP className={'ohmylms-payment-flex-item'}>
                         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
                           <Controls.SpacerWP padding={4} margin={0} marginBottom={0}>
                             <Controls.TextWP align={'center'} color={'#666'}>
@@ -206,10 +206,10 @@ export function createPaymentGatewaysSettings(readRuntime) {
                       </Controls.FlexBlockWP>
                     ) : (
                       w.map(function (e) {
-                        var t = 'creatorlms_'.concat(e.id, '_settings'),
+                        var t = 'ohmylms_'.concat(e.id, '_settings'),
                           n = a[t] || {};
                         return (
-                          <Controls.FlexBlockWP key={e.id} className={'omlms-payment-flex-item'}>
+                          <Controls.FlexBlockWP key={e.id} className={'ohmylms-payment-flex-item'}>
                             <J0 gateway={e} config={h} settings={n} />
                           </Controls.FlexBlockWP>
                         );

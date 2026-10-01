@@ -4,7 +4,7 @@ export function createMembershipsPage(readRuntime) {
   return function MembershipsPage() {
     const { $8: MembershipList, HG, React } = readRuntime();
     return (
-      HG('creator-lms', 'memberships'),
+      HG('ohmylms', 'memberships'),
       (
         <React.Fragment>
           <MembershipList />

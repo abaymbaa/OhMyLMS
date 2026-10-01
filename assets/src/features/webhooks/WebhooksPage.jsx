@@ -32,8 +32,8 @@ export function createWebhooksPage(readRuntime) {
       z: Notifications,
     } = readRuntime();
     var e;
-    HG('creator-lms', 'webhooks');
-    var t = (0, Entitlements.useIsPro)(),
+    HG('ohmylms', 'webhooks');
+    var t = true,
       n = (0, WordPressData.useDispatch)(StoreModule.default),
       r = (0, Notifications.A)(),
       a = r.openNotificationWithIcon,
@@ -133,13 +133,13 @@ export function createWebhooksPage(readRuntime) {
       }, []),
       te = (0, ReactHooks.useCallback)(
         function () {
-          t && $ ? (f(null), d(!0)) : U(!0);
+          $ ? (f(null), d(!0)) : U(!0);
         },
         [t, $],
       ),
       ne = (0, ReactHooks.useCallback)(
         function (e) {
-          if (t && $) {
+          if ($) {
             var n = Y.find(function (t) {
               return t.id === e;
             });
@@ -150,7 +150,7 @@ export function createWebhooksPage(readRuntime) {
       ),
       re = (0, ReactHooks.useCallback)(
         function (e) {
-          t && $ ? (N(!0), B(e)) : U(!0);
+          $ ? (N(!0), B(e)) : U(!0);
         },
         [t, $],
       ),
@@ -241,7 +241,7 @@ export function createWebhooksPage(readRuntime) {
                         for (;;)
                           switch ((e.p = e.n)) {
                             case 0:
-                              if (t && $) {
+                              if ($) {
                                 e.n = 1;
                                 break;
                               }
@@ -286,7 +286,7 @@ export function createWebhooksPage(readRuntime) {
                         for (;;)
                           switch ((e.p = e.n)) {
                             case 0:
-                              if (t && $) {
+                              if ($) {
                                 e.n = 1;
                                 break;
                               }
@@ -324,7 +324,7 @@ export function createWebhooksPage(readRuntime) {
               label: (0, I18n.__)('Delete', 'ohmylms'),
               value: 'delete',
               action: function () {
-                t && $ ? N(!0) : U(!0);
+                $ ? N(!0) : U(!0);
               },
             },
           ];
@@ -494,9 +494,8 @@ export function createWebhooksPage(readRuntime) {
           render: function (e) {
             var t,
               n =
-                (null === (t = window.creator_lms_params) || void 0 === t
-                  ? void 0
-                  : t.date_format) || 'F j, Y',
+                (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.date_format) ||
+                'F j, Y',
               r = e ? (0, wq.dateI18n)(n, e) : '-';
             return (
               <Controls.BadgeWP isBorderLess={!0} variant={'secondary'}>
@@ -546,7 +545,7 @@ export function createWebhooksPage(readRuntime) {
         <Controls.CardWP
           isBorderless={!0}
           variant={'secondary'}
-          className={'omlms-full-screen-height'}
+          className={'ohmylms-full-screen-height'}
         >
           <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
             <YG
@@ -557,12 +556,6 @@ export function createWebhooksPage(readRuntime) {
             />
             <Ea isBorderless={!0} minHeight={'calc(100vh - 30px)'}>
               <Controls.SpacerWP padding={5}>
-                <Controls.ProOverlayWP
-                  title={(0, I18n.__)(
-                    'Webhooks is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features. After upgrading, enable Webhooks from the Integrations page.',
-                    'ohmylms',
-                  )}
-                />
                 {P.length > 0
                   ? React.createElement(hN, {
                       items: P,

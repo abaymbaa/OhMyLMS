@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,11 +11,11 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class Certificate
  *
- * This class represents a Certificate within the CreatorLms system. It extends the base `Data` class
+ * This class represents a Certificate within the OhMyLMS system. It extends the base `Data` class
  * and provides methods to manage Certificate properties such as name, description, slug, status, and timestamps.
  * The class interacts with the data store to load, save, update, or delete Certificate data.
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Certificate extends Data {
@@ -170,7 +170,7 @@ class Certificate extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -188,7 +188,7 @@ class Certificate extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}

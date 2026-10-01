@@ -2,10 +2,10 @@
 /**
  * Hook for Chapter
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
 class ChapterHook
 {

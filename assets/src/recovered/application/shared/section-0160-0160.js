@@ -85,7 +85,6 @@ function s5() {
     };
   })();
 }
-
 function d5(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function d5(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, d5(e, t, n, r);
 }
-
 function m5(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -118,7 +116,6 @@ function m5(e, t) {
   }
   return n;
 }
-
 function p5(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -130,7 +127,6 @@ function p5(e) {
   }
   return e;
 }
-
 function f5(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -151,7 +147,6 @@ function f5(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function v5(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -161,7 +156,6 @@ function v5(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function g5(e) {
   return function () {
     var t = this,
@@ -178,7 +172,6 @@ function g5(e) {
     });
   };
 }
-
 function h5(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -212,7 +205,6 @@ function h5(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function y5(e, t) {
   if (e) {
     if ("string" == typeof e) return b5(e, t);
@@ -220,15 +212,13 @@ function y5(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? b5(e, t) : void 0;
   }
 }
-
 function b5(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var _5 = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = h5((0, g.useState)({
       enable: !1,
@@ -267,7 +257,7 @@ var _5 = function () {
           for (;;) switch (e.n) {
             case 0:
               return d(!0), e.n = 1, l()({
-                path: "creator-lms/v1/engagement/settings/reward"
+                path: "ohmylms/v1/engagement/settings/reward"
               });
             case 1:
               t = e.v, a(t || r), d(!1), t && (n = w(t.rules || [], S), a(p5(p5({}, t), {}, {
@@ -282,7 +272,7 @@ var _5 = function () {
         return e.apply(this, arguments);
       };
     }();
-    e && t();
+    t();
   }, []);
   var w = function (e, t) {
     var n = function (e) {
@@ -309,14 +299,14 @@ var _5 = function () {
         return s5().w(function (n) {
           for (;;) switch (n.p = n.n) {
             case 0:
-              if (e) {
+              {
                 n.n = 1;
                 break;
               }
               return n.a(2);
             case 1:
               return t.setLoadingSetting(!0), f(!0), n.p = 2, n.n = 3, l()({
-                path: "/creator-lms/v1/engagement/settings/reward",
+                path: "/ohmylms/v1/engagement/settings/reward",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -354,9 +344,7 @@ var _5 = function () {
   }, React.createElement(I.SkeletonWP, {
     active: !0,
     rows: 15
-  })))) : React.createElement(React.Fragment, null, _, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("The Reward System is a Pro feature and will be available soon. Stay tuned to unlock advanced gamification tools that boost learner motivation and course completion rates.", "ohmylms")
-  }), React.createElement(I.CardWP, {
+  })))) : React.createElement(React.Fragment, null, _, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
   }, React.createElement(I.SpacerWP, {
@@ -368,7 +356,7 @@ var _5 = function () {
     align: "flex-start",
     direction: "column",
     gap: 3
-  }, e && React.createElement(React.Fragment, null, r.rules.map(function (e, t) {
+  }, React.createElement(React.Fragment, null, r.rules.map(function (e, t) {
     return React.createElement(I.CardWP, {
       key: t,
       isBorderless: !0,
@@ -450,15 +438,12 @@ var _5 = function () {
     isBusy: p
   }, (0, b.__)("Save", "ohmylms")))));
 };
-
 const w5 = (0, g.memo)(_5);
-
 function E5(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var S5 = function () {
   var e = (0, z.A)(),
     t = (e.openNotificationWithIcon, e.contextHolder),
@@ -532,7 +517,7 @@ var S5 = function () {
   return React.createElement(React.Fragment, null, t, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     paddingTop: 1,
@@ -548,5 +533,4 @@ var S5 = function () {
     activekey: i
   }))));
 };
-
 const R5 = (0, g.memo)(S5);

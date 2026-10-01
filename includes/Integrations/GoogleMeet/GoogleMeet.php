@@ -1,11 +1,11 @@
 <?php 
 
-namespace OMLMS\Integrations\GoogleMeet;
+namespace OhMyLMS\Integrations\GoogleMeet;
 
 if (!defined('ABSPATH')) exit;
 
-use OMLMS\Integrations\GoogleMeet\Includes\Hooks;
-use OMLMS\Integrations\GoogleMeet\Includes\SessionReminderScheduler;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Hooks;
+use OhMyLMS\Integrations\GoogleMeet\Includes\SessionReminderScheduler;
 
 class GoogleMeet {
 
@@ -23,7 +23,7 @@ class GoogleMeet {
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
         \add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\GoogleMeet\Includes\Rest\GoogleMeetSettingsController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\GoogleMeet\Includes\Rest\GoogleMeetSettingsController::instance(), 'register_routes' )
         );
 
         new Hooks();
@@ -32,6 +32,6 @@ class GoogleMeet {
     }
 
     private function define_constants() {
-        define( 'CREATORLMS_GOOGLEMEET_INTEGRATION_URL', plugins_url( '', CREATORLMS_PRO_FILE ) );
+        define( 'OHMYLMS_GOOGLEMEET_INTEGRATION_URL', plugins_url( '', OHMYLMS_PRO_FILE ) );
     }
 }

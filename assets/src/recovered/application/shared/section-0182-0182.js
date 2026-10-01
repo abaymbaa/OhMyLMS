@@ -63,7 +63,7 @@ var K7 = function (e) {
       return e(T.default).getMemberships();
     }, []),
     l = (0, y.useDispatch)(T.default).updateMembershipPlan,
-    c = 0 < (null == i ? void 0 : i.length) ? null === (t = i[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n ? void 0 : n.currency,
+    c = 0 < (null == i ? void 0 : i.length) ? null === (t = i[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n ? void 0 : n.currency,
     u = function (e, t) {
       l(e, t), a(Z7(Z7({}, o), {}, $7({}, e, t)));
     },
@@ -105,7 +105,7 @@ var K7 = function (e) {
     justify: "flex-end",
     align: "flex-start"
   }, React.createElement(I.InputNumberWP, {
-    className: "omlms-subscription-price-input",
+    className: "ohmylms-subscription-price-input",
     prefix: c,
     type: "number",
     placeholder: (0, b.__)("e.g. 5.90", "ohmylms"),
@@ -129,7 +129,7 @@ var K7 = function (e) {
     onChange: function (e) {
       return u("subscription_period", e);
     },
-    customClass: "omlms-subscription-period-select"
+    customClass: "ohmylms-subscription-period-select"
   })), (null == r ? void 0 : r.price) && React.createElement(I.TextWP, {
     as: "p",
     size: "13px",
@@ -257,7 +257,7 @@ var o8 = function (e) {
     m = d[0],
     p = d[1],
     f = r8((0, g.useState)([]), 2),
-    v = (f[0], f[1], 0 < (null == u ? void 0 : u.length) ? null === (t = u[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n ? void 0 : n.currency),
+    v = (f[0], f[1], 0 < (null == u ? void 0 : u.length) ? null === (t = u[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n ? void 0 : n.currency),
     h = function (e) {
       return e && sn()(e).isValid() ? sn()(e).startOf("day").format("YYYY-MM-DDTHH:mm:ss.SSS") : (console.error("Invalid date value provided:", e), null);
     },
@@ -273,7 +273,7 @@ var o8 = function (e) {
     };
   return React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
     padding: 4,
-    className: "omlms-sale-price-section"
+    className: "ohmylms-sale-price-section"
   }, React.createElement(I.FlexWP, {
     gap: 8,
     align: "flex-start",
@@ -319,7 +319,7 @@ var o8 = function (e) {
     value: null !== (r = null == c ? void 0 : c.sale_price) && void 0 !== r ? r : "",
     max: 99999999,
     min: 0,
-    className: "omlms-sale-price-input"
+    className: "ohmylms-sale-price-input"
   }), (null == i ? void 0 : i.sale_price) && React.createElement(I.TextWP, {
     as: "p",
     size: "13px",
@@ -337,7 +337,7 @@ var o8 = function (e) {
     onKeyDown: function (e) {
       "Enter" !== e.key && " " !== e.key || E();
     },
-    className: "omlms-sale-price-clear-button"
+    className: "ohmylms-sale-price-clear-button"
   }, (0, b.__)("Clear", "ohmylms")) : React.createElement(I.ButtonWP, {
     variant: "link",
     onClick: w,
@@ -347,7 +347,7 @@ var o8 = function (e) {
     onKeyDown: function (e) {
       "Enter" !== e.key && " " !== e.key || w();
     },
-    className: "omlms-sale-price-schedule-button"
+    className: "ohmylms-sale-price-schedule-button"
   }, m ? (0, b.__)("Remove Schedule", "ohmylms") : (0, b.__)("Schedule", "ohmylms")), React.createElement(qt, {
     isVisible: m || Boolean(null == c ? void 0 : c.sale_price_dates_from),
     style: {
@@ -541,8 +541,8 @@ var b8 = {
     subscription_length: 0,
     subscription_period: "year",
     subscription_period_interval: "1",
-    currency: null === (u8 = window) || void 0 === u8 || null === (u8 = u8.creator_lms_params) || void 0 === u8 ? void 0 : u8.currency,
-    currency_pos: (null === (s8 = window) || void 0 === s8 || null === (s8 = s8.creator_lms_params) || void 0 === s8 ? void 0 : s8.currency_pos) || "left"
+    currency: null === (u8 = window) || void 0 === u8 || null === (u8 = u8.ohmylms_params) || void 0 === u8 ? void 0 : u8.currency,
+    currency_pos: (null === (s8 = window) || void 0 === s8 || null === (s8 = s8.ohmylms_params) || void 0 === s8 ? void 0 : s8.currency_pos) || "left"
   },
   _8 = function (e) {
     var t,
@@ -556,7 +556,7 @@ var b8 = {
         return e(T.default).getMemberships();
       }, []),
       l = (0, y.useDispatch)(T.default).updateMembershipPlan,
-      c = 0 < (null == i ? void 0 : i.length) ? null === (t = i[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n ? void 0 : n.currency,
+      c = 0 < (null == i ? void 0 : i.length) ? null === (t = i[0]) || void 0 === t ? void 0 : t.currency : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n ? void 0 : n.currency,
       u = function (e, t) {
         l(e, t), a(h8(h8({}, o), {}, y8({}, e, t)));
       },
@@ -579,7 +579,7 @@ var b8 = {
         return u("name", e);
       },
       error: null == r ? void 0 : r.name,
-      className: "omlms-membership-plan-name-input"
+      className: "ohmylms-membership-plan-name-input"
     }), React.createElement(I.DividerWP, {
       marginStart: "2",
       marginEnd: "2"
@@ -591,7 +591,7 @@ var b8 = {
         return u("description", e);
       },
       inputType: "textarea",
-      className: "omlms-membership-plan-description-input"
+      className: "ohmylms-membership-plan-description-input"
     }), React.createElement(I.DividerWP, {
       marginStart: "2",
       marginEnd: "2"
@@ -614,7 +614,7 @@ var b8 = {
       },
       value: null == o ? void 0 : o.subscription_length,
       staticSearch: !0,
-      className: "omlms-stop-renewing-after-select"
+      className: "ohmylms-stop-renewing-after-select"
     }), React.createElement(I.DividerWP, {
       marginStart: "2",
       marginEnd: "2"
@@ -637,7 +637,7 @@ var b8 = {
       },
       min: 0,
       max: 99999999,
-      className: "omlms-sign-up-fee-input"
+      className: "ohmylms-sign-up-fee-input"
     }), React.createElement(I.DividerWP, {
       marginStart: "2",
       marginEnd: "2"

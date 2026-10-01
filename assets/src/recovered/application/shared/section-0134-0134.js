@@ -182,7 +182,7 @@ var T$ = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     direction: "column",
     gap: 5,
-    className: "omlms-report-content"
+    className: "ohmylms-report-content"
   }, t.map(function (e, t) {
     var a,
       o = null == e || null === (a = e.settings) || void 0 === a ? void 0 : a.type;
@@ -305,7 +305,7 @@ var F$ = function (e) {
   }, React.createElement("strong", null, (0, b.__)("Correct: ", "ohmylms")), React.createElement("span", null, null == t ? void 0 : t.correct))))), React.createElement(I.SpacerWP, {
     marginBottom: 4
   }), React.createElement("div", {
-    className: "omlms-report-final-result"
+    className: "ohmylms-report-final-result"
   }, React.createElement(I.TextWP, {
     as: "p",
     size: 15

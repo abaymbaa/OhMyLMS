@@ -91,7 +91,7 @@ export function createDashboardOverview(readRuntime) {
               ? 'success'
               : 'danger',
           card_class: 'card-earning',
-          iconColor: 'var(--omlms-primary-color)',
+          iconColor: 'var(--ohmylms-primary-color)',
         },
         {
           label: (0, I18n.__)('Refund', 'ohmylms'),
@@ -167,12 +167,12 @@ export function createDashboardOverview(readRuntime) {
       (
         <Controls.CardWP variant={'secondary'} isBorderless={!0}>
           <Controls.SpacerWP marginBottom={0} paddingX={7.5} paddingY={6}>
-            <Controls.FlexWP gap={4} align={'stretch'} className={'omlms-overview-cards-wrapper'}>
+            <Controls.FlexWP gap={4} align={'stretch'} className={'ohmylms-overview-cards-wrapper'}>
               <Controls.FlexItemWP
                 style={{
                   flex: '9',
                 }}
-                className={'omlms-overview-left-cards'}
+                className={'ohmylms-overview-left-cards'}
               >
                 <Controls.FlexWP
                   direction={'column'}
@@ -209,7 +209,7 @@ export function createDashboardOverview(readRuntime) {
                 style={{
                   flex: '4',
                 }}
-                className={'omlms-overview-right-cards'}
+                className={'ohmylms-overview-right-cards'}
               >
                 <TopCoursePerformance
                   data={null == _ ? void 0 : _.top_course}

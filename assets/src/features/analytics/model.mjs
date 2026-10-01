@@ -1,6 +1,6 @@
 /** Preserve the dashboard's REST filter/date contract. */
 export function dashboardPath(filter, formatDate) {
-  let path = `creator-lms/v1/dashboard?filter=${filter?.type}`;
+  let path = `ohmylms/v1/dashboard?filter=${filter?.type}`;
   if (filter?.type === 'custom' && filter.startDate && filter.endDate) {
     path += `&start_date=${encodeURIComponent(formatDate(filter.startDate.date))}&end_date=${encodeURIComponent(formatDate(filter.endDate.date))}`;
   }

@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * Currency settings class.
@@ -42,7 +42,7 @@ class Currency extends Settings {
 	public function get_settings() {
 		$settings = array(
 			array(
-				'id'       => 'creator_lms_currency',
+				'id'       => 'ohmylms_currency',
 				'default'  => 'USD',
 				'type'     => 'select',
 				'desc_tip' => true,
@@ -50,8 +50,8 @@ class Currency extends Settings {
 			),
 
 			array(
-				'id'       => 'creator_lms_currency_pos',
-				'class'    => 'omlms-select2',
+				'id'       => 'ohmylms_currency_pos',
+				'class'    => 'ohmylms-select2',
 				'default'  => 'left',
 				'type'     => 'select',
 				'options'  => array(
@@ -64,7 +64,7 @@ class Currency extends Settings {
 			),
 
 			array(
-				'id'       => 'creator_lms_price_thousand_sep',
+				'id'       => 'ohmylms_price_thousand_sep',
 				'css'      => 'width:50px;',
 				'default'  => ',',
 				'type'     => 'text',
@@ -72,14 +72,14 @@ class Currency extends Settings {
 			),
 
 			array(
-				'id'      => 'creator_lms_price_decimal_sep',
+				'id'      => 'ohmylms_price_decimal_sep',
 				'css'     => 'width:50px;',
 				'default' => '.',
 				'type'    => 'text',
 			),
 
 			array(
-				'id'                => 'creator_lms_price_num_decimals',
+				'id'                => 'ohmylms_price_num_decimals',
 				'css'               => 'width:50px;',
 				'default'           => '2',
 				'type'              => 'number',
@@ -100,10 +100,10 @@ class Currency extends Settings {
 	 * @return array The currency code options with symbols.
 	 */
 	public function get_currency_code_options() {
-		$currency_code_options = get_omlms_currencies();
+		$currency_code_options = get_ohmylms_currencies();
 
 		foreach ( $currency_code_options as $code => $name ) {
-			$currency_code_options[ $code ] = $name . ' (' . get_omlms_currency_symbol( $code ) . ')';
+			$currency_code_options[ $code ] = $name . ' (' . get_ohmylms_currency_symbol( $code ) . ')';
 		}
 
 		return $currency_code_options;

@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 
 /**
  * MigrationController class.
@@ -85,7 +85,7 @@ class MigrationController extends RestController {
 		$source = sanitize_text_field( $request['source'] );
 
 		// Initialize the migration class for the given source
-		$migration     = new \OMLMS\Migrations\Migration( $source );
+		$migration     = new \OhMyLMS\Migrations\Migration( $source );
 		$source_object = $migration->run();
 		// Check if 'course_id' is set in the request for LMS
 		if ( isset( $request[$source]['course_id'] ) ) {
@@ -100,7 +100,7 @@ class MigrationController extends RestController {
 				// If initialization fails, return an error indicating LMS is not installed
 				if ( ! $is_init ) {
 					return new \WP_Error(
-						'creator_lms_not_found',
+						'ohmylms_not_found',
 						__( `{$source} is not installed.`, 'ohmylms' ),
 						array( 'status' => 400 )
 					);
@@ -113,14 +113,14 @@ class MigrationController extends RestController {
 					'status'  => 'success',
 					'message' => __( 'Course migrated successfully', 'ohmylms' ),
 				);
-				do_action( 'creatorlms_migration_completed', $source, $course_id );
+				do_action( 'ohmylms_migration_completed', $source, $course_id );
 				return rest_ensure_response( $response );
 			}
 		}
 
 		// If no course_id is provided or the migration fails, return an error
 		return new \WP_Error(
-			'creator_lms_migration_error',
+			'ohmylms_migration_error',
 			__( 'Migration failed', 'ohmylms' ),
 			array( 'status' => 400 )
 		);
@@ -148,7 +148,7 @@ class MigrationController extends RestController {
 		if( 'tutorLMS' === $source ){
 			if ( ! defined( 'TUTOR_VERSION' ) ) {
 				return new \WP_Error(
-					'creator_lms_tutor_not_found',
+					'ohmylms_tutor_not_found',
 					__( 'Tutor LMS is not installed.', 'ohmylms' ),
 					array( 'status' => 400 )
 				);
@@ -157,7 +157,7 @@ class MigrationController extends RestController {
 		}elseif( 'learnDash' === $source ){
 			if ( ! defined( 'LEARNDASH_VERSION' ) ) {
 				return new \WP_Error(
-					'creator_lms_learndash_not_found',
+					'ohmylms_learndash_not_found',
 					__( 'LearnDash LMS is not installed.', 'ohmylms' ),
 					array( 'status' => 400 )
 				);
@@ -166,7 +166,7 @@ class MigrationController extends RestController {
 		}elseif( 'learnPress' === $source ){
 			if ( ! defined( 'LEARNPRESS_VERSION' ) ) {
 				return new \WP_Error(
-					'creator_lms_learnpress_not_found',
+					'ohmylms_learnpress_not_found',
 					__( 'LearnPress is not installed.', 'ohmylms' ),
 					array( 'status' => 400 )
 				);
@@ -176,7 +176,7 @@ class MigrationController extends RestController {
 			$is_masterstudy_active = defined( 'STM_LMS_VERSION' ) || defined( 'STM_LMS_FILE' ) || defined( 'MASTERSTUDY_LMS_VERSION' ) || class_exists( 'STM_LMS' ) || post_type_exists( 'stm-courses' );
 			if ( ! $is_masterstudy_active ) {
 				return new \WP_Error(
-					'creator_lms_masterstudy_not_found',
+					'ohmylms_masterstudy_not_found',
 					__( 'MasterStudy LMS is not installed.', 'ohmylms' ),
 					array( 'status' => 400 )
 				);
@@ -232,7 +232,7 @@ class MigrationController extends RestController {
 			);
 		}catch( \Exception $e ){
 			return new \WP_Error(
-				'creator_lms_source_not_supported',
+				'ohmylms_source_not_supported',
 				__( 'Source is not supported.', 'ohmylms' ),
 				array( 'status' => 400 )
 			);

@@ -595,14 +595,14 @@ a:where(:not(.wp-element-button)) {
     justify-content: space-between;
 }
 
-.theme-twentytwentythree.creator-lms-checkout .entry-content.has-global-padding {
+.theme-twentytwentythree.ohmylms-checkout .entry-content.has-global-padding {
     padding: 0;
     margin: 0;
 }
 
-.theme-twentytwentythree.creator-lms-page .site-header .wp-container-core-group-is-layout-2 {
+.theme-twentytwentythree.ohmylms-page .site-header .wp-container-core-group-is-layout-2 {
     justify-content: space-between;
 }
-.theme-twentytwentythree.creator-lms-page .wp-block-navigation__responsive-container.is-menu-open {
+.theme-twentytwentythree.ohmylms-page .wp-block-navigation__responsive-container.is-menu-open {
     padding: 30px;
 }

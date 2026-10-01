@@ -2,7 +2,7 @@
 
 namespace CodeRex\Ecommerce;
 
-use OMLMS\Abstracts\Session;
+use OhMyLMS\Abstracts\Session;
 
 class SessionHandler extends Session {
 
@@ -46,8 +46,8 @@ class SessionHandler extends Session {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$this->_cookie = 'wp_creator_lms_session_' . COOKIEHASH;
-		$this->_table  = $wpdb->prefix . 'omlms_sessions';
+		$this->_cookie = 'wp_ohmylms_session_' . COOKIEHASH;
+		$this->_table  = $wpdb->prefix . 'ohmylms_sessions';
 	}
 
 	/**
@@ -59,7 +59,7 @@ class SessionHandler extends Session {
 
 		$this->init_session_cookie();
 
-		add_action( 'creator_lms_set_cart_cookies', array( $this, 'set_student_session_cookie' ), 10 );
+		add_action( 'ohmylms_set_cart_cookies', array( $this, 'set_student_session_cookie' ), 10 );
 		add_action( 'wp', array( $this, 'maybe_set_student_session_cookie' ), 99 );
 		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
 		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
@@ -161,7 +161,7 @@ class SessionHandler extends Session {
 			$this->_has_cookie = true;
 
 			if ( ! isset( $_COOKIE[ $this->_cookie ] ) || $_COOKIE[ $this->_cookie ] !== $cookie_value ) {
-				omlms_setcookie( $this->_cookie, $cookie_value, $this->_session_expiration, $this->use_secure_cookie(), true );
+				ohmylms_setcookie( $this->_cookie, $cookie_value, $this->_session_expiration, $this->use_secure_cookie(), true );
 			}
 		}
 	}
@@ -173,7 +173,7 @@ class SessionHandler extends Session {
 	 * @return bool
 	 */
 	protected function use_secure_cookie() {
-		return omlms_site_is_https() && is_ssl();
+		return ohmylms_site_is_https() && is_ssl();
 	}
 
 	/**
@@ -324,14 +324,14 @@ class SessionHandler extends Session {
 	 * @return string
 	 */
 	private function get_cache_prefix() {
-		$prefix = wp_cache_get( 'omlms_' . CREATOR_LMS_SESSION_CACHE_GROUP . '_cache_prefix', CREATOR_LMS_SESSION_CACHE_GROUP );
+		$prefix = wp_cache_get( 'ohmylms_' . OHMYLMS_SESSION_CACHE_GROUP . '_cache_prefix', OHMYLMS_SESSION_CACHE_GROUP );
 
 		if ( false === $prefix ) {
 			$prefix = microtime();
-			wp_cache_set( 'omlms_' . CREATOR_LMS_SESSION_CACHE_GROUP . '_cache_prefix', $prefix, CREATOR_LMS_SESSION_CACHE_GROUP );
+			wp_cache_set( 'ohmylms_' . OHMYLMS_SESSION_CACHE_GROUP . '_cache_prefix', $prefix, OHMYLMS_SESSION_CACHE_GROUP );
 		}
 
-		return 'creator_lms_cache_' . $prefix . '_';
+		return 'ohmylms_cache_' . $prefix . '_';
 	}
 
 	/**
@@ -355,7 +355,7 @@ class SessionHandler extends Session {
 				)
 			);
 
-			wp_cache_set( $this->get_cache_prefix() . $this->_student_id, $this->_data, CREATOR_LMS_SESSION_CACHE_GROUP, $this->_session_expiration - time() );
+			wp_cache_set( $this->get_cache_prefix() . $this->_student_id, $this->_data, OHMYLMS_SESSION_CACHE_GROUP, $this->_session_expiration - time() );
 			$this->_dirty = false;
 			if ( get_current_user_id() != $old_session_key && ! is_object( get_user_by( 'id', $old_session_key ) ) ) {
 				$this->delete_session( $old_session_key );
@@ -375,10 +375,10 @@ class SessionHandler extends Session {
 	 * Forget all session data without destroying it.
 	 */
 	public function forget_session() {
-		omlms_setcookie( $this->_cookie, '', time() - YEAR_IN_SECONDS, $this->use_secure_cookie(), true );
+		ohmylms_setcookie( $this->_cookie, '', time() - YEAR_IN_SECONDS, $this->use_secure_cookie(), true );
 
 		if ( ! is_admin() ) {
-			omlms_empty_cart();
+			ohmylms_empty_cart();
 		}
 
 		$this->_data       = array();
@@ -412,7 +412,7 @@ class SessionHandler extends Session {
 		global $wpdb;
 
 		// Try to get it from the cache, it will return false if not present or if object cache not in use.
-		$value = wp_cache_get( $this->get_cache_prefix() . $customer_id, CREATOR_LMS_SESSION_CACHE_GROUP );
+		$value = wp_cache_get( $this->get_cache_prefix() . $customer_id, OHMYLMS_SESSION_CACHE_GROUP );
 
 		if ( false === $value ) {
 			$value = $wpdb->get_var( $wpdb->prepare( "SELECT session_value FROM $this->_table WHERE session_key = %s", $customer_id ) ); // @codingStandardsIgnoreLine.
@@ -423,7 +423,7 @@ class SessionHandler extends Session {
 
 			$cache_duration = $this->_session_expiration - time();
 			if ( 0 < $cache_duration ) {
-				wp_cache_add( $this->get_cache_prefix() . $customer_id, $value, CREATOR_LMS_SESSION_CACHE_GROUP, $cache_duration );
+				wp_cache_add( $this->get_cache_prefix() . $customer_id, $value, OHMYLMS_SESSION_CACHE_GROUP, $cache_duration );
 			}
 		}
 
@@ -438,7 +438,7 @@ class SessionHandler extends Session {
 	public function delete_session( $customer_id ) {
 		global $wpdb;
 
-		wp_cache_delete( $this->get_cache_prefix() . $customer_id, CREATOR_LMS_SESSION_CACHE_GROUP );
+		wp_cache_delete( $this->get_cache_prefix() . $customer_id, OHMYLMS_SESSION_CACHE_GROUP );
 
 		$wpdb->delete(
 			$this->_table,

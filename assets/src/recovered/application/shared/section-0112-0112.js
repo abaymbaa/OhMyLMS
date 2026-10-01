@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var vY = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = (0, y.useSelect)(function (e) {
       return e(T.default).selectCourses();
@@ -256,11 +256,10 @@ var vY = function () {
         return cY().w(function (n) {
           for (;;) switch (n.n) {
             case 0:
-              if (e) {
+              {
                 n.n = 1;
                 break;
               }
-              return Pe(!0), n.a(2);
             case 1:
               if (!r) {
                 n.n = 3;
@@ -293,11 +292,10 @@ var vY = function () {
       return cY().w(function (n) {
         for (;;) switch (n.p = n.n) {
           case 0:
-            if (e) {
+            {
               n.n = 1;
               break;
             }
-            return Pe(!0), n.a(2);
           case 1:
             if (ye(!0), n.p = 2, !ae) {
               n.n = 4;
@@ -328,7 +326,7 @@ var vY = function () {
     }, []),
     it = (0, g.useCallback)(function () {
       var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null;
-      e ? (t && oe(t), me(!0)) : Pe(!0);
+      t && oe(t), me(!0);
     }, [e]),
     lt = (0, g.useCallback)(function () {
       var e = dY(cY().m(function e(t) {
@@ -339,7 +337,7 @@ var vY = function () {
               return n = {
                 status: "publish"
               }, e.n = 1, l()({
-                path: "/creator-lms/v1/courses/".concat(t, "/status"),
+                path: "/ohmylms/v1/courses/".concat(t, "/status"),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -362,14 +360,14 @@ var vY = function () {
       return cY().w(function (t) {
         for (;;) switch (t.p = t.n) {
           case 0:
-            if (e && !Se) {
+            if (!Se) {
               t.n = 1;
               break;
             }
             return t.a(2);
           case 1:
             return t.p = 1, Re(!0), t.n = 2, l()({
-              path: "/creator-lms/v1/courses/".concat(ae, "/clone"),
+              path: "/ohmylms/v1/courses/".concat(ae, "/clone"),
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -391,7 +389,7 @@ var vY = function () {
       oe(null), we(!1);
     }, []),
     st = (0, g.useCallback)(function (t) {
-      e ? (we(!0), oe(t)) : Pe(!0);
+      we(!0), oe(t);
     }, []),
     dt = (0, g.useCallback)(function () {
       Q(!0);
@@ -827,15 +825,12 @@ var vY = function () {
     }
   }));
 };
-
 const gY = (0, g.memo)(vY);
-
 function hY(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function yY(e) {
   return yY = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -843,7 +838,6 @@ function yY(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, yY(e);
 }
-
 function bY(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -854,7 +848,6 @@ function bY(e, t) {
   }
   return n;
 }
-
 function _Y(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -866,7 +859,6 @@ function _Y(e) {
   }
   return e;
 }
-
 function wY(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -887,7 +879,6 @@ function wY(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function EY(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -921,7 +912,6 @@ function EY(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function SY(e, t) {
   if (e) {
     if ("string" == typeof e) return RY(e, t);
@@ -929,7 +919,6 @@ function SY(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? RY(e, t) : void 0;
   }
 }
-
 function RY(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

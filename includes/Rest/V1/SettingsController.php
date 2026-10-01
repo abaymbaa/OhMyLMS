@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Admin\Settings\AdminSettings;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Admin\Settings\AdminSettings;
 
 /**
  * SettingsController class.
@@ -135,9 +135,9 @@ class SettingsController extends RestController {
 	public function get_integration_status( $request ) {
 		$integration_names_str = $request->get_param( 'name' );
 		$integration_names     = array_map( 'trim', explode( ',', $integration_names_str ) );
-		$integrations_option   = get_option( 'creatorlms_integrations', array() );
+		$integrations_option   = get_option( 'ohmylms_integrations', array() );
 		$statuses              = array();
-		$is_pro_active         = apply_filters( 'creator_lms_is_pro', false );
+		$is_pro_active         = apply_filters( 'ohmylms_is_pro', false );
 
 		foreach ( $integration_names as $name ) {
 			if ( empty( $name ) ) {
@@ -229,11 +229,11 @@ class SettingsController extends RestController {
 
 			update_option( $key, $value );
 			flush_rewrite_rules(true);
-			do_action("creatorlms_{$group_id}_settings_updated", $key, $value, $group_id );
+			do_action("ohmylms_{$group_id}_settings_updated", $key, $value, $group_id );
 			
 			// Trigger payment gateway settings event for tracking
 			if ( 'payment-gateway' === $group_id ) {
-				do_action( 'creatorlms_payment_gateway_settings_saved', $key, $value );
+				do_action( 'ohmylms_payment_gateway_settings_saved', $key, $value );
 			}
 		}
 		return rest_ensure_response(
@@ -254,83 +254,83 @@ class SettingsController extends RestController {
 	 */
 	private function is_valid_option_key( $key ) {
 		$keys = array(
-			'creator_lms_course_page_id',
-			'creator_lms_profile_page_id',
-			'creator_lms_student_dashboard_page_id',
-			'creator_lms_student_profile_page_id',
-			'creator_lms_student_courses_page_id',
-			'creator_lms_checkout_page_id',
-			'creator_lms_thank_you_page_id',
-			'creator_lms_privacy_policy_page_id',
-			'creator_lms_terms_page_id',
-			'creator_lms_registration_page_id',
-			'creator_lms_courses_per_page',
-			'creator_lms_archive_page_layout',
-			'creator_lms_archive_page_layout_style',
-			'creator_lms_archive_page_filter_is_enabled',
-			'creator_lms_archive_page_filters',
-			'creator_lms_archive_page_sorting_is_enabled',
-			'creator_lms_archive_page_search_is_enabled',
-			'creator_lms_archive_page_category_is_enabled',
-			'creator_lms_archive_page_row',
-			'creator_lms_single_course_page_features',
-			'creator_lms_single_course_page_layout',
-			'creator_lms_columns_per_row',
-			'creator_lms_container_width',
-			'creator_lms_debug_mode',
-			'creator_lms_color_preset',
-			'creator_lms_primary_color_scheme',
-			'creator_lms_primary_hover_color_scheme',
-			'creator_lms_heading_color_scheme',
-			'creator_lms_body_text_color_scheme',
-			'creator_lms_body_progress_color_scheme',
-			'creator_lms_checkout_page_layout_type',
-			'creator_lms_leaderboard_settings',
-			'creator_lms_privacy_policy_message',
-			'creator_lms_guest_checkout',
-			'creator_lms_checkout_phone_field',
-			'creator_lms_allow_purchase_without_login',
-			'creator_lms_permalink',
-			'creatorlms_offline_settings',
-			'creatorlms_stripe_settings',
-			'creatorlms_paypal_settings',
-			'creatorlms_mollie_settings',
-			'creatorlms_razorpay_settings',
-			'creatorlms_qpay_settings',
-			'creatorlms_authorize_net_settings',
-			'creator_lms_currency',
-			'creator_lms_currency_pos',
-			'creator_lms_price_thousand_sep',
-			'creator_lms_price_decimal_sep',
-			'creator_lms_price_num_decimals',
-			'creator_lms_tax_enabled',
-			'creator_lms_tax_label',
-			'creator_lms_prices_include_tax',
-			'creator_lms_eu_vat_enabled',
-			'creator_lms_disable_vat_validation',
-			'creator_lms_vat_number_label',
-			'creator_lms_fallback_tax_rate',
-			'creator_lms_existing_tax_rates',
-			'creator_lms_new_tax_rates',
-			'creator_lms_tax_rates',
-			'creator_lms_countries',
-			'creator_lms_states',
-			'creator_lms_use_custom_video_player',
-			'creator_lms_video_player_logo',
-			'creator_lms_video_player_logo_bg_color',
-			'creator_lms_email_branding_image',
-			'creator_lms_email_base_color',
-			'creator_lms_email_background_color',
-			'creator_lms_email_body_background_color',
-			'creator_lms_email_body_text_color',
-			'creator_lms_email_button_possition',
-			'creator_lms_email_sender_email_address',
-			'creator_lms_email_sender_name',
-			'creator_lms_email_footer_text',
-			'omlms_require_email_verification',
-			'omlms_notification_color',
+			'ohmylms_course_page_id',
+			'ohmylms_profile_page_id',
+			'ohmylms_student_dashboard_page_id',
+			'ohmylms_student_profile_page_id',
+			'ohmylms_student_courses_page_id',
+			'ohmylms_checkout_page_id',
+			'ohmylms_thank_you_page_id',
+			'ohmylms_privacy_policy_page_id',
+			'ohmylms_terms_page_id',
+			'ohmylms_registration_page_id',
+			'ohmylms_courses_per_page',
+			'ohmylms_archive_page_layout',
+			'ohmylms_archive_page_layout_style',
+			'ohmylms_archive_page_filter_is_enabled',
+			'ohmylms_archive_page_filters',
+			'ohmylms_archive_page_sorting_is_enabled',
+			'ohmylms_archive_page_search_is_enabled',
+			'ohmylms_archive_page_category_is_enabled',
+			'ohmylms_archive_page_row',
+			'ohmylms_single_course_page_features',
+			'ohmylms_single_course_page_layout',
+			'ohmylms_columns_per_row',
+			'ohmylms_container_width',
+			'ohmylms_debug_mode',
+			'ohmylms_color_preset',
+			'ohmylms_primary_color_scheme',
+			'ohmylms_primary_hover_color_scheme',
+			'ohmylms_heading_color_scheme',
+			'ohmylms_body_text_color_scheme',
+			'ohmylms_body_progress_color_scheme',
+			'ohmylms_checkout_page_layout_type',
+			'ohmylms_leaderboard_settings',
+			'ohmylms_privacy_policy_message',
+			'ohmylms_guest_checkout',
+			'ohmylms_checkout_phone_field',
+			'ohmylms_allow_purchase_without_login',
+			'ohmylms_permalink',
+			'ohmylms_offline_settings',
+			'ohmylms_stripe_settings',
+			'ohmylms_paypal_settings',
+			'ohmylms_mollie_settings',
+			'ohmylms_razorpay_settings',
+			'ohmylms_qpay_settings',
+			'ohmylms_authorize_net_settings',
+			'ohmylms_currency',
+			'ohmylms_currency_pos',
+			'ohmylms_price_thousand_sep',
+			'ohmylms_price_decimal_sep',
+			'ohmylms_price_num_decimals',
+			'ohmylms_tax_enabled',
+			'ohmylms_tax_label',
+			'ohmylms_prices_include_tax',
+			'ohmylms_eu_vat_enabled',
+			'ohmylms_disable_vat_validation',
+			'ohmylms_vat_number_label',
+			'ohmylms_fallback_tax_rate',
+			'ohmylms_existing_tax_rates',
+			'ohmylms_new_tax_rates',
+			'ohmylms_tax_rates',
+			'ohmylms_countries',
+			'ohmylms_states',
+			'ohmylms_use_custom_video_player',
+			'ohmylms_video_player_logo',
+			'ohmylms_video_player_logo_bg_color',
+			'ohmylms_email_branding_image',
+			'ohmylms_email_base_color',
+			'ohmylms_email_background_color',
+			'ohmylms_email_body_background_color',
+			'ohmylms_email_body_text_color',
+			'ohmylms_email_button_possition',
+			'ohmylms_email_sender_email_address',
+			'ohmylms_email_sender_name',
+			'ohmylms_email_footer_text',
+			'ohmylms_require_email_verification',
+			'ohmylms_notification_color',
 		);
-		$keys = apply_filters( 'creator_lms_valid_option_keys', $keys );
+		$keys = apply_filters( 'ohmylms_valid_option_keys', $keys );
 		return in_array( $key, $keys, true );
 	}
 
@@ -428,12 +428,12 @@ class SettingsController extends RestController {
 		if ( empty( $group_id ) ) {
 			return new \WP_Error( 'rest_setting_setting_group_invalid', __( 'Invalid setting group.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$settings          = apply_filters( 'creator_lms_settings-' . $group_id, array() );
+		$settings          = apply_filters( 'ohmylms_settings-' . $group_id, array() );
 		$filtered_settings = array();
 		
 		foreach ( $settings as $setting ) {
 			$option_key = $setting['id'];
-			if ( 0 === strpos( $option_key, 'creatorlms_' ) && false !== strpos( $option_key, '_settings' ) ) {
+			if ( 0 === strpos( $option_key, 'ohmylms_' ) && false !== strpos( $option_key, '_settings' ) ) {
 				$current_settings = AdminSettings::get_option( $option_key, array() );	
 				$merged_settings = array_merge( $setting['default'], $current_settings );
 				$setting['value'] = $merged_settings;
@@ -441,11 +441,11 @@ class SettingsController extends RestController {
 				$setting['value'] = AdminSettings::get_option( $option_key, $setting['default'] );
 				
 				// Special handling for student page settings to ensure they have valid default values
-				if ( in_array( $option_key, [ 'creator_lms_student_dashboard_page_id', 'creator_lms_student_profile_page_id', 'creator_lms_student_courses_page_id' ] ) ) {
+				if ( in_array( $option_key, [ 'ohmylms_student_dashboard_page_id', 'ohmylms_student_profile_page_id', 'ohmylms_student_courses_page_id' ] ) ) {
 					// If the setting value is empty or -1, try to get the correct page ID
 					if ( empty( $setting['value'] ) || $setting['value'] == -1 ) {
-						$page_key = str_replace( 'creator_lms_', '', str_replace( '_page_id', '', $option_key ) );
-						$page_id = omlms_get_page_id( $page_key );
+						$page_key = str_replace( 'ohmylms_', '', str_replace( '_page_id', '', $option_key ) );
+						$page_id = ohmylms_get_page_id( $page_key );
 						if ( $page_id && $page_id != -1 ) {
 							$setting['value'] = $page_id;
 							// Update the option in the database for future use
@@ -469,7 +469,7 @@ class SettingsController extends RestController {
 	 */
 	public function restore_pages( $request ) {
 		$default_pages = apply_filters(
-			'creator_lms_default_pages',
+			'ohmylms_default_pages',
 			array(
 				'course'            => array(
 					'name'    => _x( 'ohmylms-all-courses', 'Page slug', 'ohmylms' ),
@@ -479,26 +479,26 @@ class SettingsController extends RestController {
 				'checkout'          => array(
 					'name'     => _x( 'ohmylms-checkout', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'OhMy Checkout', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_checkout]<!-- /wp:shortcode -->',
-					'template' => 'omlms-checkout',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_checkout]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-checkout',
 				),
 				'student_dashboard' => array(
 					'name'     => _x( 'my-dashboard', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Dashboard', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_dashboard]<!-- /wp:shortcode -->',
-					'template' => 'omlms-dashboard',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_dashboard]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-dashboard',
 				),
 				'student_profile'   => array(
 					'name'     => _x( 'my-profile', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Profile', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_profile]<!-- /wp:shortcode -->',
-					'template' => 'omlms-profile',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_profile]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-profile',
 				),
 				'student_courses'   => array(
 					'name'     => _x( 'my-courses', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Courses', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_my_courses]<!-- /wp:shortcode -->',
-					'template' => 'omlms-my-courses',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_my_courses]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-my-courses',
 				),
 			)
 		);
@@ -506,7 +506,7 @@ class SettingsController extends RestController {
 		$restored = array();
 
 		foreach ( $default_pages as $key => $page ) {
-			$option_key = 'creator_lms_' . $key . '_page_id';
+			$option_key = 'ohmylms_' . $key . '_page_id';
 			$page_id    = absint( get_option( $option_key, 0 ) );
 			$post       = $page_id ? get_post( $page_id ) : null;
 

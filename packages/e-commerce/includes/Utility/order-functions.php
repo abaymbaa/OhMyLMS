@@ -122,7 +122,7 @@ function ecommerce_create_refund( $args = array() ) {
 		$refund->set_refunded_payment( true );
 		$refund->save();
 
-		do_action( 'creator_lms_order_refunded', $refund, $order );
+		do_action( 'ohmylms_order_refunded', $refund, $order );
 
 		if ( ( $remaining_refund_amount - $args['amount'] ) > 0 ) {
 
@@ -208,13 +208,13 @@ function ecommerce_refund_payment( $order, $amount, $reason = '' ) {
  */
 function ecommerce_get_order_statuses() {
 	$order_statuses = array(
-		'omlms-pending'    => _x( 'Pending', 'Order status', 'ohmylms' ),
-		'omlms-processing' => _x( 'Processing', 'Order status', 'ohmylms' ),
-		'omlms-on-hold'    => _x( 'On hold', 'Order status', 'ohmylms' ),
-		'omlms-completed'  => _x( 'Completed', 'Order status', 'ohmylms' ),
-		'omlms-cancelled'  => _x( 'Cancelled', 'Order status', 'ohmylms' ),
-		'omlms-refunded'   => _x( 'Refunded', 'Order status', 'ohmylms' ),
-		'omlms-failed'     => _x( 'Failed', 'Order status', 'ohmylms' ),
+		'ohmylms-pending'    => _x( 'Pending', 'Order status', 'ohmylms' ),
+		'ohmylms-processing' => _x( 'Processing', 'Order status', 'ohmylms' ),
+		'ohmylms-on-hold'    => _x( 'On hold', 'Order status', 'ohmylms' ),
+		'ohmylms-completed'  => _x( 'Completed', 'Order status', 'ohmylms' ),
+		'ohmylms-cancelled'  => _x( 'Cancelled', 'Order status', 'ohmylms' ),
+		'ohmylms-refunded'   => _x( 'Refunded', 'Order status', 'ohmylms' ),
+		'ohmylms-failed'     => _x( 'Failed', 'Order status', 'ohmylms' ),
 	);
 	return $order_statuses;
 }
@@ -229,10 +229,10 @@ function ecommerce_get_order_statuses() {
  */
 function ecommerce_get_order_status_name( $status ) {
 	$statuses = ecommerce_get_order_statuses();
-	if ( strpos( $status, 'omlms-' ) === 0 ) {
+	if ( strpos( $status, 'ohmylms-' ) === 0 ) {
 		$status = substr( $status, 6 );
 	}
-	return $statuses[ 'omlms-' . $status ] ?? $status;
+	return $statuses[ 'ohmylms-' . $status ] ?? $status;
 }
 
 

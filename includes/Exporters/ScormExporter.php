@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Exporters;
+namespace OhMyLMS\Exporters;
 
-use OMLMS\Utility\ScormHelper;
+use OhMyLMS\Utility\ScormHelper;
 
 defined('ABSPATH') || exit;
 
@@ -44,7 +44,7 @@ class ScormExporter {
      */
     public function __construct($course_ids, $scorm_version = '1.2') {
         if (empty($course_ids) || !is_array($course_ids)) {
-            throw new \Exception(__('Invalid course IDs. Provide an array of course IDs.', 'creator-lms-pro'));
+            throw new \Exception(__('Invalid course IDs. Provide an array of course IDs.', 'ohmylms-pro'));
         }
 
         // Validate courses before export
@@ -66,7 +66,7 @@ class ScormExporter {
             }
             if (!empty($errors)) {
                 throw new \Exception(
-                    __('Critical system requirements not met:', 'creator-lms-pro') . "\n" . implode("\n", $errors)
+                    __('Critical system requirements not met:', 'ohmylms-pro') . "\n" . implode("\n", $errors)
                 );
             }
         }
@@ -90,7 +90,7 @@ class ScormExporter {
         $this->temp_dir = trailingslashit($upload_dir['basedir']) . 'scorm-temp-' . time() . '-' . wp_rand();
         
         if (!wp_mkdir_p($this->temp_dir)) {
-            throw new \Exception(__('Failed to create temporary directory for SCORM export.', 'creator-lms-pro'));
+            throw new \Exception(__('Failed to create temporary directory for SCORM export.', 'ohmylms-pro'));
         }
 
         ScormHelper::log('SCORM export initialized', 'info', [
@@ -193,7 +193,7 @@ class ScormExporter {
         } catch (\Exception $e) {
             ScormHelper::log('SCORM export failed', 'error', ['error' => $e->getMessage()]);
             $this->cleanup();
-            wp_die(__('SCORM Export Error: ', 'creator-lms-pro') . $e->getMessage());
+            wp_die(__('SCORM Export Error: ', 'ohmylms-pro') . $e->getMessage());
         }
     }
 
@@ -228,7 +228,7 @@ class ScormExporter {
 
         $manifest_path = $this->temp_dir . '/imsmanifest.xml';
         if (!$xml->save($manifest_path)) {
-            throw new \Exception(__('Failed to create manifest file.', 'creator-lms-pro'));
+            throw new \Exception(__('Failed to create manifest file.', 'ohmylms-pro'));
         }
     }
 
@@ -261,7 +261,7 @@ class ScormExporter {
         
         foreach ($this->course_ids as $index => $course_id) {
             $course_post = get_post($course_id);
-            if (!$course_post || $course_post->post_type !== CREATOR_LMS_COURSE_CPT) {
+            if (!$course_post || $course_post->post_type !== OHMYLMS_COURSE_CPT) {
                 continue;
             }
 
@@ -353,7 +353,7 @@ class ScormExporter {
         
         foreach ($this->course_ids as $course_id) {
             $course_post = get_post($course_id);
-            if (!$course_post || $course_post->post_type !== CREATOR_LMS_COURSE_CPT) {
+            if (!$course_post || $course_post->post_type !== OHMYLMS_COURSE_CPT) {
                 continue;
             }
 
@@ -535,8 +535,8 @@ class ScormExporter {
     private function process_course($course_id) {
         $course_post = get_post($course_id);
         
-        if (!$course_post || $course_post->post_type !== CREATOR_LMS_COURSE_CPT) {
-            throw new \Exception(sprintf(__('Invalid course ID: %d', 'creator-lms-pro'), $course_id));
+        if (!$course_post || $course_post->post_type !== OHMYLMS_COURSE_CPT) {
+            throw new \Exception(sprintf(__('Invalid course ID: %d', 'ohmylms-pro'), $course_id));
         }
 
         // Create course directory
@@ -616,7 +616,7 @@ class ScormExporter {
         $body = $post->post_content;
         
         // Handle video lessons
-        if ($post->post_type === 'omlms-lesson') {
+        if ($post->post_type === 'ohmylms-lesson') {
             $lesson_type = get_post_meta($post->ID, '_type', true);
             
             if ($lesson_type === 'video') {
@@ -631,7 +631,7 @@ class ScormExporter {
                     if ($video_url) {
                         $video_html .= '<video controls style="width: 100%; max-width: 800px; border-radius: 8px;">';
                         $video_html .= '<source src="media/' . basename($video_url) . '" type="video/mp4">';
-                        $video_html .= __('Your browser does not support the video tag.', 'creator-lms-pro');
+                        $video_html .= __('Your browser does not support the video tag.', 'ohmylms-pro');
                         $video_html .= '</video>';
                     }
                 } elseif ($external_url) {
@@ -652,7 +652,7 @@ class ScormExporter {
                         // Generic video link
                         $video_html .= '<video controls style="width: 100%; max-width: 800px; border-radius: 8px;">';
                         $video_html .= '<source src="' . esc_url($external_url) . '">';
-                        $video_html .= __('Your browser does not support the video tag.', 'creator-lms-pro');
+                        $video_html .= __('Your browser does not support the video tag.', 'ohmylms-pro');
                         $video_html .= '</video>';
                     }
                 }
@@ -671,13 +671,13 @@ class ScormExporter {
                     if ($audio_url) {
                         $audio_html .= '<audio controls style="width: 100%; max-width: 600px;">';
                         $audio_html .= '<source src="media/' . basename($audio_url) . '" type="audio/mpeg">';
-                        $audio_html .= __('Your browser does not support the audio tag.', 'creator-lms-pro');
+                        $audio_html .= __('Your browser does not support the audio tag.', 'ohmylms-pro');
                         $audio_html .= '</audio>';
                     }
                 } elseif ($external_url) {
                     $audio_html .= '<audio controls style="width: 100%; max-width: 600px;">';
                     $audio_html .= '<source src="' . esc_url($external_url) . '">';
-                    $audio_html .= __('Your browser does not support the audio tag.', 'creator-lms-pro');
+                    $audio_html .= __('Your browser does not support the audio tag.', 'ohmylms-pro');
                     $audio_html .= '</audio>';
                 }
                 
@@ -687,35 +687,35 @@ class ScormExporter {
         }
         
         // Handle quiz content
-        if ($post->post_type === 'omlms-quiz') {
+        if ($post->post_type === 'ohmylms-quiz') {
             $body .= $this->generate_quiz_html($post->ID);
         }
         
         // Handle assignment content
-        if ($post->post_type === 'omlms-assignment') {
+        if ($post->post_type === 'ohmylms-assignment') {
             $assignment_settings = get_post_meta($post->ID, '_assignment_settings', true);
             
             if (!empty($assignment_settings)) {
                 $assignment_html = '<div class="scorm-assignment-info" style="background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #0073aa;">';
-                $assignment_html .= '<h3 style="margin-top: 0;">' . __('Assignment Requirements', 'creator-lms-pro') . '</h3>';
+                $assignment_html .= '<h3 style="margin-top: 0;">' . __('Assignment Requirements', 'ohmylms-pro') . '</h3>';
                 
                 if (isset($assignment_settings['upload_limit'])) {
-                    $assignment_html .= '<p><strong>' . __('Maximum Files:', 'creator-lms-pro') . '</strong> ' . $assignment_settings['upload_limit'] . '</p>';
+                    $assignment_html .= '<p><strong>' . __('Maximum Files:', 'ohmylms-pro') . '</strong> ' . $assignment_settings['upload_limit'] . '</p>';
                 }
                 
                 if (isset($assignment_settings['attachment_limit'])) {
-                    $assignment_html .= '<p><strong>' . __('File Size Limit:', 'creator-lms-pro') . '</strong> ' . $assignment_settings['attachment_limit'] . ' MB</p>';
+                    $assignment_html .= '<p><strong>' . __('File Size Limit:', 'ohmylms-pro') . '</strong> ' . $assignment_settings['attachment_limit'] . ' MB</p>';
                 }
                 
                 if (isset($assignment_settings['allowed_extensions']) && is_array($assignment_settings['allowed_extensions'])) {
-                    $assignment_html .= '<p><strong>' . __('Allowed File Types:', 'creator-lms-pro') . '</strong> ' . implode(', ', $assignment_settings['allowed_extensions']) . '</p>';
+                    $assignment_html .= '<p><strong>' . __('Allowed File Types:', 'ohmylms-pro') . '</strong> ' . implode(', ', $assignment_settings['allowed_extensions']) . '</p>';
                 }
                 
                 if (isset($assignment_settings['passing_grade'])) {
-                    $assignment_html .= '<p><strong>' . __('Passing Grade:', 'creator-lms-pro') . '</strong> ' . $assignment_settings['passing_grade'] . '%</p>';
+                    $assignment_html .= '<p><strong>' . __('Passing Grade:', 'ohmylms-pro') . '</strong> ' . $assignment_settings['passing_grade'] . '%</p>';
                 }
                 
-                $assignment_html .= '<p style="margin-bottom: 0;"><em>' . __('Note: This is a SCORM export. Assignment submission functionality is not available in SCORM format.', 'creator-lms-pro') . '</em></p>';
+                $assignment_html .= '<p style="margin-bottom: 0;"><em>' . __('Note: This is a SCORM export. Assignment submission functionality is not available in SCORM format.', 'ohmylms-pro') . '</em></p>';
                 $assignment_html .= '</div>';
                 
                 $body .= $assignment_html;
@@ -739,7 +739,7 @@ class ScormExporter {
         // Fetch questions
         $questions_query = $wpdb->prepare("
             SELECT * 
-            FROM {$wpdb->prefix}omlms_quiz_questions_relationship 
+            FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship 
             WHERE quiz_id = %d 
             ORDER BY order_number ASC
         ", $quiz_id);
@@ -787,7 +787,7 @@ class ScormExporter {
         // Fetch answers
         $answers_query = $wpdb->prepare("
             SELECT * 
-            FROM {$wpdb->prefix}omlms_question_answers 
+            FROM {$wpdb->prefix}ohmylms_question_answers 
             WHERE question_id = %d 
             ORDER BY order_number ASC
         ", $question_id);
@@ -795,7 +795,7 @@ class ScormExporter {
         $answers = $wpdb->get_results($answers_query, ARRAY_A);
         
         if (empty($answers)) {
-            return '<p class="no-answers"><em>' . __('No answers available', 'creator-lms-pro') . '</em></p>';
+            return '<p class="no-answers"><em>' . __('No answers available', 'ohmylms-pro') . '</em></p>';
         }
         
         $html = '<div class="question-answers" data-type="' . esc_attr($question_type) . '">';
@@ -928,9 +928,9 @@ class ScormExporter {
         $html = '<div class="text-input-answer">';
         
         if ($question_type === 'long-text') {
-            $html .= '<textarea name="question_' . $question_id . '" rows="6" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit;" placeholder="' . esc_attr__('Type your answer here...', 'creator-lms-pro') . '"></textarea>';
+            $html .= '<textarea name="question_' . $question_id . '" rows="6" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit;" placeholder="' . esc_attr__('Type your answer here...', 'ohmylms-pro') . '"></textarea>';
         } else {
-            $html .= '<input type="text" name="question_' . $question_id . '" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="' . esc_attr__('Type your answer here...', 'creator-lms-pro') . '" />';
+            $html .= '<input type="text" name="question_' . $question_id . '" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="' . esc_attr__('Type your answer here...', 'ohmylms-pro') . '" />';
         }
         
         $html .= '</div>';
@@ -947,7 +947,7 @@ class ScormExporter {
      */
     private function generate_fill_blank_html($question_id, $answers) {
         $html = '<div class="fill-blank-answer">';
-        $html .= '<input type="text" name="question_' . $question_id . '" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="' . esc_attr__('Fill in the blank...', 'creator-lms-pro') . '" />';
+        $html .= '<input type="text" name="question_' . $question_id . '" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="' . esc_attr__('Fill in the blank...', 'ohmylms-pro') . '" />';
         
         if (!empty($answers)) {
             $correct_answers = array_filter($answers, function($answer) {
@@ -955,7 +955,7 @@ class ScormExporter {
             });
             
             if (!empty($correct_answers)) {
-                $html .= '<p style="margin-top: 10px; color: #28a745; font-size: 14px;"><strong>' . __('Correct answer(s):', 'creator-lms-pro') . '</strong> ';
+                $html .= '<p style="margin-top: 10px; color: #28a745; font-size: 14px;"><strong>' . __('Correct answer(s):', 'ohmylms-pro') . '</strong> ';
                 $answer_texts = array_map(function($answer) {
                     return esc_html($answer['answer']);
                 }, $correct_answers);
@@ -980,7 +980,7 @@ class ScormExporter {
         $html = '<div class="matching-question" style="display: flex; flex-wrap: wrap; gap: 20px;">';
         
         $html .= '<div class="matching-left" style="flex: 1; min-width: 250px;">';
-        $html .= '<h4>' . __('Items to Match', 'creator-lms-pro') . '</h4>';
+        $html .= '<h4>' . __('Items to Match', 'ohmylms-pro') . '</h4>';
         
         foreach ($answers as $answer) {
             $answer_meta = $this->get_answer_meta($answer['id']);
@@ -999,7 +999,7 @@ class ScormExporter {
         $html .= '</div>';
         
         $html .= '<div class="matching-right" style="flex: 1; min-width: 250px;">';
-        $html .= '<h4>' . __('Definitions/Matches', 'creator-lms-pro') . '</h4>';
+        $html .= '<h4>' . __('Definitions/Matches', 'ohmylms-pro') . '</h4>';
         
         foreach ($answers as $answer) {
             $answer_meta = $this->get_answer_meta($answer['id']);
@@ -1031,7 +1031,7 @@ class ScormExporter {
      */
     private function generate_reorder_html($question_id, $answers) {
         $html = '<div class="reorder-question">';
-        $html .= '<p style="font-style: italic; color: #666;">' . __('The correct order is shown below:', 'creator-lms-pro') . '</p>';
+        $html .= '<p style="font-style: italic; color: #666;">' . __('The correct order is shown below:', 'ohmylms-pro') . '</p>';
         
         // Sort by order number to show correct sequence
         usort($answers, function($a, $b) {
@@ -1067,7 +1067,7 @@ class ScormExporter {
      */
     private function generate_statement_html($question_id, $answers) {
         $html = '<div class="statement-question" style="padding: 15px; background: #f0f8ff; border-left: 4px solid #007bff; border-radius: 5px;">';
-        $html .= '<p style="margin: 0; font-style: italic;">' . __('This is an informational statement. No answer required.', 'creator-lms-pro') . '</p>';
+        $html .= '<p style="margin: 0; font-style: italic;">' . __('This is an informational statement. No answer required.', 'ohmylms-pro') . '</p>';
         
         if (!empty($answers[0]) && !empty($answers[0]['answer'])) {
             $html .= '<p style="margin: 10px 0 0 0;">' . esc_html($answers[0]['answer']) . '</p>';
@@ -1089,7 +1089,7 @@ class ScormExporter {
         
         $meta_query = $wpdb->prepare("
             SELECT meta_key, meta_value 
-            FROM {$wpdb->prefix}omlms_question_answermeta 
+            FROM {$wpdb->prefix}ohmylms_question_answermeta 
             WHERE answer_id = %d
         ", $answer_id);
         
@@ -1298,7 +1298,7 @@ class ScormExporter {
         // Fetch chapters
         $chapter_query = $wpdb->prepare("
             SELECT * 
-            FROM {$wpdb->prefix}omlms_chapter_relationship 
+            FROM {$wpdb->prefix}ohmylms_chapter_relationship 
             WHERE course_id = %d 
             ORDER BY order_number ASC
         ", $course_id);
@@ -1311,7 +1311,7 @@ class ScormExporter {
             // Fetch contents for each chapter
             $content_query = $wpdb->prepare("
                 SELECT * 
-                FROM {$wpdb->prefix}omlms_content_relationship 
+                FROM {$wpdb->prefix}ohmylms_content_relationship 
                 WHERE chapter_id = %d 
                 ORDER BY order_number ASC
             ", $chapter_id);
@@ -1335,7 +1335,7 @@ class ScormExporter {
      */
     private function create_zip_package() {
         if (!class_exists('ZipArchive')) {
-            throw new \Exception(__('ZipArchive class is not available. Please enable the ZIP extension in PHP.', 'creator-lms-pro'));
+            throw new \Exception(__('ZipArchive class is not available. Please enable the ZIP extension in PHP.', 'ohmylms-pro'));
         }
 
         $upload_dir = wp_upload_dir();
@@ -1358,7 +1358,7 @@ class ScormExporter {
 
         $zip = new \ZipArchive();
         if ($zip->open($zip_path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            throw new \Exception(__('Failed to create ZIP archive.', 'creator-lms-pro'));
+            throw new \Exception(__('Failed to create ZIP archive.', 'ohmylms-pro'));
         }
 
         // Add all files from temp directory to ZIP
@@ -1406,7 +1406,7 @@ class ScormExporter {
      */
     private function send_download($zip_path) {
         if (!file_exists($zip_path)) {
-            wp_die(__('SCORM package file not found.', 'creator-lms-pro'));
+            wp_die(__('SCORM package file not found.', 'ohmylms-pro'));
         }
 
         // Clean output buffer

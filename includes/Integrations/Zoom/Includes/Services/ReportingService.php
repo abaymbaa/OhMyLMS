@@ -2,18 +2,18 @@
 /**
  * ReportingService class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Services;
+namespace OhMyLMS\Integrations\Zoom\Includes\Services;
 
-use OMLMS\Integrations\Zoom\Includes\Api\Endpoints\ReportingApi;
+use OhMyLMS\Integrations\Zoom\Includes\Api\Endpoints\ReportingApi;
 
 /**
  * Class ReportingService
  *
- * @package OMLMS\Integrations\Zoom\Services
+ * @package OhMyLMS\Integrations\Zoom\Services
  * @since 1.0.0
  */
 class ReportingService {

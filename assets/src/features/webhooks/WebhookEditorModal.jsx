@@ -310,7 +310,7 @@ export function createWebhookEditorModal(readRuntime) {
             onRequestClose={P}
             shouldCloseOnEsc={!0}
             shouldCloseOnClickOutside={!0}
-            className={'omlms-full-height-modal'}
+            className={'ohmylms-full-height-modal'}
             size={'large'}
           >
             {E ? (
@@ -321,7 +321,7 @@ export function createWebhookEditorModal(readRuntime) {
                   items={k}
                   activekey={p}
                   onChange={function () {}}
-                  className={'omlms-tab-has-custom-navigation'}
+                  className={'ohmylms-tab-has-custom-navigation'}
                 />
                 <Controls.DividerWP marginStart={4} />
                 <Controls.SpacerWP marginTop={4}>

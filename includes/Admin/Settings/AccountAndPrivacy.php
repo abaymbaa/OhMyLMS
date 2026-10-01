@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * General settings class.
@@ -42,19 +42,19 @@ class AccountAndPrivacy extends Settings {
 	public function get_settings() {
 		$settings = array(
 			array(
-				'id'      => 'creator_lms_privacy_policy_message',
+				'id'      => 'ohmylms_privacy_policy_message',
 				'type'    => 'longtext',
 				'default' => 'Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our [privacy_policy].',
 				'value'   => '',
 			),
 			array(
-				'id'      => 'creator_lms_guest_checkout',
+				'id'      => 'ohmylms_guest_checkout',
 				'default' => 'no',
 				'type'    => 'checkbox',
 				'value'   => '',
 			),
 			array(
-				'id'      => 'creator_lms_checkout_phone_field',
+				'id'      => 'ohmylms_checkout_phone_field',
 				'default' => 'optional',
 				'type'    => 'select',
 				'options' => array(
@@ -65,13 +65,13 @@ class AccountAndPrivacy extends Settings {
 				'value'   => '',
 			),
 			array(
-				'id'      => 'creator_lms_allow_purchase_without_login',
+				'id'      => 'ohmylms_allow_purchase_without_login',
 				'default' => 'yes',
 				'type'    => 'checkbox',
 				'value'   => 'yes',
 			),
 			array(
-				'id'      => 'omlms_require_email_verification',
+				'id'      => 'ohmylms_require_email_verification',
 				'default' => 'no',
 				'type'    => 'checkbox',
 				'value'   => 'yes',
@@ -86,10 +86,10 @@ class AccountAndPrivacy extends Settings {
 	 * @return array The currency code options with symbols.
 	 */
 	public function get_currency_code_options() {
-		$currency_code_options = get_omlms_currencies();
+		$currency_code_options = get_ohmylms_currencies();
 
 		foreach ( $currency_code_options as $code => $name ) {
-			$currency_code_options[ $code ] = $name . ' (' . get_omlms_currency_symbol( $code ) . ')';
+			$currency_code_options[ $code ] = $name . ' (' . get_ohmylms_currency_symbol( $code ) . ')';
 		}
 
 		return $currency_code_options;

@@ -2,49 +2,49 @@
 /**
  * Hook for Engagement
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Engagement\Point;
-use OMLMS\Engagement\Badge;
-use OMLMS\Engagement\Level;
-use OMLMS\Engagement\Leaderboard;
-use OMLMS\Engagement\Achievements;
+use OhMyLMS\Engagement\Point;
+use OhMyLMS\Engagement\Badge;
+use OhMyLMS\Engagement\Level;
+use OhMyLMS\Engagement\Leaderboard;
+use OhMyLMS\Engagement\Achievements;
 
 
 class EngagementHook
 {
     public function register_hooks() {
        
-        add_filter( 'creator_lms_show_gamification_menu', array($this, 'add_gamification_menu') );
-        add_filter( 'creatorlms_show_communities_menu', array($this, 'add_communities_menu') );
-        add_action( 'creator_lms_course_completion_rate', array( $this, 'course_completion_rate' ), 10, 3 );
-        add_action( 'creator_lms_lesson_completed', array( $this, 'lesson_completed' ), 10, 3 );
-        add_action( 'creator_lms_quiz_submission', array( $this, 'quiz_submission' ), 10, 4 );
-        add_action( 'creator_lms_quiz_submission', array( $this, 'quiz_achievement' ), 10, 4 );
-        add_action( 'creator_lms_rest_review_quiz_attempt', array( $this, 'quiz_achievement' ), 10, 4 );
-        add_action( 'creator_lms_after_assignment_submitted', array( $this, 'after_assignment_submitted' ), 10, 3 );
-        add_action( 'creator_lms_pro_after_assignment_review', array( $this, 'assignment_achievement' ), 10, 4 );
-        add_action( 'creator_lms_after_point_added', array( $this, 'after_point_added' ), 10, 2 );
+        add_filter( 'ohmylms_show_gamification_menu', array($this, 'add_gamification_menu') );
+        add_filter( 'ohmylms_show_communities_menu', array($this, 'add_communities_menu') );
+        add_action( 'ohmylms_course_completion_rate', array( $this, 'course_completion_rate' ), 10, 3 );
+        add_action( 'ohmylms_lesson_completed', array( $this, 'lesson_completed' ), 10, 3 );
+        add_action( 'ohmylms_quiz_submission', array( $this, 'quiz_submission' ), 10, 4 );
+        add_action( 'ohmylms_quiz_submission', array( $this, 'quiz_achievement' ), 10, 4 );
+        add_action( 'ohmylms_rest_review_quiz_attempt', array( $this, 'quiz_achievement' ), 10, 4 );
+        add_action( 'ohmylms_after_assignment_submitted', array( $this, 'after_assignment_submitted' ), 10, 3 );
+        add_action( 'ohmylms_pro_after_assignment_review', array( $this, 'assignment_achievement' ), 10, 4 );
+        add_action( 'ohmylms_after_point_added', array( $this, 'after_point_added' ), 10, 2 );
         add_action( 'wp_footer', array( $this, 'show_celebration' ), 10 );
         add_action( 'comment_post', array( $this, 'after_comment' ), 10 );
         add_action( 'user_register', array( $this, 'after_user_register' ), 10 );
-        add_action( 'creator_lms_after_enrolled_student', array( $this, 'after_enrolled_student' ), 10 );
-        add_action( 'creator_lms_after_checkout_process', array( $this, 'after_create_order' ), 10 );
+        add_action( 'ohmylms_after_enrolled_student', array( $this, 'after_enrolled_student' ), 10 );
+        add_action( 'ohmylms_after_checkout_process', array( $this, 'after_create_order' ), 10 );
 
         // Adding community hooks
-        add_action( 'creatorlms_community_comment_created', array( $this, 'after_community_comment' ), 10, 2 );
-        add_action( 'creatorlms_community_reaction_created', array( $this, 'after_community_reaction' ), 10, 2 );
-        add_action( 'creatorlms_community_post_created', array( $this, 'after_community_post' ), 10, 2 );
+        add_action( 'ohmylms_community_comment_created', array( $this, 'after_community_comment' ), 10, 2 );
+        add_action( 'ohmylms_community_reaction_created', array( $this, 'after_community_reaction' ), 10, 2 );
+        add_action( 'ohmylms_community_post_created', array( $this, 'after_community_post' ), 10, 2 );
     }
 
     /**
      * Add gamification menu
      */
     public function add_gamification_menu( $should_show ) {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         return is_array( $integrations ) && isset( $integrations['gamification']['is_enable'] ) && $integrations['gamification']['is_enable'];
     }
 
@@ -52,7 +52,7 @@ class EngagementHook
      * Add communities menu
      */
     public function add_communities_menu( $should_show ) {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         return is_array( $integrations ) && isset( $integrations['community']['is_enable'] ) && $integrations['community']['is_enable'];
     }
   
@@ -192,7 +192,7 @@ class EngagementHook
         }
         $post_id = intval( $_POST['comment_post_ID'] );
         $post = get_post( $post_id );
-        if ( ! $post || 'omlms-course' !== $post->post_type ) {
+        if ( ! $post || 'ohmylms-course' !== $post->post_type ) {
             return; // Not a course post type
         }
 
@@ -321,7 +321,7 @@ class EngagementHook
 
 		$student_id = $order->get_student_id();
 		global $wpdb;
-		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d AND status = %d", $student_id, $order->get_id(), 'enrolled' ), ARRAY_A );
 		
 		if ( empty( $enroll_data['course_id'] ) ) {
@@ -372,7 +372,7 @@ class EngagementHook
         $course_id = false;
 		foreach ( $order->get_items() as $item_id => $item ) {
             $post_type = get_post_type( $item->get_course_id() );
-            if ( $post_type === CREATOR_LMS_COURSE_CPT ) {
+            if ( $post_type === OHMYLMS_COURSE_CPT ) {
                 $course = $item->get_course();
                 $type   = 'course';
             }else {
@@ -458,7 +458,7 @@ class EngagementHook
         ?>
             <script>
             document.addEventListener("DOMContentLoaded", function () {
-                CreatorLMSCelebrate.show("<?php echo esc_js( $message ); ?>");
+                OhMyLMSCelebrate.show("<?php echo esc_js( $message ); ?>");
             });
             </script>
         <?php 
@@ -472,7 +472,7 @@ class EngagementHook
      * @since 1.0.0
      */
     public function maybe_gamification_enable() {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         return  is_array($integrations ) && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'];
     }
 

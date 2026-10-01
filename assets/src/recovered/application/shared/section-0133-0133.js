@@ -146,11 +146,11 @@ var m$ = function (e) {
   }, null !== (t = null == i || null === (n = i.settings) || void 0 === n ? void 0 : n.type.split("-").join(" ")) && void 0 !== t ? t : u)), React.createElement(I.FlexItemWP, null, "text-type" === u ? React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     gap: 2,
     justify: "flex-start",
-    className: "omlms-question-status-wrapper"
+    className: "ohmylms-question-status-wrapper"
   }, React.createElement(I.FlexItemWP, null, React.createElement(I.FlexWP, {
     gap: 2,
     justify: "flex-start",
-    className: "omlms-set-marks"
+    className: "ohmylms-set-marks"
   }, React.createElement(I.FlexItemWP, null, React.createElement(I.FlexWP, {
     justify: "start",
     gap: 2
@@ -158,7 +158,7 @@ var m$ = function (e) {
     as: "span"
   }, (0, b.__)("Set Marks", "ohmylms")), React.createElement(V.A, {
     title: (0, b.__)("This Question Marks: ".concat(null == i || null === (r = i.settings) || void 0 === r || null === (r = r.score) || void 0 === r ? void 0 : r.value), "ohmylms"),
-    className: "omlms-tooltip"
+    className: "ohmylms-tooltip"
   }, React.createElement(Mt.A, null)))), React.createElement(I.FlexItemWP, null, React.createElement(wn.A, {
     type: "number",
     min: 0,
@@ -196,9 +196,9 @@ var m$ = function (e) {
     marginY: 4
   }, React.createElement(I.HeadingWP, {
     level: 3,
-    className: "omlms-question-name"
+    className: "ohmylms-question-name"
   }, Ge(null == i ? void 0 : i.name), (null == i || null === (o = i.settings) || void 0 === o ? void 0 : o.required) && React.createElement("span", {
-    className: "omlms-required"
+    className: "ohmylms-required"
   }, "*")), React.createElement(I.SpacerWP, {
     marginBottom: 3
   }), (null == i ? void 0 : i.image) && React.createElement("img", {
@@ -250,12 +250,12 @@ var f$ = function (e) {
       };
     });
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-question-types omlms-single-choice-question omlms-".concat(o)
+    className: "ohmylms-question-types ohmylms-single-choice-question ohmylms-".concat(o)
   }, React.createElement(p$, {
     data: r,
     index: a
   }), React.createElement("div", {
-    className: "omlms-question-options-wrapper"
+    className: "ohmylms-question-options-wrapper"
   }, React.createElement(I.TextWP, {
     as: "p",
     size: 14,
@@ -312,7 +312,7 @@ var g$ = function (e) {
       return "single-choice" === (null == e || null === (t = e.settings) || void 0 === t ? void 0 : t.type) ? o && 1 == (null == n ? void 0 : n.length) && null != a && a.includes(n[0]) ? "correct" : "incorrect" : "multiple-choice" === e.settings.type ? o && (null == n ? void 0 : n.length) === (null == a ? void 0 : a.length) ? "correct" : "incorrect" : "in-review";
     }(r);
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-question-types omlms-multiple-choice-question omlms-".concat(o)
+    className: "ohmylms-question-types ohmylms-multiple-choice-question ohmylms-".concat(o)
   }, React.createElement(p$, {
     data: r,
     index: a
@@ -338,7 +338,7 @@ var g$ = function (e) {
       value: null == e ? void 0 : e.id,
       disabled: !0,
       checked: (null == r || null === (n = r.given_answer) || void 0 === n ? void 0 : n.includes(Number(null == e ? void 0 : e.id))) || (null == r || null === (a = r.given_answer) || void 0 === a ? void 0 : a.includes(null == e ? void 0 : e.id)),
-      className: "\n                                                ".concat(null != r && null !== (o = r.given_answer) && void 0 !== o && o.includes(Number(null == e ? void 0 : e.id)) || null != r && null !== (i = r.given_answer) && void 0 !== i && i.includes(null == e ? void 0 : e.id) ? "omlms-selected" : "", "\n                                                    ").concat(1 == (null == e ? void 0 : e.is_correct) ? "omlms-correct" : "", "\n                                            "),
+      className: "\n                                                ".concat(null != r && null !== (o = r.given_answer) && void 0 !== o && o.includes(Number(null == e ? void 0 : e.id)) || null != r && null !== (i = r.given_answer) && void 0 !== i && i.includes(null == e ? void 0 : e.id) ? "ohmylms-selected" : "", "\n                                                    ").concat(1 == (null == e ? void 0 : e.is_correct) ? "ohmylms-correct" : "", "\n                                            "),
       label: null == e ? void 0 : e.answer
     });
   }))), React.createElement(I.SpacerWP, null), React.createElement(I.CardWP, {
@@ -449,7 +449,7 @@ var w$ = function (e) {
       }();
     }((0, g.useState)(0), 2);
   return c[0], c[1], React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-question-types omlms-text-type-question omlms-".concat(l, " ").concat(null != a && a.explanation ? "omlms-has-explanation" : "")
+    className: "ohmylms-question-types ohmylms-text-type-question ohmylms-".concat(l, " ").concat(null != a && a.explanation ? "ohmylms-has-explanation" : "")
   }, React.createElement(p$, {
     setData: i,
     data: a,
@@ -467,11 +467,11 @@ var w$ = function (e) {
     size: 14,
     variant: "muted"
   }, (0, b.__)("Student's response:", "ohmylms")), React.createElement("div", {
-    className: "omlms-question-options omlms-text-type"
+    className: "ohmylms-question-options ohmylms-text-type"
   }, null != a && a.given_answer && (null == a ? void 0 : a.given_answer[0]) || (0, b.__)("No answer given", "ohmylms")), (null == a ? void 0 : a.explanation) && React.createElement(V.A, {
     title: (null == a ? void 0 : a.explanation) || (0, b.__)("No explanation provided", "ohmylms")
   }, React.createElement("span", {
-    className: "omlms-explanation-icon"
+    className: "ohmylms-explanation-icon"
   }, React.createElement(b$, null)))), "fill-in-the-blank" === (null == a || null === (t = a.settings) || void 0 === t ? void 0 : t.type) && React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, null), React.createElement(I.CardWP, {
     style: {
       padding: "16px"

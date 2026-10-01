@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 final class QuestionTypes {
     public static function register_defaults() {
@@ -7,8 +7,8 @@ final class QuestionTypes {
         foreach ($templates as $type=>$template) Registry::register('question',$type,[
             'manual'=>in_array($type,['short-text','long-text'],true),
             'label'=>ucwords(str_replace('-',' ',$type)),
-            'editor'=>['format'=>'creatorlms-options','settings'=>['required','score','randomize']],
-            'render'=>static function ($question,$attempt) use ($template) { omlms_get_template('single-lesson/quiz-loop/'.$template.'.php',compact('question','attempt')); },
+            'editor'=>['format'=>'ohmylms-options','settings'=>['required','score','randomize']],
+            'render'=>static function ($question,$attempt) use ($template) { ohmylms_get_template('single-lesson/quiz-loop/'.$template.'.php',compact('question','attempt')); },
             'validate'=>static function ($answer) { return is_array($answer) && count($answer)<=1000 && !array_filter($answer, static function($v){ return !is_scalar($v); }); },
             'grade'=>static function ($answer,$question) use ($type) { return self::grade_builtin($type,$answer,$question); },
         ]);

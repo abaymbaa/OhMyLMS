@@ -46,7 +46,7 @@ var UZ = function () {
     o = (0, y.useSelect)(function (e) {
       return e(T.default).getStudent();
     }, []);
-  HG("creator-lms", "students");
+  HG("ohmylms", "students");
   var i = (0, g.useCallback)(HZ(BZ().m(function n() {
     var r;
     return BZ().w(function (n) {
@@ -82,11 +82,7 @@ var UZ = function () {
   }, h().createElement(I.SpacerWP, {
     padding: 5,
     marginTop: 3
-  }, h().createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Student analytics is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms"),
-    top: "0px",
-    height: "100%"
-  }), h().createElement(I.FlexWP, {
+  }, h().createElement(I.FlexWP, {
     direction: "column",
     gap: 4
   }, h().createElement(I.FlexWP, {

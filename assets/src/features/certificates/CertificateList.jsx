@@ -194,7 +194,7 @@ export function createCertificateList(readRuntime) {
                     return (
                       (e.n = 1),
                       l()({
-                        path: '/creator-lms/v1/courses',
+                        path: '/ohmylms/v1/courses',
                       })
                     );
                   case 1:
@@ -454,7 +454,7 @@ export function createCertificateList(readRuntime) {
                       filterByStatusOptions: me,
                       formateCategory: !1,
                       showFilterByStatus: !1,
-                      className: 'omlms-certificate-listing-filter-card',
+                      className: 'ohmylms-certificate-listing-filter-card',
                     })}
                 <sN.A
                   rowKey={'id'}

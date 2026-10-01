@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
 /**
  * AdminSettings class.
@@ -39,7 +39,7 @@ class AdminSettings {
 		$settings[] = new EmailSettings();
 		$settings[] = new Advanced();
 
-		self::$settings = apply_filters( 'creator_lms_get_settings_object', $settings );
+		self::$settings = apply_filters( 'ohmylms_get_settings_object', $settings );
 		return self::$settings;
 	}
 

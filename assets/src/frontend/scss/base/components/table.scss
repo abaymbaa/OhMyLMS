@@ -1,11 +1,11 @@
-.creator-lms-page {
-    .creator-lms-table {
+.ohmylms-page {
+    .ohmylms-table {
         margin: 0;
         border-radius: 14px;
         background-color: #FFF;
         box-shadow: 0px 1px 2px 0px #DBDDE1;
         
-        .creator-lms-tr {
+        .ohmylms-tr {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -17,12 +17,12 @@
                 border-bottom: none;
             }
 
-            .creator-lms-td-handle {
+            .ohmylms-td-handle {
                 display: none;
             }
 
-            .creator-lms-td {
-                color: var(--creator-lms-body-text-color);
+            .ohmylms-td {
+                color: var(--ohmylms-body-text-color);
                 font-size: 14px;
                 font-weight: 400;
                 line-height: 1.2;
@@ -36,12 +36,12 @@
                 }
 
                 &.title {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-weight: 500;
                 }
             }
 
-            .creator-lms-td-handle + .creator-lms-td {
+            .ohmylms-td-handle + .ohmylms-td {
                 padding-left: 24px;
             }
 
@@ -102,13 +102,13 @@
 
         }
 
-        .creator-lms-head {
+        .ohmylms-head {
             background-color: #FAFBFC;
             border: 1px solid #EBECED;
             border-radius: 14px 14px 0 0;
 
-            .creator-lms-th {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-th {
+                color: var(--ohmylms-heading-color);
                 font-size: 14px;
                 font-weight: 500;
                 line-height: 1;
@@ -128,7 +128,7 @@
             }
         }
 
-        .creator-lms-mobile-td {
+        .ohmylms-mobile-td {
             display: none;
         }
 
@@ -140,7 +140,7 @@
 
     }
 
-    .creator-lms-table-pagination {
+    .ohmylms-table-pagination {
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -153,7 +153,7 @@
 
         strong {
             font-weight: 500;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
         }
 
         a {
@@ -182,7 +182,7 @@
 
             &:hover {
                 path {
-                    fill: var(--creator-lms-primary-color);
+                    fill: var(--ohmylms-primary-color);
                 }
             }
         }
@@ -200,7 +200,7 @@
             outline: none !important;
 
             &:focus {
-                border-color: var(--creator-lms-primary-color)!important;
+                border-color: var(--ohmylms-primary-color)!important;
             }
             
 
@@ -222,82 +222,82 @@
 
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-table {
+    .ohmylms-page .ohmylms-table {
         border-radius: 10px;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-head {
+    .ohmylms-page .ohmylms-table .ohmylms-head {
         border-radius: 10px 10px 0 0;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-head .creator-lms-th {
+    .ohmylms-page .ohmylms-table .ohmylms-head .ohmylms-th {
         padding: 12px 10px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td {
         font-size: 13px;
         padding: 14px 10px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr .title {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .title {
         max-width: 192px;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-tr .submission-date {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .submission-date {
         width: 152px;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-tr .status > span {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .status > span {
         font-size: 12px;
         padding: 6px 10px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-head .creator-lms-th:first-child,
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td:first-child {
+    .ohmylms-page .ohmylms-table .ohmylms-head .ohmylms-th:first-child,
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td:first-child {
         padding-left: 16px;
     }
     
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td-handle + .creator-lms-td {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td-handle + .ohmylms-td {
         padding-left: 16px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-head .creator-lms-th:last-child,
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td.action {
+    .ohmylms-page .ohmylms-table .ohmylms-head .ohmylms-th:last-child,
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td.action {
         padding-right: 16px;
     }
 
-    .creator-lms-page .creator-lms-table-pagination {
+    .ohmylms-page .ohmylms-table-pagination {
         padding: 14px 20px;
     }
 
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td {
         font-size: 14px;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-tr .title {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .title {
         max-width: 275px;
     }
-    .creator-lms-page .creator-lms-table .creator-lms-tr .submission-date {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .submission-date {
         width: 184px;
     }
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-table .creator-lms-tr .time,
-    .creator-lms-page .creator-lms-table .creator-lms-tr .status,
-    .creator-lms-page .creator-lms-table .creator-lms-tr .submission-date {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .time,
+    .ohmylms-page .ohmylms-table .ohmylms-tr .status,
+    .ohmylms-page .ohmylms-table .ohmylms-tr .submission-date {
         display: none;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr .title {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .title {
         max-width: 100%;
         width: calc(100% - 85px);
         position: relative;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr:not(.creator-lms-head) .title {
+    .ohmylms-page .ohmylms-table .ohmylms-tr:not(.ohmylms-head) .title {
         padding-left: 47px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td-handle {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td-handle {
         background-color: #ffffff;
         display: flex;
         align-items: center;
@@ -320,9 +320,9 @@
         }
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr.active .creator-lms-td-handle {
-        background-color: var(--creator-lms-primary-color);
-        border-color: var(--creator-lms-primary-color);
+    .ohmylms-page .ohmylms-table .ohmylms-tr.active .ohmylms-td-handle {
+        background-color: var(--ohmylms-primary-color);
+        border-color: var(--ohmylms-primary-color);
 
         svg {
             transform: rotate(-180deg);
@@ -334,11 +334,11 @@
         }
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-tr .creator-lms-td-handle + .creator-lms-td {
+    .ohmylms-page .ohmylms-table .ohmylms-tr .ohmylms-td-handle + .ohmylms-td {
         padding-left: 47px;
     }
 
-    .creator-lms-page .creator-lms-table .creator-lms-mobile-td {
+    .ohmylms-page .ohmylms-table .ohmylms-mobile-td {
         width: 100%;
         padding-bottom: 8px;
         padding-left: 32px;
@@ -356,7 +356,7 @@
             &:before {
                 content: attr(data-title);
                 display: block;
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 13px;
                 font-weight: 500;
                 margin-right: 12px;
@@ -378,13 +378,13 @@
 }
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-table-pagination a {
+    .ohmylms-page .ohmylms-table-pagination a {
         padding: 5px 4px;
     }
-    .creator-lms-page .creator-lms-table-pagination a.first-page {
+    .ohmylms-page .ohmylms-table-pagination a.first-page {
         margin-left: 0px;
     }
-    .creator-lms-page .creator-lms-table-pagination a.last-page {
+    .ohmylms-page .ohmylms-table-pagination a.last-page {
         margin-right: 0px;
     }
 }

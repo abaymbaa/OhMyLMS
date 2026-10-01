@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Webhooks;
+namespace OhMyLMS\Webhooks;
 
-use OMLMS\Data\Webhook;
-use OMLMS\DataStores\WebhookStore;
+use OhMyLMS\Data\Webhook;
+use OhMyLMS\DataStores\WebhookStore;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * Handles sending webhook notifications based on triggers.
  * Similar to how emails are sent in the system.
  *
- * @package OMLMS\Webhooks
+ * @package OhMyLMS\Webhooks
  * @since 1.0.0
  */
 class WebhookSender {
@@ -25,26 +25,26 @@ class WebhookSender {
 	 */
 	public function init() {
 		// Course related triggers
-		add_action( 'creator_lms_after_checkout_process', array( $this, 'trigger_course_purchase' ), 10 );
-		add_action( 'creator_lms_after_enrolled_student', array( $this, 'trigger_course_enrollment' ), 10, 1 );
-		add_action( 'creatorlms_lesson_already_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
-		// add_action( 'creator_lms_student_completed_course_after_reviewing_quiz', array( $this, 'trigger_course_completion' ), 10, 2 );
-		add_action( 'creator_lms_course_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
+		add_action( 'ohmylms_after_checkout_process', array( $this, 'trigger_course_purchase' ), 10 );
+		add_action( 'ohmylms_after_enrolled_student', array( $this, 'trigger_course_enrollment' ), 10, 1 );
+		add_action( 'ohmylms_lesson_already_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
+		// add_action( 'ohmylms_student_completed_course_after_reviewing_quiz', array( $this, 'trigger_course_completion' ), 10, 2 );
+		add_action( 'ohmylms_course_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
 		
 		// Lesson related triggers
-		add_action( 'creator_lms_lesson_completed', array( $this, 'trigger_lesson_completion' ), 10, 3 );
+		add_action( 'ohmylms_lesson_completed', array( $this, 'trigger_lesson_completion' ), 10, 3 );
 		
 		// Quiz related triggers
-		add_action( 'creator_lms_quiz_submission', array( $this, 'trigger_quiz_submission' ), 10, 4 );
+		add_action( 'ohmylms_quiz_submission', array( $this, 'trigger_quiz_submission' ), 10, 4 );
 
         // Quiz achievement after review
-        add_action( 'creator_lms_rest_review_quiz_attempt', array( $this, 'trigger_quiz_achievement' ), 10, 4 );
+        add_action( 'ohmylms_rest_review_quiz_attempt', array( $this, 'trigger_quiz_achievement' ), 10, 4 );
 
         // Assignment related triggers
-		add_action( 'creator_lms_after_assignment_submitted', array( $this, 'trigger_assignment_submission' ), 10, 3 );
+		add_action( 'ohmylms_after_assignment_submitted', array( $this, 'trigger_assignment_submission' ), 10, 3 );
 
 
-		add_action( 'creator_lms_pro_after_assignment_review', array( $this, 'trigger_assignment_achievement' ), 10, 4 );
+		add_action( 'ohmylms_pro_after_assignment_review', array( $this, 'trigger_assignment_achievement' ), 10, 4 );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class WebhookSender {
 
         foreach ( $order_items as $item ) {
             $course_id = $item->get_course_id();
-            $course = omlms_get_course( $course_id );
+            $course = ohmylms_get_course( $course_id );
             if ( ! $course ) {
                 continue;
             }
@@ -80,7 +80,7 @@ class WebhookSender {
             if ( ! $user || ! $course ) {
                 return;
             }
-            $student = new \OMLMS\Data\Student( $student_id );
+            $student = new \OhMyLMS\Data\Student( $student_id );
             $payload_data = array(
                 'user_id'       => $student_id,
                 'user_email'    => $student->get_email(),
@@ -133,7 +133,7 @@ class WebhookSender {
 		}
 
 		global $wpdb;
-		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enroll_data = $wpdb->get_row( 
 			$wpdb->prepare( 
 				"SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d LIMIT 1", 
@@ -147,12 +147,12 @@ class WebhookSender {
 			return;
 		}
 
-		$course = omlms_get_course( $enroll_data['course_id'] );
+		$course = ohmylms_get_course( $enroll_data['course_id'] );
 
 		if ( ! $course ) {
 			return;
 		}
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'         => $student_id,
 			'user_email'      => $student->get_email(),
@@ -185,7 +185,7 @@ class WebhookSender {
 		}
 
 		$user   = get_user_by( 'id', $student_id );
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 
 		if ( ! $user || ! $course ) {
 			return;
@@ -193,7 +193,7 @@ class WebhookSender {
 
 		// Get completion percentage
 		$completion_percentage = 100; // Default to 100% on completion
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'               => $student_id,
 			'user_email'            => $student->get_email(),
@@ -227,13 +227,13 @@ class WebhookSender {
 		}
 
 		$user   = get_user_by( 'id', $student_id );
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		$lesson = get_post( $lesson_id );
 
 		if ( ! $user || ! $course || ! $lesson ) {
 			return;
 		}
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'      => $student_id,
 			'user_email'   => $student->get_email(),
@@ -269,7 +269,7 @@ class WebhookSender {
 		}
 
 		$user   = get_user_by( 'id', $student_id );
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		$quiz   = get_post( $quiz_id );
 
 		if ( ! $user || ! $course || ! $quiz ) {
@@ -277,7 +277,7 @@ class WebhookSender {
 		}
 
 		$score     = isset( $result['total'] ) ? $result['total'] : 0;
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'      => $student_id,
 			'user_email'   => $student->get_email(),
@@ -314,7 +314,7 @@ class WebhookSender {
 		}
 
 		$user   = get_user_by( 'id', $student_id );
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		$quiz   = get_post( $quiz_id );
 
 		if ( ! $user || ! $course || ! $quiz ) {
@@ -322,7 +322,7 @@ class WebhookSender {
 		}
 
 		$score     = is_array( $result ) && isset( $result['total'] ) ? $result['total'] : $result;
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'      => $student_id,
 			'user_email'   => $student->get_email(),
@@ -359,7 +359,7 @@ class WebhookSender {
 		}
 
 		$user       = get_user_by( 'id', $student_id );
-		$course     = omlms_get_course( $course_id );
+		$course     = ohmylms_get_course( $course_id );
 		$assignment = get_post( $assignment_id );
 
 		if ( ! $user || ! $course || ! $assignment ) {
@@ -367,7 +367,7 @@ class WebhookSender {
 		}
 
 		$submission_date = current_time( 'mysql' );
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'          => $student_id,
 			'user_email'       => $student->get_email(),
@@ -403,14 +403,14 @@ class WebhookSender {
 		}
 
 		$user       = get_user_by( 'id', $student_id );
-		$course     = omlms_get_course( $course_id );
+		$course     = ohmylms_get_course( $course_id );
 		$assignment = get_post( $assignment_id );
 		if ( ! $user || ! $course || ! $assignment ) {
 			return;
 		}
 
 		$submission_date = current_time( 'mysql' );
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data = array(
 			'user_id'          => $student_id,
 			'user_email'       => $student->get_email(),
@@ -667,7 +667,7 @@ class WebhookSender {
 		}
 
 		// Fire action for logging (can be hooked by other plugins/extensions)
-		do_action( 'creator_lms_webhook_sent', $log_data );
+		do_action( 'ohmylms_webhook_sent', $log_data );
 
 		// Optional: Save to custom table or transient for debugging
 		// You can implement this based on your logging requirements

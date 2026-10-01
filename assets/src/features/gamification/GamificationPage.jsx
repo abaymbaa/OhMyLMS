@@ -4,7 +4,7 @@ export function createGamificationPage(readRuntime) {
   return function GamificationPage() {
     const { HG, R5: GamificationSettings, React } = readRuntime();
     return (
-      HG('creator-lms', 'gamification'),
+      HG('ohmylms', 'gamification'),
       (
         <React.Fragment>
           <GamificationSettings />

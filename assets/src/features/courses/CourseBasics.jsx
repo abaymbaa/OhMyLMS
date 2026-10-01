@@ -26,7 +26,7 @@ export function createCourseBasics(readRuntime) {
       t = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getCourse();
       }, []),
-      n = (0, Entitlements.useIsPro)(),
+      n = true,
       r = (function (e, t) {
         return (
           (function (e) {
@@ -105,7 +105,10 @@ export function createCourseBasics(readRuntime) {
             </Controls.SpacerWP>
           </Controls.CardWP>
           <Controls.SpacerWP marginBottom={6} />
-          <Controls.CardWP isBorderless={!0} className={'omlms-basic-tab omlms-course-settings'}>
+          <Controls.CardWP
+            isBorderless={!0}
+            className={'ohmylms-basic-tab ohmylms-course-settings'}
+          >
             {!is_cohort && (
               <Controls.SpacerWP marginBottom={0} padding={5}>
                 {React.createElement(vz, {
@@ -246,20 +249,6 @@ export function createCourseBasics(readRuntime) {
                 title={(0, I18n.__)('Sequential Lesson Access', 'ohmylms')}
                 isChecked={'yes' === (null == t ? void 0 : t.sequential_mode)}
                 onChange={function (r) {
-                  if (!n)
-                    return (
-                      e.updateProModalTitle(
-                        (0, I18n.__)('Sequential Lesson Access is a Pro Feature', 'ohmylms'),
-                      ),
-                      e.updateProModalContent(
-                        (0, I18n.__)(
-                          'Upgrade to OhMyLMS to enforce lesson order and keep students on track.',
-                          'ohmylms',
-                        ),
-                      ),
-                      e.updateProModalButtonText((0, I18n.__)('Upgrade to Pro', 'ohmylms')),
-                      void o(!0)
-                    );
                   e.setCourse(
                     Dz(
                       Dz({}, t),

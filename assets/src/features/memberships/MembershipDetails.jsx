@@ -41,10 +41,7 @@ export function createMembershipDetails(readRuntime) {
           ? null === (t = i[0]) || void 0 === t
             ? void 0
             : t.currency
-          : null === (n = window) ||
-              void 0 === n ||
-              null === (n = n.creator_lms_params) ||
-              void 0 === n
+          : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n
             ? void 0
             : n.currency,
       u = function (e, t) {
@@ -82,7 +79,7 @@ export function createMembershipDetails(readRuntime) {
               return u('name', e);
             }}
             error={null == errors ? void 0 : errors.name}
-            className={'omlms-membership-plan-name-input'}
+            className={'ohmylms-membership-plan-name-input'}
           />
           <Controls.DividerWP marginStart={'2'} marginEnd={'2'} />
           <Pf
@@ -93,7 +90,7 @@ export function createMembershipDetails(readRuntime) {
               return u('description', e);
             }}
             inputType={'textarea'}
-            className={'omlms-membership-plan-description-input'}
+            className={'ohmylms-membership-plan-description-input'}
           />
           <Controls.DividerWP marginStart={'2'} marginEnd={'2'} />
           <MembershipPricing errors={errors} validate={a} />
@@ -116,7 +113,7 @@ export function createMembershipDetails(readRuntime) {
                 }}
                 value={null == o ? void 0 : o.subscription_length}
                 staticSearch={!0}
-                className={'omlms-stop-renewing-after-select'}
+                className={'ohmylms-stop-renewing-after-select'}
               />
               <Controls.DividerWP marginStart={'2'} marginEnd={'2'} />
             </React.Fragment>
@@ -143,7 +140,7 @@ export function createMembershipDetails(readRuntime) {
             }}
             min={0}
             max={99999999}
-            className={'omlms-sign-up-fee-input'}
+            className={'ohmylms-sign-up-fee-input'}
           />
           <Controls.DividerWP marginStart={'2'} marginEnd={'2'} />
           <MembershipSaleSchedule errors={errors} validate={a} />

@@ -1,10 +1,10 @@
-.creator-lms-student-profile * {
+.ohmylms-student-profile * {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-student-profile {
+.ohmylms-page {
+    .ohmylms-student-profile {
         position: relative;
         margin: 0;
         padding: 0;
@@ -24,7 +24,7 @@
             transition: all 0.3s ease;
         }
 
-        .creator-lms-hamburger {
+        .ohmylms-hamburger {
             border-radius: 100%;
             background-color: #10052E;
             height: 40px;
@@ -45,7 +45,7 @@
             visibility: visible;
         }
 
-        .creator-lms-student-profile-wrapper {
+        .ohmylms-student-profile-wrapper {
             border-radius: 14px;
             border: 1px solid #EBECEF;
             background: #F8F8F8;
@@ -56,18 +56,18 @@
             gap: 30px;
         }
 
-        .creator-lms-student-profile-sidebar {
+        .ohmylms-student-profile-sidebar {
             padding: 14px;
             width: 218px;
         }
-        .creator-lms-student-profile-sidebar-content {
+        .ohmylms-student-profile-sidebar-content {
             width: calc(100% - 248px);
             border-radius: 14px;
             background: #FFF;
             box-shadow: 0px 1px 2px 0px #DBDDE1;
         }
 
-        .creator-lms-student-profile-tab {
+        .ohmylms-student-profile-tab {
             list-style: none;
             padding: 0;
             margin: 0;
@@ -80,7 +80,7 @@
                 }
 
                 a {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.2;
@@ -118,7 +118,7 @@
 
                 a:hover,
                 &.active a {
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                     background-color: #FFF;
                     box-shadow: 0px 1px 2px 0px #DBDDE1;
 
@@ -136,11 +136,11 @@
 
 
         //--------student-profile-tab-content--------
-        .creator-lms-student-profile-tab-content {
+        .ohmylms-student-profile-tab-content {
             padding: 40px 87px;
 
             .profile-tab-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 24px;
                 font-weight: 600;
                 line-height: 1.2;
@@ -150,7 +150,7 @@
 
         // ------profile tab content------
         .student-profile {
-            .creator-lms-profile-cover {
+            .ohmylms-profile-cover {
                 height: 228px;
                 background-color: #B3B3B3;
                 border-radius: 14px;
@@ -170,7 +170,7 @@
                 }
             }
 
-            .creator-lms-profile-avatar {
+            .ohmylms-profile-avatar {
                 position: absolute;
                 width: 130px;
                 height: 130px;
@@ -208,7 +208,7 @@
                 }
             }
 
-            .creator-lms-profile-actions {
+            .ohmylms-profile-actions {
                 display: flex;
                 align-items: center;
                 flex-flow: row wrap;
@@ -220,7 +220,7 @@
                     border: 1px solid #EBEBEF;
                     background: #FFF;
                     display: inline-block;
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 14px;
                     font-weight: 500;
                     letter-spacing: -0.14px;
@@ -237,12 +237,12 @@
                 }
             }
 
-            .creator-lms-profile-info {
+            .ohmylms-profile-info {
                 margin-top: 7px;
             }
 
-            .creator-lms-profile-name {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-profile-name {
+                color: var(--ohmylms-heading-color);
                 font-size: 20px;
                 font-weight: 700;
                 line-height: 1.3;
@@ -252,79 +252,79 @@
                 justify-content: space-between;
                 gap: 10px;
 
-                .creator-lms-user-details {
+                .ohmylms-user-details {
                     display: flex;
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 10px;
                 }
 
-                .creator-lms-user-xp-display {
+                .ohmylms-user-xp-display {
                     display: flex;
                     flex-direction: column;
                     align-items: flex-end;
                     gap: 0px;
 
-                    .creator-lms-xp-label {
+                    .ohmylms-xp-label {
                         font-size: 0.875rem;
                         color: #6b7280;
                     }
                 }
             }
 
-            .creator-lms-progress-section {
+            .ohmylms-progress-section {
                 margin-top: 22px;
 
-                .creator-lms-progress-header {
+                .ohmylms-progress-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 0.75rem;
 
-                    .creator-lms-progress-label {
+                    .ohmylms-progress-label {
                     font-weight: 600;
                     color: #374151;
                     font-size: 0.875rem;
                     }
 
-                    .creator-lms-progress-numbers {
+                    .ohmylms-progress-numbers {
                     font-size: 0.875rem;
                     color: #6b7280;
                     }
                 }
 
-                .creator-lms-progress-remaining {
+                .ohmylms-progress-remaining {
                     text-align: center;
                     font-size: 0.75rem;
                     color: #6b7280;
                 }
             }
 
-            .creator-lms-progress-bar {
+            .ohmylms-progress-bar {
                 height: 0.75rem;
                 background: #e5e7eb;
                 border-radius: 0.375rem;
                 overflow: hidden;
                 margin-bottom: 0.5rem;
 
-                .creator-lms-progress-fill {
+                .ohmylms-progress-fill {
                     height: 100%;
                     width: var(--fill-width);
-                    background: var(--creator-lms-progressbar-color, #3b82f6);
+                    background: var(--ohmylms-progressbar-color, #3b82f6);
                     border-radius: 0.375rem;
                     transition: width 0.3s ease;
-                    animation: creator-lms-fill-progress 1s ease forwards;
+                    animation: ohmylms-fill-progress 1s ease forwards;
                     
                 }
             }
 
-            .creator-lms-badges-section {
+            .ohmylms-badges-section {
                 margin-top: 22px;
                 border-radius: 8px;
                 border: 1px solid #eee;
                 padding: 20px;
 
-                .creator-lms-section-title {
+                .ohmylms-section-title {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
@@ -333,7 +333,7 @@
                     color: #1f2937;
                     margin-bottom: 1.5rem;
 
-                    .creator-lms-trophy-icon {
+                    .ohmylms-trophy-icon {
                         width: 1.25rem;
                         height: 1.25rem;
                         color: #f59e0b;
@@ -341,13 +341,13 @@
                     }
                 }
 
-                .creator-lms-badges-grid {
+                .ohmylms-badges-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
                     gap: 1rem;
                     margin-bottom: 1.5rem;
 
-                    .creator-lms-badge {
+                    .ohmylms-badge {
                         aspect-ratio: 1;
                         border-radius: 1rem;
                         padding: 1rem;
@@ -379,15 +379,15 @@
                                 background: #e5e7eb;
                             }
 
-                            .creator-lms-badge-icon {
+                            .ohmylms-badge-icon {
                                 color: #9ca3af;
                             }
 
-                            .creator-lms-badge-name {
+                            .ohmylms-badge-name {
                                 color: #6b7280;
                             }
 
-                            .creator-lms-lock-overlay {
+                            .ohmylms-lock-overlay {
                                 position: absolute;
                                 inset: 0;
                                 display: flex;
@@ -396,7 +396,7 @@
                                 background: rgba(0, 0, 0, 0.2);
                                 border-radius: 1rem;
 
-                                .creator-lms-lock-icon {
+                                .ohmylms-lock-icon {
                                     width: 1.5rem;
                                     height: 1.5rem;
                                     color: white;
@@ -404,14 +404,14 @@
                             }
                         }
 
-                        .creator-lms-badge-icon {
+                        .ohmylms-badge-icon {
                             width: 2rem;
                             height: 2rem;
                             color: white;
                             margin-bottom: 0.5rem;
                         }
 
-                        .creator-lms-badge-name {
+                        .ohmylms-badge-name {
                             font-size: 0.75rem;
                             font-weight: 600;
                             text-align: center;
@@ -448,10 +448,10 @@
                     }
                 }
 
-                .creator-lms-badge-progress {
+                .ohmylms-badge-progress {
                     text-align: center;
 
-                    .creator-lms-progress-text {
+                    .ohmylms-progress-text {
                         font-size: 0.875rem;
                         color: #6b7280;
                         margin-bottom: 0.5rem;
@@ -460,7 +460,7 @@
             }
 
             // Keyframe animation
-            @keyframes creator-lms-fill-progress {
+            @keyframes ohmylms-fill-progress {
                 from {
                     width: 0%;
                 }
@@ -473,7 +473,7 @@
 
             .learning-level {
                 display: inline-block;
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 12px;
                 font-weight: 500;
                 line-height: 1.3;
@@ -482,7 +482,7 @@
             }
 
             .profile-bio {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 15px;
                 font-weight: 400;
                 line-height: 1.5;
@@ -496,7 +496,7 @@
                 margin: 9px 0 0;
 
                 address {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.3;
@@ -507,7 +507,7 @@
                 }
 
                 .contact-link {
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                     font-size: 14px;
                     font-weight: 700;
                     line-height: 1.3;
@@ -529,7 +529,7 @@
                 margin: 9px 0 0;
 
                 .profile-contact-item {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.3;
@@ -538,7 +538,7 @@
                     gap: 5px;
 
                     strong {
-                        color: var(--creator-lms-heading-color);
+                        color: var(--ohmylms-heading-color);
                         font-weight: 600;
                     }
                 }
@@ -551,7 +551,7 @@
             }
 
             .profile-section-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 16px;
                 font-weight: 600;
                 line-height: 1.3;
@@ -564,7 +564,7 @@
                 gap: 8px;
 
                 .skill-tag {
-                    background: var(--creator-lms-primary-color);
+                    background: var(--ohmylms-primary-color);
                     color: #fff;
                     padding: 6px 12px;
                     border-radius: 20px;
@@ -581,8 +581,8 @@
                 gap: 12px;
 
                 .social-link {
-                    color: var(--creator-lms-primary-color);
-                    background: rgba(var(--creator-lms-primary-color-rgb), 0.1);
+                    color: var(--ohmylms-primary-color);
+                    background: rgba(var(--ohmylms-primary-color-rgb), 0.1);
                     padding: 8px 14px;
                     border-radius: 6px;
                     font-size: 14px;
@@ -593,7 +593,7 @@
                     display: inline-block;
 
                     &:hover {
-                        background: var(--creator-lms-primary-color);
+                        background: var(--ohmylms-primary-color);
                         color: #fff;
                         text-decoration: none;
                     }
@@ -641,7 +641,7 @@
                     width: var(--progress);
                     height: 100%;
                     border-radius: 4px;
-                    background-color: var(--creator-lms-progressbar-color);
+                    background-color: var(--ohmylms-progressbar-color);
                 }
 
                 .next-level {
@@ -708,32 +708,32 @@
         // ------profile edit tab content------
         .student-profile-edit {
             // Dynamic Fields Styles for Profile Edit
-            .creator-lms-dynamic-fields {
+            .ohmylms-dynamic-fields {
                 margin-bottom: 10px;
             }
 
-            .creator-lms-dynamic-field-row {
+            .ohmylms-dynamic-field-row {
                 display: flex;
                 align-items: center;
                 margin-bottom: 10px;
                 gap: 10px;
 
-                .creator-lms-input-wrapper {
+                .ohmylms-input-wrapper {
                     flex: 1;
                 }
             }
 
-            .creator-lms-link-row {
-                .creator-lms-link-label {
+            .ohmylms-link-row {
+                .ohmylms-link-label {
                     flex: 0 0 30% !important;
                 }
 
-                .creator-lms-link-url {
+                .ohmylms-link-url {
                     flex: 1 !important;
                 }
             }
 
-            .creator-lms-remove-field {
+            .ohmylms-remove-field {
                 background: #f1f1f1;
                 color: #666;
                 border: 1px solid #ddd;
@@ -756,24 +756,24 @@
                 }
             }
 
-            .creator-lms-add-field {
+            .ohmylms-add-field {
                 margin-top: 10px;
             }
 
             .skills-section,
             .links-section {
-                .creator-lms-input-wrapper {
+                .ohmylms-input-wrapper {
                     flex: 1;
                 }
             }
         }
 
         // ----achivements section style-----
-        .creator-lms-student-achivements {
+        .ohmylms-student-achivements {
             margin-top: 22px;
 
             .achivements-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 16px;
                 font-weight: 700;
                 line-height: 1.2;
@@ -795,7 +795,7 @@
                 gap: 23px;
             }
             .no-achivement-text {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 14px;
                 font-weight: 400;
                 line-height: 1.5;
@@ -803,7 +803,7 @@
             }
         }
 
-        .creator-lms-achivement-box {
+        .ohmylms-achivement-box {
             background-color: #FFF;
             border-radius: 8px;
             border: 1px solid #eee;
@@ -818,7 +818,7 @@
             }
 
             .achivement-type-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 14px;
                 font-weight: 700;
                 line-height: 1.2;
@@ -829,7 +829,7 @@
             }
 
             .badges-type-title {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 13px;
                 font-weight: 700;
                 line-height: 1.2;
@@ -900,7 +900,7 @@
                     left: 50%;
                     transform: translate(-50%, -50%);
                     display: flex;
-                    background: var(--creator-lms-primary-color);
+                    background: var(--ohmylms-primary-color);
                     padding: 7px;
                     align-items: center;
                     justify-content: center;
@@ -928,59 +928,59 @@
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content {
         padding: 40px 50px;
     }
 }
 
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-wrapper {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-wrapper {
         gap: 20px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar {
         padding: 0;
         width: 188px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar-content {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar-content {
         width: calc(100% - 208px);
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content {
         padding: 20px 30px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-cover {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-cover {
         height: 188px;
         border-radius: 10px;
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-cover > figure {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-cover > figure {
         border-radius: 10px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-avatar {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-avatar {
         width: 100px;
         height: 100px;
         bottom: -30px;
         border-width: 2px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-avatar figure {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-avatar figure {
         font-size: 28px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-achivements .no-achivement {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-achivements .no-achivement {
         height: 220px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-achivements .no-achivement svg {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-achivements .no-achivement svg {
         max-width: 150px;
         height: auto;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list figure {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list figure {
         height: 100px;
     }
 
@@ -988,19 +988,19 @@
 
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-student-profile .creator-lms-hamburger {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-hamburger {
         display: flex;
     }
-    .creator-lms-page .creator-lms-student-profile.open-sidebar .creator-lms-hamburger {
+    .ohmylms-page .ohmylms-student-profile.open-sidebar .ohmylms-hamburger {
         opacity: 0;
         visibility: hidden;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar-close {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar-close {
         display: flex;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-wrapper {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-wrapper {
         display: block;
         position: relative;
         padding: 0;
@@ -1010,11 +1010,11 @@
         box-shadow: none;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content {
         padding: 20px 20px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar {
         position: absolute;
         top: 0;
         left: -40px;
@@ -1030,96 +1030,96 @@
         visibility: hidden;
     }
 
-    .creator-lms-page .creator-lms-student-profile.open-sidebar .creator-lms-student-profile-sidebar {
+    .ohmylms-page .ohmylms-student-profile.open-sidebar .ohmylms-student-profile-sidebar {
         left: 0px;
         opacity: 1;
         visibility: visible;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-sidebar-content {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-sidebar-content {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-profile-tab-content .profile-tab-title {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-profile-tab-content .profile-tab-title {
         font-size: 18px;
         margin-bottom: 16px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-cover {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-cover {
         height: 190px;
         border-radius: 0;
         left: -20px;
         width: calc(100% + 40px);
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-cover > figure {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-cover > figure {
         border-radius: 0;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-avatar {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-avatar {
         left: 20px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-actions {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-actions {
         margin-top: 14px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-info {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-info {
         margin-top: 6px;
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-name {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-name {
         font-size: 18px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-achivements {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-achivements {
         margin-top: 18px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .student-profile .profile-bio {
+    .ohmylms-page .ohmylms-student-profile .student-profile .profile-bio {
         font-size: 14px;
         margin: 7px 0 0;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-student-achivements .achivements-title {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-student-achivements .achivements-title {
         font-size: 15px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list li {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list li {
         width: calc(100% / 3 - 14px);
     }
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list figure {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list figure {
         height: 130px;
     }
 
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-dashboard {
+    .ohmylms-page .ohmylms-dashboard {
         padding: 16px 0 46px;
     }
-    .creator-lms-page .creator-lms-student-profile .student-profile .creator-lms-profile-actions .profile-edit {
+    .ohmylms-page .ohmylms-student-profile .student-profile .ohmylms-profile-actions .profile-edit {
         font-size: 13px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list figure {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list figure {
         height: 100px;
     }
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list {
         gap: 10px;
     }
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list li {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list li {
         width: calc(100% / 3 - 7px);
     }
 
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-student-profile .creator-lms-hamburger {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-hamburger {
         position: fixed;
         bottom: 6px;
         left: 5px;
     }
 
-    .creator-lms-page .creator-lms-student-profile .creator-lms-achivement-box .achivement-certificate-list li {
+    .ohmylms-page .ohmylms-student-profile .ohmylms-achivement-box .achivement-certificate-list li {
         width: calc(50% - 5px);
     }
 }

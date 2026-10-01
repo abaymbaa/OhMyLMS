@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Emails\StudentsEmail;
+namespace OhMyLMS\Emails\StudentsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 use function CodeRex\Ecommerce\ecommerce;
 
 class CompleteCourse {
 
 	public function __construct() {
-		add_action( 'creator_lms_course_completed', array( $this, 'trigger' ), 10, 3 );
+		add_action( 'ohmylms_course_completed', array( $this, 'trigger' ), 10, 3 );
 	}
 
 	public function basic_settings(): array {
@@ -52,10 +52,10 @@ class CompleteCourse {
 			return;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 
 		global $wpdb;
-		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
 
 		$subject        = $settings['subject'];
@@ -66,10 +66,10 @@ class CompleteCourse {
 		}
 		$email_settings = Emails::get_email_settings();
 		if ( is_array( $email_settings ) && is_array( $enroll_data ) && is_array( $settings ) && $course ) {
-			$student = new \OMLMS\Data\Student( $student_id );
-			// Use omlms_get_template to get the email body
+			$student = new \OhMyLMS\Data\Student( $student_id );
+			// Use ohmylms_get_template to get the email body
 			ob_start();
-			omlms_get_template(
+			ohmylms_get_template(
 				'emails/complete-course', // Template file name (without .php)
 				array(
 					'course'         => $course,
@@ -85,13 +85,13 @@ class CompleteCourse {
 			$html_body = ob_get_clean();
 
 			ob_start();
-			omlms_get_template( 'emails/email-styles' );
+			ohmylms_get_template( 'emails/email-styles' );
 			$styles    = ob_get_clean();
 			$order     = ecommerce_get_order( $order_id );
 			$html_body = Emails::replace_merge_tags( $html_body, $order, $course );
 
-			$sender_name  = $email_settings['creator_lms_email_sender_name'];
-			$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+			$sender_name  = $email_settings['ohmylms_email_sender_name'];
+			$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 			$headers      = array(
 				'MIME-Version: 1.0',
 				'Content-Type: text/html; charset=UTF-8',

@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Course
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Course extends Data {
@@ -288,35 +288,35 @@ class Course extends Data {
 
 		if ( $this->is_free() ) {
 			$price_html .= apply_filters(
-				'creator_lms_free_course_price_html',
+				'ohmylms_free_course_price_html',
 				sprintf( '<span class="free">%s</span>', esc_html__( 'Free', 'ohmylms' ) )
 			);
 		} elseif ( $this->is_on_sale() ) {
 			if ( $this->validate_on_sale() ) {
 				$discount_percentage = $this->get_sale_price() ? round( ( ( $this->get_regular_price() - $this->get_sale_price() ) / $this->get_regular_price() ) * 100 ) : 0;
 				$price_html         .= apply_filters(
-					'creator_lms_course_sale_price_html',
+					'ohmylms_course_sale_price_html',
 					sprintf(
 						'<ins><bdi>%s</bdi></ins><span class="discount-percentage">%s</span> <del><bdi>%s</bdi></del>',
-						omlms_price( $this->get_sale_price() ),
+						ohmylms_price( $this->get_sale_price() ),
 						$discount_percentage . '% off',
-						omlms_price( $this->get_regular_price() )
+						ohmylms_price( $this->get_regular_price() )
 					)
 				);
 			} else {
 				$price_html .= apply_filters(
-					'creator_lms_course_price_html',
-					omlms_price( $this->get_regular_price() )
+					'ohmylms_course_price_html',
+					ohmylms_price( $this->get_regular_price() )
 				);
 			}
 		} else {
 			$price_html .= apply_filters(
-				'creator_lms_course_price_html',
-				omlms_price( $this->get_price() )
+				'ohmylms_course_price_html',
+				ohmylms_price( $this->get_price() )
 			);
 		}
 
-		return apply_filters( 'creator_lms_get_price_html', $price_html, $this );
+		return apply_filters( 'ohmylms_get_price_html', $price_html, $this );
 	}
 
 
@@ -363,13 +363,13 @@ class Course extends Data {
 	 * @return string The URL of the first lesson.
 	 */
 	public function get_course_first_lesson_url() {
-		return creator_lms_get_course_first_lesson_url( $this->get_id() );
+		return ohmylms_get_course_first_lesson_url( $this->get_id() );
 	}
 
 
 	public function get_content_link( $content_id ) {
 		$item_type             = get_post_type( $content_id );
-		$permalink_structure   = omlms_get_permalink_structure();
+		$permalink_structure   = ohmylms_get_permalink_structure();
 		$course_base_permalink = $permalink_structure['course_base'];
 		$lesson_base_permalink = $permalink_structure['lesson_base'];
 		$quiz_base_permalink   = $permalink_structure['quiz_base'];
@@ -377,10 +377,10 @@ class Course extends Data {
 		$item_slug             = get_post_field( 'post_name', $content_id );
 
 		$slugs       = array(
-			'omlms-course' => $course_base_permalink,
-			'omlms-lesson' => $lesson_base_permalink,
-			'omlms-quiz'   => $quiz_base_permalink,
-			'omlms-assignment'   => 'assignments',
+			'ohmylms-course' => $course_base_permalink,
+			'ohmylms-lesson' => $lesson_base_permalink,
+			'ohmylms-quiz'   => $quiz_base_permalink,
+			'ohmylms-assignment'   => 'assignments',
 		);
 		$slug_prefix = trailingslashit( $slugs[ $item_type ] ?? '' );
 		return trailingslashit( $course_permalink . $slug_prefix . $item_slug );
@@ -389,7 +389,7 @@ class Course extends Data {
 
 	public function get_thumbnail_url( $size = 'thumbnail' ) {
 		$thumbnail_id = $this->get_thumbnail_id();
-		return $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, $size ) : CREATOR_LMS_URL . '/assets/images/course-placeholder-image.jpg';
+		return $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, $size ) : OHMYLMS_URL . '/assets/images/course-placeholder-image.jpg';
 	}
 
 	public function get_thumbnail_url_without_placeholder( $size = 'thumbnail' ) {
@@ -493,7 +493,7 @@ class Course extends Data {
 	 * @since 1.0.0
 	 */
 	public function add_to_cart_url(): string {
-		return apply_filters( 'creator_lms_course_add_to_cart_url', $this->get_permalink(), $this );
+		return apply_filters( 'ohmylms_course_add_to_cart_url', $this->get_permalink(), $this );
 	}
 
 	/**
@@ -506,26 +506,26 @@ class Course extends Data {
 		$price_type = $this->get_price_type();
 
 		if ( $price_type === 'free' ) {
-			$text = apply_filters( 'creator_lms_free_course_add_to_cart_text', __( 'Enroll Now', 'ohmylms' ) );
+			$text = apply_filters( 'ohmylms_free_course_add_to_cart_text', __( 'Enroll Now', 'ohmylms' ) );
 		} elseif ( $this->is_purchasable() && $this->is_in_stock() ) {
 			if ( $this->validate_on_sale() && $this->is_on_sale() ) {
 				$text = sprintf(
 					// Translators: %s is replaced with the item being purchased.
 					__( 'Buy %s', 'ohmylms' ),
-					wp_kses_post( omlms_price( $this->get_price() ) )
+					wp_kses_post( ohmylms_price( $this->get_price() ) )
 				);
 			} else {
 				$text = sprintf(
 					// Translators: %s is replaced with the item being purchased.
 					__( 'Buy %s', 'ohmylms' ),
-					wp_kses_post( omlms_price( $this->get_regular_price() ) )
+					wp_kses_post( ohmylms_price( $this->get_regular_price() ) )
 				);
 			}
 		} else {
 			$text = __( 'This course cannot be purchased.', 'ohmylms' );
 		}
 
-		return apply_filters( 'creator_lms_course_add_to_cart_text', $text );
+		return apply_filters( 'ohmylms_course_add_to_cart_text', $text );
 	}
 
 
@@ -545,7 +545,7 @@ class Course extends Data {
 				wp_kses_post( $this->get_purchase_point() )
 			);
 		}
-		return apply_filters( 'creator_lms_course_add_to_cart_text', $text );
+		return apply_filters( 'ohmylms_course_add_to_cart_text', $text );
 	}
 
 	/**
@@ -824,7 +824,7 @@ class Course extends Data {
 	 * @since 1.0.0
 	 */
 	public function is_purchasable(): bool {
-		return apply_filters( 'creator_lms_course_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
+		return apply_filters( 'ohmylms_course_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
 	}
 
 
@@ -851,7 +851,7 @@ class Course extends Data {
 		} else {
 			$on_sale = false;
 		}
-		return 'view' === $context ? apply_filters( 'creator_lms_product_is_on_sale', $on_sale, $this ) : $on_sale;
+		return 'view' === $context ? apply_filters( 'ohmylms_product_is_on_sale', $on_sale, $this ) : $on_sale;
 	}
 
 	public function validate_on_sale() {
@@ -1247,7 +1247,7 @@ class Course extends Data {
 	 * @param float $average Product average rating.
 	 */
 	public function set_average_rating( $average ) {
-		$this->set_prop( 'average_rating', omlms_format_decimal( $average ) );
+		$this->set_prop( 'average_rating', ohmylms_format_decimal( $average ) );
 	}
 
 	/**
@@ -1285,7 +1285,7 @@ class Course extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -1303,7 +1303,7 @@ class Course extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}

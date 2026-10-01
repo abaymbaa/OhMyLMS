@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Sections post type to connect with course
@@ -68,6 +68,6 @@ class SectionPostType {
 			'capability_type'     => 'post',
 			'show_in_rest'        => true,
 		);
-		// register_post_type('omlms-section', $args);
+		// register_post_type('ohmylms-section', $args);
 	}
 }

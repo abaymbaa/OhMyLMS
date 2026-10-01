@@ -8,11 +8,11 @@ if ( ! $notices ) {
 }
 
 ?>
-<div class="omlms-notices">
-	<div class="omlms-NoticeGroup">
+<div class="ohmylms-notices">
+	<div class="ohmylms-NoticeGroup">
 		<?php foreach ( $notices as $notice ) : ?>
-			<div class="omlms-info"<?php echo \CodeRex\Ecommerce\omlmse_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<?php echo \CodeRex\Ecommerce\omlmse_kses_notice( $notice['notice'] ); ?>
+			<div class="ohmylms-info"<?php echo \CodeRex\Ecommerce\ohmylmse_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<?php echo \CodeRex\Ecommerce\ohmylmse_kses_notice( $notice['notice'] ); ?>
 			</div>
 		<?php endforeach; ?>
 	</div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,27 +20,27 @@ class Install {
 	 * e.g.
 	 * private static $db_updates = array(
 	 *      '2.0.0' => array(
-	 *          'omlms_update_200_db_version',
+	 *          'ohmylms_update_200_db_version',
 	 *      ),
 	 * );
 	 */
 	private static $db_updates = array(
 		'1.0.1' => array(
-			'creatorlms_update_101_user_membership_table',
-			'creatorlms_update_101_db_version',
+			'ohmylms_update_101_user_membership_table',
+			'ohmylms_update_101_db_version',
 		),
 		'1.2.1' => array(
-			'creatorlms_update_121_create_video_progress_table',
-			'creatorlms_update_121_db_version',
+			'ohmylms_update_121_create_video_progress_table',
+			'ohmylms_update_121_db_version',
 		),
 		'1.2.5' => array(
-			'creatorlms_update_125_create_student_pages',
-			'creatorlms_update_125_db_version',
+			'ohmylms_update_125_create_student_pages',
+			'ohmylms_update_125_db_version',
 		),
 		'1.2.12' => array(
-			'creatorlms_update_1212_create_student_role',
-			'creatorlms_update_1212_schedule_student_migration',
-			'creatorlms_update_1212_db_version',
+			'ohmylms_update_1212_create_student_role',
+			'ohmylms_update_1212_schedule_student_migration',
+			'ohmylms_update_1212_db_version',
 		),
 	);
 
@@ -67,7 +67,7 @@ class Install {
 	 * @since 1.0.0
 	 */
 	public static function install() {
-		set_transient( 'creator_lms_installing', true, MINUTE_IN_SECONDS * 10 );
+		set_transient( 'ohmylms_installing', true, MINUTE_IN_SECONDS * 10 );
 		try {
 			self::maybe_create_pages();
             self::bundled_maybe_create_pages();
@@ -84,13 +84,13 @@ class Install {
 			}
 			self::maybe_set_activation_transients();
 		} finally {
-			delete_transient( 'creator_lms_installing' );
+			delete_transient( 'ohmylms_installing' );
 		}
 
-		add_option( 'omlms_admin_install_timestamp', time() );
+		add_option( 'ohmylms_admin_install_timestamp', time() );
 		
 		// Set flag to indicate student pages have been created
-		update_option( 'creator_lms_student_pages_created', '1' );
+		update_option( 'ohmylms_student_pages_created', '1' );
 		
 		flush_rewrite_rules(true);
 
@@ -99,7 +99,7 @@ class Install {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_installed' );
+		do_action( 'ohmylms_installed' );
 	}
 
 
@@ -108,8 +108,8 @@ class Install {
 	 *
 	 * @since 1.0.0
 	 */
-	public static function update_omlms_version() {
-		update_option( 'creator_lms_version', OMLMS()::VERSION );
+	public static function update_ohmylms_version() {
+		update_option( 'ohmylms_version', ohmylms()::VERSION );
 	}
 
 
@@ -132,9 +132,9 @@ class Install {
 	 */
 	public static function maybe_set_activation_transients() {
 		if ( self::is_new_install() ) {
-			set_transient( '_omlms_activation_redirect', 1, 30 );
+			set_transient( '_ohmylms_activation_redirect', 1, 30 );
 		}
-		self::update_omlms_version();
+		self::update_ohmylms_version();
 	}
 
 
@@ -145,7 +145,7 @@ class Install {
 	 * @since 1.0.0
 	 */
 	public static function update_db_version( $version = null ) {
-		update_option( 'creator_lms_db_version', is_null( $version ) ? OMLMS()::VERSION : $version );
+		update_option( 'ohmylms_db_version', is_null( $version ) ? ohmylms()::VERSION : $version );
 	}
 
 
@@ -156,7 +156,7 @@ class Install {
 	 * @return boolean
 	 */
 	public static function needs_db_update() {
-		$current_db_version = get_option( 'creator_lms_db_version', null );
+		$current_db_version = get_option( 'ohmylms_db_version', null );
 		$updates            = self::get_db_update_callbacks();
 		$update_versions    = array_keys( $updates );
 		usort( $update_versions, 'version_compare' );
@@ -182,8 +182,8 @@ class Install {
 	 */
 	public static function update() {
 		$updates = self::get_db_update_callbacks();
-		$current = get_option( 'creator_lms_db_version', null );
-		$to      = OMLMS()::VERSION;
+		$current = get_option( 'ohmylms_db_version', null );
+		$to      = ohmylms()::VERSION;
 
 		if ( is_null( $current ) ) {
 			$current = '1.0.0';
@@ -205,7 +205,7 @@ class Install {
 			}
 		}
 
-		$current_version = get_option( 'creator_lms_version', null );
+		$current_version = get_option( 'ohmylms_version', null );
 		if ( version_compare( $current, $current_version, '<' ) ) {
 			self::update_db_version();
 		}
@@ -220,22 +220,22 @@ class Install {
 	 * cron plugin, server restart before it fired, broken object-cache cron)
 	 * would otherwise mean the migration silently never runs and never
 	 * retries. This watchdog keeps rescheduling until the batch worker
-	 * records completion in the 'creator_lms_student_migration_done' option.
+	 * records completion in the 'ohmylms_student_migration_done' option.
 	 *
 	 * @since 1.2.12
 	 */
 	public static function maybe_resume_student_migration() {
-		if ( get_option( 'creator_lms_student_migration_done' ) ) {
+		if ( get_option( 'ohmylms_student_migration_done' ) ) {
 			return;
 		}
 
-		$db_version = get_option( 'creator_lms_db_version', null );
+		$db_version = get_option( 'ohmylms_db_version', null );
 		if ( is_null( $db_version ) || version_compare( $db_version, '1.2.12', '<' ) ) {
 			return; // Upgrade routine hasn't run yet — it will do the initial scheduling.
 		}
 
-		if ( ! wp_next_scheduled( 'creatorlms_migrate_students_batch' ) ) {
-			wp_schedule_single_event( time() + 10, 'creatorlms_migrate_students_batch' );
+		if ( ! wp_next_scheduled( 'ohmylms_migrate_students_batch' ) ) {
+			wp_schedule_single_event( time() + 10, 'ohmylms_migrate_students_batch' );
 		}
 	}
 
@@ -247,7 +247,7 @@ class Install {
 	 * @return boolean
 	 */
 	public static function is_new_install() {
-		return is_null( get_option( 'creator_lms_version', null ) );
+		return is_null( get_option( 'ohmylms_version', null ) );
 	}
 
 
@@ -272,7 +272,7 @@ class Install {
 	private static function get_schema() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		$tables          = "CREATE TABLE {$wpdb->prefix}omlms_sessions (
+		$tables          = "CREATE TABLE {$wpdb->prefix}ohmylms_sessions (
 			  session_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  session_key char(32) NOT NULL,
 			  session_value longtext NOT NULL,
@@ -280,7 +280,7 @@ class Install {
 			  PRIMARY KEY  (session_id),
 			  UNIQUE KEY session_key (session_key)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_chapter_relationship (
+			CREATE TABLE {$wpdb->prefix}ohmylms_chapter_relationship (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  course_id INT(11) NOT NULL,
 			  chapter_id INT(11) NOT NULL,
@@ -290,7 +290,7 @@ class Install {
 			  KEY chapter_id (chapter_id),
 			  KEY course_id (course_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_content_relationship (
+			CREATE TABLE {$wpdb->prefix}ohmylms_content_relationship (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  chapter_id INT(11) NOT NULL,
 			  content_id INT(11) NOT NULL,
@@ -301,7 +301,7 @@ class Install {
 			  KEY chapter_id (chapter_id),
 			  KEY content_id (content_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_certificate_relationship (
+			CREATE TABLE {$wpdb->prefix}ohmylms_certificate_relationship (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  course_id INT(11) NOT NULL,
 			  certificate_id INT(11) NOT NULL,
@@ -310,7 +310,7 @@ class Install {
 			  KEY course_id (course_id),
 			  KEY certificate_id (certificate_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_user_enrollment (
+			CREATE TABLE {$wpdb->prefix}ohmylms_user_enrollment (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  user_id bigint(20) NOT NULL,
 			  course_id bigint(20) NOT NULL,
@@ -325,7 +325,7 @@ class Install {
 			  KEY course_id (course_id),
 			  KEY order_id (order_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_earning (
+			CREATE TABLE {$wpdb->prefix}ohmylms_earning (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  membership_id bigint(20) default NULL,
 			  course_id bigint(20) default NULL,
@@ -336,7 +336,7 @@ class Install {
 			  PRIMARY KEY (id),
 			  KEY order_id (order_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_user_progress (
+			CREATE TABLE {$wpdb->prefix}ohmylms_user_progress (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  enrollment_id bigint(20) NOT NULL,
 			  content_id bigint(20) NOT NULL,
@@ -347,7 +347,7 @@ class Install {
 			  KEY enrollment_id (enrollment_id),
 			  KEY course_id (content_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_video_progress (
+			CREATE TABLE {$wpdb->prefix}ohmylms_video_progress (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  user_id bigint(20) NOT NULL,
 			  lesson_id bigint(20) NOT NULL,
@@ -366,7 +366,7 @@ class Install {
 			  KEY lesson_id (lesson_id),
 			  KEY course_id (course_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_quiz_questions_relationship (
+			CREATE TABLE {$wpdb->prefix}ohmylms_quiz_questions_relationship (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  quiz_id INT(11) NOT NULL,
 			  question_id INT(11) NOT NULL,
@@ -376,7 +376,7 @@ class Install {
 			  KEY quiz_id (quiz_id),
 			  KEY question_id (question_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_quiz_attempts (
+			CREATE TABLE {$wpdb->prefix}ohmylms_quiz_attempts (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  course_id bigint(20) NOT NULL,
 			  quiz_id bigint(20) NOT NULL,
@@ -390,7 +390,7 @@ class Install {
 			  KEY quiz_id (quiz_id),
 			  KEY student_id (student_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_quiz_attempts_answers (
+			CREATE TABLE {$wpdb->prefix}ohmylms_quiz_attempts_answers (
 			  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  student_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			  quiz_id bigint(20) NOT NULL,
@@ -407,7 +407,7 @@ class Install {
 			  KEY quiz_id (quiz_id),
 			  KEY student_id (student_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_question_answers (
+			CREATE TABLE {$wpdb->prefix}ohmylms_question_answers (
 			  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  question_id bigint(20) NOT NULL,
 			  answer longtext NOT NULL,
@@ -416,7 +416,7 @@ class Install {
 			  PRIMARY KEY  (id),
 			  UNIQUE KEY id (id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_question_answermeta (
+			CREATE TABLE {$wpdb->prefix}ohmylms_question_answermeta (
 			  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  answer_id bigint(20) NOT NULL,
 			  meta_key char(32) NOT NULL,
@@ -424,7 +424,7 @@ class Install {
 			  PRIMARY KEY  (id),
 			  UNIQUE KEY id (id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_order_items (
+			CREATE TABLE {$wpdb->prefix}ohmylms_order_items (
 			  order_item_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  order_item_name text NOT NULL,
 			  order_item_type varchar(200) NOT NULL DEFAULT '',
@@ -432,7 +432,7 @@ class Install {
 			  PRIMARY KEY  (order_item_id),
 			  KEY order_id (order_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_order_itemmeta (
+			CREATE TABLE {$wpdb->prefix}ohmylms_order_itemmeta (
 			  meta_id bigint(20) unsigned NOT NULL auto_increment,
 			  order_item_id bigint(20) unsigned NOT NULL,
 			  meta_key varchar(255) default NULL,
@@ -441,7 +441,7 @@ class Install {
 			  KEY order_item_id (order_item_id),
 			  KEY meta_key (meta_key(32))
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_notifications (
+			CREATE TABLE {$wpdb->prefix}ohmylms_notifications (
 				id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 				student_id BIGINT(20) NOT NULL,
 				course_id BIGINT(20) NOT NULL,
@@ -454,7 +454,7 @@ class Install {
 				KEY student_id (student_id),
 				KEY course_id (course_id)
 				) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_webhooks (
+			CREATE TABLE {$wpdb->prefix}ohmylms_webhooks (
 				id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 				name VARCHAR(255) NOT NULL,
 				trigger_event VARCHAR(100) NOT NULL,
@@ -493,7 +493,7 @@ class Install {
 
 
 	/**
-	 * Register the dedicated CreatorLMS student role.
+	 * Register the dedicated OhMyLMS student role.
 	 *
 	 * Safe to call on every activation/update — bails immediately if the role
 	 * already exists, and falls back to a minimal capability set if the
@@ -502,11 +502,11 @@ class Install {
 	 * @since 1.2.12
 	 */
 	public static function create_student_role() {
-		if ( ! function_exists( 'creator_lms_get_student_role' ) ) {
+		if ( ! function_exists( 'ohmylms_get_student_role' ) ) {
 			return;
 		}
 
-		$role_slug = creator_lms_get_student_role();
+		$role_slug = ohmylms_get_student_role();
 
 		if ( get_role( $role_slug ) ) {
 			return; // Already registered, nothing to do.
@@ -529,10 +529,10 @@ class Install {
 		$capabilities = array();
 
 		$capabilities['core'] = array(
-			'manage_creator_lms',
+			'manage_ohmylms',
 		);
 
-		$capability_types = array( 'omlms-course', 'omlms-order', 'omlms-coupon', 'omlms-lesson', 'omlms-topic', 'omlms-question' );
+		$capability_types = array( 'ohmylms-course', 'ohmylms-order', 'ohmylms-coupon', 'ohmylms-lesson', 'ohmylms-topic', 'ohmylms-question' );
 
 		foreach ( $capability_types as $capability_type ) {
 			$capabilities[ $capability_type ] = array(
@@ -563,7 +563,7 @@ class Install {
 	 * @since 1.0.0
 	 */
 	public static function maybe_create_pages() {
-		if ( empty( get_option( 'creator_lms_db_version' ) ) ) {
+		if ( empty( get_option( 'ohmylms_db_version' ) ) ) {
 			self::create_pages();
 		}
 	}
@@ -576,7 +576,7 @@ class Install {
 	 */
 	public static function create_pages() {
 		$pages = apply_filters(
-			'creator_lms_default_pages',
+			'ohmylms_default_pages',
 			array(
 				'course'   => array(
 					'name'    => _x( 'ohmylms-all-courses', 'Page slug', 'ohmylms' ),
@@ -586,26 +586,26 @@ class Install {
 				'checkout' => array(
 					'name'    => _x( 'ohmylms-checkout', 'Page slug', 'ohmylms' ),
 					'title'   => _x( 'OhMy Checkout', 'Page title', 'ohmylms' ),
-					'content' => '<!-- wp:shortcode -->[creator_lms_checkout]<!-- /wp:shortcode -->',
-					'template' => 'omlms-checkout',
+					'content' => '<!-- wp:shortcode -->[ohmylms_checkout]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-checkout',
 				),
 				'student_dashboard' => array(
 					'name'     => _x( 'my-dashboard', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Dashboard', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_dashboard]<!-- /wp:shortcode -->',
-					'template' => 'omlms-dashboard',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_dashboard]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-dashboard',
 				),
 				'student_profile' => array(
 					'name'     => _x( 'my-profile', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Profile', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_profile]<!-- /wp:shortcode -->',
-					'template' => 'omlms-profile',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_profile]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-profile',
 				),
 				'student_courses' => array(
 					'name'     => _x( 'my-courses', 'Page slug', 'ohmylms' ),
 					'title'    => _x( 'My Courses', 'Page title', 'ohmylms' ),
-					'content'  => '<!-- wp:shortcode -->[creator_lms_my_courses]<!-- /wp:shortcode -->',
-					'template' => 'omlms-my-courses',
+					'content'  => '<!-- wp:shortcode -->[ohmylms_my_courses]<!-- /wp:shortcode -->',
+					'template' => 'ohmylms-my-courses',
 				),
 			)
 		);
@@ -657,7 +657,7 @@ class Install {
 			}
 
 			// Store the page ID in options
-			update_option( 'creator_lms_' . $key . '_page_id', $page_id );
+			update_option( 'ohmylms_' . $key . '_page_id', $page_id );
 		}
 
 		flush_rewrite_rules(true);
@@ -671,17 +671,17 @@ class Install {
 	 */
 	public static function create_student_pages_for_existing_users() {
 		// Check if student pages have already been created
-		if ( get_option( 'creator_lms_student_pages_created' ) ) {
+		if ( get_option( 'ohmylms_student_pages_created' ) ) {
 			return;
 		}
 
 		// Handle the old profile page - update it to use the legacy shortcode
-		$old_profile_page_id = get_option( 'creator_lms_profile_page_id' );
+		$old_profile_page_id = get_option( 'ohmylms_profile_page_id' );
 		if ( $old_profile_page_id && get_post( $old_profile_page_id ) ) {
 			// Update the old profile page to use the legacy shortcode
 			wp_update_post( array(
 				'ID'           => $old_profile_page_id,
-				'post_content' => '<!-- wp:shortcode -->[creator_lms_my_profile]<!-- /wp:shortcode -->',
+				'post_content' => '<!-- wp:shortcode -->[ohmylms_my_profile]<!-- /wp:shortcode -->',
 			) );
 		}
 
@@ -690,26 +690,26 @@ class Install {
 			'student_dashboard' => array(
 				'name'     => _x( 'my-dashboard', 'Page slug', 'ohmylms' ),
 				'title'    => _x( 'My Dashboard', 'Page title', 'ohmylms' ),
-				'content'  => '<!-- wp:shortcode -->[creator_lms_dashboard]<!-- /wp:shortcode -->',
-				'template' => 'omlms-dashboard',
+				'content'  => '<!-- wp:shortcode -->[ohmylms_dashboard]<!-- /wp:shortcode -->',
+				'template' => 'ohmylms-dashboard',
 			),
 			'student_profile' => array(
 				'name'     => _x( 'my-profile', 'Page slug', 'ohmylms' ),
 				'title'    => _x( 'My Profile', 'Page title', 'ohmylms' ),
-				'content'  => '<!-- wp:shortcode -->[creator_lms_profile]<!-- /wp:shortcode -->',
-				'template' => 'omlms-profile',
+				'content'  => '<!-- wp:shortcode -->[ohmylms_profile]<!-- /wp:shortcode -->',
+				'template' => 'ohmylms-profile',
 			),
 			'student_courses' => array(
 				'name'     => _x( 'my-courses', 'Page slug', 'ohmylms' ),
 				'title'    => _x( 'My Courses', 'Page title', 'ohmylms' ),
-				'content'  => '<!-- wp:shortcode -->[creator_lms_my_courses]<!-- /wp:shortcode -->',
-				'template' => 'omlms-my-courses',
+				'content'  => '<!-- wp:shortcode -->[ohmylms_my_courses]<!-- /wp:shortcode -->',
+				'template' => 'ohmylms-my-courses',
 			),
 		);
 
 		foreach ( $student_pages as $key => $page ) {
 			// Check if page already exists
-			$existing_page_id = get_option( 'creator_lms_' . $key . '_page_id' );
+			$existing_page_id = get_option( 'ohmylms_' . $key . '_page_id' );
 			if ( $existing_page_id && get_post( $existing_page_id ) ) {
 				continue; // Skip if page already exists
 			}
@@ -747,14 +747,14 @@ class Install {
 			}
 
 			// Store the page ID in options
-			update_option( 'creator_lms_' . $key . '_page_id', $page_id );
+			update_option( 'ohmylms_' . $key . '_page_id', $page_id );
 		}
 
 		// Update settings for existing users if they haven't been customized
 		self::maybe_update_student_page_settings();
 
 		// Set flag to indicate student pages have been created
-		update_option( 'creator_lms_student_pages_created', '1' );
+		update_option( 'ohmylms_student_pages_created', '1' );
 
 		flush_rewrite_rules(true);
 	}
@@ -766,11 +766,11 @@ class Install {
 	 */
 	private static function maybe_update_student_page_settings() {
 		// Get current profile page setting
-		$current_profile_page_id = get_option( 'creator_lms_profile_page_id' );
-		$default_profile_page_id = get_option( 'creator_lms_profile_page_id' );
+		$current_profile_page_id = get_option( 'ohmylms_profile_page_id' );
+		$default_profile_page_id = get_option( 'ohmylms_profile_page_id' );
 
 		// Update the profile page setting to point to the new student profile page
-		$new_student_profile_page_id = get_option( 'creator_lms_student_profile_page_id' );
+		$new_student_profile_page_id = get_option( 'ohmylms_student_profile_page_id' );
 		if ( $new_student_profile_page_id ) {
 			// Keep the old profile page setting as is (for legacy shortcode)
 			// The new student profile page will be used via the new settings
@@ -778,12 +778,12 @@ class Install {
 	}
 
 	public static function save_default_permalink_settings() {
-		$permalink          = new \OMLMS\Admin\Settings\Permalink();
+		$permalink          = new \OhMyLMS\Admin\Settings\Permalink();
 		$permalink_settings = $permalink->get_settings();
 		if ( is_array( $permalink_settings ) ) {
 			foreach ( $permalink_settings as $setting ) {
 				if ( isset( $setting['id'], $setting['default'] ) ) {
-					if ( 'creator_lms_permalink' == $setting['id'] ) {
+					if ( 'ohmylms_permalink' == $setting['id'] ) {
 						update_option( $setting['id'], $setting['default'] );
 						flush_rewrite_rules(true);
 					}
@@ -793,7 +793,7 @@ class Install {
 	}
 
 	public static function save_default_design_settings() {
-		$design          = new \OMLMS\Admin\Settings\Design();
+		$design          = new \OhMyLMS\Admin\Settings\Design();
 		$design_settings = $design->get_settings();
 		if ( is_array( $design_settings ) ) {
 			foreach ( $design_settings as $setting ) {
@@ -805,7 +805,7 @@ class Install {
 	}
 
 	public static function save_default_email_settings() {
-		$email          = new \OMLMS\Admin\Settings\EmailSettings();
+		$email          = new \OhMyLMS\Admin\Settings\EmailSettings();
 		$email_settings = $email->get_settings();
 		if ( is_array( $email_settings ) ) {
 			foreach ( $email_settings as $setting ) {
@@ -819,7 +819,7 @@ class Install {
 private static function bundled_get_schema() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		$tables          = "CREATE TABLE {$wpdb->prefix}omlms_user_membership (
+		$tables          = "CREATE TABLE {$wpdb->prefix}ohmylms_user_membership (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  user_id bigint(20) NOT NULL,
 			  membership_id bigint(20) NOT NULL,
@@ -834,7 +834,7 @@ private static function bundled_get_schema() {
 			  KEY membership_id (membership_id),
 			  KEY order_id (order_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_assignment_attempts (
+			CREATE TABLE {$wpdb->prefix}ohmylms_assignment_attempts (
 			  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  user_id bigint(20) NOT NULL,
 			  course_id bigint(20) NOT NULL,
@@ -850,7 +850,7 @@ private static function bundled_get_schema() {
 			  PRIMARY KEY  (id),
 			  UNIQUE KEY id (id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_user_achievement (
+			CREATE TABLE {$wpdb->prefix}ohmylms_user_achievement (
 			  id bigint(20) unsigned NOT NULL auto_increment,
 			  user_id bigint(20) NOT NULL,
 			  course_id bigint(20) NULL,
@@ -870,7 +870,7 @@ private static function bundled_get_schema() {
 			  KEY badge_id (badge_id),
 			  KEY level_id (level_id)
 			) $charset_collate;
-			CREATE TABLE {$wpdb->prefix}omlms_cohorts (
+			CREATE TABLE {$wpdb->prefix}ohmylms_cohorts (
 				id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 				course_id BIGINT(20) UNSIGNED NOT NULL,
 				title VARCHAR(255) DEFAULT NULL,
@@ -890,18 +890,18 @@ private static function bundled_get_schema() {
 	}
 
 public static function bundled_maybe_create_pages() {
-		if ( empty( get_option( 'creator_lms_pro_db_version' ) ) ) {
+		if ( empty( get_option( 'ohmylms_pro_db_version' ) ) ) {
 			self::bundled_create_pages();
 		}
 	}
 
 public static function bundled_create_pages() {
 		$pages = apply_filters(
-			'creator_lms_pro_default_pages',
+			'ohmylms_pro_default_pages',
 			array(
 				'membership' => array(
-					'name'    => _x( 'ohmylms-all-membership', 'Page slug', 'creator-lms' ),
-					'title'   => _x( 'All Membership', 'Page title', 'creator-lms' ),
+					'name'    => _x( 'ohmylms-all-membership', 'Page slug', 'ohmylms' ),
+					'title'   => _x( 'All Membership', 'Page title', 'ohmylms' ),
 					'content' => '',
 				),
 			)
@@ -911,12 +911,12 @@ public static function bundled_create_pages() {
 			$existing_page = get_page_by_path( $page['name'], OBJECT, 'page' );
 	
 			if ( $existing_page ) {
-                if (!get_option('creator_lms_' . $key . '_page_id')) update_option('creator_lms_' . $key . '_page_id', $existing_page->ID);
+                if (!get_option('ohmylms_' . $key . '_page_id')) update_option('ohmylms_' . $key . '_page_id', $existing_page->ID);
                 continue;
 				// Check if existing page has the same title and content
 				if ( $existing_page->post_title === $page['title'] && $existing_page->post_content === $page['content'] ) {
 					// Store the existing page ID and skip creation
-					update_option( 'creator_lms_' . $key . '_page_id', $existing_page->ID );
+					update_option( 'ohmylms_' . $key . '_page_id', $existing_page->ID );
 					continue;
 				} else {
 					// Update existing page if needed
@@ -951,7 +951,7 @@ public static function bundled_create_pages() {
 			}
 	
 			// Store the page ID in options
-			update_option( 'creator_lms_' . $key . '_page_id', $page_id );
+			update_option( 'ohmylms_' . $key . '_page_id', $page_id );
 		}
 
 		flush_rewrite_rules();

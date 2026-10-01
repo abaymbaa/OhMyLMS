@@ -2,9 +2,15 @@
 
 ## Open the portal
 
-Use **WordPress Admin → OhMyLMS Schools**, the shortcut beneath the existing student dashboard, or open `/?ohmylms_portal=1` on this installation. The portal is available immediately; publishing a page is optional.
+Use **WordPress Admin → OhMyLMS → Students** for management. The shared **Students**, **Teachers**, **Parents**, **All accounts**, **Classes**, and **Schools** tabs preserve the existing student enrollment/progress list and bring school management into the same navigation. Teacher and parent directories support search and pagination and include both account roles and active school/family relationships. Account directories and edit links require the appropriate WordPress capabilities. School rosters, invitations, and academic years remain available under Schools. The former People & Schools menu is removed; its admin URL remains valid.
+
+The family learning portal remains available from the shortcut beneath the existing student dashboard or at `/?ohmylms_portal=1`. Publishing a page is optional.
 
 The same OhMyLMS plugin includes all school and family features. No Pro/free block split is introduced.
+
+## Create a class without a school
+
+An administrator can assign the **OhMyLMS Teacher** WordPress role to a teacher account without inviting it to a school. Active school teachers can also create independent classes. In the learning portal, open **My classes**, then **Create independent class**. Enter a class name and optionally a subject and grade; no school or academic year is needed. Administrators use **Students → Classes**. Independent classes are listed separately from school classes and can be archived by their creator or a platform administrator. Other teachers cannot list, inspect, or archive them. School roster and invitation workflows remain school-specific.
 
 ## Set up a school
 
@@ -74,7 +80,7 @@ npm run check
 
 `npm run build` now builds both the existing SDK and `build/sdk/schools.js`. The school module uses generated files directly in both source-asset modes; do not edit `build/` by hand.
 
-PHP implementation is in `includes/Schools/`; React source is in `assets/src/features/schools/`; editor registration and CSS are in `assets/schools/`. REST routes are under `ohmylms/v1/school/`. The additive schema has its own `omlms_school_schema` version and uses the configured WordPress table prefix.
+PHP implementation is in `includes/Schools/`; React source is in `assets/src/features/schools/`; editor registration and CSS are in `assets/schools/`. REST routes are under `ohmylms/v1/school/`. The additive schema has its own `ohmylms_school_schema` version and uses the configured WordPress table prefix.
 
 Isolated verification:
 
@@ -83,9 +89,9 @@ php tests/php/schools-integration.php
 npm run test:browser -- schools.spec.cjs
 ```
 
-Set `OMLMS_TEST_CREDENTIALS` to the existing disposable site's external credentials file and enable mysqli/mbstring for its PHP runtime. Tests refuse the production database and clean up their fixtures. Mail/remote OAuth calls are blocked by the test installation.
+Set `OHMYLMS_TEST_CREDENTIALS` to the existing disposable site's external credentials file and enable mysqli/mbstring for its PHP runtime. Tests refuse the production database and clean up their fixtures. Mail/remote OAuth calls are blocked by the test installation.
 
-To disable the new module without deleting data, define `OMLMS_SCHOOLS_ENABLED` as `false` in WordPress configuration. Leave the added tables intact. Back up the database before deploying to another installation; rollback code and database only as a coordinated restore.
+To disable the new module without deleting data, define `OHMYLMS_SCHOOLS_ENABLED` as `false` in WordPress configuration. Leave the added tables intact. Back up the database before deploying to another installation; rollback code and database only as a coordinated restore.
 
 ## Current boundaries
 

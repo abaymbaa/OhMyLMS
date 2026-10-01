@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -40,7 +40,7 @@ class SetupWizardController extends RestController {
 	 */
 	public function verify_nonce( WP_REST_Request $request ) {
 		$nonce = $request->get_header( 'nonce' );
-		if ( ! wp_verify_nonce( $nonce, 'omlms_setup_wizard' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'ohmylms_setup_wizard' ) ) {
 			return new WP_Error( 'invalid_nonce', __( 'Invalid nonce.', 'ohmylms' ), array( 'status' => 403 ) );
 		}
 		return true;
@@ -151,7 +151,7 @@ class SetupWizardController extends RestController {
 		 *
 		 * @since 1.1.16
 		 */
-		do_action( 'creatorlms_onboarding_started' );
+		do_action( 'ohmylms_onboarding_started' );
 
 		return rest_ensure_response(
 			array(
@@ -180,7 +180,7 @@ class SetupWizardController extends RestController {
 		 *
 		 * @since 1.1.16
 		 */
-		do_action( 'creatorlms_onboarding_completed' );
+		do_action( 'ohmylms_onboarding_completed' );
 
 		return rest_ensure_response(
 			array(
@@ -212,7 +212,7 @@ class SetupWizardController extends RestController {
 		 * @since 1.1.17
 		 * @param string $step The wizard step ID the user was on when they exited.
 		 */
-		do_action( 'creatorlms_onboarding_skipped', $step );
+		do_action( 'ohmylms_onboarding_skipped', $step );
 
 		return rest_ensure_response(
 			array(
@@ -242,7 +242,7 @@ class SetupWizardController extends RestController {
 		}
 
 		$course_ids  = array();
-		$is_first    = ! get_option( 'creatorlms_first_course_created', false );
+		$is_first    = ! get_option( 'ohmylms_first_course_created', false );
 
 		foreach ( $courses_data as $course_data ) {
 			if ( ! isset( $course_data['title'] ) ) {
@@ -255,7 +255,7 @@ class SetupWizardController extends RestController {
 					'post_title'   => sanitize_text_field( $course_data['title'] ),
 					'post_content' => wp_kses_post( $course_data['content'] ),
 					'post_status'  => 'draft',
-					'post_type'    => 'omlms-course',
+					'post_type'    => 'ohmylms-course',
 					'post_author'  => get_current_user_id(),
 				)
 			);
@@ -282,7 +282,7 @@ class SetupWizardController extends RestController {
 		}
 
 		if ( $is_first ) {
-			do_action( 'creatorlms_after_creating_first_course', $course_ids[0], null );
+			do_action( 'ohmylms_after_creating_first_course', $course_ids[0], null );
 		}
 
 		return rest_ensure_response(
@@ -328,7 +328,7 @@ class SetupWizardController extends RestController {
 				'post_title'   => sanitize_text_field( $chapter_data['title'] ),
 				'post_content' => '',
 				'post_status'  => 'publish',
-				'post_type'    => 'omlms-chapter',
+				'post_type'    => 'ohmylms-chapter',
 				'post_author'  => get_current_user_id(),
 			)
 		);
@@ -339,7 +339,7 @@ class SetupWizardController extends RestController {
 
 		// Associate chapter with course.
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_chapter_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_chapter_relationship';
 		$wpdb->insert(
 			$table_name,
 			array(
@@ -372,11 +372,11 @@ class SetupWizardController extends RestController {
 
 		$post_type = '';
 		switch ( $content_data['type'] ) {
-			case 'omlms-lesson':
-				$post_type = 'omlms-lesson';
+			case 'ohmylms-lesson':
+				$post_type = 'ohmylms-lesson';
 				break;
-			case 'omlms-quiz':
-				$post_type = 'omlms-quiz';
+			case 'ohmylms-quiz':
+				$post_type = 'ohmylms-quiz';
 				break;
 			// Add other content types here if needed.
 			default:
@@ -400,10 +400,10 @@ class SetupWizardController extends RestController {
 
 		// Associate content with chapter.
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_content_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		$content_type_for_db = isset( $content_data['content_type'] ) ? $content_data['content_type'] : '';
-		if ( 'omlms-quiz' === $post_type ) {
+		if ( 'ohmylms-quiz' === $post_type ) {
 			$content_type_for_db = 'quiz';
 		}
 
@@ -444,23 +444,23 @@ class SetupWizardController extends RestController {
 
 		// Save full wizard data
 		if ( isset( $request['wizard_data'] ) ) {
-			update_option( 'creatorlms_setup_wizard_data', $request['wizard_data'] );
+			update_option( 'ohmylms_setup_wizard_data', $request['wizard_data'] );
 		}
 
 		// Save certificate ID if provided
 		if ( isset( $request['certificate_id'] ) ) {
-			update_option( 'creatorlms_setup_wizard_certificate_id', $request['certificate_id'] );
+			update_option( 'ohmylms_setup_wizard_certificate_id', $request['certificate_id'] );
 		}
 
 		flush_rewrite_rules(true);
 
-		if ( 'yes' === get_option( 'creatorlms_allow_tracking', 'no' ) ) {
+		if ( 'yes' === get_option( 'ohmylms_allow_tracking', 'no' ) ) {
 			/**
 			 * Fires after tracking consent is accepted.
 			 *
 			 * @since 1.1.10
 			 */
-			do_action( 'creatorlms_after_accept_consent' );
+			do_action( 'ohmylms_after_accept_consent' );
 		}
 
 		return rest_ensure_response(
@@ -501,39 +501,39 @@ class SetupWizardController extends RestController {
 	private function save_email_settings( $request ) {
 
 		if ( isset( $request['logo'] ) ) {
-			update_option( 'creator_lms_email_branding_image', sanitize_text_field( $request['logo'] ) );
+			update_option( 'ohmylms_email_branding_image', sanitize_text_field( $request['logo'] ) );
 		}
 
 		if ( isset( $request['branding_title'] ) ) {
-			update_option( 'creator_lms_branding_title', sanitize_text_field( $request['branding_title'] ) );
+			update_option( 'ohmylms_branding_title', sanitize_text_field( $request['branding_title'] ) );
 		}
 
 		if ( isset( $request['background_color'] ) ) {
-			update_option( 'creator_lms_email_background_color', sanitize_text_field( $request['background_color'] ) );
+			update_option( 'ohmylms_email_background_color', sanitize_text_field( $request['background_color'] ) );
 		}
 
 		if ( isset( $request['base_color'] ) ) {
-			update_option( 'creator_lms_email_base_color', sanitize_text_field( $request['base_color'] ) );
+			update_option( 'ohmylms_email_base_color', sanitize_text_field( $request['base_color'] ) );
 		}
 
 		if ( isset( $request['body_background_color'] ) ) {
-			update_option( 'creator_lms_email_body_background_color', sanitize_text_field( $request['body_background_color'] ) );
+			update_option( 'ohmylms_email_body_background_color', sanitize_text_field( $request['body_background_color'] ) );
 		}
 
 		if ( isset( $request['body_text_color'] ) ) {
-			update_option( 'creator_lms_email_body_text_color', sanitize_text_field( $request['body_text_color'] ) );
+			update_option( 'ohmylms_email_body_text_color', sanitize_text_field( $request['body_text_color'] ) );
 		}
 
 		if ( isset( $request['sender_name'] ) ) {
-			update_option( 'creator_lms_email_sender_name', sanitize_text_field( $request['sender_name'] ) );
+			update_option( 'ohmylms_email_sender_name', sanitize_text_field( $request['sender_name'] ) );
 		}
 
 		if ( isset( $request['sender_email_address'] ) ) {
-			update_option( 'creator_lms_email_sender_email_address', sanitize_text_field( $request['sender_email_address'] ) );
+			update_option( 'ohmylms_email_sender_email_address', sanitize_text_field( $request['sender_email_address'] ) );
 		}
 
 		if ( isset( $request['email_footer_text'] ) ) {
-			update_option( 'creator_lms_email_footer_text', sanitize_text_field( $request['email_footer_text'] ) );
+			update_option( 'ohmylms_email_footer_text', sanitize_text_field( $request['email_footer_text'] ) );
 		}
 	}
 
@@ -588,7 +588,7 @@ class SetupWizardController extends RestController {
 	}
 
 
-	private function create_taxonomy_if_not_exists( $taxonomy, $post_type = 'omlms-course' ) {
+	private function create_taxonomy_if_not_exists( $taxonomy, $post_type = 'ohmylms-course' ) {
 		global $wp_taxonomies;
 
 		if ( ! taxonomy_exists( $taxonomy ) ) {
@@ -615,18 +615,18 @@ class SetupWizardController extends RestController {
 			$name       = isset( $request['contact']['name'] ) ? sanitize_text_field( $request['contact']['name'] ) : '';
 			$setup_data = isset( $request['wizard_data'] ) ? $request['wizard_data'] : array();
 
-			$createContactInstance = new \OMLMS\SetupWizard\CreateContact( $email, $name, $setup_data );
+			$createContactInstance = new \OhMyLMS\SetupWizard\CreateContact( $email, $name, $setup_data );
 			$response              = $createContactInstance->create_contact_via_webhook();
 		}
 	}
 
 	private function save_layout_settings( $request ) {
-		$design_obj = new \OMLMS\Admin\Settings\Design();
+		$design_obj = new \OhMyLMS\Admin\Settings\Design();
 		$settings   = $design_obj->get_settings();
 		if ( is_array( $settings ) ) {
 			foreach ( $settings as $setting ) {
 				if ( isset( $setting['id'], $setting['value'] ) ) {
-					if ( 'creator_lms_archive_page_row' == $setting['id'] ) {
+					if ( 'ohmylms_archive_page_row' == $setting['id'] ) {
 						$setting['value'] = array();
 					}
 					update_option( $setting['id'], $setting['value'] );

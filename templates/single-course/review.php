@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="review-author-wrapper">
 	<?php
-		creator_lms_review_author();
-		creator_lms_review_meta();
+		ohmylms_review_author();
+		ohmylms_review_meta();
 	?>
 </div>
 
@@ -23,10 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php
 /**
- * The creator_lms_review_before_comment_meta hook.
+ * The ohmylms_review_before_comment_meta hook.
  *
- * @hooked creator_lms_review_display_rating - 10
+ * @hooked ohmylms_review_display_rating - 10
  */
-// do_action( 'creator_lms_review_before_comment_meta', $comment );
+// do_action( 'ohmylms_review_before_comment_meta', $comment );
 
 ?>

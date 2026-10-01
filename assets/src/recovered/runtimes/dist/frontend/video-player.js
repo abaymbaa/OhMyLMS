@@ -627,7 +627,7 @@
             return new Promise(function (t, n) {
               try {
                 var o = document.createElement("video");
-                if (o.className = "omlms-html5-video", o.controls = e.config.showControls, o.autoplay = e.config.autoplay, o.loop = e.config.loop, o.muted = e.config.muted, o.playsInline = !0, o.preload = "metadata", e.config.url.startsWith(window.location.origin) || e.config.url.startsWith("/") || !e.config.url.startsWith("http") || (o.crossOrigin = "anonymous"), e.config.poster && (o.poster = e.config.poster), e.config.url.toLowerCase().includes(".mov")) o.src = e.config.url;else {
+                if (o.className = "ohmylms-html5-video", o.controls = e.config.showControls, o.autoplay = e.config.autoplay, o.loop = e.config.loop, o.muted = e.config.muted, o.playsInline = !0, o.preload = "metadata", e.config.url.startsWith(window.location.origin) || e.config.url.startsWith("/") || !e.config.url.startsWith("http") || (o.crossOrigin = "anonymous"), e.config.poster && (o.poster = e.config.poster), e.config.url.toLowerCase().includes(".mov")) o.src = e.config.url;else {
                   var r = document.createElement("source");
                   r.src = e.config.url, r.type = e.getMimeType(e.config.url), o.appendChild(r);
                 }
@@ -771,7 +771,7 @@
               var e = t("<img />", {
                   src: this.options.logoUrl,
                   alt: "",
-                  class: "omlms-player-logo"
+                  class: "ohmylms-player-logo"
                 }).css({
                   top: "50%",
                   left: "50%",
@@ -792,17 +792,17 @@
         }, {
           key: "createPlayerContainer",
           value: function () {
-            this.playerContainer = t('<div class="omlms-video-player-container"></div>'), this.element.append(this.playerContainer);
+            this.playerContainer = t('<div class="ohmylms-video-player-container"></div>'), this.element.append(this.playerContainer);
             var e = this;
             this.playerContainer.on("click touchend", function (n) {
-              t(n.target).closest(".omlms-custom-controls").length > 0 || ("touchend" === n.type && (n.preventDefault(), e.showControls()), e.platformHandler && (e.platformHandler.isPaused ? e.play() : e.pause()));
+              t(n.target).closest(".ohmylms-custom-controls").length > 0 || ("touchend" === n.type && (n.preventDefault(), e.showControls()), e.platformHandler && (e.platformHandler.isPaused ? e.play() : e.pause()));
             });
           }
         }, {
           key: "addBrandingBlockers",
           value: function () {
             if ("youtube" === this.platform || "vimeo" === this.platform) {
-              var e = t('\n                    <div class="omlms-video-interaction-blocker"></div>\n                    <div class="omlms-branding-blocker-top"></div>\n                    <div class="omlms-branding-blocker-bottom-right"></div>\n                ');
+              var e = t('\n                    <div class="ohmylms-video-interaction-blocker"></div>\n                    <div class="ohmylms-branding-blocker-top"></div>\n                    <div class="ohmylms-branding-blocker-bottom-right"></div>\n                ');
               this.element.append(e), this.brandingBlockers = e;
               var n = this;
               e.on("click touchend", function (e) {
@@ -814,9 +814,9 @@
           key: "createBigPlayButton",
           value: function () {
             var e = this.isMobile ? 70 : 140,
-              n = t('\n                <div class="omlms-big-play-button">\n                    <svg width="'.concat(e, '" height="').concat(e, '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle class="play-button-circle" cx="50" cy="50" r="48" stroke-width="4"/>\n                        <path class="play-button-icon" d="M40 30L70 50L40 70V30Z"/>\n                    </svg>\n                </div>\n            '));
+              n = t('\n                <div class="ohmylms-big-play-button">\n                    <svg width="'.concat(e, '" height="').concat(e, '" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        <circle class="play-button-circle" cx="50" cy="50" r="48" stroke-width="4"/>\n                        <path class="play-button-icon" d="M40 30L70 50L40 70V30Z"/>\n                    </svg>\n                </div>\n            '));
             if ("youtube" === this.platform && !this.isMobile) {
-              var o = t('<div class="omlms-youtube-click-blocker"></div>');
+              var o = t('<div class="ohmylms-youtube-click-blocker"></div>');
               this.element.append(o), this.clickBlocker = o;
               var r = this;
               o.on("click touchend", function (e) {
@@ -832,19 +832,19 @@
         }, {
           key: "createCustomControls",
           value: function () {
-            var e = t('                <div class="omlms-custom-controls">\n                    <div class="omlms-controls-progress-container">\n                        <div class="omlms-progress-bar">\n                            <div class="omlms-progress-filled"></div>\n                            <div class="omlms-progress-handle"></div>\n                        </div>\n                        <div class="omlms-time-display">\n                            <span class="omlms-current-time">0:00</span>\n                            <span class="omlms-separator">/</span>\n                            <span class="omlms-duration">--:--</span>\n                        </div>\n                    </div>\n                    <div class="omlms-controls-bottom">\n                        <div class="omlms-controls-left">\n                            <button class="omlms-control-btn omlms-play-pause" aria-label="Play">\n                                <svg class="omlms-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <path d="M8 5v14l11-7z" fill="currentColor"/>\n                                </svg>\n                                <svg class="omlms-pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>\n                                </svg>\n                            </button>\n                            <div class="omlms-volume-control">\n                                <button class="omlms-control-btn omlms-volume-btn" aria-label="Mute">\n                                    <svg class="omlms-volume-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/>\n                                    </svg>\n                                    <svg class="omlms-mute-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="currentColor"/>\n                                    </svg>\n                                </button>\n                                <div class="omlms-volume-slider">\n                                    <div class="omlms-volume-track" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">\n                                        <div class="omlms-volume-fill"></div>\n                                        <div class="omlms-volume-thumb"></div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        <div class="omlms-controls-right">\n                            <div class="omlms-speed-control">\n                                <button class="omlms-control-btn omlms-speed-btn" aria-label="Playback speed">\n                                    <span class="omlms-speed-text">1x</span>\n                                </button>\n                                <div class="omlms-speed-menu">\n                                    <button data-speed="0.5">0.5x</button>\n                                    <button data-speed="0.75">0.75x</button>\n                                    <button data-speed="1" class="active">1x</button>\n                                    <button data-speed="1.25">1.25x</button>\n                                    <button data-speed="1.5">1.5x</button>\n                                    <button data-speed="2">2x</button>\n                                </div>\n                            </div>\n                            <button class="omlms-control-btn omlms-fullscreen-btn" aria-label="Fullscreen">\n                                <svg class="omlms-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/>\n                                </svg>\n                                <svg class="omlms-exit-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" fill="currentColor"/>\n                                </svg>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            ');
+            var e = t('                <div class="ohmylms-custom-controls">\n                    <div class="ohmylms-controls-progress-container">\n                        <div class="ohmylms-progress-bar">\n                            <div class="ohmylms-progress-filled"></div>\n                            <div class="ohmylms-progress-handle"></div>\n                        </div>\n                        <div class="ohmylms-time-display">\n                            <span class="ohmylms-current-time">0:00</span>\n                            <span class="ohmylms-separator">/</span>\n                            <span class="ohmylms-duration">--:--</span>\n                        </div>\n                    </div>\n                    <div class="ohmylms-controls-bottom">\n                        <div class="ohmylms-controls-left">\n                            <button class="ohmylms-control-btn ohmylms-play-pause" aria-label="Play">\n                                <svg class="ohmylms-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <path d="M8 5v14l11-7z" fill="currentColor"/>\n                                </svg>\n                                <svg class="ohmylms-pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>\n                                </svg>\n                            </button>\n                            <div class="ohmylms-volume-control">\n                                <button class="ohmylms-control-btn ohmylms-volume-btn" aria-label="Mute">\n                                    <svg class="ohmylms-volume-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/>\n                                    </svg>\n                                    <svg class="ohmylms-mute-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="currentColor"/>\n                                    </svg>\n                                </button>\n                                <div class="ohmylms-volume-slider">\n                                    <div class="ohmylms-volume-track" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">\n                                        <div class="ohmylms-volume-fill"></div>\n                                        <div class="ohmylms-volume-thumb"></div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        <div class="ohmylms-controls-right">\n                            <div class="ohmylms-speed-control">\n                                <button class="ohmylms-control-btn ohmylms-speed-btn" aria-label="Playback speed">\n                                    <span class="ohmylms-speed-text">1x</span>\n                                </button>\n                                <div class="ohmylms-speed-menu">\n                                    <button data-speed="0.5">0.5x</button>\n                                    <button data-speed="0.75">0.75x</button>\n                                    <button data-speed="1" class="active">1x</button>\n                                    <button data-speed="1.25">1.25x</button>\n                                    <button data-speed="1.5">1.5x</button>\n                                    <button data-speed="2">2x</button>\n                                </div>\n                            </div>\n                            <button class="ohmylms-control-btn ohmylms-fullscreen-btn" aria-label="Fullscreen">\n                                <svg class="ohmylms-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/>\n                                </svg>\n                                <svg class="ohmylms-exit-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">\n                                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" fill="currentColor"/>\n                                </svg>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            ');
             this.element.append(e), this.controls = e, this.updateVolumeFill(100), this.attachControlEvents();
           }
         }, {
           key: "attachControlEvents",
           value: function () {
             var n = this;
-            this.controls.find(".omlms-play-pause").on("click touchend", function (e) {
+            this.controls.find(".ohmylms-play-pause").on("click touchend", function (e) {
               "touchend" === e.type && e.preventDefault(), n.platformHandler.isPaused ? n.play() : n.pause();
-            }), this.controls.find(".omlms-volume-btn").on("click touchend", function (e) {
+            }), this.controls.find(".ohmylms-volume-btn").on("click touchend", function (e) {
               "touchend" === e.type && e.preventDefault(), n.volume > 0 ? (n.previousVolume = n.volume, n.setVolume(0)) : n.setVolume(n.previousVolume || 1);
             });
-            var r = this.controls.find(".omlms-volume-track"),
+            var r = this.controls.find(".ohmylms-volume-track"),
               i = !1,
               a = function (e) {
                 var t,
@@ -885,12 +885,12 @@
                 case "End":
                   e.preventDefault(), n.setVolume(1);
               }
-            }), this.controls.find(".omlms-speed-btn").on("click touchend", function (e) {
-              "touchend" === e.type && e.preventDefault(), n.controls.find(".omlms-speed-menu").toggleClass("active");
-            }), this.controls.find(".omlms-speed-menu button").on("click touchend", function (e) {
+            }), this.controls.find(".ohmylms-speed-btn").on("click touchend", function (e) {
+              "touchend" === e.type && e.preventDefault(), n.controls.find(".ohmylms-speed-menu").toggleClass("active");
+            }), this.controls.find(".ohmylms-speed-menu button").on("click touchend", function (e) {
               e.stopPropagation(), "touchend" === e.type && e.preventDefault();
               var o = parseFloat(t(this).data("speed"));
-              n.setPlaybackRate(o), n.controls.find(".omlms-speed-menu button").removeClass("active"), t(this).addClass("active"), n.controls.find(".omlms-speed-text").text(o + "x"), n.controls.find(".omlms-speed-menu").removeClass("active");
+              n.setPlaybackRate(o), n.controls.find(".ohmylms-speed-menu button").removeClass("active"), t(this).addClass("active"), n.controls.find(".ohmylms-speed-text").text(o + "x"), n.controls.find(".ohmylms-speed-menu").removeClass("active");
             });
             var s = !1,
               l = 0,
@@ -898,10 +898,10 @@
               u = 0,
               d = 0,
               h = 0,
-              f = n.controls.find(".omlms-progress-bar"),
-              p = f.find(".omlms-progress-filled")[0],
-              m = f.find(".omlms-progress-handle")[0],
-              y = n.controls.find(".omlms-current-time"),
+              f = n.controls.find(".ohmylms-progress-bar"),
+              p = f.find(".ohmylms-progress-filled")[0],
+              m = f.find(".ohmylms-progress-handle")[0],
+              y = n.controls.find(".ohmylms-current-time"),
               v = function (e) {
                 var t;
                 t = e.type && -1 !== e.type.indexOf("touch") ? (e.touches ? e.touches[0] : e.changedTouches[0]).clientX : e.pageX || e.clientX;
@@ -1000,7 +1000,7 @@
               return function (e) {
                 return t.apply(this, arguments);
               };
-            }()), this.controls.find(".omlms-fullscreen-btn").on("click touchend", function (e) {
+            }()), this.controls.find(".ohmylms-fullscreen-btn").on("click touchend", function (e) {
               "touchend" === e.type && e.preventDefault(), n.toggleFullscreen();
             });
             var w,
@@ -1122,10 +1122,10 @@
         }, {
           key: "showVolumeIndicator",
           value: function (e, n) {
-            this.element.find(".omlms-volume-indicator").remove();
+            this.element.find(".ohmylms-volume-indicator").remove();
             var o = Math.round(100 * e),
               r = Math.abs(Math.round(100 * n)),
-              i = t('\n                <div class="omlms-volume-indicator">\n                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        '.concat(0 === e ? '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="white"/>' : '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="white"/>', '\n                    </svg>\n                    <div class="omlms-volume-text">\n                        <span class="omlms-volume-current">').concat(o, '%</span>\n                        <span class="omlms-volume-delta">').concat(r, "%</span>\n                    </div>\n                </div>\n            "));
+              i = t('\n                <div class="ohmylms-volume-indicator">\n                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                        '.concat(0 === e ? '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="white"/>' : '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="white"/>', '\n                    </svg>\n                    <div class="ohmylms-volume-text">\n                        <span class="ohmylms-volume-current">').concat(o, '%</span>\n                        <span class="ohmylms-volume-delta">').concat(r, "%</span>\n                    </div>\n                </div>\n            "));
             this.element.append(i), setTimeout(function () {
               i.fadeOut(300, function () {
                 t(this).remove();
@@ -1135,10 +1135,10 @@
         }, {
           key: "showSeekIndicator",
           value: function (e) {
-            this.element.find(".omlms-seek-indicator").remove();
+            this.element.find(".ohmylms-seek-indicator").remove();
             var n = Math.abs(e),
               o = e > 0 ? "".concat(n, "s >>") : "<< ".concat(n, "s"),
-              r = t('\n                <div class="omlms-seek-indicator">\n                    '.concat(e > 0 ? '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                    <path d="M4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8z" fill="white"/>\n                    <path d="M12.5 8v4.7l3.6 2.1-.8 1.2-4.3-2.5V8h1.5z" fill="white"/>\n                </svg>' : '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                    <path d="M20 13c0 4.4-3.6 8-8 8s-8-3.6-8-8h2c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6V3l-5 5 5 5V9c4.4 0 8 3.6 8 8z" fill="white"/>\n                    <path d="M11 8v4.7l3.6 2.1-.8 1.2-4.3-2.5V8H11z" fill="white"/>\n                </svg>', "\n                    <span>").concat(o, "</span>\n                </div>\n            "));
+              r = t('\n                <div class="ohmylms-seek-indicator">\n                    '.concat(e > 0 ? '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                    <path d="M4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8z" fill="white"/>\n                    <path d="M12.5 8v4.7l3.6 2.1-.8 1.2-4.3-2.5V8h1.5z" fill="white"/>\n                </svg>' : '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n                    <path d="M20 13c0 4.4-3.6 8-8 8s-8-3.6-8-8h2c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6V3l-5 5 5 5V9c4.4 0 8 3.6 8 8z" fill="white"/>\n                    <path d="M11 8v4.7l3.6 2.1-.8 1.2-4.3-2.5V8H11z" fill="white"/>\n                </svg>', "\n                    <span>").concat(o, "</span>\n                </div>\n            "));
             this.element.append(r), setTimeout(function () {
               r.fadeOut(300, function () {
                 t(this).remove();
@@ -1158,7 +1158,7 @@
                   }
                   return e.a(2);
                 case 1:
-                  n = this.platformHandler.getCurrentTime(), (o = this.platformHandler.getDuration()) && o > 0 && isFinite(o) ? (r = n, i = n / o * 100, this.hasEnded ? (r = o, i = 100) : (a = o - n, this.platformHandler.isPaused && a >= 0 && a < .3 && (r = o, i = 100)), this.controls.find(".omlms-current-time").text(this.formatTime(r)), this.controls.find(".omlms-progress-filled").css("width", i + "%"), this.controls.find(".omlms-progress-handle").css("left", i + "%"), this.controls.find(".omlms-duration").text(this.formatTime(o)), this.durationKnown = !0) : (this.controls.find(".omlms-current-time").text(this.formatTime(n || 0)), this.controls.find(".omlms-duration").text("00:00"));
+                  n = this.platformHandler.getCurrentTime(), (o = this.platformHandler.getDuration()) && o > 0 && isFinite(o) ? (r = n, i = n / o * 100, this.hasEnded ? (r = o, i = 100) : (a = o - n, this.platformHandler.isPaused && a >= 0 && a < .3 && (r = o, i = 100)), this.controls.find(".ohmylms-current-time").text(this.formatTime(r)), this.controls.find(".ohmylms-progress-filled").css("width", i + "%"), this.controls.find(".ohmylms-progress-handle").css("left", i + "%"), this.controls.find(".ohmylms-duration").text(this.formatTime(o)), this.durationKnown = !0) : (this.controls.find(".ohmylms-current-time").text(this.formatTime(n || 0)), this.controls.find(".ohmylms-duration").text("00:00"));
                 case 2:
                   return e.a(2);
               }
@@ -1198,8 +1198,8 @@
                 onEnded: function () {
                   if (e.hasEnded = !0, e.controls) {
                     var t = e.platformHandler.getDuration();
-                    "number" == typeof t && t > 0 ? (e.controls.find(".omlms-current-time").text(e.formatTime(t)), e.controls.find(".omlms-progress-filled").css("width", "100%")) : Promise.resolve(t).then(function (t) {
-                      t && t > 0 && (e.controls.find(".omlms-current-time").text(e.formatTime(t)), e.controls.find(".omlms-progress-filled").css("width", "100%"));
+                    "number" == typeof t && t > 0 ? (e.controls.find(".ohmylms-current-time").text(e.formatTime(t)), e.controls.find(".ohmylms-progress-filled").css("width", "100%")) : Promise.resolve(t).then(function (t) {
+                      t && t > 0 && (e.controls.find(".ohmylms-current-time").text(e.formatTime(t)), e.controls.find(".ohmylms-progress-filled").css("width", "100%"));
                     });
                   }
                   e.options.onEnded && e.options.onEnded();
@@ -1228,15 +1228,15 @@
             var e = this,
               t = this.platformHandler && this.platformHandler.player;
             t && "function" == typeof t.addEventListener && (t.addEventListener("webkitbeginfullscreen", function () {
-              e.isFullscreen = !0, e.controls.find(".omlms-fullscreen-icon").hide(), e.controls.find(".omlms-exit-fullscreen-icon").show();
+              e.isFullscreen = !0, e.controls.find(".ohmylms-fullscreen-icon").hide(), e.controls.find(".ohmylms-exit-fullscreen-icon").show();
             }), t.addEventListener("webkitendfullscreen", function () {
-              e.isFullscreen = !1, e.controls.find(".omlms-fullscreen-icon").show(), e.controls.find(".omlms-exit-fullscreen-icon").hide();
+              e.isFullscreen = !1, e.controls.find(".ohmylms-fullscreen-icon").show(), e.controls.find(".ohmylms-exit-fullscreen-icon").hide();
             }));
           }
         }, {
           key: "updatePlayPauseButton",
           value: function (e) {
-            this.controls && (e ? (this.controls.find(".omlms-play-icon").show(), this.controls.find(".omlms-pause-icon").hide()) : (this.controls.find(".omlms-play-icon").hide(), this.controls.find(".omlms-pause-icon").show()));
+            this.controls && (e ? (this.controls.find(".ohmylms-play-icon").show(), this.controls.find(".ohmylms-pause-icon").hide()) : (this.controls.find(".ohmylms-play-icon").hide(), this.controls.find(".ohmylms-pause-icon").show()));
           }
         }, {
           key: "play",
@@ -1251,12 +1251,12 @@
         }, {
           key: "setVolume",
           value: function (e) {
-            this.volume = Math.max(0, Math.min(1, e)), this.platformHandler && this.platformHandler.setVolume(this.volume), this.controls && (this.updateVolumeFill(100 * this.volume), 0 === this.volume ? (this.controls.find(".omlms-volume-icon").hide(), this.controls.find(".omlms-mute-icon").show()) : (this.controls.find(".omlms-volume-icon").show(), this.controls.find(".omlms-mute-icon").hide()));
+            this.volume = Math.max(0, Math.min(1, e)), this.platformHandler && this.platformHandler.setVolume(this.volume), this.controls && (this.updateVolumeFill(100 * this.volume), 0 === this.volume ? (this.controls.find(".ohmylms-volume-icon").hide(), this.controls.find(".ohmylms-mute-icon").show()) : (this.controls.find(".ohmylms-volume-icon").show(), this.controls.find(".ohmylms-mute-icon").hide()));
           }
         }, {
           key: "updateVolumeFill",
           value: function (e) {
-            this.controls && (this.controls.find(".omlms-volume-fill").css("width", e + "%"), this.controls.find(".omlms-volume-thumb").css("left", e + "%"), this.controls.find(".omlms-volume-track").attr("aria-valuenow", Math.round(e)));
+            this.controls && (this.controls.find(".ohmylms-volume-fill").css("width", e + "%"), this.controls.find(".ohmylms-volume-thumb").css("left", e + "%"), this.controls.find(".ohmylms-volume-track").attr("aria-valuenow", Math.round(e)));
           }
         }, {
           key: "setPlaybackRate",
@@ -1288,7 +1288,7 @@
           value: function () {
             var e = this.element[0],
               t = this.platformHandler && this.platformHandler.player;
-            document.fullscreenEnabled || document.webkitFullscreenEnabled || e.requestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen || !t || "function" != typeof t.webkitEnterFullscreen ? this.isFullscreen ? (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen ? document.webkitExitFullscreen() : document.mozCancelFullScreen ? document.mozCancelFullScreen() : document.msExitFullscreen && document.msExitFullscreen(), this.isFullscreen = !1, this.controls.find(".omlms-fullscreen-icon").show(), this.controls.find(".omlms-exit-fullscreen-icon").hide()) : (e.requestFullscreen ? e.requestFullscreen() : e.webkitRequestFullscreen ? e.webkitRequestFullscreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.msRequestFullscreen && e.msRequestFullscreen(), this.isFullscreen = !0, this.controls.find(".omlms-fullscreen-icon").hide(), this.controls.find(".omlms-exit-fullscreen-icon").show()) : t.webkitEnterFullscreen();
+            document.fullscreenEnabled || document.webkitFullscreenEnabled || e.requestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen || !t || "function" != typeof t.webkitEnterFullscreen ? this.isFullscreen ? (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen ? document.webkitExitFullscreen() : document.mozCancelFullScreen ? document.mozCancelFullScreen() : document.msExitFullscreen && document.msExitFullscreen(), this.isFullscreen = !1, this.controls.find(".ohmylms-fullscreen-icon").show(), this.controls.find(".ohmylms-exit-fullscreen-icon").hide()) : (e.requestFullscreen ? e.requestFullscreen() : e.webkitRequestFullscreen ? e.webkitRequestFullscreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.msRequestFullscreen && e.msRequestFullscreen(), this.isFullscreen = !0, this.controls.find(".ohmylms-fullscreen-icon").hide(), this.controls.find(".ohmylms-exit-fullscreen-icon").show()) : t.webkitEnterFullscreen();
           }
         }, {
           key: "showControls",
@@ -1305,7 +1305,7 @@
           value: function (e) {
             var n = "Unable to load video. Please try again later.";
             e.message && e.message.includes("MOV format not supported") && (n = "MOV video format is not supported by your browser. Please convert the video to MP4 format for better compatibility.");
-            var o = t('\n                <div class="omlms-video-error">\n                    <p>'.concat(n, "</p>\n                </div>\n            "));
+            var o = t('\n                <div class="ohmylms-video-error">\n                    <p>'.concat(n, "</p>\n                </div>\n            "));
             this.element.append(o);
           }
         }, {
@@ -1317,7 +1317,7 @@
         var n, r, i, s;
       }();
     function f() {
-      var e = t(".omlms-custom-video-player");
+      var e = t(".ohmylms-custom-video-player");
       0 !== e.length && e.each(function () {
         var e = t(this),
           n = e.data("video-url"),
@@ -1331,17 +1331,17 @@
             poster: e.data("poster") || null,
             logoUrl: e.data("logo-url") || ""
           };
-        n && e.creatorLMSVideoPlayer(o);
+        n && e.ohMyLMSVideoPlayer(o);
       });
     }
-    t.fn.creatorLMSVideoPlayer = function (e) {
+    t.fn.ohMyLMSVideoPlayer = function (e) {
       return this.each(function () {
         var n = t(this),
-          o = n.data("creatorLMSVideoPlayer");
-        return o || (o = new d(this, e), n.data("creatorLMSVideoPlayer", o)), o;
+          o = n.data("ohMyLMSVideoPlayer");
+        return o || (o = new d(this, e), n.data("ohMyLMSVideoPlayer", o)), o;
       });
     }, t(document).ready(function () {
       f();
-    }), window.CreatorLMSVideoPlayer = d, window.initCreatorLMSVideoPlayers = f;
+    }), window.OhMyLMSVideoPlayer = d, window.initOhMyLMSVideoPlayers = f;
   }(jQuery);
 })();

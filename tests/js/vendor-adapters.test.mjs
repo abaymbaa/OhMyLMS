@@ -9,7 +9,7 @@ const generate = generatorModule.default || generatorModule;
 const factory = (folder, id) => fs.readFileSync(new URL(`../../assets/src/recovered/modules/dist/${folder}/0-${id}.js`, import.meta.url), 'utf8').trim().replace(/;$/, '');
 
 test('connection labels preserve behavior without importing collaboration or Yjs', () => {
-  const ast = parse(`({45644:${factory('admin/creatorlms',45644)}})`);
+  const ast = parse(`({45644:${factory('admin/ohmylms',45644)}})`);
   adaptConnectionStatus(ast);
   const modules = vm.runInNewContext(generate(ast).code);
   const exports = {};

@@ -81,7 +81,7 @@ export function createCertificateCourseSelector(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses?search='.concat(t),
+                          path: '/ohmylms/v1/courses?search='.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ export function createCertificateCourseSelector(readRuntime) {
                 key={'Save'}
                 variant={'primary'}
                 onClick={d}
-                className={'omlms-course-settings-modal-save-btn'}
+                className={'ohmylms-course-settings-modal-save-btn'}
               >
                 {(0, I18n.__)('Save', 'ohmylms')}
               </Controls.ButtonWP>

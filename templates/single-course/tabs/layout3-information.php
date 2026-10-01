@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/tabs/layout3-information.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -22,9 +22,9 @@ $course_id = $course->get_id();
 $chapters = $course->get_chapters('objects');
 $lessons = $course->get_lessons('objects');
 
-$single_course_layout = get_option('creator_lms_single_course_page_layout','layout_1');
+$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
 
-$student = new \OMLMS\Data\Student(get_current_user_id());
+$student = new \OhMyLMS\Data\Student(get_current_user_id());
 $certificate = $course->get_certificate();
 
 $maybe_enrolled     = false;
@@ -35,11 +35,11 @@ if ( $student ) {
 
 ?>
 
-<div class="creator-lms-course-chapters layout3-content-box layout3-chapters">
+<div class="ohmylms-course-chapters layout3-content-box layout3-chapters">
 	<div class="chapters-header">
 		<div class="chapters-header-left">
 			<h2 class="content-box-title">
-				<?php echo apply_filters( 'creator_lms_course_content_title', __( 'Course Overview', 'ohmylms' ) ); ?>
+				<?php echo apply_filters( 'ohmylms_course_content_title', __( 'Course Overview', 'ohmylms' ) ); ?>
 
 				<span class="small-title">
 					<?php  
@@ -68,9 +68,9 @@ if ( $student ) {
 						
 						if($maybe_enrolled){
 							//----total time----
-							if( creator_lms_format_duration($course->get_duration()) ) {
+							if( ohmylms_format_duration($course->get_duration()) ) {
 								echo ' • ';
-								echo creator_lms_format_duration($course->get_duration());
+								echo ohmylms_format_duration($course->get_duration());
 							} 
 						}else {
 							if($certificate){
@@ -85,12 +85,12 @@ if ( $student ) {
 		</div>
 
 		<div class="chapters-header-right">
-			<div class="creator-lms-chapter-toggle">
-				<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="creator-lms-chapters">
+			<div class="ohmylms-chapter-toggle">
+				<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="ohmylms-chapters">
 					<?php echo __( 'Expand All', 'ohmylms' ); ?>
 				</button>
 
-				<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="creator-lms-chapters" style="display: none;">
+				<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="ohmylms-chapters" style="display: none;">
 					<?php echo __( 'Collapse All', 'ohmylms' ); ?>
 				</button>
 			</div>
@@ -113,7 +113,7 @@ if ( $student ) {
 
 			?>
 			
-			<div class="creator-lms-single-chapter <?php echo esc_attr( $description_class ); ?>">
+			<div class="ohmylms-single-chapter <?php echo esc_attr( $description_class ); ?>">
 				<div class="chapter-title-wrapper">
 					<div class="chapter-title-description">
 						<h3 class="chapter-title-text">
@@ -122,7 +122,7 @@ if ( $student ) {
 
 						<?php
 							if( !empty($chapter->get_description()) ) {
-								echo '<div class="creator-lms-wysiwyg-content">'.$chapter->get_description().'</div>';
+								echo '<div class="ohmylms-wysiwyg-content">'.$chapter->get_description().'</div>';
 							}
 						?>
 					</div>
@@ -133,8 +133,8 @@ if ( $student ) {
 								<svg class="course-completed" width="34" height="34" fill="none" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg"><rect width="33" height="33" x=".5" y=".5" stroke="#19AA32" rx="16.5"/><rect width="20" height="20" x="7" y="7" fill="#19AA32" rx="10"/><path fill="#fff" d="M20.373 13.818l-4.628 4.628-2.122-2.121a.818.818 0 00-1.157 1.157l2.7 2.7a.818.818 0 001.157 0l5.207-5.207a.818.818 0 10-1.157-1.157z"/></svg>
 							<?php }else {
 								?>
-								<span class="creator-lms-circle-progressbar">
-									<?php echo creator_lms_circular_progressbar(45, $lessonProgress, 4, '#EAEDF4', 'var(--creator-lms-progressbar-color)'); ?>
+								<span class="ohmylms-circle-progressbar">
+									<?php echo ohmylms_circular_progressbar(45, $lessonProgress, 4, '#EAEDF4', 'var(--ohmylms-progressbar-color)'); ?>
 									<small><?php echo $lessonProgress.'%';?></small>
 								</span>
 								<?php
@@ -144,7 +144,7 @@ if ( $student ) {
 					<?php } ?>
 				</div>
 
-				<ul class="creator-lms-chapter-content-list <?php echo count($chapter_lessons) > 2 ? 'creator-lms-expandable' : '' ?>">
+				<ul class="ohmylms-chapter-content-list <?php echo count($chapter_lessons) > 2 ? 'ohmylms-expandable' : '' ?>">
 					<?php
 						foreach ( $chapter_lessons as $index => $lesson ) {
 							if( !$lesson ){
@@ -180,7 +180,7 @@ if ( $student ) {
 									break;
 							}
 							
-							if( 'assignment' === $type && !creator_lms_is_pro() ){
+							if( 'assignment' === $type && !ohmylms_is_pro() ){
 								continue;
 							}
 
@@ -191,12 +191,12 @@ if ( $student ) {
 							
 							?>
 
-							<li class="creator-lms-chapter-content-list-item type-<?php echo $type ; ?>">
+							<li class="ohmylms-chapter-content-list-item type-<?php echo $type ; ?>">
 								<span class="icon">
-									<?php include(CREATOR_LMS_DIR . '/assets/images/icon/'.$icon); ?>
+									<?php include(OHMYLMS_DIR . '/assets/images/icon/'.$icon); ?>
 								</span>
 
-								<a href="<?php echo esc_url( creatorlms_get_pretty_content_permalink( $lesson_id ) ); ?>">
+								<a href="<?php echo esc_url( ohmylms_get_pretty_content_permalink( $lesson_id ) ); ?>">
 									<?php echo $lesson_title; ?>
 								</a>
 

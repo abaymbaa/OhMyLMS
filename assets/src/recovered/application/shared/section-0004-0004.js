@@ -22,11 +22,8 @@ var Wn = function (e) {
     clipRule: "evenodd"
   })));
 };
-
 const zn = (0, g.memo)(Wn);
-
 var Bn = ["label", "className", "onDelete", "onCancel", "onClick", "alertTitle", "alertDescription"];
-
 function Ln() {
   return Ln = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -36,13 +33,11 @@ function Ln() {
     return e;
   }, Ln.apply(null, arguments);
 }
-
 function Vn(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Hn = function (e) {
   var t = e.label,
     n = void 0 === t ? (0, b.__)("Delete", "ohmylms") : t,
@@ -127,7 +122,7 @@ var Hn = function (e) {
   return h().createElement(h().Fragment, null, h().createElement(I.ButtonWP, Ln({
     variant: "text",
     title: n,
-    className: "omlms-outline-delete-button ".concat(a),
+    className: "ohmylms-outline-delete-button ".concat(a),
     icon: h().createElement(zn, null),
     onClick: y
   }, m), n), f && h().createElement(Ie, {
@@ -136,13 +131,11 @@ var Hn = function (e) {
     onClose: w,
     onDelete: _,
     isOpen: f,
-    className: "omlms-outline-delete-alert",
+    className: "ohmylms-outline-delete-alert",
     isDelete: !0
   }));
 };
-
 const Gn = (0, g.memo)(Hn);
-
 function Un(e) {
   return Un = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -150,7 +143,6 @@ function Un(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Un(e);
 }
-
 function qn(e) {
   return function (e) {
     if (Array.isArray(e)) return er(e);
@@ -160,7 +152,6 @@ function qn(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Yn(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -171,7 +162,6 @@ function Yn(e, t) {
   }
   return n;
 }
-
 function Qn(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -183,7 +173,6 @@ function Qn(e) {
   }
   return e;
 }
-
 function Zn(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -204,7 +193,6 @@ function Zn(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function $n() {
   var e,
     t,
@@ -291,7 +279,6 @@ function $n() {
     };
   })();
 }
-
 function Kn(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -313,7 +300,6 @@ function Kn(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Kn(e, t, n, r);
 }
-
 function Jn(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -323,7 +309,6 @@ function Jn(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Xn(e, t) {
   if (e) {
     if ("string" == typeof e) return er(e, t);
@@ -331,13 +316,11 @@ function Xn(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? er(e, t) : void 0;
   }
 }
-
 function er(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var tr = function (e) {
   var t,
     n,
@@ -347,7 +330,7 @@ var tr = function (e) {
     i,
     c,
     u,
-    s = (0, L.useIsPro)(),
+    s = true,
     d = e.lesson,
     m = e.chapterId,
     p = e.setOpenModal,
@@ -411,7 +394,7 @@ var tr = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return t = c.length > 0 && void 0 !== c[0] ? c[0] : "", e.n = 1, l()({
-                  path: "/creator-lms/v1/chapters/".concat(m, "/search-contents?term=").concat(t),
+                  path: "/ohmylms/v1/chapters/".concat(m, "/search-contents?term=").concat(t),
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"
@@ -515,7 +498,7 @@ var tr = function (e) {
     defaultValue: null == d || null === (n = d.prerequisites) || void 0 === n ? void 0 : n.data
   }), React.createElement(Pn, {
     onChange: function () {
-      if (s) {
+      {
         var e = !d.drip_settings.enable;
         S.setLesson(Qn(Qn({}, d), {}, {
           drip_settings: Qn(Qn({}, null == d ? void 0 : d.drip_settings), {}, {
@@ -524,10 +507,10 @@ var tr = function (e) {
             type: R ? "cohort-start" : "enrollment-from-x-days"
           })
         }));
-      } else E(!0);
+      }
     },
     onDripFeedTypeChange: function (e) {
-      if (s) {
+      {
         var t,
           n,
           r = Qn(Qn({}, d.drip_settings), {}, {
@@ -540,7 +523,7 @@ var tr = function (e) {
         S.setLesson(Qn(Qn({}, d), {}, {
           drip_settings: r
         }));
-      } else S.setIsProModalOpen(!0);
+      }
     },
     handleDripDatePickerChange: function (e, t) {
       S.setLesson(Qn(Qn({}, d), {}, {
@@ -593,15 +576,13 @@ var tr = function (e) {
     onDelete: C,
     alertTitle: (0, b.__)("Delete Lesson", "ohmylms"),
     alertDescription: (0, b.__)("Are you sure you want to delete this lesson?", "ohmylms"),
-    className: "omlms-lesson-settings-delete-button"
+    className: "ohmylms-lesson-settings-delete-button"
   })), w && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: w,
     onClose: E
   })));
 };
-
 const nr = (0, g.memo)(tr);
-
 var rr = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -614,9 +595,7 @@ var rr = function () {
     d: "M9 15.75a.75.75 0 01-.75.75h-4.5A3.754 3.754 0 010 12.75v-9A3.754 3.754 0 013.75 0h9a3.754 3.754 0 013.75 3.75v4.5a.75.75 0 11-1.5 0v-4.5c0-1.24-1.01-2.25-2.25-2.25h-9C2.51 1.5 1.5 2.51 1.5 3.75v5.22l2.106-2.107a2.95 2.95 0 014.168 0l4.006 4.006a.75.75 0 11-1.06 1.06L6.714 7.925a1.451 1.451 0 00-2.048 0L1.5 11.09v1.66C1.5 13.99 2.51 15 3.75 15h4.5a.75.75 0 01.75.75zm2.25-13.125c1.24 0 2.25 1.01 2.25 2.25s-1.01 2.25-2.25 2.25S9 6.115 9 4.875s1.01-2.25 2.25-2.25zm0 1.5a.75.75 0 10.002 1.502.75.75 0 00-.002-1.502zm6 9.375H15v-2.25a.75.75 0 10-1.5 0v2.25h-2.25a.75.75 0 100 1.5h2.25v2.25a.75.75 0 101.5 0V15h2.25a.75.75 0 100-1.5z"
   })));
 };
-
 const ar = (0, g.memo)(rr);
-
 function or() {
   var e,
     t,
@@ -703,7 +682,6 @@ function or() {
     };
   })();
 }
-
 function ir(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -725,7 +703,6 @@ function ir(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, ir(e, t, n, r);
 }
-
 function lr(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -735,7 +712,6 @@ function lr(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function cr(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -775,7 +751,6 @@ function cr(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ur(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

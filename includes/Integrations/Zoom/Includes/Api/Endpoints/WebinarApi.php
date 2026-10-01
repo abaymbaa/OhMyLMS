@@ -2,18 +2,18 @@
 /**
  * WebinarApi class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Api\Endpoints;
+namespace OhMyLMS\Integrations\Zoom\Includes\Api\Endpoints;
 
-use OMLMS\Integrations\Zoom\Includes\Api\ZoomApiClient;
+use OhMyLMS\Integrations\Zoom\Includes\Api\ZoomApiClient;
 
 /**
  * Class WebinarApi
  *
- * @package OMLMS\Integrations\Zoom\Api\Endpoints
+ * @package OhMyLMS\Integrations\Zoom\Api\Endpoints
  * @since 1.0.0
  */
 class WebinarApi {

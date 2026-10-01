@@ -19,6 +19,6 @@ Student sorting uses the endpoint's `order_by` parameter. Sort buttons issue ser
 - `tests/php/students-integration.php`: guest/student permission rejection for list/report/block/unblock and actual administrator block/unblock persistence, with fixture cleanup in the disposable WordPress database.
 - Existing desktop/mobile admin route smoke test, including Students.
 
-Browser tests use the existing isolated profile page (ID 210). Set `OMLMS_TEST_CREDENTIALS` as described in DEVELOPMENT.md. PHP integration requires `OMLMS_TEST_SITE` and database `ohmylms_source_test`.
+Browser tests use the existing isolated profile page (ID 210). Set `OHMYLMS_TEST_CREDENTIALS` as described in DEVELOPMENT.md. PHP integration requires `OHMYLMS_TEST_SITE` and database `ohmylms_source_test`.
 
-Actual verification email delivery/link completion, full student reports, course enrollment management, checkout purchase completion, and comprehensive responsive/RTL testing remain broader acceptance work. The source build remains behind the existing whole-application `OMLMS_SOURCE_ASSETS` switch and is enabled on the isolated test site. This increment does not enable it on the working math site or add a database migration.
+Actual verification email delivery/link completion, full student reports, course enrollment management, checkout purchase completion, and comprehensive responsive/RTL testing remain broader acceptance work. The source build remains behind the existing whole-application `OHMYLMS_SOURCE_ASSETS` switch and is enabled on the isolated test site. This increment does not enable it on the working math site or add a database migration.

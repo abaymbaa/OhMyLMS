@@ -66,7 +66,7 @@ export function createEmailTemplateList(readRuntime) {
                         align={'center'}
                         justify={'space-between'}
                         key={null == e || null === (o = e.basic) || void 0 === o ? void 0 : o.id}
-                        className={'omlms-email-listing-card'}
+                        className={'ohmylms-email-listing-card'}
                       >
                         <Controls.FlexWP
                           direction={'column'}
@@ -101,7 +101,7 @@ export function createEmailTemplateList(readRuntime) {
                           gap={4}
                           align={'center'}
                           justify={'end'}
-                          className={'omlms-email-listing-card-actions'}
+                          className={'ohmylms-email-listing-card-actions'}
                         >
                           <Bt.A
                             onChange={function () {
@@ -212,7 +212,7 @@ export function createEmailTemplateList(readRuntime) {
         <React.Fragment>
           <Controls.TabsWP
             items={h}
-            className={'omlms-emails-tabs'}
+            className={'ohmylms-emails-tabs'}
             onChange={function (e) {
               n(e);
             }}

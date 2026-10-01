@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var Yp = function (e) {
-  var t = (0, L.useIsPro)();
+  var t = true;
   M().noConflict();
   var n = e.videoSrc,
     r = e.imageSrc,
@@ -88,7 +88,7 @@ var Yp = function (e) {
     r && u(r), n && m(n);
   }, [r, n]), (0, g.useEffect)(function () {
     var e = function (e) {
-      !A || !k.current || k.current.contains(e.target) || e.target.closest(".omlms-history-list") || e.target.closest(".omlms-tooltip-box") || e.target.closest(".omlms-ai-image-prompt") || (F(!1), G(null));
+      !A || !k.current || k.current.contains(e.target) || e.target.closest(".ohmylms-history-list") || e.target.closest(".ohmylms-tooltip-box") || e.target.closest(".ohmylms-ai-image-prompt") || (F(!1), G(null));
     };
     return document.addEventListener("mousedown", e), function () {
       document.removeEventListener("mousedown", e);
@@ -101,9 +101,9 @@ var Yp = function (e) {
     borderRadius: "8px"
   };
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-course-thumb-wrapper"
+    className: "ohmylms-course-thumb-wrapper"
   }, React.createElement("div", {
-    className: "omlms-course-thumb-media"
+    className: "ohmylms-course-thumb-media"
   }, d ? React.createElement(React.Fragment, null, React.createElement("video", {
     ref: O,
     src: d,
@@ -122,7 +122,7 @@ var Yp = function (e) {
     src: c,
     alt: "Course Thumb"
   })) : React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-course-thumb-placeholder"
+    className: "ohmylms-course-thumb-placeholder"
   }, React.createElement("svg", {
     fill: "none",
     width: "88",
@@ -140,7 +140,7 @@ var Yp = function (e) {
     fill: "#fff",
     d: "M0 0h88v88H0z"
   })))))), !_ && React.createElement("div", {
-    className: "omlms-course-thumb-controls"
+    className: "ohmylms-course-thumb-controls"
   }, (c || d) && React.createElement("div", {
     className: "clrms-course-thumb-controls-btns"
   }, c && d ? React.createElement(I.TooltipWP, {
@@ -182,7 +182,7 @@ var Yp = function (e) {
     justify: "flex-start",
     align: "center",
     gap: 2,
-    className: "omlms-thumb-video-player"
+    className: "ohmylms-thumb-video-player"
   }, React.createElement(I.TooltipWP, {
     text: (0, b.__)("Play Thumb Video", "ohmylms")
   }, React.createElement(I.ButtonWP, {
@@ -194,13 +194,13 @@ var Yp = function (e) {
     },
     padding: "0px"
   })), React.createElement("span", {
-    className: "omlms-thumb-video-player-line"
+    className: "ohmylms-thumb-video-player-line"
   }))))), React.createElement(I.SpacerWP, {
     marginBottom: 1.5
   }), React.createElement(I.FlexWP, {
     justify: "flex-start",
     gap: 1,
-    className: "omlms-course-thumb-actions"
+    className: "ohmylms-course-thumb-actions"
   }, d && c && React.createElement(React.Fragment, null, React.createElement(I.TooltipWP, {
     text: (0, b.__)("Replace Thumbnail Image/Video", "ohmylms")
   }, React.createElement(I.DropdownMenuWP, {
@@ -253,8 +253,7 @@ var Yp = function (e) {
     onClick: function () {
       return function () {
         var e;
-        if (t) return null != B && null !== (e = B.ai_model) && void 0 !== e && e.is_enable ? null != z && z.self || "anthropic" !== (null == z ? void 0 : z.platform) ? null != z && z.self || null != z && z.api_key ? void F(!0) : (i.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (i.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), i.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (W(!0), i.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void i.updateProModalButtonText(null));
-        W(!0);
+        return null != B && null !== (e = B.ai_model) && void 0 !== e && e.is_enable ? null != z && z.self || "anthropic" !== (null == z ? void 0 : z.platform) ? null != z && z.self || null != z && z.api_key ? void F(!0) : (i.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (i.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), i.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (W(!0), i.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void i.updateProModalButtonText(null));
       }();
     },
     padding: "0px"
@@ -286,9 +285,7 @@ var Yp = function (e) {
     isDelete: !0
   }));
 };
-
 const Qp = (0, g.memo)(Yp);
-
 var Zp = function (e) {
   var t = e.handleInputChange,
     n = e.onContentChange,
@@ -314,22 +311,22 @@ var Zp = function (e) {
       return o ? null == i ? void 0 : i.image_src : null == l ? void 0 : l.image_src;
     }, [o, i, l]);
   return h().createElement(h().Fragment, null, h().createElement("div", {
-    className: "omlms-course-info-header ".concat(s || d ? "omlms-has-media" : "", " ").concat(s ? "omlms-thumb-video-wrapper" : "", " ").concat(d ? "omlms-thumb-img-wrapper" : "")
+    className: "ohmylms-course-info-header ".concat(s || d ? "ohmylms-has-media" : "", " ").concat(s ? "ohmylms-thumb-video-wrapper" : "", " ").concat(d ? "ohmylms-thumb-img-wrapper" : "")
   }, h().createElement(Qp, {
     videoSrc: s,
     imageSrc: d,
     handleRemoveMedia: r,
     handleUploadComplete: a
   }), h().createElement("div", {
-    className: "omlms-course-content-info"
+    className: "ohmylms-course-content-info"
   }, h().createElement("div", {
-    className: "omlms-title-input-wrapper omlms-course-title"
+    className: "ohmylms-title-input-wrapper ohmylms-course-title"
   }, h().createElement(re.A, {
     value: "Untitled" !== c ? Ge(c) : "",
     onChange: t,
     placeholder: (0, b.__)("Enter Course Title", "ohmylms"),
     name: "name",
-    className: "omlms-course-title",
+    className: "ohmylms-course-title",
     style: {
       fontSize: 30,
       fontWeight: "bold",
@@ -354,9 +351,7 @@ var Zp = function (e) {
     editorFor: "course"
   }))));
 };
-
 const $p = (0, g.memo)(Zp);
-
 var Kp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -372,9 +367,7 @@ var Kp = function () {
     d: "M33.86 23.9l-1 1.2-5-4.5-5 4.5-1-1.1 6-5.5 6 5.4zm0-6l-1 1.1-5-4.5-5 4.5-1-1.1 6-5.5 6 5.5z"
   })));
 };
-
 const Jp = (0, g.memo)(Kp);
-
 var Xp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -390,11 +383,8 @@ var Xp = function () {
     d: "M33.86 13.1l-1-1.2-5 4.5-5-4.5-1 1.1 6 5.5 6-5.4zm0 6l-1-1.1-5 4.5-5-4.5-1 1.1 6 5.5 6-5.5z"
   })));
 };
-
 const ef = (0, g.memo)(Xp);
-
 n(13174);
-
 var tf = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -408,11 +398,8 @@ var tf = function () {
     d: "M1.6 6.4h4.8V1.6a.6.6 0 011.2 0v4.8h4.8a.6.6 0 010 1.2H7.6v4.8a.6.6 0 01-1.2 0V7.6H1.6a.6.6 0 010-1.2z"
   })));
 };
-
 const nf = (0, g.memo)(tf);
-
 var rf = ["label", "className", "onClick"];
-
 function af() {
   return af = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -422,7 +409,6 @@ function af() {
     return e;
   }, af.apply(null, arguments);
 }
-
 var of = (0, g.forwardRef)(function (e, t) {
   var n = e.label,
     r = void 0 === n ? (0, b.__)("Add New", "ohmylms") : n,
@@ -454,11 +440,8 @@ var of = (0, g.forwardRef)(function (e, t) {
     variant: "primary"
   }, i), r));
 });
-
 of.displayName = "AddButton";
-
 const lf = (0, g.memo)(of);
-
 var cf = function (e) {
   var t = e.icon,
     n = void 0 === t ? null : t,
@@ -494,9 +477,7 @@ var cf = function (e) {
     onClick: s
   })));
 };
-
 const uf = (0, g.memo)(cf);
-
 var sf = function () {
   return React.createElement("svg", {
     width: "109",
@@ -522,9 +503,7 @@ var sf = function () {
     d: "M35.604 54.288l11.148-3.093c.541-.15 1.017-.282 1.438-.397m-7.438 7.49L51.9 55.195c.54-.15 1.016-.282 1.438-.397"
   }));
 };
-
 const df = (0, g.memo)(sf);
-
 function mf(e) {
   return mf = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -532,7 +511,6 @@ function mf(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, mf(e);
 }
-
 function pf(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -543,7 +521,6 @@ function pf(e, t) {
   }
   return n;
 }
-
 function ff(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -555,7 +532,6 @@ function ff(e) {
   }
   return e;
 }
-
 function vf(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -576,7 +552,6 @@ function vf(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function gf(e) {
   return function (e) {
     if (Array.isArray(e)) return Ef(e);
@@ -586,7 +561,6 @@ function gf(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function hf() {
   var e,
     t,
@@ -673,7 +647,6 @@ function hf() {
     };
   })();
 }
-
 function yf(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -695,7 +668,6 @@ function yf(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, yf(e, t, n, r);
 }
-
 function bf(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -705,7 +677,6 @@ function bf(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function _f(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -739,7 +710,6 @@ function _f(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function wf(e, t) {
   if (e) {
     if ("string" == typeof e) return Ef(e, t);
@@ -747,7 +717,6 @@ function wf(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Ef(e, t) : void 0;
   }
 }
-
 function Ef(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

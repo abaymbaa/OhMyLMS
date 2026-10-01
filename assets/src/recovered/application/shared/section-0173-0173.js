@@ -20,7 +20,6 @@ function o6(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, o6(e, t, n, r);
 }
-
 function i6(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -30,7 +29,6 @@ function i6(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function l6(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -70,13 +68,11 @@ function l6(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function c6(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var u6 = function () {
     return React.createElement("svg", {
       xmlns: "http://www.w3.org/2000/svg",
@@ -112,7 +108,7 @@ var u6 = function () {
       d = u[1],
       m = (0, y.useDispatch)(T.default),
       p = (0, f.Zp)(),
-      v = (0, L.useIsPro)(),
+      v = true,
       h = function () {
         var e,
           t = (e = a6().m(function e() {
@@ -240,11 +236,8 @@ var u6 = function () {
       onClose: d
     }));
   };
-
 const d6 = (0, g.memo)(s6);
-
 var m6, p6, f6, v6, g6;
-
 function h6(e) {
   return function (e) {
     if (Array.isArray(e)) return y6(e);
@@ -260,27 +253,25 @@ function h6(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function y6(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
-var b6 = (null === (m6 = window.creator_lms_params) || void 0 === m6 ? void 0 : m6.plugin_assets) + "images/",
-  _6 = [].concat(h6(null !== (p6 = window) && void 0 !== p6 && null !== (p6 = p6.creator_lms_params) && void 0 !== p6 && p6.is_tutor_lms_active ? [{
+var b6 = (null === (m6 = window.ohmylms_params) || void 0 === m6 ? void 0 : m6.plugin_assets) + "images/",
+  _6 = [].concat(h6(null !== (p6 = window) && void 0 !== p6 && null !== (p6 = p6.ohmylms_params) && void 0 !== p6 && p6.is_tutor_lms_active ? [{
     label: (0, b.__)("Tutor LMS", "ohmylms"),
     value: "tutorLMS",
     icon: b6 + "tutor_icon.svg"
-  }] : []), h6(null !== (f6 = window) && void 0 !== f6 && null !== (f6 = f6.creator_lms_params) && void 0 !== f6 && f6.is_learndash_lms_active ? [{
+  }] : []), h6(null !== (f6 = window) && void 0 !== f6 && null !== (f6 = f6.ohmylms_params) && void 0 !== f6 && f6.is_learndash_lms_active ? [{
     label: (0, b.__)("LearnDash", "ohmylms"),
     value: "learnDash",
     icon: b6 + "learndash_icon.svg"
-  }] : []), h6(null !== (v6 = window) && void 0 !== v6 && null !== (v6 = v6.creator_lms_params) && void 0 !== v6 && v6.is_learnpress_active ? [{
+  }] : []), h6(null !== (v6 = window) && void 0 !== v6 && null !== (v6 = v6.ohmylms_params) && void 0 !== v6 && v6.is_learnpress_active ? [{
     label: (0, b.__)("LearnPress", "ohmylms"),
     value: "learnPress",
     icon: b6 + "learnpress_icon.svg"
-  }] : []), h6(null !== (g6 = window) && void 0 !== g6 && null !== (g6 = g6.creator_lms_params) && void 0 !== g6 && g6.is_masterstudy_active ? [{
+  }] : []), h6(null !== (g6 = window) && void 0 !== g6 && null !== (g6 = g6.ohmylms_params) && void 0 !== g6 && g6.is_masterstudy_active ? [{
     label: (0, b.__)("MasterStudy LMS", "ohmylms"),
     value: "masterStudy",
     icon: b6 + "masterstudy_icon.svg"
@@ -289,7 +280,7 @@ var b6 = (null === (m6 = window.creator_lms_params) || void 0 === m6 ? void 0 : 
     return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
       isBorderless: !0,
       variant: "secondary",
-      className: "omlms-full-screen-height"
+      className: "ohmylms-full-screen-height"
     }, React.createElement(I.SpacerWP, {
       padding: 4,
       paddingTop: 6,
@@ -301,9 +292,7 @@ var b6 = (null === (m6 = window.creator_lms_params) || void 0 === m6 ? void 0 : 
       paddingBottom: 28
     }, React.createElement(k4, null)))));
   };
-
 const E6 = (0, g.memo)(w6);
-
 function S6(e) {
   return function (e) {
     if (Array.isArray(e)) return j6(e);
@@ -313,7 +302,6 @@ function S6(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function R6() {
   var e,
     t,
@@ -400,7 +388,6 @@ function R6() {
     };
   })();
 }
-
 function x6(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -422,7 +409,6 @@ function x6(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, x6(e, t, n, r);
 }
-
 function C6(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -432,7 +418,6 @@ function C6(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function P6(e) {
   return function () {
     var t = this,
@@ -449,7 +434,6 @@ function P6(e) {
     });
   };
 }
-
 function O6(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -483,7 +467,6 @@ function O6(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function k6(e, t) {
   if (e) {
     if ("string" == typeof e) return j6(e, t);
@@ -491,7 +474,6 @@ function k6(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? j6(e, t) : void 0;
   }
 }
-
 function j6(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

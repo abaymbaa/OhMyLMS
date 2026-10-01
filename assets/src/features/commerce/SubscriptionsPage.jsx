@@ -8,7 +8,7 @@ export function createSubscriptionsPage(readRuntime) {
   return function SubscriptionsPage() {
     const { HG: setScreenId, HQ: SubscriptionListMemo, React } = readRuntime();
 
-    setScreenId('creator-lms', 'subscriptions');
+    setScreenId('ohmylms', 'subscriptions');
 
     return (
       <React.Fragment>

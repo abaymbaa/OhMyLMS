@@ -18,7 +18,7 @@ class OrderItemStore extends DataStore {
 		global $wpdb;
 
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_order_items',
+			$wpdb->prefix . 'ohmylms_order_items',
 			array(
 				'order_item_name' => $item->get_name(),
 				'order_item_type' => $item->get_type(),
@@ -43,7 +43,7 @@ class OrderItemStore extends DataStore {
 		$data = wp_cache_get( 'ecom-item-' . $item->get_id(), 'order-items' );
 
 		if ( false === $data ) {
-			$data = $wpdb->get_row( $wpdb->prepare( "SELECT order_id, order_item_name FROM {$wpdb->prefix}omlms_order_items WHERE order_item_id = %d LIMIT 1;", $item->get_id() ) );
+			$data = $wpdb->get_row( $wpdb->prepare( "SELECT order_id, order_item_name FROM {$wpdb->prefix}ohmylms_order_items WHERE order_item_id = %d LIMIT 1;", $item->get_id() ) );
 			wp_cache_set( 'ecom-item-' . $item->get_id(), $data, 'order-items' );
 		}
 
@@ -115,7 +115,7 @@ class OrderItemStore extends DataStore {
 	 */
 	function update_metadata( $item_id, $meta_key, $meta_value ) {
 		global $wpdb;
-		$table_name_meta = $wpdb->prefix . 'omlms_order_itemmeta';
+		$table_name_meta = $wpdb->prefix . 'ohmylms_order_itemmeta';
 
 		// Check if the meta key exists for the custom item
 		$exists = $wpdb->get_var(
@@ -164,7 +164,7 @@ class OrderItemStore extends DataStore {
 	 */
 	function get_metadata( $item_id, $meta_key, $single = true ) {
 		global $wpdb;
-		$table_name_meta = $wpdb->prefix . 'omlms_order_itemmeta';
+		$table_name_meta = $wpdb->prefix . 'ohmylms_order_itemmeta';
 
 		$meta_value = $wpdb->get_var(
 			$wpdb->prepare(

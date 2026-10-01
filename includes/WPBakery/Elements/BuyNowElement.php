@@ -2,11 +2,11 @@
 /**
  * WPBakery Buy Now Element
  *
- * @package OMLMS\WPBakery\Elements
+ * @package OhMyLMS\WPBakery\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\WPBakery\Elements;
+namespace OhMyLMS\WPBakery\Elements;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,7 +30,7 @@ class BuyNowElement {
 	private function get_courses_dropdown() {
 		$courses = get_posts(
 			array(
-				'post_type'   => 'omlms-course',
+				'post_type'   => 'ohmylms-course',
 				'post_status' => 'publish',
 				'numberposts' => -1,
 				'orderby'     => 'title',
@@ -60,9 +60,9 @@ class BuyNowElement {
 		vc_map(
 			array(
 				'name'        => __( 'Buy Now Button', 'ohmylms' ),
-				'base'        => 'creator_lms_buy_now',
-				'icon'        => 'icon-wpb-creatorlms',
-				'category'    => __( 'CreatorLMS', 'ohmylms' ),
+				'base'        => 'ohmylms_buy_now',
+				'icon'        => 'icon-wpb-ohmylms',
+				'category'    => __( 'OhMyLMS', 'ohmylms' ),
 				'description' => __( 'Add a Buy Now button for a course', 'ohmylms' ),
 				'params'      => array(
 					// Course Selection

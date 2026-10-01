@@ -20,7 +20,7 @@ common controls, styling and backend permissions remain in use.
 The existing course-level Community component remains in `../courses/`. Frontend
 community feeds and PHP endpoints are outside this admin conversion. Recovered files
 remain the parity baseline. Do not rerun the one-time extractor over authored changes.
-Source activation still uses `OMLMS_SOURCE_ASSETS`; building does not change site configuration.
+Source activation still uses `OHMYLMS_SOURCE_ASSETS`; building does not change site configuration.
 
 ## Validation
 

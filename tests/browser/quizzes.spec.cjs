@@ -1,9 +1,9 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 test.beforeEach(async({page})=>{
- const config=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const config=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(config.username);await page.locator('#user_pass').fill(config.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
 });
 test('source quiz editor saves and reopens every built-in question type',async({page},testInfo)=>{
  test.setTimeout(180000);
@@ -19,25 +19,25 @@ test('source quiz editor saves and reopens every built-in question type',async({
   return {quiz,questions:loaded.content};
  });
  try{
-  await page.goto(`/wp-admin/admin.php?page=creator-lms#/quiz-edit/${fixture.quiz.id}`);
+  await page.goto(`/wp-admin/admin.php?page=ohmylms#/quiz-edit/${fixture.quiz.id}`);
   await expect(page.getByPlaceholder('Enter Quiz Title')).toHaveValue('Source quiz fixture',{timeout:15000});
   expect(await page.evaluate(()=>Object.keys(window.ohmylms.extensions.quizComponents).length)).toBe(17);
   for(const question of fixture.questions){
-   await page.evaluate(question=>{const actions=wp.data.dispatch('creator-lms/store');actions.setSelectedQuestionId(question.id);actions.setQuestion(question);},question);
-   await expect(page.locator('.omlms-quiz-editor-page')).toBeVisible();
+   await page.evaluate(question=>{const actions=wp.data.dispatch('ohmylms/store');actions.setSelectedQuestionId(question.id);actions.setQuestion(question);},question);
+   await expect(page.locator('.ohmylms-quiz-editor-page')).toBeVisible();
    expect(errors,question.settings.type).toEqual([]);
    if(question.settings.type==='example-number')await page.getByLabel('Expected number').fill('42');
   }
   // Return to a valid choice question before exercising the complete Save action.
-  await page.evaluate(question=>{const actions=wp.data.dispatch('creator-lms/store');actions.setSelectedQuestionId(question.id);actions.setQuestion(question);},fixture.questions[0]);
-  await page.locator('.omlms-quiz-option-item').first().locator('input[type="text"], textarea, [contenteditable="true"]').first().fill('Edited choice from React');
-  await page.locator('.omlms-remove-option-btn').first().click();
+  await page.evaluate(question=>{const actions=wp.data.dispatch('ohmylms/store');actions.setSelectedQuestionId(question.id);actions.setQuestion(question);},fixture.questions[0]);
+  await page.locator('.ohmylms-quiz-option-item').first().locator('input[type="text"], textarea, [contenteditable="true"]').first().fill('Edited choice from React');
+  await page.locator('.ohmylms-remove-option-btn').first().click();
   await expect(page.getByText('You must have at least 2 options')).toBeVisible();
-  await page.locator('.omlms-add-option-btn').first().click();
-  await expect(page.locator('.omlms-quiz-option-item')).toHaveCount(3);
+  await page.locator('.ohmylms-add-option-btn').first().click();
+  await expect(page.locator('.ohmylms-quiz-option-item')).toHaveCount(3);
   await page.getByPlaceholder('Option 3',{exact:true}).fill('Temporary third answer');
-  await page.locator('.omlms-remove-option-btn').last().click();
-  await expect(page.locator('.omlms-quiz-option-item')).toHaveCount(2);
+  await page.locator('.ohmylms-remove-option-btn').last().click();
+  await expect(page.locator('.ohmylms-quiz-option-item')).toHaveCount(2);
   await page.getByPlaceholder('Enter Quiz Title').fill('Saved source quiz');
   const response=page.waitForResponse(r=>r.url().includes(`/quiz/${fixture.quiz.id}`)&&r.request().method()==='POST',{timeout:15000});
   await page.getByRole('button',{name:'Save',exact:true}).click();expect((await response).ok()).toBe(true);

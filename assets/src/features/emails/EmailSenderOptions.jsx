@@ -82,9 +82,9 @@ export function createEmailSenderOptions(readRuntime) {
               </Controls.FlexWP>
               <Controls.SpacerWP />
               <Controls.InputWP
-                value={null == e ? void 0 : e.creator_lms_email_sender_email_address}
+                value={null == e ? void 0 : e.ohmylms_email_sender_email_address}
                 onChange={function (e) {
-                  return n('creator_lms_email_sender_email_address', 'value', e);
+                  return n('ohmylms_email_sender_email_address', 'value', e);
                 }}
               />
             </Controls.SpacerWP>
@@ -102,9 +102,9 @@ export function createEmailSenderOptions(readRuntime) {
               </Controls.FlexWP>
               <Controls.SpacerWP />
               <Controls.InputWP
-                value={null == e ? void 0 : e.creator_lms_email_sender_name}
+                value={null == e ? void 0 : e.ohmylms_email_sender_name}
                 onChange={function (e) {
-                  return n('creator_lms_email_sender_name', 'value', e);
+                  return n('ohmylms_email_sender_name', 'value', e);
                 }}
               />
             </Controls.SpacerWP>
@@ -122,9 +122,9 @@ export function createEmailSenderOptions(readRuntime) {
               </Controls.FlexWP>
               <Controls.SpacerWP />
               <RichText.A
-                value={null == e ? void 0 : e.creator_lms_email_footer_text}
+                value={null == e ? void 0 : e.ohmylms_email_footer_text}
                 onChange={function (e) {
-                  return n('creator_lms_email_footer_text', 'value', e);
+                  return n('ohmylms_email_footer_text', 'value', e);
                 }}
               />
             </Controls.SpacerWP>

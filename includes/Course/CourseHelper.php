@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Course;
+namespace OhMyLMS\Course;
 
 /**
  * Responsible to handle all course related calculations
@@ -61,13 +61,13 @@ class CourseHelper {
 		 * @param array $map_data course data
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_add_course', $map_data );
+		do_action( 'ohmylms_before_add_course', $map_data );
 
 		$post_id = wp_insert_post(
 			array(
 				'post_title'   => $map_data['title'],
 				'post_excerpt' => $map_data['description'],
-				'post_type'    => 'omlms-course',
+				'post_type'    => 'ohmylms-course',
 				'post_status'  => 'publish',
 			)
 		);
@@ -90,13 +90,13 @@ class CourseHelper {
 		 * @param array $map_data course data
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_add_course', $post_id, $map_data );
+		do_action( 'ohmylms_after_add_course', $post_id, $map_data );
 
 		set_post_thumbnail( $post_id, $map_data['feature_image']['src'] );
 
 		unset( $map_data['feature_image'] );
 		unset( $map_data['feature_video'] );
-		update_post_meta( $post_id, 'omlms_course_map', $map_data );
+		update_post_meta( $post_id, 'ohmylms_course_map', $map_data );
 
 		return array(
 			'status'    => 'success',
@@ -122,7 +122,7 @@ class CourseHelper {
 		 * @param array $map_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_course_update', $post_id, $map_data );
+		do_action( 'ohmylms_before_course_update', $post_id, $map_data );
 
 		if ( empty( $map_data['name'] ) ) {
 			return array(
@@ -140,24 +140,24 @@ class CourseHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post && 'omlms-course' === $post->post_type ) {
+		if ( $post && 'ohmylms-course' === $post->post_type ) {
 			wp_update_post(
 				array(
 					'ID'         => $post_id,
 					'post_title' => sanitize_text_field( $map_data['title'] ),
 				)
 			);
-			update_post_meta( $post_id, 'omlms_course_map', $map_data );
+			update_post_meta( $post_id, 'ohmylms_course_map', $map_data );
 		} else {
 			$post_id = wp_insert_post(
 				array(
 					'post_title'  => sanitize_text_field( $map_data['title'] ),
-					'post_type'   => 'omlms-course',
+					'post_type'   => 'ohmylms-course',
 					'post_status' => 'publish',
 				)
 			);
 
-			update_post_meta( $post_id, 'omlms_course_map', $map_data );
+			update_post_meta( $post_id, 'ohmylms_course_map', $map_data );
 		}
 
 		/**
@@ -167,7 +167,7 @@ class CourseHelper {
 		 * @param array $map_data key value pair based items to update meta fields
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_course_update', $post_id, $map_data );
+		do_action( 'ohmylms_after_course_update', $post_id, $map_data );
 
 		return array(
 			'status'  => 'success',
@@ -185,7 +185,7 @@ class CourseHelper {
 	public static function delete_course( $post_id ): array {
 
 		$post = get_post( $post_id );
-		if ( ! $post || 'omlms-course' !== $post->post_type ) {
+		if ( ! $post || 'ohmylms-course' !== $post->post_type ) {
 
 			return array(
 				'status'  => 'error',
@@ -199,7 +199,7 @@ class CourseHelper {
 		 * @param string $post_id course id to delete
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_before_course_delete', $post_id );
+		do_action( 'ohmylms_before_course_delete', $post_id );
 
 		$result = wp_delete_post( $post_id, true );
 
@@ -217,7 +217,7 @@ class CourseHelper {
 		 * @param string $post_id Deleted course id
 		 * @since 1.0.0
 		 */
-		do_action( 'omlms_after_course_delete', $post_id );
+		do_action( 'ohmylms_after_course_delete', $post_id );
 
 		return array(
 			'status'  => 'success',
@@ -237,7 +237,7 @@ class CourseHelper {
 
 		global $wpdb;
 
-		$table  = $wpdb->prefix . 'omlms_courses_with_sections';
+		$table  = $wpdb->prefix . 'ohmylms_courses_with_sections';
 		$result = $wpdb->insert(
 			$table,
 			array(
@@ -284,7 +284,7 @@ class CourseHelper {
 	public static function update_course_map( $course_id, $map ): array {
 
 		$course = get_post( $course_id );
-		if ( ! $course || 'omlms-course' !== $course->post_type ) {
+		if ( ! $course || 'ohmylms-course' !== $course->post_type ) {
 
 			return array(
 				'status'  => 'error',
@@ -292,7 +292,7 @@ class CourseHelper {
 			);
 		}
 
-		update_post_meta( $course_id, 'omlms_course_map', $map );
+		update_post_meta( $course_id, 'ohmylms_course_map', $map );
 
 		return array(
 			'status'  => 'success',
@@ -309,14 +309,14 @@ class CourseHelper {
 	 */
 	public static function get_course_map( $course_id ): array {
 		$course = get_post( $course_id );
-		if ( ! $course || 'omlms-course' !== $course->post_type ) {
+		if ( ! $course || 'ohmylms-course' !== $course->post_type ) {
 
 			return array(
 				'status'  => 'error',
 				'message' => __( 'Course not found.', 'ohmylms' ),
 			);
 		}
-		$map = get_post_meta( $course_id, 'omlms_course_map', true );
+		$map = get_post_meta( $course_id, 'ohmylms_course_map', true );
 		if ( empty( $map ) ) {
 			$map = self::get_default_map( $course_id );
 		}
@@ -358,9 +358,9 @@ class CourseHelper {
 		return $course_data;
 	}
 
-	public static function omlms_save_course_general_settings() {
+	public static function ohmylms_save_course_general_settings() {
 
-		check_ajax_referer( 'omlms-course', 'nonce' );
+		check_ajax_referer( 'ohmylms-course', 'nonce' );
 
 		if ( ! current_user_can( 'edit_post', $_POST['post_id'] ) ) {
 			$response = array(
@@ -402,7 +402,7 @@ class CourseHelper {
 	public static function save_course_settings( int $course_id, $settings_data ): array {
 
 		$course = get_post( $course_id );
-		if ( ! $course || 'omlms-course' !== $course->post_type ) {
+		if ( ! $course || 'ohmylms-course' !== $course->post_type ) {
 
 			return array(
 				'status'  => 'error',
@@ -410,7 +410,7 @@ class CourseHelper {
 			);
 		}
 
-		update_post_meta( $course_id, 'omlms_course_settings', $settings_data );
+		update_post_meta( $course_id, 'ohmylms_course_settings', $settings_data );
 
 		return array(
 			'status'  => 'success',

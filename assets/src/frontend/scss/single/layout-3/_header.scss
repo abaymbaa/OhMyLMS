@@ -1,11 +1,11 @@
-.creator-lms-single-course-layout3 {
-    .creator-lms-course-header {
-        .creator-lms-course-title {
+.ohmylms-single-course-layout3 {
+    .ohmylms-course-header {
+        .ohmylms-course-title {
             font-size: 40px;
             font-weight: 600;
         }
 
-        .creator-lms-course-meta {
+        .ohmylms-course-meta {
             gap: 14px;
             row-gap: 10px;
 
@@ -59,12 +59,12 @@
 
                 strong {
                     font-weight: 500;
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                 }
             }
         }
 
-        .creator-lms-course-author {
+        .ohmylms-course-author {
             display: flex;
             flex-flow: row wrap;
             align-items: center;
@@ -98,7 +98,7 @@
             }
         }
 
-        .creator-lms-feature-image-wrapper {
+        .ohmylms-feature-image-wrapper {
             margin-top: 35px;
 
             figure img {
@@ -112,30 +112,30 @@
     }
 }
 
-.theme-twentytwentyfour .creator-lms-single-course-layout3 .creator-lms-course-header .creator-lms-course-meta li svg {
+.theme-twentytwentyfour .ohmylms-single-course-layout3 .ohmylms-course-header .ohmylms-course-meta li svg {
     position: relative;
     top: -1px;
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-single-course-layout3 .creator-lms-course-header .creator-lms-course-title {
+    .ohmylms-single-course-layout3 .ohmylms-course-header .ohmylms-course-title {
         font-size: 34px;
     }
     
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-single-course-layout3 .creator-lms-course-header .creator-lms-course-title {
+    .ohmylms-single-course-layout3 .ohmylms-course-header .ohmylms-course-title {
         font-size: 30px;
     }
     
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-single-course-layout3 .creator-lms-course-header .creator-lms-course-title {
+    .ohmylms-single-course-layout3 .ohmylms-course-header .ohmylms-course-title {
         font-size: 24px;
     }
-    .creator-lms-single-course-layout3 .creator-lms-course-header .creator-lms-feature-image-wrapper {
+    .ohmylms-single-course-layout3 .ohmylms-course-header .ohmylms-feature-image-wrapper {
         margin-top: 20px;
     }
     

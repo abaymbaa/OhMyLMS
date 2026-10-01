@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 use WP_REST_Controller;
 
@@ -16,7 +16,7 @@ abstract class RestController extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creator-lms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * Authorize access to an existing object of the expected post type.
@@ -28,11 +28,11 @@ abstract class RestController extends WP_REST_Controller {
 		$post = $post_id ? get_post( $post_id ) : null;
 
 		if ( ! $post || ! in_array( $post->post_type, (array) $post_types, true ) ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'ohmylms_rest_invalid_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		if ( ! in_array( $action, array( 'read', 'edit', 'delete' ), true ) || ! current_user_can( $action . '_post', $post_id ) ) {
-			return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;

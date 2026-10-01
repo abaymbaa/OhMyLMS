@@ -73,7 +73,7 @@ export function createZoomEditor(readRuntime) {
       I = (0, Notifications.A)(),
       openNotificationWithIcon = I.openNotificationWithIcon,
       contextHolder = I.contextHolder,
-      D = (0, Entitlements.useFeatureAccess)('zoom'),
+      D = true,
       W = Qi(),
       B = (null == u ? void 0 : u.zoom_plan) || jo,
       V = function (e) {
@@ -99,7 +99,7 @@ export function createZoomEditor(readRuntime) {
                 for (;;)
                   switch ((e.p = e.n)) {
                     case 0:
-                      if (D) {
+                      {
                         e.n = 1;
                         break;
                       }
@@ -193,7 +193,7 @@ export function createZoomEditor(readRuntime) {
                 for (;;)
                   switch ((e.p = e.n)) {
                     case 0:
-                      if (D) {
+                      {
                         e.n = 1;
                         break;
                       }
@@ -412,7 +412,7 @@ export function createZoomEditor(readRuntime) {
               w || R || onClose();
             },
             onSave: function () {
-              D && (v ? G() : H());
+              v ? G() : H();
             },
             onPreview: function () {
               null != u && u.preview_url && window.open(u.preview_url, '_blank');

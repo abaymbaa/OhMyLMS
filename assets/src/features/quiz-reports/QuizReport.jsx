@@ -22,7 +22,7 @@ export function createQuizReport(readRuntime) {
       uf: EmptyState,
       v: RouterLinks,
     } = readRuntime();
-    useAdminScreen('creator-lms', 'quizzes');
+    useAdminScreen('ohmylms', 'quizzes');
     var e = JZ((0, ReactHooks.useState)(''), 2),
       search = e[0],
       setSearch = e[1],
@@ -60,7 +60,7 @@ export function createQuizReport(readRuntime) {
                             setLoading(!0),
                             (e.n = 1),
                             ApiFetchModule()({
-                              path: '/creator-lms/v1/quiz/'.concat(quizId, '/report'),
+                              path: '/ohmylms/v1/quiz/'.concat(quizId, '/report'),
                               method: 'GET',
                               headers: {
                                 'Content-Type': 'application/json',

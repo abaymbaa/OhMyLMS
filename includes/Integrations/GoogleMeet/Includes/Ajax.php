@@ -2,18 +2,18 @@
 /**
  * Ajax class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes;
 
-use OMLMS\Integrations\GoogleMeet\Includes\Services\MeetingService;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Services\MeetingService;
 
 /**
  * Class Ajax
  *
- * @package OMLMS\Integrations\GoogleMeet
+ * @package OhMyLMS\Integrations\GoogleMeet
  * @since 1.0.0
  */
 class Ajax {
@@ -32,10 +32,10 @@ class Ajax {
 	 * @return void
 	 */
 	private function init_ajax_handlers() {
-		\add_action( 'wp_ajax_creatorlms_create_googlemeet', array( $this, 'create_meeting' ) );
-		\add_action( 'wp_ajax_creatorlms_update_googlemeet', array( $this, 'update_meeting' ) );
-		\add_action( 'wp_ajax_creatorlms_delete_googlemeet', array( $this, 'delete_meeting' ) );
-		\add_action( 'wp_ajax_creatorlms_get_googlemeet', array( $this, 'get_meeting' ) );
+		\add_action( 'wp_ajax_ohmylms_create_googlemeet', array( $this, 'create_meeting' ) );
+		\add_action( 'wp_ajax_ohmylms_update_googlemeet', array( $this, 'update_meeting' ) );
+		\add_action( 'wp_ajax_ohmylms_delete_googlemeet', array( $this, 'delete_meeting' ) );
+		\add_action( 'wp_ajax_ohmylms_get_googlemeet', array( $this, 'get_meeting' ) );
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Ajax {
 	 * @return void
 	 */
 	public function create_meeting() {
-		\check_ajax_referer( 'creatorlms_nonce', 'nonce' );
+		\check_ajax_referer( 'ohmylms_nonce', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
 			\wp_send_json_error( array( 'message' => __( 'Unauthorized', 'ohmylms' ) ), 403 );
@@ -78,7 +78,7 @@ class Ajax {
 	 * @return void
 	 */
 	public function update_meeting() {
-		\check_ajax_referer( 'creatorlms_nonce', 'nonce' );
+		\check_ajax_referer( 'ohmylms_nonce', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
 			\wp_send_json_error( array( 'message' => __( 'Unauthorized', 'ohmylms' ) ), 403 );
@@ -111,7 +111,7 @@ class Ajax {
 	 * @return void
 	 */
 	public function delete_meeting() {
-		\check_ajax_referer( 'creatorlms_nonce', 'nonce' );
+		\check_ajax_referer( 'ohmylms_nonce', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
 			\wp_send_json_error( array( 'message' => __( 'Unauthorized', 'ohmylms' ) ), 403 );
@@ -137,7 +137,7 @@ class Ajax {
 	 * @return void
 	 */
 	public function get_meeting() {
-		\check_ajax_referer( 'creatorlms_nonce', 'nonce' );
+		\check_ajax_referer( 'ohmylms_nonce', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
 			\wp_send_json_error( array( 'message' => __( 'Unauthorized', 'ohmylms' ) ), 403 );

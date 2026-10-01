@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Admin\Settings\AdminSettings;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Admin\Settings\AdminSettings;
 
 /**
  * SettingsController class.
@@ -94,7 +94,7 @@ class EmailController extends RestController {
 
 		$settings = array();
 		foreach ( $email_ids as $key => $email_id ) {
-			$email = 'OMLMS\\Emails\\' . $key;
+			$email = 'OhMyLMS\\Emails\\' . $key;
 			if ( class_exists( $email ) ) {
 				$settings[ $email_id ]          = $this->get_setting( $email_id, ( new $email() )->default_settings() );
 				$settings[ $email_id ]['basic'] = ( new $email() )->basic_settings();
@@ -163,7 +163,7 @@ class EmailController extends RestController {
 			'StudentsEmail\\QuizGraded'         => 'student_quiz_graded',
 		);
 		$key       = array_search( $request['email_id'], $email_ids );
-		$email     = 'OMLMS\\Emails\\' . $key;
+		$email     = 'OhMyLMS\\Emails\\' . $key;
 		$setting   = $this->get_setting( $request['email_id'], ( new $email() )->default_settings() );
 		if ( is_wp_error( $setting ) ) {
 			return $setting;

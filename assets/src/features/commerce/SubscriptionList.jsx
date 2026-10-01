@@ -3,7 +3,6 @@
  * Displays subscriptions table, Pro overlay gating, search, and pagination.
  */
 import { createElement } from '@wordpress/element';
-
 export function createSubscriptionList(readRuntime) {
   return function SubscriptionList() {
     const {
@@ -27,15 +26,11 @@ export function createSubscriptionList(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-
-    const isPro = Entitlements.useIsPro?.() ?? false;
     const dispatch = WordPressData.useDispatch(StoreModule.default);
     const navigate = Router.Zp();
-
     const notifications = Notifications.A();
     const openNotification = notifications.openNotificationWithIcon;
     const contextHolder = notifications.contextHolder;
-
     const subscriptions = WordPressData.useSelect(
       (select) => select(StoreModule.default).selectSubscriptions(),
       [],
@@ -58,15 +53,16 @@ export function createSubscriptionList(readRuntime) {
       (select) => select(StoreModule.default).getNotificationStatus(),
       [],
     );
-
     const [selectedRowKeys, setSelectedRowKeys] = ReactHooks.useState([]);
     const [currentPage, setCurrentPage] = ReactHooks.useState(1);
     const [perPage] = ReactHooks.useState(10);
     const [searchTerm, setSearchTerm] = ReactHooks.useState('');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = ReactHooks.useState(false);
     const [targetDeleteId, setTargetDeleteId] = ReactHooks.useState(null);
-    const [sorting, setSorting] = ReactHooks.useState({ field: 'start_date', order: 'DESC' });
-
+    const [sorting, setSorting] = ReactHooks.useState({
+      field: 'start_date',
+      order: 'DESC',
+    });
     const fetchSubscriptionsList = ReactHooks.useCallback(
       (orderby = sorting.field, order = sorting.order) => {
         const params = {
@@ -80,46 +76,42 @@ export function createSubscriptionList(readRuntime) {
       },
       [dispatch, currentPage, perPage, searchTerm, sorting],
     );
-
     ReactHooks.useEffect(() => {
-      if (isPro) {
+      {
         fetchSubscriptionsList();
       }
-    }, [isPro, fetchSubscriptionsList]);
-
+    }, [fetchSubscriptionsList]);
     ReactHooks.useEffect(() => {
       if (!loading && notificationMessage && notificationMessage.length > 0) {
         openNotification(notificationStatus, notificationMessage);
       }
     }, [loading, notificationMessage, notificationStatus, openNotification]);
-
     const handleSearch = ReactHooks.useCallback((value) => {
       setSearchTerm(value);
       setCurrentPage(1);
     }, []);
-
     const handlePageChange = ReactHooks.useCallback((page) => {
       setCurrentPage(page);
       setSelectedRowKeys([]);
     }, []);
-
     const handleViewSubscription = ReactHooks.useCallback(
       (id) => {
         navigate(`/subscription-edit/${id}`);
       },
       [navigate],
     );
-
     const handleTableChange = ReactHooks.useCallback(
       (paginationInfo, filters, sorter) => {
         const field = sorter.field || 'start_date';
         const order = sorter.order === 'ascend' ? 'ASC' : 'DESC';
         setCurrentPage(1);
-        setSorting({ field, order });
+        setSorting({
+          field,
+          order,
+        });
       },
       [fetchSubscriptionsList],
     );
-
     const bulkActions = ReactHooks.useMemo(
       () => [
         {
@@ -130,7 +122,6 @@ export function createSubscriptionList(readRuntime) {
       ],
       [],
     );
-
     const columns = ReactHooks.useMemo(
       () => [
         {
@@ -211,11 +202,13 @@ export function createSubscriptionList(readRuntime) {
               <Controls.BadgeWP
                 isBorderLess={true}
                 variant={variant}
-                style={{ textTransform: 'capitalize' }}
+                style={{
+                  textTransform: 'capitalize',
+                }}
               >
                 {status
                   ? status
-                      .replace('omlms-', '')
+                      .replace('ohmylms-', '')
                       .replace('-', ' ')
                       .replace(/^(\w)/, (c) => c.toUpperCase())
                   : I18n.__('N/A', 'ohmylms')}
@@ -235,7 +228,6 @@ export function createSubscriptionList(readRuntime) {
       ],
       [handleViewSubscription],
     );
-
     const rowSelection = ReactHooks.useMemo(
       () => ({
         selectedRowKeys,
@@ -243,20 +235,18 @@ export function createSubscriptionList(readRuntime) {
       }),
       [selectedRowKeys],
     );
-
     return (
       <React.Fragment>
         {contextHolder}
         <Controls.ContainerWP>
           <PageHeader title={I18n.__('Subscriptions', 'ohmylms')} />
-          <ContentCard isBorderless={true} style={{ minHeight: '408px' }}>
+          <ContentCard
+            isBorderless={true}
+            style={{
+              minHeight: '408px',
+            }}
+          >
             <Controls.SpacerWP padding={5} marginBottom={0}>
-              <Controls.ProOverlayWP
-                title={I18n.__(
-                  'Subscription is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.',
-                  'ohmylms',
-                )}
-              />
               <Controls.SpacerWP marginBottom={4}>
                 {selectedRowKeys.length > 0 ? (
                   <BulkActionsBar

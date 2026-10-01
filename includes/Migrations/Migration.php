@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Migrations;
+namespace OhMyLMS\Migrations;
 
 class Migration {
 
@@ -50,27 +50,27 @@ class Migration {
 			'tutorLMS' => array(
 				'title'       => 'Tutor LMS',
 				'description' => 'Migrate Tutor LMS courses, lessons, quizzes and other data to OhMyLMS.',
-				'class'       => 'OMLMS\\Migrations\\TutorLMS',
+				'class'       => 'OhMyLMS\\Migrations\\TutorLMS',
 			),
 			'learnDash' => array(
 				'title'       => 'LearnDash LMS',
 				'description' => 'Migrate LearnDash LMS courses, lessons, quizzes and other data to OhMyLMS.',
-				'class'       => 'OMLMS\\Migrations\\LearnDash',
+				'class'       => 'OhMyLMS\\Migrations\\LearnDash',
 			),
 			'learnPress' => array(
 				'title'       => 'LearnPress',
 				'description' => 'Migrate LearnPress courses, lessons, quizzes and other data to OhMyLMS.',
-				'class'       => 'OMLMS\\Migrations\\LearnPress',
+				'class'       => 'OhMyLMS\\Migrations\\LearnPress',
 			),
 			'masterStudy' => array(
 				'title'       => 'MasterStudy LMS',
 				'description' => 'Migrate MasterStudy LMS courses, lessons, quizzes and other data to OhMyLMS.',
-				'class'       => 'OMLMS\\Migrations\\MasterStudy',
+				'class'       => 'OhMyLMS\\Migrations\\MasterStudy',
 			),
 		);
 
 		// Allow filtering of the migration sources
-		$sources = apply_filters( 'creator_lms_migrations', $sources );
+		$sources = apply_filters( 'ohmylms_migrations', $sources );
 
 		return $sources;
 	}

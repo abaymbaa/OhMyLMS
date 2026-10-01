@@ -26,12 +26,12 @@ export function createRelatedOrders(readRuntime) {
         render: (_, record) => {
           let link = null;
           if (record.relationship === I18n.__('Subscription', 'ohmylms')) {
-            link = `/wp-admin/admin.php?page=creator-lms#/subscription-edit/${record.id}`;
+            link = `/wp-admin/admin.php?page=ohmylms#/subscription-edit/${record.id}`;
           } else if (
             record.relationship === I18n.__('Renewal Order', 'ohmylms') ||
             record.relationship === I18n.__('Parent', 'ohmylms')
           ) {
-            link = `/wp-admin/admin.php?page=creator-lms#/order-edit/${record.id}`;
+            link = `/wp-admin/admin.php?page=ohmylms#/order-edit/${record.id}`;
           }
 
           if (link) {
@@ -106,7 +106,7 @@ export function createRelatedOrders(readRuntime) {
               rowKey="order_number"
               columns={columns}
               dataSource={relatedOrders}
-              className="omlms-related-orders-table"
+              className="ohmylms-related-orders-table"
             />
           </Controls.SpacerWP>
         </Controls.CardWP>

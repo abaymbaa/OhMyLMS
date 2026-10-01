@@ -31,7 +31,7 @@ export function createCategoriesPage(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    HG('creator-lms', 'categories');
+    HG('ohmylms', 'categories');
     var e = (0, WordPressData.useDispatch)(StoreModule.default),
       t = (0, Notifications.A)(),
       n = t.openNotificationWithIcon,
@@ -82,7 +82,7 @@ export function createCategoriesPage(readRuntime) {
                         (t.p = 1),
                         (t.n = 2),
                         l()({
-                          path: '/creator-lms/v1/categories',
+                          path: '/ohmylms/v1/categories',
                         })
                       );
                     case 2:
@@ -152,7 +152,7 @@ export function createCategoriesPage(readRuntime) {
                       return (
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/categories/'.concat(R.term_id),
+                          path: '/ohmylms/v1/categories/'.concat(R.term_id),
                           method: 'PUT',
                           data: {
                             name: t.name,
@@ -169,7 +169,7 @@ export function createCategoriesPage(readRuntime) {
                       return (
                         (e.n = 4),
                         l()({
-                          path: '/creator-lms/v1/categories',
+                          path: '/ohmylms/v1/categories',
                           method: 'POST',
                           data: {
                             name: t.name,
@@ -233,7 +233,7 @@ export function createCategoriesPage(readRuntime) {
                       return (
                         (e.n = 4),
                         l()({
-                          path: '/creator-lms/v1/categories/'.concat(P.term_id),
+                          path: '/ohmylms/v1/categories/'.concat(P.term_id),
                           method: 'DELETE',
                         })
                       );
@@ -245,7 +245,7 @@ export function createCategoriesPage(readRuntime) {
                       return (
                         (e.n = 6),
                         l()({
-                          path: '/creator-lms/v1/categories/bulk',
+                          path: '/ohmylms/v1/categories/bulk',
                           method: 'DELETE',
                           data: {
                             ids: W,

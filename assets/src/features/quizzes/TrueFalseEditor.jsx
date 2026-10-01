@@ -21,20 +21,22 @@ export function createTrueFalseEditor(readRuntime) {
       r.updateQuestion,
       (
         <React.Fragment>
-          <div className={'omlms-options-list omlms-options-list-true-false'}>
+          <div className={'ohmylms-options-list ohmylms-options-list-true-false'}>
             {options.map(function (r, o) {
               var i, l;
               return (
                 <div
-                  className={'omlms-option-item-wrapper omlms-quiz-option-item omlms-quiz-option-item-'.concat(
+                  className={'ohmylms-option-item-wrapper ohmylms-quiz-option-item ohmylms-quiz-option-item-'.concat(
                     o,
                   )}
                   key={(null == r ? void 0 : r.id) || o}
                 >
                   <Controls.CardWP
                     isBorderless={!0}
-                    className={'omlms-option-item '.concat(
-                      1 == (null == r ? void 0 : r.is_correct) ? 'omlms-option-item--correct' : '',
+                    className={'ohmylms-option-item '.concat(
+                      1 == (null == r ? void 0 : r.is_correct)
+                        ? 'ohmylms-option-item--correct'
+                        : '',
                     )}
                   >
                     <Controls.FlexWP>
@@ -90,7 +92,7 @@ export function createTrueFalseEditor(readRuntime) {
                     <React.Fragment />
                   ) : (
                     <div
-                      className={'omlms-option-correct'}
+                      className={'ohmylms-option-correct'}
                       style={{
                         color: 'red',
                         marginTop: 4,
@@ -103,7 +105,7 @@ export function createTrueFalseEditor(readRuntime) {
                     Boolean(
                       null == r || null === (l = r.answer) || void 0 === l ? void 0 : l.trim(),
                     ) && (
-                      <span className={'omlms-option-correct'}>
+                      <span className={'ohmylms-option-correct'}>
                         {(0, I18n.__)('This answer is correct', 'ohmylms')}
                       </span>
                     )}
@@ -114,7 +116,7 @@ export function createTrueFalseEditor(readRuntime) {
               !options.some(function (e) {
                 return 1 == e.is_correct;
               }) && (
-                <p className={'omlms-option-error-msg'}>
+                <p className={'ohmylms-option-error-msg'}>
                   {(0, I18n.__)('Please select at least one correct answer', 'ohmylms')}
                 </p>
               )}

@@ -78,10 +78,10 @@ export function createChoiceOptionsEditor(readRuntime) {
       event.currentTarget.classList.remove('dragging');
     }
     return (
-      <div className={`omlms-options-list omlms-${type}-choice`}>
+      <div className={`ohmylms-options-list ohmylms-${type}-choice`}>
         {ordering.I(options).map((option, index) => (
           <Option
-            className={`omlms-quiz-option-item omlms-quiz-option-item-${index}`}
+            className={`ohmylms-quiz-option-item ohmylms-quiz-option-item-${index}`}
             key={option.id}
             option={option}
             index={index}
@@ -100,9 +100,9 @@ export function createChoiceOptionsEditor(readRuntime) {
             onInputBlur={() => setFocused(false)}
           />
         ))}
-        {error && <p className="omlms-option-error-msg">{error}</p>}
+        {error && <p className="ohmylms-option-error-msg">{error}</p>}
         {hasValidationErrors && !options.some((option) => Number(option.is_correct) === 1) && (
-          <p className="omlms-option-error-msg">
+          <p className="ohmylms-option-error-msg">
             {__('Please select at least one correct answer', 'ohmylms')}
           </p>
         )}

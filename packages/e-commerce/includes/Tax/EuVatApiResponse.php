@@ -75,7 +75,7 @@ class EuVatApiResponse
                 $error_message = $this->error;
         }
 
-        return apply_filters('creator_lms_vat_error_code_to_string', $error_message, $this->error);
+        return apply_filters('ohmylms_vat_error_code_to_string', $error_message, $this->error);
     }
 
     public function __toString()

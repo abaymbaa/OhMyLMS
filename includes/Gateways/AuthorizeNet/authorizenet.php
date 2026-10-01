@@ -8,9 +8,9 @@
  * @version 1.0.0
  */
 
-define( 'CREATORLMS_AUTHORIZENET_VERSION', '1.0.0' );
-define( 'CREATORLMS_AUTHORIZENET_MAIN_FILE', __FILE__ );
-define( 'CREATORLMS_AUTHORIZENET_ABSPATH', __DIR__ . '/' );
+define( 'OHMYLMS_AUTHORIZENET_VERSION', '1.0.0' );
+define( 'OHMYLMS_AUTHORIZENET_MAIN_FILE', __FILE__ );
+define( 'OHMYLMS_AUTHORIZENET_ABSPATH', __DIR__ . '/' );
 
 /**
  * Register Authorize.Net Gateway
@@ -21,7 +21,7 @@ define( 'CREATORLMS_AUTHORIZENET_ABSPATH', __DIR__ . '/' );
  * @return array The updated list of payment gateways including Authorize.Net.
  * @since 1.0.0
  */
-add_filter('creatorlms_payment_gateways', function ($gateways) {
+add_filter('ohmylms_payment_gateways', function ($gateways) {
     $gateways[] = GatewayAuthorizenet::class;
     return $gateways;
 });
@@ -34,7 +34,7 @@ add_filter('creatorlms_payment_gateways', function ($gateways) {
  * @param array $settings The existing settings array.
  * @return array The updated settings array including Authorize.Net settings.
  */
-add_filter('creatorlms_payment_gateways_settings', function ($settings) {
+add_filter('ohmylms_payment_gateways_settings', function ($settings) {
     $settings['authorizenet'] = array();
     return $settings;
 });

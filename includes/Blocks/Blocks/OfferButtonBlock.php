@@ -2,16 +2,16 @@
 /**
  * OhMyLMS Offer Button Block (PHP registration)
  *
- * @package OMLMS\Blocks\Blocks
+ * @package OhMyLMS\Blocks\Blocks
  */
 
-namespace OMLMS\Blocks\Blocks;
+namespace OhMyLMS\Blocks\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class OfferButtonBlock {
     public static function register() {
-        register_block_type( 'creator-lms/offer-button', [
+        register_block_type( 'ohmylms/offer-button', [
             'attributes'      => [
                 'action'        => [ 'type' => 'string', 'default' => 'accept' ],
                 'text'          => [ 'type' => 'string', 'default' => 'Accept Offer' ],
@@ -30,22 +30,22 @@ class OfferButtonBlock {
                 'style'         => [ 'type' => 'string', 'default' => '' ],
             ],
             'render_callback' => [ __CLASS__, 'render' ],
-            'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+            'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
         ] );
     }
 
     public static function render( $atts ) {
         // Use the pro shortcode handler for output
-        if ( class_exists( '\OMLMS\Shortcodes\ShortCodeOfferButton' ) ) {
+        if ( class_exists( '\OhMyLMS\Shortcodes\ShortCodeOfferButton' ) ) {
             ob_start();
-            \OMLMS\Shortcodes\ShortCodeOfferButton::output( $atts );
+            \OhMyLMS\Shortcodes\ShortCodeOfferButton::output( $atts );
             return ob_get_clean();
         }
-        return '<div class="creator-lms-offer-button-missing">Offer Button not available.</div>';
+        return '<div class="ohmylms-offer-button-missing">Offer Button not available.</div>';
     }
 }
 
 // Register on init
-add_action( 'init', [ '\OMLMS\Blocks\Blocks\OfferButtonBlock', 'register' ] );
+add_action( 'init', [ '\OhMyLMS\Blocks\Blocks\OfferButtonBlock', 'register' ] );

@@ -2,7 +2,7 @@
 /**
  * DripContent class
  */
-namespace OMLMS;
+namespace OhMyLMS;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -15,8 +15,8 @@ class DripContent {
      * Initialize drip content functionality
      */
     public function __construct() {
-        add_filter( 'creator_lms_is_lesson_locked', array( $this, 'is_lesson_locked' ), 10, 4 );
-        add_filter( 'creator_lms_drip_protection_message', array($this, 'drip_protection_message'), 10, 4);
+        add_filter( 'ohmylms_is_lesson_locked', array( $this, 'is_lesson_locked' ), 10, 4 );
+        add_filter( 'ohmylms_drip_protection_message', array($this, 'drip_protection_message'), 10, 4);
     }
 
     /**
@@ -31,14 +31,14 @@ class DripContent {
      */
     public function is_lesson_locked( $is_locked, $lesson_id, $course_id, $current_student_id ) {
         $post_type = get_post_type( $lesson_id );
-        if ( 'omlms-lesson' === $post_type ) {
-            $lesson = omlms_get_lesson( $lesson_id );
-        } elseif ( 'omlms-quiz' === $post_type ) {
-            $lesson = omlms_get_quiz( $lesson_id );
-        } elseif ( 'omlms-assignment' === $post_type ) {
-            $lesson = omlms_get_assignment( $lesson_id );
-        } elseif ( 'omlms-session' === $post_type ) {
-            $lesson = omlms_get_session( $lesson_id );
+        if ( 'ohmylms-lesson' === $post_type ) {
+            $lesson = ohmylms_get_lesson( $lesson_id );
+        } elseif ( 'ohmylms-quiz' === $post_type ) {
+            $lesson = ohmylms_get_quiz( $lesson_id );
+        } elseif ( 'ohmylms-assignment' === $post_type ) {
+            $lesson = ohmylms_get_assignment( $lesson_id );
+        } elseif ( 'ohmylms-session' === $post_type ) {
+            $lesson = ohmylms_get_session( $lesson_id );
         } else {
             return $is_locked; // Unsupported post type, return original status
         }
@@ -56,12 +56,12 @@ class DripContent {
             return $is_locked;
         }
 
-        $timezone = new \DateTimeZone( function_exists('omlms_timezone_string') ? omlms_timezone_string() : 'UTC' );
+        $timezone = new \DateTimeZone( function_exists('ohmylms_timezone_string') ? ohmylms_timezone_string() : 'UTC' );
         $now = new \DateTime( 'now', $timezone );
         $type = $drip_settings['type'] ?? '';
 
         if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
-            $course = omlms_get_course( $course_id );
+            $course = ohmylms_get_course( $course_id );
             if ( ! $course ) {
                 return $is_locked;
             }
@@ -103,7 +103,7 @@ class DripContent {
         if ( $type === 'enrollment-from-x-days' ) {
             global $wpdb;
             $enrollment_date = $wpdb->get_var( $wpdb->prepare( 
-                "SELECT start_date FROM {$wpdb->prefix}omlms_user_enrollment WHERE user_id = %d AND course_id = %d AND status = %s",
+                "SELECT start_date FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d AND status = %s",
                 $current_student_id, $course_id, 'enrolled'
             ) );
             if ( ! $enrollment_date ) {
@@ -136,7 +136,7 @@ class DripContent {
      * @since 1.0.0
      */
     public function get_lesson_unlock_date( $unlock_date, $lesson_id, $course_id, $current_student_id ) {
-        $lesson = omlms_get_lesson( $lesson_id );
+        $lesson = ohmylms_get_lesson( $lesson_id );
         if ( ! $lesson ) {
             return $unlock_date;
         }
@@ -145,11 +145,11 @@ class DripContent {
             return $unlock_date;
         }
 
-        $timezone = new \DateTimeZone( function_exists('omlms_timezone_string') ? omlms_timezone_string() : 'UTC' );
+        $timezone = new \DateTimeZone( function_exists('ohmylms_timezone_string') ? ohmylms_timezone_string() : 'UTC' );
         $type = $drip_settings['type'] ?? '';
 
         if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
-            $course = omlms_get_course( $course_id );
+            $course = ohmylms_get_course( $course_id );
             if ( ! $course ) {
                 return $unlock_date;
             }
@@ -199,20 +199,20 @@ class DripContent {
      * @since 1.0.0
      */
     public function drip_protection_message( $output, $content_id, $post_type, $student_id ) {
-        $is_locked = $this->is_lesson_locked( true, $content_id, creator_lms_get_course_by_content_id( $content_id ), $student_id );
+        $is_locked = $this->is_lesson_locked( true, $content_id, ohmylms_get_course_by_content_id( $content_id ), $student_id );
         if ( ! $is_locked ) {
             return $output; // No drip protection, return original output
         }
         $content = null;
         $content_type = '';
-        if ( 'omlms-lesson' === $post_type ) {
-            $content = omlms_get_lesson( $content_id );
+        if ( 'ohmylms-lesson' === $post_type ) {
+            $content = ohmylms_get_lesson( $content_id );
             $content_type = 'lesson';
-        } elseif ( 'omlms-quiz' === $post_type ) {
-            $content = omlms_get_quiz( $content_id );
+        } elseif ( 'ohmylms-quiz' === $post_type ) {
+            $content = ohmylms_get_quiz( $content_id );
             $content_type = 'quiz';
-        } elseif ( 'omlms-assignment' === $post_type ) {
-            $content = omlms_get_assignment( $content_id );
+        } elseif ( 'ohmylms-assignment' === $post_type ) {
+            $content = ohmylms_get_assignment( $content_id );
             $content_type = 'assignment';
         }
         if ( ! $content ) {
@@ -225,12 +225,12 @@ class DripContent {
         if ( ! $drip_settings || ! is_array( $drip_settings ) || empty( $drip_settings['enable'] ) ) {
             return $output;
         }
-        $course_id = creator_lms_get_course_by_content_id( $content_id );
-        $timezone = new \DateTimeZone( function_exists('omlms_timezone_string') ? omlms_timezone_string() : 'UTC' );
+        $course_id = ohmylms_get_course_by_content_id( $content_id );
+        $timezone = new \DateTimeZone( function_exists('ohmylms_timezone_string') ? ohmylms_timezone_string() : 'UTC' );
         $type = $drip_settings['type'] ?? '';
         $unlock_datetime = null;
         if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
-            $course = omlms_get_course( $course_id );
+            $course = ohmylms_get_course( $course_id );
             if ( $course ) {
                 $cohorts = $course->get_cohort();
                 $cohort = is_array($cohorts) && count($cohorts) > 0 ? $cohorts[0] : null;
@@ -260,7 +260,7 @@ class DripContent {
         } elseif ( $type === 'enrollment-from-x-days' ) {
             global $wpdb;
             $enrollment_date = $wpdb->get_var( $wpdb->prepare( 
-                "SELECT start_date FROM {$wpdb->prefix}omlms_user_enrollment WHERE user_id = %d AND course_id = %d AND status = %s",
+                "SELECT start_date FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d AND status = %s",
                 $student_id, $course_id, 'enrolled'
             ) );
             if ( $enrollment_date ) {

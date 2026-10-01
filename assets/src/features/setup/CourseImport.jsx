@@ -104,7 +104,7 @@ export function createCourseImport(readRuntime) {
         Xne(
           null !== (t = window) &&
             void 0 !== t &&
-            null !== (t = t.creator_lms_params) &&
+            null !== (t = t.ohmylms_params) &&
             void 0 !== t &&
             t.is_tutor_lms_active
             ? [
@@ -119,7 +119,7 @@ export function createCourseImport(readRuntime) {
         Xne(
           null !== (n = window) &&
             void 0 !== n &&
-            null !== (n = n.creator_lms_params) &&
+            null !== (n = n.ohmylms_params) &&
             void 0 !== n &&
             n.is_learndash_lms_active
             ? [
@@ -134,7 +134,7 @@ export function createCourseImport(readRuntime) {
         Xne(
           null !== (r = window) &&
             void 0 !== r &&
-            null !== (r = r.creator_lms_params) &&
+            null !== (r = r.ohmylms_params) &&
             void 0 !== r &&
             r.is_learnpress_active
             ? [
@@ -149,7 +149,7 @@ export function createCourseImport(readRuntime) {
         Xne(
           null !== (a = window) &&
             void 0 !== a &&
-            null !== (a = a.creator_lms_params) &&
+            null !== (a = a.ohmylms_params) &&
             void 0 !== a &&
             a.is_masterstudy_active
             ? [
@@ -185,10 +185,12 @@ export function createCourseImport(readRuntime) {
         />
         <Controls.ContainerWP>
           <div
-            className={'omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper'}
+            className={
+              'ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper'
+            }
           >
-            <div className={'omlms-setup-wizard__container'}>
-              <div className={'omlms-setup-wizard__header'}>
+            <div className={'ohmylms-setup-wizard__container'}>
+              <div className={'ohmylms-setup-wizard__header'}>
                 <Controls.HeadingWP
                   as={'h2'}
                   color={'#000d25'}
@@ -249,7 +251,7 @@ export function createCourseImport(readRuntime) {
                               <Controls.SpacerWP padding={4} marginBottom={0}>
                                 {c.selectedPlatform === e.value && (
                                   <div
-                                    className={'omlms-setup-wizard__check'}
+                                    className={'ohmylms-setup-wizard__check'}
                                     style={{
                                       position: 'absolute',
                                       height: '16px',

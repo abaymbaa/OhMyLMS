@@ -24,7 +24,7 @@ var X8 = function (e) {
     size: 40
   }) : React.createElement(JU, null)), React.createElement(I.FlexWP, {
     direction: "column",
-    className: "omlms-td-thumbnail-title"
+    className: "ohmylms-td-thumbnail-title"
   }, React.createElement(v.Link, {
     to: "/students/".concat(null == t ? void 0 : t.user_id, "/report"),
     title: null == t ? void 0 : t.student_name,
@@ -42,7 +42,7 @@ var X8 = function (e) {
     justify: "start",
     gap: "2"
   }, React.createElement("div", {
-    className: "omlms-td-action-analytics"
+    className: "ohmylms-td-action-analytics"
   }, React.createElement(I.ButtonWP, {
     icon: React.createElement(vG, null),
     onClick: r,
@@ -52,7 +52,7 @@ var X8 = function (e) {
       height: "26px"
     }
   })), React.createElement("div", {
-    className: "omlms-td-login-info"
+    className: "ohmylms-td-login-info"
   }, null != t && t.last_login ? React.createElement(I.BadgeWP, {
     variant: "secondary",
     isBorderLess: !0
@@ -370,7 +370,7 @@ var l9 = function () {
             return t.p = 0, n = {
               ids: Y ? [Y] : A
             }, t.n = 1, l()({
-              path: "/creator-lms/v1/students",
+              path: "/ohmylms/v1/students",
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -403,7 +403,7 @@ var l9 = function () {
             return t.p = 0, n = {
               ids: [$]
             }, t.n = 1, l()({
-              path: "/creator-lms/v1/students/unban",
+              path: "/ohmylms/v1/students/unban",
               method: "POST",
               headers: {
                 "Content-Type": "application/json"

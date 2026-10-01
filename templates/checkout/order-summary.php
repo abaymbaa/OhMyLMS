@@ -2,13 +2,13 @@
 /**
  * Template for displaying checkout billing form.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/billing-form.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/billing-form.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
-use OMLMS\Membership\MembershipHelper;
+use OhMyLMS\Membership\MembershipHelper;
 
 defined( 'ABSPATH' ) || exit();
 ?>
@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit();
 				echo 1;
 				?>
 			</td>
-			<td><?php echo omlms_price($total); ?></td>
+			<td><?php echo ohmylms_price($total); ?></td>
 		</tr>
 		<?php
 	}
@@ -68,7 +68,7 @@ defined( 'ABSPATH' ) || exit();
 						}
 						?>
 					</td>
-					<td><?php echo omlms_price( $cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale() ? $cart_item['data']->get_price() : $cart_item['data']->get_regular_price()  );?></td>
+					<td><?php echo ohmylms_price( $cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale() ? $cart_item['data']->get_price() : $cart_item['data']->get_regular_price()  );?></td>
 				</tr>
 				<?php
 			}
@@ -79,7 +79,7 @@ defined( 'ABSPATH' ) || exit();
 	<tfoot>
 	<tr>
 		<td colspan="2"><?php _e('Subtotal', 'ohmylms'); ?></td>
-		<td><?php echo omlms_price($total); ?></td>
+		<td><?php echo ohmylms_price($total); ?></td>
 	</tr>
 	<tr>
 		<td colspan="2"><?php _e('Tax', 'ohmylms'); ?></td>
@@ -87,7 +87,7 @@ defined( 'ABSPATH' ) || exit();
 	</tr>
 	<tr>
 		<td colspan="2"><?php _e('Total', 'ohmylms'); ?></td>
-		<td><?php echo omlms_price($total);  ?></td>
+		<td><?php echo ohmylms_price($total);  ?></td>
 	</tr>
 	</tfoot>
 </table>

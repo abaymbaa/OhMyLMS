@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Course;
+use OhMyLMS\Data\Course;
 
 class CourseFactory {
 
@@ -33,7 +33,7 @@ class CourseFactory {
 	 */
 	private function get_course_id( $course ) {
 		global $post;
-		if ( false === $course && isset( $post, $post->ID ) && CREATOR_LMS_COURSE_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $course && isset( $post, $post->ID ) && OHMYLMS_COURSE_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		} elseif ( is_numeric( $course ) ) {
 			return $this->is_course_exist( $course ) ? $course : false;
@@ -63,8 +63,8 @@ class CourseFactory {
 
 		$course = get_post( $course_id );
 
-		// Check if the post exists and the post type is CREATOR_LMS_COURSE_CPT
-		if ( $course && CREATOR_LMS_COURSE_CPT === get_post_type( $course_id ) ) {
+		// Check if the post exists and the post type is OHMYLMS_COURSE_CPT
+		if ( $course && OHMYLMS_COURSE_CPT === get_post_type( $course_id ) ) {
 			return true;  // Post exists and is of the correct type
 		} else {
 			return false; // Either post doesn't exist or the post type doesn't match

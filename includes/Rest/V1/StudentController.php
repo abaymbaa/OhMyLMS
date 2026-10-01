@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Course;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Course;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -27,7 +27,7 @@ class StudentController extends RestController {
 	protected $base = 'students';
 
 	public function check_student_permission() {
-		return current_user_can( 'manage_options' ) || current_user_can( 'manage_creator_lms' );
+		return current_user_can( 'manage_options' ) || current_user_can( 'manage_ohmylms' );
 	}
 
 	/**
@@ -146,7 +146,7 @@ class StudentController extends RestController {
 			MIN(e.start_date) AS registration_date';
 
 		// Add membership count only if pro is active
-		if ( creator_lms_is_pro() ) {
+		if ( ohmylms_is_pro() ) {
 			$query .= ',
 				COUNT(DISTINCT m.membership_id) AS membership_enrolled';
 		} else {
@@ -158,14 +158,14 @@ class StudentController extends RestController {
             FROM
                 {$wpdb->users} u
             INNER JOIN
-                {$wpdb->prefix}omlms_user_enrollment e
+                {$wpdb->prefix}ohmylms_user_enrollment e
                 ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
 		// Add membership join only if pro is active
-		if ( creator_lms_is_pro() ) {
+		if ( ohmylms_is_pro() ) {
 			$query .= "
             LEFT JOIN
-                {$wpdb->prefix}omlms_user_membership m
+                {$wpdb->prefix}ohmylms_user_membership m
                 ON u.ID = m.user_id AND m.status IN ('enrolled', 'banned')";
 		}
 
@@ -186,10 +186,10 @@ class StudentController extends RestController {
 		//     FROM
 		//         {$wpdb->users} u
 		//     INNER JOIN
-		//         {$wpdb->prefix}omlms_user_enrollment e
+		//         {$wpdb->prefix}ohmylms_user_enrollment e
 		//         ON u.ID = e.user_id AND e.status = 'enrolled'
 		//     LEFT JOIN
-		//         {$wpdb->prefix}omlms_user_membership m
+		//         {$wpdb->prefix}ohmylms_user_membership m
 		//         ON u.ID = m.user_id AND m.status = 'enrolled'
 		//     WHERE
 		//         1=1
@@ -235,14 +235,14 @@ class StudentController extends RestController {
 			FROM
 				{$wpdb->users} u
 			INNER JOIN
-				{$wpdb->prefix}omlms_user_enrollment e
+				{$wpdb->prefix}ohmylms_user_enrollment e
 				ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
 		// Add membership join only if pro is active
-		if ( creator_lms_is_pro() ) {
+		if ( ohmylms_is_pro() ) {
 			$count_query .= "
 			LEFT JOIN
-				{$wpdb->prefix}omlms_user_membership m
+				{$wpdb->prefix}ohmylms_user_membership m
 				ON u.ID = m.user_id AND m.status IN ('enrolled', 'banned')";
 		}
 
@@ -274,8 +274,8 @@ class StudentController extends RestController {
 		$response_data = array();
 		foreach ( $results as $row ) {
 			$student_avatar_url = get_avatar_url( $row['user_id'], array( 'size' => 96 ) ); // You can adjust the size as needed
-			$last_login         = get_user_meta( $row['user_id'], '_creatorlms_last_login', true );
-			$is_banned          = get_user_meta( $row['user_id'], '_omlms_banned_student', true );
+			$last_login         = get_user_meta( $row['user_id'], '_ohmylms_last_login', true );
+			$is_banned          = get_user_meta( $row['user_id'], '_ohmylms_banned_student', true );
 			$response_data[]    = array(
 				'user_id'             => $row['user_id'],
 				'student_name'        => $row['student_name'],
@@ -354,7 +354,7 @@ class StudentController extends RestController {
 
 
 	/**
-	 * Ban a student from CreatorLMS
+	 * Ban a student from OhMyLMS
 	 *
 	 * @param WP_REST_Request $request REST request object.
 	 *
@@ -366,16 +366,16 @@ class StudentController extends RestController {
 		$user_ids = $request->get_param( 'ids' );
 
 		if ( empty( $user_ids ) ) {
-			return new \WP_Error( 'creator_lms_rest_omlms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		global $wpdb;
-		$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
-		$membership_table = $wpdb->prefix . 'omlms_user_membership';
+		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
+		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
 
 		foreach ( $user_ids as $user_id ) {
 			if ( ! is_numeric( $user_id ) ) {
-				return new \WP_Error( 'creator_lms_rest_omlms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+				return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
 
 			// Update enrollment status to 'banned' instead of deleting
@@ -388,7 +388,7 @@ class StudentController extends RestController {
 			);
 
 			// Update membership status to 'banned' instead of deleting
-			if ( creator_lms_is_pro() ) {
+			if ( ohmylms_is_pro() ) {
 				$wpdb->update(
 					$membership_table,
 					array( 'status' => 'banned' ),
@@ -399,7 +399,7 @@ class StudentController extends RestController {
 			}
 
 			// Update user meta by adding a new meta key
-			update_user_meta( $user_id, '_omlms_banned_student', 'yes' );
+			update_user_meta( $user_id, '_ohmylms_banned_student', 'yes' );
 		}
 
 		return rest_ensure_response(
@@ -412,7 +412,7 @@ class StudentController extends RestController {
 	}
 
 	/**
-	 * Unban a student from CreatorLMS
+	 * Unban a student from OhMyLMS
 	 *
 	 * @param WP_REST_Request $request REST request object.
 	 *
@@ -424,16 +424,16 @@ class StudentController extends RestController {
 		$user_ids = $request->get_param( 'ids' );
 
 		if ( empty( $user_ids ) ) {
-			return new \WP_Error( 'creator_lms_rest_omlms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		global $wpdb;
-		$enrollment_table = $wpdb->prefix . 'omlms_user_enrollment';
-		$membership_table = $wpdb->prefix . 'omlms_user_membership';
+		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
+		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
 
 		foreach ( $user_ids as $user_id ) {
 			if ( ! is_numeric( $user_id ) ) {
-				return new \WP_Error( 'creator_lms_rest_omlms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+				return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
 
 			// Restore enrollment status from 'banned' to 'enrolled'
@@ -449,7 +449,7 @@ class StudentController extends RestController {
 			);
 
 			// Restore membership status from 'banned' to 'enrolled'
-			if ( creator_lms_is_pro() ) {
+			if ( ohmylms_is_pro() ) {
 				$wpdb->update(
 					$membership_table,
 					array( 'status' => 'enrolled' ),
@@ -463,7 +463,7 @@ class StudentController extends RestController {
 			}
 
 			// Remove the banned meta key
-			delete_user_meta( $user_id, '_omlms_banned_student' );
+			delete_user_meta( $user_id, '_ohmylms_banned_student' );
 		}
 
 		return rest_ensure_response(

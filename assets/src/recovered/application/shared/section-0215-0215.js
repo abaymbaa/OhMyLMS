@@ -8,7 +8,7 @@ var une = {
         id: 0,
         url: null
       },
-      type: "omlms-course",
+      type: "ohmylms-course",
       slug: "digital-marketing-growth-blueprint-for-absolute-beginners",
       content: "Learn the fundamentals of digital marketing and create a growth strategy from scratch. Covering marketing fundamentals, audience research, content &amp; SEO basics, social media growth systems, paid ads introduction, email marketing &amp; funnels, and analytics &amp; optimization.",
       excerpt: "",
@@ -41,7 +41,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-1-marketing-fundamentals-audience-research",
         content: "",
         excerpt: "",
@@ -56,7 +56,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-1-understanding-the-customer-journey",
           content: "<h1>What Is the Customer Journey?</h1><p>The <strong>customer journey</strong> is the path a person takes from first discovering a brand to becoming a paying and loyal customer.</p><p>In digital marketing, people usually don’t buy immediately. They interact with content, ads, and websites before making a decision.</p><hr><h2> Why It Matters</h2><p>Understanding the customer journey helps you:</p><ul><li><p> Send the right message at the right time</p></li><li><p> Build trust before selling</p></li><li><p>Increase conversions</p></li><li><p>Avoid spammy marketing</p></li></ul><hr><h2>The 5 Stages of the Customer Journey</h2><h3> 1. Awareness</h3><p>The customer realizes they have a problem or need.  </p><p><strong>Goal:</strong> Educate and attract attention.</p><h3>2. Consideration</h3><p>The customer researches and compares solutions.  </p><p><strong>Goal:</strong> Build trust and show value.</p><h3>3. Decision</h3><p>The customer is ready to buy.  </p><p><strong>Goal:</strong> Remove doubts and encourage action.</p><h3>4. Retention</h3><p>The customer has purchased and starts using the product.  </p><p><strong>Goal:</strong> Keep them engaged and satisfied.</p><h3>5. Advocacy</h3><p>Happy customers recommend your brand to others.  </p><p><strong>Goal:</strong> Turn customers into promoters.</p><hr><h2> Key Takeaways</h2><ul><li><p> Customers move through stages before buying</p></li><li><p>Each stage needs different content</p></li><li><p>The customer journey is the foundation of digital marketing</p></li></ul><p></p>",
@@ -77,7 +77,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-2-conducting-market-research",
           content: "",
@@ -98,7 +98,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-2-content-seo-basics",
         content: "",
         excerpt: "",
@@ -113,7 +113,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-1-content-strategy-creation",
           content: "",
@@ -133,7 +133,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-2-seo-fundamentals-keyword-research",
           content: "",
@@ -154,7 +154,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-3-social-media-growth-systems",
         content: "",
         excerpt: "",
@@ -169,7 +169,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-1-platform-selection-strategy",
           content: "",
@@ -189,7 +189,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-2-building-a-social-media-calendar",
           content: "",
@@ -210,7 +210,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-4-paid-ads-introduction",
         content: "",
         excerpt: "",
@@ -225,7 +225,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-1-google-ads-facebook-ads-basics",
           content: "",
@@ -245,7 +245,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-2-setting-up-tracking-campaigns",
           content: "",
@@ -266,7 +266,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-5-email-marketing-funnels",
         content: "",
         excerpt: "",
@@ -281,7 +281,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-1-building-an-email-list",
           content: "",
@@ -301,7 +301,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-2-creating-optimizing-email-campaigns",
           content: "",
@@ -322,7 +322,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-6-analytics-optimization",
         content: "",
         excerpt: "",
@@ -337,7 +337,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-1-setting-up-google-analytics",
           content: "",
@@ -357,7 +357,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-2-tracking-interpreting-metrics",
           content: "",
@@ -382,7 +382,7 @@ var une = {
         id: 0,
         url: null
       },
-      type: "omlms-course",
+      type: "ohmylms-course",
       slug: "modern-web-ai-skills-for-builders",
       content: "Learn the modern web technologies and AI tools needed to build dynamic and intelligent web applications. Master HTML, CSS, JavaScript, React, Backend basics, and more.",
       excerpt: "",
@@ -415,7 +415,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-1-web-fundamentals",
         content: "",
         excerpt: "",
@@ -430,7 +430,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-1-introduction-to-html",
           content: "",
@@ -450,7 +450,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-2-introduction-to-css",
           content: "",
@@ -470,7 +470,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-3-introduction-to-javascript",
           content: "",
@@ -490,7 +490,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-quiz",
+          type: "ohmylms-quiz",
           content_type: "quiz",
           slug: "quiz-on-web-fundamentals",
           content: "",
@@ -511,7 +511,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-2-react-component-thinking",
         content: "",
         excerpt: "",
@@ -526,7 +526,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-1-introduction-to-react",
           content: "",
@@ -546,7 +546,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-2-component-thinking-and-state-management",
           content: "",
@@ -566,7 +566,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-quiz",
+          type: "ohmylms-quiz",
           content_type: "quiz",
           slug: "quiz-on-react-component-thinking",
           content: "",
@@ -587,7 +587,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-3-backend-apis",
         content: "",
         excerpt: "",
@@ -602,7 +602,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-1-introduction-to-backend-development",
           content: "",
@@ -622,7 +622,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-2-building-rest-apis",
           content: "",
@@ -642,7 +642,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-quiz",
+          type: "ohmylms-quiz",
           content_type: "quiz",
           slug: "quiz-on-backend-apis",
           content: "",
@@ -663,7 +663,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-4-ai-tools-for-developers",
         content: "",
         excerpt: "",
@@ -678,7 +678,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-1-introduction-to-ai-and-machine-learning",
           content: "",
@@ -698,7 +698,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-2-integrating-ai-into-web-applications",
           content: "",
@@ -718,7 +718,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-quiz",
+          type: "ohmylms-quiz",
           content_type: "quiz",
           slug: "quiz-on-ai-tools-for-developers",
           content: "",
@@ -739,7 +739,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-5-no-code-automation",
         content: "",
         excerpt: "",
@@ -754,7 +754,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-1-introduction-to-no-code-tools",
           content: "",
@@ -774,7 +774,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-2-automating-web-development-tasks",
           content: "",
@@ -794,7 +794,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-quiz",
+          type: "ohmylms-quiz",
           content_type: "quiz",
           slug: "quiz-on-no-code-automation",
           content: "",
@@ -815,7 +815,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-6-capstone-project",
         content: "",
         excerpt: "",
@@ -830,7 +830,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-1-project-setup",
           content: "",
@@ -850,7 +850,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-2-project-development",
           content: "",
@@ -875,7 +875,7 @@ var une = {
         id: 0,
         url: null
       },
-      type: "omlms-course",
+      type: "ohmylms-course",
       slug: "build-monetize-your-personal-brand-a-comprehensive-guide-for-absolute-beginners",
       content: "In this comprehensive course, you'll learn how to build, grow, and monetize your personal brand as an absolute beginner. We'll cover essential modules such as Finding your niche &amp; positioning, Content strategy &amp; consistency, Platform growth (YouTube, Instagram, and more), Monetization models, Community building, and Scaling with systems. Each module includes a quiz to help solidify your understanding.",
       excerpt: "",
@@ -908,7 +908,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-1-finding-your-niche-positioning",
         content: "",
         excerpt: "",
@@ -923,7 +923,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-1-identifying-your-unique-value-proposition",
           content: "",
@@ -943,7 +943,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-1-2-researching-your-target-audience",
           content: "",
@@ -964,7 +964,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-2-content-strategy-consistency",
         content: "",
         excerpt: "",
@@ -979,7 +979,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-1-creating-a-content-calendar",
           content: "",
@@ -999,7 +999,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-2-2-consistently-delivering-high-quality-content",
           content: "",
@@ -1020,7 +1020,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-3-platform-growth-youtube",
         content: "",
         excerpt: "",
@@ -1035,7 +1035,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-1-optimizing-your-youtube-channel",
           content: "",
@@ -1055,7 +1055,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-3-2-creating-engaging-youtube-content",
           content: "",
@@ -1076,7 +1076,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-4-platform-growth-instagram",
         content: "",
         excerpt: "",
@@ -1091,7 +1091,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-1-optimizing-your-instagram-profile",
           content: "",
@@ -1111,7 +1111,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-4-2-creating-engaging-instagram-content",
           content: "",
@@ -1132,7 +1132,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-5-monetization-models",
         content: "",
         excerpt: "",
@@ -1147,7 +1147,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-1-understanding-different-monetization-models",
           content: "",
@@ -1167,7 +1167,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-5-2-choosing-the-right-monetization-model-for-you",
           content: "",
@@ -1188,7 +1188,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-6-community-building",
         content: "",
         excerpt: "",
@@ -1203,7 +1203,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-1-creating-a-community-strategy",
           content: "",
@@ -1223,7 +1223,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-6-2-engaging-with-your-community",
           content: "",
@@ -1244,7 +1244,7 @@ var une = {
           id: 0,
           url: null
         },
-        type: "omlms-chapter",
+        type: "ohmylms-chapter",
         slug: "chapter-7-scaling-with-systems",
         content: "",
         excerpt: "",
@@ -1259,7 +1259,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-7-1-automating-your-content-creation",
           content: "",
@@ -1279,7 +1279,7 @@ var une = {
             id: "",
             url: null
           },
-          type: "omlms-lesson",
+          type: "ohmylms-lesson",
           content_type: "text",
           slug: "lesson-7-2-implementing-systems-for-growth",
           content: "",

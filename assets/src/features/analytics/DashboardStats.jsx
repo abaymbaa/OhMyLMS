@@ -12,7 +12,7 @@ export function createDashboardStats(readRuntime) {
       l = props.data,
       c = props.dataLoading,
       u = (0, Router.Zp)(),
-      s = (0, Entitlements.useIsPro)();
+      s = true;
     return (
       <React.Fragment>
         <Controls.SpacerWP marginBottom={0} marginTop={4}>
@@ -44,7 +44,7 @@ export function createDashboardStats(readRuntime) {
                           </Controls.TextWP>
                           <V.A
                             text={'Total courses sold in the past 30 days'}
-                            className={'omlms-tooltip'}
+                            className={'ohmylms-tooltip'}
                             placement={'top'}
                           >
                             <React.Fragment>
@@ -106,7 +106,7 @@ export function createDashboardStats(readRuntime) {
                           display: 'block',
                           lineHeight: 1,
                         }}
-                        className={'omlms-card-value'}
+                        className={'ohmylms-card-value'}
                       >
                         {null == l ? void 0 : l.course_sold}
                       </span>
@@ -151,7 +151,7 @@ export function createDashboardStats(readRuntime) {
                           </Controls.TextWP>
                           <V.A
                             text={'New Students in the past 30 days'}
-                            className={'omlms-tooltip'}
+                            className={'ohmylms-tooltip'}
                             placement={'top'}
                           >
                             <React.Fragment>
@@ -213,7 +213,7 @@ export function createDashboardStats(readRuntime) {
                           display: 'block',
                           lineHeight: 1,
                         }}
-                        className={'omlms-card-value'}
+                        className={'ohmylms-card-value'}
                       >
                         {null == l ? void 0 : l.total_enrollments}
                       </span>
@@ -232,7 +232,7 @@ export function createDashboardStats(readRuntime) {
               </Controls.CardWP>
             </Controls.FlexBlockWP>
             <Controls.FlexBlockWP>
-              {creator_lms_params.is_communities_enabled ? (
+              {ohmylms_params.is_communities_enabled ? (
                 <Controls.CardWP
                   style={{
                     height: '100%',
@@ -307,7 +307,7 @@ export function createDashboardStats(readRuntime) {
                       onClick={function () {
                         var e;
                         return window.open(
-                          null === (e = creator_lms_params) ||
+                          null === (e = ohmylms_params) ||
                             void 0 === e ||
                             null === (e = e.community) ||
                             void 0 === e
@@ -351,14 +351,6 @@ export function createDashboardStats(readRuntime) {
                           'ohmylms',
                         )}
                       </p>
-                      {!s && (
-                        <p>
-                          {(0, I18n.__)(
-                            'License Management and advanced Pro features available. Upgrade to Pro today to unlock cohorts, community, AI course builder, and more.',
-                            'ohmylms',
-                          )}
-                        </p>
-                      )}
                     </Controls.SpacerWP>
                   </Controls.SpacerWP>
                 </Controls.CardWP>

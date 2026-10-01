@@ -2,7 +2,7 @@
 /**
  * SequentialMode class (Pro)
  */
-namespace OMLMS;
+namespace OhMyLMS;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SequentialMode {
 
 	public function __construct() {
-		add_filter( 'creator_lms_is_lesson_locked', array( $this, 'is_lesson_locked' ), 20, 4 );
+		add_filter( 'ohmylms_is_lesson_locked', array( $this, 'is_lesson_locked' ), 20, 4 );
 	}
 
 	/**
@@ -23,7 +23,7 @@ class SequentialMode {
 	 * @return int[]
 	 */
 	public static function get_ordered_content_ids( $course_id ) {
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return array();
 		}
@@ -39,7 +39,7 @@ class SequentialMode {
 			if ( ! isset( $chapter_data['id'] ) ) {
 				continue;
 			}
-			$chapter = omlms_get_chapter( $chapter_data['id'] );
+			$chapter = ohmylms_get_chapter( $chapter_data['id'] );
 			if ( ! $chapter ) {
 				continue;
 			}
@@ -75,7 +75,7 @@ class SequentialMode {
 			return false;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course || 'yes' !== $course->get_sequential_mode() ) {
 			return false;
 		}
@@ -100,7 +100,7 @@ class SequentialMode {
 		}
 
 		$prev_id = $flat[ $position - 1 ];
-		$student = omlms_get_student( $student_id );
+		$student = ohmylms_get_student( $student_id );
 		if ( ! $student ) {
 			return false;
 		}
@@ -112,10 +112,10 @@ class SequentialMode {
 		$prev_post = get_post( $prev_id );
 
 		// For assignments, also accept submitted/failed attempts — don't block forever on instructor review.
-		if ( $prev_post && CREATOR_LMS_ASSIGNMENT_CPT === $prev_post->post_type ) {
+		if ( $prev_post && OHMYLMS_ASSIGNMENT_CPT === $prev_post->post_type ) {
 			global $wpdb;
 			$attempt = $wpdb->get_var( $wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}omlms_assignment_attempts WHERE user_id = %d AND assignment_id = %d LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}ohmylms_assignment_attempts WHERE user_id = %d AND assignment_id = %d LIMIT 1",
 				$student_id,
 				$prev_id
 			) );
@@ -125,8 +125,8 @@ class SequentialMode {
 		}
 
 		// For quizzes, unblock when all attempts are exhausted — student cannot retry.
-		if ( $prev_post && CREATOR_LMS_QUIZ_CPT === $prev_post->post_type ) {
-			$quiz = omlms_get_quiz( $prev_id );
+		if ( $prev_post && OHMYLMS_QUIZ_CPT === $prev_post->post_type ) {
+			$quiz = ohmylms_get_quiz( $prev_id );
 			if ( $quiz ) {
 				$max_attempts  = (int) $quiz->get_take_attempts();
 				$used_attempts = (int) $quiz->count_total_attempt( $student_id, $course_id );
@@ -140,7 +140,7 @@ class SequentialMode {
 	}
 
 	/**
-	 * Filter callback for creator_lms_is_lesson_locked (priority 20, after DripContent at 10).
+	 * Filter callback for ohmylms_is_lesson_locked (priority 20, after DripContent at 10).
 	 *
 	 * @param bool $is_locked
 	 * @param int  $lesson_id

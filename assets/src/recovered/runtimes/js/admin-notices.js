@@ -1,5 +1,5 @@
 /**
- * CreatorLMS Admin Notices JavaScript
+ * OhMyLMS Admin Notices JavaScript
  * 
  * Handles dismissible admin notices
  */
@@ -8,17 +8,17 @@
 
   $(document).ready(function () {
     // Handle dismissible notice clicks
-    $(document).on('click', '.creatorlms-notice .notice-dismiss', function () {
-      var $notice = $(this).closest('.creatorlms-notice');
+    $(document).on('click', '.ohmylms-notice .notice-dismiss', function () {
+      var $notice = $(this).closest('.ohmylms-notice');
       var noticeType = $notice.data('notice');
       if (noticeType === 'pro-version') {
         // Send AJAX request to dismiss pro version notice
         $.ajax({
-          url: creatorlms_notices.ajax_url,
+          url: ohmylms_notices.ajax_url,
           type: 'POST',
           data: {
-            action: 'creatorlms_dismiss_pro_version_notice',
-            nonce: creatorlms_notices.nonce
+            action: 'ohmylms_dismiss_pro_version_notice',
+            nonce: ohmylms_notices.nonce
           },
           success: function (response) {
             if (response.success) {
@@ -26,7 +26,7 @@
             }
           },
           error: function () {
-            console.error('Failed to dismiss CreatorLMS Pro version notice');
+            console.error('Failed to dismiss OhMyLMS Pro version notice');
           }
         });
       }

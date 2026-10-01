@@ -1,12 +1,12 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var hee = function () {
-  HG("creator-lms", "courses");
+  HG("ohmylms", "courses");
   var e = (0, y.useDispatch)(T.default),
     t = (0, f.Zp)(),
     n = (0, z.A)(),
     r = n.openNotificationWithIcon,
     a = n.contextHolder,
-    o = (0, L.useIsPro)(),
+    o = true,
     i = (0, f.g)().id,
     c = vee((0, g.useState)(!0), 2),
     u = c[0],
@@ -77,9 +77,9 @@ var hee = function () {
           size: 40,
           src: null == t ? void 0 : t.student_img
         }) : React.createElement("span", {
-          className: "omlms-col-avatar"
+          className: "ohmylms-col-avatar"
         }, React.createElement(JU, null)), React.createElement("span", {
-          className: "omlms-title-text"
+          className: "ohmylms-title-text"
         }, null == t ? void 0 : t.student_name));
       }
     }, {
@@ -105,7 +105,7 @@ var hee = function () {
         return React.createElement(React.Fragment, null, React.createElement(I.ButtonWP, {
           variant: "link",
           icon: React.createElement(zn, null),
-          className: "omlms-delete-btn",
+          className: "ohmylms-delete-btn",
           onClick: function () {
             return ie(null == t ? void 0 : t.user_id);
           }
@@ -124,7 +124,7 @@ var hee = function () {
         for (;;) switch (e.p = e.n) {
           case 0:
             return e.p = 0, e.n = 1, l()({
-              path: "/creator-lms/v1/courses/".concat(i, "/enroll/").concat(X[0]),
+              path: "/ohmylms/v1/courses/".concat(i, "/enroll/").concat(X[0]),
               method: "DELETE"
             });
           case 1:
@@ -154,7 +154,7 @@ var hee = function () {
       U(e);
     }, [])),
     se = (0, g.useCallback)(function () {
-      o ? D(!0) : re(!0);
+      D(!0);
     }, [o, e]),
     de = function () {
       var e = fee(dee().m(function e() {
@@ -181,7 +181,7 @@ var hee = function () {
                 order_by: G.split("_")[0],
                 order: G.split("_")[1]
               }, t), e.n = 2, l()({
-                path: (0, lN.addQueryArgs)("/creator-lms/v1/students", a),
+                path: (0, lN.addQueryArgs)("/ohmylms/v1/students", a),
                 method: "GET",
                 parse: !1,
                 headers: {
@@ -249,7 +249,7 @@ var hee = function () {
     title: (0, b.__)("Enroll a Student", "ohmylms"),
     autoFocus: !0
   }, React.createElement(nf, null), " ", (0, b.__)("Enroll a Student", "ohmylms"))), React.createElement(I.CardWP, {
-    className: "omlms-data-table-wrapper"
+    className: "ohmylms-data-table-wrapper"
   }, React.createElement(I.SpacerWP, {
     padding: 5,
     marginTop: 4
@@ -261,7 +261,7 @@ var hee = function () {
     onChange: me
   }), React.createElement(vn.A, {
     placeholder: (0, b.__)("Sort", "ohmylms"),
-    className: "omlms-selectbox-filter",
+    className: "ohmylms-selectbox-filter",
     onChange: ue,
     value: G,
     options: ae

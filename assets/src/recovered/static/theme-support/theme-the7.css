@@ -1,128 +1,128 @@
-.theme-dt-the7.creator-lms-page .creator-lms-wysiwyg-content ol {
+.theme-dt-the7.ohmylms-page .ohmylms-wysiwyg-content ol {
     list-style-type: decimal;
 }
-.theme-dt-the7.creator-lms-page .creator-lms-wysiwyg-content ul {
+.theme-dt-the7.ohmylms-page .ohmylms-wysiwyg-content ul {
     list-style: disc;
 }
 
-.theme-dt-the7.creator-lms-page:not(.creator-lms-checkout) #main > .wf-wrap {
+.theme-dt-the7.ohmylms-page:not(.ohmylms-checkout) #main > .wf-wrap {
     padding: 0;
     width: 100%;
 }
 
 
-.theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-wrapper {
+.theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-wrapper {
     flex-flow: column-reverse;
     gap: 44px;
 }
-.theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-right {
+.theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-right {
     width: 100%;
     padding: 0;
 }
 
-.theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-outer::before {
+.theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-outer::before {
     width: 100%;
 }
-.theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-outer .creator-lms-container {
+.theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-outer .ohmylms-container {
     padding: 0;
 }
 
-.theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-left {
+.theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-left {
     width: 100%;
     padding: 0;
     border-right: none;
 }
 
-.theme-dt-the7.creator-lms-checkout .creator-lms-order-review-table-wrapper {
+.theme-dt-the7.ohmylms-checkout .ohmylms-order-review-table-wrapper {
     margin-bottom: 0;
 }
 
-.theme-dt-the7.creator-lms-page .creator-lms-checkout-coupon .apply-coupon {
+.theme-dt-the7.ohmylms-page .ohmylms-checkout-coupon .apply-coupon {
     border: none !important;
     margin: 0 !important;
 }
-.theme-dt-the7.creator-lms-page .widget_search input[type=text].searchform-s, 
-.theme-dt-the7.creator-lms-page .woocommerce div.elementor .the7-elementor-widget form.cart table.variations td.value select, 
-.theme-dt-the7.creator-lms-page .wpcf7-number, 
-.theme-dt-the7.creator-lms-page input[type=text]:not(.elementor-field):not(.searchform-s), 
-.theme-dt-the7.creator-lms-page input[type=search]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=tel]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=url]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=email]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=number]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=date]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=range]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page input[type=password]:not(.elementor-field), 
-.theme-dt-the7.creator-lms-page select:not(.elementor-field):not(.elementor-field-textual), 
-.theme-dt-the7.creator-lms-page textarea:not(.elementor-field) {
+.theme-dt-the7.ohmylms-page .widget_search input[type=text].searchform-s, 
+.theme-dt-the7.ohmylms-page .woocommerce div.elementor .the7-elementor-widget form.cart table.variations td.value select, 
+.theme-dt-the7.ohmylms-page .wpcf7-number, 
+.theme-dt-the7.ohmylms-page input[type=text]:not(.elementor-field):not(.searchform-s), 
+.theme-dt-the7.ohmylms-page input[type=search]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=tel]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=url]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=email]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=number]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=date]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=range]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page input[type=password]:not(.elementor-field), 
+.theme-dt-the7.ohmylms-page select:not(.elementor-field):not(.elementor-field-textual), 
+.theme-dt-the7.ohmylms-page textarea:not(.elementor-field) {
     margin-bottom: 0;
     font-size: 14px;
     line-height: 1.25;
     min-height: auto;
 }
 
-.theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+.theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-content {
     padding: 30px;
 }
-.theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-table-wrapper {
+.theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-table-wrapper {
     padding: 20px;
 }
 
-.theme-dt-the7.single-omlms-course #main {
+.theme-dt-the7.single-ohmylms-course #main {
     padding: 0;
 }
 
-.theme-dt-the7.creator-lms-page .course-author-wrapper .author-avatar {
+.theme-dt-the7.ohmylms-page .course-author-wrapper .author-avatar {
     display: block;
     flex: inherit;
     margin: 0;
 }
 
-.theme-dt-the7.creator-lms-page .course-author-wrapper .author-info {
+.theme-dt-the7.ohmylms-page .course-author-wrapper .author-info {
     display: block;
 }
 
-.theme-dt-the7.creator-lms-page .creator-lms-course-reviews-form #respond .comment-form .form-submit #submit {
+.theme-dt-the7.ohmylms-page .ohmylms-course-reviews-form #respond .comment-form .form-submit #submit {
     display: flex;
     background-image: none;
 }
 
-.theme-dt-the7.creator-lms-page .creator-lms-course-reviews-form .comment-form .form-submit > a.dt-btn {
+.theme-dt-the7.ohmylms-page .ohmylms-course-reviews-form .comment-form .form-submit > a.dt-btn {
     display: none;
 }
 
-.theme-dt-the7.single-omlms-course .page-title-breadcrumbs {
+.theme-dt-the7.single-ohmylms-course .page-title-breadcrumbs {
     display: none;
 }
 
 @media screen and (max-width: 1199px) {
-    .theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+    .theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-content {
         padding: 20px;
         flex-flow: column;
         gap: 20px;
         border-radius: 20px;
     }
 
-    .theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content-left {
+    .theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-content-left {
         width: 100%;
     }
-    .theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content-right {
+    .theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-content-right {
         width: 100%;
     }
 }
 
 @media screen and (max-width: 991px) {
-    .theme-dt-the7.creator-lms-checkout .creator-lms-checkout-form-wrapper {
+    .theme-dt-the7.ohmylms-checkout .ohmylms-checkout-form-wrapper {
         flex-flow: column;
         gap: 20px;
     }
 }
 
 @media screen and (max-width: 425px) {
-    .theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-table-wrapper {
+    .theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-table-wrapper {
         padding: 14px;
     }
-    .theme-dt-the7.creator-lms-page .creator-lms-thankyou .creator-lms-thankyou-content {
+    .theme-dt-the7.ohmylms-page .ohmylms-thankyou .ohmylms-thankyou-content {
         padding: 14px;
     }
 }

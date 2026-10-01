@@ -120,7 +120,7 @@ export function createCouponList(readRuntime) {
                     onClick={function () {
                       return ae(t);
                     }}
-                    className={'omlms-coupon-title'}
+                    className={'ohmylms-coupon-title'}
                   >
                     {Ge(e) || 'N/A'}
                   </v.Link>
@@ -158,7 +158,7 @@ export function createCouponList(readRuntime) {
               width: '15%',
               render: function (e) {
                 return (
-                  <Controls.SpacerWP marginBottom={0} className={'omlms-coupon-code'}>
+                  <Controls.SpacerWP marginBottom={0} className={'ohmylms-coupon-code'}>
                     <Controls.TagWP
                       style={Wre(
                         Wre(
@@ -304,7 +304,7 @@ export function createCouponList(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses?search='.concat(t),
+                          path: '/ohmylms/v1/courses?search='.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -362,7 +362,7 @@ export function createCouponList(readRuntime) {
           console.error(error);
           $(
             'error',
-            error?.code === 'creator_lms_rest_coupon_code_already_exists'
+            error?.code === 'ohmylms_rest_coupon_code_already_exists'
               ? error.message
               : I18n.__('Something went wrong!', 'ohmylms'),
           );

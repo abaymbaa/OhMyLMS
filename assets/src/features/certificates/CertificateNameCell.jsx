@@ -35,7 +35,7 @@ export function createCertificateNameCell(readRuntime) {
                 />
               )}
             </v.Link>
-            <Controls.FlexWP direction={'column'} className={'omlms-td-thumbnail-title'}>
+            <Controls.FlexWP direction={'column'} className={'ohmylms-td-thumbnail-title'}>
               <v.Link
                 to={'/certificate-edit/'.concat(null == t ? void 0 : t.id)}
                 title={null == t ? void 0 : t.name}
@@ -57,7 +57,7 @@ export function createCertificateNameCell(readRuntime) {
                 align={'center'}
                 justify={'flex-start'}
                 gap={2}
-                className={'omlms-td-thumbnail-title-actions'}
+                className={'ohmylms-td-thumbnail-title-actions'}
               >
                 <Controls.ButtonWP
                   onClick={r}

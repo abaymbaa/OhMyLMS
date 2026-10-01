@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 
 use Elementor\Widget_Base;
@@ -17,7 +17,7 @@ class BuyNowWidget extends Widget_Base {
      */
     private function get_courses_dropdown() {
         $courses = get_posts([
-            'post_type' => 'omlms-course',
+            'post_type' => 'ohmylms-course',
             'post_status' => 'publish',
             'numberposts' => -1,
             'orderby' => 'title',
@@ -30,7 +30,7 @@ class BuyNowWidget extends Widget_Base {
         return $options;
     }
     public function get_name() {
-        return 'creator-lms-buy-now';
+        return 'ohmylms-buy-now';
     }
 
     public function get_title() {
@@ -42,7 +42,7 @@ class BuyNowWidget extends Widget_Base {
     }
 
     public function get_categories() {
-        return [ 'creator-lms' ];
+        return [ 'ohmylms' ];
     }
 
 
@@ -191,7 +191,7 @@ class BuyNowWidget extends Widget_Base {
                 'min_width' => $settings['min_width'],
                 'height' => $settings['height'],
             ];
-            $shortcode = '[creator_lms_buy_now';
+            $shortcode = '[ohmylms_buy_now';
             foreach ($atts as $k => $v) {
                 if ($v !== '' && $v !== null) {
                     $shortcode .= ' ' . $k . '="' . esc_attr($v) . '"';

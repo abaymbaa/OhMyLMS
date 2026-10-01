@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Exporters;
+namespace OhMyLMS\Exporters;
 
 defined('ABSPATH') || exit;
 
@@ -22,7 +22,7 @@ class CourseExporter {
      */
     public function __construct($course_ids) {
         if (empty($course_ids) || !is_array($course_ids)) {
-            throw new \Exception(__('Invalid course IDs. Provide an array of course IDs.', 'creator-lms'));
+            throw new \Exception(__('Invalid course IDs. Provide an array of course IDs.', 'ohmylms'));
         }
 
         $this->course_ids = $course_ids;
@@ -51,7 +51,7 @@ class CourseExporter {
         $json_data = json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         if (!$json_data) {
-            wp_die(__('Error encoding course data to JSON.', 'creator-lms'));
+            wp_die(__('Error encoding course data to JSON.', 'ohmylms'));
         }
 
         // Set headers for JSON file download.
@@ -79,7 +79,7 @@ class CourseExporter {
         // Get the course post object.
         $course_post = get_post($course_id);
 
-        if (!$course_post || $course_post->post_type !== CREATOR_LMS_COURSE_CPT) {
+        if (!$course_post || $course_post->post_type !== OHMYLMS_COURSE_CPT) {
             return null;
         }
 
@@ -97,7 +97,7 @@ class CourseExporter {
         $thumbnail_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : null;
         $course_terms = [];
         // Get terms associated with the course.
-        $taxonomies = get_object_taxonomies(CREATOR_LMS_COURSE_CPT, 'objects');
+        $taxonomies = get_object_taxonomies(OHMYLMS_COURSE_CPT, 'objects');
         foreach ($taxonomies as $taxonomy) {
             $terms = wp_get_post_terms($course_id, $taxonomy->name, ['fields' => 'all']);
             if (!is_wp_error($terms) && !empty($terms)) {
@@ -146,7 +146,7 @@ class CourseExporter {
         // Fetch chapters for the course.
         $chapter_query = $wpdb->prepare("
             SELECT * 
-            FROM {$wpdb->prefix}omlms_chapter_relationship 
+            FROM {$wpdb->prefix}ohmylms_chapter_relationship 
             WHERE course_id = %d 
             ORDER BY order_number ASC
         ", $course_id);
@@ -167,7 +167,7 @@ class CourseExporter {
             // Fetch contents for each chapter.
             $content_query = $wpdb->prepare("
                 SELECT * 
-                FROM {$wpdb->prefix}omlms_content_relationship 
+                FROM {$wpdb->prefix}ohmylms_content_relationship 
                 WHERE chapter_id = %d 
                 ORDER BY order_number ASC
             ", $chapter_id);
@@ -189,11 +189,11 @@ class CourseExporter {
                     }
     
                     $quiz_questions = [];
-                    if ($content_post->post_type === 'omlms-quiz') {
+                    if ($content_post->post_type === 'ohmylms-quiz') {
                         // Fetch questions for the quiz.
                         $questions_query = $wpdb->prepare("
                             SELECT * 
-                            FROM {$wpdb->prefix}omlms_quiz_questions_relationship 
+                            FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship 
                             WHERE quiz_id = %d 
                             ORDER BY order_number ASC
                         ", $content_id);
@@ -210,7 +210,7 @@ class CourseExporter {
                                 // Fetch answers for the question.
                                 $answers_query = $wpdb->prepare("
                                     SELECT * 
-                                    FROM {$wpdb->prefix}omlms_question_answers 
+                                    FROM {$wpdb->prefix}ohmylms_question_answers 
                                     WHERE question_id = %d 
                                     ORDER BY order_number ASC
                                 ", $question_id);
@@ -222,7 +222,7 @@ class CourseExporter {
                                     // Fetch answer metadata.
                                     $answer_meta_query = $wpdb->prepare("
                                         SELECT * 
-                                        FROM {$wpdb->prefix}omlms_question_answermeta 
+                                        FROM {$wpdb->prefix}ohmylms_question_answermeta 
                                         WHERE answer_id = %d
                                     ", $answer['id']);
     

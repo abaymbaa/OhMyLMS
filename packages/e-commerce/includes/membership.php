@@ -57,7 +57,7 @@ class Membership {
 	 * @since 1.0.0
 	 */
 	public function request_membership( $membership_id ) {
-		$checkout_page = get_permalink( omlms_get_page_id( 'checkout' ) );
+		$checkout_page = get_permalink( ohmylms_get_page_id( 'checkout' ) );
 
 		$query_array = array(
 			'membership_id' => $membership_id,

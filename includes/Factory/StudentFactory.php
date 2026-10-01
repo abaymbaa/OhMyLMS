@@ -1,12 +1,12 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use OMLMS\Data\Student;
+use OhMyLMS\Data\Student;
 
 /**
  * Class StudentFactory
@@ -14,7 +14,7 @@ use OMLMS\Data\Student;
  * This class is responsible for creating and managing student-related user objects.
  * It provides methods to retrieve student objects based on user ID or WP_User object.
  *
- * @package OMLMS\Factory
+ * @package OhMyLMS\Factory
  * @since 1.0.0
  */
 class StudentFactory {
@@ -23,7 +23,7 @@ class StudentFactory {
 	 * Get student object based on user ID or WP_User object.
 	 *
 	 * @param mixed $student_id The user ID, WP_User object, or false for current user.
-	 * @return \OMLMS\Data\Student|false Returns a Student object if successful, otherwise false.
+	 * @return \OhMyLMS\Data\Student|false Returns a Student object if successful, otherwise false.
 	 * @since 1.0.0
 	 */
 	public function get_student( $student_id = false ) {
@@ -70,13 +70,13 @@ class StudentFactory {
 			return false;
 		}
 
-		// 'omlms_student' is the dedicated role (1.2.12+); 'subscriber' is kept
+		// 'ohmylms_student' is the dedicated role (1.2.12+); 'subscriber' is kept
 		// for backward compatibility with users created before the migration
 		// ran, or by an add-on still on an older version. 'administrator' has
 		// been accepted since 1.0.0 (admins previewing courses) — unchanged.
 		$valid_roles = array( 'subscriber', 'administrator' );
-		if ( function_exists( 'creator_lms_get_student_role' ) ) {
-			$valid_roles[] = creator_lms_get_student_role();
+		if ( function_exists( 'ohmylms_get_student_role' ) ) {
+			$valid_roles[] = ohmylms_get_student_role();
 		}
 
 		return (bool) array_intersect( $valid_roles, (array) $user->roles );

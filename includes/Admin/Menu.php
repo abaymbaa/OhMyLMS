@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Admin;
+namespace OhMyLMS\Admin;
 
-use OMLMS\Admin\Pages\AdminSettings;
+use OhMyLMS\Admin\Pages\AdminSettings;
 
 class Menu {
 
@@ -29,7 +29,7 @@ class Menu {
 	public function init_menu() {
 		global $submenu;
 
-		$slug          = CREATOR_LMS_SLUG;
+		$slug          = OHMYLMS_SLUG;
 		$menu_position = 6;
 		$capability    = 'manage_options';
 
@@ -43,7 +43,7 @@ class Menu {
 			$menu_position
 		);
 		$pending_count = $this->count_unchecked_orders();
-		$pending_count	= apply_filters( 'creator_lms_pending_orders_count', $pending_count );
+		$pending_count	= apply_filters( 'ohmylms_pending_orders_count', $pending_count );
 		$pending_count = 0;
 		$badge_html    = $pending_count > 0 ? " <span class='update-plugins count-$pending_count'><span class='plugin-count'>$pending_count</span></span>" : '';
 		if ( current_user_can( $capability ) ) {
@@ -52,12 +52,12 @@ class Menu {
 			$submenu[ $slug ][] = array( esc_attr__( 'Categories', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/categories' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Tags', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/tags' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Quizzes', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/quizzes' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			if( creator_lms_is_pro() ) {
+			if( ohmylms_is_pro() ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Assignments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assignments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 			$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-			 if ( apply_filters( 'creator_lms_show_sessions_menu', false ) ) {
+			 if ( apply_filters( 'ohmylms_show_sessions_menu', false ) ) {
 			 	$submenu[ $slug ][] = array( esc_attr__( 'Sessions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/sessions' );
 			 }
 
@@ -65,12 +65,12 @@ class Menu {
 			$submenu[ $slug ][] = array( esc_attr__( 'Coupon', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/coupons' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Orders', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/orders' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Subscriptions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/subscriptions' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Students', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/students' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			if( apply_filters( 'creator_lms_show_gamification_menu', false ) ) {
+			$submenu[ $slug ][] = array( esc_attr__( 'Account Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/students' );
+			if( apply_filters( 'ohmylms_show_gamification_menu', false ) ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 			
-			if ( apply_filters( 'creatorlms_should_enable_webhooks', false ) ) {
+			if ( apply_filters( 'ohmylms_should_enable_webhooks', false ) ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Webhooks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/webhooks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 		
@@ -87,7 +87,7 @@ class Menu {
 	 */
 	private function count_unchecked_orders() {
 		$args = array(
-			'post_type'      => 'omlms-order',
+			'post_type'      => 'ohmylms-order',
 			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'meta_query'     => array(
@@ -110,28 +110,28 @@ class Menu {
 	 * @since 1.0.0
 	 */
 	public function register_submenu() {
-		$slug       = CREATOR_LMS_SLUG;
-		$capability = 'manage_creator_lms';
+		$slug       = OHMYLMS_SLUG;
+		$capability = 'manage_ohmylms';
 
 		add_submenu_page(
 			$slug,
 			__( 'Settings', 'ohmylms' ),
 			__( 'Settings', 'ohmylms' ),
 			$capability,
-			admin_url( 'admin.php?page=creator-lms#/settings/general-settings' ),
+			admin_url( 'admin.php?page=ohmylms#/settings/general-settings' ),
 			null
 		);
 
-		do_action( 'creatorlms_after_settings_menu_item' );
+		do_action( 'ohmylms_after_settings_menu_item' );
 
 		
-		if( !creator_lms_is_pro() ) {
+		if( !ohmylms_is_pro() ) {
 			// add_submenu_page(
 			// 	$slug,
 			// 	__( 'Free Vs Pro', 'ohmylms' ),
 			// 	__( 'Free Vs Pro', 'ohmylms' ),
 			// 	$capability,
-			// 	admin_url( 'admin.php?page=creator-lms#/free-vs-pro' ),
+			// 	admin_url( 'admin.php?page=ohmylms#/free-vs-pro' ),
 			// 	null
 			// );
 		}
@@ -139,9 +139,9 @@ class Menu {
 		add_submenu_page(
 			$slug,
 			__( 'Help & Feedback', 'ohmylms' ),
-			'<span class="omlms-open-new-tab">' . __( 'Help & Feedback', 'ohmylms' ) . '</span>',
+			'<span class="ohmylms-open-new-tab">' . __( 'Help & Feedback', 'ohmylms' ) . '</span>',
 			$capability,
-			'https://creatorlms.net/contact-us/',
+			'https://ohmylms.com/contact-us/',
 			null
 		);
 	}
@@ -150,7 +150,7 @@ class Menu {
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($) {
-				$('.omlms-open-new-tab').parent().attr('target','_blank');
+				$('.ohmylms-open-new-tab').parent().attr('target','_blank');
 			});
 		</script>
 		<?php
@@ -161,10 +161,10 @@ class Menu {
 		global $parent_file, $submenu_file, $post_type, $current_screen;
 
 		switch ( $post_type ) {
-			case 'omlms-course':
-			case 'omlms-order':
-			case 'omlms-coupon':
-				$parent_file = 'creator_lms'; // WPCS: override ok.
+			case 'ohmylms-course':
+			case 'ohmylms-order':
+			case 'ohmylms-coupon':
+				$parent_file = 'ohmylms'; // WPCS: override ok.
 				break;
 		}
 	}
@@ -178,7 +178,7 @@ class Menu {
 	 * @return void
 	 */
 	public function plugin_page() {
-		require_once CREATOR_LMS_INCLUDES . '/Admin/views/app.php';
+		require_once OHMYLMS_INCLUDES . '/Admin/views/app.php';
 	}
 
 
@@ -188,7 +188,7 @@ class Menu {
 	 * @since 1.0.0
 	 */
 	public function render_tools_page(): void {
-		require_once CREATOR_LMS_INCLUDES . '/Admin/views/tools.php';
+		require_once OHMYLMS_INCLUDES . '/Admin/views/tools.php';
 	}
 
 
@@ -198,10 +198,10 @@ class Menu {
 	 * @since 1.0.0
 	 */
 	public function render_settings_page(): void {
-		global $creator_lms_current_tab, $creator_lms_current_section;
-		$creator_lms_current_tab = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
-		$tabs                    = apply_filters( 'creator_lms_settings_tabs_array', array() );
-		require_once CREATOR_LMS_INCLUDES . '/Admin/views/settings.php';
+		global $ohmylms_current_tab, $ohmylms_current_section;
+		$ohmylms_current_tab = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
+		$tabs                    = apply_filters( 'ohmylms_settings_tabs_array', array() );
+		require_once OHMYLMS_INCLUDES . '/Admin/views/settings.php';
 	}
 
 
@@ -212,11 +212,11 @@ class Menu {
 	 * @since 1.0.0
 	 */
 	public function save_settings(): void {
-		global $creator_lms_current_tab, $creator_lms_current_section, $creator_lms_current_page;
+		global $ohmylms_current_tab, $ohmylms_current_section, $ohmylms_current_page;
 		if ( is_crlm_admin_page() ) {
-			$creator_lms_current_section = empty( $_GET['section'] ) ? '' : sanitize_title( wp_unslash( $_GET['section'] ) ); // WPCS: input var okay, CSRF ok.
-			$creator_lms_current_tab     = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
-			$creator_lms_current_page    = empty( $_GET['page'] ) ? 'omlms-settings' : sanitize_title( wp_unslash( $_GET['page'] ) ); // WPCS: input var okay, CSRF ok.
+			$ohmylms_current_section = empty( $_GET['section'] ) ? '' : sanitize_title( wp_unslash( $_GET['section'] ) ); // WPCS: input var okay, CSRF ok.
+			$ohmylms_current_tab     = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
+			$ohmylms_current_page    = empty( $_GET['page'] ) ? 'ohmylms-settings' : sanitize_title( wp_unslash( $_GET['page'] ) ); // WPCS: input var okay, CSRF ok.
 
 			if ( ! empty( $_POST['save'] ) ) {
 				AdminSettings::save();
@@ -239,7 +239,7 @@ class Menu {
 	 * Add custom menu option to the admin bar.
 	 */
 	public function lms_admin_menu_option( $wp_admin_bar ) {
-		$archive_page_id  = get_option( 'creator_lms_course_page_id', 0 );
+		$archive_page_id  = get_option( 'ohmylms_course_page_id', 0 );
 		$archive_page_url = home_url();
 		if ( $archive_page_id ) {
 			$archive_page_url = get_permalink( $archive_page_id );
@@ -247,23 +247,23 @@ class Menu {
 
 		$wp_admin_bar->add_node(
 			array(
-				'id'     => 'visit-omlms-courses',
+				'id'     => 'visit-ohmylms-courses',
 				'title'  => 'Visit Courses',
 				'href'   => $archive_page_url, // Your custom page URL
 				'parent' => 'site-name', // Add under Visit Site
 				'meta'   => array(
 					'title'  => __( 'Visit Courses', 'ohmylms' ), // Tooltip
 					'target' => '_blank', // Open in new tab
-					'class'  => 'visit-omlms-courses-class',
+					'class'  => 'visit-ohmylms-courses-class',
 				),
 			)
 		);
 
-		if( !creator_lms_is_pro() ) {
+		if( !ohmylms_is_pro() ) {
 			return;
 		}
 		// For memberships
-		$membership_page_id  = get_option( 'creator_lms_membership_page_id', 0 );
+		$membership_page_id  = get_option( 'ohmylms_membership_page_id', 0 );
 		if ( ! $membership_page_id ) {
 			return;
 		}
@@ -273,14 +273,14 @@ class Menu {
 		}
 		$wp_admin_bar->add_node(
 			array(
-				'id'     => 'visit-omlms-memberships',
+				'id'     => 'visit-ohmylms-memberships',
 				'title'  => 'Visit Memberships',
 				'href'   => $membership_page_url, // Your custom page URL
 				'parent' => 'site-name', // Add under Visit Site
 				'meta'   => array(
 					'title'  => __( 'Visit Memberships', 'ohmylms' ), // Tooltip
 					'target' => '_blank', // Open in new tab
-					'class'  => 'visit-omlms-memberships-class',
+					'class'  => 'visit-ohmylms-memberships-class',
 				),
 			)
 		);

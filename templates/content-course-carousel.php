@@ -2,16 +2,16 @@
 /**
  * Template for displaying carousel courses.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit();
 if( isset($atts) && is_array($atts) && isset($atts['course_rows']) ){
-    $data = !empty($atts['course_rows']) ? $atts['course_rows'] : get_option('creator_lms_archive_page_row', []);
+    $data = !empty($atts['course_rows']) ? $atts['course_rows'] : get_option('ohmylms_archive_page_row', []);
 } else {
     // Fallback to default option if shortcode attributes are not set
-    $data = get_option('creator_lms_archive_page_row', []);
+    $data = get_option('ohmylms_archive_page_row', []);
 }
 
 if (empty($data)) {
@@ -21,7 +21,7 @@ global $category;
 
 ?>
 
-<div class="creator-lms-course-carousel-wrapper">
+<div class="ohmylms-course-carousel-wrapper">
     <?php
     foreach ($data as $row) {
 
@@ -37,12 +37,12 @@ global $category;
             continue;
         }
 
-        echo '<div class="creator-lms-course-carousel-single">';
+        echo '<div class="ohmylms-course-carousel-single">';
             echo '<h3 class="course-carousel-title">'.esc_html($row['row_heading']).'</h3>';
             
             if( 'all' === $row['row_display_criteria'] ){
                 $args = [
-                    'post_type' => CREATOR_LMS_COURSE_CPT,
+                    'post_type' => OHMYLMS_COURSE_CPT,
                     'post_status'    => 'publish',
                     'posts_per_page' => -1,  // Adjust as needed
                 ];
@@ -61,12 +61,12 @@ global $category;
                 $query = new \WP_Query( $args );
                
                 if ($query->have_posts()) {
-                    creator_lms_course_loop_start(true, isset($atts) && is_array($atts) ? $atts : null);
+                    ohmylms_course_loop_start(true, isset($atts) && is_array($atts) ? $atts : null);
                     while ($query->have_posts()) {
                         $query->the_post();
-                        omlms_get_template_part( 'content', 'course', isset($atts) && is_array($atts) ? $atts : null );
+                        ohmylms_get_template_part( 'content', 'course', isset($atts) && is_array($atts) ? $atts : null );
                     }
-                    creator_lms_course_loop_end();
+                    ohmylms_course_loop_end();
                     wp_reset_postdata(); // Reset after custom query
                 } 
                 
@@ -78,7 +78,7 @@ global $category;
                 if (!empty($course_ids)) {
                     // Create a WP_Query with the course IDs
                     $query = new \WP_Query([
-                        'post_type' => 'omlms-course',
+                        'post_type' => 'ohmylms-course',
                         'post__in' => $course_ids,
                         'orderby' => 'post__in', // Maintain the order of IDs
                         'posts_per_page' => -1,  // Adjust as needed
@@ -86,12 +86,12 @@ global $category;
                     ]);
 
                     if ($query->have_posts()) {
-                        creator_lms_course_loop_start( true, isset($atts) && is_array($atts) ? $atts : null );
+                        ohmylms_course_loop_start( true, isset($atts) && is_array($atts) ? $atts : null );
                         while ($query->have_posts()) {
                             $query->the_post();
-                            omlms_get_template_part('content', 'course', isset($atts) && is_array($atts) ? $atts : null);
+                            ohmylms_get_template_part('content', 'course', isset($atts) && is_array($atts) ? $atts : null);
                         }
-                        creator_lms_course_loop_end();
+                        ohmylms_course_loop_end();
                         wp_reset_postdata(); // Reset after custom query
                     } 
                 }

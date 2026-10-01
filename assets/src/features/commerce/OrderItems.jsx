@@ -111,9 +111,9 @@ export function createOrderItems(readRuntime) {
             justify={'space-between'}
             align={'center'}
             gap={5}
-            className={'omlms-order-details-tfoot-td-flex'}
+            className={'ohmylms-order-details-tfoot-td-flex'}
           >
-            <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-left'}>
+            <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-left'}>
               <Controls.TextWP
                 as={'span'}
                 color={'#000D25'}
@@ -126,7 +126,7 @@ export function createOrderItems(readRuntime) {
                 {':'}
               </Controls.TextWP>
             </Controls.FlexItemWP>
-            <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-right'}>
+            <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-right'}>
               <Controls.TextWP
                 as={'span'}
                 color={'#000D25'}
@@ -161,9 +161,9 @@ export function createOrderItems(readRuntime) {
             justify={'space-between'}
             align={'center'}
             gap={5}
-            className={'omlms-order-details-tfoot-td-flex'}
+            className={'ohmylms-order-details-tfoot-td-flex'}
           >
-            <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-left'}>
+            <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-left'}>
               <Controls.TextWP
                 as={'span'}
                 color={'Refunded' === e ? '#FF4D4F' : '#000D25'}
@@ -176,7 +176,7 @@ export function createOrderItems(readRuntime) {
                 {':'}
               </Controls.TextWP>
             </Controls.FlexItemWP>
-            <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-right'}>
+            <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-right'}>
               <Controls.TextWP
                 as={'span'}
                 color={'Refunded' === e ? '#FF4D4F' : '#000D25'}
@@ -309,14 +309,14 @@ export function createOrderItems(readRuntime) {
             rowKey={'key'}
             columns={columns}
             dataSource={items}
-            className={'omlms-order-details-summary-table'}
+            className={'ohmylms-order-details-summary-table'}
           />
           <Controls.SpacerWP marginBottom={0} paddingY={3} paddingX={4}>
             <Controls.FlexWP
               justify={'space-between'}
               align={'flex-start'}
               gap={3}
-              className={'omlms-order-details-tfoot-row'}
+              className={'ohmylms-order-details-tfoot-row'}
             >
               {coupon.code ? (
                 <div>
@@ -352,9 +352,9 @@ export function createOrderItems(readRuntime) {
                   justify={'space-between'}
                   align={'flex-start'}
                   gap={5}
-                  className={'omlms-order-details-tfoot-td-flex'}
+                  className={'ohmylms-order-details-tfoot-td-flex'}
                 >
-                  <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-left'}>
+                  <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-left'}>
                     <Controls.TextWP
                       as={'span'}
                       color={'#000D25'}
@@ -367,7 +367,7 @@ export function createOrderItems(readRuntime) {
                       {':'}
                     </Controls.TextWP>
                   </Controls.FlexItemWP>
-                  <Controls.FlexItemWP className={'omlms-order-details-tfoot-td-right'}>
+                  <Controls.FlexItemWP className={'ohmylms-order-details-tfoot-td-right'}>
                     <Controls.TextWP
                       as={'span'}
                       color={'#000D25'}
@@ -433,7 +433,7 @@ export function createOrderItems(readRuntime) {
               justify={'space-between'}
               align={'flex-start'}
               gap={3}
-              className={'omlms-order-details-tfoot-row'}
+              className={'ohmylms-order-details-tfoot-row'}
             >
               <div />
               <Controls.SpacerWP marginBottom={0}>
@@ -448,7 +448,7 @@ export function createOrderItems(readRuntime) {
                       justify={'space-between'}
                       align={'flex-start'}
                       gap={3}
-                      className={'omlms-order-details-tfoot-row'}
+                      className={'ohmylms-order-details-tfoot-row'}
                     >
                       <div />
                       <Controls.SpacerWP marginBottom={0}>

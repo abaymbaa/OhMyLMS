@@ -109,9 +109,9 @@ export function createTextAnswerResult(readRuntime) {
       (
         <React.Fragment>
           <div
-            className={'omlms-question-types omlms-text-type-question omlms-'
+            className={'ohmylms-question-types ohmylms-text-type-question ohmylms-'
               .concat(l, ' ')
-              .concat(null != data && data.explanation ? 'omlms-has-explanation' : '')}
+              .concat(null != data && data.explanation ? 'ohmylms-has-explanation' : '')}
           >
             <QuizQuestionHeader
               setData={setData}
@@ -130,7 +130,7 @@ export function createTextAnswerResult(readRuntime) {
               <Controls.TextWP as={'p'} size={14} variant={'muted'}>
                 {(0, I18n.__)("Student's response:", 'ohmylms')}
               </Controls.TextWP>
-              <div className={'omlms-question-options omlms-text-type'}>
+              <div className={'ohmylms-question-options ohmylms-text-type'}>
                 {(null != data &&
                   data.given_answer &&
                   (null == data ? void 0 : data.given_answer[0])) ||
@@ -143,7 +143,7 @@ export function createTextAnswerResult(readRuntime) {
                     (0, I18n.__)('No explanation provided', 'ohmylms')
                   }
                 >
-                  <span className={'omlms-explanation-icon'}>
+                  <span className={'ohmylms-explanation-icon'}>
                     <AnswerIcon />
                   </span>
                 </Tooltip.A>

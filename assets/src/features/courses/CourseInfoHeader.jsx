@@ -25,7 +25,7 @@ export function createCourseInfoHeader(readRuntime) {
     const { name, description, video_src: video, image_src: image } = course || {};
     return (
       <div
-        className={`omlms-course-info-header ${video || image ? 'omlms-has-media' : ''} ${video ? 'omlms-thumb-video-wrapper' : ''} ${image ? 'omlms-thumb-img-wrapper' : ''}`}
+        className={`ohmylms-course-info-header ${video || image ? 'ohmylms-has-media' : ''} ${video ? 'ohmylms-thumb-video-wrapper' : ''} ${image ? 'ohmylms-thumb-img-wrapper' : ''}`}
       >
         <Media
           videoSrc={video}
@@ -33,14 +33,14 @@ export function createCourseInfoHeader(readRuntime) {
           handleRemoveMedia={handleRemoveMedia}
           handleUploadComplete={handleUploadComplete}
         />
-        <div className="omlms-course-content-info">
-          <div className="omlms-title-input-wrapper omlms-course-title">
+        <div className="ohmylms-course-content-info">
+          <div className="ohmylms-title-input-wrapper ohmylms-course-title">
             <TitleInput
               value={name !== 'Untitled' ? decode(name) : ''}
               onChange={handleInputChange}
               placeholder={__('Enter Course Title', 'ohmylms')}
               name="name"
-              className="omlms-course-title"
+              className="ohmylms-course-title"
               style={{
                 fontSize: 30,
                 fontWeight: 'bold',

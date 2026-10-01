@@ -2,15 +2,15 @@
 /**
  * Student class.
  *
- * @package Creator_LMS
+ * @package OhMyLMS
  * @subpackage Student
  * @since 1.0.0
  */
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\DataStores\DataStores;
 
 /**
  * Student class.
@@ -787,7 +787,7 @@ class Student extends Data {
 	public function get_cover_image( $context = 'view' ) {
 		$cover_image = $this->get_prop( 'cover_image', $context );
 		if ( empty( $cover_image ) ) {
-			$cover_image = CREATOR_LMS_URL . '/assets/images/student-cover-image-placeholder.jpeg';
+			$cover_image = OHMYLMS_URL . '/assets/images/student-cover-image-placeholder.jpeg';
 		}
 		return $cover_image;
 	}

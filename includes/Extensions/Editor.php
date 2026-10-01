@@ -1,10 +1,10 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 /** Small native authoring surface; existing course builder remains compatible. */
 final class Editor {
     public static function init() {
-        add_action('admin_menu',static function(){add_submenu_page('creator-lms','Layouts & extensions','Layouts & extensions','edit_posts','ohmylms-extensions',[__CLASS__,'page']);},99);
+        add_action('admin_menu',static function(){add_submenu_page('ohmylms','Layouts & extensions','Layouts & extensions','edit_posts','ohmylms-extensions',[__CLASS__,'page']);},99);
     }
     private static function select($name,$selected,$context) {
         echo '<select name="'.esc_attr($name).'">';
@@ -18,7 +18,7 @@ final class Editor {
         $id=absint($_REQUEST['content_id'] ?? 0); $post=$id?get_post($id):null;
         echo '<div class="wrap"><h1>OhMyLMS layouts & extensions</h1><form method="get"><input type="hidden" name="page" value="ohmylms-extensions"><label>Content ID <input type="number" min="1" name="content_id" value="'.esc_attr($id).'"></label> <button class="button">Load</button></form>';
         if (!$post) {echo '<p>Enter a course, chapter, lesson, quiz, or question ID from the course builder.</p></div>';return;}
-        $context=str_replace('omlms-','',$post->post_type);
+        $context=str_replace('ohmylms-','',$post->post_type);
         if (!in_array($context,['course','chapter','lesson','quiz','question'],true) || !current_user_can('edit_post',$id)) wp_die('Access denied.');
         if (isset($_POST['ohmylms_save'])) {
             check_admin_referer('ohmylms_extension_settings');

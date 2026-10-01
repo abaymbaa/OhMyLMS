@@ -294,7 +294,7 @@ var ree = {
               return e.a(2);
             case 1:
               return P(!0), e.p = 2, e.n = 3, l()({
-                path: "/creator-lms/v1/users/?search=".concat(encodeURIComponent(t)),
+                path: "/ohmylms/v1/users/?search=".concat(encodeURIComponent(t)),
                 method: "GET"
               });
             case 3:
@@ -338,7 +338,7 @@ var ree = {
               return j(!0), e.p = 2, r = {
                 email: t
               }, v.trim() && (r.first_name = v.trim()), _.trim() && (r.last_name = _.trim()), e.n = 3, l()({
-                path: "/creator-lms/v1/courses/".concat(u, "/enroll-by-email"),
+                path: "/ohmylms/v1/courses/".concat(u, "/enroll-by-email"),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -367,7 +367,7 @@ var ree = {
       shouldCloseOnClickOutside: !0,
       title: (0, b.__)("Enroll Student", "ohmylms"),
       onRequestClose: D,
-      className: "omlms-enrollment-modal ".concat(c || "")
+      className: "ohmylms-enrollment-modal ".concat(c || "")
     }, React.createElement("div", {
       style: {
         marginBottom: "12px"

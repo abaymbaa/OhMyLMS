@@ -1,13 +1,13 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class DataStore
  *
- * @package OMLMS\Abstracts
+ * @package OhMyLMS\Abstracts
  * @since 1.0.0
  */
 abstract class DataStore {
@@ -90,7 +90,7 @@ abstract class DataStore {
 	}
 
 	protected function string_to_timestamp( $time_string ) {
-		return '0000-00-00 00:00:00' !== $time_string ? omlms_string_to_timestamp( $time_string ) : null;
+		return '0000-00-00 00:00:00' !== $time_string ? ohmylms_string_to_timestamp( $time_string ) : null;
 	}
 
 

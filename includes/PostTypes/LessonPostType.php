@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Lesson post type to connect with topics
@@ -22,7 +22,7 @@ class LessonPostType {
 	 * @since 1.0.0
 	 */
 	public function register_lesson_cpt() {
-		$permalinks = omlms_get_permalink_structure();
+		$permalinks = ohmylms_get_permalink_structure();
 		$labels = array(
 			'name'                  => _x( 'Lessons', 'Post Type General Name', 'ohmylms' ),
 			'singular_name'         => _x( 'Lesson', 'Post Type Singular Name', 'ohmylms' ),
@@ -72,6 +72,6 @@ class LessonPostType {
 			'publicly_queryable'  => true,
 			'capability_type'     => 'post'
 		);
-		register_post_type( 'omlms-lesson', $args );
+		register_post_type( 'ohmylms-lesson', $args );
 	}
 }

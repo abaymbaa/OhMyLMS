@@ -29,7 +29,7 @@ export function createCoursePricing(readRuntime) {
         return e(StoreModule.default).getGamificationSettings();
       }, []);
     (sn().extend(NW()), sn().extend(lo()));
-    var l = (0, WordPressData.useDispatch)('creator-lms/store'),
+    var l = (0, WordPressData.useDispatch)('ohmylms/store'),
       c = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getCourse();
       }, []),
@@ -74,7 +74,7 @@ export function createCoursePricing(readRuntime) {
         <Controls.FlexWP
           justify={'space-between'}
           align={'flex-start'}
-          className={'omlms-single-settings settings-price omlms-'.concat(price_type)}
+          className={'ohmylms-single-settings settings-price ohmylms-'.concat(price_type)}
         >
           <Controls.FlexItemWP
             style={{
@@ -133,16 +133,16 @@ export function createCoursePricing(readRuntime) {
                     direction={'column'}
                     justify={'flex-end'}
                     align={'flex-end'}
-                    className={'omlms-settings-right'}
+                    className={'ohmylms-settings-right'}
                   >
                     <div
-                      className={'omlms-price-range'}
+                      className={'ohmylms-price-range'}
                       style={{
                         width: '100%',
                       }}
                     >
                       <Controls.FlexWP gap={4}>
-                        <Controls.FlexBlockWP className={'omlms-single-price'}>
+                        <Controls.FlexBlockWP className={'ohmylms-single-price'}>
                           <Controls.TextWP as={'span'} variant={'muted'}>
                             {(0, I18n.__)('Regular Price', 'ohmylms')}
                           </Controls.TextWP>
@@ -157,7 +157,7 @@ export function createCoursePricing(readRuntime) {
                             }}
                             placeholder={(0, I18n.__)('0.00', 'ohmylms')}
                             className={
-                              'omlms-course-settings-pricing-input-regular omlms-price-input'
+                              'ohmylms-course-settings-pricing-input-regular ohmylms-price-input'
                             }
                             onChange={function (e) {
                               /^\d*\.?\d*$/.test(e) &&
@@ -214,7 +214,7 @@ export function createCoursePricing(readRuntime) {
                             }}
                           />
                         </Controls.FlexBlockWP>
-                        <Controls.FlexBlockWP className={'omlms-single-price'}>
+                        <Controls.FlexBlockWP className={'ohmylms-single-price'}>
                           <Controls.TextWP as={'span'} variant={'muted'}>
                             {(0, I18n.__)('Sale Price', 'ohmylms')}
                           </Controls.TextWP>
@@ -229,7 +229,7 @@ export function createCoursePricing(readRuntime) {
                             }}
                             placeholder={(0, I18n.__)('0.00', 'ohmylms')}
                             className={
-                              'omlms-course-settings-pricing-input-discount omlms-price-input'
+                              'ohmylms-course-settings-pricing-input-discount ohmylms-price-input'
                             }
                             onChange={function (e) {
                               (/^\d*\.?\d*$/.test(e) || '' === e || null === e) &&
@@ -464,7 +464,7 @@ export function createCoursePricing(readRuntime) {
                             }).value) && (
                           <React.Fragment>
                             <Controls.FlexWP gap={4}>
-                              <Controls.FlexBlockWP className={'omlms-single-price'}>
+                              <Controls.FlexBlockWP className={'ohmylms-single-price'}>
                                 <Controls.SpacerWP marginBottom={1} />
                                 <Controls.TextWP as={'span'} variant={'muted'}>
                                   {(0, I18n.__)('Purchase with Points', 'ohmylms')}
@@ -480,7 +480,7 @@ export function createCoursePricing(readRuntime) {
                                   }}
                                   placeholder={(0, I18n.__)('0', 'ohmylms')}
                                   className={
-                                    'omlms-course-settings-pricing-input-discount omlms-price-input'
+                                    'ohmylms-course-settings-pricing-input-discount ohmylms-price-input'
                                   }
                                   onChange={function (e) {
                                     (/^\d*\.?\d*$/.test(e) || '' === e || null === e) &&

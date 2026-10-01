@@ -1,23 +1,23 @@
 <?php
-namespace OMLMS\Emails;
+namespace OhMyLMS\Emails;
 
 class Emails {
 
 
 	public function get_emails() {
 		$emails = array(
-			\OMLMS\Emails\CreatorsEmail\NewOrder::class,
-			\OMLMS\Emails\CreatorsEmail\CancelledOrder::class,
-			\OMLMS\Emails\CreatorsEmail\AssignmentSubmitted::class,
-			\OMLMS\Emails\CreatorsEmail\QuizSubmitted::class,
-			\OMLMS\Emails\StudentsEmail\NewOrder::class,
-			\OMLMS\Emails\StudentsEmail\CompleteCourse::class,
-			\OMLMS\Emails\StudentsEmail\ConfirmEnrollment::class,
-			\OMLMS\Emails\StudentsEmail\CancelEnrollment::class,
-			\OMLMS\Emails\StudentsEmail\AssignmentGraded::class,
-			\OMLMS\Emails\StudentsEmail\QuizGraded::class,
-			\OMLMS\Emails\StudentsEmail\ManualEnrollment::class,
-			\OMLMS\Emails\StudentsEmail\EmailVerification::class,
+			\OhMyLMS\Emails\CreatorsEmail\NewOrder::class,
+			\OhMyLMS\Emails\CreatorsEmail\CancelledOrder::class,
+			\OhMyLMS\Emails\CreatorsEmail\AssignmentSubmitted::class,
+			\OhMyLMS\Emails\CreatorsEmail\QuizSubmitted::class,
+			\OhMyLMS\Emails\StudentsEmail\NewOrder::class,
+			\OhMyLMS\Emails\StudentsEmail\CompleteCourse::class,
+			\OhMyLMS\Emails\StudentsEmail\ConfirmEnrollment::class,
+			\OhMyLMS\Emails\StudentsEmail\CancelEnrollment::class,
+			\OhMyLMS\Emails\StudentsEmail\AssignmentGraded::class,
+			\OhMyLMS\Emails\StudentsEmail\QuizGraded::class,
+			\OhMyLMS\Emails\StudentsEmail\ManualEnrollment::class,
+			\OhMyLMS\Emails\StudentsEmail\EmailVerification::class,
 		);
 		return $emails;
 	}
@@ -31,11 +31,11 @@ class Emails {
 	}
 
 	public function register_digest_cron() {
-		if ( ! wp_next_scheduled( 'omlms_send_assignment_submission_digest' ) ) {
-			wp_schedule_event( time(), 'daily', 'omlms_send_assignment_submission_digest' );
+		if ( ! wp_next_scheduled( 'ohmylms_send_assignment_submission_digest' ) ) {
+			wp_schedule_event( time(), 'daily', 'ohmylms_send_assignment_submission_digest' );
 		}
-		if ( ! wp_next_scheduled( 'omlms_send_quiz_submission_digest' ) ) {
-			wp_schedule_event( time(), 'daily', 'omlms_send_quiz_submission_digest' );
+		if ( ! wp_next_scheduled( 'ohmylms_send_quiz_submission_digest' ) ) {
+			wp_schedule_event( time(), 'daily', 'ohmylms_send_quiz_submission_digest' );
 		}
 	}
 
@@ -79,15 +79,15 @@ class Emails {
 	public static function get_email_settings() {
 		$settings = array();
 		$keys     = array(
-			'creator_lms_email_branding_image',
-			'creator_lms_email_base_color',
-			'creator_lms_email_background_color',
-			'creator_lms_email_body_background_color',
-			'creator_lms_email_body_text_color',
-			'creator_lms_email_button_possition',
-			'creator_lms_email_sender_email_address',
-			'creator_lms_email_sender_name',
-			'creator_lms_email_footer_text',
+			'ohmylms_email_branding_image',
+			'ohmylms_email_base_color',
+			'ohmylms_email_background_color',
+			'ohmylms_email_body_background_color',
+			'ohmylms_email_body_text_color',
+			'ohmylms_email_button_possition',
+			'ohmylms_email_sender_email_address',
+			'ohmylms_email_sender_name',
+			'ohmylms_email_footer_text',
 		);
 
 		foreach ( $keys as $key ) {

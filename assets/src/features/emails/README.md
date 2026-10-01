@@ -16,7 +16,7 @@ Edit the JSX files in this directory and run `npm run build` from the plugin roo
 
 The components retain the existing WordPress data store, REST actions, rich-text editor, shared controls, notification templates, branding settings and permissions. Template-specific HTML generation remains local to `EmailPreview.jsx`. Some transpiler helpers are still supplied by the recovered runtime, so these are editable named React modules rather than a standalone application.
 
-Source activation remains controlled by `OMLMS_SOURCE_ASSETS`. Building does not change site configuration.
+Source activation remains controlled by `OHMYLMS_SOURCE_ASSETS`. Building does not change site configuration.
 
 ## Validation
 

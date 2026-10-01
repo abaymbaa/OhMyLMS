@@ -29,7 +29,7 @@ test('reassembled assets preserve the shipped program AST',()=>{
 test('every factory has editable source and generated maps embed source',()=>{
  assert.ok(manifest.modules.length>800);
  for(const module of manifest.modules) assert.ok(fs.existsSync(path.join(root,'assets/src/recovered',module.source)),module.source);
- const map=JSON.parse(fs.readFileSync(path.join(root,'build/parity/assets/dist/admin/creatorlms.js.map'),'utf8'));
+ const map=JSON.parse(fs.readFileSync(path.join(root,'build/parity/assets/dist/admin/ohmylms.js.map'),'utf8'));
  assert.ok(map.sources.length>10);
  assert.equal(map.sources.length,map.sourcesContent.length);
  assert.ok(map.sources.every(s=>s.startsWith('ohmylms-source:///')));

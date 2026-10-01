@@ -1,10 +1,10 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Question;
-use OMLMS\DataException;
-use OMLMS\Question\QuestionHelper;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Question;
+use OhMyLMS\DataException;
+use OhMyLMS\Question\QuestionHelper;
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -112,7 +112,7 @@ class QuestionController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_QUIZ_CPT,
+			'post_type'           => OHMYLMS_QUIZ_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 		);
 
@@ -129,7 +129,7 @@ class QuestionController extends RestController {
 			unset( $args['filter'] );
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_question_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_question_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -196,7 +196,7 @@ class QuestionController extends RestController {
 
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with object name.
-			return new WP_Error( 'creator_lms_rest_question_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Question' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_question_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Question' ), array( 'status' => 400 ) );
 		}
 		try {
 			$question_id = $this->save_question( $request );
@@ -211,12 +211,12 @@ class QuestionController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_question', $post, $request, true );
+			do_action( 'ohmylms_rest_insert_question', $post, $request, true );
 
 			// $request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response( $post, $request );
 			$response = rest_ensure_response( $response );
-			do_action( 'creator_lms_rest_question_created', $post, $request );
+			do_action( 'ohmylms_rest_question_created', $post, $request );
 			if ( ! is_wp_error( $response ) ) {
 				$response->set_status( 201 );
 			}
@@ -238,8 +238,8 @@ class QuestionController extends RestController {
 
 		$post_id = (int) $request['id'];
 
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_QUESTION_CPT ) {
-			return new WP_Error( 'creator_lms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_QUESTION_CPT ) {
+			return new WP_Error( 'ohmylms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -249,7 +249,7 @@ class QuestionController extends RestController {
 			$this->update_post_meta_fields( $post, $request );
 			// $request->set_param( 'context', 'edit' );
 
-			do_action( 'creator_lms_rest_question_updated', $post, $request );
+			do_action( 'ohmylms_rest_question_updated', $post, $request );
 
 			$response = $this->prepare_item_for_response( $post, $request );
 
@@ -272,8 +272,8 @@ class QuestionController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUESTION_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_question_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUESTION_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_question_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data     = $this->prepare_item_for_response( $post, $request );
@@ -298,25 +298,25 @@ class QuestionController extends RestController {
 	public function delete_item( $request ) {
 		$question_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 		if ( ! $question_id ) {
-			return new WP_Error( 'creator_lms_rest_question_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_question_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$question = omlms_get_question( $question_id );
+		$question = ohmylms_get_question( $question_id );
 
 		if ( ! ( $question instanceof Question ) ) {
-			return new WP_Error( 'creator_lms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$question->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_question' action hook.
+		 * Executes the 'ohmylms_rest_delete_question' action hook.
 		 * This hook is triggered when a question is being deleted via the REST API.
 		 *
 		 * @param array $request The request array.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_question', $request );
+		do_action( 'ohmylms_rest_delete_question', $request );
 
 		$response = array(
 			'id'      => $question_id,
@@ -353,7 +353,7 @@ class QuestionController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$question = omlms_get_question( $id );
+			$question = ohmylms_get_question( $id );
 		} else {
 			$question = new Question();
 		}
@@ -388,7 +388,7 @@ class QuestionController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$question = omlms_get_question( $post->ID );
+		$question = ohmylms_get_question( $post->ID );
 		$data     = $this->get_question_data( $question );
 		$response = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $question, $request ) );
@@ -404,7 +404,7 @@ class QuestionController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_question', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_question', $response, $post, $request );
 	}
 
 
@@ -476,7 +476,7 @@ class QuestionController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$question = omlms_get_question( $post );
+		$question = ohmylms_get_question( $post );
 		$question = $this->set_question_meta( $question, $request );
 		$question->save();
 		/**
@@ -486,7 +486,7 @@ class QuestionController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_question_meta_updated', $question );
+		do_action( 'ohmylms_rest_question_meta_updated', $question );
 
 		return true;
 	}
@@ -541,7 +541,7 @@ class QuestionController extends RestController {
 				 *
 				 * @param mixed $prepared_args[ $var ] The query_var value.
 				 */
-				$query_args[ $var ] = apply_filters( "creator_lms_rest_query_var-{$var}", $prepared_args[ $var ] );
+				$query_args[ $var ] = apply_filters( "ohmylms_rest_query_var-{$var}", $prepared_args[ $var ] );
 			}
 		}
 
@@ -583,7 +583,7 @@ class QuestionController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_QUIZ_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_QUIZ_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -614,7 +614,7 @@ class QuestionController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}

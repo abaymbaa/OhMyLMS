@@ -320,7 +320,7 @@ var xp = function (e) {
     style: {
       maxWidth: "1500px"
     },
-    className: "omlms-create-modal-wrapper",
+    className: "ohmylms-create-modal-wrapper",
     size: "fill",
     headerActions: React.createElement(I.FlexWP, {
       gap: 3,
@@ -329,9 +329,9 @@ var xp = function (e) {
     }, React.createElement(ra, {
       label: (0, b.__)("Result", "ohmylms"),
       icon: React.createElement(za, null),
-      customClass: "omlms-quiz-report-btn",
+      customClass: "ohmylms-quiz-report-btn",
       onClick: function () {
-        var e = "".concat(window.location.origin, "/wp-admin/admin.php?page=creator-lms#").concat("/quiz-report", "/").concat(a);
+        var e = "".concat(window.location.origin, "/wp-admin/admin.php?page=ohmylms#").concat("/quiz-report", "/").concat(a);
         window.open(e, "_blank");
       },
       variant: "default"
@@ -348,7 +348,7 @@ var xp = function (e) {
         (0, Ec.$)(i).isValid || null == i || null === (e = i.settings) || void 0 === e || !e.type ? s(!0) : n.setQuizError(!0);
       },
       variant: "default",
-      customClass: "omlms-quiz-settings-btn-header"
+      customClass: "ohmylms-quiz-settings-btn-header"
     }), React.createElement(ra, {
       label: (0, b.__)("Preview", "ohmylms"),
       icon: React.createElement(Br, null),
@@ -356,14 +356,14 @@ var xp = function (e) {
         null != o && o.preview_url && window.open(null == o ? void 0 : o.preview_url, "_blank");
       },
       variant: "default",
-      customClass: "omlms-quiz-preview-btn-header"
+      customClass: "ohmylms-quiz-preview-btn-header"
     }), React.createElement(ra, {
       label: (0, b.__)("Save", "ohmylms"),
-      customClass: "omlms-quiz-save-btn",
+      customClass: "ohmylms-quiz-save-btn",
       onClick: O,
       loading: m,
       variant: "primary",
-      className: "omlms-save-quiz-btn-header",
+      className: "ohmylms-save-quiz-btn-header",
       padding: "10px 24px"
     }))
   }, React.createElement(fp, {
@@ -584,7 +584,7 @@ const Ip = function (e) {
     d = (e.showEdit, e.setShowEdit),
     m = (e.handleSaveName, (0, f.g)().id),
     p = Ze(),
-    v = (0, y.useDispatch)("creator-lms/store"),
+    v = (0, y.useDispatch)("ohmylms/store"),
     _ = (0, y.useSelect)(function (e) {
       return e(T.default).getAISuggestedCourses();
     }, []),
@@ -612,7 +612,7 @@ const Ip = function (e) {
       return e(T.default).getCourseChapterSidebarOpen();
     }),
     U = ((0, y.useSelect)(function (e) {
-      return e("creator-lms/store").getCourseChaptersContent();
+      return e("ohmylms/store").getCourseChaptersContent();
     }, [n.id]), p && (null === (t = _[m - 1]) || void 0 === t || null === (t = t.chapters.find(function (e) {
       return e.id === r;
     })) || void 0 === t || t.content), (0, g.useRef)(null), (0, y.useSelect)(function (e) {
@@ -681,13 +681,13 @@ const Ip = function (e) {
       return H(!1);
     },
     gap: 2,
-    className: "omlms-chapter-single-nav ".concat(l ? "active" : "", " ").concat(V ? "show-dragable" : ""),
+    className: "ohmylms-chapter-single-nav ".concat(l ? "active" : "", " ").concat(V ? "show-dragable" : ""),
     align: "center",
     justify: "flex-start"
   }, G && h().createElement("span", {
-    className: "omlms-chapter-nav-drag-icon ".concat(V ? "show" : "")
+    className: "ohmylms-chapter-nav-drag-icon ".concat(V ? "show" : "")
   }, h().createElement(Op, null)), h().createElement(I.CardWP, {
-    className: "omlms-chapter-nav ".concat(l ? "active" : "", " ").concat(V ? "show-dragable" : ""),
+    className: "ohmylms-chapter-nav ".concat(l ? "active" : "", " ").concat(V ? "show-dragable" : ""),
     onClick: function () {
       return function (e) {
         c(r), u(e), d(!1), p || setTimeout(function () {
@@ -721,7 +721,7 @@ const Ip = function (e) {
     })
   }))))) : h().createElement(h().Fragment, null, h().createElement(I.TextWP, {
     as: "p",
-    className: "omlms-chapter-nav-index",
+    className: "ohmylms-chapter-nav-index",
     align: "center"
   }, s + 1)))), z && h().createElement(Ie, {
     title: (0, b.__)("Delete Chapter", "ohmylms"),

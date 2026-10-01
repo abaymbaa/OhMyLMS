@@ -160,20 +160,20 @@
       },
       init: function () {
         var t = this;
-        this.isLessonPage() && ("undefined" != typeof omlms_frontend_params && omlms_frontend_params.video_completion_threshold && (this.config.completionThreshold = parseInt(omlms_frontend_params.video_completion_threshold, 10)), this.state.lessonId = this.getLessonId(), this.state.courseId = this.getCourseId(), this.state.lessonId && this.state.courseId && omlms_frontend_params.current_student_id && (this.detectAndInitializePlayer(), e(window).on("beforeunload", function () {
+        this.isLessonPage() && ("undefined" != typeof ohmylms_frontend_params && ohmylms_frontend_params.video_completion_threshold && (this.config.completionThreshold = parseInt(ohmylms_frontend_params.video_completion_threshold, 10)), this.state.lessonId = this.getLessonId(), this.state.courseId = this.getCourseId(), this.state.lessonId && this.state.courseId && ohmylms_frontend_params.current_student_id && (this.detectAndInitializePlayer(), e(window).on("beforeunload", function () {
           return t.saveProgress();
         }), e(document).on("visibilitychange", function () {
           document.hidden && t.saveProgress();
         })));
       },
       detectAndInitializePlayer: function () {
-        var t = e(".omlms-custom-video-player");
+        var t = e(".ohmylms-custom-video-player");
         if (t.length) this.initCustomPlayer(t[0]);else {
           var a = e('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
           if (a.length) this.initYouTubePlayer(a[0]);else {
             var s = e('iframe[src*="vimeo.com"]');
             if (s.length) this.initVimeoPlayer(s[0]);else {
-              var r = e("video.the-video, .creator-lms-video-player video");
+              var r = e("video.the-video, .ohmylms-video-player video");
               r.length && this.initHTML5Player(r[0]);
             }
           }
@@ -190,7 +190,7 @@
               return t().w(function (t) {
                 for (;;) switch (t.n) {
                   case 0:
-                    if (!((n = e(a).data("creatorLMSVideoPlayer")) && n.platformHandler && n.platformHandler.isReady)) {
+                    if (!((n = e(a).data("ohMyLMSVideoPlayer")) && n.platformHandler && n.platformHandler.isReady)) {
                       t.n = 4;
                       break;
                     }
@@ -255,9 +255,9 @@
               case 6:
                 o = i.v, u = 0, o && o.last_position > 1 && !o.is_completed && (u = o.last_position, setTimeout(function () {
                   if (e.controls) {
-                    e.controls.find(".omlms-current-time").text(e.formatTime(u));
+                    e.controls.find(".ohmylms-current-time").text(e.formatTime(u));
                     var t = u / n.state.totalDuration * 100;
-                    e.controls.find(".omlms-progress-filled").css("width", t + "%"), e.controls.find(".omlms-progress-handle").css("left", t + "%");
+                    e.controls.find(".ohmylms-progress-filled").css("width", t + "%"), e.controls.find(".ohmylms-progress-handle").css("left", t + "%");
                   }
                 }, 100)), c = !1, l = e.options.onPlay, d = e.options.onPause, e.options.onPlay = s(t().m(function e() {
                   return t().w(function (t) {
@@ -333,7 +333,7 @@
       },
       setupYouTubePlayer: function (t) {
         var e = this;
-        t.id || (t.id = "omlms-youtube-player-" + this.state.lessonId);
+        t.id || (t.id = "ohmylms-youtube-player-" + this.state.lessonId);
         var a = t.src;
         -1 === a.indexOf("enablejsapi=1") && (t.src = a + (-1 === a.indexOf("?") ? "?" : "&") + "enablejsapi=1"), this.state.player = new YT.Player(t.id, {
           events: {
@@ -539,13 +539,13 @@
       },
       loadProgress: function () {
         var t = this;
-        return this.state.lessonId && "undefined" != typeof omlms_frontend_params && omlms_frontend_params.ajax_url ? new Promise(function (a, s) {
+        return this.state.lessonId && "undefined" != typeof ohmylms_frontend_params && ohmylms_frontend_params.ajax_url ? new Promise(function (a, s) {
           e.ajax({
-            url: omlms_frontend_params.ajax_url,
+            url: ohmylms_frontend_params.ajax_url,
             type: "POST",
             data: {
-              action: "creator_lms_get_video_progress",
-              nonce: omlms_frontend_params.video_progress_nonce,
+              action: "ohmylms_get_video_progress",
+              nonce: ohmylms_frontend_params.video_progress_nonce,
               lesson_id: t.state.lessonId
             },
             success: function (t) {
@@ -565,11 +565,11 @@
         if (this.state.hasInitialized && 0 !== this.state.totalDuration) {
           var a = this.calculateWatchedDuration();
           a < this.config.minWatchDuration || e.ajax({
-            url: omlms_frontend_params.ajax_url,
+            url: ohmylms_frontend_params.ajax_url,
             type: "POST",
             data: {
-              action: "creator_lms_save_video_progress",
-              nonce: omlms_frontend_params.video_progress_nonce,
+              action: "ohmylms_save_video_progress",
+              nonce: ohmylms_frontend_params.video_progress_nonce,
               lesson_id: this.state.lessonId,
               course_id: this.state.courseId,
               watched_duration: a,
@@ -577,7 +577,7 @@
               last_position: this.state.lastPosition
             },
             success: function (a) {
-              a.success && a.data.progress && a.data.progress.is_completed && (e(document).trigger("creatorlms:video:completed", {
+              a.success && a.data.progress && a.data.progress.is_completed && (e(document).trigger("ohmylms:video:completed", {
                 lessonId: t.state.lessonId,
                 courseId: t.state.courseId
               }), t.clearProgress());
@@ -588,12 +588,12 @@
       },
       clearProgress: function () {
         var t = this;
-        this.state.lessonId && "undefined" != typeof omlms_frontend_params && omlms_frontend_params.ajax_url && e.ajax({
-          url: omlms_frontend_params.ajax_url,
+        this.state.lessonId && "undefined" != typeof ohmylms_frontend_params && ohmylms_frontend_params.ajax_url && e.ajax({
+          url: ohmylms_frontend_params.ajax_url,
           type: "POST",
           data: {
-            action: "creator_lms_clear_video_progress",
-            nonce: omlms_frontend_params.video_progress_nonce,
+            action: "ohmylms_clear_video_progress",
+            nonce: ohmylms_frontend_params.video_progress_nonce,
             lesson_id: this.state.lessonId
           },
           success: function (e) {
@@ -655,20 +655,20 @@
         }))();
       },
       isLessonPage: function () {
-        return e("body").hasClass("single-lesson") || e("body").hasClass("single-omlms-lesson") || e(".creator-lms-lesson-content-body").length > 0;
+        return e("body").hasClass("single-lesson") || e("body").hasClass("single-ohmylms-lesson") || e(".ohmylms-lesson-content-body").length > 0;
       },
       getLessonId: function () {
         var t = e("[data-lesson-id]").attr("data-lesson-id");
         if (t) return parseInt(t);
         var a = e("body").attr("class"),
           s = a && a.match(/postid-(\d+)/);
-        return s ? parseInt(s[1]) : "undefined" != typeof creatorlms_lesson_id ? parseInt(creatorlms_lesson_id) : 0;
+        return s ? parseInt(s[1]) : "undefined" != typeof ohmylms_lesson_id ? parseInt(ohmylms_lesson_id) : 0;
       },
       getCourseId: function () {
         var t = e("[data-course-id]").attr("data-course-id");
         if (t) return parseInt(t);
-        if ("undefined" != typeof creatorlms_course_id) return parseInt(creatorlms_course_id);
-        var a = e(".omlms-course-link").attr("href");
+        if ("undefined" != typeof ohmylms_course_id) return parseInt(ohmylms_course_id);
+        var a = e(".ohmylms-course-link").attr("href");
         if (a) {
           var s = a.match(/post=(\d+)/);
           if (s) return parseInt(s[1]);

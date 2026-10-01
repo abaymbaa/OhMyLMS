@@ -26,7 +26,7 @@ export function createBonusPointSettings(readRuntime) {
       r,
       a,
       o,
-      i = (0, Entitlements.useIsPro)(),
+      i = true,
       c = (0, WordPressData.useDispatch)(StoreModule.default),
       u = M2(
         (0, ReactHooks.useState)({
@@ -271,7 +271,7 @@ export function createBonusPointSettings(readRuntime) {
                       h(!0),
                       (e.n = 1),
                       l()({
-                        path: 'creator-lms/v1/engagement/settings/point',
+                        path: 'ohmylms/v1/engagement/settings/point',
                       })
                     );
                   case 1:
@@ -303,7 +303,7 @@ export function createBonusPointSettings(readRuntime) {
           return e.apply(this, arguments);
         };
       })();
-      i && e();
+      e();
     }, []);
     var W = function (e, t) {
       var n = (function (e) {
@@ -371,7 +371,7 @@ export function createBonusPointSettings(readRuntime) {
                 for (;;)
                   switch ((e.p = e.n)) {
                     case 0:
-                      if (i) {
+                      {
                         e.n = 1;
                         break;
                       }
@@ -383,7 +383,7 @@ export function createBonusPointSettings(readRuntime) {
                         (e.p = 2),
                         (e.n = 3),
                         l()({
-                          path: '/creator-lms/v1/engagement/settings/point',
+                          path: '/ohmylms/v1/engagement/settings/point',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -479,7 +479,7 @@ export function createBonusPointSettings(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/engagement/settings/point',
+                          path: '/ohmylms/v1/engagement/settings/point',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -547,7 +547,7 @@ export function createBonusPointSettings(readRuntime) {
                         )),
                         (e.n = 3),
                         l()({
-                          path: '/creator-lms/v1/engagement/settings/point',
+                          path: '/ohmylms/v1/engagement/settings/point',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -819,12 +819,7 @@ export function createBonusPointSettings(readRuntime) {
     ) : (
       <React.Fragment>
         {contextHolder}
-        <Controls.ProOverlayWP
-          title={(0, I18n.__)(
-            'The Bonus Point System is a Pro feature and will be available soon. Stay tuned to unlock advanced gamification tools that boost learner motivation and course completion rates.',
-            'ohmylms',
-          )}
-        />
+
         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
           <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>
             <Controls.FlexWP
@@ -833,7 +828,7 @@ export function createBonusPointSettings(readRuntime) {
               direction={'column'}
               gap={2}
             >
-              {i && (
+              {
                 <React.Fragment>
                   <Controls.CardWP isBorderless={!0} padding={'24px'} fullWidth={!0}>
                     <Controls.FlexWP justify={'space-between'} align={'center'}>
@@ -1330,7 +1325,7 @@ export function createBonusPointSettings(readRuntime) {
                                         {(0, I18n.__)('Email Body', 'ohmylms')}
                                       </Controls.HeadingWP>
                                       <Controls.TextareaWP
-                                        className={'omlms-text-generate-prompt-input'}
+                                        className={'ohmylms-text-generate-prompt-input'}
                                         placeholder={(0, I18n.__)('Write here...', 'ohmylms')}
                                         value={R.email.body}
                                         onChange={Y}
@@ -1346,7 +1341,7 @@ export function createBonusPointSettings(readRuntime) {
                     </Controls.FlexItemWP>
                   </Controls.FlexWP>
                 </React.Fragment>
-              )}
+              }
             </Controls.FlexWP>
           </Controls.SpacerWP>
         </Controls.CardWP>
@@ -1641,7 +1636,7 @@ export function createBonusPointSettings(readRuntime) {
                           {(0, I18n.__)('Email body', 'ohmylms')}
                         </Controls.HeadingWP>
                         <Controls.TextareaWP
-                          className={'omlms-text-generate-prompt-input'}
+                          className={'ohmylms-text-generate-prompt-input'}
                           placeholder={(0, I18n.__)('Write here...', 'ohmylms')}
                           value={R.email.body}
                           onChange={Y}

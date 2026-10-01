@@ -2,13 +2,13 @@
 /**
  * Template for displaying checkout billing form.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/billing-form.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/billing-form.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
-use OMLMS\Membership\MembershipHelper;
+use OhMyLMS\Membership\MembershipHelper;
 
 defined( 'ABSPATH' ) || exit();
 ?>
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit();
 <?php
 
 $args = array(
-	'post_type'      => 'omlms-membership', // Specify the custom post type
+	'post_type'      => 'ohmylms-membership', // Specify the custom post type
 	'posts_per_page' => -1,                 // Get all posts
 	'fields'         => 'ids'               // Only retrieve post IDs
 );
@@ -25,14 +25,14 @@ $membership_plans = get_posts($args);
 
 
 if (empty($membership_plans) || !is_array($membership_plans)) {
-	echo apply_filters('omlms_membership_plans_no_plans_message', __('No membership plans found.', 'ohmylms'));
+	echo apply_filters('ohmylms_membership_plans_no_plans_message', __('No membership plans found.', 'ohmylms'));
 }
 
 // Apply filter before displaying plans
-echo apply_filters('omlms_before_display_membership_plans', '', $membership_id);
+echo apply_filters('ohmylms_before_display_membership_plans', '', $membership_id);
 
 // Change buy now button text
-$buy_now_text = apply_filters('omlms_membership_plans_buy_button_text', __('Buy Now', 'ohmylms'));
+$buy_now_text = apply_filters('ohmylms_membership_plans_buy_button_text', __('Buy Now', 'ohmylms'));
 
 ob_start();
 ?>
@@ -46,9 +46,9 @@ ob_start();
 			</h3>
 			<p>
 				<?php
-				$pricing_type = get_post_meta($plan_id, 'omlms_membership_pricing_type', true);
+				$pricing_type = get_post_meta($plan_id, 'ohmylms_membership_pricing_type', true);
 				if($pricing_type == 'Paid') {
-					$price = get_post_meta($plan_id, 'omlms_membership_regular_price', true);
+					$price = get_post_meta($plan_id, 'ohmylms_membership_regular_price', true);
 					echo __('Price: ', 'ohmylms') .'$'. number_format( (float) $price, 2, '.', '' );
 				}
 				else {
@@ -57,12 +57,12 @@ ob_start();
 				?>
 			</p>
 			<p><?php
-				$billing_period = get_post_meta($plan_id, 'omlms_membership_billing_period', true);
+				$billing_period = get_post_meta($plan_id, 'ohmylms_membership_billing_period', true);
 				echo __('Subscription: ', 'ohmylms') .  $billing_period
 				?></p>
 			<button class="buy-now-button crlm_purchase" data-membership="<?php echo $plan_id; ?>" data-plan="<?php echo $plan['plan_id'] ?>" ><?php echo $buy_now_text; ?></button>
 			<?php
-			$courses = unserialize(get_post_meta($plan_id, 'omlms_membership_selected_products', true));
+			$courses = unserialize(get_post_meta($plan_id, 'ohmylms_membership_selected_products', true));
 			if ( ! empty( $courses ) && is_array( $courses ) ) : ?>
 				<p><?php __('Courses: ', 'ohmylms'); ?></p>
 				<ul>
@@ -110,7 +110,7 @@ ob_start();
 <?php
 
 // Apply filter after displaying plans
-echo apply_filters('omlms_after_display_membership_plans', '', $membership_id);
+echo apply_filters('ohmylms_after_display_membership_plans', '', $membership_id);
 
 echo ob_get_clean();
 ?>

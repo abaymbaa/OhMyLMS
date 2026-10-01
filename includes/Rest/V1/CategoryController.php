@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use function EDD\Blocks\Forms\register;
 
 class CategoryController extends RestController {
@@ -127,7 +127,7 @@ class CategoryController extends RestController {
 				// Get courses for this category (only directly assigned, not from child categories)
 				$courses = get_posts(
 					array(
-						'post_type'      => 'omlms-course',
+						'post_type'      => 'ohmylms-course',
 						'posts_per_page' => -1,
 						'post_status'    => 'any',
 						'tax_query'      => array(

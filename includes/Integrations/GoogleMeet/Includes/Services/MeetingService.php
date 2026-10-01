@@ -2,19 +2,19 @@
 /**
  * MeetingService class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Services;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Services;
 
-use OMLMS\Integrations\GoogleMeet\Includes\Api\GoogleMeetApiClient;
-use OMLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Api\GoogleMeetApiClient;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
 
 /**
  * Class MeetingService
  *
- * @package OMLMS\Integrations\GoogleMeet\Services
+ * @package OhMyLMS\Integrations\GoogleMeet\Services
  * @since 1.0.0
  */
 class MeetingService {
@@ -59,7 +59,7 @@ class MeetingService {
 			),
 			'conferenceData' => array(
 				'createRequest' => array(
-					'requestId' => uniqid( 'creatorlms_' ),
+					'requestId' => uniqid( 'ohmylms_' ),
 					'conferenceSolutionKey' => array(
 						'type' => 'hangoutsMeet',
 					),

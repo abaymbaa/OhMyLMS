@@ -2,12 +2,12 @@
 /**
  * The template for displaying lesson's Assignment content
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-assignment.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-assignment.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \OMLMS\Data\Lesson $lesson
- * @global \OMLMS\Data\Student $student
+ * @global \OhMyLMS\Data\Lesson $lesson
+ * @global \OhMyLMS\Data\Student $student
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if( !$lesson ){
 
 $lesson_id = $lesson->get_id();
 $current_id = get_the_ID();
-$student = new \OMLMS\Data\Student(get_current_user_id());
+$student = new \OhMyLMS\Data\Student(get_current_user_id());
 $get_type = $lesson->get_type();
 $is_active = $lesson_id == $current_id ? 'active' : '';
 
@@ -55,10 +55,10 @@ $is_active = $lesson_id == $current_id ? 'active' : '';
 
  $is_checked = $student->maybe_completed($lesson_id) ? 'checked' : '';
 
-$_course_id = omlms_get_course_id_by_content_id( $lesson_id );
+$_course_id = ohmylms_get_course_id_by_content_id( $lesson_id );
 $is_lesson_locked = false;
 if ( $_course_id && function_exists( 'apply_filters' ) ) {
-	$is_lesson_locked = apply_filters( 'creator_lms_is_lesson_locked', false, $lesson_id, $_course_id, get_current_user_id() );
+	$is_lesson_locked = apply_filters( 'ohmylms_is_lesson_locked', false, $lesson_id, $_course_id, get_current_user_id() );
 }
 ?>
 
@@ -72,7 +72,7 @@ if ( $_course_id && function_exists( 'apply_filters' ) ) {
 
 	<?php if ( $is_lesson_locked ) : ?>
 		<span style="position:absolute;right:17px;top:50%;transform:translateY(-50%);z-index:1;line-height:1;">
-			<?php include( CREATOR_LMS_DIR . '/assets/images/icon/lock-icon.php' ); ?>
+			<?php include( OHMYLMS_DIR . '/assets/images/icon/lock-icon.php' ); ?>
 		</span>
 	<?php else : ?>
 		<span class="lesson-status <?php echo $is_checked ? 'checked' : ''; ?>">

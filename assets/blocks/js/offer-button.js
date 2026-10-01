@@ -34,10 +34,10 @@
         style:         { type: 'string', default: '' },
     };
 
-    registerBlockType('creator-lms/offer-button', {
+    registerBlockType('ohmylms/offer-button', {
         title: __('OhMyLMS Offer Button', 'ohmylms'),
         icon: 'button',
-        category: 'creator-lms',
+        category: 'ohmylms',
         attributes: attributesData,
         edit: function(props) {
             var attributes = props.attributes;
@@ -131,7 +131,7 @@
                 )
             );
             var serverSideRender = createElement(ServerSideRender, {
-                block: 'creator-lms/offer-button',
+                block: 'ohmylms/offer-button',
                 attributes: attributes
             });
             return [inspectorControls, serverSideRender];

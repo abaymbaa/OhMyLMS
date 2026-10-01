@@ -2,7 +2,7 @@
 /**
  * My Account page
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/my-profile.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/my-profile.php.
  *
  * @version 3.5.0
  */
@@ -14,20 +14,20 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.6.0
  */
-//do_action( 'creator_lms_account_navigation' );
-do_action( 'creator_lms_account_header' );
+//do_action( 'ohmylms_account_navigation' );
+do_action( 'ohmylms_account_header' );
 
 ?>
 
-<section class="creator-lms-dashboard">
-	<div class="creator-lms-container">
+<section class="ohmylms-dashboard">
+	<div class="ohmylms-container">
 		<?php
 		/**
 		 * My Account content.
 		 *
 		 * @since 2.6.0
 		 */
-		do_action( 'creator_lms_account_content' );
+		do_action( 'ohmylms_account_content' );
 		?>
 	</div>
 </section>

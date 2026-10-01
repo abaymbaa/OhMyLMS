@@ -5,7 +5,7 @@ function GH(e) {
     n = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),
-    r = (0, L.useFeatureAccess)("funnel"),
+    r = true,
     a = LH((0, g.useState)([{
       label: (0, b.__)("Select type", "ohmylms"),
       value: ""
@@ -65,7 +65,7 @@ function GH(e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/page/search?value=".concat(t),
+                path: "/ohmylms/v1/page/search?value=".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -133,7 +133,7 @@ function GH(e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/courses?search=".concat(t),
+                path: "/ohmylms/v1/courses?search=".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -200,7 +200,7 @@ function GH(e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/membership?search=".concat(t),
+                path: "/ohmylms/v1/membership?search=".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -270,7 +270,7 @@ function GH(e) {
       return (0, b.__)("Please enter 3 or more characters...", "ohmylms");
     },
     O = function () {
-      if (r) {
+      {
         var e = {
             step_id: "step_".concat(s.length + 1),
             step_type: "",
@@ -302,7 +302,7 @@ function GH(e) {
       }
     },
     k = function (e, t, n) {
-      if (r) {
+      {
         var a = s.map(function (r) {
           return r.step_id === e ? FH(FH({}, r), {}, "acceptedAction" === t ? {
             condition: FH(FH({}, r.condition), {}, {
@@ -322,7 +322,7 @@ function GH(e) {
       }
     },
     j = function (e) {
-      r && t.setCourse(FH(FH({}, n), {}, {
+      t.setCourse(FH(FH({}, n), {}, {
         funnel_steps: e
       }));
     },
@@ -564,8 +564,8 @@ function GH(e) {
     }), h().createElement(I.TextWP, null, (0, b.__)("Choose the page template for this offer.", "ohmylms"))), h().createElement(I.FlexItemWP, {
       flex: "2"
     }, h().createElement(Jt.A, {
-      className: "omlms-single-select omlms-search-select auto-height",
-      classNamePrefix: "omlms-react-select",
+      className: "ohmylms-single-select ohmylms-search-select auto-height",
+      classNamePrefix: "ohmylms-react-select",
       placeholder: (0, b.__)("Type to search pages...", "ohmylms"),
       value: n.offer_page_id && n.page_name ? {
         value: n.offer_page_id,
@@ -617,8 +617,8 @@ function GH(e) {
     }), h().createElement(I.TextWP, null, (0, b.__)("Select the course to offer in this step.", "ohmylms"))), h().createElement(I.FlexItemWP, {
       flex: "2"
     }, h().createElement(Jt.A, {
-      className: "omlms-single-select omlms-search-select auto-height",
-      classNamePrefix: "omlms-react-select",
+      className: "ohmylms-single-select ohmylms-search-select auto-height",
+      classNamePrefix: "ohmylms-react-select",
       placeholder: (0, b.__)("Type to search courses...", "ohmylms"),
       value: n.course_id && n.course_name ? {
         value: n.course_id,
@@ -647,8 +647,8 @@ function GH(e) {
     }), h().createElement(I.TextWP, null, (0, b.__)("Select the membership plan to offer in this step.", "ohmylms"))), h().createElement(I.FlexItemWP, {
       flex: "2"
     }, h().createElement(Jt.A, {
-      className: "omlms-single-select omlms-search-select auto-height",
-      classNamePrefix: "omlms-react-select",
+      className: "ohmylms-single-select ohmylms-search-select auto-height",
+      classNamePrefix: "ohmylms-react-select",
       placeholder: (0, b.__)("Type to search memberships...", "ohmylms"),
       value: n.membership_id && n.membership_name ? {
         value: n.membership_id,
@@ -666,7 +666,7 @@ function GH(e) {
       isBorderless: !0,
       padding: "16px",
       variant: "secondary",
-      className: "omlms-funnel-discount-section"
+      className: "ohmylms-funnel-discount-section"
     }, h().createElement(I.FlexItemWP, null, h().createElement(I.FlexWP, {
       gap: 1,
       align: "flex-start"
@@ -776,7 +776,6 @@ function GH(e) {
     }
   }, (0, b.__)("Choose a step from the left panel to configure its settings", "ohmylms"))))))))))));
 }
-
 var UH = function () {
     var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "$",
       t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "left",
@@ -823,9 +822,7 @@ var UH = function () {
       a = e.del;
     return UH(t, n, r, void 0 !== a && a);
   };
-
 const YH = (0, g.memo)(qH);
-
 function QH(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -859,7 +856,6 @@ function QH(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ZH(e, t) {
   if (e) {
     if ("string" == typeof e) return $H(e, t);
@@ -867,7 +863,6 @@ function ZH(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? $H(e, t) : void 0;
   }
 }
-
 function $H(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

@@ -160,8 +160,8 @@ export function createQuestionList(readRuntime) {
       ),
       (
         <React.Fragment>
-          <div className={'omlms-editor-left-sidebar'}>
-            <div className={'omlms-add-question-wrapper'}>
+          <div className={'ohmylms-editor-left-sidebar'}>
+            <div className={'ohmylms-add-question-wrapper'}>
               <Controls.ButtonWP
                 variant={'secondary'}
                 icon={React.createElement(uc, null)}

@@ -71,7 +71,7 @@ export function createAiPreviewHeader(readRuntime) {
       <Controls.FlexWP
         justify={'space-between'}
         align={'center'}
-        className={'omlms-ai-course-preview-modal-header'}
+        className={'ohmylms-ai-course-preview-modal-header'}
       >
         <Nr
           onClick={function () {
@@ -92,7 +92,7 @@ export function createAiPreviewHeader(readRuntime) {
             }).map(function (e, t) {
               return (
                 <Controls.ButtonWP
-                  className={'omlms-ai-course-pagination-btn '.concat(l === t ? 'active' : '')}
+                  className={'ohmylms-ai-course-pagination-btn '.concat(l === t ? 'active' : '')}
                   onClick={function () {
                     return (function (e) {
                       (c(e), n && 'function' == typeof n && n(e));

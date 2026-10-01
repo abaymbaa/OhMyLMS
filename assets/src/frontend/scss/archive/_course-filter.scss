@@ -1,6 +1,6 @@
-.creator-lms-page {
-    .creator-lms-courses {
-        .creator-lms-course-sidebar {
+.ohmylms-page {
+    .ohmylms-courses {
+        .ohmylms-course-sidebar {
 			width: 307px;
 			border-radius: 8px;
 			background-color: #FFF;
@@ -9,7 +9,7 @@
 			top: 30px;
 		}
 
-        .creator-lms-filter-header {
+        .ohmylms-filter-header {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
@@ -20,7 +20,7 @@
 			position: relative;
 
             .filter-title {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 18px;
                 font-weight: 500;
                 line-height: 1;
@@ -34,7 +34,7 @@
             }
 
             .clear-filter {
-                color: var(--creator-lms-primary-color);
+                color: var(--ohmylms-primary-color);
                 font-size: 12px;
                 font-weight: 500;
                 text-decoration-line: underline;
@@ -52,12 +52,12 @@
                 }
 
                 &:focus {
-                    outline: 2px solid var(--creator-lms-outline-color);
+                    outline: 2px solid var(--ohmylms-outline-color);
                     outline-offset: 2px;
                 }
             }
 
-            .creator-lms-close-filter {
+            .ohmylms-close-filter {
                 line-height: 1;
                 padding: 3px 0 3px 4px;
                 border: none!important;
@@ -72,7 +72,7 @@
             }
 		}
 
-        .creator-lms-filter-accordion {
+        .ohmylms-filter-accordion {
             padding: 27px 20px 54px;
             max-height: calc(100vh - 90px);
             overflow: auto;
@@ -87,14 +87,14 @@
                 margin-top: 27px;
             }
     
-            .creator-lms-accordion-item {
+            .ohmylms-accordion-item {
                 border: none;
                 margin-bottom: 32px;
     
                 &.active {
                     box-shadow: none;
     
-                    .creator-lms-accordion-title svg {
+                    .ohmylms-accordion-title svg {
                         transform: rotate(180deg);
                     }
                 }
@@ -105,16 +105,16 @@
     
             }
     
-            .creator-lms-accordion-head {
+            .ohmylms-accordion-head {
                 padding: 0;
             }
     
-            .creator-lms-accordion-body {
+            .ohmylms-accordion-body {
                 display: block;
                 padding: 20px 0 0;
             }
     
-            .creator-lms-accordion-title {
+            .ohmylms-accordion-title {
                 font-size: 18px;
                 font-weight: 500;
                 line-height: 1;
@@ -134,15 +134,15 @@
                 }
             }
     
-            .creator-lms-checkbox {
+            .ohmylms-checkbox {
                 margin-bottom: 16px;
     
                 &:last-child {
                     margin-bottom: 0;
                 }
     
-                .creator-lms-checkbox-text {
-                    color: var(--creator-lms-body-text-color);
+                .ohmylms-checkbox-text {
+                    color: var(--ohmylms-body-text-color);
                     font-size: 14px;
                     line-height: 1.53;
     
@@ -157,7 +157,7 @@
                         }
 
                         &:focus {
-                            outline: 2px solid var(--creator-lms-outline-color);
+                            outline: 2px solid var(--ohmylms-outline-color);
                             outline-offset: 2px;
                         }
     
@@ -168,8 +168,8 @@
                     }
                 }
     
-                input[type=checkbox]:checked + .creator-lms-checkbox-text {
-                    color: var(--creator-lms-primary-color);
+                input[type=checkbox]:checked + .ohmylms-checkbox-text {
+                    color: var(--ohmylms-primary-color);
     
                     svg {
                         opacity: 1;
@@ -186,13 +186,13 @@
 }
 
 @media screen and (max-width: 1199px) {
-	.creator-lms-page .creator-lms-courses .creator-lms-course-sidebar {
+	.ohmylms-page .ohmylms-courses .ohmylms-course-sidebar {
         width: 267px;
     } 
 }
 
 @media screen and (max-width: 991px) {
-	.creator-lms-page .creator-lms-courses .creator-lms-course-sidebar {
+	.ohmylms-page .ohmylms-courses .ohmylms-course-sidebar {
         position: fixed;
         left: -70px;
         top: 20px;
@@ -203,27 +203,27 @@
 		transition: all 0.3s ease;
     }
 
-	.creator-lms-page .creator-lms-courses .open-sidebar .creator-lms-course-sidebar {
+	.ohmylms-page .ohmylms-courses .open-sidebar .ohmylms-course-sidebar {
         left: 10px;
 		opacity: 1;
         visibility: visible;
     }
 
-    .creator-lms-page .creator-lms-courses .creator-lms-filter-header .creator-lms-close-filter {
+    .ohmylms-page .ohmylms-courses .ohmylms-filter-header .ohmylms-close-filter {
 		display: block;
 	}
 
-    .creator-lms-page .creator-lms-courses .creator-lms-filter-accordion {
+    .ohmylms-page .ohmylms-courses .ohmylms-filter-accordion {
 		padding: 20px 20px 20px;
 		max-height: calc(100vh - 103px);
 	}
 }
 
 @media screen and (max-width: 767px) {
-	.creator-lms-page .creator-lms-courses .creator-lms-filter-accordion .creator-lms-accordion-title {
+	.ohmylms-page .ohmylms-courses .ohmylms-filter-accordion .ohmylms-accordion-title {
         font-size: 16px;
     }
-    .creator-lms-page .creator-lms-courses .creator-lms-filter-accordion .creator-lms-checkbox {
+    .ohmylms-page .ohmylms-courses .ohmylms-filter-accordion .ohmylms-checkbox {
         margin-bottom: 12px;
     }
 }

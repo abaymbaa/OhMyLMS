@@ -1,8 +1,8 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Admin\Settings\AdminSettings;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Admin\Settings\AdminSettings;
 
 /**
  * DashboardController class.
@@ -110,11 +110,11 @@ class DashboardProController extends RestController {
 		$query = "
 			SELECT p.ID as order_id, m.meta_value as line_total, p.post_status as order_status, p.post_date
 			FROM {$wpdb->posts} p
-			INNER JOIN {$wpdb->prefix}omlms_order_items oi ON p.ID = oi.order_id
-			INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-			INNER JOIN {$wpdb->prefix}omlms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id
-			WHERE p.post_type = 'omlms-order' 
-			  AND p.post_status IN ('omlms-completed', 'omlms-refunded') 
+			INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
+			INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+			INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta course_meta ON oi.order_item_id = course_meta.order_item_id
+			WHERE p.post_type = 'ohmylms-order' 
+			  AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded') 
 			  AND m.meta_key = '_line_total' 
 			  AND course_meta.meta_key = '_course_id' 
 			  AND course_meta.meta_value = {$course_id}
@@ -190,12 +190,12 @@ class DashboardProController extends RestController {
 				$date_key = date( 'Y', strtotime( $result['post_date'] ) );
 			}
 	
-			if ( $result['order_status'] === 'omlms-completed' ) {
+			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning              += $line_total;
 				$graph_data[ $date_key ]['net'] += $line_total;
 			}
 	
-			if ( $result['order_status'] === 'omlms-refunded' ) {
+			if ( $result['order_status'] === 'ohmylms-refunded' ) {
 				$total_refund                      += $line_total;
 				$graph_data[ $date_key ]['refund'] += $line_total;
 			}
@@ -210,8 +210,8 @@ class DashboardProController extends RestController {
 			'total_refund'  => $total_refund,
 			'net_amount'    => $total_net_earning,
 			'graph_data'    => $graph_data,
-			'currency'		=> html_entity_decode(get_omlms_currency_symbol( get_omlms_currency() )),
-			'currency_pos'	=> get_omlms_currency_position(),
+			'currency'		=> html_entity_decode(get_ohmylms_currency_symbol( get_ohmylms_currency() )),
+			'currency_pos'	=> get_ohmylms_currency_position(),
 		);
 	}
 
@@ -244,7 +244,7 @@ class DashboardProController extends RestController {
 		// Start with the base query
 		$enrollment_query = $wpdb->prepare(
 			"SELECT ue.user_id as student_id
-			 FROM {$wpdb->prefix}omlms_user_enrollment ue
+			 FROM {$wpdb->prefix}ohmylms_user_enrollment ue
 			 WHERE ue.course_id = %d AND ue.status = %s",
 			$course_id,
 			'enrolled'
@@ -267,7 +267,7 @@ class DashboardProController extends RestController {
 		if( is_array($results) ){
 			$total_students = count($results);
 			foreach( $results as $result ){
-				$student = new \OMLMS\Data\Student($result['student_id']);
+				$student = new \OhMyLMS\Data\Student($result['student_id']);
 				if( $student->is_course_completed( $course_id ) ) {
 					$course_completion++;
 				}
@@ -321,9 +321,9 @@ class DashboardProController extends RestController {
 				SUM(CASE WHEN cr2.content_type = 'quiz' THEN 1 ELSE 0 END) AS quizzes,
 				SUM(CASE WHEN cr2.content_type = 'assignment' THEN 1 ELSE 0 END) AS assignments
 			FROM {$wpdb->posts} p
-			LEFT JOIN {$wpdb->prefix}omlms_chapter_relationship cr ON p.ID = cr.course_id
-			LEFT JOIN {$wpdb->prefix}omlms_content_relationship cr2 ON cr.chapter_id = cr2.chapter_id
-			WHERE p.post_type = 'omlms-course'
+			LEFT JOIN {$wpdb->prefix}ohmylms_chapter_relationship cr ON p.ID = cr.course_id
+			LEFT JOIN {$wpdb->prefix}ohmylms_content_relationship cr2 ON cr.chapter_id = cr2.chapter_id
+			WHERE p.post_type = 'ohmylms-course'
 			AND p.post_status = 'publish'
 			AND cr.course_id = {$course_id}
 		";
@@ -332,7 +332,7 @@ class DashboardProController extends RestController {
 		$query = $this->get_filter_query( $query, $filter, $start_date, $end_date );
 		$result = $wpdb->get_row( $query, ARRAY_A );
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		$result['total_review'] = $course->get_review_count();
 		$result['date_created'] = $course->get_date_created();
 		$result['date_modified'] = $course->get_date_modified();
@@ -397,11 +397,11 @@ class DashboardProController extends RestController {
 	 */
 	public function get_items_permissions_check( $request ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to view this resource.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
+			return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to view this resource.', 'ohmylms' ), array( 'status' => \rest_authorization_required_code() ) );
 		}
 
 		// The dashboard exposes per course revenue and enrolment data.
-		return $this->check_object_permission( $request, 'read', CREATOR_LMS_COURSE_CPT );
+		return $this->check_object_permission( $request, 'read', OHMYLMS_COURSE_CPT );
 	}
 
 	/**

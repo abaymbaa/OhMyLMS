@@ -1,5 +1,5 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
-var Yte = (null === (Ute = window.creator_lms_params) || void 0 === Ute ? void 0 : Ute.plugin_assets) + "images/",
+var Yte = (null === (Ute = window.ohmylms_params) || void 0 === Ute ? void 0 : Ute.plugin_assets) + "images/",
   Qte = function (e) {
     var t = e.onTabChange,
       n = (e.onWizardSkip, function (e, t) {
@@ -78,11 +78,11 @@ var Yte = (null === (Ute = window.creator_lms_params) || void 0 === Ute ? void 0
       }
     }, (0, b.__)("Let's personalize your journey so we can set everything up perfectly for you. 🎯", "ohmylms")))), React.createElement(I.SpacerWP, {
       align: "center",
-      className: "omlms-setup-wizard-welcome-image-wrapper"
+      className: "ohmylms-setup-wizard-welcome-image-wrapper"
     }, React.createElement(I.FlexWP, {
       items: "center",
       justify: "center",
-      className: "omlms-setup-wizard-welcome-image-flex"
+      className: "ohmylms-setup-wizard-welcome-image-flex"
     }, React.createElement("img", {
       src: Yte + "setup-wizard-img.webp",
       alt: (0, b.__)("Setup Wizard", "ohmylms"),
@@ -135,7 +135,7 @@ var Yte = (null === (Ute = window.creator_lms_params) || void 0 === Ute ? void 0
       },
       label: (0, b.__)("Send me tips to build my OhMyLMS faster", "ohmylms"),
       checked: i.isOptEnabled,
-      className: "omlms-setup-wizard-optin-checkbox"
+      className: "ohmylms-setup-wizard-optin-checkbox"
     }), React.createElement(I.TextWP, {
       as: "p",
       align: "center",
@@ -232,7 +232,7 @@ var Jte = function (e) {
       l = i[0],
       c = i[1];
     return h().createElement("div", {
-      className: "omlms-setup-wizard__card",
+      className: "ohmylms-setup-wizard__card",
       style: {
         backgroundColor: "white",
         borderRadius: "8px",
@@ -258,13 +258,13 @@ var Jte = function (e) {
         "Enter" !== e.key && " " !== e.key || o();
       }
     }, h().createElement("div", {
-      className: "omlms-setup-wizard__card-inner",
+      className: "ohmylms-setup-wizard__card-inner",
       style: {
         borderRadius: "16px",
         width: "100%"
       }
     }, h().createElement("div", {
-      className: "omlms-setup-wizard__card-content",
+      className: "ohmylms-setup-wizard__card-content",
       style: {
         display: "flex",
         flexDirection: "column",
@@ -274,7 +274,7 @@ var Jte = function (e) {
         width: "100%"
       }
     }, h().createElement("div", {
-      className: "omlms-setup-wizard__info",
+      className: "ohmylms-setup-wizard__info",
       style: {
         display: "flex",
         flexDirection: "column",
@@ -284,7 +284,7 @@ var Jte = function (e) {
         width: "220px"
       }
     }, h().createElement("div", {
-      className: "omlms-setup-wizard__icon-wrapper",
+      className: "ohmylms-setup-wizard__icon-wrapper",
       style: {
         backgroundColor: "#f4f5f7",
         width: "29px",
@@ -296,7 +296,7 @@ var Jte = function (e) {
         padding: "7.25px"
       }
     }, t), h().createElement("div", {
-      className: "omlms-setup-wizard__text-content",
+      className: "ohmylms-setup-wizard__text-content",
       style: {
         display: "flex",
         flexDirection: "column",
@@ -305,7 +305,7 @@ var Jte = function (e) {
         width: "100%"
       }
     }, h().createElement("h3", {
-      className: "omlms-setup-wizard__title",
+      className: "ohmylms-setup-wizard__title",
       style: {
         fontFamily: "Inter, sans-serif",
         fontWeight: 600,
@@ -317,14 +317,14 @@ var Jte = function (e) {
         whiteSpace: "pre-wrap"
       }
     }, n), r && h().createElement("div", {
-      className: "omlms-setup-wizard__caption",
+      className: "ohmylms-setup-wizard__caption",
       style: {
         display: "flex",
         alignItems: "center",
         width: "100%"
       }
     }, h().createElement("p", {
-      className: "omlms-setup-wizard__description",
+      className: "ohmylms-setup-wizard__description",
       style: {
         fontFamily: "DM Sans, sans-serif",
         fontWeight: 500,
@@ -337,7 +337,7 @@ var Jte = function (e) {
         whiteSpace: "pre-wrap"
       }
     }, r)))))), a && h().createElement("div", {
-      className: "omlms-setup-wizard__check",
+      className: "ohmylms-setup-wizard__check",
       style: {
         position: "absolute",
         height: "16px",
@@ -370,7 +370,7 @@ var Jte = function (e) {
   },
   Xte = function () {
     return h().createElement("div", {
-      className: "omlms-setup-wizard__svg-icon"
+      className: "ohmylms-setup-wizard__svg-icon"
     }, h().createElement("svg", {
       style: {
         display: "block"
@@ -401,7 +401,7 @@ var Jte = function (e) {
   },
   ene = function () {
     return h().createElement("div", {
-      className: "omlms-setup-wizard__svg-icon"
+      className: "ohmylms-setup-wizard__svg-icon"
     }, h().createElement("svg", {
       style: {
         display: "block"
@@ -423,7 +423,7 @@ var Jte = function (e) {
   },
   tne = function () {
     return h().createElement("div", {
-      className: "omlms-setup-wizard__svg-icon"
+      className: "ohmylms-setup-wizard__svg-icon"
     }, h().createElement("svg", {
       style: {
         display: "block"
@@ -470,11 +470,11 @@ function nne() {
       description: (0, b.__)("Scaling an existing course business", "ohmylms")
     }];
   return h().createElement("div", {
-    className: "omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper"
+    className: "ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper"
   }, h().createElement("div", {
-    className: "omlms-setup-wizard__container"
+    className: "ohmylms-setup-wizard__container"
   }, h().createElement("div", {
-    className: "omlms-setup-wizard__header"
+    className: "ohmylms-setup-wizard__header"
   }, h().createElement(I.HeadingWP, {
     as: "h2",
     color: "#000d25",
@@ -492,7 +492,7 @@ function nne() {
       margin: "auto"
     }
   }, (0, b.__)("No matter where you're starting, we'll guide you step by step.", "ohmylms"))), h().createElement("div", {
-    className: "omlms-setup-wizard__cards-container",
+    className: "ohmylms-setup-wizard__cards-container",
     style: {
       display: "flex",
       gap: "16px",
@@ -563,7 +563,7 @@ var one = function () {
     }, []);
   return React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
     marginBottom: "0",
-    className: "omlms-setup-wizard-preference-certificates-wrapper"
+    className: "ohmylms-setup-wizard-preference-certificates-wrapper"
   }, React.createElement(I.FlexWP, {
     align: "stretch",
     justify: "space-between",

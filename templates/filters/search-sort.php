@@ -2,9 +2,9 @@
 /**
  * Template for displaying course content within loop.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/filters/search-sort.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/filters/search-sort.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -13,21 +13,21 @@ defined( 'ABSPATH' ) || exit();
 // Check if we're in a shortcode context with custom attributes
 if ( isset( $atts ) && is_array( $atts ) ) {
 	// Use shortcode attributes
-	$is_filter_enabled = isset( $atts['show_filter'] ) ? $atts['show_filter'] : get_option('creator_lms_archive_page_filter_is_enabled','no');
-	$is_search_enabled = isset( $atts['show_search'] ) ? $atts['show_search'] : get_option('creator_lms_archive_page_search_is_enabled','no');
-	$is_sort_enabled = isset( $atts['show_sort'] ) ? $atts['show_sort'] : get_option('creator_lms_archive_page_sorting_is_enabled','no');
+	$is_filter_enabled = isset( $atts['show_filter'] ) ? $atts['show_filter'] : get_option('ohmylms_archive_page_filter_is_enabled','no');
+	$is_search_enabled = isset( $atts['show_search'] ) ? $atts['show_search'] : get_option('ohmylms_archive_page_search_is_enabled','no');
+	$is_sort_enabled = isset( $atts['show_sort'] ) ? $atts['show_sort'] : get_option('ohmylms_archive_page_sorting_is_enabled','no');
 } else {
 	// Use global options for regular archive pages
-	$is_filter_enabled = get_option('creator_lms_archive_page_filter_is_enabled','no');
-	$is_search_enabled = get_option('creator_lms_archive_page_search_is_enabled','no');
-	$is_sort_enabled = get_option('creator_lms_archive_page_sorting_is_enabled','no');
+	$is_filter_enabled = get_option('ohmylms_archive_page_filter_is_enabled','no');
+	$is_search_enabled = get_option('ohmylms_archive_page_search_is_enabled','no');
+	$is_sort_enabled = get_option('ohmylms_archive_page_sorting_is_enabled','no');
 }
 
 global $courses_count;
 
 ?>
 <?php if( 'yes' === $is_search_enabled || 'yes' === $is_sort_enabled || 'yes' === $is_filter_enabled ){ ?>
-    <div class="creator-lms-search-sort">
+    <div class="ohmylms-search-sort">
         <div class="search-sort-left">
             <?php if('yes' === $is_filter_enabled){ ?>
                 <button type="button" class="filter-hamburger">
@@ -49,11 +49,11 @@ global $courses_count;
         <div class="search-sort-right">
             <?php 
                 if( 'yes' === $is_search_enabled ){ 
-                    echo omlms_get_template( 'filters/course-search.php' );
+                    echo ohmylms_get_template( 'filters/course-search.php' );
                 }
         
                 if( 'yes' === $is_sort_enabled ){ 
-                    echo omlms_get_template( 'filters/course-sort.php' );
+                    echo ohmylms_get_template( 'filters/course-sort.php' );
                 } 
             ?>
         </div>

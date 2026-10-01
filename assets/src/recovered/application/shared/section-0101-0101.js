@@ -85,7 +85,6 @@ function TG() {
     };
   })();
 }
-
 function IG(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function IG(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, IG(e, t, n, r);
 }
-
 function FG(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -117,7 +115,6 @@ function FG(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 const NG = function (e) {
   var t,
     n,
@@ -154,7 +151,7 @@ const NG = function (e) {
       progression_delay: (0, b.__)("30 days", "ohmylms"),
       progression_state: Number(null == _ || null === (o = _.earning) || void 0 === o || null === (o = o.growth) || void 0 === o ? void 0 : o.earning) > -1 ? "success" : "danger",
       card_class: "card-earning",
-      iconColor: "var(--omlms-primary-color)"
+      iconColor: "var(--ohmylms-primary-color)"
     }, {
       label: (0, b.__)("Refund", "ohmylms"),
       tooltip: (0, b.__)("Total refund in the past 30 days", "ohmylms"),
@@ -182,7 +179,7 @@ const NG = function (e) {
           return TG().w(function (e) {
             for (;;) switch (e.n) {
               case 0:
-                return t = "creator-lms/v1/dashboard?filter=".concat(null == E ? void 0 : E.type), "custom" !== (null == E ? void 0 : E.type) || null != E && E.startDate || null != E && E.endDate || (t = "creator-lms/v1/dashboard?filter=custom"), "custom" === (null == E ? void 0 : E.type) && null != E && E.startDate && null != E && E.endDate && (t = "creator-lms/v1/dashboard?filter=custom&start_date=".concat(sn()(null == E || null === (n = E.startDate) || void 0 === n ? void 0 : n.date, S).format("YYYY-MM-DD"), "&end_date=").concat(sn()(null == E || null === (r = E.endDate) || void 0 === r ? void 0 : r.date, S).format("YYYY-MM-DD"))), w.setDashboardLoader(!0), e.n = 1, l()({
+                return t = "ohmylms/v1/dashboard?filter=".concat(null == E ? void 0 : E.type), "custom" !== (null == E ? void 0 : E.type) || null != E && E.startDate || null != E && E.endDate || (t = "ohmylms/v1/dashboard?filter=custom"), "custom" === (null == E ? void 0 : E.type) && null != E && E.startDate && null != E && E.endDate && (t = "ohmylms/v1/dashboard?filter=custom&start_date=".concat(sn()(null == E || null === (n = E.startDate) || void 0 === n ? void 0 : n.date, S).format("YYYY-MM-DD"), "&end_date=").concat(sn()(null == E || null === (r = E.endDate) || void 0 === r ? void 0 : r.date, S).format("YYYY-MM-DD"))), w.setDashboardLoader(!0), e.n = 1, l()({
                   path: t
                 });
               case 1:
@@ -221,12 +218,12 @@ const NG = function (e) {
   }, h().createElement(I.FlexWP, {
     gap: 4,
     align: "stretch",
-    className: "omlms-overview-cards-wrapper"
+    className: "ohmylms-overview-cards-wrapper"
   }, h().createElement(I.FlexItemWP, {
     style: {
       flex: "9"
     },
-    className: "omlms-overview-left-cards"
+    className: "ohmylms-overview-left-cards"
   }, h().createElement(I.FlexWP, {
     direction: "column",
     align: "space-between",
@@ -264,7 +261,7 @@ const NG = function (e) {
     style: {
       flex: "4"
     },
-    className: "omlms-overview-right-cards"
+    className: "ohmylms-overview-right-cards"
   }, h().createElement(MG, {
     data: null == _ ? void 0 : _.top_course,
     totalCourses: null == _ ? void 0 : _.total_course,
@@ -309,9 +306,7 @@ const NG = function (e) {
     handleAddCourse: m
   })))));
 };
-
 var DG = ["isOpen", "onClose", "onAction", "modalPosition", "cancelBtnText", "actionBtnText", "loading", "supportScorm", "jsonImportEnabled"];
-
 function WG() {
   return WG = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -321,7 +316,6 @@ function WG() {
     return e;
   }, WG.apply(null, arguments);
 }
-
 function zG(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -361,13 +355,11 @@ function zG(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function BG(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var LG = function (e) {
   var t = e.isOpen,
     n = e.onClose,
@@ -577,9 +569,7 @@ var LG = function (e) {
     variant: "primary"
   }, l))));
 };
-
 const VG = (0, g.memo)(LG);
-
 function HG(e, t) {
   var n = document.querySelector("#adminmenu");
   Array.from(n.getElementsByClassName("current")).forEach(function (e) {
@@ -587,18 +577,17 @@ function HG(e, t) {
   }), Array.from(n.querySelectorAll(".wp-has-current-submenu")).forEach(function (e) {
     e.classList.remove("wp-has-current-submenu"), e.classList.remove("wp-menu-open"), e.classList.remove("selected"), e.classList.add("wp-not-current-submenu"), e.classList.add("menu-top");
   });
-  var r = "/" === t ? "admin.php?page=creator-lms" : "admin.php?page=creator-lms#/" + t,
+  var r = "/" === t ? "admin.php?page=ohmylms" : "admin.php?page=ohmylms#/" + t,
     a = "/" === t ? 'li > a[href$="'.concat(r, '"], li > a[href*="').concat(r, '?"]') : 'li > a[href*="'.concat(r, '"]'),
     o = n.querySelectorAll(a);
   if (Array.from(o).forEach(function (e) {
     e.parentElement.classList.add("current");
   }), e) {
-    var i = n.querySelector("#toplevel_page_creator-lms");
+    var i = n.querySelector("#toplevel_page_ohmylms");
     i && (i.classList.remove("wp-not-current-submenu"), i.classList.add("wp-has-current-submenu"), i.classList.add("wp-menu-open"), i.classList.add("current"));
   }
   document.querySelector("#wpwrap").classList.remove("wp-responsive-open");
 }
-
 var GG = n(39706),
   UG = n(99166),
   qG = function (e) {
@@ -636,9 +625,7 @@ var GG = n(39706),
       gap: "2"
     }, u, o && React.createElement(lf, l))))));
   };
-
 const YG = (0, g.memo)(qG);
-
 var QG = n(24295),
   ZG = function () {
     return React.createElement("svg", {
@@ -682,7 +669,7 @@ var QG = n(24295),
   },
   KG = function (e) {
     var t = e.setCourseType,
-      n = (0, L.useFeatureAccess)("cohort");
+      n = true;
     return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
       isBorderless: !0,
       variant: "secondary",
@@ -703,7 +690,7 @@ var QG = n(24295),
       onClick: function () {
         return t("self-paced");
       },
-      className: "omlms-course-type-btn omlms-manual-course"
+      className: "ohmylms-course-type-btn ohmylms-manual-course"
     }, React.createElement(I.FlexWP, {
       gap: 2,
       justify: "flex-start",
@@ -722,7 +709,7 @@ var QG = n(24295),
       onClick: function () {
         return t("cohort-based");
       },
-      className: "omlms-course-type-btn omlms-cohort-course",
+      className: "ohmylms-course-type-btn ohmylms-cohort-course",
       disabled: !n
     }, React.createElement(I.FlexWP, {
       gap: 2,
@@ -740,9 +727,7 @@ var QG = n(24295),
       lineHeight: "1.7em"
     }, (0, b.__)("Scheduled, group-based learning with live sessions and community interaction.", "ohmylms")))))));
   };
-
 const JG = (0, g.memo)(KG);
-
 function XG(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

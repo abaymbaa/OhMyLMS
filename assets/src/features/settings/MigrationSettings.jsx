@@ -15,7 +15,7 @@ export function createMigrationSettings(readRuntime) {
         <Controls.CardWP
           isBorderless={!0}
           variant={'secondary'}
-          className={'omlms-full-screen-height'}
+          className={'ohmylms-full-screen-height'}
         >
           <Controls.SpacerWP padding={4} paddingTop={6} marginTop={4} marginBottom={0}>
             {_6.length > 0 ? (

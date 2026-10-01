@@ -1,11 +1,11 @@
-.creator-lms-page {
-    .creator-lms-student-profile {
+.ohmylms-page {
+    .ohmylms-student-profile {
         .student-settings {
             .required {
                 color: #f66f6f;
             }
 
-            .creator-lms-student-account {
+            .ohmylms-student-account {
                 border-radius: 8px;
                 background-color: #FFF;
                 box-shadow: 0px 1px 4px 0px #D3D6DD;
@@ -16,7 +16,7 @@
                 }
 
                 .account-title {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 18px;
                     font-weight: 600;
                     line-height: 1.2;
@@ -24,14 +24,14 @@
                     margin: 0 0 15px;
                 }
 
-                .creator-lms-password-strength {
+                .ohmylms-password-strength {
                     margin-top: -12px;
                     display: none;
                 }
                 
             }
 
-            .creator-lms-password-show .show-password-icon {
+            .ohmylms-password-show .show-password-icon {
                 top: 10px;
             }
         }

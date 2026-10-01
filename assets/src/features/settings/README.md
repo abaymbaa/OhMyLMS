@@ -17,7 +17,7 @@ Edit the JSX files in this directory and run `npm run build` from the plugin roo
 
 Email Settings is intentionally excluded because it is maintained in `../emails`. Gamification and Webhooks remain separate feature/runtime modules even though the Settings route renders their tabs. Shared design controls, gateway-specific forms, WordPress data stores, REST behavior, permissions and Pro gating continue to come from the recovered runtime.
 
-Source activation remains controlled by `OMLMS_SOURCE_ASSETS`. Building does not change site configuration.
+Source activation remains controlled by `OHMYLMS_SOURCE_ASSETS`. Building does not change site configuration.
 
 ## Validation
 

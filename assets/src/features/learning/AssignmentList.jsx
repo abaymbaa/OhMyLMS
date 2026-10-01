@@ -188,7 +188,7 @@ export function createAssignmentList(readRuntime) {
                     return (
                       (e.n = 1),
                       l()({
-                        path: '/creator-lms/v1/courses',
+                        path: '/ohmylms/v1/courses',
                       })
                     );
                   case 1:
@@ -434,7 +434,7 @@ export function createAssignmentList(readRuntime) {
                       filterByStatusOptions: se,
                       formateCategory: !1,
                       showFilterByStatus: !1,
-                      className: 'omlms-assignment-listing-filter-card',
+                      className: 'ohmylms-assignment-listing-filter-card',
                     })}
                   </React.Fragment>
                 )}

@@ -28,7 +28,7 @@ class SubscriptionFactory {
     private function get_subscription_id( $subscription ) {
         global $post;
 
-        if ( false === $subscription && isset( $post, $post->ID ) && 'omlms-subscription' === \get_post_type( $post->ID ) ) {
+        if ( false === $subscription && isset( $post, $post->ID ) && 'ohmylms-subscription' === \get_post_type( $post->ID ) ) {
             return \absint( $post->ID );
         } elseif ( is_numeric( $subscription ) ) {
             return $subscription;

@@ -4,11 +4,11 @@
  * 
  * Handles the creation of webhooks table when the integration is enabled
  * 
- * @package OMLMS\Integrations\Webhooks
+ * @package OhMyLMS\Integrations\Webhooks
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Webhooks\Includes;
+namespace OhMyLMS\Integrations\Webhooks\Includes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ class WebhooksMigration {
     /**
      * Option key to track if webhooks table is created
      */
-    const WEBHOOKS_TABLE_CREATED_OPTION = 'creatorlms_webhooks_table_created';
+    const WEBHOOKS_TABLE_CREATED_OPTION = 'ohmylms_webhooks_table_created';
 
     /**
      * Initialize the migration
@@ -55,7 +55,7 @@ class WebhooksMigration {
      * @since 1.0.0
      */
     private static function is_webhooks_enabled() {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         
         if ( empty( $integrations ) || ! is_array( $integrations ) ) {
             return false;
@@ -85,7 +85,7 @@ class WebhooksMigration {
         }
 
         // Double check if table actually exists in database
-        $table_name = $wpdb->prefix . 'omlms_webhooks';
+        $table_name = $wpdb->prefix . 'ohmylms_webhooks';
         $table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name;
 
         // If table exists but option not set, set the option
@@ -108,7 +108,7 @@ class WebhooksMigration {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'omlms_webhooks';
+        $table_name = $wpdb->prefix . 'ohmylms_webhooks';
 
         $sql = "CREATE TABLE {$table_name} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -136,7 +136,7 @@ class WebhooksMigration {
          * 
          * @since 1.0.0
          */
-        do_action( 'creatorlms_webhooks_table_created' );
+        do_action( 'ohmylms_webhooks_table_created' );
     }
 
     /**
@@ -147,7 +147,7 @@ class WebhooksMigration {
     public static function drop_webhooks_table() {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'omlms_webhooks';
+        $table_name = $wpdb->prefix . 'ohmylms_webhooks';
         $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 
         // Remove the option
@@ -158,7 +158,7 @@ class WebhooksMigration {
          * 
          * @since 1.0.0
          */
-        do_action( 'creatorlms_webhooks_table_dropped' );
+        do_action( 'ohmylms_webhooks_table_dropped' );
     }
 
     /**
@@ -169,7 +169,7 @@ class WebhooksMigration {
      */
     public static function get_table_name() {
         global $wpdb;
-        return $wpdb->prefix . 'omlms_webhooks';
+        return $wpdb->prefix . 'ohmylms_webhooks';
     }
 
     /**

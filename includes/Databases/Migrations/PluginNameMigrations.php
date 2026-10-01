@@ -1,6 +1,6 @@
 <?php
 
-namespace RexTheme\OMLMS\Databases\Migrations;
+namespace RexTheme\OhMyLMS\Databases\Migrations;
 
 use RexTheme\PluginName\Abstracts\DBMigrator;
 

@@ -43,9 +43,9 @@ class OrderFactory {
 	private function get_order_id( $order ) {
 		global $post;
 
-		if ( false === $order && isset( $post, $post->ID ) && 'omlms-order' === get_post_type( $post->ID ) ) {
+		if ( false === $order && isset( $post, $post->ID ) && 'ohmylms-order' === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
-		} elseif ( false === $order && isset( $post, $post->ID ) && 'omlms_order_refund' === get_post_type( $post->ID ) ) {
+		} elseif ( false === $order && isset( $post, $post->ID ) && 'ohmylms_order_refund' === get_post_type( $post->ID ) ) {
 			return $order;
 		} elseif ( is_numeric( $order ) ) {
 			return $order;

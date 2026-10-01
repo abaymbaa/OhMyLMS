@@ -24,13 +24,13 @@ class SubscriptionManager {
 	 * Post type slug for subscriptions.
 	 * @var string
 	 */
-	const POST_TYPE = 'omlms-subscription';
+	const POST_TYPE = 'ohmylms-subscription';
 
 	/**
 	 * Action Scheduler hook for processing renewals.
 	 * @var string
 	 */
-	const RENEWAL_ACTION_HOOK = 'creator_lms_process_subscription_renewal';
+	const RENEWAL_ACTION_HOOK = 'ohmylms_process_subscription_renewal';
 
 	/**
 	 * Create a new subscription linked to an order and membership.
@@ -65,7 +65,7 @@ class SubscriptionManager {
 						$order->get_id(),
 						get_the_title( $membership_id )
 					),
-			'post_status' => 'creatorlms-pending',
+			'post_status' => 'ohmylms-pending',
 			'post_parent' => $order->get_id(),
 			'post_author' => $student_id,
 		);
@@ -121,8 +121,8 @@ class SubscriptionManager {
 		self::copy_order_meta_to_subscription( $order->get_id(), $subscription_id );
 
 		// Save _order_version
-		if ( defined( 'CREATOR_LMS_VERSION' ) ) {
-			update_post_meta( $subscription_id, '_order_version', CREATOR_LMS_VERSION );
+		if ( defined( 'OHMYLMS_VERSION' ) ) {
+			update_post_meta( $subscription_id, '_order_version', OHMYLMS_VERSION );
 		}
 
 		update_post_meta( $subscription_id, '_order_id', $order->get_id() );
@@ -190,7 +190,7 @@ class SubscriptionManager {
 			'comment_type'         => 'subscription_note',
 			'comment_parent'       => 0,
 			'comment_approved'     => 1,
-			'comment_agent'        => 'CreatorLMS/' . ( defined( 'CREATOR_LMS_VERSION' ) ? CREATOR_LMS_VERSION : '1.0.0' ),
+			'comment_agent'        => 'OhMyLMS/' . ( defined( 'OHMYLMS_VERSION' ) ? OHMYLMS_VERSION : '1.0.0' ),
 			'comment_date'         => current_time( 'mysql' ),       // Local time for display.
 			'comment_date_gmt'     => current_time( 'mysql', true ), // GMT for storage consistency.
 			'user_id'              => $user_id,
@@ -276,7 +276,7 @@ class SubscriptionManager {
 		if ( $updated ) {
 			self::add_subscription_note( $subscription_id, __( 'Subscription status changed to On-Hold.', 'ohmylms' ) );
 			self::clear_scheduled_renewal_actions( $subscription_id ); // Stop scheduled payments.
-			do_action( 'creator_lms_subscription_on_hold', $subscription_id );
+			do_action( 'ohmylms_subscription_on_hold', $subscription_id );
 		}
 		return $updated;
 	}
@@ -297,7 +297,7 @@ class SubscriptionManager {
 
 		if ( $updated ) {
 			self::add_subscription_note( $subscription_id, __( 'Subscription marked for cancellation. It will be cancelled at the end of the current term.', 'ohmylms' ) );
-			do_action( 'creator_lms_subscription_pending_cancellation', $subscription_id );
+			do_action( 'ohmylms_subscription_pending_cancellation', $subscription_id );
 		}
 		return $updated;
 	}
@@ -328,7 +328,7 @@ class SubscriptionManager {
 			}
 			self::clear_scheduled_renewal_actions( $subscription_id );
 			update_post_meta( $subscription_id, '_end_date', current_time( 'mysql' ) ); // Record cancellation date as end date (GMT).
-			do_action( 'creator_lms_subscription_cancelled', $subscription_id );
+			do_action( 'ohmylms_subscription_cancelled', $subscription_id );
 		}
 		return $updated;
 	}
@@ -350,7 +350,7 @@ class SubscriptionManager {
 		if ( $updated ) {
 			self::add_subscription_note( $subscription_id, __( 'Subscription status changed to Expired.', 'ohmylms' ) );
 			self::clear_scheduled_renewal_actions( $subscription_id );
-			do_action( 'creatorlms_subscription_expired', $subscription_id );
+			do_action( 'ohmylms_subscription_expired', $subscription_id );
 		}
 		return $updated;
 	}
@@ -372,7 +372,7 @@ class SubscriptionManager {
 		}
 
 		$new_status_slug_clean = sanitize_key( $new_status_slug );
-		$full_status = 'creatorlms-' . $new_status_slug_clean;
+		$full_status = 'ohmylms-' . $new_status_slug_clean;
 
 		// Verify if it's a valid registered post status.
 		// get_post_stati() returns registered status objects.
@@ -392,10 +392,10 @@ class SubscriptionManager {
 
 		if ( ! is_wp_error( $updated_post_id_or_error ) && $updated_post_id_or_error > 0 ) {
 			update_post_meta( $subscription_id, '_status', $new_status_slug_clean ); // Store the clean slug for easier checks.
-			// Action hook for specific status change, e.g., creator_lms_subscription_status_active.
-			do_action( 'creator_lms_subscription_status_' . $new_status_slug_clean, $subscription_id );
+			// Action hook for specific status change, e.g., ohmylms_subscription_status_active.
+			do_action( 'ohmylms_subscription_status_' . $new_status_slug_clean, $subscription_id );
 			// Generic status change hook.
-			do_action( 'creator_lms_subscription_status_changed', $subscription_id, $new_status_slug_clean, $full_status );
+			do_action( 'ohmylms_subscription_status_changed', $subscription_id, $new_status_slug_clean, $full_status );
 			return true;
 		} else {
 			// Log error if wp_update_post failed.
@@ -421,7 +421,7 @@ class SubscriptionManager {
 		$subscription_period 			= get_post_meta( $membership_id, '_subscription_period', true );
 		$subscription_period_interval 	= get_post_meta( $membership_id, '_subscription_period_interval', true );
 
-		$timezone = function_exists('wp_timezone') ? wp_timezone() : new \DateTimeZone( omlms_timezone_string() );
+		$timezone = function_exists('wp_timezone') ? wp_timezone() : new \DateTimeZone( ohmylms_timezone_string() );
 		$now = ( new \DateTime( 'now', $timezone ) )->format( 'Y-m-d H:i:s' );
 		$start_date_obj = new \DateTime( $now, $timezone );
 		$next_payment_date_obj = '';
@@ -492,7 +492,7 @@ class SubscriptionManager {
 			$next_payment_gmt_ts,
 			self::RENEWAL_ACTION_HOOK,
 			array( 'subscription_id' => $subscription_id ),
-			'creatorlms-subscription-renewals'
+			'ohmylms-subscription-renewals'
 		);
 		if ( $action_id ) {
 			$date_format       = get_option( 'date_format', 'Y-m-d' ) . ' ' . get_option( 'time_format', 'H:i:s' );
@@ -549,7 +549,7 @@ class SubscriptionManager {
 		$args = array(
 			'hook'   => self::RENEWAL_ACTION_HOOK,
 			'args'   => array( 'subscription_id' => $subscription_id ),
-			'group'  => 'creator-lms-subscription-renewals',
+			'group'  => 'ohmylms-subscription-renewals',
 			'status' => \ActionScheduler_Store::STATUS_PENDING, // Only clear pending actions.
 		);
 		$action_ids = as_get_scheduled_actions( $args, 'ids' ); // Get an array of action IDs.
@@ -672,7 +672,7 @@ class SubscriptionManager {
 			$renewal_order->set_address( $original_order->get_address() );
 			$renewal_order->set_country( $original_order->get_country() );
 			$renewal_order->set_parent_id( $original_order_id );
-			$renewal_order->set_order_version( CREATOR_LMS_VERSION );
+			$renewal_order->set_order_version( OHMYLMS_VERSION );
 
 			foreach ( $original_order->get_items('line_item') as $item ) {
 				$product_id = $item->get_course_id();
@@ -680,12 +680,12 @@ class SubscriptionManager {
 					continue;
 				}
 				$membership = get_post( $membership_id );
-				if ( ! $membership || $membership->post_type !== 'omlms-membership' ) {
+				if ( ! $membership || $membership->post_type !== 'ohmylms-membership' ) {
 					continue;
 				}
 
-				if( creator_lms_is_pro () ) {
-					$product = omlms_get_membership( $product_id );
+				if( ohmylms_is_pro () ) {
+					$product = ohmylms_get_membership( $product_id );
 				}
 				if( !$product ) {
 					continue;
@@ -723,7 +723,7 @@ class SubscriptionManager {
 			self::mark_subscription_on_hold( $subscription_id );
 			$renewal_order->set_status( 'failed' );
 			$renewal_order->save();
-			do_action( 'creator_lms_subscription_renewal_payment_failed', $subscription_id, $error_message );
+			do_action( 'ohmylms_subscription_renewal_payment_failed', $subscription_id, $error_message );
 			return;
 		}
 
@@ -761,7 +761,7 @@ class SubscriptionManager {
 				delete_post_meta( $subscription_id, '_schedule_next_payment_date' );
 				self::mark_subscription_active( $subscription_id );
 				do_action(
-					'creatorlms_subscription_renewal_payment_completed',
+					'ohmylms_subscription_renewal_payment_completed',
 					$subscription_id,
 					$amount_to_charge,
 					$transaction_id
@@ -780,7 +780,7 @@ class SubscriptionManager {
 		self::mark_subscription_active( $subscription_id );
 
 		do_action(
-			'creatorlms_subscription_renewal_payment_completed',
+			'ohmylms_subscription_renewal_payment_completed',
 			$subscription_id,
 			$amount_to_charge,
 			$transaction_id
@@ -813,7 +813,7 @@ class SubscriptionManager {
 		$order_meta = get_post_meta( $order_id );
 		if ( ! empty( $order_meta ) && is_array( $order_meta ) ) {
 			foreach ( $order_meta as $meta_key => $meta_values ) {
-				if ( strpos( $meta_key, '_subscription' ) === 0 || strpos( $meta_key, '_omlms' ) === 0 ) {
+				if ( strpos( $meta_key, '_subscription' ) === 0 || strpos( $meta_key, '_ohmylms' ) === 0 ) {
 					continue;
 				}
 				foreach ( $meta_values as $meta_value ) {

@@ -31,7 +31,7 @@ export function createCourseStudentsReport(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)(),
+    var t = true,
       n = props.students,
       r = (0, Router.g)().id,
       a = (0, WordPressData.useDispatch)(StoreModule.default),
@@ -197,7 +197,7 @@ export function createCourseStudentsReport(readRuntime) {
         },
       ],
       ce = (0, ReactHooks.useCallback)(function (e, n) {
-        t && (V(e), S(!0), K(n));
+        (V(e), S(!0), K(n));
       }, []),
       ue = (0, ReactHooks.useCallback)(
         aq(
@@ -226,9 +226,7 @@ export function createCourseStudentsReport(readRuntime) {
                         ee(!0),
                         (e.n = 3),
                         l()({
-                          path: '/creator-lms/v1/notification/course/'
-                            .concat(r, '/student/')
-                            .concat($),
+                          path: '/ohmylms/v1/notification/course/'.concat(r, '/student/').concat($),
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -328,10 +326,7 @@ export function createCourseStudentsReport(readRuntime) {
                           (o.end_date = aN()(j[1]).format('YYYY-MM-DD'))),
                         (e.n = 2),
                         l()({
-                          path: (0, lN.addQueryArgs)(
-                            '/creator-lms/v1/analytics/course/'.concat(r),
-                            o,
-                          ),
+                          path: (0, lN.addQueryArgs)('/ohmylms/v1/analytics/course/'.concat(r), o),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -387,26 +382,23 @@ export function createCourseStudentsReport(readRuntime) {
         },
         [o],
       ),
-      (0, ReactHooks.useCallback)(function () {
-        window.open(Entitlements.pricingPageLink, '_blank');
-      }, []),
       (
         <React.Fragment>
           {re}
-          <div className={'omlms-course-report-table-wrapper'}>
+          <div className={'ohmylms-course-report-table-wrapper'}>
             <Controls.FlexWP gap={4} justify={'flex-start'}>
               <Controls.FlexItemWP>
                 <Cm
                   placeholder={(0, I18n.__)('Search', 'ohmylms')}
                   onChange={me}
-                  className={'omlms-filter-report-search'}
+                  className={'ohmylms-filter-report-search'}
                 />
               </Controls.FlexItemWP>
               <Controls.FlexItemWP>
                 <AnalyticsDateFilter
                   placeholder={(0, I18n.__)('Filter By Days', 'ohmylms')}
-                  className={'omlms-filter-report-by-days'}
-                  popupClassName={'omlms-custom-daterange'}
+                  className={'ohmylms-filter-report-by-days'}
+                  popupClassName={'ohmylms-custom-daterange'}
                   onChange={function (e) {
                     'custom_range' !== e && pe(e);
                   }}
@@ -416,7 +408,7 @@ export function createCourseStudentsReport(readRuntime) {
               <Controls.FlexItemWP>
                 <vn.A
                   placeholder={(0, I18n.__)('Status', 'ohmylms')}
-                  className={'omlms-filter-report-status'}
+                  className={'ohmylms-filter-report-status'}
                   onChange={fe}
                   value={F}
                   options={de}
@@ -424,18 +416,11 @@ export function createCourseStudentsReport(readRuntime) {
               </Controls.FlexItemWP>
             </Controls.FlexWP>
             <Controls.SpacerWP marginBottom={5} />
-            <Controls.ProOverlayWP
-              title={(0, I18n.__)(
-                'Course analytics is a pro feature. Please upgrade to the Pro version to access it.',
-                'ohmylms',
-              )}
-              top={'0px'}
-              height={'100%'}
-            />
+
             <TableModule.A
               rowKey={'student_id'}
               columns={le}
-              dataSource={t ? (null != u ? u : []) : $U.qO}
+              dataSource={null != u ? u : []}
               pagination={!1}
               loading={h}
               scroll={{

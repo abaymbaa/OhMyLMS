@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Course;
+namespace OhMyLMS\Course;
 
 use WP_Error;
 

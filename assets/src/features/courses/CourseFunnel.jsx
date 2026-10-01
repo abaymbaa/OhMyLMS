@@ -30,7 +30,7 @@ export function createCourseFunnel(readRuntime) {
       n = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getCourse();
       }, []),
-      r = (0, Entitlements.useFeatureAccess)('funnel'),
+      r = true,
       a = LH(
         (0, ReactHooks.useState)([
           {
@@ -127,7 +127,7 @@ export function createCourseFunnel(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/page/search?value='.concat(t),
+                          path: '/ohmylms/v1/page/search?value='.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -225,7 +225,7 @@ export function createCourseFunnel(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/courses?search='.concat(t),
+                          path: '/ohmylms/v1/courses?search='.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -322,7 +322,7 @@ export function createCourseFunnel(readRuntime) {
                         (e.p = 0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/membership?search='.concat(t),
+                          path: '/ohmylms/v1/membership?search='.concat(t),
                           method: 'GET',
                           headers: {
                             'Content-Type': 'application/json',
@@ -416,7 +416,7 @@ export function createCourseFunnel(readRuntime) {
         return (0, I18n.__)('Please enter 3 or more characters...', 'ohmylms');
       },
       O = function () {
-        if (r) {
+        {
           var e = {
               step_id: 'step_'.concat(s.length + 1),
               step_type: '',
@@ -462,7 +462,7 @@ export function createCourseFunnel(readRuntime) {
         }
       },
       k = function (e, t, n) {
-        if (r) {
+        {
           var a = s.map(function (r) {
             return r.step_id === e
               ? FH(
@@ -528,16 +528,15 @@ export function createCourseFunnel(readRuntime) {
         }
       },
       j = function (e) {
-        r &&
-          t.setCourse(
-            FH(
-              FH({}, n),
-              {},
-              {
-                funnel_steps: e,
-              },
-            ),
-          );
+        t.setCourse(
+          FH(
+            FH({}, n),
+            {},
+            {
+              funnel_steps: e,
+            },
+          ),
+        );
       },
       A = function () {
         return s.find(function (e) {
@@ -863,9 +862,9 @@ export function createCourseFunnel(readRuntime) {
                                       <Controls.FlexItemWP flex={'2'}>
                                         <Jt.A
                                           className={
-                                            'omlms-single-select omlms-search-select auto-height'
+                                            'ohmylms-single-select ohmylms-search-select auto-height'
                                           }
-                                          classNamePrefix={'omlms-react-select'}
+                                          classNamePrefix={'ohmylms-react-select'}
                                           placeholder={(0, I18n.__)(
                                             'Type to search pages...',
                                             'ohmylms',
@@ -942,9 +941,9 @@ export function createCourseFunnel(readRuntime) {
                                           <Controls.FlexItemWP flex={'2'}>
                                             <Jt.A
                                               className={
-                                                'omlms-single-select omlms-search-select auto-height'
+                                                'ohmylms-single-select ohmylms-search-select auto-height'
                                               }
-                                              classNamePrefix={'omlms-react-select'}
+                                              classNamePrefix={'ohmylms-react-select'}
                                               placeholder={(0, I18n.__)(
                                                 'Type to search courses...',
                                                 'ohmylms',
@@ -990,9 +989,9 @@ export function createCourseFunnel(readRuntime) {
                                           <Controls.FlexItemWP flex={'2'}>
                                             <Jt.A
                                               className={
-                                                'omlms-single-select omlms-search-select auto-height'
+                                                'ohmylms-single-select ohmylms-search-select auto-height'
                                               }
-                                              classNamePrefix={'omlms-react-select'}
+                                              classNamePrefix={'ohmylms-react-select'}
                                               placeholder={(0, I18n.__)(
                                                 'Type to search memberships...',
                                                 'ohmylms',
@@ -1024,7 +1023,7 @@ export function createCourseFunnel(readRuntime) {
                                   isBorderless={!0}
                                   padding={'16px'}
                                   variant={'secondary'}
-                                  className={'omlms-funnel-discount-section'}
+                                  className={'ohmylms-funnel-discount-section'}
                                 >
                                   <Controls.FlexItemWP>
                                     <Controls.FlexWP gap={1} align={'flex-start'}>

@@ -112,9 +112,9 @@ export function createEmailPersonalization(readRuntime) {
           description: (0, I18n.__)('The base color for email template.', 'ohmylms'),
           isShowResetBtn: !0,
           defaultColor: '#6E42D3',
-          initialColor: i.creator_lms_email_base_color,
+          initialColor: i.ohmylms_email_base_color,
           onChange: function (e) {
-            m('creator_lms_email_base_color', 'value', e);
+            m('ohmylms_email_base_color', 'value', e);
           },
         },
         {
@@ -122,9 +122,9 @@ export function createEmailPersonalization(readRuntime) {
           description: (0, I18n.__)('The background color for email template.', 'ohmylms'),
           isShowResetBtn: !0,
           defaultColor: '#F4F5F7',
-          initialColor: i.creator_lms_email_background_color,
+          initialColor: i.ohmylms_email_background_color,
           onChange: function (e) {
-            m('creator_lms_email_background_color', 'value', e);
+            m('ohmylms_email_background_color', 'value', e);
           },
         },
         {
@@ -132,9 +132,9 @@ export function createEmailPersonalization(readRuntime) {
           description: (0, I18n.__)('The main body background color.', 'ohmylms'),
           isShowResetBtn: !0,
           defaultColor: '#FFFFFF',
-          initialColor: i.creator_lms_email_body_background_color,
+          initialColor: i.ohmylms_email_body_background_color,
           onChange: function (e) {
-            m('creator_lms_email_body_background_color', 'value', e);
+            m('ohmylms_email_body_background_color', 'value', e);
           },
         },
         {
@@ -142,9 +142,9 @@ export function createEmailPersonalization(readRuntime) {
           description: (0, I18n.__)('The main body text color default.', 'ohmylms'),
           isShowResetBtn: !0,
           defaultColor: '#1F2328',
-          initialColor: i.creator_lms_email_body_text_color,
+          initialColor: i.ohmylms_email_body_text_color,
           onChange: function (e) {
-            m('creator_lms_email_body_text_color', 'value', e);
+            m('ohmylms_email_body_text_color', 'value', e);
           },
         },
         {
@@ -155,9 +155,9 @@ export function createEmailPersonalization(readRuntime) {
           ),
           isShowResetBtn: !0,
           defaultColor: '#6E42D3',
-          initialColor: i.omlms_notification_color,
+          initialColor: i.ohmylms_notification_color,
           onChange: function (e) {
-            m('omlms_notification_color', 'value', e);
+            m('ohmylms_notification_color', 'value', e);
           },
         },
       ];
@@ -177,12 +177,12 @@ export function createEmailPersonalization(readRuntime) {
                   'Add a logo and color theme to customize the look and feel of email notification your customers receive.',
                   'ohmylms',
                 )}
-                brandingImg={i.creator_lms_email_branding_image}
+                brandingImg={i.ohmylms_email_branding_image}
                 handleRemove={function () {
-                  m('creator_lms_email_branding_image', 'value', '');
+                  m('ohmylms_email_branding_image', 'value', '');
                 }}
                 handleChange={function (e) {
-                  return m('creator_lms_email_branding_image', 'value', e);
+                  return m('ohmylms_email_branding_image', 'value', e);
                 }}
                 colorsConfig={p}
                 showDivider={!0}

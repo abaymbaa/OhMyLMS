@@ -1,11 +1,11 @@
 <?php
 /**
- * CreatorLMS Offer Button Widget for Elementor
+ * OhMyLMS Offer Button Widget for Elementor
  *
- * @package Creatorlms\Elementor\Widgets
+ * @package OhMyLMS\Elementor\Widgets
  */
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class OfferButtonWidget extends Widget_Base {
 
     public function get_name() {
-        return 'creator-lms-offer-button';
+        return 'ohmylms-offer-button';
     }
 
     public function get_title() {
@@ -27,7 +27,7 @@ class OfferButtonWidget extends Widget_Base {
     }
 
     public function get_categories() {
-        return [ 'creator-lms' ];
+        return [ 'ohmylms' ];
     }
 
     protected function _register_controls() {
@@ -184,7 +184,7 @@ class OfferButtonWidget extends Widget_Base {
             'id'            => $settings['id'],
             'style'         => $settings['style'],
         ];
-        $shortcode = '[creator_lms_offer_button';
+        $shortcode = '[ohmylms_offer_button';
         foreach ($atts as $k => $v) {
             if ($v !== '' && $v !== null) {
                 $shortcode .= ' ' . $k . '="' . esc_attr($v) . '"';

@@ -4,9 +4,8 @@ function Eq(e, t) {
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Sq = function (e) {
-  (0, L.useIsPro)();
+  true;
   var t = e.handleTypeFilters,
     n = e.handleOrderTypeFilters,
     r = e.orderTypeOptions,
@@ -56,9 +55,7 @@ var Sq = function (e) {
     }((0, g.useState)(!0), 2)),
     s = (u[0], u[1], o.reduce(function (e, t) {
       return e + t.order_total;
-    }, 0), (0, g.useCallback)(function () {
-      window.open(L.pricingPageLink, "_blank");
-    }, []), (0, g.useCallback)(function (e) {
+    }, 0), (0, g.useCallback)(function (e) {
       "custom_range" !== e && t(e);
     }, []));
   return h().createElement(h().Fragment, null, h().createElement(I.HeadingWP, {
@@ -94,13 +91,10 @@ var Sq = function (e) {
     }
   }));
 };
-
 const Rq = (0, g.memo)(Sq);
-
 function xq(e) {
   return Array.isArray(e) && 2 === e.length && sn()(e[0]).isValid() && sn()(e[1]).isValid();
 }
-
 function Cq(e) {
   return Cq = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -108,7 +102,6 @@ function Cq(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Cq(e);
 }
-
 function Pq() {
   var e,
     t,
@@ -195,7 +188,6 @@ function Pq() {
     };
   })();
 }
-
 function Oq(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -217,7 +209,6 @@ function Oq(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Oq(e, t, n, r);
 }
-
 function kq(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -227,7 +218,6 @@ function kq(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function jq(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -238,7 +228,6 @@ function jq(e, t) {
   }
   return n;
 }
-
 function Aq(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -250,7 +239,6 @@ function Aq(e) {
   }
   return e;
 }
-
 function Mq(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -271,7 +259,6 @@ function Mq(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Tq(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -311,13 +298,11 @@ function Tq(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Iq(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Fq = function (e) {
     var t = e.currency,
       n = e.currency_pos,
@@ -365,7 +350,7 @@ var Fq = function (e) {
       U = G[0],
       q = G[1],
       Y = (0, f.Zp)(),
-      Q = (0, L.useIsPro)(),
+      Q = true,
       Z = [{
         label: (0, b.__)("Income", "ohmylms"),
         tooltip: (0, b.__)("Total income ".concat(U ? "within " + U : "of all time"), "ohmylms"),
@@ -444,7 +429,7 @@ var Fq = function (e) {
         title: "Type",
         dataIndex: "type",
         key: "type",
-        className: "omlms-transaction-history-type",
+        className: "ohmylms-transaction-history-type",
         render: function (e, t) {
           return h().createElement(h().Fragment, null, e || "N/A");
         }
@@ -452,7 +437,7 @@ var Fq = function (e) {
         title: "Details",
         dataIndex: "order_items",
         key: "order_items",
-        className: "omlms-transaction-history-details",
+        className: "ohmylms-transaction-history-details",
         render: function (e, t) {
           var n;
           return (null === (n = t.order_items) || void 0 === n ? void 0 : n.length) > 0 ? h().createElement(h().Fragment, null, t.order_items.map(function (e, t) {
@@ -504,9 +489,16 @@ var Fq = function (e) {
             return Pq().w(function (e) {
               for (;;) switch (e.p = e.n) {
                 case 0:
-                  if (n = d.length > 1 && void 0 !== d[1] ? d[1] : "last_30_days", r = d.length > 2 && void 0 !== d[2] ? d[2] : "", a = d.length > 3 && void 0 !== d[3] ? d[3] : "all", o = d.length > 4 && void 0 !== d[4] ? d[4] : "date", i = d.length > 5 && void 0 !== d[5] ? d[5] : "DESC", Q) {
-                    e.n = 1;
-                    break;
+                  {
+                    n = d.length > 1 && void 0 !== d[1] ? d[1] : "last_30_days";
+                    r = d.length > 2 && void 0 !== d[2] ? d[2] : "";
+                    a = d.length > 3 && void 0 !== d[3] ? d[3] : "all";
+                    o = d.length > 4 && void 0 !== d[4] ? d[4] : "date";
+                    i = d.length > 5 && void 0 !== d[5] ? d[5] : "DESC";
+                    {
+                      e.n = 1;
+                      break;
+                    }
                   }
                   return C(null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.earning_graph), k(null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.order_by_country), M(null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.transactions), N(null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.count_unchecked_orders), H({
                     currency: null === $U.$C || void 0 === $U.$C ? void 0 : $U.$C.currency,
@@ -520,7 +512,7 @@ var Fq = function (e) {
                     order: o,
                     sort_by: i
                   }, xq(n) && (c.filter = "custom", c.start_date = sn()(n[0]).format("YYYY-MM-DD"), c.end_date = sn()(n[1]).format("YYYY-MM-DD")), e.n = 3, l()({
-                    path: (0, lN.addQueryArgs)("/creator-lms/v1/analytics/earnings", c),
+                    path: (0, lN.addQueryArgs)("/ohmylms/v1/analytics/earnings", c),
                     method: "GET",
                     headers: {
                       "Content-Type": "application/json"
@@ -623,19 +615,15 @@ var Fq = function (e) {
     }, h().createElement(I.SpacerWP, {
       padding: 7.5,
       marginBottom: 0
-    }, h().createElement(I.ProOverlayWP, {
-      title: (0, b.__)("Course analytics is a pro feature. Please upgrade to the Pro version to access it.", "ohmylms"),
-      top: "0px",
-      height: "100%"
-    }), h().createElement(I.FlexWP, {
+    }, h().createElement(I.FlexWP, {
       gap: 4,
       align: "stretch",
-      className: "omlms-earning-report-cards-wrapper"
+      className: "ohmylms-earning-report-cards-wrapper"
     }, h().createElement(I.FlexItemWP, {
       style: {
         width: "calc(67% - 8px)"
       },
-      className: "omlms-earning-report-left-card"
+      className: "ohmylms-earning-report-left-card"
     }, h().createElement(I.CardWP, {
       isBorderless: !0
     }, h().createElement(I.SpacerWP, {
@@ -648,7 +636,7 @@ var Fq = function (e) {
     }, h().createElement(I.HeadingWP, {
       level: 3
     }, (0, b.__)("Earnings", "ohmylms")), h().createElement("div", {
-      className: "omlms-dashboard-filter"
+      className: "ohmylms-dashboard-filter"
     }, h().createElement(ZU, {
       placeholder: (0, b.__)("Filter By Days", "ohmylms"),
       onChange: function (e) {
@@ -711,7 +699,7 @@ var Fq = function (e) {
       style: {
         width: "calc(33% - 8px)"
       },
-      className: "omlms-earning-report-right-card"
+      className: "ohmylms-earning-report-right-card"
     }, h().createElement(I.FlexWP, {
       align: "start",
       justify: "start",
@@ -847,5 +835,4 @@ var Fq = function (e) {
       paddingBottom: 5
     })));
   };
-
 const Dq = (0, g.memo)(Nq);

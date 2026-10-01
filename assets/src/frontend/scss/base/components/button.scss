@@ -1,13 +1,13 @@
-.creator-lms-page {
-    .creator-lms-button[type=submit],
-    .creator-lms-button[type=button],
-    .creator-lms-button {
+.ohmylms-page {
+    .ohmylms-button[type=submit],
+    .ohmylms-button[type=button],
+    .ohmylms-button {
         color: #FFF;
         font-size: 15px;
         font-weight: 500;
         line-height: 1.2;
         border-radius: 8px;
-        background-color: var(--creator-lms-primary-color, #6e42d3);
+        background-color: var(--ohmylms-primary-color, #6e42d3);
         border: 1px solid transparent;
         transition: all 0.3s ease;
         box-shadow: none;
@@ -22,12 +22,12 @@
 
         &:hover {
             background-color: transparent;
-            border-color: var(--creator-lms-primary-color, #6e42d3);
-            color: var(--creator-lms-primary-color, #6e42d3);
+            border-color: var(--ohmylms-primary-color, #6e42d3);
+            color: var(--ohmylms-primary-color, #6e42d3);
         }
 
         &:focus {
-            outline: 2px solid rgba(var(--creator-lms-primary-color-rgb), 0.349);
+            outline: 2px solid rgba(var(--ohmylms-primary-color-rgb), 0.349);
         }
 
         @media (max-width: 767px) {
@@ -36,13 +36,13 @@
             padding: 9px 24px;
         }
 
-        &.creator-lms-button-outline{
+        &.ohmylms-button-outline{
             background-color: transparent;
-            border-color: var(--creator-lms-primary-color);
-            color: var(--creator-lms-primary-color);
+            border-color: var(--ohmylms-primary-color);
+            color: var(--ohmylms-primary-color);
 
             &:hover {
-                background-color: var(--creator-lms-primary-color);
+                background-color: var(--ohmylms-primary-color);
                 color: #FFF;
             }
         }
@@ -67,25 +67,25 @@
             }
         }
 
-        &.creator-lms-button-disabled {
-            background-color: var(--creator-lms-gray-300);
-            border-color: var(--creator-lms-gray-300);
-            color: var(--creator-lms-gray-600) !important;
+        &.ohmylms-button-disabled {
+            background-color: var(--ohmylms-gray-300);
+            border-color: var(--ohmylms-gray-300);
+            color: var(--ohmylms-gray-600) !important;
             cursor: not-allowed;
 
             &:hover {
-                background-color: var(--creator-lms-gray-300);
-                border-color: var(--creator-lms-gray-300) !important;
-                color: var(--creator-lms-gray-600);
+                background-color: var(--ohmylms-gray-300);
+                border-color: var(--ohmylms-gray-300) !important;
+                color: var(--ohmylms-gray-600);
             }
             &:focus {
-                outline: 2px solid rgba(var(--creator-lms-gray-600-rgb), 0.349);
+                outline: 2px solid rgba(var(--ohmylms-gray-600-rgb), 0.349);
             }
         }
     }
 
     @media screen and (max-width: 1199px) {
-        .creator-lms-button {
+        .ohmylms-button {
             border-radius: 8px;
             padding: 10px 18px;
         }

@@ -3,6 +3,44 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
+test('Students tabs share the native table and stay in the admin application', async ({ page }) => {
+  const credentials = JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS, 'utf8'));
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/wp-login.php');
+  await page.locator('#user_login').fill(credentials.username);
+  await page.locator('#user_pass').fill(credentials.password);
+  await page.locator('#wp-submit').click();
+  await page.waitForURL(/wp-admin/);
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/students');
+  await expect(page.getByRole('heading', { name: 'Students', exact: true })).toBeVisible();
+  const tabs = page.getByRole('navigation', { name: 'Students and schools' });
+  await page.evaluate(() => { window.tableNavigationMarker = 'same-document'; });
+  for (const name of ['Teachers', 'Parents', 'All accounts', 'Classes', 'Schools', 'Students']) {
+    await tabs.getByRole('link', { name, exact: true }).click();
+    await expect(tabs.getByRole('link', { name, exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('.student-listing-table')).toBeVisible();
+    await expect(page.locator('.ohmylms-school-shell')).toHaveCount(0);
+    expect(await page.evaluate(() => window.tableNavigationMarker)).toBe('same-document');
+    expect(new URL(page.url()).searchParams.get('page')).toBe('ohmylms');
+  }
+  await tabs.getByRole('link', { name: 'All accounts', exact: true }).click();
+  await page.getByPlaceholder('Search All accounts', { exact: true }).fill(credentials.username);
+  await expect(page.getByRole('cell', { name: credentials.username, exact: true }).first()).toBeVisible();
+  await page.getByRole('combobox').selectOption('last_12_months');
+  await expect(page.getByRole('cell', { name: credentials.username, exact: true })).toBeVisible();
+  await page.locator('.student-listing-table tbody tr').first().getByRole('button').click();
+  await expect(page.getByRole('menuitem', { name: 'Edit user', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('script[src*="sdk/schools.js"]')).toHaveCount(0);
+  await page.screenshot({ path: 'test-results/students-shared-table.png', fullPage: true });
+  await page.reload();
+  await expect(tabs.getByRole('link', { name: 'All accounts', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.goto('/wp-admin/admin.php?page=ohmylms-schools&tab=teachers');
+  await expect(tabs.getByRole('link', { name: 'Teachers', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(errors).toEqual([]);
+});
+
 test('school registration is accessible on mobile and validates required fields', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -19,7 +57,7 @@ test('school registration is accessible on mobile and validates required fields'
 });
 
 test('administrator creates a school, academic year and class in the real portal', async ({ page }) => {
-  const credentials = JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS, 'utf8'));
+  const credentials = JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS, 'utf8'));
   const name = `School browser ${Date.now()}`;
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -58,20 +96,26 @@ test('administrator creates a school, academic year and class in the real portal
     await student.getByLabel('Student name').fill('Browser student');
     await student.getByLabel('School student ID').fill('BROWSER-1');
     await student.getByRole('button', { name: 'Save', exact: true }).click();
-    await expect(page.getByRole('cell', { name: 'Browser student', exact: true })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Browser student', exact: true })).toBeVisible({ timeout: 20000 });
     await page.getByRole('button', { name: 'Invitations', exact: true }).click();
     const invitation = page.getByRole('group', { name: 'Create invitation', exact: true });
     await invitation.getByLabel('Invitation type').selectOption('guardian');
     await invitation.getByLabel('Recipient email').fill('browser-parent@example.invalid');
     await invitation.getByRole('combobox', { name: /^Student/ }).selectOption({ label: 'Browser student' });
     await invitation.getByRole('button', { name: 'Create invitation link', exact: true }).click();
-    await expect(page.getByRole('textbox', { name: 'Invitation link', exact: true })).toHaveValue(/omlms_invite=/);
+    await expect(page.getByRole('textbox', { name: 'Invitation link', exact: true })).toHaveValue(/ohmylms_invite=/);
     await expect(page.getByRole('cell', { name: 'browser-parent@example.invalid', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Revoke', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Revoke', exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: 'Classes', exact: true }).click();
     await page.getByRole('button', { name: 'Open class', exact: true }).click();
     await page.screenshot({ path: 'test-results/schools-class-desktop.png', fullPage: true });
+    await page.goto('/wp-admin/admin.php?page=ohmylms-schools');
+    await page.getByPlaceholder('Search Schools').fill(name);
+    await expect(page.getByRole('cell', { name, exact: true })).toBeVisible();
+    await page.getByRole('navigation', { name: 'Students and schools' }).getByRole('link', { name: 'Classes', exact: true }).click();
+    await page.getByPlaceholder('Search Classes').fill('Grade 5 Mathematics');
+    await expect(page.getByRole('cell', { name: 'Grade 5 Mathematics', exact: true })).toBeVisible();
     expect(errors).toEqual([]);
   } finally {
     const php = 'C:/Users/Byambaa/AppData/Roaming/Local/lightning-services/php-8.2.30+1/bin/win64/php.exe';

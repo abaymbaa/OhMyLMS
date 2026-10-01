@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
-use OMLMS\Data\Student;
+use OhMyLMS\Data\Student;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Class ShortCodeCheckout
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 class ShortCodeCheckout {
@@ -34,7 +34,7 @@ class ShortCodeCheckout {
 		// Parse shortcode attributes
 		$attributes = shortcode_atts( array(
 			// Title styling
-			'title_color'                => 'var(--creator-lms-heading-color)',
+			'title_color'                => 'var(--ohmylms-heading-color)',
 			'title_font_size'           => '22px',
 			'title_font_weight'         => '600',
 			'title_font_family'         => '',
@@ -44,13 +44,13 @@ class ShortCodeCheckout {
 			'title_letter_spacing'      => '0',
 			
 			// Input styling
-			'input_label_color'         => 'var(--creator-lms-heading-color)',
+			'input_label_color'         => 'var(--ohmylms-heading-color)',
 			'input_label_font_size'     => '14px',
 			'input_label_font_weight'   => '500',
 			'input_label_font_family'   => '',
 			'input_font_size'           => '14px',
 			'input_font_weight'         => '400',
-			'input_color'               => 'var(--creator-lms-heading-color)',
+			'input_color'               => 'var(--ohmylms-heading-color)',
 			'input_font_family'         => '',
 			'input_background_color'    => '#FFF',
 			'input_border_color'        => '#EBEBEF',
@@ -89,7 +89,7 @@ class ShortCodeCheckout {
 			'button_hover_box_shadow'       => 'none',
 			
 			// Privacy Text styling
-			'privacy_text_color'        => 'var(--creator-lms-heading-color)',
+			'privacy_text_color'        => 'var(--ohmylms-heading-color)',
 			'privacy_text_font_size'    => '14px',
 			'privacy_text_font_weight'  => '400',
 			'privacy_text_font_family'  => '',
@@ -133,14 +133,14 @@ class ShortCodeCheckout {
 	), $atts );
 
 	// Store attributes globally for template access
-	global $omlms_checkout_attributes;
-	$omlms_checkout_attributes = $attributes;
+	global $ohmylms_checkout_attributes;
+	$ohmylms_checkout_attributes = $attributes;
 	
 	// Note: layout_type is now parsed directly from post content in CommonHook::template_include_callback
 	// No need to set global variable here
 
-	if ( isset( $wp->query_vars['cr-order-received'] ) ) {
-		self::order_received( $wp->query_vars['cr-order-received'] );
+	if ( isset( $wp->query_vars['ohmylms-order-received'] ) ) {
+		self::order_received( $wp->query_vars['ohmylms-order-received'] );
 	} else {
 		self::checkout();
 	}
@@ -154,10 +154,10 @@ class ShortCodeCheckout {
  */
 private static function checkout() {
 		// Check if we're in preview mode (Elementor, Gutenberg, Bricks, or WPBakery)
-		$is_elementor_preview_mode = apply_filters( 'creator_lms_elementor_preview_mode', false );
-		$is_gutenberg_preview_mode = apply_filters( 'creator_lms_gutenberg_preview_mode', false );
-		$is_bricks_preview_mode = apply_filters( 'creator_lms_bricks_preview_mode', false );
-		$is_wpbakery_preview_mode = apply_filters( 'creator_lms_wpbakery_preview_mode', false );
+		$is_elementor_preview_mode = apply_filters( 'ohmylms_elementor_preview_mode', false );
+		$is_gutenberg_preview_mode = apply_filters( 'ohmylms_gutenberg_preview_mode', false );
+		$is_bricks_preview_mode = apply_filters( 'ohmylms_bricks_preview_mode', false );
+		$is_wpbakery_preview_mode = apply_filters( 'ohmylms_wpbakery_preview_mode', false );
 		
 		$is_preview_mode = $is_elementor_preview_mode || $is_gutenberg_preview_mode || $is_bricks_preview_mode || $is_wpbakery_preview_mode;
 		
@@ -165,12 +165,12 @@ private static function checkout() {
 		if ( ! $is_preview_mode && ecommerce()->cart->is_empty() && ! \is_customize_preview() ) {
 			// Check if user hasn't seen this checkout before (using transient instead of session)
 			$user_id = get_current_user_id();
-			$transient_key = 'omlms_checkout_auto_added_' . ( $user_id ? $user_id : wp_get_session_token() );
+			$transient_key = 'ohmylms_checkout_auto_added_' . ( $user_id ? $user_id : wp_get_session_token() );
 			
 			if ( ! get_transient( $transient_key ) ) {
 				// Get a random published course
 				$random_course_args = array(
-					'post_type'      => 'omlms-course',
+					'post_type'      => 'ohmylms-course',
 					'post_status'    => 'publish',
 					'posts_per_page' => 1,
 					'orderby'        => 'rand',
@@ -185,7 +185,7 @@ private static function checkout() {
 					// Add course to cart
 					ecommerce()->cart->add_to_cart( array(
 						'course_id' => $course_id,
-						'type'      => 'omlms-course',
+						'type'      => 'ohmylms-course',
 						'quantity'  => 1,
 					) );
 					
@@ -200,13 +200,13 @@ private static function checkout() {
 		
 		// Check cart has contents (skip check in preview mode)
 		if ( ! $is_preview_mode && ecommerce()->cart->is_empty() && ! \is_customize_preview() ) {
-			$archive_page_id  = \get_option( 'creator_lms_course_page_id', 0 );
+			$archive_page_id  = \get_option( 'ohmylms_course_page_id', 0 );
 			$archive_page_url = \home_url();
 			if ( $archive_page_id ) {
 				$archive_page_url = \get_permalink( $archive_page_id );
 			}
 
-			omlms_get_template( 'checkout/no-cart-data.php', array( 'archive_page_url' => $archive_page_url ) );
+			ohmylms_get_template( 'checkout/no-cart-data.php', array( 'archive_page_url' => $archive_page_url ) );
 			return;
 		}
 
@@ -225,17 +225,17 @@ private static function checkout() {
 				if ( isset( $data['course_id'], $data['type'] ) ) {
 					$id   = $data['course_id'];
 					$type = $data['type'];
-					if ( 'omlms-course' === $type ) {
-						$course = omlms_get_course( $id );
+					if ( 'ohmylms-course' === $type ) {
+						$course = ohmylms_get_course( $id );
 						if ( $course ) {
 							$is_course_already_enrolled = $course->has_access();
 							$url                        = $course->get_permalink();
 						}
 					} else {
-						if( 'omlms-membership' !== $type ) {
+						if( 'ohmylms-membership' !== $type ) {
 							continue;
 						}
-						$membership = omlms_get_membership( $id );
+						$membership = ohmylms_get_membership( $id );
 						if ( $membership ) {
 							$is_course_already_enrolled = $membership->is_already_purchased();
 							$url = home_url( '/my-profile/' );
@@ -249,7 +249,7 @@ private static function checkout() {
 
 		// Inject folded input fields script
 		self::inject_checkout_folded_input_script();
-		omlms_get_template( 'checkout/form-checkout.php', array( 'checkout' => $checkout ) );
+		ohmylms_get_template( 'checkout/form-checkout.php', array( 'checkout' => $checkout ) );
 	}
 
 
@@ -281,16 +281,16 @@ private static function checkout() {
 	 * @since 1.0.0
 	 */
 	private static function inject_custom_styles() {
-		global $omlms_checkout_attributes;
+		global $ohmylms_checkout_attributes;
 		
-		if ( empty( $omlms_checkout_attributes ) ) {
+		if ( empty( $ohmylms_checkout_attributes ) ) {
 			return;
 		}
 
-		$css = self::generate_custom_css( $omlms_checkout_attributes );
+		$css = self::generate_custom_css( $ohmylms_checkout_attributes );
 		
 		if ( ! empty( $css ) ) {
-			echo '<style type="text/css" id="omlms-checkout-custom-styles">' . $css . '</style>';
+			echo '<style type="text/css" id="ohmylms-checkout-custom-styles">' . $css . '</style>';
 		}
 	}
 
@@ -304,13 +304,13 @@ private static function checkout() {
 		(function($) {
 			// Function to initialize folded state for checkout input fields
 			function initializeCheckoutFoldedInputs() {
-				$(".creator-lms-input-text").each(function () {
-					var $row = $(this).parents('.creator-lms-form-row');
+				$(".ohmylms-input-text").each(function () {
+					var $row = $(this).parents('.ohmylms-form-row');
 					// Check if the input has a value		
 					if ($(this).val().trim() !== "") {
-						$row.addClass('creator-lms-folded');
+						$row.addClass('ohmylms-folded');
 					} else {
-						$row.removeClass('creator-lms-folded');
+						$row.removeClass('ohmylms-folded');
 					}
 				});
 			}
@@ -362,7 +362,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $title_styles ) ) {
-			$css .= '.creator-lms-page .creator-lms-checkout-form-wrapper .creator-lms-checkout-title { ' . implode( '; ', $title_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page .ohmylms-checkout-form-wrapper .ohmylms-checkout-title { ' . implode( '; ', $title_styles ) . '; }' . "\n";
 		}
 
 		// Input label styles
@@ -385,7 +385,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $label_styles ) ) {
-			$css .= '.creator-lms-form-row label.creator-lms-input-label { ' . implode( '; ', $label_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-form-row label.ohmylms-input-label { ' . implode( '; ', $label_styles ) . '; }' . "\n";
 		}
 
 		// Input field styles
@@ -419,7 +419,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $input_styles ) ) {
-			$css .= '.creator-lms-page input.creator-lms-input-text, .creator-lms-page select.creator-lms-input-select { ' . implode( '; ', $input_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page input.ohmylms-input-text, .ohmylms-page select.ohmylms-input-select { ' . implode( '; ', $input_styles ) . '; }' . "\n";
 		}
 
 		// Checkout button styles
@@ -491,7 +491,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $button_styles ) ) {
-			$css .= '.creator-lms-page .creator-lms-checkout-payment button.creator-lms-place-order-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page .ohmylms-checkout-payment button.ohmylms-place-order-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
 		}
 
 		// Button hover styles
@@ -510,7 +510,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $button_hover_styles ) ) {
-			$css .= '.creator-lms-page .creator-lms-checkout-payment button.creator-lms-place-order-button:hover { ' . implode( '; ', $button_hover_styles ) . '; }' .  "\n";
+			$css .= '.ohmylms-page .ohmylms-checkout-payment button.ohmylms-place-order-button:hover { ' . implode( '; ', $button_hover_styles ) . '; }' .  "\n";
 		}
 
 		// Privacy text styles
@@ -541,15 +541,15 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $privacy_styles ) ) {
-			$css .= '.creator-lms-page .creator-lms-tnc-wrapper span { ' . implode( '; ', $privacy_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page .ohmylms-tnc-wrapper span { ' . implode( '; ', $privacy_styles ) . '; }' . "\n";
 		}
 
 		// Checkout box styles
 		$checkout_box_styles = array();
 		if ( ! empty( $attrs['checkout_box_background_color'] ) ) {
 			$checkout_box_styles[] = 'background-color: ' . esc_attr( $attrs['checkout_box_background_color'] );
-			$css .= '.creator-lms-page div.creator-lms-checkout-form-outer::before { background-color: ' . esc_attr( $attrs['checkout_box_background_color'] ) . '; }' . "\n";
-			$css .= '.creator-lms-page .creator-lms-checkout-payment .creator-lms-payment-method-wrapper { background-color: ' . esc_attr( $attrs['checkout_box_background_color'] ) . '; }' . "\n";
+			$css .= '.ohmylms-page div.ohmylms-checkout-form-outer::before { background-color: ' . esc_attr( $attrs['checkout_box_background_color'] ) . '; }' . "\n";
+			$css .= '.ohmylms-page .ohmylms-checkout-payment .ohmylms-payment-method-wrapper { background-color: ' . esc_attr( $attrs['checkout_box_background_color'] ) . '; }' . "\n";
 		}
 
 		// Checkout box padding
@@ -588,14 +588,14 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $checkout_box_styles ) ) {
-			$css .= '.creator-lms-page .creator-lms-checkout-form-left { ' . implode( '; ', $checkout_box_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page .ohmylms-checkout-form-left { ' . implode( '; ', $checkout_box_styles ) . '; }' . "\n";
 		}
 
 		// Order summary styles
 		$order_summary_styles = array();
 		if ( ! empty( $attrs['order_summary_background_color'] ) ) {
 			$order_summary_styles[] = 'background-color: ' . esc_attr( $attrs['order_summary_background_color'] ) . '!important';
-			$css .= '.creator-lms { background-color: ' . esc_attr( $attrs['order_summary_background_color'] ) . '!important; }' . "\n";
+			$css .= '.ohmylms { background-color: ' . esc_attr( $attrs['order_summary_background_color'] ) . '!important; }' . "\n";
 		}
 
 		// Order summary padding
@@ -634,7 +634,7 @@ private static function checkout() {
 		}
 
 		if ( ! empty( $order_summary_styles ) ) {
-			$css .= '.creator-lms-page div.creator-lms-checkout-form-right { ' . implode( '; ', $order_summary_styles ) . '; }' . "\n";
+			$css .= '.ohmylms-page div.ohmylms-checkout-form-right { ' . implode( '; ', $order_summary_styles ) . '; }' . "\n";
 		}
 
 		return $css;
@@ -661,11 +661,11 @@ private static function checkout() {
 		}
 		
 		if( !$order->has_status( 'failed' ) ) {
-			omlms_empty_cart();
+			ohmylms_empty_cart();
 		}
 		
 		if ( ! $order ) {
-			omlms_get_template(
+			ohmylms_get_template(
 				'checkout/thankyou.php',
 				array(
 					'order' => false,
@@ -677,10 +677,10 @@ private static function checkout() {
 		$order_student_id = $order->get_student_id();
 		$student          = new Student( $order_student_id );
 		if ( $order_student_id && get_current_user_id() != $order_student_id ) {
-			omlms_get_template( 'checkout/order-received.php', array( 'order' => false ) );
+			ohmylms_get_template( 'checkout/order-received.php', array( 'order' => false ) );
 			return;
 		}
-		omlms_get_template(
+		ohmylms_get_template(
 			'checkout/thankyou.php',
 			array(
 				'order'   => $order,

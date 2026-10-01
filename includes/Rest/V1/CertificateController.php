@@ -1,9 +1,9 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Certificate;
-use OMLMS\DataException;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Certificate;
+use OhMyLMS\DataException;
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -111,7 +111,7 @@ class CertificateController extends RestController {
 		$post = get_post( (int) $request['id'] );
 
 		if ( $post && ! current_user_can( 'read_post', $post->ID ) ) {
-			return new WP_Error( 'creator_lms_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -139,7 +139,7 @@ class CertificateController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_CERTIFICATE_CPT,
+			'post_type'           => OHMYLMS_CERTIFICATE_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : array( 'draft', 'publish', 'future' ),
 			'meta_query'          => array(),
 		);
@@ -182,7 +182,7 @@ class CertificateController extends RestController {
 		// }
 
 		// Allow further filters
-		$args       = apply_filters( 'creator_lms_rest_omlms_certificate_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_certificate_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query = new WP_Query( $query_args );
@@ -234,7 +234,7 @@ class CertificateController extends RestController {
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with object name.
-			return new WP_Error( 'creator_lms_rest_certificate_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'certificate' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_certificate_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'certificate' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -250,7 +250,7 @@ class CertificateController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_certificate', $post, $request );
+			do_action( 'ohmylms_rest_insert_certificate', $post, $request );
 
 			$request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response_with_contents( $post, $request );
@@ -274,8 +274,8 @@ class CertificateController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_CERTIFICATE_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_certificate_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_CERTIFICATE_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_certificate_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data     = $this->prepare_item_for_response_with_contents( $post, $request );
@@ -295,8 +295,8 @@ class CertificateController extends RestController {
 	 */
 	public function update_item( $request ) {
 		$post_id = (int) $request['id'];
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_CERTIFICATE_CPT ) {
-			return new WP_Error( 'creator_lms_rest_certificate_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_CERTIFICATE_CPT ) {
+			return new WP_Error( 'ohmylms_rest_certificate_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -328,29 +328,29 @@ class CertificateController extends RestController {
 
 		// Check the certificate id exist or not
 		if ( ! $certificate_id ) {
-			return new WP_Error( 'creator_lms_rest_certificate_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_certificate_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Get existing certificate by certificate id
-		$certificate = omlms_get_certificate( $certificate_id );
+		$certificate = ohmylms_get_certificate( $certificate_id );
 
 		// Check the certificate exist or not.
 		if ( ! ( $certificate instanceof Certificate ) ) {
-			return new WP_Error( 'creator_lms_rest_certificate_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_certificate_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Delete the certificate
 		$certificate->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_certificate' action hook.
+		 * Executes the 'ohmylms_rest_delete_certificate' action hook.
 		 * This hook is triggered when a certificate is being deleted via the REST API.
 		 *
 		 * @param string $certificate_id Certificate ID.
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_certificate', $certificate_id );
+		do_action( 'ohmylms_rest_delete_certificate', $certificate_id );
 
 		$response = array(
 			'status'  => 'success',
@@ -372,7 +372,7 @@ class CertificateController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$certificate = omlms_get_certificate( $post );
+		$certificate = ohmylms_get_certificate( $post );
 		// Save certificate meta fields.
 		$certificate = $this->set_certificate_meta( $certificate, $request );
 
@@ -493,7 +493,7 @@ class CertificateController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( $id > 0 ) {
-			$certificate = omlms_get_certificate( $id );
+			$certificate = ohmylms_get_certificate( $id );
 		} else {
 			$certificate = new Certificate();
 		}
@@ -567,11 +567,11 @@ class CertificateController extends RestController {
 		$certificate_ids = $request->get_param( 'certificate_ids' );
 		if ( is_array( $certificate_ids ) ) {
 			foreach ( $certificate_ids as $certificate_id ) {
-				if ( get_post_type( $certificate_id ) !== 'omlms-certificate' ) {
+				if ( get_post_type( $certificate_id ) !== 'ohmylms-certificate' ) {
 					return new \WP_REST_Response( array( 'message' => 'Invalid certificate ID.' ), 400 );
 				}
 				wp_trash_post( $certificate_id );
-				do_action( 'creator_lms_rest_delete_certificate', $certificate_id );
+				do_action( 'ohmylms_rest_delete_certificate', $certificate_id );
 			}
 			return new \WP_REST_Response( array( 'message' => 'Deleted Successfully' ), 200 );
 		}
@@ -602,7 +602,7 @@ class CertificateController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_CERTIFICATE_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_CERTIFICATE_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -633,7 +633,7 @@ class CertificateController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}
@@ -650,7 +650,7 @@ class CertificateController extends RestController {
 	 */
 	public function prepare_item_for_response( $post, $request ) {
 
-		$certificate = omlms_get_certificate( $post );
+		$certificate = ohmylms_get_certificate( $post );
 		$data        = $this->get_certificate_data( $certificate );
 		$response    = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $certificate, $request ) );
@@ -666,7 +666,7 @@ class CertificateController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_certificate', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_certificate', $response, $post, $request );
 	}
 
 
@@ -681,7 +681,7 @@ class CertificateController extends RestController {
 	 */
 	public function prepare_item_for_response_with_contents( $post, $request ) {
 
-		$certificate      = omlms_get_certificate( $post );
+		$certificate      = ohmylms_get_certificate( $post );
 		$data             = $this->get_certificate_data( $certificate );
 		$data['contents'] = $certificate->get_contents();
 		$response         = rest_ensure_response( $data );
@@ -698,7 +698,7 @@ class CertificateController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_certificate', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_certificate', $response, $post, $request );
 	}
 
 	/**

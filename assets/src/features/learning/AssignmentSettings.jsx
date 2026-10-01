@@ -40,7 +40,7 @@ export function createAssignmentSettings(readRuntime) {
       m,
       p,
       f,
-      v = (0, Entitlements.useIsPro)(),
+      v = true,
       assignment = props.assignment,
       chapterId = props.chapterId,
       setOpenModal = props.setOpenModal,
@@ -73,7 +73,7 @@ export function createAssignmentSettings(readRuntime) {
                       return (
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/chapters/'
+                          path: '/ohmylms/v1/chapters/'
                             .concat(chapterId, '/search-contents?term=')
                             .concat(t),
                           method: 'GET',
@@ -257,7 +257,7 @@ export function createAssignmentSettings(readRuntime) {
         <DripSettings
           onChange={function () {
             var e;
-            if (v) {
+            {
               var t = !(
                 null != assignment &&
                 null !== (e = assignment.drip_settings) &&
@@ -294,7 +294,7 @@ export function createAssignmentSettings(readRuntime) {
             a
           }
           onDripFeedTypeChange={function (e) {
-            if (v) {
+            {
               var t,
                 n,
                 r = Aa(
@@ -403,7 +403,7 @@ export function createAssignmentSettings(readRuntime) {
             d
           }
           showDivider={!1}
-          customClass={'omlms-assignment-settings-time-limit-button'}
+          customClass={'ohmylms-assignment-settings-time-limit-button'}
           conditionalChild={
             <Ea isBorderless={!0} variant={'secondary'} padding={'16px'} margin={'12px 0 0'}>
               <Controls.InputWP
@@ -411,7 +411,7 @@ export function createAssignmentSettings(readRuntime) {
                 type={'number'}
                 min={1}
                 placeholder={(0, I18n.__)('Enter time limit', 'ohmylms')}
-                className={'omlms-assignment-settings-time-limit-input'}
+                className={'ohmylms-assignment-settings-time-limit-input'}
                 onChange={function (e) {
                   /^\d*\.?\d*$/.test(e) && P('time_limit', e);
                 }}
@@ -430,7 +430,7 @@ export function createAssignmentSettings(readRuntime) {
               <Controls.SpacerWP />
               <_n
                 placeholder={(0, I18n.__)('Select option', 'ohmylms')}
-                customClass={'omlms-assignment-settings-time-limit-type-select'}
+                customClass={'ohmylms-assignment-settings-time-limit-type-select'}
                 options={O}
                 value={null == assignment ? void 0 : assignment.time_limit_type}
                 onChange={function (e) {
@@ -449,7 +449,7 @@ export function createAssignmentSettings(readRuntime) {
             title={(0, I18n.__)('Set the maximum points a student can score', 'ohmylms')}
             error={Number(null == assignment ? void 0 : assignment.total_points) < 1}
             errorMessage={(0, I18n.__)('Total points should be greater than 0', 'ohmylms')}
-            className={'omlms-assignment-settings-total-points-input'}
+            className={'ohmylms-assignment-settings-total-points-input'}
             handleChange={function (e) {
               var t = e;
               /^\d*\.?\d*$/.test(t) && P('total_points', t);
@@ -487,7 +487,7 @@ export function createAssignmentSettings(readRuntime) {
               'Minimum pass points should be greater than 0 and less than or equal to total points',
               'ohmylms',
             )}
-            className={'omlms-assignment-settings-pass-points-input'}
+            className={'ohmylms-assignment-settings-pass-points-input'}
             handleChange={function (e) {
               var t = e;
               /^\d*\.?\d*$/.test(t) && P('maximum_pass_points', t);
@@ -517,7 +517,7 @@ export function createAssignmentSettings(readRuntime) {
             void 0 !== m &&
             m
           }
-          customClass={'omlms-assignment-settings-submission-attempts-button'}
+          customClass={'ohmylms-assignment-settings-submission-attempts-button'}
           showDivider={!1}
           conditionalChild={
             <Ca
@@ -528,7 +528,7 @@ export function createAssignmentSettings(readRuntime) {
               )}
               error={Number(null == assignment ? void 0 : assignment.number_of_files) < 1}
               errorMessage={(0, I18n.__)('Number of files should be greater than 0', 'ohmylms')}
-              className={'omlms-assignment-settings-number-of-files-input'}
+              className={'ohmylms-assignment-settings-number-of-files-input'}
               handleChange={function (e) {
                 var t = e;
                 /^\d*\.?\d*$/.test(t) && P('number_of_files', t);
@@ -560,7 +560,7 @@ export function createAssignmentSettings(readRuntime) {
             p
           }
           showDivider={!1}
-          customClass={'omlms-assignment-settings-file-size-limit-button'}
+          customClass={'ohmylms-assignment-settings-file-size-limit-button'}
           conditionalChild={
             <Ca
               value={(null == assignment ? void 0 : assignment.max_file_size_limit) || ''}
@@ -570,7 +570,7 @@ export function createAssignmentSettings(readRuntime) {
               )}
               error={Number(null == assignment ? void 0 : assignment.max_file_size_limit) < 1}
               errorMessage={(0, I18n.__)('File size limit should be greater than 0', 'ohmylms')}
-              className={'omlms-assignment-settings-file-size-limit-input'}
+              className={'ohmylms-assignment-settings-file-size-limit-input'}
               handleChange={function (e) {
                 var t = e;
                 /^\d*\.?\d*$/.test(t) && P('max_file_size_limit', t);

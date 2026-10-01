@@ -2,9 +2,9 @@
 /**
  * Template for displaying payment option.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/payment.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/payment.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -20,8 +20,8 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 		continue;
 	}
 	
-	if(get_post_type($cart_item['data']->get_id()) == 'omlms-membership'){
-		$membership = omlms_get_membership( $cart_item['data']->get_id() );
+	if(get_post_type($cart_item['data']->get_id()) == 'ohmylms-membership'){
+		$membership = ohmylms_get_membership( $cart_item['data']->get_id() );
 		if( $membership && $membership->get_subscription_period() !== 'one_time' ){
 			$has_membership = true;
 			if ( $membership->get_subscription_period() === 'day' ) {
@@ -35,15 +35,15 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 }
 
 ?>
-	<div id="creator-lms-payment" class="creator-lms-checkout-payment">
+	<div id="ohmylms-payment" class="ohmylms-checkout-payment">
 
 		<?php if ( ! $by_point && \CodeRex\Ecommerce\ecommerce()->cart->needs_payment() ) : ?>
-			<div class="creator-lms-payment-method-wrapper">
-				<h3 class="creator-lms-checkout-title">
+			<div class="ohmylms-payment-method-wrapper">
+				<h3 class="ohmylms-checkout-title">
 					<?php esc_html_e( 'Payment Information', 'ohmylms' ); ?>
 				</h3>
 
-				<ul class="creator-lms-payment-methods">
+				<ul class="ohmylms-payment-methods">
 					<?php
 					if ( ! empty( $available_gateways ) ) {
 						$is_first = true;
@@ -55,7 +55,7 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 								continue;
 							}
 
-							omlms_get_template(
+							ohmylms_get_template(
 								'checkout/payment-method.php',
 								array(
 									'gateway' => $gateway,
@@ -75,24 +75,24 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 			</div>
 		<?php endif; ?>
 
-		<div class="creator-lms-place-order">
-			<?php do_action( 'creator_lms_review_order_before_submit' ); ?>
+		<div class="ohmylms-place-order">
+			<?php do_action( 'ohmylms_review_order_before_submit' ); ?>
 
-			<input type="hidden" name="action" value="creator_lms_checkout">
-			<?php do_action( 'creator_lms_review_order_after_submit' ); ?>
-			<?php wp_nonce_field( 'creator-lms-process_checkout', 'creator-lms-process-checkout-nonce' ); ?>
+			<input type="hidden" name="action" value="ohmylms_checkout">
+			<?php do_action( 'ohmylms_review_order_after_submit' ); ?>
+			<?php wp_nonce_field( 'ohmylms-process_checkout', 'ohmylms-process-checkout-nonce' ); ?>
 
 			<button
 				type="submit"
-				class="creator-lms-button creator-lms-place-order-button"
-				name="creator_lms_checkout_place_order"
+				class="ohmylms-button ohmylms-place-order-button"
+				name="ohmylms_checkout_place_order"
 				aria-label="Complete Checkout"
 			>
 				<?php echo __( 'Complete Checkout', 'ohmylms' ); ?>
-				<span class="creator-lms-loader"></span>
+				<span class="ohmylms-loader"></span>
 			</button>
 
-			<?php omlms_get_template( 'checkout/terms.php' ); ?>
+			<?php ohmylms_get_template( 'checkout/terms.php' ); ?>
 		</div>
 	</div>
 <?php

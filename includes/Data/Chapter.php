@@ -1,20 +1,20 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Chapter
  *
- * This class represents a chapter within the CreatorLms system. It extends the base `Data` class
+ * This class represents a chapter within the OhMyLMS system. It extends the base `Data` class
  * and provides methods to manage chapter properties such as name, description, slug, status, and timestamps.
  * The class interacts with the data store to load, save, update, or delete chapter data.
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Chapter extends Data {

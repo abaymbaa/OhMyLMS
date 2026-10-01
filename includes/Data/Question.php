@@ -2,21 +2,21 @@
 /**
  * Question class to handle question data
  *
- * @package creator-lms
+ * @package ohmylms
  * @since 1.0.0
  */
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\CPTData\PostTypeData;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\CPTData\PostTypeData;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Quiz
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Question extends PostTypeData {
@@ -99,7 +99,7 @@ class Question extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -117,7 +117,7 @@ class Question extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}

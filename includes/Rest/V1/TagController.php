@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use function EDD\Blocks\Forms\register;
 
 class TagController extends RestController {
@@ -116,7 +116,7 @@ class TagController extends RestController {
 				// Get courses for this tag
 				$courses = get_posts(
 					array(
-						'post_type'      => 'omlms-course',
+						'post_type'      => 'ohmylms-course',
 						'posts_per_page' => -1,
 						'post_status'    => 'any',
 						'tax_query'      => array(

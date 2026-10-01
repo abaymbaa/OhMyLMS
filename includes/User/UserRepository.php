@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\User;
+namespace OhMyLMS\User;
 
 /**
  * Responsible to handle all user and enrollment related database operations
@@ -19,11 +19,11 @@ class UserRepository {
 	 */
 	public static function query_is_user_enrolled( $course_id, $user_id ): ?string {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 
 		return $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}omlms_user_enrollment WHERE course_id = %d AND user_id = %d AND status = %s",
+				"SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id = %d AND user_id = %d AND status = %s",
 				$course_id,
 				$user_id,
 				'enrolled'
@@ -40,7 +40,7 @@ class UserRepository {
 	 */
 	public static function insert_new_enrollment( $data ): array {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_users_enrolled_in_courses';
+		$table_name = $wpdb->prefix . 'ohmylms_users_enrolled_in_courses';
 		try {
 			$wpdb->insert( $table_name, $data );
 			return array(

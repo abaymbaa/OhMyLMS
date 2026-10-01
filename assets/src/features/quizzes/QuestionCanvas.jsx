@@ -32,7 +32,7 @@ export function createQuestionCanvas(readRuntime) {
       r,
       a,
       chapterId = props.chapterId,
-      i = (0, Entitlements.useIsPro)(),
+      i = true,
       question = (function () {
         var e = (0, WordPressData.useSelect)(function (e) {
             return e(StoreModule.default).getQuizTypes();
@@ -247,12 +247,10 @@ export function createQuestionCanvas(readRuntime) {
                       break;
                     }
                     return e.a(2);
-                  case 1:
-                    if (i || !A.includes(quizType)) {
-                      e.n = 2;
-                      break;
-                    }
-                    return (s.setIsProModalOpen(!0), e.a(2));
+                  case 1: {
+                    e.n = 2;
+                    break;
+                  }
                   case 2:
                     (((t = ju({}, m)).order_number = p.length + 1),
                       (t.id = new Date().getTime()),
@@ -299,8 +297,8 @@ export function createQuestionCanvas(readRuntime) {
       })();
     return (
       <React.Fragment>
-        <div className={'omlms-quiz-editor-wrapper'}>
-          <div className={'omlms-quiz-editor-body'}>
+        <div className={'ohmylms-quiz-editor-wrapper'}>
+          <div className={'ohmylms-quiz-editor-body'}>
             {edit &&
               (showDefault ? (
                 React.createElement(edit, null)
@@ -314,7 +312,7 @@ export function createQuestionCanvas(readRuntime) {
                         {React.createElement(lu, {
                           icon: O,
                           label: null == k ? void 0 : k.name,
-                          iconColor: 'var(--omlms-primary-color)',
+                          iconColor: 'var(--ohmylms-primary-color)',
                         })}
                       </Controls.FlexBlockWP>
                       <Controls.FlexBlockWP>
@@ -331,29 +329,23 @@ export function createQuestionCanvas(readRuntime) {
                       question: 'Untitled' === E ? '' : E,
                       description: description,
                       onChange: function (e, t) {
-                        i || !A.includes(quizType)
-                          ? s.updateQuestionData(x, Au({}, e, t))
-                          : s.setIsProModalOpen(!0);
+                        s.updateQuestionData(x, Au({}, e, t));
                       },
                       onImgUpload: function () {
                         var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '',
                           t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : '';
-                        i || !A.includes(quizType)
-                          ? s.updateQuestionData(x, {
-                              image_src: e,
-                              thumbnail_id: t,
-                            })
-                          : s.setIsProModalOpen(!0);
+                        s.updateQuestionData(x, {
+                          image_src: e,
+                          thumbnail_id: t,
+                        });
                       },
                       onVideoUpload: function () {
                         var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '',
                           t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : '';
-                        i || !A.includes(quizType)
-                          ? s.updateQuestionData(x, {
-                              video_src: e,
-                              video_id: t,
-                            })
-                          : s.setIsProModalOpen(!0);
+                        s.updateQuestionData(x, {
+                          video_src: e,
+                          video_id: t,
+                        });
                       },
                       videoSrc: videoSrc,
                       imgSrc: imgSrc,
@@ -377,7 +369,7 @@ export function createQuestionCanvas(readRuntime) {
             }}
             onDelete={F}
             isOpen={h}
-            wrapClassName={'omlms-delete-question-modal'}
+            wrapClassName={'ohmylms-delete-question-modal'}
             isDelete={!0}
           />
         )}

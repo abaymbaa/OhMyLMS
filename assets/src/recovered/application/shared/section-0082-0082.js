@@ -4,7 +4,7 @@ var kN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Course Enrollment", "ohmylms"),
   foreground: "#2271b1",
@@ -43,7 +43,7 @@ var kN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -64,7 +64,7 @@ var kN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("Leave it blank to trigger the automation for any course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -76,7 +76,7 @@ var kN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
         }(e);
       },
       isDisabled: "course" === (null == c ? void 0 : c.automationFor)
@@ -128,7 +128,7 @@ var AN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("New Course Order", "ohmylms"),
   foreground: "#2271b1",
@@ -167,7 +167,7 @@ var AN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -188,7 +188,7 @@ var AN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("Leave it blank to trigger the automation for any course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -200,7 +200,7 @@ var AN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
         }(e);
       },
       isDisabled: "course" === (null == c ? void 0 : c.automationFor)
@@ -214,7 +214,7 @@ var AN = {
 
 function MN() {
   return React.createElement("svg", {
-    className: "omlms-course-enrollment-automation-icon",
+    className: "ohmylms-course-enrollment-automation-icon",
     width: "24",
     height: "25",
     fill: "none",
@@ -249,7 +249,7 @@ var TN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Enrollment Cancellation", "ohmylms"),
   foreground: "#2271b1",
@@ -288,7 +288,7 @@ var TN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -309,7 +309,7 @@ var TN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("Leave it blank to trigger the automation for any course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -321,7 +321,7 @@ var TN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "courses", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "courses", e);
         }(e);
       },
       isDisabled: "course" === (null == c ? void 0 : c.automationFor)
@@ -360,7 +360,7 @@ var FN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Course Completion Rate", "ohmylms"),
   foreground: "#2271b1",
@@ -419,7 +419,7 @@ var FN = {
           label: null == m ? void 0 : m.contentName,
           value: null == m ? void 0 : m.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "creator_lms_settings", "courses", e);
+        (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "ohmylms_settings", "courses", e);
       }
     }, [m]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -440,7 +440,7 @@ var FN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("Leave it blank to trigger the automation for any course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = c.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = c.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.courses) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == p ? void 0 : p.filter(function (e) {
@@ -452,7 +452,7 @@ var FN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "creator_lms_settings", "courses", e);
+          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "ohmylms_settings", "courses", e);
         }(e);
       },
       isDisabled: "course" === (null == m ? void 0 : m.automationFor)
@@ -463,27 +463,27 @@ var FN = {
     }, (0, b.__)("Completion rate", "ohmylms"), React.createElement("span", {
       className: "mintmrm-tooltip"
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("If nothing is selected, the automation will trigger when the course is completed.", "ohmylms")))), React.createElement("div", {
-      className: "omlms-automation-completion-rate"
+      className: "ohmylms-automation-completion-rate"
     }, React.createElement(yg.Ay, {
       className: "basic-single",
       classNamePrefix: "select",
-      value: null !== (r = null === (a = c.settings) || void 0 === a || null === (a = a.creator_lms_settings) || void 0 === a ? void 0 : a.compare_with) && void 0 !== r ? r : "",
+      value: null !== (r = null === (a = c.settings) || void 0 === a || null === (a = a.ohmylms_settings) || void 0 === a ? void 0 : a.compare_with) && void 0 !== r ? r : "",
       isClearable: !1,
       isSearchable: !1,
       name: "color",
       options: f,
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "creator_lms_settings", "compare_with", e);
+          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "ohmylms_settings", "compare_with", e);
         }(e);
       }
     }), React.createElement(wn.A, {
-      min: "less_than" !== (null == c || null === (o = c.settings) || void 0 === o || null === (o = o.creator_lms_settings) || void 0 === o ? void 0 : o.compare_with) ? 0 : 1,
+      min: "less_than" !== (null == c || null === (o = c.settings) || void 0 === o || null === (o = o.ohmylms_settings) || void 0 === o ? void 0 : o.compare_with) ? 0 : 1,
       max: 100,
-      value: null == c || null === (i = c.settings) || void 0 === i || null === (i = i.creator_lms_settings) || void 0 === i ? void 0 : i.compare_with_value,
+      value: null == c || null === (i = c.settings) || void 0 === i || null === (i = i.ohmylms_settings) || void 0 === i ? void 0 : i.compare_with_value,
       onChange: function (e) {
         /^\d*\.?\d*$/.test(e) && function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "creator_lms_settings", "compare_with_value", e);
+          (0, y.dispatch)(Lf).updateStepArgs(u, s, d, "ohmylms_settings", "compare_with_value", e);
         }(e);
       },
       suffix: "%"
@@ -522,7 +522,7 @@ var DN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Complete Lesson", "ohmylms"),
   foreground: "#2271b1",
@@ -561,7 +561,7 @@ var DN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "lessons", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "lessons", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -580,7 +580,7 @@ var DN = {
     }, (0, b.__)("Select Lesson(s)", "ohmylms")), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.lessons) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.lessons) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -592,7 +592,7 @@ var DN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "lessons", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "lessons", e);
         }(e);
       },
       isDisabled: "lesson" === (null == c ? void 0 : c.automationFor)

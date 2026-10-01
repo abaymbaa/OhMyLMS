@@ -42,10 +42,7 @@ export function createMembershipSaleSchedule(readRuntime) {
           ? null === (t = u[0]) || void 0 === t
             ? void 0
             : t.currency
-          : null === (n = window) ||
-              void 0 === n ||
-              null === (n = n.creator_lms_params) ||
-              void 0 === n
+          : null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n
             ? void 0
             : n.currency),
       h = function (e) {
@@ -70,7 +67,7 @@ export function createMembershipSaleSchedule(readRuntime) {
       };
     return (
       <React.Fragment>
-        <Controls.SpacerWP padding={4} className={'omlms-sale-price-section'}>
+        <Controls.SpacerWP padding={4} className={'ohmylms-sale-price-section'}>
           <Controls.FlexWP gap={8} align={'flex-start'} justify={'flex-start'}>
             <Controls.FlexItemWP isBlock={!0}>
               <Controls.HeadingWP level={'4'}>
@@ -119,7 +116,7 @@ export function createMembershipSaleSchedule(readRuntime) {
                         }
                         max={99999999}
                         min={0}
-                        className={'omlms-sale-price-input'}
+                        className={'ohmylms-sale-price-input'}
                       />
                       {(null == errors ? void 0 : errors.sale_price) && (
                         <Controls.TextWP as={'p'} size={'13px'} color={'#FF4955'} align={'right'}>
@@ -139,7 +136,7 @@ export function createMembershipSaleSchedule(readRuntime) {
                             onKeyDown={function (e) {
                               ('Enter' !== e.key && ' ' !== e.key) || E();
                             }}
-                            className={'omlms-sale-price-clear-button'}
+                            className={'ohmylms-sale-price-clear-button'}
                           >
                             {(0, I18n.__)('Clear', 'ohmylms')}
                           </Controls.ButtonWP>
@@ -157,7 +154,7 @@ export function createMembershipSaleSchedule(readRuntime) {
                             onKeyDown={function (e) {
                               ('Enter' !== e.key && ' ' !== e.key) || w();
                             }}
-                            className={'omlms-sale-price-schedule-button'}
+                            className={'ohmylms-sale-price-schedule-button'}
                           >
                             {m
                               ? (0, I18n.__)('Remove Schedule', 'ohmylms')

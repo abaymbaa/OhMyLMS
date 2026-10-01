@@ -715,7 +715,7 @@ const CQ = function (e) {
       style: {
         backgroundColor: "#fff"
       },
-      href: "/wp-admin/admin.php?page=creator-lms#/students/".concat(r, "/report"),
+      href: "/wp-admin/admin.php?page=ohmylms#/students/".concat(r, "/report"),
       rel: "noopener noreferrer"
     }, (0, b.__)("View profile", "ohmylms")), h().createElement("br", null)))));
   },
@@ -766,25 +766,25 @@ const CQ = function (e) {
 function OQ(e) {
   var t = arguments.length > 1 && void 0 !== arguments[1] && arguments[1],
     n = {
-      decimal_sep: creator_lms_params.decimal_separator,
-      currency_position: creator_lms_params.currency_position,
-      currency_symbol: creator_lms_params.currency_symbol,
-      trim_zeros: creator_lms_params.currency_format_trim_zeros,
-      num_decimals: creator_lms_params.currency_format_num_decimals,
+      decimal_sep: ohmylms_params.decimal_separator,
+      currency_position: ohmylms_params.currency_position,
+      currency_symbol: ohmylms_params.currency_symbol,
+      trim_zeros: ohmylms_params.currency_format_trim_zeros,
+      num_decimals: ohmylms_params.currency_format_num_decimals,
       html: !0
     },
     r = e < 0,
     a = Math.abs(e).toFixed(n.num_decimals);
   "." !== n.decimal_sep && (a = a.replace(".", n.decimal_sep));
   var o,
-    i = n.html ? '<span class="creator-lms-Price-currencySymbol">'.concat(n.currency_symbol, "</span>") : n.currency_symbol;
+    i = n.html ? '<span class="ohmylms-Price-currencySymbol">'.concat(n.currency_symbol, "</span>") : n.currency_symbol;
   return "left" === n.currency_position ? o = "".concat(r ? "-" : "").concat(i).concat(a) : "right" === n.currency_position ? o = "".concat(r ? "-" : "").concat(a).concat(i) : "left_space" === n.currency_position ? o = "".concat(r ? "-" : "").concat(i, " ").concat(a) : "right_space" === n.currency_position && (o = "".concat(r ? "-" : "").concat(a, " ").concat(i)), t ? React.createElement("span", {
-    className: "creator-lms-Price-amount amount"
+    className: "ohmylms-Price-amount amount"
   }, r && "-", n.currency_position.includes("left") && React.createElement("span", {
-    className: "creator-lms-Price-currencySymbol"
+    className: "ohmylms-Price-currencySymbol"
   }, n.currency_symbol), a, n.currency_position.includes("right") && React.createElement("span", {
-    className: "creator-lms-Price-currencySymbol"
-  }, n.currency_symbol)) : n.html ? '<span class="creator-lms-Price-amount amount">'.concat(o, "</span>") : o;
+    className: "ohmylms-Price-currencySymbol"
+  }, n.currency_symbol)) : n.html ? '<span class="ohmylms-Price-amount amount">'.concat(o, "</span>") : o;
 }
 
 const kQ = function (e) {
@@ -796,7 +796,7 @@ const kQ = function (e) {
     key: "order_number",
     render: function (e, t) {
       var n = null;
-      return t.relationship === (0, b.__)("Subscription", "ohmylms") ? n = "/wp-admin/admin.php?page=creator-lms#/subscription-edit/".concat(t.id) : t.relationship !== (0, b.__)("Renewal Order", "ohmylms") && t.relationship !== (0, b.__)("Parent", "ohmylms") || (n = "/wp-admin/admin.php?page=creator-lms#/order-edit/".concat(t.id)), n ? h().createElement("a", {
+      return t.relationship === (0, b.__)("Subscription", "ohmylms") ? n = "/wp-admin/admin.php?page=ohmylms#/subscription-edit/".concat(t.id) : t.relationship !== (0, b.__)("Renewal Order", "ohmylms") && t.relationship !== (0, b.__)("Parent", "ohmylms") || (n = "/wp-admin/admin.php?page=ohmylms#/order-edit/".concat(t.id)), n ? h().createElement("a", {
         href: n,
         target: "_blank",
         rel: "noopener noreferrer"
@@ -877,7 +877,7 @@ const kQ = function (e) {
     rowKey: "order_number",
     columns: r,
     dataSource: n,
-    className: "omlms-related-orders-table"
+    className: "ohmylms-related-orders-table"
   }))));
 };
 

@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\SetupWizard;
+namespace OhMyLMS\SetupWizard;
 
 /**
  * Create Contact to MailMint and Appsero

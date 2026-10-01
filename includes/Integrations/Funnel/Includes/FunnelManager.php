@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Integrations\Funnel\Includes;
+namespace OhMyLMS\Integrations\Funnel\Includes;
 
 /**
  * FunnelManager Class
@@ -50,7 +50,7 @@ class FunnelManager {
 		 * @param array $payment_result The payment processing result.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_process_funnel', $order_id, $posted_data, $payment_result );
+		do_action( 'ohmylms_process_funnel', $order_id, $posted_data, $payment_result );
 
 		// Check if we have funnel steps configured for this order
 		$funnel_course = $this->find_funnel_course( $order_id );
@@ -257,7 +257,7 @@ class FunnelManager {
 	}
 
 	/**
-	 * Process order funnel (for compatibility with creatorlms-pro).
+	 * Process order funnel (for compatibility with ohmylms-pro).
 	 *
 	 * @param int $order_id The order ID.
 	 * @param array $posted_data The posted checkout data.
@@ -265,7 +265,7 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	public function process_order_funnel( $order_id, $posted_data ) {
-		// This method is for compatibility with creatorlms-pro funnel system
+		// This method is for compatibility with ohmylms-pro funnel system
 		// We need to create a dummy payment result for the maybe_process_funnel method
 		$payment_result = array(
 			'result'  => 'success',

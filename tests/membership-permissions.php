@@ -17,9 +17,9 @@ require dirname(__DIR__) . '/includes/Rest/V1/MembershipController.php';
 function verify($condition, $message) {
     if (!$condition) { throw new RuntimeException($message); }
 }
-$GLOBALS['posts'] = [7 => (object) ['post_type' => 'omlms-membership'], 8 => (object) ['post_type' => 'post']];
+$GLOBALS['posts'] = [7 => (object) ['post_type' => 'ohmylms-membership'], 8 => (object) ['post_type' => 'post']];
 $GLOBALS['caps'] = ['edit_posts:', 'read_post:7', 'edit_post:7', 'delete_post:7'];
-$controller = new OMLMS\Rest\V1\MembershipController();
+$controller = new OhMyLMS\Rest\V1\MembershipController();
 foreach (['read', 'edit', 'delete'] as $action) {
     $method = 'check_membership_' . $action . '_permission';
     verify($controller->$method(['id' => 7]) === true, "Authorized $action failed");

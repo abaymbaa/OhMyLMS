@@ -2,19 +2,19 @@
 /**
  * GoogleMeetApiClient class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes\Api;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes\Api;
 
-use OMLMS\Integrations\GoogleMeet\Includes\Api\GoogleMeetApiInterface;
-use OMLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Api\GoogleMeetApiInterface;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
 
 /**
  * Class GoogleMeetApiClient
  *
- * @package OMLMS\Integrations\GoogleMeet\Api
+ * @package OhMyLMS\Integrations\GoogleMeet\Api
  * @since 1.0.0
  */
 class GoogleMeetApiClient implements GoogleMeetApiInterface {

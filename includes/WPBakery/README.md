@@ -1,12 +1,12 @@
-# CreatorLMS - WPBakery Page Builder Integration
+# OhMyLMS - WPBakery Page Builder Integration
 
-This directory contains the WPBakery Page Builder integration for CreatorLMS.
+This directory contains the WPBakery Page Builder integration for OhMyLMS.
 
 ## Quick Start
 
 1. Install and activate WPBakery Page Builder
-2. The CreatorLMS elements will automatically appear in the WPBakery editor
-3. Look for the "CreatorLMS" category in the element picker
+2. The OhMyLMS elements will automatically appear in the WPBakery editor
+3. Look for the "OhMyLMS" category in the element picker
 4. Add elements to your pages and customize as needed
 
 ## Elements Included
@@ -35,9 +35,9 @@ See the root plugin directory for complete documentation:
 
 - WordPress 6.0+
 - PHP 7.4+
-- CreatorLMS Plugin
+- OhMyLMS Plugin
 - WPBakery Page Builder
 
 ## Support
 
-For questions or issues, please refer to the main CreatorLMS documentation or support channels.
+For questions or issues, please refer to the main OhMyLMS documentation or support channels.

@@ -16,15 +16,15 @@ var NX = function (e) {
     f = e.tag,
     v = e.showPricing;
   return React.createElement(React.Fragment, null, React.createElement(LJ, null, React.createElement("span", {
-    className: "omlms-dummy-content-title large"
+    className: "ohmylms-dummy-content-title large"
   }), React.createElement("div", {
-    className: "omlms-dummy-layout-wrapper"
+    className: "ohmylms-dummy-layout-wrapper"
   }, React.createElement("div", {
-    className: "omlms-dummy-layout-body"
+    className: "ohmylms-dummy-layout-body"
   }, ((null == t ? void 0 : t.isChecked) || (null == n ? void 0 : n.isChecked) || (null == r ? void 0 : r.isChecked) || (null == a ? void 0 : a.isChecked)) && React.createElement("div", {
-    className: "omlms-dummy-course-info"
+    className: "ohmylms-dummy-course-info"
   }, (null == t ? void 0 : t.isChecked) && React.createElement(rX, null), (null == n ? void 0 : n.isChecked) && React.createElement(oX, null), (null == r ? void 0 : r.isChecked) && React.createElement(lX, null), (null == a ? void 0 : a.isChecked) && React.createElement(uX, null)), React.createElement("div", {
-    className: "omlms-dummy-course"
+    className: "ohmylms-dummy-course"
   }, React.createElement("svg", {
     fill: "none",
     width: "261",
@@ -61,9 +61,9 @@ var NX = function (e) {
     fill: "#757C8E",
     d: "M1 15h55v3H1z"
   })), React.createElement(FX, null), React.createElement(dX, null))), React.createElement("div", {
-    className: "omlms-dummy-layout-sidebar"
+    className: "ohmylms-dummy-layout-sidebar"
   }, v && React.createElement(pX, null), (null == s ? void 0 : s.isChecked) && React.createElement(vX, null), (null == u ? void 0 : u.isChecked) && React.createElement(hX, null), (null == c ? void 0 : c.isChecked) && React.createElement(bX, null), ((null == o ? void 0 : o.isChecked) || (null == i ? void 0 : i.isChecked) || (null == l ? void 0 : l.isChecked)) && React.createElement(Ea, {
-    className: "omlms-dummy-course-info-sidebar"
+    className: "ohmylms-dummy-course-info-sidebar"
   }, (null == o ? void 0 : o.isChecked) && React.createElement(wX, null), (null == i ? void 0 : i.isChecked) && React.createElement(SX, null), (null == l ? void 0 : l.isChecked) && React.createElement(xX, null)), (null == d ? void 0 : d.isChecked) && React.createElement(PX, null), (null == m ? void 0 : m.isChecked) && React.createElement(kX, null), (null == p ? void 0 : p.isChecked) && React.createElement(AX, null), (null == f ? void 0 : f.isChecked) && React.createElement(TX, null)))));
 };
 
@@ -263,7 +263,7 @@ const zX = (0, g.memo)(WX);
 
 var BX = function () {
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-dummy-review-box"
+    className: "ohmylms-dummy-review-box"
   }, React.createElement("svg", {
     fill: "none",
     width: "236",
@@ -338,27 +338,27 @@ var VX = function (e) {
     f = e.tag,
     v = e.showPricing;
   return React.createElement(React.Fragment, null, React.createElement(LJ, {
-    className: "omlms-dummy-layout-2"
+    className: "ohmylms-dummy-layout-2"
   }, React.createElement("div", {
-    className: "omlms-dummy-header"
+    className: "ohmylms-dummy-header"
   }, React.createElement("span", {
-    className: "omlms-dummy-content-title large"
+    className: "ohmylms-dummy-content-title large"
   }), React.createElement("span", {
-    className: "omlms-dummy-content-title large thin"
+    className: "ohmylms-dummy-content-title large thin"
   }), ((null == t ? void 0 : t.isChecked) || (null == n ? void 0 : n.isChecked) || (null == r ? void 0 : r.isChecked)) && React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-dummy-course-info"
+    className: "ohmylms-dummy-course-info"
   }, (null == t ? void 0 : t.isChecked) && React.createElement(rX, null), (null == n ? void 0 : n.isChecked) && React.createElement(oX, null), (null == r ? void 0 : r.isChecked) && React.createElement(lX, null), (null == a ? void 0 : a.isChecked) && React.createElement(uX, null))), React.createElement("span", {
-    className: "omlms-dummy-course-creator"
+    className: "ohmylms-dummy-course-creator"
   }, "Created by ", React.createElement("span", null, "Admin"))), React.createElement("div", {
-    className: "omlms-dummy-layout-body"
+    className: "ohmylms-dummy-layout-body"
   }, React.createElement(dX, null), React.createElement(zX, null), React.createElement("span", {
-    className: "omlms-dummy-content-title extra-small"
+    className: "ohmylms-dummy-content-title extra-small"
   }), React.createElement(LX, null)), (v || (null == s ? void 0 : s.isChecked) || (null == u ? void 0 : u.isChecked) || (null == c ? void 0 : c.isChecked) || (null == o ? void 0 : o.isChecked) || (null == i ? void 0 : i.isChecked) || (null == l ? void 0 : l.isChecked) || (null == d ? void 0 : d.isChecked) || (null == m ? void 0 : m.isChecked) || (null == p ? void 0 : p.isChecked) || (null == f ? void 0 : f.isChecked)) && React.createElement("div", {
-    className: "omlms-card-wrapper omlms-dummy-sidebar"
+    className: "ohmylms-card-wrapper ohmylms-dummy-sidebar"
   }, v && React.createElement(React.Fragment, null, React.createElement(FX, null), React.createElement(pX, null), React.createElement("span", {
-    className: "omlms-dummy-content-title extra-small pricing-title"
+    className: "ohmylms-dummy-content-title extra-small pricing-title"
   })), (null == s ? void 0 : s.isChecked) && React.createElement(vX, null), (null == u ? void 0 : u.isChecked) && React.createElement(hX, null), (null == c ? void 0 : c.isChecked) && React.createElement(bX, null), ((null == o ? void 0 : o.isChecked) || (null == i ? void 0 : i.isChecked) || (null == l ? void 0 : l.isChecked)) && React.createElement("div", {
-    className: "omlms-dummy-course-info-sidebar"
+    className: "ohmylms-dummy-course-info-sidebar"
   }, (null == o ? void 0 : o.isChecked) && React.createElement(wX, null), (null == i ? void 0 : i.isChecked) && React.createElement(SX, null), (null == l ? void 0 : l.isChecked) && React.createElement(xX, null)), (null == d ? void 0 : d.isChecked) && React.createElement(PX, null), (null == m ? void 0 : m.isChecked) && React.createElement(kX, null), (null == p ? void 0 : p.isChecked) && React.createElement(AX, null), (null == f ? void 0 : f.isChecked) && React.createElement(TX, null))));
 };
 
@@ -419,7 +419,7 @@ var qX = function () {
       marginTop: "6px"
     }
   })), React.createElement("div", {
-    className: "omlms-dummy-sidebar-content"
+    className: "ohmylms-dummy-sidebar-content"
   }, React.createElement("svg", {
     style: {
       width: "100%",
@@ -535,7 +535,7 @@ const YX = (0, g.memo)(qX);
 var QX = function () {
   return React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
-    className: "omlms-dummy-progress",
+    className: "ohmylms-dummy-progress",
     style: {
       borderRadius: "10px"
     }
@@ -591,9 +591,9 @@ var $X = function () {
     marginBottom: 0,
     padding: 3
   }, React.createElement("div", {
-    className: "omlms-dummy-sidebar-header"
+    className: "ohmylms-dummy-sidebar-header"
   }, React.createElement("span", null, "Leaderboard")), React.createElement("div", {
-    className: "omlms-dummy-users",
+    className: "ohmylms-dummy-users",
     style: {
       flexDirection: "column",
       gap: "7px"

@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\Abstracts\Data;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\Abstracts\Data;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Membership
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Membership extends Data {
@@ -234,26 +234,26 @@ class Membership extends Data {
 
 		if ( $this->is_free() ) {
 			$price_html .= apply_filters(
-				'creator_lms_free_course_price_html',
-				sprintf( '<span class="free">%s</span>', esc_html__( 'Free', 'creator-lms' ) )
+				'ohmylms_free_course_price_html',
+				sprintf( '<span class="free">%s</span>', esc_html__( 'Free', 'ohmylms' ) )
 			);
 		} elseif ( $this->is_on_sale() ) {
 			$price_html .= apply_filters(
-				'creator_lms_course_sale_price_html',
+				'ohmylms_course_sale_price_html',
 				sprintf(
 					'<ins><bdi>%s</bdi></ins> <del><bdi>%s</bdi></del>',
-					omlms_price( $this->get_sale_price() ),
-					omlms_price( $this->get_regular_price() )
+					ohmylms_price( $this->get_sale_price() ),
+					ohmylms_price( $this->get_regular_price() )
 				)
 			);
 		} else {
 			$price_html .= apply_filters(
-				'creator_lms_course_price_html',
-				omlms_price( $this->get_price() )
+				'ohmylms_course_price_html',
+				ohmylms_price( $this->get_price() )
 			);
 		}
 
-		return apply_filters( 'creator_lms_get_price_html', $price_html, $this );
+		return apply_filters( 'ohmylms_get_price_html', $price_html, $this );
 	}
 
 
@@ -323,13 +323,13 @@ class Membership extends Data {
 	 * @since 1.0.0
 	 */
 	public function add_to_cart_url(): string {
-		$profile_page_id = get_option('creator_lms_profile_page_id');
+		$profile_page_id = get_option('ohmylms_profile_page_id');
 		$profile_link = get_page_link($profile_page_id);
 
 		if($this->is_already_purchased()){
-			return apply_filters( 'creator_lms_membership_add_to_cart_url', $profile_link, $this );
+			return apply_filters( 'ohmylms_membership_add_to_cart_url', $profile_link, $this );
 		}
-		return apply_filters( 'creator_lms_membership_add_to_cart_url', $this->get_permalink(), $this );
+		return apply_filters( 'ohmylms_membership_add_to_cart_url', $this->get_permalink(), $this );
 	}
 
 	/**
@@ -348,17 +348,17 @@ class Membership extends Data {
                 }
                 $text = sprintf(
                     // Translators: %s is replaced with the plan being purchased.
-                    __( 'Choose Plan %s', 'creator-lms' ),
-                    wp_kses_post( omlms_price($price) )
+                    __( 'Choose Plan %s', 'ohmylms' ),
+                    wp_kses_post( ohmylms_price($price) )
                 );
 			}else{
-				$text = __( 'See Membership', 'creator-lms' );
+				$text = __( 'See Membership', 'ohmylms' );
 			}
 		} else {
-			$text = __( 'This membership cannot be purchased.', 'creator-lms' );
+			$text = __( 'This membership cannot be purchased.', 'ohmylms' );
 		}
 
-		return apply_filters( 'creator_lms_membership_add_to_cart_text', $text );
+		return apply_filters( 'ohmylms_membership_add_to_cart_text', $text );
 	}
 	/**
 	 * Get the price type of the membership.
@@ -389,7 +389,7 @@ class Membership extends Data {
 	 * @since 1.0.0
 	 */
 	public function is_purchasable(): bool {
-		return apply_filters( 'creator_lms_membership_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
+		return apply_filters( 'ohmylms_membership_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
 	}
 
 
@@ -435,7 +435,7 @@ class Membership extends Data {
 			}
 		}
 
-		return 'view' === $context ? apply_filters( 'creator_lms_membership_is_on_sale', $on_sale, $this ) : $on_sale;
+		return 'view' === $context ? apply_filters( 'ohmylms_membership_is_on_sale', $on_sale, $this ) : $on_sale;
 	}
 
 
@@ -746,7 +746,7 @@ class Membership extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -764,7 +764,7 @@ class Membership extends Data {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}
@@ -924,7 +924,7 @@ class Membership extends Data {
                 $from_date = gmdate( 'Y-m-d H:i:s' );
             }
             $site_time_offset = (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-            $first_renewal_timestamp = creatorlms_add_time( $subscription_period_interval, $this->get_subscription_period(), creatorlms_date_to_time( $from_date ) + $site_time_offset );
+            $first_renewal_timestamp = ohmylms_add_time( $subscription_period_interval, $this->get_subscription_period(), ohmylms_date_to_time( $from_date ) + $site_time_offset );
             if ( 'site' !== $timezone ) {
                 $first_renewal_timestamp -= $site_time_offset;
             }

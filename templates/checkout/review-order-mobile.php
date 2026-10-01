@@ -2,9 +2,9 @@
 /**
  * Template for displaying order review in mobile devices.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/review-order-mobile.php
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/review-order-mobile.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -12,7 +12,7 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 
-<div class="creator-lms-order-review-toggle">
+<div class="ohmylms-order-review-toggle">
     <div class="order-review-toggle-head">
         <p class="review-toggle-title">
             Show Order Summary
@@ -30,10 +30,10 @@ defined( 'ABSPATH' ) || exit;
                 $cart_items = \CodeRex\Ecommerce\ecommerce()->cart->get_cart_contents();
                 $total = \CodeRex\Ecommerce\ecommerce()->cart->get_total($cart_items);
             }
-            echo omlms_price($total);
+            echo ohmylms_price($total);
             ?>
         </span>
     </div>
 
-    <?php creator_lms_order_review($checkout); ?>
+    <?php ohmylms_order_review($checkout); ?>
 </div>

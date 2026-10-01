@@ -1,34 +1,34 @@
-.creator-lms-assignment-single * {
+.ohmylms-assignment-single * {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-assignment-single {
+.ohmylms-page {
+    .ohmylms-assignment-single {
         padding: 60px 0 85px;
         background-color: #F9FAFD;
 
-        .creator-lms-assignment-title {
-            color: var(--creator-lms-heading-color);
+        .ohmylms-assignment-title {
+            color: var(--ohmylms-heading-color);
             font-size: 32px;
             font-weight: 700;
             line-height: 1.3;
             margin-bottom: 25px;
         }
 
-        .creator-lms-content-wrapper {
+        .ohmylms-content-wrapper {
             gap: 40px;
             align-items: flex-start;
         }
 
-        .creator-lms-content {
+        .ohmylms-content {
             width: calc(100% - 460px);
             border-radius: 16px;
             background-color: #FFF;
             box-shadow: 0px 2px 8px 0px #ECECEC;
             padding: 34px 40px 40px;
 
-            .creator-lms-resources-list {
+            .ohmylms-resources-list {
                 padding: 24px 0 0;
                 margin: 20px 0 0;
                 border-top: 1px solid #EBECED;
@@ -40,24 +40,24 @@
             }
         }
 
-        .creator-lms-sidebar {
+        .ohmylms-sidebar {
             position: sticky;
             top: 30px;
         }
 
-        .creator-lms-sidebar-widget {
+        .ohmylms-sidebar-widget {
             &.with-gray-color {
-                background-color: rgba(var(--creator-lms-primary-color-rgb), 0.059);
+                background-color: rgba(var(--ohmylms-primary-color-rgb), 0.059);
             }
 
-            .creator-lms-score-comment-box {
+            .ohmylms-score-comment-box {
                 border-radius: 8px;
                 background-color: #FFF;
                 padding: 22px 24px 24px;
                 margin-top: 20px;
 
                 .score-comment-box-title {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 16px;
                     font-weight: 700;
                     line-height: 1;
@@ -69,7 +69,7 @@
 
                 .score-comment-details-text p,
                 .score-comment-details-text {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 16px;
                     font-weight: 400;
                     line-height: 1.6;
@@ -79,7 +79,7 @@
 
                 .read-more-toggle {
                     display: none;
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                     font-size: 14px;
                     font-weight: 500;
                     line-height: 1;
@@ -109,7 +109,7 @@
                 box-shadow: none;
 
                 .submission-widget-title {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-size: 15px;
                     font-weight: 700;
                     line-height: 1.3;
@@ -130,50 +130,50 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-assignment-single {
+    .ohmylms-page .ohmylms-assignment-single {
         padding: 40px 0 65px;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-assignment-title {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-assignment-title {
         font-size: 26px;
         margin-bottom: 20px;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-content-wrapper {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-content-wrapper {
         gap: 30px;
     }
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-content {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-content {
         width: calc(100% - 390px);
         border-radius: 8px;
         padding: 14px 20px 20px;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box {
         border-radius: 10px;
         padding: 18px 20px 17px;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .score-comment-details-text p, 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .score-comment-details-text {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .score-comment-details-text p, 
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .score-comment-details-text {
         font-size: 14px;
     }
 
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-assignment-title {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-assignment-title {
         font-size: 24px;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-content-wrapper {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-content-wrapper {
         flex-direction: column-reverse;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-content {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-content {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-sidebar {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-sidebar {
         position: relative;
         top: 0;
     }
@@ -181,19 +181,19 @@
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .read-more-toggle {
+    .ohmylms-page .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .read-more-toggle {
         display: inline-block;
     }
-    .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .score-comment-details-text .line-clamp {
+    .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .score-comment-details-text .line-clamp {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .score-comment-details-text.active .line-clamp {
+    .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .score-comment-details-text.active .line-clamp {
         -webkit-line-clamp: inherit;
     }
-    .creator-lms-assignment-single .creator-lms-sidebar-widget .creator-lms-score-comment-box .score-comment-details-text.active svg {
+    .ohmylms-assignment-single .ohmylms-sidebar-widget .ohmylms-score-comment-box .score-comment-details-text.active svg {
         transform: rotate(180deg);
     }
 

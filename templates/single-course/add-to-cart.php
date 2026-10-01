@@ -2,9 +2,9 @@
 /**
  * The template for displaying single course add to cart
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-course/add-to-cart.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-course/add-to-cart.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -41,7 +41,7 @@ $args = array(
 		' ',
 		array_filter(
 			array(
-				$course->is_purchasable() && $course->is_in_stock() ? 'add_to_cart_button enroll-button creator-lms-button' : 'creator-lms-button enroll-button'
+				$course->is_purchasable() && $course->is_in_stock() ? 'add_to_cart_button enroll-button ohmylms-button' : 'ohmylms-button enroll-button'
 			)
 		)
 	),
@@ -60,24 +60,24 @@ if ( $should_show_add_to_cart ) {
 		
 	}else {
 		ob_start();
-		include(CREATOR_LMS_DIR . '/assets/images/icon/shopping-cart-icon.php');
+		include(OHMYLMS_DIR . '/assets/images/icon/shopping-cart-icon.php');
 		$cart_icon = ob_get_clean();
 		$btn_text = __('Buy Now', 'ohmylms');
 	}
 
 	echo sprintf(
-		'<a href="%s" tabindex="0" data-quantity="%s" class="add_to_cart_button enroll-button creator-lms-button" %s>%s%s</a>',
+		'<a href="%s" tabindex="0" data-quantity="%s" class="add_to_cart_button enroll-button ohmylms-button" %s>%s%s</a>',
 		esc_url( $course->add_to_cart_url() ),
 		esc_attr( isset( $args['quantity'] ) ? $args['quantity'] : 1 ),
-		isset( $args['attributes'] ) ? omlms_implode_html_attributes( $args['attributes'] ) : '',
+		isset( $args['attributes'] ) ? ohmylms_implode_html_attributes( $args['attributes'] ) : '',
 		$cart_icon,
 		$btn_text
 	);
 }
 // Only show points-based purchase if enrollment is active
 if ( $should_show_add_to_cart ) {
-	$integrations = get_option( 'creatorlms_integrations', array() );
-	if( creator_lms_is_pro() && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] && \OMLMS\Engagement\Reward::maybe_met_rules( 'purchase_course' ) ) {
+	$integrations = get_option( 'ohmylms_integrations', array() );
+	if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] && \OhMyLMS\Engagement\Reward::maybe_met_rules( 'purchase_course' ) ) {
 		if ( $course ) {
 			if( $course->get_purchase_point() && $course->get_reward_disabled() !== 'yes' && $course->get_purchase_point() ) {
 				$defaults = array(
@@ -86,7 +86,7 @@ if ( $should_show_add_to_cart ) {
 						' ',
 						array_filter(
 							array(
-								$course->is_purchasable() && $course->is_in_stock() ? 'add-to-cart-using-point-button enroll-button creator-lms-button' : 'creator-lms-button enroll-button',
+								$course->is_purchasable() && $course->is_in_stock() ? 'add-to-cart-using-point-button enroll-button ohmylms-button' : 'ohmylms-button enroll-button',
 							)
 						)
 					),
@@ -95,8 +95,8 @@ if ( $should_show_add_to_cart ) {
 						'rel'            => 'nofollow',
 					),
 				);
-				$args     = apply_filters( 'creator_lms_loop_add_to_cart_args', $defaults, $course );
-				omlms_get_template( 'loop/add-to-cart-using-point.php', $args );
+				$args     = apply_filters( 'ohmylms_loop_add_to_cart_args', $defaults, $course );
+				ohmylms_get_template( 'loop/add-to-cart-using-point.php', $args );
 			}
 		}
 	}

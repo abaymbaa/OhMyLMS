@@ -10,7 +10,7 @@ import {validateCommunity} from '../../assets/src/features/communities/model.mjs
 const generate = generatorModule.default || generatorModule;
 const source = 'assets/src/recovered/';
 const manifest = JSON.parse(fs.readFileSync(source + 'manifest.json'));
-const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/creatorlms.js').factories.find(f => f.id === '1841');
+const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/ohmylms.js').factories.find(f => f.id === '1841');
 const ast = parse(factory.fragments.map(file => fs.readFileSync(source + file, 'utf8')).join('\n'));
 const declarations = new Map();
 for (const statement of ast.program.body) {
@@ -80,7 +80,7 @@ test('community list preserves analytics, detail requests and view actions',asyn
  const row={id:12,url:'https://example.test/community/group'};
  const menu=table.props.columns.at(-1).render(null,row);menu.props.controls[0].onClick();assert.equal(h.requests.at(-1),row.url);
  h.globals.response=h.globals.community;menu.props.controls[1].onClick();await flush();
- assert.equal(h.requests.at(-1).path,'/creatorlms/v1/community/spaces/12');assert.deepEqual(h.globals.changes.at(-1),h.globals.community);
+ assert.equal(h.requests.at(-1).path,'/ohmylms/v1/community/spaces/12');assert.deepEqual(h.globals.changes.at(-1),h.globals.community);
 });
 test('community details preserve custom slugs and image attachment payloads',()=>{
  const h=harness();let tree=h.render('CommunityDetails',{errors:{},validate(){}});
@@ -93,17 +93,16 @@ test('community details preserve custom slugs and image attachment payloads',()=
 test('community course assignment preserves filtering and selection contracts',async()=>{
  const h=harness();h.globals.response=[{id:1,name:'Available'},{id:2,name:'Assigned',has_community:'yes'}];
  const tree=h.render('CommunityCourses');h.effects[0]();await flush();
- assert.equal(h.requests[0].path,'/creator-lms/v1/courses?search=&post_status=publish');assert.deepEqual(plain(h.updates.get(0)),[{label:'Available',value:1}]);
+ assert.equal(h.requests[0].path,'/ohmylms/v1/courses?search=&post_status=publish');assert.deepEqual(plain(h.updates.get(0)),[{label:'Available',value:1}]);
  const select=find(tree,'AdvancedSelectWP');select.props.onChange({label:'Available',value:1});assert.equal(h.globals.changes.at(-1).parent_id,1);
  select.props.onChange(null);assert.equal(h.globals.changes.at(-1).parent_id,null);
 });
-test('community editor validates, gates Pro and retries failed saves without duplicates',async()=>{
+test('community editor validates and retries failed saves without duplicates',async()=>{
  assert.ok(validateCommunity({title:' ',slug:'A B'}).title);assert.ok(validateCommunity({title:'Group',slug:'ab'}).slug);assert.deepEqual(validateCommunity({title:'Group',slug:'valid-slug'}),{});
  const h=harness([false,'2',{},false]);const closed=[];let refreshed=0;
  const tree=h.render('CommunityEditor',{isOpen:true,setIsOpen:value=>closed.push(value),onSuccess:()=>refreshed++});
  const save=all(tree,'ButtonWP').at(-1).props.onClick;
- h.globals.L.isProActive=false;await save();assert.equal(h.globals.saved.length,0);assert.equal(h.updates.get(3),true);
- h.globals.L.isProActive=true;h.globals.saveResult={status:'error'};await save();assert.equal(closed.length,0);assert.equal(h.updates.get(0),false);
+ h.globals.saveResult={status:'error'};await save();assert.equal(closed.length,0);assert.equal(h.updates.get(0),false);
  h.globals.saveError=true;await save();assert.equal(closed.length,0);assert.equal(h.updates.get(0),false);
  h.globals.saveError=false;h.globals.saveResult={status:'success'};await Promise.all([save(),save()]);assert.equal(h.globals.saved.length,3);assert.deepEqual(closed,[false]);assert.equal(refreshed,1);
  h.globals.community.slug='bad slug';await save();assert.equal(h.globals.saved.length,3);

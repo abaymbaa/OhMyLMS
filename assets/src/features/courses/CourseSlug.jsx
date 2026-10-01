@@ -87,7 +87,7 @@ export function createCourseSlug(readRuntime) {
             }}
           >
             <Controls.InputWP
-              className={'omlms-course-settings-slug-input'}
+              className={'ohmylms-course-settings-slug-input'}
               defaultValue={slug}
               onChange={function (e) {
                 !(function (e) {
@@ -104,7 +104,7 @@ export function createCourseSlug(readRuntime) {
             />
             {a && (
               <div
-                className={'omlms-input-error'}
+                className={'ohmylms-input-error'}
                 style={{
                   color: 'red',
                   fontSize: '12px',

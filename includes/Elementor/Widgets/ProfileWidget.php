@@ -1,16 +1,16 @@
 <?php
 /**
- * CreatorLMS Profile Widget for Elementor
+ * OhMyLMS Profile Widget for Elementor
  *
- * @package OMLMS\Elementor\Widgets
+ * @package OhMyLMS\Elementor\Widgets
  * @since 1.0.0
  */
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use OMLMS\Shortcodes\ShortCodeProfile;
+use OhMyLMS\Shortcodes\ShortCodeProfile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class ProfileWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_name() {
-		return 'creator-lms-profile';
+		return 'ohmylms-profile';
 	}
 
 	/**
@@ -34,7 +34,7 @@ class ProfileWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'CreatorLMS Profile', 'ohmylms' );
+		return __( 'OhMyLMS Profile', 'ohmylms' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class ProfileWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_categories() {
-		return array( 'creator-lms' );
+		return array( 'ohmylms' );
 	}
 
 	/**
@@ -70,7 +70,7 @@ class ProfileWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'omlms-frontend' );
+		return array( 'ohmylms-frontend' );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class ProfileWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'omlms-frontend' );
+		return array( 'ohmylms-frontend' );
 	}
 
 	/**
@@ -1101,15 +1101,15 @@ class ProfileWidget extends Widget_Base {
 	 */
 	protected function render() {
 		// Enqueue frontend assets.
-		wp_enqueue_style( 'omlms-frontend' );
-		wp_enqueue_script( 'omlms-frontend' );
+		wp_enqueue_style( 'ohmylms-frontend' );
+		wp_enqueue_script( 'ohmylms-frontend' );
 
 		// Retrieve settings; bail with admin notice if invalid.
 		$settings = $this->get_settings_for_display();
 
 		if ( ! is_array( $settings ) ) {
 			if ( current_user_can( 'edit_posts' ) ) {
-				echo '<div class="creator-lms-widget-error">';
+				echo '<div class="ohmylms-widget-error">';
 				echo '<p>' . esc_html__( 'Profile widget: unable to load settings.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
@@ -1128,16 +1128,16 @@ class ProfileWidget extends Widget_Base {
 
 		// Output outer wrapper with optional inline style.
 		if ( '' !== $style ) {
-			echo '<div class="creator-lms-profile-widget-wrap" style="' . esc_attr( $style ) . '">';
+			echo '<div class="ohmylms-profile-widget-wrap" style="' . esc_attr( $style ) . '">';
 		} else {
-			echo '<div class="creator-lms-profile-widget-wrap">';
+			echo '<div class="ohmylms-profile-widget-wrap">';
 		}
 
 		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
 			// Edit-mode path: show preview notice and render with preview filter.
-			echo '<div class="creator-lms-preview-notice"><p>' . esc_html__( 'Profile Preview', 'ohmylms' ) . '</p></div>';
+			echo '<div class="ohmylms-preview-notice"><p>' . esc_html__( 'Profile Preview', 'ohmylms' ) . '</p></div>';
 
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 
 			try {
 				ob_start();
@@ -1151,11 +1151,11 @@ class ProfileWidget extends Widget_Base {
 				echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} catch ( \Throwable $e ) {
 				ob_end_clean();
-				echo '<div class="creator-lms-preview-error">';
+				echo '<div class="ohmylms-preview-error">';
 				echo '<p>' . esc_html__( 'Profile preview is not available.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			} finally {
-				remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 			}
 		} else {
 			// Frontend path: render directly.

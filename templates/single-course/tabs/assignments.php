@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/tabs/assignments.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
-$single_course_layout = get_option('creator_lms_single_course_page_layout','layout_1');
+$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
 
 if(!$student){
     return;
 }
 
 if( 'layout_2' === $single_course_layout && !$maybe_enrolled ){
-    // return .creator-lms-course-assignment if not enrolled and layout-2
+    // return .ohmylms-course-assignment if not enrolled and layout-2
     return;
 }
 
@@ -31,11 +31,11 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
 
 ?>
 
-<div class="creator-lms-course-assignment">
+<div class="ohmylms-course-assignment">
     <?php if ( 'layout_2' === $single_course_layout ) { ?>
-        <h2 class="creator-lms-content-section-title assignment-title">
+        <h2 class="ohmylms-content-section-title assignment-title">
             <?php
-                echo apply_filters( 'creator_lms_course_assignment_title', __( 'Assignments', 'ohmylms' ) ); 
+                echo apply_filters( 'ohmylms_course_assignment_title', __( 'Assignments', 'ohmylms' ) ); 
             ?>
         </h2>
     <?php } ?>
@@ -43,7 +43,7 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
     <?php
     if( !empty($all_assignment_attempts) ){
         ?>
-        <div class="creator-lms-assignment-accordion creator-lms-default-accordion">
+        <div class="ohmylms-assignment-accordion ohmylms-default-accordion">
             <?php
                 foreach($all_assignment_attempts as $key=>$assignment_attempt){
                     if( !empty($assignment_attempt['assignment']) ){
@@ -56,9 +56,9 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
                         $class_status = isset($submissions[0]['status']) && 'submitted' === $submissions[0]['status']? 'pending' : 'approved';
                         $status = isset($submissions[0]['status']) && 'submitted' === $submissions[0]['status']? 'Pending' : 'Approved';
                         ?>
-                        <div class="creator-lms-accordion-item">
-                            <div class="creator-lms-accordion-head" role="button" tabindex="0" aria-expanded="false" aria-controls="lms-accordion-body-<?php echo $key; ?>" id="lms-accordion-head-<?php echo $key; ?>">
-                                <span class="creator-lms-accordion-title">
+                        <div class="ohmylms-accordion-item">
+                            <div class="ohmylms-accordion-head" role="button" tabindex="0" aria-expanded="false" aria-controls="lms-accordion-body-<?php echo $key; ?>" id="lms-accordion-head-<?php echo $key; ?>">
+                                <span class="ohmylms-accordion-title">
                                     <?php echo $title; ?>
                                 </span>
 
@@ -73,43 +73,43 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
                                 </span>
                             </div>
 
-                            <div class="creator-lms-accordion-body" id="lms-accordion-body-<?php echo $key; ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo $key; ?>">
+                            <div class="ohmylms-accordion-body" id="lms-accordion-body-<?php echo $key; ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo $key; ?>">
                                 <?php
                                     if( 
                                         is_array($assignment_attempt['submissions']) && 
                                         !empty($assignment_attempt['submissions'] ) 
                                     ){
                                         ?>
-                                            <div class="creator-lms-table">
+                                            <div class="ohmylms-table">
                                                 <?php
                                                     $loop = 1;
                                                     foreach($assignment_attempt['submissions'] as $submission_key=>$submission){
                                                         $status = 'submitted' === $submission['status'] ? 'pending' : 'approved';
                                                         $date = date("F d, Y", strtotime($submission['start_date']));
                                                         ?>
-                                                            <div class="creator-lms-tr">
-                                                                <div class="creator-lms-td-handle" role="button">
+                                                            <div class="ohmylms-tr">
+                                                                <div class="ohmylms-td-handle" role="button">
                                                                     <svg width="10" height="6" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1 1l4 4 4-4"></path></svg>
                                                                 </div>
 
-                                                                <div class="creator-lms-td title">
+                                                                <div class="ohmylms-td title">
                                                                     <?php 
-                                                                        echo $loop.''.creator_lms_get_number_suffix($loop).''.__(' Submission', 'ohmylms') ; 
+                                                                        echo $loop.''.ohmylms_get_number_suffix($loop).''.__(' Submission', 'ohmylms') ; 
                                                                     ?>
                                                                 </div>
 
-                                                                <div class="creator-lms-td submission-date">
+                                                                <div class="ohmylms-td submission-date">
                                                                     <?php echo $date; ?>
                                                                 </div>
 
-                                                                <div class="creator-lms-td action">
+                                                                <div class="ohmylms-td action">
                                                                     <a href="<?php echo esc_url(add_query_arg(array('course-id'=> $course->get_id(),'single-assignement-id' => $assignment->get_id(),'attempt-id' => (int)($key) + 1,'submission-id' => (int)$submission_key + 1), $course->get_permalink())); ?>" title="View details">
-                                                                        <?php include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon.php'); ?>
+                                                                        <?php include(OHMYLMS_DIR . '/assets/images/icon/eye-icon.php'); ?>
                                                                     </a>
                                                                 </div>
 
-                                                                <div class="creator-lms-mobile-td">
-                                                                    <div class="creator-lms-td submission-date" data-title="Date:">
+                                                                <div class="ohmylms-mobile-td">
+                                                                    <div class="ohmylms-td submission-date" data-title="Date:">
                                                                         <?php echo $date; ?>
                                                                     </div>
                                                                 </div>
@@ -131,25 +131,25 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
                 }
             ?>
 
-            <!-- <div class="creator-lms-table-pagination">
+            <!-- <div class="ohmylms-table-pagination">
                 <strong>678</strong> items
 
                 <a class="first-page" href="#" role="button" aria-label="First page" title="First Page">
-                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/double-arrow-left-icon.php'); ?>
+                    <?php include(OHMYLMS_DIR . '/assets/images/icon/double-arrow-left-icon.php'); ?>
                 </a>
 
                 <a class="previous-page" href="#" role="button" aria-label="Previous page" title="Previous Page">
-                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/arrow-left-icon.php'); ?>
+                    <?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-left-icon.php'); ?>
                 </a>
 
                 <input type="number" name="current-page-number" id="current-page-number" min="1" max="678" value="1" class="current-page-number">
 
                 <a class="next-page" href="#" role="button" aria-label="Next page" title="Next Page">
-                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/arrow-right-icon.php'); ?>
+                    <?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-right-icon.php'); ?>
                 </a>
 
                 <a class="last-page" href="#" role="button" aria-label="Last page" title="Last Page">
-                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/double-arrow-right-icon.php'); ?>
+                    <?php include(OHMYLMS_DIR . '/assets/images/icon/double-arrow-right-icon.php'); ?>
                 </a>
 
                 of <strong>01</strong>
@@ -159,7 +159,7 @@ $all_assignment_attempts = $student->get_all_assignment_attempts( $course->get_i
     }else {
         ?>
             <div class="no-course-data">
-                <?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+                <?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
                 <p>
                     <?php echo __( 'No Assignment Submission Found.', 'ohmylms' ); ?>
                 </p>

@@ -49,7 +49,7 @@ var See = function (e) {
     align: "center",
     justify: "start",
     gap: 4,
-    className: "omlms-email-editor-responsieve-switcher"
+    className: "ohmylms-email-editor-responsieve-switcher"
   }, React.createElement(I.RadioGroupIconWP, {
     onChange: function (e) {
       return n(e);

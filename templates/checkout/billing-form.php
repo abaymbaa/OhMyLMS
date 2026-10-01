@@ -2,9 +2,9 @@
 /**
  * Template for displaying checkout billing form.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/billing-form.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/billing-form.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

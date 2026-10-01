@@ -2,11 +2,11 @@
 /**
  * WPBakery Checkout Element
  *
- * @package OMLMS\WPBakery\Elements
+ * @package OhMyLMS\WPBakery\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\WPBakery\Elements;
+namespace OhMyLMS\WPBakery\Elements;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,7 +33,7 @@ class CheckoutElement {
 	 * @return string Modified output.
 	 */
 	public function disable_cache_for_preview( $output, $shortcode ) {
-		if ( 'creator_lms_checkout' === $shortcode ) {
+		if ( 'ohmylms_checkout' === $shortcode ) {
 			// Add a timestamp to force cache bypass in editor
 			if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 				$output .= '<!-- vc-no-cache:' . time() . ' -->';
@@ -55,9 +55,9 @@ class CheckoutElement {
 		vc_map(
 			array(
 				'name'        => __( 'Checkout', 'ohmylms' ),
-				'base'        => 'creator_lms_checkout',
-				'icon'        => 'icon-wpb-creatorlms',
-				'category'    => __( 'CreatorLMS', 'ohmylms' ),
+				'base'        => 'ohmylms_checkout',
+				'icon'        => 'icon-wpb-ohmylms',
+				'category'    => __( 'OhMyLMS', 'ohmylms' ),
 				'description' => __( 'Display the checkout form', 'ohmylms' ),
 				'params'      => array(
 					// --- Layout Settings ---

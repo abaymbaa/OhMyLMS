@@ -18,25 +18,25 @@ if (! defined('ABSPATH')) {
 
 <?php 
 
-$email_logo = !empty($email_settings['creator_lms_email_branding_image']) ?? '';
-$base_color = empty($email_settings['creator_lms_email_base_color']) ?? 'var(--omlms-primary-color)';
-$email_bg_color = empty($email_settings['creator_lms_email_background_color']) ?? '#ffffff';
-$email_body_bg_color = empty($email_settings['creator_lms_email_body_background_color']) ?? '#ffffff';
-$email_text_color = empty($email_settings['creator_lms_email_body_text_color']) ?? '#1F2328';
-$cta_btn_position = empty($email_settings['creator_lms_email_button_possition']) ?? 'center';
+$email_logo = !empty($email_settings['ohmylms_email_branding_image']) ?? '';
+$base_color = empty($email_settings['ohmylms_email_base_color']) ?? 'var(--ohmylms-primary-color)';
+$email_bg_color = empty($email_settings['ohmylms_email_background_color']) ?? '#ffffff';
+$email_body_bg_color = empty($email_settings['ohmylms_email_body_background_color']) ?? '#ffffff';
+$email_text_color = empty($email_settings['ohmylms_email_body_text_color']) ?? '#1F2328';
+$cta_btn_position = empty($email_settings['ohmylms_email_button_possition']) ?? 'center';
 ?>
 
 <body>
-    <div class="creator-lms-email-container">
-        <table class="creator-lms-table-main" style="width: 100%; border-spacing: 0; background: <?php echo $email_bg_color; ?>; border:0;">
+    <div class="ohmylms-email-container">
+        <table class="ohmylms-table-main" style="width: 100%; border-spacing: 0; background: <?php echo $email_bg_color; ?>; border:0;">
             <tr style="background: transparent; border: none; border-radius: 0;">
                 <td style="background: transparent; border: none; border-radius: 0; padding: 40px;">
-                    <table class="creator-lms-table2" style="border-spacing: 0; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto; border-collapse: separate;">
+                    <table class="ohmylms-table2" style="border-spacing: 0; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto; border-collapse: separate;">
                         <tr>
                             <td style="border: 5px solid <?php echo $base_color; ?>; background: <?php echo $email_body_bg_color; ?>; border-radius: 20px;">
-                                <table class="creator-lms-table3" style="width: 100%; border-collapse: collapse;">
+                                <table class="ohmylms-table3" style="width: 100%; border-collapse: collapse;">
                                     <!-- Include Header -->
-                                    <?php do_action('creator_lms_email_header', 'New Order', $email_settings ); ?>
+                                    <?php do_action('ohmylms_email_header', 'New Order', $email_settings ); ?>
                                     
                                     <!-- Main Content -->
                                     <tr>
@@ -52,13 +52,13 @@ $cta_btn_position = empty($email_settings['creator_lms_email_button_possition'])
 
                                                 
                                                 <!-- Include Order Details -->
-                                                <?php do_action('creator_lms_email_order_details', $order, $email_settings ) ?>
+                                                <?php do_action('ohmylms_email_order_details', $order, $email_settings ) ?>
                                                 
                                                 <!-- Include Order Items -->
-                                                <?php do_action('creator_lms_email_order_items', $order, $email_settings ) ?>
+                                                <?php do_action('ohmylms_email_order_items', $order, $email_settings ) ?>
 
                                                 <!-- Include Footer -->
-                                                <?php do_action('creator_lms_email_footer', $settings, $email_settings ) ?>
+                                                <?php do_action('ohmylms_email_footer', $settings, $email_settings ) ?>
 
                                             </div>
                                         </td>

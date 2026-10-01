@@ -4,14 +4,14 @@
  *
  * Handle comments (reviews and order notes).
  *
- * @package  OMLMS\Hooks
+ * @package  OhMyLMS\Hooks
  *
  * @version 1.0.0
  */
 
-namespace OMLMS;
+namespace OhMyLMS;
 
-use OMLMS\Data\Course;
+use OhMyLMS\Data\Course;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -45,7 +45,7 @@ class CourseComment {
 	 * @return bool
 	 */
 	public static function comments_open( $open, $post_id ) {
-		if ( CREATOR_LMS_COURSE_CPT === get_post_type( $post_id ) && ! post_type_supports( CREATOR_LMS_COURSE_CPT, 'comments' ) ) {
+		if ( OHMYLMS_COURSE_CPT === get_post_type( $post_id ) && ! post_type_supports( OHMYLMS_COURSE_CPT, 'comments' ) ) {
 			$open = false;
 		}
 		return $open;
@@ -58,7 +58,7 @@ class CourseComment {
 	 */
 	public static function add_comment_rating( $comment_id ) {
 		// phpcs:disable
-		if ( isset( $_POST['rating'], $_POST['comment_post_ID'] ) && CREATOR_LMS_COURSE_CPT === get_post_type( absint( $_POST['comment_post_ID'] ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		if ( isset( $_POST['rating'], $_POST['comment_post_ID'] ) && OHMYLMS_COURSE_CPT === get_post_type( absint( $_POST['comment_post_ID'] ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			if ( ! $_POST['rating'] || $_POST['rating'] > 5 || $_POST['rating'] < 0 ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				return;
 			}
@@ -81,7 +81,7 @@ class CourseComment {
 	public static function comment_moderation_recipients( $emails, $comment_id ) {
 		$comment = get_comment( $comment_id );
 
-		if ( $comment && CREATOR_LMS_COURSE_CPT === get_post_type( $comment->comment_post_ID ) ) {
+		if ( $comment && OHMYLMS_COURSE_CPT === get_post_type( $comment->comment_post_ID ) ) {
 			$emails = array( get_option( 'admin_email' ) );
 		}
 
@@ -95,8 +95,8 @@ class CourseComment {
 	 * @throws \Exception
 	 */
 	public static function clear_transients( $post_id ) {
-		if ( CREATOR_LMS_COURSE_CPT === get_post_type( $post_id ) ) {
-			$course = omlms_get_course( $post_id );
+		if ( OHMYLMS_COURSE_CPT === get_post_type( $post_id ) ) {
+			$course = ohmylms_get_course( $post_id );
 			$course->set_rating_counts( self::get_rating_counts_for_product( $course ) );
 			$course->set_average_rating( self::get_average_rating_for_product( $course ) );
 			$course->set_review_count( self::get_review_count_for_product( $course ) );
@@ -111,7 +111,7 @@ class CourseComment {
 	 * is called.
 	 */
 	public static function delete_comments_count_cache() {
-		delete_transient( 'creator_lms_count_comments' );
+		delete_transient( 'ohmylms_count_comments' );
 	}
 
 	/**
@@ -126,7 +126,7 @@ class CourseComment {
 		global $wpdb;
 
 		if ( 0 === $post_id ) {
-			$stats = get_transient( 'creator_lms_count_comments' );
+			$stats = get_transient( 'ohmylms_count_comments' );
 
 			if ( ! $stats ) {
 				$stats = array(
@@ -139,7 +139,7 @@ class CourseComment {
 					SELECT comment_approved, COUNT(*) AS num_comments
 					FROM {$wpdb->comments}
 					LEFT JOIN {$wpdb->posts} ON comment_post_ID = {$wpdb->posts}.ID
-					WHERE comment_type NOT IN ('action_log', 'order_note', 'webhook_delivery') AND {$wpdb->posts}.post_type NOT IN ('omlms-course')
+					WHERE comment_type NOT IN ('action_log', 'order_note', 'webhook_delivery') AND {$wpdb->posts}.post_type NOT IN ('ohmylms-course')
 					GROUP BY comment_approved
 					",
 					ARRAY_A
@@ -173,7 +173,7 @@ class CourseComment {
 				}
 
 				$stats = (object) $stats;
-				set_transient( 'creator_lms_count_comments', $stats );
+				set_transient( 'ohmylms_count_comments', $stats );
 			}
 		}
 
@@ -214,7 +214,7 @@ class CourseComment {
 	public static function add_comment_purchase_verification( $comment_id ) {
 		$comment  = get_comment( $comment_id );
 		$verified = false;
-		if ( CREATOR_LMS_COURSE_CPT === get_post_type( $comment->comment_post_ID ) ) {
+		if ( OHMYLMS_COURSE_CPT === get_post_type( $comment->comment_post_ID ) ) {
 			$verified = wc_customer_bought_product( $comment->comment_author_email, $comment->user_id, $comment->comment_post_ID );
 			add_comment_meta( $comment_id, 'verified', (int) $verified, true );
 		}
@@ -352,7 +352,7 @@ class CourseComment {
 	 */
 	public static function update_comment_type( $comment_data ) {
 		// phpcs:disable
-		if ( ! is_admin() && isset( $_POST['comment_post_ID'], $comment_data['comment_type'] ) && self::is_default_comment_type( $comment_data['comment_type'] ) && CREATOR_LMS_COURSE_CPT === get_post_type( absint( $_POST['comment_post_ID'] ) ) ) { // WPCS: input var ok, CSRF ok.
+		if ( ! is_admin() && isset( $_POST['comment_post_ID'], $comment_data['comment_type'] ) && self::is_default_comment_type( $comment_data['comment_type'] ) && OHMYLMS_COURSE_CPT === get_post_type( absint( $_POST['comment_post_ID'] ) ) ) { // WPCS: input var ok, CSRF ok.
 			$comment_data['comment_type']     = 'review';
 			$comment_data['comment_approved'] = 0;
 		}

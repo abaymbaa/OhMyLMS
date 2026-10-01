@@ -88,7 +88,7 @@ export function createPaymentSettings(readRuntime) {
                           (r[null == t ? void 0 : t.key] = null == t ? void 0 : t.value),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/settings/payment-gateway',
+                          path: '/ohmylms/v1/settings/payment-gateway',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ export function createPaymentSettings(readRuntime) {
                         (n = x(r)),
                         (t.n = 1),
                         l()({
-                          path: '/creator-lms/v1/settings/currency',
+                          path: '/ohmylms/v1/settings/currency',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -187,13 +187,11 @@ export function createPaymentSettings(readRuntime) {
                         _(!0),
                         (o = x(a)),
                         (i =
-                          (null == a ||
-                          null === (n = a.creator_lms_existing_tax_rates) ||
-                          void 0 === n
+                          (null == a || null === (n = a.ohmylms_existing_tax_rates) || void 0 === n
                             ? void 0
                             : n.value) || []),
                         (c =
-                          (null == a || null === (r = a.creator_lms_new_tax_rates) || void 0 === r
+                          (null == a || null === (r = a.ohmylms_new_tax_rates) || void 0 === r
                             ? void 0
                             : r.value) || []),
                         (s = []),
@@ -225,28 +223,25 @@ export function createPaymentSettings(readRuntime) {
                         (d = V1(
                           V1(
                             {
-                              creator_lms_tax_enabled: o.creator_lms_tax_enabled || 'no',
-                              creator_lms_tax_label: o.creator_lms_tax_label || 'Tax',
-                              creator_lms_prices_include_tax:
-                                o.creator_lms_prices_include_tax || 'no',
-                              creator_lms_eu_vat_enabled: o.creator_lms_eu_vat_enabled || 'no',
-                              creator_lms_disable_vat_validation:
-                                o.creator_lms_disable_vat_validation || 'no',
-                              creator_lms_vat_number_label:
-                                o.creator_lms_vat_number_label || 'VAT Number',
-                              creator_lms_fallback_tax_rate:
-                                o.creator_lms_fallback_tax_rate || '0.00',
+                              ohmylms_tax_enabled: o.ohmylms_tax_enabled || 'no',
+                              ohmylms_tax_label: o.ohmylms_tax_label || 'Tax',
+                              ohmylms_prices_include_tax: o.ohmylms_prices_include_tax || 'no',
+                              ohmylms_eu_vat_enabled: o.ohmylms_eu_vat_enabled || 'no',
+                              ohmylms_disable_vat_validation:
+                                o.ohmylms_disable_vat_validation || 'no',
+                              ohmylms_vat_number_label: o.ohmylms_vat_number_label || 'VAT Number',
+                              ohmylms_fallback_tax_rate: o.ohmylms_fallback_tax_rate || '0.00',
                             },
                             o,
                           ),
                           {},
                           {
-                            creator_lms_tax_rates: s,
+                            ohmylms_tax_rates: s,
                           },
                         )),
                         (t.n = 1),
                         l()({
-                          path: '/creator-lms/v1/settings/tax',
+                          path: '/ohmylms/v1/settings/tax',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -315,12 +310,12 @@ export function createPaymentSettings(readRuntime) {
           <Controls.CardWP
             isBorderless={!0}
             variant={'secondary'}
-            className={'omlms-full-screen-height'}
+            className={'ohmylms-full-screen-height'}
           >
             <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
               <ep.A
                 items={k}
-                className={'omlms-monetization-tabs'}
+                className={'ohmylms-monetization-tabs'}
                 onChange={function (e) {
                   (S(e), d('/settings/'.concat(p, '/').concat(e)));
                 }}

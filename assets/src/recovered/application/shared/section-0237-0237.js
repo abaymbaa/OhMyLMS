@@ -11,7 +11,7 @@ const uoe = (0, g.memo)(coe),
     return (0, g.useEffect)(function () {
       var t,
         n = e.pathname;
-      return !/^\/course-edit\/\d+$/i.test(n) || null !== (t = window) && void 0 !== t && null !== (t = t.creator_lms_params) && void 0 !== t && t.is_uiexpress_active ? document.body.classList.remove("folded") : document.body.classList.add("folded"), function () {
+      return !/^\/course-edit\/\d+$/i.test(n) || null !== (t = window) && void 0 !== t && null !== (t = t.ohmylms_params) && void 0 !== t && t.is_uiexpress_active ? document.body.classList.remove("folded") : document.body.classList.add("folded"), function () {
         document.body.classList.remove("folded");
       };
     }, [e.pathname]), null;
@@ -147,25 +147,25 @@ var foe = function () {
         return doe().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (n = i.length > 1 && void 0 !== i[1] ? i[1] : "", window.creator_lms_params) {
+              if (n = i.length > 1 && void 0 !== i[1] ? i[1] : "", window.ohmylms_params) {
                 e.n = 1;
                 break;
               }
               return e.a(2);
             case 1:
-              if (window.creator_lms_params.track_page_view_nonce) {
+              if (window.ohmylms_params.track_page_view_nonce) {
                 e.n = 2;
                 break;
               }
               return e.a(2);
             case 2:
-              if (window.creator_lms_params.ajax_url) {
+              if (window.ohmylms_params.ajax_url) {
                 e.n = 3;
                 break;
               }
               return e.a(2);
             case 3:
-              return (r = new FormData()).append("action", "omlms_track_page_view"), r.append("nonce", window.creator_lms_params.track_page_view_nonce), r.append("page_path", t), r.append("page_name", n || t), e.p = 4, e.n = 5, fetch(window.creator_lms_params.ajax_url, {
+              return (r = new FormData()).append("action", "ohmylms_track_page_view"), r.append("nonce", window.ohmylms_params.track_page_view_nonce), r.append("page_path", t), r.append("page_name", n || t), e.p = 4, e.n = 5, fetch(window.ohmylms_params.ajax_url, {
                 method: "POST",
                 body: r
               });
@@ -175,7 +175,7 @@ var foe = function () {
               e.v, e.n = 8;
               break;
             case 7:
-              e.p = 7, o = e.v, console.error("CreatorLMS: Error tracking page view", o);
+              e.p = 7, o = e.v, console.error("OhMyLMS: Error tracking page view", o);
             case 8:
               return e.a(2);
           }
@@ -201,7 +201,7 @@ var foe = function () {
   voe = function () {
     var e = (0, f.zy)();
     return (0, p.useEffect)(function () {
-      if (window.creator_lms_params.should_track) {
+      if (window.ohmylms_params.should_track) {
         var t = e.pathname.replace(/^\//, "").split("/")[0].split("-").map(function (e) {
           return e.charAt(0).toUpperCase() + e.slice(1);
         }).join(" ");
@@ -226,7 +226,7 @@ const goe = function () {
     var t = !0;
     return t && (e.getLmsUtilityData(), function () {
       var e;
-      if (null !== (e = window) && void 0 !== e && null !== (e = e.creator_lms_params) && void 0 !== e && e.is_uiexpress_active) {
+      if (null !== (e = window) && void 0 !== e && null !== (e = e.ohmylms_params) && void 0 !== e && e.is_uiexpress_active) {
         var t = 0,
           n = function () {
             document.getElementById("uixpress-app-wrapper") ? (function () {
@@ -275,7 +275,7 @@ const goe = function () {
 };
 
 var hoe,
-  yoe = document.getElementById("creator-lms");
+  yoe = document.getElementById("ohmylms");
 
 yoe && (hoe = (0, y.createReduxStore)(Lf, {
   actions: r,
@@ -648,4 +648,4 @@ yoe && (hoe = (0, y.createReduxStore)(Lf, {
 }), (0, y.register)(hoe), function () {
   var e, t, n, r, a, o, i, l, c, u, s, d, m, p, f, v, g, h, y;
   iI(Jy), iI(Yy), iI(Uy), iI(vb), iI(_b), iI(kb), iI(Rb), iI(Tb), iI(Bb), iI(ib), iI(qb), iI(p_), null !== (e = window) && void 0 !== e && null !== (e = e.MRM_Vars) && void 0 !== e && e.is_wc_active && null !== (t = window) && void 0 !== t && null !== (t = t.MRM_Vars) && void 0 !== t && null !== (t = t.cart_settings) && void 0 !== t && t.enable && (iI(S_), iI(P_), iI(j_)), null !== (n = window) && void 0 !== n && null !== (n = n.MRM_Vars) && void 0 !== n && n.is_wc_active && (iI(W_), iI(tw), iI(M_), iI(Y_), iI(iw), iI(ow), iI(Rw), iI(F_), iI(vw)), null !== (r = window) && void 0 !== r && null !== (r = r.MRM_Vars) && void 0 !== r && r.is_wcs_active && (iI($w), iI(aE), iI(dE), iI(Mw), iI(Lw)), null !== (a = window) && void 0 !== a && null !== (a = a.MRM_Vars) && void 0 !== a && a.is_wcm_active && (iI(vE), iI(gE)), null !== (o = window) && void 0 !== o && null !== (o = o.MRM_Vars) && void 0 !== o && o.is_wcw_active && iI(RE), null !== (i = window) && void 0 !== i && null !== (i = i.MRM_Vars) && void 0 !== i && i.is_edd_active && (iI(ME), iI(IE), iI(DE)), null !== (l = window) && void 0 !== l && null !== (l = l.MRM_Vars) && void 0 !== l && l.is_tutor_active && (iI(qE), iI(HE), iI(BE), iI(eS), iI(ZE), iI(JE)), null !== (c = window) && void 0 !== c && null !== (c = c.MRM_Vars) && void 0 !== c && c.is_gform_active && (iI(_S), iI(AS), iI(dS)), null !== (u = window) && void 0 !== u && null !== (u = u.MRM_Vars) && void 0 !== u && u.is_jetform_active && (iI(LS), iI(JS)), null !== (s = window) && void 0 !== s && null !== (s = s.MRM_Vars) && void 0 !== s && s.is_fluentform_active && iI(uR), null !== (d = window) && void 0 !== d && null !== (d = d.MRM_Vars) && void 0 !== d && d.is_fluent_booking_active && (iI(hR), iI(xR), iI(TR), iI(LR)), null !== (m = window) && void 0 !== m && null !== (m = m.MRM_Vars) && void 0 !== m && m.is_wp_form_active && iI(zC), null !== (p = window) && void 0 !== p && null !== (p = p.MRM_Vars) && void 0 !== p && p.is_contact_form_active && iI(KR), null !== (f = window) && void 0 !== f && null !== (f = f.MRM_Vars) && void 0 !== f && f.is_bricks_active && iI(cx), null !== (v = window) && void 0 !== v && null !== (v = v.MRM_Vars) && void 0 !== v && v.is_learndash_active && (iI(eC), iI(gx), iI(Ox), iI(Ux), iI(lC), iI(Dx)), null !== (g = window) && void 0 !== g && null !== (g = g.MRM_Vars) && void 0 !== g && g.is_memberpress_active && (iI(fC), iI(EC)), null !== (h = window) && void 0 !== h && null !== (h = h.MRM_Vars) && void 0 !== h && h.is_lifterlms_active && (iI(xC), iI(OC)), iI(Tj), iI(Uj), iI($C), iI(HC), iI(tP), iI(Jj), iI(JC), iI(cP), iI(oP), iI(tA), iI(Qj), iI(jA), iI(TA), iI(YA), iI(aM), iI(oM), iI(mM), iI(qM), iI(_T), null !== (y = window) && void 0 !== y && null !== (y = y.MRM_Vars) && void 0 !== y && y.is_wc_active && (iI(ZT), iI(KT), iI(RT), iI(ET)), iI(iA), iI(oI);
-}(), (0, y.dispatch)(Lf).unregisterTriggerExcept("creator_lms"), lI("specificTimeDelay"), (0, o.H)(yoe).render(React.createElement(goe, null)));
+}(), (0, y.dispatch)(Lf).unregisterTriggerExcept("ohmylms"), lI("specificTimeDelay"), (0, o.H)(yoe).render(React.createElement(goe, null)));

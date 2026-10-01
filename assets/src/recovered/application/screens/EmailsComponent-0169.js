@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var C4 = function () {
-  HG("creator-lms", "emails");
+  HG("ohmylms", "emails");
   var e = function (e, t) {
       return function (e) {
         if (Array.isArray(e)) return e;
@@ -49,7 +49,7 @@ var C4 = function () {
   }, []), React.createElement(React.Fragment, null, r, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     paddingTop: 1,

@@ -1,6 +1,6 @@
-.creator-lms-page {
-    .creator-lms-lesson-details {
-        .creator-lms-lesson-navigation {
+.ohmylms-page {
+    .ohmylms-lesson-details {
+        .ohmylms-lesson-navigation {
             border-top: 1px solid #ECEDF2;
             padding-top: 24px;
             position: relative;
@@ -16,17 +16,17 @@
                 gap: 12px;
             }
 
-            .creator-lms-checkbox {
+            .ohmylms-checkbox {
                 border-radius: 10px;
                 background-color: #35BD4C;
                 padding: 12px 20px;
 
                 &:focus {
-                    outline: 2px solid rgba(var(--creator-lms-primary-color-rgb), 0.3490196078);
+                    outline: 2px solid rgba(var(--ohmylms-primary-color-rgb), 0.3490196078);
                 }
             }
 
-            .creator-lms-checkbox-text {
+            .ohmylms-checkbox-text {
                 color: #FFF;
                 font-size: 14px;
                 line-height: 1;
@@ -60,11 +60,11 @@
                 }
             }
 
-            .creator-lms-checkbox input[type=checkbox]:checked + .creator-lms-checkbox-text .checkedbox {
+            .ohmylms-checkbox input[type=checkbox]:checked + .ohmylms-checkbox-text .checkedbox {
                 background: transparent;
                 border-color: #fff;
             }
-            .creator-lms-checkbox input[type=checkbox]:checked + .creator-lms-checkbox-text .checkedbox svg {
+            .ohmylms-checkbox input[type=checkbox]:checked + .ohmylms-checkbox-text .checkedbox svg {
                 opacity: 1;
                 visibility: visible;
             }
@@ -77,7 +77,7 @@
                 border-radius: 10px;
 
                 &:hover {
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                 }
             }
             
@@ -98,7 +98,7 @@
 
                     &:hover {
                         text-decoration: underline;
-                        color: var(--creator-lms-primary-color);
+                        color: var(--ohmylms-primary-color);
                     }
                 }
 
@@ -106,17 +106,17 @@
                     margin-left: auto;
                 }
 
-                .creator-lms-button {
+                .ohmylms-button {
                     color: #fff;
                     font-size: 14px;
                     padding: 10px 20px 9px;
-                    background-color: var(--creator-lms-primary-color);
+                    background-color: var(--ohmylms-primary-color);
                     height: 38px;
                     border-radius: 10px;
 
                     
                     &:hover {
-                        color: var(--creator-lms-primary-color);
+                        color: var(--ohmylms-primary-color);
                         background-color: transparent;
                     }
 
@@ -132,7 +132,7 @@
                     // &.quiz-taken {
                     //     border-color: #FFF;
                     //     background-color: #FFF;
-                    //     color: var(--creator-lms-heading-color);
+                    //     color: var(--ohmylms-heading-color);
                     //     box-shadow: 0px 1px 2px 0px #DBDDE1;
                     // }
                 }
@@ -147,7 +147,7 @@
                 }
             }
 
-            .creator-lms-quiz-notice {
+            .ohmylms-quiz-notice {
                 color: #A1A1AA;
                 font-size: 13px;
                 font-weight: 400;
@@ -166,42 +166,42 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .ohmylms-checkbox {
         border-radius: 8px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .assignment-quiz-navigation .creator-lms-button {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .assignment-quiz-navigation .ohmylms-button {
         border-radius: 8px;
     }
 
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .quiz-navigation {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .quiz-navigation {
         justify-content: flex-end;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .quiz-navigation form {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .quiz-navigation form {
         margin-left: 0;
     }
 
 }
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .default-navigation {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .default-navigation {
         gap: 9px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .ohmylms-checkbox {
         padding: 12px 16px;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .next-lesson {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .next-lesson {
         padding: 10px 16px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .creator-lms-checkbox-text {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .ohmylms-checkbox-text {
         font-size: 13px;
     }
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-navigation .next-lesson {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-navigation .next-lesson {
         font-size: 13px;
     }
 

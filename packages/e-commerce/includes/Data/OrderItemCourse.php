@@ -105,7 +105,7 @@ class OrderItemCourse extends OrderItem {
 	 * @since 1.0.0
 	 */
 	public function get_course() {
-		return omlms_get_course( $this->get_course_id() );
+		return ohmylms_get_course( $this->get_course_id() );
 	}
 
 	/**
@@ -115,7 +115,7 @@ class OrderItemCourse extends OrderItem {
 	 * @since 1.0.0
 	 */
 	public function get_membership() {
-		return omlms_get_membership( $this->get_course_id() );
+		return ohmylms_get_membership( $this->get_course_id() );
 	}
 
 

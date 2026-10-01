@@ -2,13 +2,13 @@
 /**
  * Class ShortCodeOfferButton
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  * @since 1.0.0
  */
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
-use OMLMS\Integrations\Funnel\Includes\FunnelManager;
+use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -41,7 +41,7 @@ class ShortCodeOfferButton {
 				'height'          => '',              // Button height
 			),
 			$atts,
-			'creator_lms_offer_button'
+			'ohmylms_offer_button'
 		);
 
 		// Get funnel session data to determine if we're in a funnel context
@@ -82,10 +82,10 @@ class ShortCodeOfferButton {
 		}
 
 		// Build CSS classes
-		$button_classes = array( 'creator-lms-offer-btn' );
+		$button_classes = array( 'ohmylms-offer-btn' );
 		
 		// Add action class for default styling hook
-		$button_classes[] = 'creator-lms-offer-btn--' . sanitize_html_class( $atts['action'] );
+		$button_classes[] = 'ohmylms-offer-btn--' . sanitize_html_class( $atts['action'] );
 		
 		// Add custom classes
 		if ( ! empty( $atts['class'] ) ) {
@@ -196,7 +196,7 @@ class ShortCodeOfferButton {
 	 */
 	private static function render_offer_button( $url, $text, $classes, $style_attr, $atts ) {
 		?>
-		<div class="creator-lms-offer-button-wrapper">
+		<div class="ohmylms-offer-button-wrapper">
 			<a href="<?php echo esc_url( $url ); ?>" 
 			   <?php if ( ! empty( $atts['id'] ) ) : ?>id="<?php echo esc_attr( $atts['id'] ); ?>"<?php endif; ?>
 			   class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"

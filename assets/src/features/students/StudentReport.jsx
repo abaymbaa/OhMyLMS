@@ -87,7 +87,7 @@ export function createStudentReport(readRuntime) {
       o = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getStudent();
       }, []);
-    HG('creator-lms', 'students');
+    HG('ohmylms', 'students');
     var i = (0, ReactHooks.useCallback)(
       HZ(
         BZ().m(function n() {
@@ -138,14 +138,6 @@ export function createStudentReport(readRuntime) {
                 </Controls.FlexWP>
                 <Controls.CardWP isBorderless={!0} variant={'secondary'}>
                   <Controls.SpacerWP padding={5} marginTop={3}>
-                    <Controls.ProOverlayWP
-                      title={(0, I18n.__)(
-                        'Student analytics is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.',
-                        'ohmylms',
-                      )}
-                      top={'0px'}
-                      height={'100%'}
-                    />
                     <Controls.FlexWP direction={'column'} gap={4}>
                       <Controls.FlexWP justify={'space-between'} align={'center'} gap={3}>
                         <Controls.FlexItemWP flex={1}>

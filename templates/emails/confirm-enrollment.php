@@ -16,26 +16,26 @@ if (! defined('ABSPATH')) {
 </head>
 
 <?php 
-$email_logo = $email_settings['creator_lms_email_branding_image'] ?? '';
-$base_color = $email_settings['creator_lms_email_base_color'] ?? 'var(--omlms-primary-color)';
-$email_bg_color = $email_settings['creator_lms_email_background_color'] ?? '#F4F5F7';
-$email_body_bg_color = $email_settings['creator_lms_email_body_background_color'] ?? '#ffffff';
-$email_text_color = $email_settings['creator_lms_email_body_text_color'] ?? '#1F2328';
-$cta_btn_position = $email_settings['creator_lms_email_button_possition'] ?? 'center';
+$email_logo = $email_settings['ohmylms_email_branding_image'] ?? '';
+$base_color = $email_settings['ohmylms_email_base_color'] ?? 'var(--ohmylms-primary-color)';
+$email_bg_color = $email_settings['ohmylms_email_background_color'] ?? '#F4F5F7';
+$email_body_bg_color = $email_settings['ohmylms_email_body_background_color'] ?? '#ffffff';
+$email_text_color = $email_settings['ohmylms_email_body_text_color'] ?? '#1F2328';
+$cta_btn_position = $email_settings['ohmylms_email_button_possition'] ?? 'center';
 
 ?>
 
 <body>
-    <div class="creator-lms-email-container">
-        <table class="creator-lms-table-main" style="width: 100%; border-spacing: 0; background: <?php echo $email_bg_color; ?>; border:0;">
+    <div class="ohmylms-email-container">
+        <table class="ohmylms-table-main" style="width: 100%; border-spacing: 0; background: <?php echo $email_bg_color; ?>; border:0;">
             <tr style="background: transparent; border: none; border-radius: 0;">
                 <td style="background: transparent; border: none; border-radius: 0; padding: 40px;">
-                    <table class="creator-lms-table2" style="border-spacing: 0; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto; border-collapse: separate;">
+                    <table class="ohmylms-table2" style="border-spacing: 0; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto; border-collapse: separate;">
                         <tr>
                             <td style="border: 5px solid <?php echo $base_color; ?>; background: <?php echo $email_body_bg_color; ?>; border-radius: 20px;">
-                                <table class="creator-lms-table3" style="width: 100%; border-collapse: collapse;">
+                                <table class="ohmylms-table3" style="width: 100%; border-collapse: collapse;">
                                     <!-- Include Header -->
-                                    <?php do_action('creator_lms_email_header', 'Confirm enrollment', $email_settings ); ?>
+                                    <?php do_action('ohmylms_email_header', 'Confirm enrollment', $email_settings ); ?>
                                     
                                     <!-- Main Content -->
                                     <tr>
@@ -49,7 +49,7 @@ $cta_btn_position = $email_settings['creator_lms_email_button_possition'] ?? 'ce
                                                     <?php echo $settings['additional_content']; ?>
                                                 </div>
                                                 
-                                                <table class="creator-lms-order-items-table" style="width: 100%; border: 0; border-collapse: separate; border-radius: 0; background: transparent; margin: 0 0 20px">
+                                                <table class="ohmylms-order-items-table" style="width: 100%; border: 0; border-collapse: separate; border-radius: 0; background: transparent; margin: 0 0 20px">
                                                     <tr>
                                                         <td style="border: 1px solid #EBECED; border-radius: 10px; overflow: hidden; background: transparent;">
                                                             <table style="width: 100%; border: 0; border-collapse: collapse; border-radius: 0; background: transparent;">

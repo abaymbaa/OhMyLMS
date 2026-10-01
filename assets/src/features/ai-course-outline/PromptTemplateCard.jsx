@@ -72,7 +72,7 @@ export function createPromptTemplateCard(readRuntime) {
           isBorderless={!0}
           variant={'secondary'}
           padding={'12px 16px'}
-          className={'omlms-single-prompt-template'}
+          className={'ohmylms-single-prompt-template'}
           onMouseEnter={function () {
             i(!0);
           }}
@@ -95,7 +95,7 @@ export function createPromptTemplateCard(readRuntime) {
               <Controls.FlexWP
                 align={'center'}
                 justify={'center'}
-                className={'omlms-prompt-template-edit-btn-wrapper'}
+                className={'ohmylms-prompt-template-edit-btn-wrapper'}
               >
                 <Controls.ButtonWP
                   icon={<pG.A width={'14'} height={'14'} />}
@@ -112,7 +112,7 @@ export function createPromptTemplateCard(readRuntime) {
         </Controls.CardWP>
         <style scoped={!0}>
           {
-            '\n                    .omlms-single-prompt-template {\n                        position: relative;\n                        animation: fadeIn 0.3s ease-in-out;\n                    }\n\n                    .omlms-prompt-template-edit-btn-wrapper {\n                        position: absolute;\n                        width: 100%;\n                        bottom: 0;\n                        height: 60%;\n                        left: 0;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper .components-button {\n                        background: #000D25;\n                        color: #FFFFFF;\n                        padding: 4px 6px;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper .components-button:hover {\n                        color: #FFFFFF;\n                    }\n                    .omlms-prompt-template-edit-btn-wrapper:before {\n                        content: "";\n                        height: 100%;\n                        width: 100%;\n                        position: absolute;\n                        background: linear-gradient(0deg, rgba(255, 255, 255, 0.60) 0%, rgba(244, 245, 247, 0.00) 204.29%);\n                        backdrop-filter: blur(2px);\n                        border-radius: 0 0 4px 4px;\n                    }\n\n                    @keyframes fadeIn {\n                        0% {\n                            opacity: 0;\n                        }\n                        100% {\n                            opacity: 1;\n                        }\n                    }\n                '
+            '\n                    .ohmylms-single-prompt-template {\n                        position: relative;\n                        animation: fadeIn 0.3s ease-in-out;\n                    }\n\n                    .ohmylms-prompt-template-edit-btn-wrapper {\n                        position: absolute;\n                        width: 100%;\n                        bottom: 0;\n                        height: 60%;\n                        left: 0;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper .components-button {\n                        background: #000D25;\n                        color: #FFFFFF;\n                        padding: 4px 6px;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper .components-button:hover {\n                        color: #FFFFFF;\n                    }\n                    .ohmylms-prompt-template-edit-btn-wrapper:before {\n                        content: "";\n                        height: 100%;\n                        width: 100%;\n                        position: absolute;\n                        background: linear-gradient(0deg, rgba(255, 255, 255, 0.60) 0%, rgba(244, 245, 247, 0.00) 204.29%);\n                        backdrop-filter: blur(2px);\n                        border-radius: 0 0 4px 4px;\n                    }\n\n                    @keyframes fadeIn {\n                        0% {\n                            opacity: 0;\n                        }\n                        100% {\n                            opacity: 1;\n                        }\n                    }\n                '
           }
         </style>
       </React.Fragment>

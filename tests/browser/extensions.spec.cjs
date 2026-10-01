@@ -1,19 +1,19 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 async function login(page){
- const credentials=JSON.parse(fs.readFileSync(process.env.OMLMS_TEST_CREDENTIALS,'utf8'));
+ const credentials=JSON.parse(fs.readFileSync(process.env.OHMYLMS_TEST_CREDENTIALS,'utf8'));
  await page.goto('/wp-login.php');await page.locator('#user_login').fill(credentials.username);await page.locator('#user_pass').fill(credentials.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);
 }
 test.beforeEach(async({page})=>{await login(page);});
 test('custom admin page and isolated rendering failure',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms#/extensions/example-page');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/extensions/example-page');
  await expect(page.getByRole('heading',{name:'OhMyLMS example module'})).toBeVisible();
  await page.evaluate(()=>{
   const sdk=window.ohmylms.extensions;
   sdk.registerSlot('test-throwing',{label:'Throwing example',slot:'admin.screen.after',render:()=>{throw new Error('Expected isolated extension failure');}});
  });
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
  await page.evaluate(()=>{
   window.ohmylms.extensions.registerSlot('test-throwing',{label:'Throwing example',slot:'admin.screen.after',render:()=>{throw new Error('Expected isolated extension failure');}});
  });
@@ -23,10 +23,10 @@ test('custom admin page and isolated rendering failure',async({page})=>{
 });
 test('membership UI creates and reopens namespaced extension settings',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms#/memberships');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/memberships');
  await page.getByRole('button',{name:'Add Membership',exact:true}).first().click();
  await expect(page.getByLabel('Member benefit')).toBeVisible();
- await page.locator('.omlms-membership-plan-name-input input, input.omlms-membership-plan-name-input').fill('Browser extension plan');
+ await page.locator('.ohmylms-membership-plan-name-input input, input.ohmylms-membership-plan-name-input').fill('Browser extension plan');
  await page.getByPlaceholder('e.g. 5.90').first().fill('120');
  await page.getByLabel('Member benefit').fill('Browser-tested benefit');
  await page.getByRole('button',{name:'Next',exact:true}).click();
@@ -43,17 +43,17 @@ test('membership UI creates and reopens namespaced extension settings',async({pa
  } finally {await page.evaluate(id=>wp.apiFetch({path:`/ohmylms/v1/membership/${id}`,method:'DELETE'}),plan.id);}
 });
 test('registered question editor updates the existing authoring store',async({page})=>{
- await page.goto('/wp-admin/admin.php?page=creator-lms');
- await page.waitForFunction(()=>window.ohmylms?.extensions&&wp.data.select('creator-lms/store'));
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
+ await page.waitForFunction(()=>window.ohmylms?.extensions&&wp.data.select('ohmylms/store'));
  await page.evaluate(()=>{
   const sdk=window.ohmylms.extensions;
-  wp.data.dispatch('creator-lms/store').setQuestion({name:'Example number',settings:{type:'example-number',expected:1,score:{value:1}}});
-  const type=sdk.questionTypes('creator-lms/store').find(t=>t.type==='example-number');
+  wp.data.dispatch('ohmylms/store').setQuestion({name:'Example number',settings:{type:'example-number',expected:1,score:{value:1}}});
+  const type=sdk.questionTypes('ohmylms/store').find(t=>t.type==='example-number');
   const element=document.createElement('div');element.id='question-test';document.body.appendChild(element);
   wp.element.createRoot(element).render(wp.element.createElement(type.edit));
  });
  await page.getByLabel('Expected number').fill('42');
- expect(await page.evaluate(()=>wp.data.select('creator-lms/store').selectQuestion().settings.expected)).toBe(42);
+ expect(await page.evaluate(()=>wp.data.select('ohmylms/store').selectQuestion().settings.expected)).toBe(42);
 });
 test('admin feature routes render on desktop and mobile',async({page},testInfo)=>{
  test.setTimeout(180000);
@@ -61,12 +61,12 @@ test('admin feature routes render on desktop and mobile',async({page},testInfo)=
  page.on('pageerror',error=>failures.push({route,error:error.message}));
  page.on('response',response=>{if(response.status()>=500)failures.push({route,url:response.url(),status:response.status()});});
  for(route of ['/courses','/quizzes','/memberships','/orders','/subscriptions','/students','/integrations','/settings/general-settings','/webhooks','/certificates','/assignments']){
-  await page.goto('/wp-admin/admin.php?page=creator-lms#'+route);
+  await page.goto('/wp-admin/admin.php?page=ohmylms#'+route);
   await page.waitForLoadState('networkidle');
   await expect(page.locator('body')).not.toContainText('There has been a critical error');
  }
  await page.setViewportSize({width:390,height:844});
- await page.goto('/wp-admin/admin.php?page=creator-lms#/memberships');await page.waitForLoadState('networkidle');
+ await page.goto('/wp-admin/admin.php?page=ohmylms#/memberships');await page.waitForLoadState('networkidle');
  await expect(page.getByText('All Memberships',{exact:true})).toBeVisible();
  await page.screenshot({path:testInfo.outputPath('memberships-mobile.png'),fullPage:true});
  await page.evaluate(()=>document.documentElement.dir='rtl');
@@ -77,10 +77,10 @@ test('admin feature routes render on desktop and mobile',async({page},testInfo)=
 
 test('custom lesson uses the real save and reopen flow',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
  const lesson=await page.evaluate(()=>wp.apiFetch({path:'/ohmylms/v1/lessons',method:'POST',data:{name:'Browser reading',type:'example-reading',description:'Initial reading',status:'draft'}}));
  try{
-  await page.goto(`/wp-admin/admin.php?page=creator-lms#/lesson-edit/${lesson.id}`);
+  await page.goto(`/wp-admin/admin.php?page=ohmylms#/lesson-edit/${lesson.id}`);
   await expect(page.getByLabel('Reading title')).toHaveValue('Browser reading');
   await page.getByLabel('Reading title').fill('Updated browser reading');
   await page.getByLabel('Reading content').fill('Updated reading body');
@@ -96,12 +96,12 @@ test('custom lesson uses the real save and reopen flow',async({page})=>{
 
 test('built-in rich text lesson edits without duplicate editor plugins',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
  const lesson=await page.evaluate(()=>wp.apiFetch({path:'/ohmylms/v1/lessons',method:'POST',data:{name:'Rich text fixture',type:'text',description:'Initial text',status:'draft'}}));
  try{
-  await page.goto(`/wp-admin/admin.php?page=creator-lms#/lesson-edit/${lesson.id}`);
+  await page.goto(`/wp-admin/admin.php?page=ohmylms#/lesson-edit/${lesson.id}`);
   const editor=page.locator('[contenteditable="true"]').first();
-  await page.waitForFunction(id=>wp.data.select('creator-lms/store').getLesson()?.id==id,lesson.id);
+  await page.waitForFunction(id=>wp.data.select('ohmylms/store').getLesson()?.id==id,lesson.id);
   await expect(editor).toContainText('Initial text');await editor.fill('Saved rich text lesson');
   const saved=page.waitForResponse(r=>r.url().includes(`/lessons/${lesson.id}`)&&['POST','PUT','PATCH'].includes(r.request().method()),{timeout:15000});
   await page.getByRole('button',{name:'Save',exact:true}).click();expect((await saved).ok()).toBe(true);
@@ -112,15 +112,15 @@ test('built-in rich text lesson edits without duplicate editor plugins',async({p
 
 test('student course page mounts its extension slot',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/wp-admin/admin.php?page=creator-lms');
+ await page.goto('/wp-admin/admin.php?page=ohmylms');
  const course=await page.evaluate(()=>wp.apiFetch({path:'/ohmylms/v1/courses',method:'POST',data:{name:'Student slot fixture',description:'Student course body',status:'publish'}}));
  try{
-  await page.goto(`/?post_type=omlms-course&p=${course.id}`);
+  await page.goto(`/?post_type=ohmylms-course&p=${course.id}`);
   await expect(page.getByText('Example course footer',{exact:true})).toBeVisible();
   await page.screenshot({path:testInfo.outputPath('student-course.png'),fullPage:true});
   expect(errors).toEqual([]);
  }finally{
-  await page.goto('/wp-admin/admin.php?page=creator-lms');
+  await page.goto('/wp-admin/admin.php?page=ohmylms');
   await page.evaluate(id=>wp.apiFetch({path:`/ohmylms/v1/courses/${id}`,method:'DELETE'}),course.id);
  }
 });

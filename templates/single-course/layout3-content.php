@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/layout3-content.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-$course_tabs = apply_filters( 'creator_lms_course_tabs', array() );
+$course_tabs = apply_filters( 'ohmylms_course_tabs', array() );
 
 if ( ! empty( $course_tabs ) ) : ?>
-	<nav class="creator-lms-single-course-layout3-content-nav" aria-label="<?php esc_attr_e( 'Course Tabs', 'ohmylms' ); ?>">
+	<nav class="ohmylms-single-course-layout3-content-nav" aria-label="<?php esc_attr_e( 'Course Tabs', 'ohmylms' ); ?>">
         <ul role="tablist">
             <?php foreach ( $course_tabs as $key => $course_tab ) : ?>
                 <li class="<?php echo 'description' === $key ? 'active': ''; ?>" role="presentation">
@@ -34,10 +34,10 @@ if ( ! empty( $course_tabs ) ) : ?>
     </nav>
 
 
-    <div class="creator-lms-single-course-layout3-content">
+    <div class="ohmylms-single-course-layout3-content">
         <?php 
         foreach ( $course_tabs as $key => $course_tab ) :
-            $courseClass = 'creator-lms-single-tab-content course-' . esc_attr($key);
+            $courseClass = 'ohmylms-single-tab-content course-' . esc_attr($key);
 
             if ('description' === $key) {
                 $courseClass .= ' active';

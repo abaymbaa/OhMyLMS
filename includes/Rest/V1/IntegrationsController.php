@@ -2,62 +2,38 @@
 /**
  * Integrations controller.
  *
- * @package     CreatorLMS
- * @author      CreatorLMS
+ * @package     OhMyLMS
+ * @author      OhMyLMS
  * @copyright   Copyright (c) 2024, CreatorLMS
  * @license     GPL2+
  * @since       1.0.0
  */
 
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * CreatorLMS Integrations settings controller class.
+ * OhMyLMS Integrations settings controller class.
  *
  * @since 1.0.0
  */
 class IntegrationsController extends RestController {
 
 	/**
-	 * Whether an integration is free (not gated behind a pro license plan).
-	 *
-	 * Core-registered addons like Google Sign-In aren't premium features, so
-	 * they must not be run through OMLMS\Utility\LicenseHelper — that
-	 * class only knows about pro plan features and defaults anything it
-	 * doesn't recognize to "requires upgrade".
-	 *
-	 * @param string $key Integration key.
-	 * @return bool
-	 */
-	private static function is_free_integration( $key ) {
-		$free_integrations = apply_filters( 'creatorlms_free_integrations', array( 'google_signin' ) );
-		return in_array( $key, $free_integrations, true );
-	}
-
-	/**
-	 * Resolve is_valid/required_plan for an integration, skipping the pro
-	 * license check entirely for free integrations.
+	 * is_valid/required_plan for an integration. Every bundled integration is available.
 	 *
 	 * @param string $key Integration key.
 	 * @return array{is_valid: bool, required_plan: string|null}
 	 */
 	private static function get_integration_validity( $key ) {
-		if ( self::is_free_integration( $key ) ) {
-			return array(
-				'is_valid'      => true,
-				'required_plan' => null,
-			);
-		}
-
 		return array(
-			'is_valid'      => \OMLMS\Utility\LicenseHelper::is_feature_enabled( $key ),
-			'required_plan' => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature( $key ),
+			'is_valid'      => true,
+			'required_plan' => null,
 		);
 	}
 
@@ -66,7 +42,7 @@ class IntegrationsController extends RestController {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * Route base.
@@ -130,7 +106,7 @@ class IntegrationsController extends RestController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
-		$integrations = get_option( 'creatorlms_integrations', array() );
+		$integrations = get_option( 'ohmylms_integrations', array() );
 		if( is_array( $integrations ) ) {
 			foreach( $integrations as $key => $value ) {
 				$validity = self::get_integration_validity( $key );
@@ -143,7 +119,7 @@ class IntegrationsController extends RestController {
 			}
 		}
 
-		$is_community_active = defined( 'CREATORLMS_COMMUNITY_VERSION' );
+		$is_community_active = defined( 'OHMYLMS_COMMUNITY_VERSION' );
         
         if( $is_community_active ) {
             $integrations['community']['is_enable'] = 1;
@@ -162,7 +138,7 @@ class IntegrationsController extends RestController {
 	 */
 	public function get_items_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_view', __( 'Sorry, you are not allowed to view these integrations.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_view', __( 'Sorry, you are not allowed to view these integrations.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -176,10 +152,10 @@ class IntegrationsController extends RestController {
 	 */
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
-		$current_integrations = get_option( 'creatorlms_integrations', array() );
-		do_action( 'creatorlms_integrations_before_update', $integrations, $current_integrations );
+		$current_integrations = get_option( 'ohmylms_integrations', array() );
+		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
-		$previous_integrations  = get_option( 'creatorlms_integrations', [] );
+		$previous_integrations  = get_option( 'ohmylms_integrations', [] );
 		$need_reload = false;
 
 		foreach ( $integrations as $key => $value ) {
@@ -205,22 +181,22 @@ class IntegrationsController extends RestController {
 				'is_enable' => $is_enable
 			);
 
-			do_action( 'creatorlms_integration_' . $sanitized_key . '_updated', $is_enable );
+			do_action( 'ohmylms_integration_' . $sanitized_key . '_updated', $is_enable );
 
 			if ( $is_being_enabled ) {
-				do_action( 'creatorlms_integration_' . $sanitized_key . '_before_enable', $sanitized_key );
+				do_action( 'ohmylms_integration_' . $sanitized_key . '_before_enable', $sanitized_key );
 			}
 
-			update_option( 'creatorlms_integrations', $current_integrations );
+			update_option( 'ohmylms_integrations', $current_integrations );
 
 			if ( $is_being_enabled ) {
-				do_action( 'creatorlms_integration_' . $sanitized_key . '_after_enable', $sanitized_key );
+				do_action( 'ohmylms_integration_' . $sanitized_key . '_after_enable', $sanitized_key );
 				
 				// Trigger addon activation tracking
-				do_action( 'creatorlms_addon_activated', $sanitized_key );
+				do_action( 'ohmylms_addon_activated', $sanitized_key );
 			}
 			if( 'content_protection' === $sanitized_key ) {
-				update_option( 'creator_lms_content_protection', $is_enable ? 'yes' : 'no' );
+				update_option( 'ohmylms_content_protection', $is_enable ? 'yes' : 'no' );
 			}
 
 			$integrations[ $sanitized_key ][ 'is_enable' ] = $is_enable;
@@ -229,10 +205,10 @@ class IntegrationsController extends RestController {
 			$integrations[ $sanitized_key ][ 'required_plan' ]     = $required_plan;
 		}
 
-		update_option( 'creatorlms_integrations', $integrations );
+		update_option( 'ohmylms_integrations', $integrations );
 
-		do_action( 'creatorlms_integrations_after_update', $current_integrations );
-		do_action( 'creatorlms_integrations_'.$sanitized_key.'_after_update', $current_integrations );
+		do_action( 'ohmylms_integrations_after_update', $current_integrations );
+		do_action( 'ohmylms_integrations_'.$sanitized_key.'_after_update', $current_integrations );
 
 		return new WP_REST_Response(
 			array(
@@ -254,7 +230,7 @@ class IntegrationsController extends RestController {
 	 */
 	public function update_items_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_update', __( 'Sorry, you are not allowed to update these integrations.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_update', __( 'Sorry, you are not allowed to update these integrations.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}
@@ -268,14 +244,14 @@ class IntegrationsController extends RestController {
 	 */
 	public function delete_item( $request ) {
 		$integration_id = $request['id'];
-		$integrations   = get_option( 'creatorlms_integrations', array() );
+		$integrations   = get_option( 'ohmylms_integrations', array() );
 
 		if ( ! isset( $integrations[ $integration_id ] ) ) {
-			return new WP_Error( 'creatorlms_rest_integration_not_found', __( 'Integration not found.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ohmylms_rest_integration_not_found', __( 'Integration not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		unset( $integrations[ $integration_id ] );
-		update_option( 'creatorlms_integrations', $integrations );
+		update_option( 'ohmylms_integrations', $integrations );
 
 		return new WP_REST_Response(
 			array(
@@ -295,7 +271,7 @@ class IntegrationsController extends RestController {
 	 */
 	public function delete_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'creatorlms_rest_cannot_delete', __( 'Sorry, you are not allowed to delete this integration.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_delete', __( 'Sorry, you are not allowed to delete this integration.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		return true;
 	}

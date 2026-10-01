@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\ThemeSupport;
+namespace OhMyLMS\ThemeSupport;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -10,17 +10,17 @@ defined( 'ABSPATH' ) || exit;
  */
 class Woostify {
 	public function init() {
-		add_filter( 'creator_lms_enqueue_styles', array( $this, 'enqueue_styles' ) );
+		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 		// Hook very early to intercept the AJAX call before Woostify processes it
 		add_action( 'wp_ajax_get_curr_percent_shipping_threshold_product', array( $this, 'prevent_woostify_ajax_error' ), 1 );
 		add_action( 'wp_ajax_nopriv_get_curr_percent_shipping_threshold_product', array( $this, 'prevent_woostify_ajax_error' ), 1 );
 	}
 
 	public function enqueue_styles( $styles ) {
-		$styles['omlms-general'] = array(
-			'src'     => CREATOR_LMS_ASSETS_URL . ( '/theme-support/theme-woostify.css' ),
+		$styles['ohmylms-general'] = array(
+			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-woostify.css' ),
 			'deps'    => array(),
-			'version' => CREATOR_LMS_VERSION,
+			'version' => OHMYLMS_VERSION,
 			'media'   => 'all',
 			'has_rtl' => true,
 		);

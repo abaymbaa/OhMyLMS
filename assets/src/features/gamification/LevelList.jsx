@@ -154,7 +154,7 @@ export function createLevelList(readRuntime) {
                         })),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/levels',
+                          path: '/ohmylms/v1/engagement/levels',
                           method: 'DELETE',
                           headers: {
                             'Content-Type': 'application/json',
@@ -205,7 +205,7 @@ export function createLevelList(readRuntime) {
                         c(!0),
                         (e.n = 1),
                         l()({
-                          path: 'creator-lms/v1/engagement/levels',
+                          path: 'ohmylms/v1/engagement/levels',
                         })
                       );
                     case 1:

@@ -7,9 +7,9 @@ export function createSetupWizardPage(readRuntime) {
       (0, ReactHooks.useLayoutEffect)(function () {
         return (
           (document.title = (0, I18n.__)('Setup Wizard - OhMyLMS', 'ohmylms')),
-          document.documentElement.classList.add('omlms-setup-wizard'),
+          document.documentElement.classList.add('ohmylms-setup-wizard'),
           function () {
-            (document.documentElement.classList.remove('omlms-setup-wizard'),
+            (document.documentElement.classList.remove('ohmylms-setup-wizard'),
               (document.title = 'OhMyLMS'));
           }
         );

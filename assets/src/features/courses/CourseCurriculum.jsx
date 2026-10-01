@@ -233,7 +233,7 @@ export function createCourseCurriculum(readRuntime) {
         for (
           var t = function (e) {
               return (
-                e.classList.contains('omlms-draggable-single-chapter') &&
+                e.classList.contains('ohmylms-draggable-single-chapter') &&
                 e.hasAttribute('draggable') &&
                 'true' === e.getAttribute('draggable')
               );
@@ -284,7 +284,7 @@ export function createCourseCurriculum(readRuntime) {
       <React.Fragment>
         <Controls.FlexWP align={'start'} justify={'start'} gap={0}>
           <Controls.FlexItemWP
-            className={'omlms-chapter-sidebar '.concat(le ? 'omlms-chapter-sidebar-open' : '')}
+            className={'ohmylms-chapter-sidebar '.concat(le ? 'ohmylms-chapter-sidebar-open' : '')}
           >
             {React.createElement(lc, {
               courseId: a,
@@ -298,7 +298,7 @@ export function createCourseCurriculum(readRuntime) {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <div className={'omlms-chapter-nav-wrapper'}>
+                <div className={'ohmylms-chapter-nav-wrapper'}>
                   {x.length > 0 &&
                     x.map(function (e, t) {
                       return (
@@ -350,7 +350,7 @@ export function createCourseCurriculum(readRuntime) {
                               }
                             })(e);
                           }}
-                          className={'omlms-draggable-single-chapter'}
+                          className={'ohmylms-draggable-single-chapter'}
                         >
                           <Ip
                             chapter={e}
@@ -380,12 +380,14 @@ export function createCourseCurriculum(readRuntime) {
             )}
           </Controls.FlexItemWP>
           <Controls.FlexItemWP
-            className={'omlms-chapter-preview '
-              .concat(le ? 'omlms-chapter-sidebar-open' : '', ' ')
-              .concat(me ? '' : 'omlms-course-info-closed')}
+            className={'ohmylms-chapter-preview '
+              .concat(le ? 'ohmylms-chapter-sidebar-open' : '', ' ')
+              .concat(me ? '' : 'ohmylms-course-info-closed')}
           >
             <div
-              className={'omlms-course-info-wrapper '.concat(me ? '' : 'omlms-course-info-closed')}
+              className={'ohmylms-course-info-wrapper '.concat(
+                me ? '' : 'ohmylms-course-info-closed',
+              )}
             >
               <$p
                 handleInputChange={u}
@@ -398,23 +400,23 @@ export function createCourseCurriculum(readRuntime) {
                 onClick={function () {
                   w.setCourseInfoOpen(!me);
                 }}
-                className={'omlms-course-info-toggle'}
+                className={'ohmylms-course-info-toggle'}
                 icon={me ? <Jp /> : React.createElement(ef, null)}
               />
             </div>
             <Controls.SpacerWP
               marginTop={2}
               paddingX={4}
-              className={'omlms-chapter-content-wrapper'}
+              className={'ohmylms-chapter-content-wrapper'}
             >
               <Controls.FlexWP
                 align={'start'}
                 justify={'space-between'}
                 gap={2}
                 direction={'column'}
-                className={'omlms-chapter-contents-wrapper'}
+                className={'ohmylms-chapter-contents-wrapper'}
               >
-                <div className={'omlms-chapter-contents'}>
+                <div className={'ohmylms-chapter-contents'}>
                   {x.length > 0 ? (
                     x.map(function (e, t) {
                       return (

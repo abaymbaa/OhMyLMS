@@ -7,6 +7,6 @@ export function createSubscriptionsPage(readRuntime) {
       HQ,
       React
     } = readRuntime();
-    return HG("creator-lms", "subscriptions"), <React.Fragment><HQ /></React.Fragment>;
+    return HG("ohmylms", "subscriptions"), <React.Fragment><HQ /></React.Fragment>;
   };
 }

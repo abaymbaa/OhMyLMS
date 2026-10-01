@@ -4,11 +4,11 @@
  * 
  * Handles the creation of WP Fusion triggers table when the integration is enabled
  * 
- * @package OMLMS\Integrations\WPFusion
+ * @package OhMyLMS\Integrations\WPFusion
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes;
+namespace OhMyLMS\Integrations\WPFusion\Includes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ class WPFusionMigration {
     /**
      * Option key to track if integrations table is created
      */
-    const WPFUSION_TABLE_CREATED_OPTION = 'creatorlms_integrations_table_created';
+    const WPFUSION_TABLE_CREATED_OPTION = 'ohmylms_integrations_table_created';
 
     /**
      * Initialize the migration
@@ -25,7 +25,7 @@ class WPFusionMigration {
      * @since 1.0.0
      */
     public static function init() {
-        add_action( 'admin_init', array( __CLASS__, 'maybe_omlms_integration_table' ) );
+        add_action( 'admin_init', array( __CLASS__, 'maybe_ohmylms_integration_table' ) );
     }
 
     /**
@@ -34,7 +34,7 @@ class WPFusionMigration {
      * 
      * @since 1.0.0
      */
-    public static function maybe_omlms_integration_table() {
+    public static function maybe_ohmylms_integration_table() {
 
         // Check if table is already created
         if ( self::is_integration_table_created() ) {
@@ -42,7 +42,7 @@ class WPFusionMigration {
         }
 
         // Create the table - always create for any integration usage
-        self::omlms_integration_table();
+        self::ohmylms_integration_table();
     }
 
     /**
@@ -52,7 +52,7 @@ class WPFusionMigration {
      * @since 1.0.0
      */
     private static function is_wpfusion_enabled() {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         
         if ( empty( $integrations ) || ! is_array( $integrations ) ) {
             return false;
@@ -82,7 +82,7 @@ class WPFusionMigration {
         }
 
         // Double check if table actually exists in database
-        $table_name = $wpdb->prefix . 'omlms_integrations';
+        $table_name = $wpdb->prefix . 'ohmylms_integrations';
         $table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name;
 
         // If table exists but option not set, set the option
@@ -99,13 +99,13 @@ class WPFusionMigration {
      * 
      * @since 1.0.0
      */
-    private static function omlms_integration_table() {
+    private static function ohmylms_integration_table() {
         global $wpdb;
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'omlms_integrations';
+        $table_name = $wpdb->prefix . 'ohmylms_integrations';
 
         $sql = "CREATE TABLE {$table_name} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -136,7 +136,7 @@ class WPFusionMigration {
          * 
          * @since 1.0.0
          */
-        do_action( 'creatorlms_integrations_table_created' );
+        do_action( 'ohmylms_integrations_table_created' );
     }
 
     /**
@@ -147,7 +147,7 @@ class WPFusionMigration {
     public static function drop_wpfusion_table() {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'omlms_integrations';
+        $table_name = $wpdb->prefix . 'ohmylms_integrations';
         $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 
         // Remove the option
@@ -158,7 +158,7 @@ class WPFusionMigration {
          * 
          * @since 1.0.0
          */
-        do_action( 'creatorlms_integrations_table_dropped' );
+        do_action( 'ohmylms_integrations_table_dropped' );
     }
 
     /**
@@ -169,7 +169,7 @@ class WPFusionMigration {
      */
     public static function get_table_name() {
         global $wpdb;
-        return $wpdb->prefix . 'omlms_integrations';
+        return $wpdb->prefix . 'ohmylms_integrations';
     }
 
     /**

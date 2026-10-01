@@ -7,7 +7,7 @@ export function createPromptTemplateToggleIcon(readRuntime) {
       n = void 0 === t ? '0' : t;
     return (
       <svg
-        className={'omlms-back-arrow-btn-icon'}
+        className={'ohmylms-back-arrow-btn-icon'}
         style={{
           transform: 'rotate('.concat(n, 'deg)'),
         }}

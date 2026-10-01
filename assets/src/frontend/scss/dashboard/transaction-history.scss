@@ -1,11 +1,11 @@
-.creator-lms-page {
-    .creator-lms-student-profile {
+.ohmylms-page {
+    .ohmylms-student-profile {
         .student-transaction-history {
             @media screen and (min-width: 1400px) {
                 padding: 40px 55px;
             }
 
-            .creator-lms-dashboard-table .dashboard-table-body .dashboard-table-tr:last-child {
+            .ohmylms-dashboard-table .dashboard-table-body .dashboard-table-tr:last-child {
                 border-bottom: 0;
             }
 
@@ -23,26 +23,26 @@
 
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.date,
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.price,
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.course-name,
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.purchase-method {
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.date,
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.price,
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.course-name,
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-tr > .dashboard-table-td.purchase-method {
         display: none;
     }
    
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-tr .dashboard-table-td.status {
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-tr .dashboard-table-td.status {
         width: 100px;
         margin-left: auto;
         text-align: right;
     }
     
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.date,
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.price,
-    .creator-lms-page .creator-lms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.course-name {
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.date,
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.price,
+    .ohmylms-page .ohmylms-student-profile .student-transaction-history .dashboard-table-mobile-td .dashboard-table-td.course-name {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-student-profile .no-course-data {
+    .ohmylms-page .ohmylms-student-profile .no-course-data {
         padding-bottom: 5px;
     }
 

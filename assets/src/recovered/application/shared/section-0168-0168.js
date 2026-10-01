@@ -91,7 +91,7 @@ var c4 = function () {
           align: "center",
           justify: "space-between",
           key: null == e || null === (o = e.basic) || void 0 === o ? void 0 : o.id,
-          className: "omlms-email-listing-card"
+          className: "ohmylms-email-listing-card"
         }, React.createElement(I.FlexWP, {
           direction: "column",
           gap: 2,
@@ -116,7 +116,7 @@ var c4 = function () {
           gap: 4,
           align: "center",
           justify: "end",
-          className: "omlms-email-listing-card-actions"
+          className: "ohmylms-email-listing-card-actions"
         }, React.createElement(Bt.A, {
           onChange: function () {
             var n;
@@ -185,7 +185,7 @@ var c4 = function () {
     }
   }) : React.createElement(React.Fragment, null, React.createElement(I.TabsWP, {
     items: h,
-    className: "omlms-emails-tabs",
+    className: "ohmylms-emails-tabs",
     onChange: function (e) {
       n(e);
     },
@@ -216,7 +216,7 @@ var f4 = function () {
     justify: "space-between",
     align: "start",
     gap: "4",
-    className: "omlms-email-button-position-wrapper"
+    className: "ohmylms-email-button-position-wrapper"
   }, React.createElement(I.FlexItemWP, {
     style: {
       maxWidth: "300px"
@@ -229,11 +229,11 @@ var f4 = function () {
     style: {
       marginLeft: "auto"
     },
-    className: "omlms-email-button-position-options"
+    className: "ohmylms-email-button-position-options"
   }, React.createElement(I.RadioGroupWP, {
     onChange: function (e) {
       return function (e, n, r) {
-        t("creator_lms_email_button_possition", function (e, t, n) {
+        t("ohmylms_email_button_possition", function (e, t, n) {
           return (t = function (e) {
             var t = function (e) {
               if ("object" != p4(e) || !e) return e;
@@ -255,7 +255,7 @@ var f4 = function () {
         }({}, "value", r));
       }(0, 0, e);
     },
-    value: null == e ? void 0 : e.creator_lms_email_button_possition,
+    value: null == e ? void 0 : e.ohmylms_email_button_possition,
     options: [{
       value: "left",
       label: React.createElement(q.Icon, {
@@ -344,9 +344,9 @@ var h4 = function () {
   }, React.createElement(I.TextWP, null, (0, b.__)("Sender Email Address", "ohmylms")), React.createElement(I.TooltipWP, {
     title: (0, b.__)("Enter the email address that will be used to send emails.", "ohmylms")
   }, React.createElement(Mt.A, null))), React.createElement(I.SpacerWP, null), React.createElement(I.InputWP, {
-    value: null == e ? void 0 : e.creator_lms_email_sender_email_address,
+    value: null == e ? void 0 : e.ohmylms_email_sender_email_address,
     onChange: function (e) {
-      return n("creator_lms_email_sender_email_address", "value", e);
+      return n("ohmylms_email_sender_email_address", "value", e);
     }
   })), React.createElement(I.SpacerWP, {
     marginY: 5
@@ -357,9 +357,9 @@ var h4 = function () {
   }, React.createElement(I.TextWP, null, (0, b.__)("Sender Name", "ohmylms")), React.createElement(I.TooltipWP, {
     title: (0, b.__)("Enter the name that will be used to send emails.", "ohmylms")
   }, React.createElement(Mt.A, null))), React.createElement(I.SpacerWP, null), React.createElement(I.InputWP, {
-    value: null == e ? void 0 : e.creator_lms_email_sender_name,
+    value: null == e ? void 0 : e.ohmylms_email_sender_name,
     onChange: function (e) {
-      return n("creator_lms_email_sender_name", "value", e);
+      return n("ohmylms_email_sender_name", "value", e);
     }
   })), React.createElement(I.SpacerWP, {
     marginY: 5
@@ -370,9 +370,9 @@ var h4 = function () {
   }, React.createElement(I.TextWP, null, (0, b.__)("Email Footer Text", "ohmylms")), React.createElement(I.TooltipWP, {
     title: (0, b.__)("Enter the footer text that will be used to send emails.", "ohmylms")
   }, React.createElement(Mt.A, null))), React.createElement(I.SpacerWP, null), React.createElement(W.A, {
-    value: null == e ? void 0 : e.creator_lms_email_footer_text,
+    value: null == e ? void 0 : e.ohmylms_email_footer_text,
     onChange: function (e) {
-      return n("creator_lms_email_footer_text", "value", e);
+      return n("ohmylms_email_footer_text", "value", e);
     }
   })))));
 };
@@ -583,45 +583,45 @@ var S4 = function (e) {
       description: (0, b.__)("The base color for email template.", "ohmylms"),
       isShowResetBtn: !0,
       defaultColor: "#6E42D3",
-      initialColor: i.creator_lms_email_base_color,
+      initialColor: i.ohmylms_email_base_color,
       onChange: function (e) {
-        m("creator_lms_email_base_color", "value", e);
+        m("ohmylms_email_base_color", "value", e);
       }
     }, {
       title: (0, b.__)("Background color", "ohmylms"),
       description: (0, b.__)("The background color for email template.", "ohmylms"),
       isShowResetBtn: !0,
       defaultColor: "#F4F5F7",
-      initialColor: i.creator_lms_email_background_color,
+      initialColor: i.ohmylms_email_background_color,
       onChange: function (e) {
-        m("creator_lms_email_background_color", "value", e);
+        m("ohmylms_email_background_color", "value", e);
       }
     }, {
       title: (0, b.__)("Body background color", "ohmylms"),
       description: (0, b.__)("The main body background color.", "ohmylms"),
       isShowResetBtn: !0,
       defaultColor: "#FFFFFF",
-      initialColor: i.creator_lms_email_body_background_color,
+      initialColor: i.ohmylms_email_body_background_color,
       onChange: function (e) {
-        m("creator_lms_email_body_background_color", "value", e);
+        m("ohmylms_email_body_background_color", "value", e);
       }
     }, {
       title: (0, b.__)("Body text color", "ohmylms"),
       description: (0, b.__)("The main body text color default.", "ohmylms"),
       isShowResetBtn: !0,
       defaultColor: "#1F2328",
-      initialColor: i.creator_lms_email_body_text_color,
+      initialColor: i.ohmylms_email_body_text_color,
       onChange: function (e) {
-        m("creator_lms_email_body_text_color", "value", e);
+        m("ohmylms_email_body_text_color", "value", e);
       }
     }, {
       title: (0, b.__)("Notification color", "ohmylms"),
       description: (0, b.__)("Color used for verification and notification banners on the site.", "ohmylms"),
       isShowResetBtn: !0,
       defaultColor: "#6E42D3",
-      initialColor: i.omlms_notification_color,
+      initialColor: i.ohmylms_notification_color,
       onChange: function (e) {
-        m("omlms_notification_color", "value", e);
+        m("ohmylms_notification_color", "value", e);
       }
     }];
   return React.createElement(React.Fragment, null, o, t && React.createElement(I.ModalWP, {
@@ -634,12 +634,12 @@ var S4 = function (e) {
   }, React.createElement(L2, {
     title: (0, b.__)("Branding", "ohmylms"),
     description: (0, b.__)("Add a logo and color theme to customize the look and feel of email notification your customers receive.", "ohmylms"),
-    brandingImg: i.creator_lms_email_branding_image,
+    brandingImg: i.ohmylms_email_branding_image,
     handleRemove: function () {
-      m("creator_lms_email_branding_image", "value", "");
+      m("ohmylms_email_branding_image", "value", "");
     },
     handleChange: function (e) {
-      return m("creator_lms_email_branding_image", "value", e);
+      return m("ohmylms_email_branding_image", "value", e);
     },
     colorsConfig: p,
     showDivider: !0

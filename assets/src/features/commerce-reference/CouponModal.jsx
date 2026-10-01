@@ -104,13 +104,13 @@ export function createCouponModal(readRuntime) {
                     description: p,
                     date_expires: {
                       date: moment(B).format("YYYY-MM-DDTHH:mm:ss"),
-                      timezone: null === (t = window) || void 0 === t || null === (t = t.creator_lms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
-                      timezone_type: null === (n = window) || void 0 === n || null === (n = n.creator_lms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type
+                      timezone: null === (t = window) || void 0 === t || null === (t = t.ohmylms_params) || void 0 === t || null === (t = t.timezone) || void 0 === t ? void 0 : t.timezone_string,
+                      timezone_type: null === (n = window) || void 0 === n || null === (n = n.ohmylms_params) || void 0 === n || null === (n = n.timezone) || void 0 === n ? void 0 : n.timezone_type
                     },
                     date_start: {
                       date: moment(D).format("YYYY-MM-DDTHH:mm:ss"),
-                      timezone: null === (o = window) || void 0 === o || null === (o = o.creator_lms_params) || void 0 === o || null === (o = o.timezone) || void 0 === o ? void 0 : o.timezone_string,
-                      timezone_type: null === (i = window) || void 0 === i || null === (i = i.creator_lms_params) || void 0 === i || null === (i = i.timezone) || void 0 === i ? void 0 : i.timezone_type
+                      timezone: null === (o = window) || void 0 === o || null === (o = o.ohmylms_params) || void 0 === o || null === (o = o.timezone) || void 0 === o ? void 0 : o.timezone_string,
+                      timezone_type: null === (i = window) || void 0 === i || null === (i = i.ohmylms_params) || void 0 === i || null === (i = i.timezone) || void 0 === i ? void 0 : i.timezone_type
                     },
                     individual_use: "no",
                     exclude_sale_items: [],
@@ -175,13 +175,13 @@ export function createCouponModal(readRuntime) {
     var ne = isNaN(w) ? "0" : Number(w).toFixed(0);
     return <React.Fragment>{t && <Controls.ModalWP title={(0, I18n.__)(" Coupon Settings", "ohmylms")} onRequestClose={Z} shouldCloseOnEsc={!0} shouldCloseOnClickOutside={!0} size={"large"}><Controls.CardWP isBorderless={!0} variant={"secondary"}><Controls.SpacerWP marginBottom={0} marginTop={2} padding={1}><Pf title={(0, I18n.__)("Coupon Title", "ohmylms")} description={(0, I18n.__)("An internal name to help you identify and manage this coupon.", "ohmylms")} inputType={"text"} value={Ge(s)} onChange={function (e) {
               return d(e);
-            }} /><Controls.SpacerWP padding={4}><Controls.FlexWP gap={8} align={"flex-start"} justify={"space-between"}><Controls.FlexItemWP isBlock={!0}><Controls.HeadingWP level={"4"}>{(0, I18n.__)("Coupon Code", "ohmylms")}</Controls.HeadingWP><Controls.TextWP>{(0, I18n.__)("A unique code that customers can enter during checkout to receive a discount.", "ohmylms")}</Controls.TextWP></Controls.FlexItemWP><Controls.FlexItemWP isBlock={!0} className={"omlms-coupon-generate"}><Controls.FlexWP gap={2}><Controls.FlexItemWP style={{
+            }} /><Controls.SpacerWP padding={4}><Controls.FlexWP gap={8} align={"flex-start"} justify={"space-between"}><Controls.FlexItemWP isBlock={!0}><Controls.HeadingWP level={"4"}>{(0, I18n.__)("Coupon Code", "ohmylms")}</Controls.HeadingWP><Controls.TextWP>{(0, I18n.__)("A unique code that customers can enter during checkout to receive a discount.", "ohmylms")}</Controls.TextWP></Controls.FlexItemWP><Controls.FlexItemWP isBlock={!0} className={"ohmylms-coupon-generate"}><Controls.FlexWP gap={2}><Controls.FlexItemWP style={{
                       position: "relative",
                       width: "calc(100% - 40px)"
                     }}><Controls.InputWP type={"text"} value={J} onChange={function (e) {
                         var t = e.replace(/[^a-zA-Z0-9-_]/g, "");
                         ("" === t || /[a-zA-Z]/.test(t)) && X(t);
-                      }} /><Controls.ButtonWP className={"omlms-coupon-generate-btn ".concat(l && "is-generating")} onClick={function () {
+                      }} /><Controls.ButtonWP className={"ohmylms-coupon-generate-btn ".concat(l && "is-generating")} onClick={function () {
                         c(!0), setTimeout(function () {
                           var e = $();
                           X(e), c(!1);

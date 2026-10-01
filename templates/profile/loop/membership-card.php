@@ -22,23 +22,23 @@ if( ! $is_one_time ) {
 
 // Safely get status
 $status = $subscription ? $subscription->get_status() : '';
-$status_classes = 'omlms-membership-status ' . 'omlms-status-' . strtolower( $status );
+$status_classes = 'ohmylms-membership-status ' . 'ohmylms-status-' . strtolower( $status );
 
 // Safely get price
 $price_html = __( 'Not available', 'ohmylms' );
 
 if( $is_one_time ) {
-    $price_html = omlms_price( $memebership->get_regular_price() ) . ' / ' . __( 'One Time', 'ohmylms' );
+    $price_html = ohmylms_price( $memebership->get_regular_price() ) . ' / ' . __( 'One Time', 'ohmylms' );
 } else {
     if ( $subscription ) {
-        $price_html = omlms_price( $recurring_amount ) . ' / ' . $subscription->get_billing_period();
+        $price_html = ohmylms_price( $recurring_amount ) . ' / ' . $subscription->get_billing_period();
     } else {
-        $price_html = omlms_price( $memebership->get_regular_price() ) . ' / ' . $memebership->get_subscription_period();
+        $price_html = ohmylms_price( $memebership->get_regular_price() ) . ' / ' . $memebership->get_subscription_period();
     }
 }
 
 // Safely get purchase date
-$purchase_date = $order ? omlms_format_datetime( $order->get_date_created() ) : __( 'Not available', 'ohmylms' );
+$purchase_date = $order ? ohmylms_format_datetime( $order->get_date_created() ) : __( 'Not available', 'ohmylms' );
 
 if( ! $is_one_time ) {
 
@@ -56,7 +56,7 @@ if( ! $is_one_time ) {
         ));
         $price = isset($tax_data['total_with_tax']) ? $tax_data['total_with_tax'] : $price;
     }
-    $price_html = omlms_price($price) . ' / ' . $billing_period;
+    $price_html = ohmylms_price($price) . ' / ' . $billing_period;
     $now        = current_time('timestamp');
 
     switch ($billing_period) {
@@ -82,13 +82,13 @@ if( ! $is_one_time ) {
 // Safely get payment method
 $payment_method = $order && $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Not available', 'ohmylms' );
 ?>
-<div class="omlms-membership-card creator-lms-dashboard-single-membership">
-    <div class="omlms-membership-card-header">
-        <h3 class="omlms-membership-name"><?php echo $memebership->get_name(); ?></h3>
+<div class="ohmylms-membership-card ohmylms-dashboard-single-membership">
+    <div class="ohmylms-membership-card-header">
+        <h3 class="ohmylms-membership-name"><?php echo $memebership->get_name(); ?></h3>
         <span class="<?php echo esc_attr( $status_classes ); ?>"><?php echo esc_html( ucfirst( $status ) ); ?></span>
     </div>
-    <div class="omlms-membership-card-body">
-        <ul class="omlms-membership-details">
+    <div class="ohmylms-membership-card-body">
+        <ul class="ohmylms-membership-details">
             <li>
                 <strong><?php echo __( 'Price:', 'ohmylms' ); ?></strong>
                 <span><?php echo $price_html; ?></span>
@@ -113,13 +113,13 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
             </li>
         </ul>
     </div>
-    <div class="omlms-membership-card-footer">
-        <a href="#" class="omlms-button view-plan" role="button"><?php echo __( 'View Plan', 'ohmylms' ); ?></a>
+    <div class="ohmylms-membership-card-footer">
+        <a href="#" class="ohmylms-button view-plan" role="button"><?php echo __( 'View Plan', 'ohmylms' ); ?></a>
     </div>
 
-    <div class="creator-lms-membership-modal" aria-hidden="true">
-        <div class="creator-lms-membership-modal-wrapper">
-            <div class="creator-lms-membership-modal-inner">
+    <div class="ohmylms-membership-modal" aria-hidden="true">
+        <div class="ohmylms-membership-modal-wrapper">
+            <div class="ohmylms-membership-modal-inner">
                 <h4 class="membership-modal-title">
                     <?php echo __( 'Plan Details', 'ohmylms' ); ?>
                     <a href="#" role="button" class="close-modal">
@@ -141,7 +141,7 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
                         <?php endforeach; ?>
                     </ul>
                     <?php else: ?>
-                        <p class="omlms-no-courses-message"><?php echo __( 'No courses are included in this membership yet.', 'ohmylms' ); ?></p>
+                        <p class="ohmylms-no-courses-message"><?php echo __( 'No courses are included in this membership yet.', 'ohmylms' ); ?></p>
                     <?php endif; ?>
                 </div>
             </div>

@@ -11,9 +11,7 @@ var gz = function () {
     d: "M5.625 9.75a3.375 3.375 0 110-6.75 3.375 3.375 0 010 6.75zm0-5.25a1.875 1.875 0 100 3.75 1.875 1.875 0 000-3.75zm5.625 12.75v-.375a5.625 5.625 0 10-11.25 0v.375a.75.75 0 101.5 0v-.375a4.125 4.125 0 018.25 0v.375a.75.75 0 101.5 0zM18 13.5a5.25 5.25 0 00-8.75-3.913.75.75 0 101 1.118A3.75 3.75 0 0116.5 13.5a.75.75 0 101.5 0zm-4.875-6.75a3.375 3.375 0 110-6.75 3.375 3.375 0 010 6.75zm0-5.25a1.875 1.875 0 100 3.75 1.875 1.875 0 000-3.75z"
   })));
 };
-
 const hz = (0, g.memo)(gz);
-
 var yz = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -35,9 +33,7 @@ var yz = function () {
     d: "M0 0h18v18H0z"
   })))));
 };
-
 const bz = (0, g.memo)(yz);
-
 var _z = function (e) {
   var t = e.access,
     n = e.handleAccessChange,
@@ -53,7 +49,7 @@ var _z = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     justify: "space-between",
     align: "flex-start",
-    className: "omlms-course-access-section"
+    className: "ohmylms-course-access-section"
   }, React.createElement(I.FlexItemWP, {
     style: {
       flex: "5"
@@ -77,9 +73,7 @@ var _z = function (e) {
     onChange: n
   })))));
 };
-
 const wz = (0, g.memo)(_z);
-
 function Ez(e) {
   return Ez = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -87,7 +81,6 @@ function Ez(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ez(e);
 }
-
 function Sz(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -98,7 +91,6 @@ function Sz(e, t) {
   }
   return n;
 }
-
 function Rz(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -110,7 +102,6 @@ function Rz(e) {
   }
   return e;
 }
-
 function xz(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -131,7 +122,6 @@ function xz(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 var Cz = function (e) {
   var t,
     n,
@@ -209,9 +199,7 @@ var Cz = function (e) {
     }
   }))))));
 };
-
 const Pz = (0, g.memo)(Cz);
-
 var Oz = function (e) {
   var t = e.experienceLevel,
     n = e.handleExperienceLevelChange,
@@ -254,9 +242,7 @@ var Oz = function (e) {
     buttonStyle: "solid"
   })))));
 };
-
 const kz = (0, g.memo)(Oz);
-
 var jz = function (e) {
   var t = e.reviewEnabled,
     n = e.handleReviewEnabled;
@@ -282,15 +268,12 @@ var jz = function (e) {
     onChange: n
   })))));
 };
-
 const Az = (0, g.memo)(jz);
-
 function Mz(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Tz = function (e) {
   var t = e.slug,
     n = e.handleSlugChange,
@@ -351,7 +334,7 @@ var Tz = function (e) {
       flex: "3"
     }
   }, h().createElement(I.InputWP, {
-    className: "omlms-course-settings-slug-input",
+    className: "ohmylms-course-settings-slug-input",
     defaultValue: t,
     onChange: function (e) {
       !function (e) {
@@ -365,7 +348,7 @@ var Tz = function (e) {
       " " === e.key && e.preventDefault();
     }
   }), a && h().createElement("div", {
-    className: "omlms-input-error",
+    className: "ohmylms-input-error",
     style: {
       color: "red",
       fontSize: "12px",
@@ -373,9 +356,7 @@ var Tz = function (e) {
     }
   }, a))));
 };
-
 const Iz = (0, g.memo)(Tz);
-
 function Fz(e) {
   return Fz = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -383,7 +364,6 @@ function Fz(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Fz(e);
 }
-
 function Nz(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -394,7 +374,6 @@ function Nz(e, t) {
   }
   return n;
 }
-
 function Dz(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -406,7 +385,6 @@ function Dz(e) {
   }
   return e;
 }
-
 function Wz(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -427,19 +405,17 @@ function Wz(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function zz(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Bz = function () {
   var e = (0, y.useDispatch)(T.default),
     t = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),
-    n = (0, L.useIsPro)(),
+    n = true,
     r = function (e, t) {
       return function (e) {
         if (Array.isArray(e)) return e;
@@ -505,7 +481,7 @@ var Bz = function () {
     marginBottom: 6
   }), React.createElement(I.CardWP, {
     isBorderless: !0,
-    className: "omlms-basic-tab omlms-course-settings"
+    className: "ohmylms-basic-tab ohmylms-course-settings"
   }, !f && React.createElement(I.SpacerWP, {
     marginBottom: 0,
     padding: 5
@@ -587,7 +563,6 @@ var Bz = function () {
     title: (0, b.__)("Sequential Lesson Access", "ohmylms"),
     isChecked: "yes" === (null == t ? void 0 : t.sequential_mode),
     onChange: function (r) {
-      if (!n) return e.updateProModalTitle((0, b.__)("Sequential Lesson Access is a Pro Feature", "ohmylms")), e.updateProModalContent((0, b.__)("Upgrade to OhMyLMS to enforce lesson order and keep students on track.", "ohmylms")), e.updateProModalButtonText((0, b.__)("Upgrade to Pro", "ohmylms")), void o(!0);
       e.setCourse(Dz(Dz({}, t), {}, {
         sequential_mode: r ? "yes" : "no"
       }));
@@ -596,9 +571,7 @@ var Bz = function () {
     description: (0, b.__)("Students must complete each lesson in order before the next one unlocks.", "ohmylms")
   })))));
 };
-
 const Lz = (0, g.memo)(Bz);
-
 function Vz(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -638,13 +611,11 @@ function Vz(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Hz(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function Gz() {
   var e;
   M().noConflict();
@@ -662,10 +633,10 @@ function Gz() {
     s = u[0],
     d = u[1],
     m = (null == t || null === (e = t.download_resource) || void 0 === e ? void 0 : e.file) || [],
-    p = (0, L.useIsPro)(),
+    p = true,
     f = (0, g.useCallback)(function () {
       var e;
-      p ? ((e = wp.media({
+      (e = wp.media({
         title: "Select or Upload Media",
         button: {
           text: "Use this media"
@@ -681,7 +652,7 @@ function Gz() {
           };
         });
         n.setCourseDownloadResource(t);
-      }), e.open()) : d(!0);
+      }), e.open();
     }, [p, n]);
   return h().createElement(h().Fragment, null, h().createElement(I.FlexWP, {
     align: "flex-start",
@@ -704,13 +675,13 @@ function Gz() {
     align: "flex-end",
     justify: "flex-end",
     direction: "column",
-    className: "omlms-download-resources-container"
+    className: "ohmylms-download-resources-container"
   }, h().createElement(I.ButtonWP, {
     variant: "secondary",
     icon: h().createElement(Tn, null),
     onClick: f,
-    className: "omlms-lesson-settings-resources-upload-button",
-    "aria-disabled": p ? "false" : "true",
+    className: "ohmylms-lesson-settings-resources-upload-button",
+    "aria-disabled": "false",
     style: {
       cursor: "pointer"
     }
@@ -733,7 +704,7 @@ function Gz() {
       gap: 3,
       align: "center",
       justify: "flex-start",
-      className: "omlms-single-resource-info"
+      className: "ohmylms-single-resource-info"
     }, h().createElement(I.CardWP, {
       className: "resource-icon"
     }, h().createElement(I.FlexWP, {

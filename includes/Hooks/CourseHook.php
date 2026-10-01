@@ -2,15 +2,15 @@
 /**
  * Hook for Course
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
 class CourseHook
 {
     public function register_hooks(){
-        add_filter('creatorlms_rest_get_course_data', array($this, 'get_course_data'), 10, 2);
+        add_filter('ohmylms_rest_get_course_data', array($this, 'get_course_data'), 10, 2);
     }
 
     /**

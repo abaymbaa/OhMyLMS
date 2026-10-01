@@ -2,9 +2,9 @@
 /**
  * Template for displaying billing fields.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/form-billing.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/form-billing.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -12,10 +12,10 @@
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<div class="creator-lms-billing-fields">
-	<?php do_action( 'creator_lms_before_checkout_billing_form', $checkout ); ?>
+<div class="ohmylms-billing-fields">
+	<?php do_action( 'ohmylms_before_checkout_billing_form', $checkout ); ?>
 
-	<div class="creator-lms-billing-field-wrapper">
+	<div class="ohmylms-billing-field-wrapper">
 		
 		<?php
 			$fields = $checkout->get_checkout_fields( 'billing' );
@@ -25,19 +25,19 @@ defined( 'ABSPATH' ) || exit();
 		?>
 	</div>
 
-	<?php do_action( 'creator_lms_after_checkout_billing_form', $checkout ); ?>
+	<?php do_action( 'ohmylms_after_checkout_billing_form', $checkout ); ?>
 </div>
 
 <?php if ( ! is_user_logged_in() && $checkout->is_registration_enabled() ) : ?>
-	<div class="creator-lms-account-fields">
+	<div class="ohmylms-account-fields">
 <!--		<p class="form-row form-row-wide create-account">-->
-<!--			<label class="creator-lms-form__label creator-lms-form__label-for-checkbox checkbox">-->
-<!--				<input class="creator-lms-form__input creator-lms-form__input-checkbox input-checkbox" id="createaccount" --><?php //checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'creator_lms_create_account_default_checked', false ) ) ), true ); ?><!-- type="checkbox" name="createaccount" value="1" />-->
+<!--			<label class="ohmylms-form__label ohmylms-form__label-for-checkbox checkbox">-->
+<!--				<input class="ohmylms-form__input ohmylms-form__input-checkbox input-checkbox" id="createaccount" --><?php //checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'ohmylms_create_account_default_checked', false ) ) ), true ); ?><!-- type="checkbox" name="createaccount" value="1" />-->
 <!--				<span>--><?php //esc_html_e( 'Create an account?', 'ohmylms' ); ?><!--</span>-->
 <!--			</label>-->
 <!--		</p>-->
 
-		<?php do_action( 'creator_lms_before_checkout_registration_form', $checkout ); ?>
+		<?php do_action( 'ohmylms_before_checkout_registration_form', $checkout ); ?>
 
 		<?php if ( $checkout->get_checkout_fields( 'account' ) ) : ?>
 
@@ -49,6 +49,6 @@ defined( 'ABSPATH' ) || exit();
 
 		<?php endif; ?>
 
-		<?php do_action( 'creator_lms_after_checkout_registration_form', $checkout ); ?>
+		<?php do_action( 'ohmylms_after_checkout_registration_form', $checkout ); ?>
 	</div>
 <?php endif; ?>

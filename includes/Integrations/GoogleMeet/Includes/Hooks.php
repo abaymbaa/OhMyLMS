@@ -2,16 +2,16 @@
 /**
  * Hooks class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleMeet\Includes;
+namespace OhMyLMS\Integrations\GoogleMeet\Includes;
 
 /**
  * Class Hooks
  *
- * @package OMLMS\Integrations\GoogleMeet
+ * @package OhMyLMS\Integrations\GoogleMeet
  * @since 1.0.0
  */
 class Hooks {
@@ -31,26 +31,26 @@ class Hooks {
 	 */
 	private function init_hooks() {
 		// Register GoogleMeet in integrations list
-		\add_filter( 'creatorlms_integrations', array( $this, 'register_googlemeet_integration' ), 10, 1 );
+		\add_filter( 'ohmylms_integrations', array( $this, 'register_googlemeet_integration' ), 10, 1 );
 		\add_filter( 'init', array( $this, 'google_meet_authentication' ), 10 );
 		
 		// Add GoogleMeet as a live class platform option
-		\add_filter( 'creatorlms_live_class_platforms', array( $this, 'add_googlemeet_platform' ) );
+		\add_filter( 'ohmylms_live_class_platforms', array( $this, 'add_googlemeet_platform' ) );
 		
 		// Register Sessions menu when GoogleMeet is enabled
-		\add_filter( 'creator_lms_show_sessions_menu', array( $this, 'register_session_menu' ) );
+		\add_filter( 'ohmylms_show_sessions_menu', array( $this, 'register_session_menu' ) );
 		
 		// Enqueue scripts for GoogleMeet
 		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 		
 		// Add GoogleMeet template
-		\add_filter( 'creatorlms_lesson_template_path', array( $this, 'add_googlemeet_template' ), 10, 2 );
+		\add_filter( 'ohmylms_lesson_template_path', array( $this, 'add_googlemeet_template' ), 10, 2 );
 		
 		// Session lifecycle hooks
 
-		\add_action( 'creatorlms_googlemeet_session_created', array( $this, 'create_googlemeet_session' ), 10, 2 );
-		\add_action( 'creatorlms_googlemeet_session_updated', array( $this, 'update_googlemeet_session' ), 10, 2 );
-		\add_action( 'creatorlms_googlemeet_session_deleted', array( $this, 'delete_googlemeet_session' ), 10, 2 );
+		\add_action( 'ohmylms_googlemeet_session_created', array( $this, 'create_googlemeet_session' ), 10, 2 );
+		\add_action( 'ohmylms_googlemeet_session_updated', array( $this, 'update_googlemeet_session' ), 10, 2 );
+		\add_action( 'ohmylms_googlemeet_session_deleted', array( $this, 'delete_googlemeet_session' ), 10, 2 );
 	}
 
 	/**
@@ -66,13 +66,12 @@ class Hooks {
 		$integrations['googlemeet'] = array(
 			'label'       => __( 'Google Meet', 'ohmylms' ),
 			'description' => __( 'Integrate Google Meet for live classes and video conferencing', 'ohmylms' ),
-			'icon'        => CREATORLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
+			'icon'        => OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
 			'categories'  => array( 'live-classes' ),
 			'hasSettings' => true,
 			'dependency' => __('Requires Cohorts', 'ohmylms'),
-			'class'       => 'OMLMS\\Integrations\\GoogleMeet\\GoogleMeet',
-			'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('googlemeet'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('googlemeet'),
+			'class'       => 'OhMyLMS\\Integrations\\GoogleMeet\\GoogleMeet',
+			'is_valid'    => true,
 		);
 		return $integrations;
 	}
@@ -89,7 +88,7 @@ class Hooks {
 	public function add_googlemeet_platform( $platforms ) {
 		$platforms['googlemeet'] = array(
 			'name'  => __( 'Google Meet', 'ohmylms' ),
-			'icon'  => CREATORLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
+			'icon'  => OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
 		);
 		return $platforms;
 	}
@@ -104,7 +103,7 @@ class Hooks {
 	 * @return bool Whether to show sessions menu.
 	 */
 	public function register_session_menu( $should_show ) {
-		$integrations = get_option( 'creatorlms_integrations' );
+		$integrations = get_option( 'ohmylms_integrations' );
 		$googlemeet_enabled = isset( $integrations['googlemeet']['is_enable'] ) && $integrations['googlemeet']['is_enable'];
 		
 		if ( $googlemeet_enabled ) {
@@ -128,8 +127,8 @@ class Hooks {
 			
 			if ( $platform === 'googlemeet' ) {
 				\wp_enqueue_script(
-					'creatorlms-googlemeet-content',
-					CREATORLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/js/content-googlemeet.js',
+					'ohmylms-googlemeet-content',
+					OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/js/content-googlemeet.js',
 					array( 'jquery' ),
 					'1.0.0',
 					true
@@ -150,7 +149,7 @@ class Hooks {
 	 */
 	public function add_googlemeet_template( $template, $platform ) {
 		if ( $platform === 'googlemeet' ) {
-			$googlemeet_template = plugin_dir_path( CREATORLMS_PRO_FILE ) . 'includes/Integrations/GoogleMeet/Templates/content-googlemeet.php';
+			$googlemeet_template = plugin_dir_path( OHMYLMS_PRO_FILE ) . 'includes/Integrations/GoogleMeet/Templates/content-googlemeet.php';
 			if ( file_exists( $googlemeet_template ) ) {
 				return $googlemeet_template;
 			}
@@ -243,7 +242,7 @@ class Hooks {
 
 
     private function get_valid_token( $user_id ) {
-		$tokens = get_user_meta( $user_id, 'creatorlms_googlemeet_tokens', true );
+		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		if ( empty( $tokens['access_token'] ) ) return false;
 
 		if ( time() > ( $tokens['expires_in'] ?? 0 ) ) {
@@ -255,8 +254,8 @@ class Hooks {
 
 
     private function refresh_access_token( $user_id ) {
-		$creds  = get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
-		$tokens = get_user_meta( $user_id, 'creatorlms_googlemeet_tokens', true );
+		$creds  = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 
 		if ( empty( $tokens['refresh_token'] ) ) {
 			return false;
@@ -280,7 +279,7 @@ class Hooks {
 		if ( isset( $body['access_token'] ) ) {
 			$tokens['access_token'] = $body['access_token'];
 			$tokens['expires_in']   = time() + ( $body['expires_in'] ?? 3600 );
-			update_user_meta( $user_id, 'creatorlms_googlemeet_tokens', $tokens );
+			update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', $tokens );
 			return $tokens['access_token'];
 		}
 
@@ -435,11 +434,11 @@ class Hooks {
 		if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) && $_GET['state'] === 'googlemeet_auth' ) {
 			$code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 			$user_id  = get_current_user_id();
-			$creds    = get_user_meta( $user_id, 'creatorlms_googlemeet_api_credentials', true );
+			$creds    = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 			if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
 				// Redirect back with error
-				wp_safe_redirect( admin_url( 'admin.php?page=creator-lms#/integrations?auth=error&message=missing_credentials' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=missing_credentials' ) );
 				exit;
 			}
 
@@ -455,24 +454,24 @@ class Hooks {
 			
 			if ( is_wp_error( $response ) ) {
 				// Redirect back with error
-				wp_safe_redirect( admin_url( 'admin.php?page=creator-lms#/integrations?auth=error&message=oauth_failed' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=oauth_failed' ) );
 				exit;
 			}
 
 			$body = json_decode( wp_remote_retrieve_body( $response ), true );
 			if ( isset( $body['access_token'] ) ) {
-				update_user_meta( $user_id, 'creatorlms_googlemeet_tokens', [
+				update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', [
 					'access_token'  => $body['access_token'],
 					'refresh_token' => $body['refresh_token'] ?? '',
 					'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
 				] );
 				
 				// Redirect back to integrations page with success
-				wp_safe_redirect( admin_url( 'admin.php?page=creator-lms#/integrations?auth=success' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=success' ) );
 				exit;
 			} else {
 				// Redirect back with error
-				wp_safe_redirect( admin_url( 'admin.php?page=creator-lms#/integrations?auth=error&message=no_access_token' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=no_access_token' ) );
 				exit;
 			}
 		}

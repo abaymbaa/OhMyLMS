@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Integrations\Funnel\Includes;
+namespace OhMyLMS\Integrations\Funnel\Includes;
 
 use CodeRex\Ecommerce\SubscriptionManager;
 
@@ -386,7 +386,7 @@ class FunnelEndpoint {
 			if ( empty( $product_id ) ) {
 				return new \WP_Error( 'invalid_course', __( 'Course not specified for upsell/downsell.', 'ohmylms' ) );
 			}
-			$product = omlms_get_course( $product_id );
+			$product = ohmylms_get_course( $product_id );
 			if ( ! $product ) {
 				return new \WP_Error( 'course_not_found', __( 'Course not found.', 'ohmylms' ) );
 			}
@@ -395,7 +395,7 @@ class FunnelEndpoint {
 			if ( empty( $product_id ) ) {
 				return new \WP_Error( 'invalid_membership', __( 'Membership not specified for upsell/downsell.', 'ohmylms' ) );
 			}
-			$product = omlms_get_membership( $product_id );
+			$product = ohmylms_get_membership( $product_id );
 			if ( ! $product ) {
 				return new \WP_Error( 'membership_not_found', __( 'Membership not found.', 'ohmylms' ) );
 			}
@@ -513,7 +513,7 @@ class FunnelEndpoint {
 	 */
 	private function apply_tax_to_upsell_price( $price, $order_id ){
 		// Check if tax is enabled globally (you may need to adjust this based on your tax settings)
-		$tax_enabled = get_option( 'creator_lms_tax_enabled', 'no') === 'yes';
+		$tax_enabled = get_option( 'ohmylms_tax_enabled', 'no') === 'yes';
 		if (! $tax_enabled) {
 			return $price;
 		}
@@ -626,8 +626,8 @@ class FunnelEndpoint {
 			$product->get_name(),
 			$offer_type,
 			$step_data['step_id'],
-			omlms_price( $product->get_price() ),
-			omlms_price( $final_price )
+			ohmylms_price( $product->get_price() ),
+			ohmylms_price( $final_price )
 		);
 		$original_order->add_order_note( $note );
 
@@ -638,7 +638,7 @@ class FunnelEndpoint {
 			$this->process_upsell_enrollment( $original_order->get_student_id(), $product->get_id(), $original_order );
 		} elseif ( $offer_type === 'membership' ) {
 			$this->process_upsell_membership_enrollment( $original_order->get_student_id(), $product->get_id(), $original_order );
-			$membership = omlms_get_membership( $product->get_id() );
+			$membership = ohmylms_get_membership( $product->get_id() );
 			if( $membership && 'one_time' !== $membership->get_subscription_period() ) {
 				$subscription_id = SubscriptionManager::create_subscription( $original_order, $product->get_id() );
 				if ( is_wp_error( $subscription_id ) ) {
@@ -663,7 +663,7 @@ class FunnelEndpoint {
 	private function process_upsell_enrollment( $student_id, $course_id, $order ) {
 		global $wpdb;
 
-		$enrollment_table  = $wpdb->prefix . 'omlms_user_enrollment';
+		$enrollment_table  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enrollment_status = 'pending' === $order->get_status() || 'processing' === $order->get_status() ? 'pending' : 'enrolled';
 
 		$enrollment_data = array(
@@ -675,7 +675,7 @@ class FunnelEndpoint {
 			'start_date' => current_time( 'mysql' ),
 		);
 
-		$student = new \OMLMS\Data\Student( get_current_user_id() );
+		$student = new \OhMyLMS\Data\Student( get_current_user_id() );
 		if ( $course_id && $student && ! $student->maybe_enrolled( $course_id ) ) {
 			// Check if the record exists
 			$existing_record = $wpdb->get_var(
@@ -709,7 +709,7 @@ class FunnelEndpoint {
 			}
 
 			if ( 'enrolled' === $enrollment_status ) {
-				do_action( 'creator_lms_after_enrolled_student', $order->get_id() );
+				do_action( 'ohmylms_after_enrolled_student', $order->get_id() );
 			}
 		}
 	}
@@ -726,7 +726,7 @@ class FunnelEndpoint {
 	private function process_upsell_membership_enrollment( $student_id, $membership_id, $order ) {
 		global $wpdb;
 
-		$membership_table  = $wpdb->prefix . 'omlms_user_membership';
+		$membership_table  = $wpdb->prefix . 'ohmylms_user_membership';
 		$enrollment_status = 'pending' === $order->get_status() || 'processing' === $order->get_status() ? 'pending' : 'enrolled';
 
 		$membership_data = array(
@@ -767,7 +767,7 @@ class FunnelEndpoint {
 				$membership_table,
 				$membership_data
 			);
-			do_action('creatorlms_after_enrolled_student', $order->get_id());
+			do_action('ohmylms_after_enrolled_student', $order->get_id());
 		}
 
 		$membership_details = get_post_meta( $membership_id, '_products', true );

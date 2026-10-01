@@ -82,9 +82,9 @@ export function createSubscriptionDetails(readRuntime) {
       }
     }, [o, a]), p ? <Controls.SkeletonWP active={!0} /> : <Controls.ContainerWP isFullWidth={!0}><Controls.SpacerWP paddingTop={5} />{c}<Controls.FlexWP gap={2} align={"center"} justify={"flex-start"}><BackButton onClick={function () {
           r("/subscriptions");
-        }} /><Controls.HeadingWP level={3} size={18} weight={600} color={"#000D25"}>{(0, I18n.__)("Subscription Details", "ohmylms")}</Controls.HeadingWP></Controls.FlexWP><Controls.SpacerWP marginBottom={3} /><Controls.CardWP isBorderless={!0}><Controls.SpacerWP padding={6} marginBottom={0}><Controls.FlexWP className={"omlms-subscription-details"} justify={"start"} align={"start"} gap={3}><Controls.FlexItemWP className={"omlms-subscription-details-left"} style={{
+        }} /><Controls.HeadingWP level={3} size={18} weight={600} color={"#000D25"}>{(0, I18n.__)("Subscription Details", "ohmylms")}</Controls.HeadingWP></Controls.FlexWP><Controls.SpacerWP marginBottom={3} /><Controls.CardWP isBorderless={!0}><Controls.SpacerWP padding={6} marginBottom={0}><Controls.FlexWP className={"ohmylms-subscription-details"} justify={"start"} align={"start"} gap={3}><Controls.FlexItemWP className={"ohmylms-subscription-details-left"} style={{
               width: "calc(70% - 12px)"
-            }}><Controls.CardWP><Controls.SpacerWP padding={4} marginBottom={0}><Controls.HeadingWP level={1} size={24} weight={600}>{(0, I18n.__)("Subscription", "ohmylms")}{" #"}{a}</Controls.HeadingWP><Controls.SpacerWP /><Controls.BadgeWP isBorderLess={!0} variant={"secondary"}><Controls.TextWP>{(0, I18n.__)("Linked to Order ", "ohmylms")}<Controls.ButtonWP href={"/wp-admin/admin.php?page=creator-lms#/order-edit/".concat(null == d ? void 0 : d.original_order_id)} variant={"link"} style={{
+            }}><Controls.CardWP><Controls.SpacerWP padding={4} marginBottom={0}><Controls.HeadingWP level={1} size={24} weight={600}>{(0, I18n.__)("Subscription", "ohmylms")}{" #"}{a}</Controls.HeadingWP><Controls.SpacerWP /><Controls.BadgeWP isBorderLess={!0} variant={"secondary"}><Controls.TextWP>{(0, I18n.__)("Linked to Order ", "ohmylms")}<Controls.ButtonWP href={"/wp-admin/admin.php?page=ohmylms#/order-edit/".concat(null == d ? void 0 : d.original_order_id)} variant={"link"} style={{
                         textDecoration: "none"
                       }}>{"#"}{null == d ? void 0 : d.original_order_id}</Controls.ButtonWP></Controls.TextWP></Controls.BadgeWP></Controls.SpacerWP></Controls.CardWP><Controls.SpacerWP marginBottom={3} /><Controls.CardWP><Controls.SpacerWP padding={5} marginBottom={0}><Controls.HeadingWP level={2} size={18} weight={600} style={{
                     marginBottom: "20px"
@@ -101,7 +101,7 @@ export function createSubscriptionDetails(readRuntime) {
                       }) : null;
                     })}</Controls.FlexWP> : <Controls.TextWP>{(0, I18n.__)("No courses associated with this subscription.", "ohmylms")}</Controls.TextWP>}</Controls.SpacerWP></Controls.CardWP><Controls.SpacerWP marginBottom={3} />{Array.isArray(null == d ? void 0 : d.related_orders) && (null == d ? void 0 : d.related_orders.length) > 0 && <Controls.CardWP isBorderless={!0} variant={"secondary"}><Controls.SpacerWP paddingY={6} paddingX={4} marginBottom={0}>{React.createElement(kQ, {
                     relatedOrders: null == d ? void 0 : d.related_orders
-                  })}</Controls.SpacerWP></Controls.CardWP>}</Controls.FlexItemWP><Controls.FlexItemWP className={"omlms-subscription-details-right"} style={{
+                  })}</Controls.SpacerWP></Controls.CardWP>}</Controls.FlexItemWP><Controls.FlexItemWP className={"ohmylms-subscription-details-right"} style={{
               width: "30%"
             }}><Controls.CardWP isBorderless={!0} variant={"secondary"}><Controls.SpacerWP paddingX={4} paddingY={5} marginBottom={0}><KQ subscription={d} status={null == d ? void 0 : d.status.toLowerCase()} onStatusChange={function () {}} onUpdate={function () {
                     return Promise.resolve();

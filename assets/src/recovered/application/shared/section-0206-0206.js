@@ -26,7 +26,7 @@ var Zee = function (e) {
     }
   })), React.createElement(I.FlexWP, {
     direction: "column",
-    className: "omlms-td-thumbnail-title"
+    className: "ohmylms-td-thumbnail-title"
   }, React.createElement(v.Link, {
     to: "/certificate-edit/".concat(null == t ? void 0 : t.id),
     title: null == t ? void 0 : t.name,
@@ -43,7 +43,7 @@ var Zee = function (e) {
     align: "center",
     justify: "flex-start",
     gap: 2,
-    className: "omlms-td-thumbnail-title-actions"
+    className: "ohmylms-td-thumbnail-title-actions"
   }, React.createElement(I.ButtonWP, {
     onClick: r,
     label: (0, b.__)("Edit Certificate", "ohmylms"),
@@ -53,9 +53,7 @@ var Zee = function (e) {
     }
   }, React.createElement(pG.A, null))))));
 };
-
 const $ee = (0, g.memo)(Zee);
-
 function Kee() {
   var e,
     t,
@@ -142,7 +140,6 @@ function Kee() {
     };
   })();
 }
-
 function Jee(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -164,7 +161,6 @@ function Jee(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Jee(e, t, n, r);
 }
-
 function Xee(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -174,7 +170,6 @@ function Xee(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function ete(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -214,15 +209,13 @@ function ete(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function tte(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var nte = function (e) {
-  (0, L.useIsPro)();
+  true;
   var t = e.template,
     n = e.setOpenModal,
     r = ((0, y.useDispatch)(T.default), (0, y.useSelect)(function (e) {
@@ -247,7 +240,7 @@ var nte = function (e) {
                   contents: (null == t ? void 0 : t.contents) || {},
                   html_contents: CB(null == t || null === (r = t.contents) || void 0 === r ? void 0 : r.elements)
                 }, e.n = 1, l()({
-                  path: "/creator-lms/v1/certificates",
+                  path: "/ohmylms/v1/certificates",
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json"
@@ -310,9 +303,7 @@ var nte = function (e) {
     }
   }, (0, b.__)("Use this template", "ohmylms"))))));
 };
-
 const rte = (0, g.memo)(nte);
-
 function ate(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -352,15 +343,12 @@ function ate(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ote(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 (0, b.__)("Industry", "ohmylms"), (0, b.__)("Company", "ohmylms");
-
 var ite = function (e) {
   var t = e.openModal,
     n = e.setOpenModal,
@@ -403,9 +391,7 @@ var ite = function (e) {
     }));
   }))));
 };
-
 const lte = (0, g.memo)(ite);
-
 function cte() {
   var e,
     t,
@@ -492,7 +478,6 @@ function cte() {
     };
   })();
 }
-
 function ute(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -514,7 +499,6 @@ function ute(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, ute(e, t, n, r);
 }
-
 function ste(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -524,7 +508,6 @@ function ste(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function dte(e) {
   return function () {
     var t = this,
@@ -541,7 +524,6 @@ function dte(e) {
     });
   };
 }
-
 function mte(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -575,7 +557,6 @@ function mte(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function pte(e, t) {
   if (e) {
     if ("string" == typeof e) return fte(e, t);
@@ -583,13 +564,11 @@ function pte(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? fte(e, t) : void 0;
   }
 }
-
 function fte(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var vte = function () {
   var e = (0, y.useDispatch)(T.default),
     t = (0, y.useSelect)(function (e) {
@@ -718,7 +697,7 @@ var vte = function () {
         for (;;) switch (e.n) {
           case 0:
             return e.n = 1, l()({
-              path: "/creator-lms/v1/courses"
+              path: "/ohmylms/v1/courses"
             });
           case 1:
             t = e.v, U(t);
@@ -900,7 +879,7 @@ var vte = function () {
     filterByStatusOptions: me,
     formateCategory: !1,
     showFilterByStatus: !1,
-    className: "omlms-certificate-listing-filter-card"
+    className: "ohmylms-certificate-listing-filter-card"
   }), React.createElement(sN.A, {
     rowKey: "id",
     columns: ve,
@@ -940,5 +919,4 @@ var vte = function () {
     setOpenModal: Z
   }));
 };
-
 const gte = (0, g.memo)(vte);

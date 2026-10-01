@@ -1,3 +1,3 @@
-<div class="creator-lms-admin-page" id="creator-lms">
+<div class="ohmylms-admin-page" id="ohmylms">
 
 </div>

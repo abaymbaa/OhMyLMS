@@ -4,25 +4,25 @@
  * Get course object
  *
  * @param $course_id
- * @return bool|\OMLMS\Data\Course
+ * @return bool|\OhMyLMS\Data\Course
  * @throws Exception
  * @since 1.0.0
  */
-function omlms_get_course( $course_id ) {
+function ohmylms_get_course( $course_id ) {
 	// Ensure the plugin is loaded and course_factory exists
-    if ( function_exists( 'OMLMS' ) && isset( OMLMS()->course_factory ) && OMLMS()->course_factory ) {
-        return OMLMS()->course_factory->get_course( $course_id );
+    if ( function_exists( 'OhMyLMS' ) && isset( ohmylms()->course_factory ) && ohmylms()->course_factory ) {
+        return ohmylms()->course_factory->get_course( $course_id );
     }
 
     // Fallback: return null if course_factory is not ready
     return null;
 }
 
-function omlms_get_course_id_by_content_id( $content_id ) {
+function ohmylms_get_course_id_by_content_id( $content_id ) {
 	global $wpdb;
 
-	$table_content = $wpdb->prefix . 'omlms_content_relationship';
-	$table_chapter = $wpdb->prefix . 'omlms_chapter_relationship';
+	$table_content = $wpdb->prefix . 'ohmylms_content_relationship';
+	$table_chapter = $wpdb->prefix . 'ohmylms_chapter_relationship';
 
 	$query     = $wpdb->prepare(
 		"SELECT cr.course_id
@@ -47,15 +47,15 @@ function omlms_get_course_id_by_content_id( $content_id ) {
  * @return string The permalink of the first lesson.
  * @since 1.0.0
  */
-function creator_lms_get_course_first_lesson_url( $course_id ) {
-	$course = omlms_get_course( $course_id );
+function ohmylms_get_course_first_lesson_url( $course_id ) {
+	$course = ohmylms_get_course( $course_id );
 	$chapters = $course->get_chapters();
 	if( is_array($chapters) ) {
 		foreach ( $chapters as $chapter_array ) {
 			if( !isset($chapter_array['id']) ) {
 				continue;
 			}
-			$chapter = omlms_get_chapter( $chapter_array['id'] );
+			$chapter = ohmylms_get_chapter( $chapter_array['id'] );
 			
 			if ( ! $chapter ) {
 				continue;
@@ -68,24 +68,24 @@ function creator_lms_get_course_first_lesson_url( $course_id ) {
 						continue;
 					}
 					if( isset($lesson_array['type']) && 'quiz' === $lesson_array['type'] ) {
-						$quiz = omlms_get_quiz( $lesson_array['id'] );
+						$quiz = ohmylms_get_quiz( $lesson_array['id'] );
 						if ( $quiz ) {
-							return creatorlms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
+							return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
 						}
 					}
 					
 					if( isset($lesson_array['type']) && 'assignment' === $lesson_array['type'] ) {
-						$assignment = omlms_get_assignment( $lesson_array['id'] );
+						$assignment = ohmylms_get_assignment( $lesson_array['id'] );
 						if ( $assignment ) {
-							return creatorlms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
+							return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
 						}
 					}
 					
-					$lesson = omlms_get_lesson( $lesson_array['id'] );
+					$lesson = ohmylms_get_lesson( $lesson_array['id'] );
 					if ( ! $lesson ) {
 						continue;
 					}
-					return creatorlms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson
+					return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson
 					
 				}
 			}
@@ -97,9 +97,9 @@ function creator_lms_get_course_first_lesson_url( $course_id ) {
 	$sql       = $wpdb->prepare(
 		"SELECT content_rel.content_id
         FROM {$wpdb->posts} AS wp_posts
-        INNER JOIN {$wpdb->prefix}omlms_chapter_relationship AS chapter_rel
+        INNER JOIN {$wpdb->prefix}ohmylms_chapter_relationship AS chapter_rel
             ON wp_posts.ID = chapter_rel.course_id
-        INNER JOIN {$wpdb->prefix}omlms_content_relationship AS content_rel
+        INNER JOIN {$wpdb->prefix}ohmylms_content_relationship AS content_rel
             ON chapter_rel.chapter_id = content_rel.chapter_id
         INNER JOIN {$wpdb->posts} AS lesson_post
             ON content_rel.content_id = lesson_post.ID
@@ -110,7 +110,7 @@ function creator_lms_get_course_first_lesson_url( $course_id ) {
 		$course_id
 	);
 	$lesson_id = $wpdb->get_var( $sql );
-	return $lesson_id ? creatorlms_get_pretty_content_permalink( $lesson_id ) : '';
+	return $lesson_id ? ohmylms_get_pretty_content_permalink( $lesson_id ) : '';
 }
 
 /**
@@ -121,7 +121,7 @@ function creator_lms_get_course_first_lesson_url( $course_id ) {
  *
  * @since 1.0.0
  */
-function creator_lms_get_course_id_by_chapter_id( $chapter_id ) {
+function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
 	static $cache = array();
 
 	if ( array_key_exists( $chapter_id, $cache ) ) {
@@ -130,7 +130,7 @@ function creator_lms_get_course_id_by_chapter_id( $chapter_id ) {
 
 	global $wpdb;
 	$sql = $wpdb->prepare(
-		"SELECT course_id FROM {$wpdb->prefix}omlms_chapter_relationship WHERE chapter_id = %d LIMIT 1",
+		"SELECT course_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE chapter_id = %d LIMIT 1",
 		$chapter_id
 	);
 	$result = $wpdb->get_var( $sql );
@@ -153,7 +153,7 @@ function get_best_selling_course_ids( $category = null ) {
 	$query = "
         SELECT p.ID
         FROM {$wpdb->posts} p
-        INNER JOIN {$wpdb->prefix}omlms_order_itemmeta m ON p.ID = m.meta_value
+        INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON p.ID = m.meta_value
     ";
 
 	// If category is provided, join term relationships and taxonomy tables
@@ -185,9 +185,9 @@ function get_best_selling_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_course_id', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_course_id' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id' );
 	}
 
 	// Execute the query and return the results
@@ -241,9 +241,9 @@ function get_top_rated_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_average_rating', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_average_rating' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating' );
 	}
 
 	// Execute the query and return the results
@@ -297,9 +297,9 @@ function get_top_reviewed_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_review_count', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_review_count' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count' );
 	}
 
 	// Execute the query and return the results
@@ -347,9 +347,9 @@ function get_free_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_price_type', 'free', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_price_type', 'free' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free' );
 	}
 
 	// Execute the query and return the results
@@ -397,9 +397,9 @@ function get_paid_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_price_type', 'paid', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', '_price_type', 'paid' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid' );
 	}
 
 	// Execute the query and return the results
@@ -449,9 +449,9 @@ function get_recent_course_ids( $category = null ) {
 
 	// Prepare the query with or without category
 	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish', $category );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', $category );
 	} else {
-		$prepared_query = $wpdb->prepare( $query, 'omlms-course', 'publish' );
+		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish' );
 	}
 
 	// Execute the query and return the results

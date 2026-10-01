@@ -1,9 +1,9 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Membership;
-use OMLMS\DataException;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Membership;
+use OhMyLMS\DataException;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -43,10 +43,10 @@ class MembershipController extends RestController {
 	 */
 	public function check_membership_read_permission( $request ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			return new \WP_Error( 'creator_lms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'ohmylms_rest_forbidden', __( 'Sorry, you are not allowed to manage this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
-		return $this->check_object_permission( $request, 'read', 'omlms-membership' );
+		return $this->check_object_permission( $request, 'read', 'ohmylms-membership' );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class MembershipController extends RestController {
 	 * @return true|\WP_Error
 	 */
 	public function check_membership_edit_permission( $request ) {
-		return $this->check_object_permission( $request, 'edit', 'omlms-membership' );
+		return $this->check_object_permission( $request, 'edit', 'ohmylms-membership' );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class MembershipController extends RestController {
 	 * @return true|\WP_Error
 	 */
 	public function check_membership_delete_permission( $request ) {
-		return $this->check_object_permission( $request, 'delete', 'omlms-membership' );
+		return $this->check_object_permission( $request, 'delete', 'ohmylms-membership' );
 	}
 
 
@@ -115,7 +115,7 @@ class MembershipController extends RestController {
 			array(
 				'args' => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the membership.', 'creator-lms' ),
+						'description' => __( 'Unique identifier for the membership.', 'ohmylms' ),
 						'type'        => 'integer',
 					),
 				),
@@ -151,7 +151,7 @@ class MembershipController extends RestController {
 		$post = get_post( (int) $request['id'] );
 
 		if ( $post && ! current_user_can( 'read_post', $post->ID ) ) {
-			return new WP_Error( 'creator_lms_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'creator-lms' ), array( 'status' => rest_authorization_required_code() ) );
+			return new WP_Error( 'ohmylms_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -182,7 +182,7 @@ class MembershipController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_MEMBERSHIP_CPT,
+			'post_type'           => OHMYLMS_MEMBERSHIP_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 			'meta_query'          => isset( $request['meta_key'] ) && isset( $request['meta_value'] ) ? array(
 				array(
@@ -256,7 +256,7 @@ class MembershipController extends RestController {
 			}
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_membership_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_membership_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -323,7 +323,7 @@ class MembershipController extends RestController {
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with error name.
-			return new WP_Error( 'creator_lms_rest_membership_exists', sprintf( __( 'Cannot create existing %s.', 'creator-lms' ), 'membership' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_membership_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'membership' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -337,10 +337,10 @@ class MembershipController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_membership', $post, $request );
+			do_action( 'ohmylms_rest_insert_membership', $post, $request );
 			
 			// Trigger membership created event for tracking
-			do_action( 'creatorlms_membership_created', $membership_id, $request );
+			do_action( 'ohmylms_membership_created', $membership_id, $request );
 
 			$this->update_additional_fields_for_object( $post, $request );
 			$this->update_post_meta_fields( $post, $request );
@@ -367,8 +367,8 @@ class MembershipController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_MEMBERSHIP_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_membership_id', __( 'Invalid ID.', 'creator-lms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_MEMBERSHIP_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_membership_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data     = $this->prepare_item_for_response( $post, $request );
@@ -391,7 +391,7 @@ class MembershipController extends RestController {
 	public function trash_bulk( $request ) {
 		$membership_ids = $request->get_param('membership_ids');
 		if( is_array($membership_ids) ){
-			$membership_ids = $this->filter_allowed_post_ids( $membership_ids, 'delete', 'omlms-membership' );
+			$membership_ids = $this->filter_allowed_post_ids( $membership_ids, 'delete', 'ohmylms-membership' );
 
 			if ( is_wp_error( $membership_ids ) ) {
 				return $membership_ids;
@@ -399,7 +399,7 @@ class MembershipController extends RestController {
 
 			foreach( $membership_ids as $membership_id ){
 				wp_trash_post($membership_id);
-				do_action( 'creator_lms_rest_delete_membership', $membership_id );
+				do_action( 'ohmylms_rest_delete_membership', $membership_id );
 			}
 			return new \WP_REST_Response(['message' => 'Deleted Successfully'], 200);
 		}
@@ -417,8 +417,8 @@ class MembershipController extends RestController {
 	 */
 	public function update_item( $request ) {
 		$post_id = (int) $request['id'];
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_MEMBERSHIP_CPT ) {
-			return new WP_Error( 'creator_lms_rest_membership_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_MEMBERSHIP_CPT ) {
+			return new WP_Error( 'ohmylms_rest_membership_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -452,33 +452,33 @@ class MembershipController extends RestController {
 
 		// Check the membership id exist or not
 		if ( ! $membership_id ) {
-			return new WP_Error( 'creator_lms_rest_membership_empty_id', __( 'ID is required.', 'creator-lms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_membership_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Get existing membership by membership id
-		$membership = omlms_get_membership( $membership_id );
+		$membership = ohmylms_get_membership( $membership_id );
 
 		// Check the membership exist or not.
 		if ( ! ( $membership instanceof Membership ) ) {
-			return new WP_Error( 'creator_lms_rest_membership_invalid_id', __( 'ID is invalid.', 'creator-lms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_membership_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Delete the membership
 		$membership->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_membership' action hook.
+		 * Executes the 'ohmylms_rest_delete_membership' action hook.
 		 * This hook is triggered when a membership is being deleted via the REST API.
 		 *
 		 * @param string $membership_id Membership ID.
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_membership', $membership_id );
+		do_action( 'ohmylms_rest_delete_membership', $membership_id );
 
 		$response = array(
 			'status'  => 'success',
-			'message' => __( 'Membership deleted successfully', 'creator-lms' ),
+			'message' => __( 'Membership deleted successfully', 'ohmylms' ),
 		);
 		return rest_ensure_response( $response );
 	}
@@ -549,7 +549,7 @@ class MembershipController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_MEMBERSHIP_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_MEMBERSHIP_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -580,7 +580,7 @@ class MembershipController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}
@@ -613,7 +613,7 @@ class MembershipController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$membership = omlms_get_membership( $post );
+		$membership = ohmylms_get_membership( $post );
 		// Save membership meta fields.
 		$membership = $this->set_membership_meta( $membership, $request );
 
@@ -627,7 +627,7 @@ class MembershipController extends RestController {
 			 * @param array $products The products being added to the membership.
 			 * @param int $membershipId The ID of the membership.
 			 */
-			do_action('creator_lms_rest_after_adding_products_on_membership', $products, $membership->get_id());
+			do_action('ohmylms_rest_after_adding_products_on_membership', $products, $membership->get_id());
 		}
 		return true;
 	}
@@ -687,7 +687,7 @@ class MembershipController extends RestController {
 	protected function set_membership_cover_image( $membership, $attachment_id ) {
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			// Translators: %s is replaced with error name.
-			throw new DataException( 'creator_lms_membership_invalid_image_id', sprintf( __( '#%s is an invalid image ID.', 'creator-lms' ), $attachment_id ), 400 );
+			throw new DataException( 'ohmylms_membership_invalid_image_id', sprintf( __( '#%s is an invalid image ID.', 'ohmylms' ), $attachment_id ), 400 );
 		}
 
 		$membership->set_thumbnail_id( $attachment_id );
@@ -727,8 +727,8 @@ class MembershipController extends RestController {
 			'products'              => $membership->get_products(),
 			'courses'               => count( $membership->get_products() ),
 			'members'               => $membership->count_membership_members(),
-			'currency'		 		=> html_entity_decode(get_omlms_currency_symbol( get_omlms_currency() )),
-            'currency_pos'			=> get_omlms_currency_position(),
+			'currency'		 		=> html_entity_decode(get_ohmylms_currency_symbol( get_ohmylms_currency() )),
+            'currency_pos'			=> get_ohmylms_currency_position(),
 
 		);
 		return $data;
@@ -770,7 +770,7 @@ class MembershipController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$membership = omlms_get_membership( $id );
+			$membership = ohmylms_get_membership( $id );
 		} else {
 			$membership = new Membership();
 		}
@@ -801,7 +801,7 @@ class MembershipController extends RestController {
 	 */
 	public function prepare_item_for_response( $post, $request ) {
 
-		$membership = omlms_get_membership( $post );
+		$membership = ohmylms_get_membership( $post );
 		$data       = $this->get_membership_data( $membership );
 		$response   = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $membership, $request ) );
@@ -817,6 +817,6 @@ class MembershipController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_membership', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_membership', $response, $post, $request );
 	}
 }

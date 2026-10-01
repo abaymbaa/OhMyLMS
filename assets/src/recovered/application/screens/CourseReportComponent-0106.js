@@ -21,7 +21,7 @@ var bq = function () {
     S,
     R,
     x = (0, f.g)().id;
-  x || f.C5, HG("creator-lms", "course"), (0, y.useDispatch)(T.default);
+  x || f.C5, HG("ohmylms", "course"), (0, y.useDispatch)(T.default);
   var C = hq((0, g.useState)({}), 2),
     P = C[0],
     O = C[1],
@@ -53,7 +53,7 @@ var bq = function () {
               order: t,
               completion_type: z
             }, e.n = 2, l()({
-              path: (0, lN.addQueryArgs)("/creator-lms/v1/analytics/course/".concat(x), r),
+              path: (0, lN.addQueryArgs)("/ohmylms/v1/analytics/course/".concat(x), r),
               method: "GET",
               headers: {
                 "Content-Type": "application/json"
@@ -109,12 +109,12 @@ var bq = function () {
     gap: 5,
     align: "stretch",
     justify: "space-between",
-    className: "omlms-course-journey-card-wrapper"
+    className: "ohmylms-course-journey-card-wrapper"
   }, React.createElement(I.FlexItemWP, {
     style: {
       width: "calc(41% - 11px)"
     },
-    className: "omlms-course-journey-left-card"
+    className: "ohmylms-course-journey-left-card"
   }, React.createElement(I.CardWP, {
     isBorderless: !0,
     fullHeight: !0
@@ -193,7 +193,7 @@ var bq = function () {
     style: {
       width: "calc(59% - 11px)"
     },
-    className: "omlms-course-journey-right-card"
+    className: "ohmylms-course-journey-right-card"
   }, React.createElement(I.CardWP, {
     isBorderless: !0,
     fullHeight: !0,
@@ -235,7 +235,7 @@ var bq = function () {
       price: Number(null == P || null === (d = P.earning) || void 0 === d ? void 0 : d.total_earning)
     }))
   }), React.createElement(gU, {
-    className: "omlms-refund",
+    className: "ohmylms-refund",
     title: (0, b.__)("Refund", "ohmylms"),
     icon: React.createElement(React.Fragment, null, React.createElement(IU, {
       iconColor: "#ff4955"
@@ -252,7 +252,7 @@ var bq = function () {
       price: Number(null == P || null === (v = P.earning) || void 0 === v ? void 0 : v.total_refund)
     }))
   }), React.createElement(gU, {
-    className: "omlms-net-income",
+    className: "ohmylms-net-income",
     title: (0, b.__)("Net Income", "ohmylms"),
     icon: React.createElement(React.Fragment, null, React.createElement(IU, {
       iconColor: "#33A646"
@@ -272,7 +272,7 @@ var bq = function () {
     marginBottom: 5
   }), React.createElement(I.SpacerWP, {
     marginBottom: 0,
-    className: "omlms-course-report-chart"
+    className: "ohmylms-course-report-chart"
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0,
     style: {

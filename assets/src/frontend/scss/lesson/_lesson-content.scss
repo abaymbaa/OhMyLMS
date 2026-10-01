@@ -1,15 +1,15 @@
-.creator-lms-page {
-    .creator-lms-lesson-details {
-        .creator-lms-lesson-content {
+.ohmylms-page {
+    .ohmylms-lesson-details {
+        .ohmylms-lesson-content {
             h1 {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 32px;
                 font-weight: 700;
                 line-height: 1.3;
                 margin: 0 0 12px;
             }
 
-            .creator-lms-resources-list {
+            .ohmylms-resources-list {
                 padding: 24px 0;
                 margin: 24px 0 0;
                 border-top: 1px solid #E8E8E8;
@@ -23,7 +23,7 @@
 
     }
 
-    .creator-lms-video-player {
+    .ohmylms-video-player {
         position: relative;
         border-radius: 14px;
         margin-bottom: 26px;
@@ -37,7 +37,7 @@
             display: block;
         }
 
-        .creator-lms-video-player-cover {
+        .ohmylms-video-player-cover {
             position: absolute;
             top: 0;
             left: 0;
@@ -64,7 +64,7 @@
                 margin: 0!important
             }
 
-            .creator-lms-video-player-play {
+            .ohmylms-video-player-play {
                 position: absolute;
                 top: 50%;
                 left: 50%;
@@ -93,11 +93,11 @@
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .creator-lms-video-player .creator-lms-video-player-cover:before {
+    .ohmylms-page .ohmylms-video-player .ohmylms-video-player-cover:before {
         border-radius: 8px;
     }
 
-    .creator-lms-page .creator-lms-video-player {
+    .ohmylms-page .ohmylms-video-player {
         border-radius: 8px;
 
         img {
@@ -109,14 +109,14 @@
         }
     }
 
-    .creator-lms-page .creator-lms-video-player .creator-lms-video-player-cover img {
+    .ohmylms-page .ohmylms-video-player .ohmylms-video-player-cover img {
         border-radius: 8px;
     }
 
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content h1 {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content h1 {
         font-size: 26px;
         line-height: 1.2;
     }
@@ -124,17 +124,17 @@
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-video-player .creator-lms-video-player-cover .creator-lms-video-player-play {
+    .ohmylms-page .ohmylms-video-player .ohmylms-video-player-cover .ohmylms-video-player-play {
         width: 50px;
         height: 50px;
     }
-    .creator-lms-page .creator-lms-video-player .creator-lms-video-player-cover .creator-lms-video-player-play svg {
+    .ohmylms-page .ohmylms-video-player .ohmylms-video-player-cover .ohmylms-video-player-play svg {
         width: 14px;
     }
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content h1 {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content h1 {
         font-size: 24px;
     }
 }

@@ -2,14 +2,14 @@
 
 namespace CodeRex\Ecommerce\Abstracts;
 
-use OMLMS\Abstracts\SettingsApi;
+use OhMyLMS\Abstracts\SettingsApi;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class PaymentGateway
- * @package OMLMS\Order\Abstracts
+ * @package OhMyLMS\Order\Abstracts
  * @since 1.0.0
  */
 abstract class PaymentGateway extends SettingsApi {
@@ -89,7 +89,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * or fraud rules require a phone number.
 	 *
 	 * A gateway can set this statically, override get_required_checkout_fields(),
-	 * or third parties can use the 'creator_lms_gateway_required_checkout_fields'
+	 * or third parties can use the 'ohmylms_gateway_required_checkout_fields'
 	 * filter — so custom gateways can make a field optional or mandatory too.
 	 *
 	 * @var string[]
@@ -118,7 +118,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 */
 	public function get_required_checkout_fields() {
 		$fields = (array) apply_filters(
-			'creator_lms_gateway_required_checkout_fields',
+			'ohmylms_gateway_required_checkout_fields',
 			(array) $this->required_checkout_fields,
 			isset( $this->id ) ? $this->id : '',
 			$this
@@ -134,7 +134,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * @since 1.0.0
 	 */
 	public function get_title() {
-		return apply_filters( 'creator_lms_payment_gateway_title', $this->title, $this->id );
+		return apply_filters( 'ohmylms_payment_gateway_title', $this->title, $this->id );
 	}
 
 
@@ -145,7 +145,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * @since 1.0.0
 	 */
 	public function get_description() {
-		return apply_filters( 'creator_lms_gateway_description', $this->description, $this->id );
+		return apply_filters( 'ohmylms_gateway_description', $this->description, $this->id );
 	}
 
 
@@ -313,7 +313,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 *
 	 * @param int $original_order_id The ID of the original order that created the subscription.
 	 * @param float $amount The amount to charge for this renewal.
-	 * @param int $subscription_id The ID of the omlms-subscription post.
+	 * @param int $subscription_id The ID of the ohmylms-subscription post.
 	 * @param int $student_id The ID of the student/user.
 	 * @return array Should return an array with 'result' => 'success' or 'failure'.
 	 *               On success, can optionally include 'transaction_id'.
@@ -345,7 +345,7 @@ abstract class PaymentGateway extends SettingsApi {
 	/**
 	 * Get a setting value for the payment gateway.
 	 *
-	 * This method retrieves a setting value using the pattern creatorlms_{gateway_id}_settings.
+	 * This method retrieves a setting value using the pattern ohmylms_{gateway_id}_settings.
 	 * It first checks the gateway-specific settings, then falls back to the default settings.
 	 *
 	 * @param string $key The setting key to retrieve.

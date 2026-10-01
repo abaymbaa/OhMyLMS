@@ -1,10 +1,10 @@
 <?php 
 
-namespace OMLMS\Integrations\ContentProtection;
+namespace OhMyLMS\Integrations\ContentProtection;
 
 if (!defined('ABSPATH')) exit;
 
-use \OMLMS\Integrations\ContentProtection\Includes\Hooks;
+use \OhMyLMS\Integrations\ContentProtection\Includes\Hooks;
 
 class ContentProtection {
 

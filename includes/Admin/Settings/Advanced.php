@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * Advanced settings class.
@@ -42,7 +42,7 @@ class Advanced extends Settings {
 	public function get_settings() {
 		$settings = array(
 			array(
-				'id'      => 'creator_lms_use_custom_video_player',
+				'id'      => 'ohmylms_use_custom_video_player',
 				'type'    => 'checkbox',
 				'default' => 'yes',
 				'label'   => __( 'Use Custom Video Player', 'ohmylms' ),

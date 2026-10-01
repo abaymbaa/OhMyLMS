@@ -1,12 +1,12 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit();
 
 abstract class CacheEngine {
 
-	public $cache_group = 'creator_lms';
+	public $cache_group = 'ohmylms';
 
 	public $key;
 

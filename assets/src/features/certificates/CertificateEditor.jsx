@@ -41,7 +41,7 @@ export function createCertificateEditor(readRuntime) {
           justify={'start'}
           direction={'column'}
           gap={0}
-          className={'omlms-classic-certificate-builder'}
+          className={'ohmylms-classic-certificate-builder'}
         >
           <MemoCertificateEditorHeader
             saveAsPDF={function () {

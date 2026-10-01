@@ -2,9 +2,9 @@
 /**
  * Membership Loop Add to Cart
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/membership-loop/add-to-cart.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/membership-loop/add-to-cart.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -25,13 +25,13 @@ $args = array(
 );
 
 $add_to_cart =  apply_filters(
-	'creator_lms_membership_loop_add_to_cart_link', // WPCS: XSS ok.
+	'ohmylms_membership_loop_add_to_cart_link', // WPCS: XSS ok.
 	sprintf(
 		'<a href="%s" data-quantity="%s" class="%s" %s>%s</a>',
 		esc_url( $membership->add_to_cart_url() ),
 		esc_attr( 1 ),
-		esc_attr( 'creator-lms-button add_to_cart_button'),
-		isset( $args['attributes'] ) ? omlms_implode_html_attributes( $args['attributes'] ) : '',
+		esc_attr( 'ohmylms-button add_to_cart_button'),
+		isset( $args['attributes'] ) ? ohmylms_implode_html_attributes( $args['attributes'] ) : '',
 		wp_kses_post( $membership->add_to_cart_text() )
 	),
 	$membership,

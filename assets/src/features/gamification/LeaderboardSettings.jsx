@@ -18,7 +18,7 @@ export function createLeaderboardSettings(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)(),
+    var e = true,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = _2(
         (0, ReactHooks.useState)({
@@ -55,7 +55,7 @@ export function createLeaderboardSettings(readRuntime) {
                 for (;;)
                   switch ((t.p = t.n)) {
                     case 0:
-                      if (e) {
+                      {
                         t.n = 1;
                         break;
                       }
@@ -66,7 +66,7 @@ export function createLeaderboardSettings(readRuntime) {
                         s(!0),
                         (t.n = 2),
                         l()({
-                          path: 'creator-lms/v1/engagement/settings/leaderboard',
+                          path: 'ohmylms/v1/engagement/settings/leaderboard',
                         })
                       );
                     case 2:
@@ -118,7 +118,7 @@ export function createLeaderboardSettings(readRuntime) {
                 for (;;)
                   switch ((n.p = n.n)) {
                     case 0:
-                      if (e) {
+                      {
                         n.n = 1;
                         break;
                       }
@@ -158,7 +158,7 @@ export function createLeaderboardSettings(readRuntime) {
                         (n.p = 4),
                         (n.n = 5),
                         l()({
-                          path: '/creator-lms/v1/engagement/settings/leaderboard',
+                          path: '/ohmylms/v1/engagement/settings/leaderboard',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ export function createLeaderboardSettings(readRuntime) {
         };
       })(),
       E = function (t, n) {
-        if (e) {
+        {
           var o = g2(g2({}, r), {}, h2({}, t, n));
           a(o);
         }
@@ -238,12 +238,7 @@ export function createLeaderboardSettings(readRuntime) {
     return (
       <React.Fragment>
         {contextHolder}
-        <Controls.ProOverlayWP
-          title={(0, I18n.__)(
-            'Leaderboard is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.',
-            'ohmylms',
-          )}
-        />
+
         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
           <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>
             <Controls.FlexWP
@@ -252,7 +247,7 @@ export function createLeaderboardSettings(readRuntime) {
               direction={'column'}
               gap={3}
             >
-              {e && (
+              {
                 <React.Fragment>
                   <Controls.CardWP isBorderless={!0} padding={'24px'} fullWidth={!0}>
                     <Controls.FlexWP
@@ -284,7 +279,7 @@ export function createLeaderboardSettings(readRuntime) {
                             <Controls.SelectWP
                               placeholder={(0, I18n.__)('Select a criterion', 'ohmylms')}
                               onChange={function (t) {
-                                if (e) {
+                                {
                                   var n = g2(
                                     g2({}, r),
                                     {},
@@ -389,7 +384,7 @@ export function createLeaderboardSettings(readRuntime) {
                     </Controls.FlexWP>
                   </Controls.CardWP>
                 </React.Fragment>
-              )}
+              }
             </Controls.FlexWP>
           </Controls.SpacerWP>
         </Controls.CardWP>

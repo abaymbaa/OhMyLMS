@@ -1,16 +1,16 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Data\Question;
-use OMLMS\Data\Quiz;
-use OMLMS\Data\Student;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Data\Question;
+use OhMyLMS\Data\Quiz;
+use OhMyLMS\Data\Student;
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WP_Error;
-use OMLMS\DataException;
+use OhMyLMS\DataException;
 /**
  * Controller for handling quiz REST API endpoints.
  *
@@ -223,7 +223,7 @@ class QuizController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_QUIZ_CPT,
+			'post_type'           => OHMYLMS_QUIZ_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : array( 'draft', 'publish', 'future' ),
 		);
 
@@ -246,7 +246,7 @@ class QuizController extends RestController {
 			unset( $args['filter'] );
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_quiz_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_quiz_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -367,7 +367,7 @@ class QuizController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => CREATOR_LMS_QUIZ_CPT,
+			'post_type'           => OHMYLMS_QUIZ_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 		);
 
@@ -386,7 +386,7 @@ class QuizController extends RestController {
 			unset( $args['filter'] );
 		}
 
-		$args       = apply_filters( 'creator_lms_rest_omlms_quiz_query', $args, $request );
+		$args       = apply_filters( 'ohmylms_rest_ohmylms_quiz_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		$posts_query  = new WP_Query();
@@ -451,7 +451,7 @@ class QuizController extends RestController {
 
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with error name.
-			return new WP_Error( 'creator_lms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
 		}
 		try {
 			$quiz_id = $this->save_quiz( $request );
@@ -466,7 +466,7 @@ class QuizController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_quiz', $post, $request, true );
+			do_action( 'ohmylms_rest_insert_quiz', $post, $request, true );
 
 			$request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response( $post, $request );
@@ -493,7 +493,7 @@ class QuizController extends RestController {
 
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with error name.
-			return new WP_Error( 'creator_lms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Quiz' ), array( 'status' => 400 ) );
 		}
 		try {
 			$quiz_id = $this->save_quiz( $request );
@@ -508,7 +508,7 @@ class QuizController extends RestController {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_rest_insert_quiz', $post, $request, true );
+			do_action( 'ohmylms_rest_insert_quiz', $post, $request, true );
 
 			$request->set_param( 'context', 'edit' );
 			$response = $this->prepare_item_for_response( $post, $request );
@@ -535,11 +535,11 @@ class QuizController extends RestController {
 		$quiz_ids = $request->get_param( 'quiz_ids' );
 		if ( is_array( $quiz_ids ) ) {
 			foreach ( $quiz_ids as $quiz_id ) {
-				if ( get_post_type( $quiz_id ) !== 'omlms-quiz' ) {
+				if ( get_post_type( $quiz_id ) !== 'ohmylms-quiz' ) {
 					return new \WP_REST_Response( array( 'message' => 'Invalid quiz ID.' ), 400 );
 				}
 				wp_trash_post( $quiz_id );
-				do_action( 'creator_lms_rest_delete_quiz', $quiz_id );
+				do_action( 'ohmylms_rest_delete_quiz', $quiz_id );
 			}
 			return new \WP_REST_Response( array( 'message' => 'Deleted Successfully' ), 200 );
 		}
@@ -558,8 +558,8 @@ class QuizController extends RestController {
 
 		$post_id = (int) $request['id'];
 
-		if ( empty( $post_id ) || get_post_type( $post_id ) !== CREATOR_LMS_QUIZ_CPT ) {
-			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -570,7 +570,7 @@ class QuizController extends RestController {
 			$this->save_question( $post, $request );
 			$request->set_param( 'context', 'edit' );
 			$data                  = $this->prepare_item_for_response( $post, $request );
-			$question              = omlms_get_quiz( $post->ID )->get_questions();
+			$question              = ohmylms_get_quiz( $post->ID )->get_questions();
 			$data_array            = rest_get_server()->response_to_data( $data, false );
 			$data_array['content'] = $question;
 			$response              = rest_ensure_response( $data_array );
@@ -604,12 +604,12 @@ class QuizController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$data                  = $this->prepare_item_for_response( $post, $request );
-		$question              = omlms_get_quiz( $post->ID )->get_questions();
+		$question              = ohmylms_get_quiz( $post->ID )->get_questions();
 		$data_array            = rest_get_server()->response_to_data( $data, false );
 		$data_array['content'] = $question;
 		$response              = rest_ensure_response( $data_array );
@@ -633,25 +633,25 @@ class QuizController extends RestController {
 	public function delete_item( $request ) {
 		$quiz_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 		if ( ! $quiz_id ) {
-			return new WP_Error( 'creator_lms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$quiz = omlms_get_quiz( $quiz_id );
+		$quiz = ohmylms_get_quiz( $quiz_id );
 
 		if ( ! ( $quiz instanceof Quiz ) ) {
-			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$quiz->delete();
 
 		/**
-		 * Executes the 'creator_lms_rest_delete_quiz' action hook.
+		 * Executes the 'ohmylms_rest_delete_quiz' action hook.
 		 * This hook is triggered when a quiz is being deleted via the REST API.
 		 *
 		 * @param array $request The request array.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_delete_quiz', $quiz_id );
+		do_action( 'ohmylms_rest_delete_quiz', $quiz_id );
 
 		$response = array(
 			'id'      => $quiz_id,
@@ -678,10 +678,10 @@ class QuizController extends RestController {
 	public function get_report( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz = omlms_get_quiz( $post->ID );
+		$quiz = ohmylms_get_quiz( $post->ID );
 
 		$report   = $quiz->get_report();
 		$data     = array(
@@ -708,15 +708,15 @@ class QuizController extends RestController {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['attempt_id'];
 		$post       = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz     	= omlms_get_quiz( $post->ID );
+		$quiz     	= ohmylms_get_quiz( $post->ID );
 		$report   	= $quiz->get_attempt_report( $attempt_id );
-		$attempt 	= creatorlms_get_attempt( $attempt_id );
+		$attempt 	= ohmylms_get_attempt( $attempt_id );
 		$student 	= $attempt->get_student();
 		$course_id 	= $attempt->get_course_id();
-		$course	 	= omlms_get_course( $course_id );
+		$course	 	= ohmylms_get_course( $course_id );
 		$data     = array(
 			'report'               	=> $report,
 			'question_total_marks' 	=> $quiz->get_total_marks(),
@@ -755,12 +755,12 @@ class QuizController extends RestController {
 		$data = $request->get_params( 'data' );
 
 		if ( empty( $id ) ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz = omlms_get_quiz( $id );
+		$quiz = ohmylms_get_quiz( $id );
 
 		if ( empty( $quiz ) ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		if ( isset( $data['report']['questions'] ) ) {
@@ -770,13 +770,13 @@ class QuizController extends RestController {
 			}
 		}
 
-		$attempt = creatorlms_get_attempt( $attempt_id );
+		$attempt = ohmylms_get_attempt( $attempt_id );
 		$score = $attempt->get_total_score();
 		
 		global $wpdb;
 
 		$wpdb->update(
-			"{$wpdb->prefix}omlms_quiz_attempts",
+			"{$wpdb->prefix}ohmylms_quiz_attempts",
 			array(
 				'status' => 'completed',
 				'total'	 => $score,
@@ -791,8 +791,8 @@ class QuizController extends RestController {
 				'%d',
 			)
 		);
-		$student_id   = $wpdb->get_var( $wpdb->prepare( "SELECT student_id FROM {$wpdb->prefix}omlms_quiz_attempts WHERE id = %d", $attempt_id ) );
-		$course_id    = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$student_id   = $wpdb->get_var( $wpdb->prepare( "SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d", $attempt_id ) );
+		$course_id    = ohmylms_get_course_by_content_id( $quiz->get_id() );
 		$get_attempts = $quiz->get_attempt_report( $attempt_id );
 		do_action('ohmylms_attempt_graded', ['quiz_id'=>$id, 'attempt_id'=>$attempt_id, 'course_id'=>(int)$course_id, 'student_id'=>(int)$student_id, 'total'=>(float)$score, 'status'=>'completed', 'reason'=>'manual-review']);
 		$previous_completion_rate = 0;
@@ -803,7 +803,7 @@ class QuizController extends RestController {
 		}
 
 		do_action(
-			'creator_lms_rest_review_quiz_attempt',
+			'ohmylms_rest_review_quiz_attempt',
 			$quiz->get_id(),
 			$course_id,
 			$student_id,
@@ -811,18 +811,18 @@ class QuizController extends RestController {
 		);
 
 		
-		$student = new \OMLMS\Data\Student( $student_id );
+		$student = new \OhMyLMS\Data\Student( $student_id );
 		$maybe_course_completion = $student && $student->is_course_completed( $course_id ) ? 'yes' : 'no';
 
 		if( $maybe_course_completion === 'yes' ){
-			do_action( 'creator_lms_student_completed_course_after_reviewing_quiz', $student_id, $course_id );
+			do_action( 'ohmylms_student_completed_course_after_reviewing_quiz', $student_id, $course_id );
 			$completion_rate = $student->get_over_all_completion_rate( $course_id );
 			if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 ) {
 				global $wpdb;
-				$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+				$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 				$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
 				if ( isset( $enroll_data['order_id'] ) ) {
-					do_action( 'creator_lms_course_completed', $student_id, $course_id, $enroll_data['order_id'] );
+					do_action( 'ohmylms_course_completed', $student_id, $course_id, $enroll_data['order_id'] );
 				}
 			}
 		}
@@ -849,10 +849,10 @@ class QuizController extends RestController {
 		$quiz_attempt_answer_id = (int) $request['quiz_attempt_answer_id'];
 		$attempt_id             = (int) $request['attempt_id'];
 		$post                   = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== CREATOR_LMS_QUIZ_CPT ) {
-			return new WP_Error( 'creator_lms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz = omlms_get_quiz( $post->ID );
+		$quiz = ohmylms_get_quiz( $post->ID );
 		$quiz->update_attempt_report_manually( $quiz_attempt_answer_id, $request );
 		$report       = $quiz->get_attempt_report( $attempt_id );
 		$data         = array(
@@ -862,7 +862,7 @@ class QuizController extends RestController {
 			'passing_mark'         => $quiz->get_passing_grade(),
 		);
 		$student_id   = get_current_user_id();
-		$course_id    = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$course_id    = ohmylms_get_course_by_content_id( $quiz->get_id() );
 		$get_attempts = $quiz->get_all_quiz_attempts_by_attempt_id( $student_id, $course_id, $attempt_id );
 		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
 			$student = new Student( $student_id );
@@ -889,7 +889,7 @@ class QuizController extends RestController {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
 		if ( isset( $request['id'] ) ) {
-			$quiz = omlms_get_quiz( $id );
+			$quiz = ohmylms_get_quiz( $id );
 		} else {
 			$quiz = new Quiz();
 		}
@@ -924,7 +924,7 @@ class QuizController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$quiz = omlms_get_quiz( $post->ID );
+		$quiz = ohmylms_get_quiz( $post->ID );
 		$data = $this->get_quiz_data( $quiz );
 
 		$response = rest_ensure_response( $data );
@@ -941,7 +941,7 @@ class QuizController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'creator_lms_rest_prepare_quiz', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_quiz', $response, $post, $request );
 	}
 
 
@@ -956,10 +956,10 @@ class QuizController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_quiz_data( $quiz ) {
-		$course_id = creator_lms_get_course_by_content_id( $quiz->get_id() );
+		$course_id = ohmylms_get_course_by_content_id( $quiz->get_id() );
 		$courses   = array();
 		if ( $course_id ) {
-			$course = omlms_get_course( $course_id );
+			$course = ohmylms_get_course( $course_id );
 			if ( $course ) {
 				$courses['id']          = $course_id;
 				$courses['course_name'] = $course->get_name();
@@ -1027,7 +1027,7 @@ class QuizController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
-		$quiz = omlms_get_quiz( $post );
+		$quiz = ohmylms_get_quiz( $post );
 		$quiz = $this->set_quiz_meta( $quiz, $request );
 		$quiz->save();
 		/**
@@ -1037,7 +1037,7 @@ class QuizController extends RestController {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_rest_quiz_meta_updated', $quiz );
+		do_action( 'ohmylms_rest_quiz_meta_updated', $quiz );
 
 		return true;
 	}
@@ -1093,7 +1093,7 @@ class QuizController extends RestController {
 				 *
 				 * @param mixed $prepared_args[ $var ] The query_var value.
 				 */
-				$query_args[ $var ] = apply_filters( "creator_lms_rest_query_var-{$var}", $prepared_args[ $var ] );
+				$query_args[ $var ] = apply_filters( "ohmylms_rest_query_var-{$var}", $prepared_args[ $var ] );
 			}
 		}
 
@@ -1135,7 +1135,7 @@ class QuizController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_QUIZ_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_QUIZ_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -1166,7 +1166,7 @@ class QuizController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}
@@ -1186,15 +1186,15 @@ class QuizController extends RestController {
 		$quiz_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 		// Check the chapter id exist or not
 		if ( ! $quiz_id ) {
-			return new WP_Error( 'creator_lms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Get existing chapter by chapter id
-		$quiz = omlms_get_quiz( $quiz_id );
+		$quiz = ohmylms_get_quiz( $quiz_id );
 
 		// Check the chapter exist or not.
 		if ( ! ( $quiz instanceof Quiz ) ) {
-			return new WP_Error( 'creator_lms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$questions = $quiz->get_questions();
@@ -1225,15 +1225,15 @@ class QuizController extends RestController {
 
 		// Check the chapter id exist or not
 		if ( ! $quiz_id ) {
-			return new WP_Error( 'creator_lms_rest_chapter_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_chapter_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		// Get existing chapter by chapter id
-		$quiz = omlms_get_quiz( $quiz_id );
+		$quiz = ohmylms_get_quiz( $quiz_id );
 
 		// Check the chapter exist or not.
 		if ( ! ( $quiz instanceof Quiz ) ) {
-			return new WP_Error( 'creator_lms_rest_chapter_empty_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_chapter_empty_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 		$all_data       = $request->get_json_params();
 		$quiz_data      = $all_data['quiz'];
@@ -1241,11 +1241,11 @@ class QuizController extends RestController {
 		$this->save_quiz( $quiz_data );
 		foreach ( $questions_data as $question ) {
 			if ( isset( $question['id'] ) ) {
-				$quiz_obj = omlms_get_question( $question['id'] );
+				$quiz_obj = ohmylms_get_question( $question['id'] );
 			} else {
 				$quiz_obj = new Question();
 			}
-			// $quiz_obj = omlms_get_question( $question['id'] );
+			// $quiz_obj = ohmylms_get_question( $question['id'] );
 			$quiz_obj->set_id( $question['id'] );
 			$quiz_obj->set_name( $question['name'] );
 			$quiz_obj->set_description( $question['description'] );

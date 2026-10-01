@@ -37,7 +37,7 @@ when the filter changes or the component unmounts. Recent-course sorting copies 
 array instead of mutating WordPress store data. Existing dashboard totals are retained
 when a subsequent request fails; failure is logged rather than presented as new data.
 
-`OMLMS_SOURCE_ASSETS` still controls activation. Building does not change site configuration.
+`OHMYLMS_SOURCE_ASSETS` still controls activation. Building does not change site configuration.
 
 ## Verification
 

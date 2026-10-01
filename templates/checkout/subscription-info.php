@@ -2,9 +2,9 @@
 /**
  * Subscription info template
  *
- * This template can be overridden by copying it to yourtheme/creatorlms/checkout/subscription-info.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/subscription-info.php.
  *
- * @package   CreatorLmsPro
+ * @package   OhMyLMSPro
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Data\Subscription $subscription
  */
@@ -24,8 +24,8 @@ if( empty( $post_ids ) ) {
 // if ( ! empty( $post_ids ) ) {
 ?>
 
-<div class="creator-lms-thankyou-table-wrapper subscription-info">
-    <h2 class="creator-lms-order-summary-title">
+<div class="ohmylms-thankyou-table-wrapper subscription-info">
+    <h2 class="ohmylms-order-summary-title">
         <?php echo __('Subscription Details', 'ohmylms'); ?>
     </h2>
     <?php
@@ -34,7 +34,7 @@ if( empty( $post_ids ) ) {
         if( ! isset( $subscription ) || ! $subscription instanceof \CodeRex\Ecommerce\Data\Subscription ) {
             continue;
         }
-        $membership = omlms_get_membership( $subscription->get_membership_id() );
+        $membership = ohmylms_get_membership( $subscription->get_membership_id() );
         if( ! $membership ) {
             continue;
         }
@@ -62,7 +62,7 @@ if( empty( $post_ids ) ) {
                 ));
                 $price = isset($tax_data['total_with_tax']) ? $tax_data['total_with_tax'] : $price;
             }
-            $price_html = omlms_price($price) . ' / ' . $billing_period;
+            $price_html = ohmylms_price($price) . ' / ' . $billing_period;
             $now        = current_time('timestamp');
 
             switch ($billing_period) {
@@ -111,7 +111,7 @@ if( empty( $post_ids ) ) {
                 <?php endif; ?>
                 <tr class="subscription-amount">
                     <td><?php echo __('Amount', 'ohmylms'); ?></td>
-                    <td style="font-weight: bold;"><?php echo omlms_price($recurring_amount).'/'.$subscription->get_billing_period(); ?></td>
+                    <td style="font-weight: bold;"><?php echo ohmylms_price($recurring_amount).'/'.$subscription->get_billing_period(); ?></td>
                 </tr>
             </tbody>
         </table>

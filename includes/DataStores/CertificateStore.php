@@ -1,17 +1,17 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Certificate;
-use OMLMS\Data\Student;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Certificate;
+use OhMyLMS\Data\Student;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class CertificateStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class CertificateStore extends DataStore {
@@ -30,9 +30,9 @@ class CertificateStore extends DataStore {
 		}
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_certificate_data',
+				'ohmylms_new_certificate_data',
 				array(
-					'post_type'     => CREATOR_LMS_CERTIFICATE_CPT,
+					'post_type'     => OHMYLMS_CERTIFICATE_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => $certificate->get_status() ? $certificate->get_status() : 'draft',
 					'post_title'    => $certificate->get_name() ? $certificate->get_name() : __( 'Untitled', 'ohmylms' ),
@@ -58,7 +58,7 @@ class CertificateStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creator_lms_after_creating_new_certificate', $id, $certificate );
+			do_action( 'ohmylms_after_creating_new_certificate', $id, $certificate );
 		}
 	}
 
@@ -73,7 +73,7 @@ class CertificateStore extends DataStore {
 	 */
 	public function read( &$certificate ) {
 		$post_object = get_post( $certificate->get_id() );
-		if ( ! $certificate->get_id() || ! $post_object || CREATOR_LMS_CERTIFICATE_CPT !== $post_object->post_type ) {
+		if ( ! $certificate->get_id() || ! $post_object || OHMYLMS_CERTIFICATE_CPT !== $post_object->post_type ) {
 			return;
 		}
 
@@ -131,7 +131,7 @@ class CertificateStore extends DataStore {
 			'post_title'  => $certificate->get_name( 'edit' ),
 			'post_status' => $certificate->get_status( 'edit' ) ? $certificate->get_status( 'edit' ) : 'publish',
 			'post_name'   => sanitize_title( $certificate->get_name() ),
-			'post_type'   => CREATOR_LMS_CERTIFICATE_CPT,
+			'post_type'   => OHMYLMS_CERTIFICATE_CPT,
 		);
 		if ( $certificate->get_date_created( 'edit' ) ) {
 			$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $certificate->get_date_created( 'edit' )->getOffsetTimestamp() );
@@ -152,7 +152,7 @@ class CertificateStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_update_certificate', $certificate->get_id(), $certificate );
+		do_action( 'ohmylms_update_certificate', $certificate->get_id(), $certificate );
 	}
 
 
@@ -200,7 +200,7 @@ class CertificateStore extends DataStore {
 				 *
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_deleting_a_certificate' );
+				do_action( 'ohmylms_after_deleting_a_certificate' );
 			}
 		}
 	}
@@ -281,7 +281,7 @@ class CertificateStore extends DataStore {
 
 		// Query to get all course IDs associated with the certificate
 		$query = $wpdb->prepare(
-			"SELECT course_id FROM {$wpdb->prefix}omlms_certificate_relationship WHERE certificate_id = %d",
+			"SELECT course_id FROM {$wpdb->prefix}ohmylms_certificate_relationship WHERE certificate_id = %d",
 			$certificate_id
 		);
 
@@ -292,7 +292,7 @@ class CertificateStore extends DataStore {
 			$courses    = array();
 			$course_ids = $results;
 			foreach ( $course_ids as $course_id ) {
-				$course = omlms_get_course( $course_id );
+				$course = ohmylms_get_course( $course_id );
 				if ( $course ) {
 					$courses[] = array(
 						'id'           => $course_id,
@@ -316,7 +316,7 @@ class CertificateStore extends DataStore {
 		$certificate_id = $certificate->get_id();
 
 		// Prepare the table name
-		$table_name = $wpdb->prefix . 'omlms_certificate_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_certificate_relationship';
 
 		// Delete all existing relationships
 		$wpdb->delete(

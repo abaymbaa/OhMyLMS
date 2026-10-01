@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
-use OMLMS\Data\Student;
+use OhMyLMS\Data\Student;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -40,22 +40,22 @@ class FormHandler {
 			return;
 		}
 
-		$first_name   = ! empty( $_POST['first_name'] ) ? omlms_clean( wp_unslash( $_POST['first_name'] ) ) : '';
-		$last_name    = ! empty( $_POST['last_name'] ) ? omlms_clean( wp_unslash( $_POST['last_name'] ) ) : '';
-		$display_name = ! empty( $_POST['display_name'] ) ? omlms_clean( wp_unslash( $_POST['display_name'] ) ) : '';
-		$address      = ! empty( $_POST['address'] ) ? omlms_clean( wp_unslash( $_POST['address'] ) ) : '';
-		$email        = ! empty( $_POST['email'] ) ? omlms_clean( wp_unslash( $_POST['email'] ) ) : '';
-		$pass_current = ! empty( $_POST['password_current'] ) ? omlms_clean( $_POST['password_current'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass1        = ! empty( $_POST['password1'] ) ? omlms_clean( $_POST['password1'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass2        = ! empty( $_POST['password2'] ) ? omlms_clean( $_POST['password2'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$first_name   = ! empty( $_POST['first_name'] ) ? ohmylms_clean( wp_unslash( $_POST['first_name'] ) ) : '';
+		$last_name    = ! empty( $_POST['last_name'] ) ? ohmylms_clean( wp_unslash( $_POST['last_name'] ) ) : '';
+		$display_name = ! empty( $_POST['display_name'] ) ? ohmylms_clean( wp_unslash( $_POST['display_name'] ) ) : '';
+		$address      = ! empty( $_POST['address'] ) ? ohmylms_clean( wp_unslash( $_POST['address'] ) ) : '';
+		$email        = ! empty( $_POST['email'] ) ? ohmylms_clean( wp_unslash( $_POST['email'] ) ) : '';
+		$pass_current = ! empty( $_POST['password_current'] ) ? ohmylms_clean( $_POST['password_current'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass1        = ! empty( $_POST['password1'] ) ? ohmylms_clean( $_POST['password1'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass2        = ! empty( $_POST['password2'] ) ? ohmylms_clean( $_POST['password2'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$bio          = ! empty( $_POST['bio'] ) ? htmlspecialchars( strip_tags( $_POST['bio'] ), ENT_QUOTES, 'UTF-8' ) : '';
 		$interests    = ! empty( $_POST['interests'] ) ? htmlspecialchars( strip_tags( $_POST['interests'] ), ENT_QUOTES, 'UTF-8' ) : '';
 		$skills       = ! empty( $_POST['skills'] ) && is_array( $_POST['skills'] ) ? array_map( 'sanitize_text_field', $_POST['skills'] ) : array();
 		$link_labels  = ! empty( $_POST['link_labels'] ) && is_array( $_POST['link_labels'] ) ? array_map( 'sanitize_text_field', $_POST['link_labels'] ) : array();
 		$link_urls    = ! empty( $_POST['link_urls'] ) && is_array( $_POST['link_urls'] ) ? array_map( 'esc_url_raw', $_POST['link_urls'] ) : array();
-		$phone        = ! empty( $_POST['phone'] ) ? omlms_clean( wp_unslash( $_POST['phone'] ) ) : '';
-		$whatsapp     = ! empty( $_POST['whatsapp'] ) ? omlms_clean( wp_unslash( $_POST['whatsapp'] ) ) : '';
-		$country      = ! empty( $_POST['country'] ) ? omlms_clean( wp_unslash( $_POST['country'] ) ) : '';
+		$phone        = ! empty( $_POST['phone'] ) ? ohmylms_clean( wp_unslash( $_POST['phone'] ) ) : '';
+		$whatsapp     = ! empty( $_POST['whatsapp'] ) ? ohmylms_clean( wp_unslash( $_POST['whatsapp'] ) ) : '';
+		$country      = ! empty( $_POST['country'] ) ? ohmylms_clean( wp_unslash( $_POST['country'] ) ) : '';
 
 		$save_pass = true;
 
@@ -72,7 +72,7 @@ class FormHandler {
 		$user->display_name = $display_name;
 
 		if ( is_email( $display_name ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Display name cannot be changed to email address due to privacy concern.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Display name cannot be changed to email address due to privacy concern.', 'ohmylms' ), 'error' );
 		}
 
 		$required_fields = array(
@@ -85,7 +85,7 @@ class FormHandler {
 		foreach ( $required_fields as $field_key => $field_name ) {
 			if ( empty( $_POST[ $field_key ] ) ) {
 				/* translators: %s: Field name. */
-				\CodeRex\Ecommerce\omlmse_add_notice( sprintf( __( '%s is a required field.', 'ohmylms' ), '<strong>' . esc_html( $field_name ) . '</strong>' ), 'error', array( 'id' => $field_key ) );
+				\CodeRex\Ecommerce\ohmylmse_add_notice( sprintf( __( '%s is a required field.', 'ohmylms' ), '<strong>' . esc_html( $field_name ) . '</strong>' ), 'error', array( 'id' => $field_key ) );
 			}
 		}
 
@@ -93,28 +93,28 @@ class FormHandler {
 		if ( $email ) {
 			$email = sanitize_email( $email );
 			if ( ! is_email( $email ) ) {
-				\CodeRex\Ecommerce\omlmse_add_notice( __( 'Please provide a valid email address.', 'ohmylms' ), 'error' );
+				\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please provide a valid email address.', 'ohmylms' ), 'error' );
 			} elseif ( email_exists( $email ) && $email !== $current_user->user_email ) {
-				\CodeRex\Ecommerce\omlmse_add_notice( __( 'This email address is already registered.', 'ohmylms' ), 'error' );
+				\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'This email address is already registered.', 'ohmylms' ), 'error' );
 			}
 			$user->user_email = $email;
 		}
 
 		// handle password
 		if ( ! empty( $pass_current ) && empty( $pass1 ) && empty( $pass2 ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Please fill out all password fields.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please fill out all password fields.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && empty( $pass_current ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Please enter your current password.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please enter your current password.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && empty( $pass2 ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Please re-enter your password.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please re-enter your password.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'New passwords do not match.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'New passwords do not match.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && ! wp_check_password( $pass_current, $current_user->user_pass, $current_user->ID ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Your current password is incorrect.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Your current password is incorrect.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		}
 
@@ -122,7 +122,7 @@ class FormHandler {
 			$user->user_pass = $pass1;
 		}
 
-		if ( \CodeRex\Ecommerce\omlmse_notice_count( 'error' ) === 0 ) {
+		if ( \CodeRex\Ecommerce\ohmylmse_notice_count( 'error' ) === 0 ) {
 			wp_update_user( $user );
 			$student = new Student( $user->ID );
 			$student->set_email( $email );
@@ -140,7 +140,7 @@ class FormHandler {
 
 			$student->save();
 
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
 			
 			// Check if redirect_to parameter is set (for shortcode usage).
 			$redirect_url = ! empty( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
@@ -148,7 +148,7 @@ class FormHandler {
 			if ( $redirect_url ) {
 				wp_safe_redirect( $redirect_url );
 			} else {
-				wp_safe_redirect( omlms_get_endpoint_url( 'profile', '', omlms_get_page_permalink( 'student_profile' ) ) );
+				wp_safe_redirect( ohmylms_get_endpoint_url( 'profile', '', ohmylms_get_page_permalink( 'student_profile' ) ) );
 			}
 			exit;
 		} else {
@@ -160,7 +160,7 @@ class FormHandler {
 				$redirect_url = add_query_arg( 'edit', 'true', $redirect_url );
 				wp_safe_redirect( $redirect_url );
 			} else {
-				wp_safe_redirect( omlms_get_endpoint_url( 'profile-edit', '', omlms_get_page_permalink( 'student_profile' ) ) );
+				wp_safe_redirect( ohmylms_get_endpoint_url( 'profile-edit', '', ohmylms_get_page_permalink( 'student_profile' ) ) );
 			}
 			exit;
 		}
@@ -188,11 +188,11 @@ class FormHandler {
 			return;
 		}
 
-		$notification_chapter            = ! empty( $_POST['notification_chapter'] ) ? omlms_clean( wp_unslash( $_POST['notification_chapter'] ) ) : 'off';
-		$notification_direct_messages    = ! empty( $_POST['notification_direct_messages'] ) ? omlms_clean( wp_unslash( $_POST['notification_direct_messages'] ) ) : 'off';
-		$notification_new_course_content = ! empty( $_POST['notification_new_course_content'] ) ? omlms_clean( wp_unslash( $_POST['notification_new_course_content'] ) ) : 'off';
-		$notification_comments_replies   = ! empty( $_POST['notification_comments_replies'] ) ? omlms_clean( wp_unslash( $_POST['notification_comments_replies'] ) ) : 'off';
-		if ( \CodeRex\Ecommerce\omlmse_notice_count( 'error' ) === 0 ) {
+		$notification_chapter            = ! empty( $_POST['notification_chapter'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_chapter'] ) ) : 'off';
+		$notification_direct_messages    = ! empty( $_POST['notification_direct_messages'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_direct_messages'] ) ) : 'off';
+		$notification_new_course_content = ! empty( $_POST['notification_new_course_content'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_new_course_content'] ) ) : 'off';
+		$notification_comments_replies   = ! empty( $_POST['notification_comments_replies'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_comments_replies'] ) ) : 'off';
+		if ( \CodeRex\Ecommerce\ohmylmse_notice_count( 'error' ) === 0 ) {
 			$student = new Student( $user_id );
 			$student->set_notification_chapter( $notification_chapter );
 			$student->set_notification_direct_messages( $notification_direct_messages );
@@ -200,8 +200,8 @@ class FormHandler {
 			$student->set_notification_comments_replies( $notification_comments_replies );
 
 			$student->save();
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'Notification settings saved successfully.', 'ohmylms' ) );
-			wp_safe_redirect( omlms_get_endpoint_url( 'notification', '', omlms_get_page_permalink( 'student_profile' ) ) );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Notification settings saved successfully.', 'ohmylms' ) );
+			wp_safe_redirect( ohmylms_get_endpoint_url( 'notification', '', ohmylms_get_page_permalink( 'student_profile' ) ) );
 			exit;
 		}
 	}
@@ -221,11 +221,11 @@ class FormHandler {
 			return;
 		}
 
-		$assignment_id = ! empty( $_POST['assignment_id'] ) ? omlms_clean( wp_unslash( $_POST['assignment_id'] ) ) : '';
-		$course_id     = ! empty( $_POST['course_id'] ) ? omlms_clean( wp_unslash( $_POST['course_id'] ) ) : '';
-		$content       = ! empty( $_POST['submission-body'] ) ? omlms_clean( sanitize_text_field( $_POST['submission-body'] ) ) : '';
+		$assignment_id = ! empty( $_POST['assignment_id'] ) ? ohmylms_clean( wp_unslash( $_POST['assignment_id'] ) ) : '';
+		$course_id     = ! empty( $_POST['course_id'] ) ? ohmylms_clean( wp_unslash( $_POST['course_id'] ) ) : '';
+		$content       = ! empty( $_POST['submission-body'] ) ? ohmylms_clean( sanitize_text_field( $_POST['submission-body'] ) ) : '';
 
-		$assignment = new \OMLMS\Data\Assignment( $assignment_id );
+		$assignment = new \OhMyLMS\Data\Assignment( $assignment_id );
 
 		if ( ! $assignment->get_id() ) {
 			return;
@@ -239,14 +239,14 @@ class FormHandler {
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		if ( empty( $_FILES['creator-lms-submission-file'] ) || $_FILES['creator-lms-submission-file']['error'] === UPLOAD_ERR_NO_FILE ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'No file was uploaded.', 'ohmylms' ), 'error' );
+		if ( empty( $_FILES['ohmylms-submission-file'] ) || $_FILES['ohmylms-submission-file']['error'] === UPLOAD_ERR_NO_FILE ) {
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'No file was uploaded.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
 
 		$allowed_mimes = apply_filters(
-			'creator_lms_assignment_allowed_mimes',
+			'ohmylms_assignment_allowed_mimes',
 			array(
 				'jpg|jpeg' => 'image/jpeg',
 				'png'      => 'image/png',
@@ -264,7 +264,7 @@ class FormHandler {
 		);
 
 		$uploaded_file = wp_handle_upload(
-			$_FILES['creator-lms-submission-file'],
+			$_FILES['ohmylms-submission-file'],
 			array(
 				'test_form' => false,
 				'mimes'     => $allowed_mimes,
@@ -273,22 +273,22 @@ class FormHandler {
 
 		if ( ! $uploaded_file || isset( $uploaded_file['error'] ) ) {
 			$error_message = isset( $uploaded_file['error'] ) ? $uploaded_file['error'] : __( 'File upload failed.', 'ohmylms' );
-			\CodeRex\Ecommerce\omlmse_add_notice( $error_message, 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( $error_message, 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
 
 		$file_size = filesize( $uploaded_file['file'] );
-		$file_size = omlms_format_file_size( $file_size );
+		$file_size = ohmylms_format_file_size( $file_size );
 
 		if ( $assignment->get_enable_file_size_limit() && $assignment->get_max_file_size_limit() < $file_size ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'File size is too large.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'File size is too large.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
 
 		if ( $assignment->get_number_of_files() <= count( $assignment->get_submission( $student->get_id() ) ) ) {
-			\CodeRex\Ecommerce\omlmse_add_notice( __( 'You have reached the maximum number of files allowed.', 'ohmylms' ), 'error' );
+			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'You have reached the maximum number of files allowed.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
@@ -300,7 +300,7 @@ class FormHandler {
 
 		$assignment->submit_file_submission( $student->get_id(), $course_id, $submit_data );
 
-		\CodeRex\Ecommerce\omlmse_add_notice( __( 'Assignment submitted successfully.', 'ohmylms' ) );
+		\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Assignment submitted successfully.', 'ohmylms' ) );
 		wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 		exit;
 	}
@@ -313,9 +313,9 @@ class FormHandler {
 	public static function save_quiz_attempt() {
         if (($_POST['action'] ?? '') !== 'quiz-action') return;
         if (!wp_verify_nonce($_POST['save-quiz-attempt-nonce'] ?? '', 'save_quiz_attempt')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['creator_lms_quiz_id'] ?? 0);
+        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
         $student_id=get_current_user_id();
-        $result=\OMLMS\Quiz\Submission::start($quiz_id,$student_id);
+        $result=\OhMyLMS\Quiz\Submission::start($quiz_id,$student_id);
         if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
         wp_safe_redirect(get_permalink($quiz_id));
         exit;
@@ -327,14 +327,14 @@ class FormHandler {
 	 * @return void
 	 */
 	public static function save_quiz_submit() {
-        if (($_POST['action'] ?? '') !== 'creator-lms-quiz-submission') return;
+        if (($_POST['action'] ?? '') !== 'ohmylms-quiz-submission') return;
         if (!wp_verify_nonce($_POST['save-quiz-submit-nonce'] ?? '', 'save_quiz_submit')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['creator_lms_quiz_id'] ?? 0);
+        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
         $student_id=get_current_user_id();
         $attempt_id=absint($_POST['quiz_attempt_id'] ?? 0);
         $answers=wp_unslash($_POST['attempt'][$attempt_id]['quiz_question'] ?? []);
         if (!is_array($answers)) wp_die('Invalid answers.', '', ['response'=>400]);
-        $result=\OMLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'submit');
+        $result=\OhMyLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'submit');
         if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
         wp_safe_redirect(get_permalink($quiz_id));
         exit;
@@ -342,14 +342,14 @@ class FormHandler {
 
 
 	public static function save_quiz_exit_submit() {
-        if (($_POST['action'] ?? '') !== 'creator-lms-quiz-exit-submission') return;
+        if (($_POST['action'] ?? '') !== 'ohmylms-quiz-exit-submission') return;
         if (!wp_verify_nonce($_POST['save-quiz-exit-submit-nonce'] ?? '', 'save_quiz_exit_submit')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['creator_lms_quiz_id'] ?? 0);
+        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
         $student_id=get_current_user_id();
         $attempt_id=absint($_POST['quiz_attempt_id'] ?? 0);
         $answers=wp_unslash($_POST['attempt'][$attempt_id]['quiz_question'] ?? []);
         if (!is_array($answers)) wp_die('Invalid answers.', '', ['response'=>400]);
-        $result=\OMLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'exit');
+        $result=\OhMyLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'exit');
         if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
         wp_safe_redirect(get_permalink($quiz_id));
         exit;

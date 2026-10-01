@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Quiz;
+use OhMyLMS\Data\Quiz;
 
 class QuizFactory {
 
@@ -35,7 +35,7 @@ class QuizFactory {
 	private function get_quiz_id( $quiz ) {
 		global $post;
 
-		if ( false === $quiz && isset( $post, $post->ID ) && CREATOR_LMS_QUIZ_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $quiz && isset( $post, $post->ID ) && OHMYLMS_QUIZ_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		} elseif ( is_numeric( $quiz ) ) {
 			return $quiz;

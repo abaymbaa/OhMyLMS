@@ -28,7 +28,7 @@ export function createPromptTemplateSlider(readRuntime) {
     return (
       <React.Fragment>
         <div
-          className={'omlms-templates-view-container'}
+          className={'ohmylms-templates-view-container'}
           style={{
             width: '100%',
             maxWidth: ''.concat(310 * o + 16 * (o - 1), 'px'),
@@ -38,7 +38,7 @@ export function createPromptTemplateSlider(readRuntime) {
           }}
         >
           <div
-            className={'omlms-templates-slider'}
+            className={'ohmylms-templates-slider'}
             style={{
               display: 'flex',
               transform: 'translateX('.concat(s, 'px)'),
@@ -50,7 +50,7 @@ export function createPromptTemplateSlider(readRuntime) {
               return (
                 <div
                   key={e.id || t}
-                  className={'omlms-template-item-wrapper'}
+                  className={'ohmylms-template-item-wrapper'}
                   style={{
                     minWidth: ''.concat(310, 'px'),
                     width: ''.concat(310, 'px'),

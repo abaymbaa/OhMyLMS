@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Membership;
+use OhMyLMS\Data\Membership;
 
 class MembershipFactory {
 
@@ -32,7 +32,7 @@ class MembershipFactory {
 	 */
 	private function get_membership_id( $membership ) {
 		global $post;
-		if ( false === $membership && isset( $post, $post->ID ) && CREATOR_LMS_MEMBERSHIP_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $membership && isset( $post, $post->ID ) && OHMYLMS_MEMBERSHIP_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		} elseif ( is_numeric( $membership ) ) {
 			return $this->is_membership_exist( $membership ) ? $membership : false;
@@ -62,8 +62,8 @@ class MembershipFactory {
 
 		$membership = get_post( $membership_id );
 
-		// Check if the post exists and the post type is CREATOR_LMS_COURSE_CPT
-		if ( $membership && CREATOR_LMS_MEMBERSHIP_CPT === get_post_type( $membership_id ) ) {
+		// Check if the post exists and the post type is OHMYLMS_COURSE_CPT
+		if ( $membership && OHMYLMS_MEMBERSHIP_CPT === get_post_type( $membership_id ) ) {
 			return true;  // Post exists and is of the correct type
 		} else {
 			return false; // Either post doesn't exist or the post type doesn't match

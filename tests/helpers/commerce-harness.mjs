@@ -11,7 +11,7 @@ import {transformSync} from '@babel/core';
 const generate = generatorModule.default || generatorModule;
 const source = 'assets/src/recovered/';
 const manifest = JSON.parse(fs.readFileSync(source + 'manifest.json'));
-const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/creatorlms.js').factories.find(f => f.id === '1841');
+const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/ohmylms.js').factories.find(f => f.id === '1841');
 const ast = parse(factory.fragments.map(file => fs.readFileSync(source + file, 'utf8')).join('\n'));
 const declarations = new Map();
 for (const statement of ast.program.body) {
@@ -57,7 +57,7 @@ function harness(states = []) {
   globals.g.Suspense='Suspense';
   globals.actions={setDashboardLoader:value=>updates.set('loading',value),setDashboardOverview:value=>updates.set('overview',value),setDashboardAll:value=>updates.set('all',value)};
   globals.y={useDispatch:()=>globals.actions,useSelect:fn=>fn(()=>({selectCourses:()=>[],getDashboardLoader:()=>globals.loading,getDashboardOverview:()=>globals.overview,getDashboardFilter:()=>globals.filter,getNotificationMessage:()=>'',getNotificationStatus:()=>''}))};
-  globals.window.creator_lms_params={currency:'$',plugin_assets:'/assets/'};globals.creator_lms_params=globals.window.creator_lms_params;
+  globals.window.ohmylms_params={currency:'$',plugin_assets:'/assets/'};globals.ohmylms_params=globals.window.ohmylms_params;
   for(const name of ['YG','NG','VG','lU','nf','kf','mG','wG','MG','_G','PG','lf','yG','Br','uf','df','SB','vG','gU','yU','_U','EU','RU','CU','OU','MU','jU','IU','YH','LU','cq','BU','eq','Cm','ZU','UU','JU','Dq','Fq','dc','Rq'])globals[name]=name;  Object.assign(globals,{
     VY:value=>String(value),JY:value=>String(value),OQ:value=>String(value),Ge:value=>value,
     sn:()=>value=>({format:()=>String(value),isValid:()=>true}),moment:value=>({format:()=>String(value),isValid:()=>true}),

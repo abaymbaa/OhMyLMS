@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\CPTData\PostTypeData;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\CPTData\PostTypeData;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Session
  *
- * Represents a Session in the CreatorLMS system.
+ * Represents a Session in the OhMyLMS system.
  */
 class Session extends PostTypeData {
 

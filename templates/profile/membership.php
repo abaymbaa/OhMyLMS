@@ -2,9 +2,9 @@
 /**
  * Template for displaying membership of student profile
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/profile/membership.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/profile/membership.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -13,12 +13,12 @@ use function CodeRex\Ecommerce\ecommerce;
 
 ?>
 
-<div class="creator-lms-student-profile-tab-content student-membership">
+<div class="ohmylms-student-profile-tab-content student-membership">
 	<h4 class="profile-tab-title">
 		<?php echo __( 'My Membership', 'ohmylms' ); ?>
 	</h4>
 
-    <div class="creator-lms-dashboard-table my-membership-table">
+    <div class="ohmylms-dashboard-table my-membership-table">
 		<div class="dashboard-table-head">
 			<div class="dashboard-table-tr">
 				<div class="dashboard-table-td membership-id">
@@ -70,7 +70,7 @@ use function CodeRex\Ecommerce\ecommerce;
 									continue;
 								}
 								$membership_id 	= $subscription->get_membership_id();
-								$membership 	= function_exists( 'omlms_get_membership' ) ? omlms_get_membership( $membership_id ) : null;
+								$membership 	= function_exists( 'ohmylms_get_membership' ) ? ohmylms_get_membership( $membership_id ) : null;
 
 								if ($membership){
 									$subscription_length = $membership->get_billing_period();
@@ -99,7 +99,7 @@ use function CodeRex\Ecommerce\ecommerce;
 										));
 										$price = isset($tax_data['total_with_tax']) ? $tax_data['total_with_tax'] : $price;
 									}
-									$price_html = omlms_price($price) . ' / ' . $billing_period;
+									$price_html = ohmylms_price($price) . ' / ' . $billing_period;
 									$now        = current_time('timestamp');
 
 									switch ($billing_period) {
@@ -154,7 +154,7 @@ use function CodeRex\Ecommerce\ecommerce;
 													$item_total = $item->get_total();
 													$tax_amount = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
 													$total_with_tax = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $item_total;
-													echo omlms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
+													echo ohmylms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
 													break;
 												}
 											}
@@ -162,7 +162,7 @@ use function CodeRex\Ecommerce\ecommerce;
 											// For recurring payments, show recurring amount with period
 											$tax_amount = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
 											$recurring_amount = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
-											echo omlms_price($recurring_amount).'/'.$subscription->get_billing_period();
+											echo ohmylms_price($recurring_amount).'/'.$subscription->get_billing_period();
 										}
 										?>
 									</div>
@@ -173,15 +173,15 @@ use function CodeRex\Ecommerce\ecommerce;
 										// Disable cancel button for one-time payments
 										if ( ! $is_one_time && in_array($subscription->get_status(), $cancellable_statuses)) :
 										?>
-											<a href="#" class="do-membership-cancel creator-lms-table-action-btn" title="<?php esc_attr_e( 'Cancel', 'ohmylms' ); ?>">
+											<a href="#" class="do-membership-cancel ohmylms-table-action-btn" title="<?php esc_attr_e( 'Cancel', 'ohmylms' ); ?>">
 												<?php echo __('Cancel', 'ohmylms'); ?>
 											</a>
 										<?php elseif ( $is_one_time ) : ?>
-											<button type="button" class="creator-lms-table-action-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+											<button type="button" class="ohmylms-table-action-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
 												<?php echo __('Cancel', 'ohmylms'); ?>
 											</button>
 										<?php else: ?>
-											<span class="creator-lms-status-label" style="text-transform: capitalize">
+											<span class="ohmylms-status-label" style="text-transform: capitalize">
 												<?php
 												$status_name = esc_html( $subscription->get_status() );
 												echo sprintf( __('%s', 'ohmylms'), $status_name );
@@ -189,10 +189,10 @@ use function CodeRex\Ecommerce\ecommerce;
 											</span>
 										<?php endif; ?>
 
-										<div class="creator-lms-alert">
-											<div class="creator-lms-alert-inner">
-												<div class="creator-lms-alert-wrapper">
-													<div class="creator-lms-alert-body">
+										<div class="ohmylms-alert">
+											<div class="ohmylms-alert-inner">
+												<div class="ohmylms-alert-wrapper">
+													<div class="ohmylms-alert-body">
 														<div class="icon">
 															<svg fill="none" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#F85656" fill-rule="evenodd" d="M12 0c6.626 0 12 5.374 12 12s-5.374 12-12 12S0 18.626 0 12 5.374 0 12 0zm-1.286 13.033V6.856c0-.708.578-1.285 1.286-1.285.708 0 1.286.583 1.286 1.285v6.177c0 .702-.578 1.285-1.286 1.285a1.288 1.288 0 01-1.286-1.285zm1.28 2.664a1.457 1.457 0 110 2.915 1.457 1.457 0 010-2.915z" clip-rule="evenodd"></path></svg>
 														</div>
@@ -207,12 +207,12 @@ use function CodeRex\Ecommerce\ecommerce;
 														</div>
 													</div>
 
-													<div class="creator-lms-alert-footer">
-														<button type="button" class="creator-lms-button creator-lms-alert-cancel" aria-label="<?php echo __('Cancel', 'ohmylms'); ?>">
+													<div class="ohmylms-alert-footer">
+														<button type="button" class="ohmylms-button ohmylms-alert-cancel" aria-label="<?php echo __('Cancel', 'ohmylms'); ?>">
 															<?php echo __('Cancel', 'ohmylms'); ?>
 														</button>
 
-														<button type="button" class="creator-lms-button creator-lms-danger creator-lms-cancel-membership" aria-label="<?php echo __('Confirm Cancel', 'ohmylms'); ?>" data-order-id="<?php echo $order->get_id(); ?>" data-membership-id="<?php echo $membership->get_id();?>" data-subscription-id="<?php echo $subscription->get_id();?>" data-student-id="<?php echo get_current_user_id();?>">
+														<button type="button" class="ohmylms-button ohmylms-danger ohmylms-cancel-membership" aria-label="<?php echo __('Confirm Cancel', 'ohmylms'); ?>" data-order-id="<?php echo $order->get_id(); ?>" data-membership-id="<?php echo $membership->get_id();?>" data-subscription-id="<?php echo $subscription->get_id();?>" data-student-id="<?php echo get_current_user_id();?>">
 															<?php echo __('Confirm Cancel', 'ohmylms'); ?>
 														</button>
 													</div>
@@ -229,13 +229,13 @@ use function CodeRex\Ecommerce\ecommerce;
 										<div class="dashboard-table-td expiration" data-title="Expiration: ">
 											<?php
 												if ( $membership ) {
-													echo omlms_price($order->get_formatted_order_total());
+													echo ohmylms_price($order->get_formatted_order_total());
 												}
 											?>
 										</div>
 
 										<div class="dashboard-table-td billing" data-title="Billing: ">
-											<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( omlms_format_datetime( $order->get_date_created() ) ); ?></time>
+											<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( ohmylms_format_datetime( $order->get_date_created() ) ); ?></time>
 										</div>
 									</div>
 
@@ -248,7 +248,7 @@ use function CodeRex\Ecommerce\ecommerce;
 						if ( empty( $post_ids ) && ! empty( $items ) ) {
 							foreach ( $items as $item ) {
 								$membership_id = $item->get_course_id();
-								$membership = function_exists( 'omlms_get_membership' ) ? omlms_get_membership( $membership_id ) : null;
+								$membership = function_exists( 'ohmylms_get_membership' ) ? ohmylms_get_membership( $membership_id ) : null;
 								
 								if ( ! $membership ) {
 									continue;
@@ -293,12 +293,12 @@ use function CodeRex\Ecommerce\ecommerce;
 										$item_total = $item->get_total();
 										$tax_amount = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
 										$total_with_tax = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $item_total;
-										echo omlms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
+										echo ohmylms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
 										?>
 									</div>
 
 									<div class="dashboard-table-td action">
-										<button type="button" class="creator-lms-table-action-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+										<button type="button" class="ohmylms-table-action-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
 											<?php echo __('Cancel', 'ohmylms'); ?>
 										</button>
 									</div>
@@ -311,13 +311,13 @@ use function CodeRex\Ecommerce\ecommerce;
 										<div class="dashboard-table-td expiration" data-title="Expiration: ">
 											<?php
 												if ( $membership ) {
-													echo omlms_price($order->get_formatted_order_total());
+													echo ohmylms_price($order->get_formatted_order_total());
 												}
 											?>
 										</div>
 
 										<div class="dashboard-table-td billing" data-title="Billing: ">
-											<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( omlms_format_datetime( $order->get_date_created() ) ); ?></time>
+											<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( ohmylms_format_datetime( $order->get_date_created() ) ); ?></time>
 										</div>
 									</div>
 
@@ -330,7 +330,7 @@ use function CodeRex\Ecommerce\ecommerce;
 					if(!$membership_count || !$enrolled_membership){
 						?>
 						<div class="no-course-data">
-							<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+							<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 							<p>
 								<?php echo __( 'No Membership Found.', 'ohmylms' ); ?>
 							</p>
@@ -341,7 +341,7 @@ use function CodeRex\Ecommerce\ecommerce;
 				}else{
 					?>
 					<div class="no-course-data">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 						<p>
 							<?php echo __( 'No Membership Found.', 'ohmylms' ); ?>
 						</p>
@@ -357,7 +357,7 @@ use function CodeRex\Ecommerce\ecommerce;
 		<?php echo __( 'Past Invoices', 'ohmylms' ); ?>
 	</h5>
 
-    <div class="creator-lms-dashboard-table past-invoice-table">
+    <div class="ohmylms-dashboard-table past-invoice-table">
 		<div class="dashboard-table-head">
 			<div class="dashboard-table-tr">
 				<div class="dashboard-table-td date">
@@ -397,7 +397,7 @@ use function CodeRex\Ecommerce\ecommerce;
 
 							if ( $item ) {
 								$membership_id 	= $item->get_course_id();
-								$membership 	= function_exists( 'omlms_get_membership' ) ? omlms_get_membership( $membership_id ) : null;
+								$membership 	= function_exists( 'ohmylms_get_membership' ) ? ohmylms_get_membership( $membership_id ) : null;
 
 								if($membership){
 									$subscription_length = $membership->get_subscription_length();
@@ -428,7 +428,7 @@ use function CodeRex\Ecommerce\ecommerce;
 										<div class="dashboard-table-td price">
 											<?php
 												$negative = $order->get_total() < 0;
-												$formatted_price = ( $negative ? '-' : '' ) . sprintf( omlms_get_price_format(), '<span class="omlms-price-currency-symbol">' . get_omlms_currency_symbol( get_omlms_currency() ) . '</span>', $order->get_total() );
+												$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $order->get_total() );
 
 												echo $formatted_price;
 											?>
@@ -441,8 +441,8 @@ use function CodeRex\Ecommerce\ecommerce;
 										</div>
 
 										<div class="dashboard-table-td action">
-											<a href="<?php echo esc_url( omlms_get_account_endpoint_url( 'invoice-details',['id'=>$order->get_id()] ) ); ?>">
-												<?php include CREATOR_LMS_DIR . '/assets/images/icon/eye-icon.php'; ?>
+											<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'invoice-details',['id'=>$order->get_id()] ) ); ?>">
+												<?php include OHMYLMS_DIR . '/assets/images/icon/eye-icon.php'; ?>
 											</a>
 										</div>
 
@@ -450,13 +450,13 @@ use function CodeRex\Ecommerce\ecommerce;
 											<div class="dashboard-table-td date" data-title="Date: ">
 												<?php
 													if ( $membership ) {
-														echo omlms_price($order->get_formatted_order_total());
+														echo ohmylms_price($order->get_formatted_order_total());
 													}
 												?>
 											</div>
 
 											<div class="dashboard-table-td price" data-title="Price: ">
-												<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( omlms_format_datetime( $order->get_date_created() ) ); ?></time>
+												<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( ohmylms_format_datetime( $order->get_date_created() ) ); ?></time>
 											</div>
 
 											<div class="dashboard-table-td status" data-title="Status: ">
@@ -478,7 +478,7 @@ use function CodeRex\Ecommerce\ecommerce;
 					if(!$membership_count){
 						?>
 						<div class="no-course-data">
-							<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+							<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 							<p>
 								<?php echo __( 'No Invoice Found.', 'ohmylms' ); ?>
 							</p>
@@ -489,7 +489,7 @@ use function CodeRex\Ecommerce\ecommerce;
 				}else{
 					?>
 					<div class="no-course-data">
-						<?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
 						<p>
 							<?php echo __( 'No Invoice Found.', 'ohmylms' ); ?>
 						</p>

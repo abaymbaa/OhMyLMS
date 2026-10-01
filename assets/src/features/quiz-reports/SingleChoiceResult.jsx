@@ -40,9 +40,9 @@ export function createSingleChoiceResult(readRuntime) {
             });
     return (
       <React.Fragment>
-        <div className={'omlms-question-types omlms-single-choice-question omlms-'.concat(o)}>
+        <div className={'ohmylms-question-types ohmylms-single-choice-question ohmylms-'.concat(o)}>
           <QuizQuestionHeader data={data} index={index} />
-          <div className={'omlms-question-options-wrapper'}>
+          <div className={'ohmylms-question-options-wrapper'}>
             <Controls.TextWP as={'p'} size={14} variant={'muted'}>
               {(0, I18n.__)('Select single', 'ohmylms')}
             </Controls.TextWP>

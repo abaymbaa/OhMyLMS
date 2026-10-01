@@ -2,21 +2,21 @@
 /**
  * Quiz class
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\CPTData\PostTypeData;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\CPTData\PostTypeData;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Quiz class
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Quiz extends PostTypeData {
@@ -100,7 +100,7 @@ class Quiz extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -118,7 +118,7 @@ class Quiz extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}
@@ -131,7 +131,7 @@ class Quiz extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function get_permalink(): string {
-		return creatorlms_get_pretty_content_permalink( $this->get_id() ) ?? '';
+		return ohmylms_get_pretty_content_permalink( $this->get_id() ) ?? '';
 	}
 
 
@@ -348,7 +348,7 @@ class Quiz extends PostTypeData {
 		$questions   = $this->get_questions();
 		$total_marks = 0;
 		foreach ( $questions as $q ) {
-			$question     = omlms_get_question( $q['id'] );
+			$question     = ohmylms_get_question( $q['id'] );
 			$settings     = $question->get_settings();
 			$total_marks += isset( $settings['score']['value'] ) && ! empty( $settings['score']['enabled'] ) && $settings['score']['enabled'] ? $settings['score']['value'] : 0;
 		}

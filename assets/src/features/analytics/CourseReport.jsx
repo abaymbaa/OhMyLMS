@@ -55,9 +55,7 @@ export function createCourseReport(readRuntime) {
       S,
       R,
       x = (0, Router.g)().id;
-    (x || Router.C5,
-      HG('creator-lms', 'course'),
-      (0, WordPressData.useDispatch)(StoreModule.default));
+    (x || Router.C5, HG('ohmylms', 'course'), (0, WordPressData.useDispatch)(StoreModule.default));
     var C = hq((0, ReactHooks.useState)({}), 2),
       P = C[0],
       O = C[1],
@@ -106,7 +104,7 @@ export function createCourseReport(readRuntime) {
                           (e.n = 2),
                           l()({
                             path: (0, lN.addQueryArgs)(
-                              '/creator-lms/v1/analytics/course/'.concat(x),
+                              '/ohmylms/v1/analytics/course/'.concat(x),
                               r,
                             ),
                             method: 'GET',
@@ -184,13 +182,13 @@ export function createCourseReport(readRuntime) {
                 gap={5}
                 align={'stretch'}
                 justify={'space-between'}
-                className={'omlms-course-journey-card-wrapper'}
+                className={'ohmylms-course-journey-card-wrapper'}
               >
                 <Controls.FlexItemWP
                   style={{
                     width: 'calc(41% - 11px)',
                   }}
-                  className={'omlms-course-journey-left-card'}
+                  className={'ohmylms-course-journey-left-card'}
                 >
                   <Controls.CardWP isBorderless={!0} fullHeight={!0}>
                     <Controls.SpacerWP marginBottom={0} padding={6}>
@@ -330,7 +328,7 @@ export function createCourseReport(readRuntime) {
                   style={{
                     width: 'calc(59% - 11px)',
                   }}
-                  className={'omlms-course-journey-right-card'}
+                  className={'ohmylms-course-journey-right-card'}
                 >
                   <Controls.CardWP isBorderless={!0} fullHeight={!0} fullWidth={!0}>
                     <Controls.SpacerWP marginBottom={0} padding={5}>
@@ -386,7 +384,7 @@ export function createCourseReport(readRuntime) {
                                   }
                                 />
                                 <ReportMetricCard
-                                  className={'omlms-refund'}
+                                  className={'ohmylms-refund'}
                                   title={(0, I18n.__)('Refund', 'ohmylms')}
                                   icon={
                                     <React.Fragment>
@@ -422,7 +420,7 @@ export function createCourseReport(readRuntime) {
                                   }
                                 />
                                 <ReportMetricCard
-                                  className={'omlms-net-income'}
+                                  className={'ohmylms-net-income'}
                                   title={(0, I18n.__)('Net Income', 'ohmylms')}
                                   icon={
                                     <React.Fragment>
@@ -463,7 +461,7 @@ export function createCourseReport(readRuntime) {
                           <Controls.SpacerWP marginBottom={5} />
                           <Controls.SpacerWP
                             marginBottom={0}
-                            className={'omlms-course-report-chart'}
+                            className={'ohmylms-course-report-chart'}
                           >
                             <Controls.SpacerWP
                               marginBottom={0}

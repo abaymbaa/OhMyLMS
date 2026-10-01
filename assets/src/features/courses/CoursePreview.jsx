@@ -37,7 +37,7 @@ export function createCoursePreview(readRuntime) {
       ),
       i = (0, WordPressData.useSelect)(
         function (e) {
-          return e('creator-lms/store').getCourseChaptersContent();
+          return e('ohmylms/store').getCourseChaptersContent();
         },
         [r],
       ),
@@ -281,13 +281,13 @@ export function createCoursePreview(readRuntime) {
     return (
       <React.Fragment>
         <Controls.ContainerWP>
-          <Controls.SpacerWP paddingY={6} marginBottom={0} className={'omlms-course-preview'}>
+          <Controls.SpacerWP paddingY={6} marginBottom={0} className={'ohmylms-course-preview'}>
             <Controls.CardWP variant={'secondary'} isBorderless={!0}>
               <Controls.SpacerWP padding={10} marginBottom={0}>
                 <Controls.FlexWP
                   gap={5}
                   align={'flex-start'}
-                  className={'omlms-course-preview-wrapper'}
+                  className={'ohmylms-course-preview-wrapper'}
                 >
                   <Controls.CardWP
                     style={{
@@ -317,7 +317,7 @@ export function createCoursePreview(readRuntime) {
                       <Controls.FlexWP
                         gap={0}
                         direction={'column'}
-                        className={'omlms-review-summery-list'}
+                        className={'ohmylms-review-summery-list'}
                       >
                         {_.map(function (e, t) {
                           return (
@@ -462,7 +462,7 @@ export function createCoursePreview(readRuntime) {
                         </Controls.SpacerWP>
                       </Controls.CardWP>
                       {'future' === (null == a ? void 0 : a.status) && (
-                        <div className={'omlms-course-publish-status'}>
+                        <div className={'ohmylms-course-publish-status'}>
                           <p>
                             {(0, I18n.__)('Your course is scheduled for publishing on ', 'ohmylms')}
                             <strong>

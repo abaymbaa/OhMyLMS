@@ -37,7 +37,7 @@ var JN,
         key: "lms_submit_assignment",
         type: "trigger",
         settings: {
-          creator_lms_settings: {
+          ohmylms_settings: {
             assignments: []
           }
         },
@@ -116,7 +116,7 @@ var JN,
         key: "lms_course_enrollment",
         type: "trigger",
         settings: {
-          creator_lms_settings: {
+          ohmylms_settings: {
             courses: []
           }
         },
@@ -194,7 +194,7 @@ var JN,
         key: "lms_course_completion_rate",
         type: "trigger",
         settings: {
-          creator_lms_settings: {
+          ohmylms_settings: {
             courses: [],
             compare_with_value: "50",
             compare_with: {
@@ -278,7 +278,7 @@ var JN,
         key: "lms_complete_lesson",
         type: "trigger",
         settings: {
-          creator_lms_settings: {
+          ohmylms_settings: {
             lessons: []
           }
         },
@@ -357,7 +357,7 @@ var JN,
         key: "lms_submit_quiz",
         type: "trigger",
         settings: {
-          creator_lms_settings: {
+          ohmylms_settings: {
             quizes: []
           }
         },
@@ -672,7 +672,7 @@ var AD = function (e) {
       height: "100%",
       top: 0,
       left: 0,
-      background: "rgba(var(--omlms-primary-color-rgb), 0.2)",
+      background: "rgba(var(--ohmylms-primary-color-rgb), 0.2)",
       borderRadius: "8px",
       opacity: s ? 1 : 0,
       visibility: s ? "visible" : "hidden",

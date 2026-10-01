@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\CPTData;
+namespace OhMyLMS\CPTData;
 
-use OMLMS\Abstracts\Data;
+use OhMyLMS\Abstracts\Data;
 
 /**
  * Class PostTypeData
  *
- * This class represents a post type in the CreatorLMS system. It extends the base Data class and provides
+ * This class represents a post type in the OhMyLMS system. It extends the base Data class and provides
  * methods for managing post type data, including getting and setting properties, saving, and deleting post types.
  *
- * @package OMLMS\CPTData
+ * @package OhMyLMS\CPTData
  * @since 1.0.0
  */
 class PostTypeData extends Data {

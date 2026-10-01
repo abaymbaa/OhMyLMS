@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Certificate;
+use OhMyLMS\Data\Certificate;
 /**
  * Class LessonFactory
  *
  * Factory class for creating and retrieving Lesson objects.
  *
- * @package OMLMS\Factory
+ * @package OhMyLMS\Factory
  * @since 1.0.0
  */
 class CertificateFactory {
@@ -41,7 +41,7 @@ class CertificateFactory {
 		global $post;
 
 		// Check if input is false and post is set
-		if ( false === $certificate && isset( $post, $post->ID ) && CREATOR_LMS_LESSON_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $certificate && isset( $post, $post->ID ) && OHMYLMS_LESSON_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		}
 
@@ -72,7 +72,7 @@ class CertificateFactory {
 	 * Checks whether a certificate with the given ID exists.
 	 *
 	 * This method verifies that the certificate exists in the database and is of
-	 * the correct post type (`CREATOR_LMS_LESSON_CPT`).
+	 * the correct post type (`OHMYLMS_LESSON_CPT`).
 	 *
 	 * @param int $certificate_id The ID of the certificate to check.
 	 * @return bool Returns true if the certificate exists, otherwise false.
@@ -86,7 +86,7 @@ class CertificateFactory {
 		$certificate = get_post( $certificate_id );
 
 		// Check if the post exists and the post type matches
-		if ( $certificate && CREATOR_LMS_CERTIFICATE_CPT === get_post_type( $certificate_id ) ) {
+		if ( $certificate && OHMYLMS_CERTIFICATE_CPT === get_post_type( $certificate_id ) ) {
 			return true;
 		} else {
 			return false;

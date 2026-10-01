@@ -17,7 +17,7 @@ export function createCertificateTemplateCard(readRuntime) {
       l,
       y: WordPressData,
     } = readRuntime();
-    (0, Entitlements.useIsPro)();
+    true;
     var t = props.template,
       n = props.setOpenModal,
       r =
@@ -58,7 +58,7 @@ export function createCertificateTemplateCard(readRuntime) {
                           }),
                           (e.n = 1),
                           l()({
-                            path: '/creator-lms/v1/certificates',
+                            path: '/ohmylms/v1/certificates',
                             method: 'POST',
                             headers: {
                               'Content-Type': 'application/json',

@@ -12,19 +12,19 @@ namespace CodeRex\Ecommerce;
  *
  * @since 1.0.0
  */
-function omlmse_add_notice( $message, $notice_type = 'success', $data = array() ) {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylmse_add_notice( $message, $notice_type = 'success', $data = array() ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return;
 	}
 
-	$notices = ecommerce()->session->get( 'omlmse_notices', array() );
+	$notices = ecommerce()->session->get( 'ohmylmse_notices', array() );
 
 	// Backward compatibility.
 	if ( 'success' === $notice_type ) {
-		$message = apply_filters( 'omlms_add_message', $message );
+		$message = apply_filters( 'ohmylms_add_message', $message );
 	}
 
-	$message = apply_filters( 'omlms_add_' . $notice_type, $message );
+	$message = apply_filters( 'ohmylms_add_' . $notice_type, $message );
 
 	if ( ! empty( $message ) ) {
 		$notices[ $notice_type ][] = array(
@@ -33,7 +33,7 @@ function omlmse_add_notice( $message, $notice_type = 'success', $data = array() 
 		);
 	}
 
-	ecommerce()->session->set( 'omlmse_notices', $notices );
+	ecommerce()->session->set( 'ohmylmse_notices', $notices );
 }
 
 /**
@@ -44,13 +44,13 @@ function omlmse_add_notice( $message, $notice_type = 'success', $data = array() 
  *
  * @since 1.0.0
  */
-function omlmse_notice_count( $notice_type = 'error' ) {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylmse_notice_count( $notice_type = 'error' ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return 0;
 	}
 
 	$notice_count = 0;
-	$all_notices  = ecommerce()->session->get( 'omlmse_notices', array() );
+	$all_notices  = ecommerce()->session->get( 'ohmylmse_notices', array() );
 	if ( isset( $all_notices[ $notice_type ] ) && is_array( $all_notices[ $notice_type ] ) ) {
 		$notice_count = count( $all_notices[ $notice_type ] );
 	} elseif ( empty( $notice_type ) ) {
@@ -73,12 +73,12 @@ function omlmse_notice_count( $notice_type = 'error' ) {
  *
  * @since 1.0.0
  */
-function omlmse_has_notice( $message, $notice_type = 'success' ) {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylmse_has_notice( $message, $notice_type = 'success' ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return false;
 	}
 
-	$notices = ecommerce()->session->get( 'omlmse_notices', array() );
+	$notices = ecommerce()->session->get( 'ohmylmse_notices', array() );
 	$notices = isset( $notices[ $notice_type ] ) ? $notices[ $notice_type ] : array();
 	return array_search( $message, wp_list_pluck( $notices, 'notice' ), true ) !== false;
 }
@@ -91,11 +91,11 @@ function omlmse_has_notice( $message, $notice_type = 'success' ) {
  *
  * @since 1.0.0
  */
-function omlmse_set_notices( $notices ) {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylmse_set_notices( $notices ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return;
 	}
-	ecommerce()->session->set( 'omlmse_notices', $notices );
+	ecommerce()->session->set( 'ohmylmse_notices', $notices );
 }
 
 /**
@@ -105,11 +105,11 @@ function omlmse_set_notices( $notices ) {
  *
  * @since 1.0.0
  */
-function omlmse_clear_notices() {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylmse_clear_notices() {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return;
 	}
-	ecommerce()->session->set( 'omlmse_notices', null );
+	ecommerce()->session->set( 'ohmylmse_notices', null );
 }
 
 /**
@@ -120,9 +120,9 @@ function omlmse_clear_notices() {
  *
  * @since 1.0.0
  */
-function omlmse_print_notices( $return = false ) {
+function ohmylmse_print_notices( $return = false ) {
 
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return;
 	}
 
@@ -133,21 +133,21 @@ function omlmse_print_notices( $return = false ) {
 		return;
 	}
 
-	$all_notices  = $session->get( 'omlmse_notices', array() );
-	$notice_types = apply_filters( 'omlmse_notice_types', array( 'error', 'success', 'notice' ) );
+	$all_notices  = $session->get( 'ohmylmse_notices', array() );
+	$notice_types = apply_filters( 'ohmylmse_notice_types', array( 'error', 'success', 'notice' ) );
 
 	// Buffer output.
 	ob_start();
 
 	foreach ( $notice_types as $notice_type ) {
-		if ( omlmse_notice_count( $notice_type ) > 0 ) {
+		if ( ohmylmse_notice_count( $notice_type ) > 0 ) {
 			$messages = array();
 
 			foreach ( $all_notices[ $notice_type ] as $notice ) {
 				$messages[] = isset( $notice['notice'] ) ? $notice['notice'] : $notice;
 			}
 
-			omlms_get_template(
+			ohmylms_get_template(
 				"notices/{$notice_type}.php",
 				array(
 					'messages' => array_filter( $messages ),
@@ -157,9 +157,9 @@ function omlmse_print_notices( $return = false ) {
 		}
 	}
 
-	omlmse_clear_notices();
+	ohmylmse_clear_notices();
 
-	$notices = omlmse_kses_notice( ob_get_clean() );
+	$notices = ohmylmse_kses_notice( ob_get_clean() );
 
 	if ( $return ) {
 		return $notices;
@@ -179,17 +179,17 @@ function omlmse_print_notices( $return = false ) {
  *
  * @since 1.0.0
  */
-function omlms_print_notice( $message, $notice_type = 'success', $data = array(), $return = false ) {
+function ohmylms_print_notice( $message, $notice_type = 'success', $data = array(), $return = false ) {
 	if ( 'success' === $notice_type ) {
-		$message = apply_filters( 'omlms_add_message', $message );
+		$message = apply_filters( 'ohmylms_add_message', $message );
 	}
 
-	$message = apply_filters( 'omlms_add_' . $notice_type, $message );
+	$message = apply_filters( 'ohmylms_add_' . $notice_type, $message );
 
 	// Buffer output.
 	ob_start();
 
-	omlms_get_template(
+	ohmylms_get_template(
 		"notices/{$notice_type}.php",
 		array(
 			'messages' => array( $message ), // @deprecated 3.9.0
@@ -202,7 +202,7 @@ function omlms_print_notice( $message, $notice_type = 'success', $data = array()
 		)
 	);
 
-	$notice = omlmse_kses_notice( ob_get_clean() );
+	$notice = ohmylmse_kses_notice( ob_get_clean() );
 
 	if ( $return ) {
 		return $notice;
@@ -219,12 +219,12 @@ function omlms_print_notice( $message, $notice_type = 'success', $data = array()
  *
  * @since 1.0.0
  */
-function omlms_get_notices( $notice_type = '' ) {
-	if ( ! did_action( 'creator_lms_after_init' ) ) {
+function ohmylms_get_notices( $notice_type = '' ) {
+	if ( ! did_action( 'ohmylms_after_init' ) ) {
 		return array();
 	}
 
-	$all_notices = ecommerce()->session->get( 'omlmse_notices', array() );
+	$all_notices = ecommerce()->session->get( 'ohmylmse_notices', array() );
 
 	if ( empty( $notice_type ) ) {
 		$notices = $all_notices;
@@ -245,10 +245,10 @@ function omlms_get_notices( $notice_type = '' ) {
  *
  * @since 1.0.0
  */
-function omlmse_add_wp_error_notices( $errors ) {
+function ohmylmse_add_wp_error_notices( $errors ) {
 	if ( is_wp_error( $errors ) && $errors->get_error_messages() ) {
 		foreach ( $errors->get_error_messages() as $error ) {
-			omlmse_add_notice( $error, 'error' );
+			ohmylmse_add_notice( $error, 'error' );
 		}
 	}
 }
@@ -261,7 +261,7 @@ function omlmse_add_wp_error_notices( $errors ) {
  *
  * @since 1.0.0
  */
-function omlmse_kses_notice( $message ) {
+function ohmylmse_kses_notice( $message ) {
 	$allowed_tags = array_replace_recursive(
 		wp_kses_allowed_html( 'post' ),
 		array(
@@ -270,7 +270,7 @@ function omlmse_kses_notice( $message ) {
 			),
 		)
 	);
-	return wp_kses( $message, apply_filters( 'omlms_kses_notice_allowed_tags', $allowed_tags ) );
+	return wp_kses( $message, apply_filters( 'ohmylms_kses_notice_allowed_tags', $allowed_tags ) );
 }
 
 /**
@@ -281,7 +281,7 @@ function omlmse_kses_notice( $message ) {
  *
  * @since 1.0.0
  */
-function omlmse_get_notice_data_attr( $notice ) {
+function ohmylmse_get_notice_data_attr( $notice ) {
 	if ( empty( $notice['data'] ) ) {
 		return null;
 	}

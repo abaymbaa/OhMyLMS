@@ -2,15 +2,15 @@
 
 The actual WordPress site at `http://xyz.local` was tested with its existing signed-in
 administrator browser session. No new administrator credentials were created or saved.
-The source build was temporarily enabled with `OMLMS_SOURCE_ASSETS`; the browser's
+The source build was temporarily enabled with `OHMYLMS_SOURCE_ASSETS`; the browser's
 script inventory confirmed both the built extension SDK and built admin application.
 
 ## Site configuration
 
 Local site ID: `PFRRu4Kvx`. MySQL port: `10005`. Site root is the `xyz/app/public`
 directory containing this plugin. The database contained only legacy `wp_crlms_*`
-tables, while the current PHP code queries `wp_omlms_*`. Twenty-one missing current
-tables were created from `OMLMS\Install`'s checked-in schemas. No existing table was
+tables, while the current PHP code queries `wp_ohmylms_*`. Twenty-one missing current
+tables were created from `OhMyLMS\Install`'s checked-in schemas. No existing table was
 altered and no legacy records were migrated. Those new tables remain initialized.
 
 ## Live checks

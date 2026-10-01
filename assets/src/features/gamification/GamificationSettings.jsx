@@ -17,7 +17,7 @@ export function createGamificationSettings(readRuntime) {
     return (
       <Fragment>
         {contextHolder}
-        <Controls.CardWP isBorderless variant="secondary" className="omlms-full-screen-height">
+        <Controls.CardWP isBorderless variant="secondary" className="ohmylms-full-screen-height">
           <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
             <Controls.TabsWP
               key={activeTab}

@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Extensions;
+namespace OhMyLMS\Extensions;
 
 /** Registration is explicit; callbacks are supplied by trusted plugins or themes only. */
 final class Registry {

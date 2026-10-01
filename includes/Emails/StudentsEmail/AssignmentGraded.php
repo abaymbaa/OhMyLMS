@@ -1,13 +1,13 @@
 <?php
 
-namespace OMLMS\Emails\StudentsEmail;
+namespace OhMyLMS\Emails\StudentsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 
 class AssignmentGraded {
 
 	public function __construct() {
-		add_action( 'creator_lms_after_assignment_review', array( $this, 'trigger' ), 10, 4 );
+		add_action( 'ohmylms_after_assignment_review', array( $this, 'trigger' ), 10, 4 );
 	}
 
 	public function basic_settings(): array {
@@ -46,7 +46,7 @@ class AssignmentGraded {
 			return;
 		}
 
-		$course = omlms_get_course( $course_id );
+		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
 			return;
 		}
@@ -55,7 +55,7 @@ class AssignmentGraded {
 		$assignment_title = $assignment ? $assignment->post_title : '';
 
 		global $wpdb;
-		$attempt     = $wpdb->get_row( $wpdb->prepare( "SELECT score FROM {$wpdb->prefix}omlms_assignment_attempts WHERE user_id = %d AND assignment_id = %d ORDER BY id DESC LIMIT 1", $student_id, $assignment_id ) );
+		$attempt     = $wpdb->get_row( $wpdb->prepare( "SELECT score FROM {$wpdb->prefix}ohmylms_assignment_attempts WHERE user_id = %d AND assignment_id = %d ORDER BY id DESC LIMIT 1", $student_id, $assignment_id ) );
 		$score       = $attempt ? $attempt->score : '';
 		$total_marks = get_post_meta( $assignment_id, '_total_points', true );
 
@@ -66,11 +66,11 @@ class AssignmentGraded {
 		$subject = $this->replace_tags( $subject, $student->display_name, $course->get_name(), $assignment_title, $status );
 
 		if ( isset( $settings['button_link'] ) && empty( $settings['button_link'] ) ) {
-			$settings['button_link'] = omlms_get_page_permalink( 'student_dashboard' );
+			$settings['button_link'] = ohmylms_get_page_permalink( 'student_dashboard' );
 		}
 
 		ob_start();
-		omlms_get_template(
+		ohmylms_get_template(
 			'emails/student-assignment-graded',
 			array(
 				'student'          => $student,
@@ -87,8 +87,8 @@ class AssignmentGraded {
 		$html_body = $this->replace_tags( $html_body, $student->display_name, $course->get_name(), $assignment_title, $status );
 
 		$headers      = array( 'MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8' );
-		$sender_name  = $email_settings['creator_lms_email_sender_name'];
-		$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+		$sender_name  = $email_settings['ohmylms_email_sender_name'];
+		$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 		if ( $sender_email && $sender_name ) {
 			$headers[] = 'From: ' . $sender_name . ' <' . $sender_email . '>';
 		}

@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/duration.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -17,7 +17,7 @@ global $course;
 
 <?php if ($course->get_lessons_count() > 0){ ?>
 	<li class="course-lesson-count">
-		<?php include(CREATOR_LMS_DIR . '/assets/images/icon/text-file-icon.php'); ?>
+		<?php include(OHMYLMS_DIR . '/assets/images/icon/text-file-icon.php'); ?>
 		<?php
 		echo sprintf(
 			_n( '%d Lesson', '%d Lessons', $course->get_lessons_count(), 'ohmylms' ),

@@ -2,10 +2,10 @@
 /**
  * Membership Loop Price
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/membership-loop/price.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/membership-loop/price.php.
  * 
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -16,7 +16,7 @@ global $membership;
 if( $membership == null ) {
 	return;
 }
-$currency = omlms_get_currency_symbol();
+$currency = ohmylms_get_currency_symbol();
 
 $regular_price = $membership->get_regular_price();
 $sale_price = $membership->get_sale_price();
@@ -34,7 +34,7 @@ $save_calculation = $regular_price ? number_format( ( ( floatval($regular_price)
 	<?php 
 		$price = $membership->validate_on_sale() ? $price: $regular_price;
 		$negative = $price < 0;
-		$formatted_price = ( $negative ? '-' : '' ) . sprintf( omlms_get_price_format(), '<span class="omlms-price-currency-symbol">' . get_omlms_currency_symbol( get_omlms_currency() ) . '</span>', $price );
+		$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $price );
 
 		echo $formatted_price;
 
@@ -44,7 +44,7 @@ $save_calculation = $regular_price ? number_format( ( ( floatval($regular_price)
 		// Append sign-up fee if greater than zero, with shorter wording and small font
 		if ( floatval($signup_fee) > 0 ) {
 			$negative_signup = $signup_fee < 0;
-			$formatted_signup_fee = ( $negative_signup ? '-' : '' ) . sprintf( omlms_get_price_format(), '<span class="omlms-price-currency-symbol">' . get_omlms_currency_symbol( get_omlms_currency() ) . '</span>', $signup_fee );
+			$formatted_signup_fee = ( $negative_signup ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $signup_fee );
 			echo ' <small>+ ' . $formatted_signup_fee . ' sign-up</small>';
 		}
 	?>
@@ -57,7 +57,7 @@ $save_calculation = $regular_price ? number_format( ( ( floatval($regular_price)
 			echo __('Normally ', 'ohmylms');
 
 			$negative = $regular_price < 0;
-			$formatted_price = ( $negative ? '-' : '' ) . sprintf( omlms_get_price_format(), '<span class="omlms-price-currency-symbol">' . get_omlms_currency_symbol( get_omlms_currency() ) . '</span>', $regular_price );
+			$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $regular_price );
 
 			echo '<del>'.$formatted_price.'</del>';
 

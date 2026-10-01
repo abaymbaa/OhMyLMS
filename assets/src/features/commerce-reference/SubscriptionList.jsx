@@ -163,7 +163,7 @@ export function createSubscriptionList(readRuntime) {
             }
             return <Controls.BadgeWP isBorderLess={!0} variant={t} style={{
               textTransform: "capitalize"
-            }}>{e ? e.replace("omlms-", "").replace("-", " ").replace(/^(\w)/, function (e) {
+            }}>{e ? e.replace("ohmylms-", "").replace("-", " ").replace(/^(\w)/, function (e) {
                 return e.toUpperCase();
               }) : (0, I18n.__)("N/A", "ohmylms")}</Controls.BadgeWP>;
           }
@@ -178,7 +178,7 @@ export function createSubscriptionList(readRuntime) {
         }];
       }, [H, function (e) {
         var t = null == e ? void 0 : e.toLowerCase();
-        return "active" === t || "completed" === t || "creatorlms-active" === t ? "green" : "pending" === t || "creatorlms-pending" === t ? "gold" : "on-hold" === t || "creatorlms-on-hold" === t ? "orange" : "cancelled" === t || "creatorlms-cancelled" === t ? "red" : "expired" === t || "creatorlms-expired" === t ? "grey" : "default";
+        return "active" === t || "completed" === t || "ohmylms-active" === t ? "green" : "pending" === t || "ohmylms-pending" === t ? "gold" : "on-hold" === t || "ohmylms-on-hold" === t ? "orange" : "cancelled" === t || "ohmylms-cancelled" === t ? "red" : "expired" === t || "ohmylms-expired" === t ? "grey" : "default";
       }]),
       U = (0, ReactHooks.useCallback)(function (e, t, n) {
         var r = {}[n.field] || n.field || "start_date",

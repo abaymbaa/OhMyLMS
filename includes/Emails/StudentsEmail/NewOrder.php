@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Emails\StudentsEmail;
+namespace OhMyLMS\Emails\StudentsEmail;
 
-use OMLMS\Emails\Emails;
+use OhMyLMS\Emails\Emails;
 
 class NewOrder {
 
@@ -12,7 +12,7 @@ class NewOrder {
 	 * Registers the `trigger` function to be executed after an order is created.
 	 */
 	public function __construct() {
-		add_action( 'creator_lms_checkout_after_create_order', array( $this, 'trigger' ), 10, 2 );
+		add_action( 'ohmylms_checkout_after_create_order', array( $this, 'trigger' ), 10, 2 );
 	}
 
 
@@ -97,12 +97,12 @@ class NewOrder {
 		if ( $order && is_array( $data ) && is_array( $email_settings ) && is_array( $settings ) ) {
 
 			if ( isset( $settings['button_link'] ) ) {
-				$settings['button_link'] = omlms_get_page_permalink( 'student_dashboard' );
+				$settings['button_link'] = ohmylms_get_page_permalink( 'student_dashboard' );
 			}
 
-			// Use omlms_get_template to get the email body
+			// Use ohmylms_get_template to get the email body
 			ob_start();
-			omlms_get_template(
+			ohmylms_get_template(
 				'emails/new-order', // Template file name (without .php)
 				array(
 					'order'          => $order,
@@ -115,13 +115,13 @@ class NewOrder {
 			$html_body = ob_get_clean();
 
 			ob_start();
-			omlms_get_template( 'emails/email-styles' );
+			ohmylms_get_template( 'emails/email-styles' );
 			$styles = ob_get_clean();
 
 			$html_body = Emails::replace_merge_tags( $html_body, $order );
 
-			$sender_name  = $email_settings['creator_lms_email_sender_name'];
-			$sender_email = $email_settings['creator_lms_email_sender_email_address'];
+			$sender_name  = $email_settings['ohmylms_email_sender_name'];
+			$sender_email = $email_settings['ohmylms_email_sender_email_address'];
 			$headers      = array(
 				'MIME-Version: 1.0',
 				'Content-Type: text/html; charset=UTF-8',

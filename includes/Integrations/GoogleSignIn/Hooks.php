@@ -5,11 +5,11 @@
  * Registers the Google Sign-In addon card on the Addons (Integrations) page
  * and exposes the addon's enabled/disabled state to the rest of the plugin.
  *
- * @package OMLMS\Integrations\GoogleSignIn
+ * @package OhMyLMS\Integrations\GoogleSignIn
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\GoogleSignIn;
+namespace OhMyLMS\Integrations\GoogleSignIn;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,7 +26,7 @@ class Hooks {
 	 * Hooks constructor.
 	 */
 	public function __construct() {
-		\add_filter( 'creatorlms_integrations', array( $this, 'register_integration' ), 10, 1 );
+		\add_filter( 'ohmylms_integrations', array( $this, 'register_integration' ), 10, 1 );
 	}
 
 	/**
@@ -39,10 +39,10 @@ class Hooks {
 		$integrations[ self::INTEGRATION_KEY ] = array(
 			'label'         => __( 'Google Sign-In', 'ohmylms' ),
 			'description'   => __( 'Let students sign up and log in with their Google account.', 'ohmylms' ),
-			'icon'          => plugins_url( 'includes/Integrations/GoogleSignIn/Assets/google-icon.svg', OMLMS_FILE ),
+			'icon'          => plugins_url( 'includes/Integrations/GoogleSignIn/Assets/google-icon.svg', OHMYLMS_FILE ),
 			'categories'    => array( 'course-engagement' ),
 			'hasSettings'   => true,
-			'class'         => 'OMLMS\\Integrations\\GoogleSignIn\\GoogleSignIn',
+			'class'         => 'OhMyLMS\\Integrations\\GoogleSignIn\\GoogleSignIn',
 			'is_valid'      => true,
 			'required_plan' => null,
 		);
@@ -56,7 +56,7 @@ class Hooks {
 	 * @return bool
 	 */
 	public static function is_enabled() {
-		$integrations = get_option( 'creatorlms_integrations', array() );
+		$integrations = get_option( 'ohmylms_integrations', array() );
 
 		return ! empty( $integrations[ self::INTEGRATION_KEY ]['is_enable'] );
 	}

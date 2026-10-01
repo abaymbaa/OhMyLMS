@@ -42,4 +42,4 @@ Still required before full release: broader content insertion/reordering/deletio
 
 ## Development and rollout
 
-Run `npm run build`, `npm test`, `npm run lint` and the isolated browser/PHP commands in DEVELOPMENT.md. The existing `OMLMS_SOURCE_ASSETS` switch controls the whole reconstructed application; there is no course-only release switch. No database migration was added by this increment. Do not enable the switch on math until the remaining acceptance gates pass; the latest read-only homepage check obtained no HTTP response, including the elevated retry.
+Run `npm run build`, `npm test`, `npm run lint` and the isolated browser/PHP commands in DEVELOPMENT.md. The existing `OHMYLMS_SOURCE_ASSETS` switch controls the whole reconstructed application; there is no course-only release switch. No database migration was added by this increment. Do not enable the switch on math until the remaining acceptance gates pass; the latest read-only homepage check obtained no HTTP response, including the elevated retry.

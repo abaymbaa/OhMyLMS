@@ -44,7 +44,7 @@ class Discounts {
 			$item->object        = $cart_item;
 			$item->course        = $cart_item['data'];
 			$item->quantity      = $cart_item['quantity'];
-			$item->price         = apply_filters( 'creator_lms_cart_item_price', $item->course->get_price(), $item, $cart_item, $cart );
+			$item->price         = apply_filters( 'ohmylms_cart_item_price', $item->course->get_price(), $item, $cart_item, $cart );
 			$this->items[ $key ] = $item;
 		}
 	}

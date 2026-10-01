@@ -14,7 +14,7 @@ export function createPromptCarouselNavigation(readRuntime) {
         (
           <React.Fragment>
             <div
-              className={'omlms-prompt-carousel-navigation'}
+              className={'ohmylms-prompt-carousel-navigation'}
               style={{
                 marginTop: '15px',
                 display: 'flex',
@@ -27,12 +27,12 @@ export function createPromptCarouselNavigation(readRuntime) {
               <button
                 onClick={a}
                 aria-label={(0, I18n.__)('Previous templates', 'ohmylms')}
-                className={'omlms-carousel-arrow-button'}
+                className={'ohmylms-carousel-arrow-button'}
               >
                 <CarouselArrow direction={'left'} />
               </button>
               <div
-                className={'omlms-carousel-dots'}
+                className={'ohmylms-carousel-dots'}
                 style={{
                   display: 'flex',
                   margin: '0 10px',
@@ -50,7 +50,7 @@ export function createPromptCarouselNavigation(readRuntime) {
                       aria-label={''
                         .concat((0, I18n.__)('Go to template set', 'ohmylms'), ' ')
                         .concat(t + 1)}
-                      className={'omlms-carousel-dot '.concat(n === t ? 'active' : '')}
+                      className={'ohmylms-carousel-dot '.concat(n === t ? 'active' : '')}
                     />
                   );
                 })}
@@ -58,14 +58,14 @@ export function createPromptCarouselNavigation(readRuntime) {
               <button
                 onClick={r}
                 aria-label={(0, I18n.__)('Next templates', 'ohmylms')}
-                className={'omlms-carousel-arrow-button'}
+                className={'ohmylms-carousel-arrow-button'}
               >
                 <CarouselArrow direction={'right'} />
               </button>
             </div>
             <style scoped={!0}>
               {
-                '\n                .omlms-carousel-arrow-button {\n                    background: transparent;\n                    border: none;\n                    cursor: pointer;\n                    padding: 8px;\n                    border-radius: 50%;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                    color: #7A8B9A; /* Default arrow color */\n                    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;\n                }\n                .omlms-carousel-arrow-button:hover {\n                    background-color: #e0e0e0;\n                    color: var(--omlms-primary-hover-color, #5331A1); /* Use primary hover color */\n                }\n                .omlms-carousel-arrow-button:focus-visible {\n                    outline: 2px solid var(--omlms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                    color: var(--omlms-primary-color, #6e42d3);\n                }\n\n                .omlms-carousel-dots button.omlms-carousel-dot {\n                    height: 10px;\n                    width: 10px;\n                    background-color: #cccccc;\n                    border-radius: 50%;\n                    display: inline-block;\n                    margin: 0 4px;\n                    cursor: pointer;\n                    border: none;\n                    padding: 0;\n                    transition: background-color 0.2s ease-in-out;\n                }\n                .omlms-carousel-dots button.omlms-carousel-dot.active {\n                    background-color: var(--omlms-primary-color, #6e42d3); /* Use primary color */\n                }\n                .omlms-carousel-dots button.omlms-carousel-dot:focus-visible {\n                    outline: 2px solid var(--omlms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                }\n            '
+                '\n                .ohmylms-carousel-arrow-button {\n                    background: transparent;\n                    border: none;\n                    cursor: pointer;\n                    padding: 8px;\n                    border-radius: 50%;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                    color: #7A8B9A; /* Default arrow color */\n                    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;\n                }\n                .ohmylms-carousel-arrow-button:hover {\n                    background-color: #e0e0e0;\n                    color: var(--ohmylms-primary-hover-color, #5331A1); /* Use primary hover color */\n                }\n                .ohmylms-carousel-arrow-button:focus-visible {\n                    outline: 2px solid var(--ohmylms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                    color: var(--ohmylms-primary-color, #6e42d3);\n                }\n\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot {\n                    height: 10px;\n                    width: 10px;\n                    background-color: #cccccc;\n                    border-radius: 50%;\n                    display: inline-block;\n                    margin: 0 4px;\n                    cursor: pointer;\n                    border: none;\n                    padding: 0;\n                    transition: background-color 0.2s ease-in-out;\n                }\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot.active {\n                    background-color: var(--ohmylms-primary-color, #6e42d3); /* Use primary color */\n                }\n                .ohmylms-carousel-dots button.ohmylms-carousel-dot:focus-visible {\n                    outline: 2px solid var(--ohmylms-primary-color, #6e42d3);\n                    outline-offset: 1px;\n                }\n            '
               }
             </style>
           </React.Fragment>

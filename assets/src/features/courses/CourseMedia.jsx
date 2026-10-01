@@ -23,7 +23,7 @@ export function createCourseMedia(readRuntime) {
       wr,
       y: WordPressData,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)();
+    var t = true;
     M().noConflict();
     var videoSrc = props.videoSrc,
       imageSrc = props.imageSrc,
@@ -141,9 +141,9 @@ export function createCourseMedia(readRuntime) {
             !A ||
               !k.current ||
               k.current.contains(e.target) ||
-              e.target.closest('.omlms-history-list') ||
-              e.target.closest('.omlms-tooltip-box') ||
-              e.target.closest('.omlms-ai-image-prompt') ||
+              e.target.closest('.ohmylms-history-list') ||
+              e.target.closest('.ohmylms-tooltip-box') ||
+              e.target.closest('.ohmylms-ai-image-prompt') ||
               (F(!1), G(null));
           };
           return (
@@ -163,8 +163,8 @@ export function createCourseMedia(readRuntime) {
     };
     return (
       <React.Fragment>
-        <div className={'omlms-course-thumb-wrapper'}>
-          <div className={'omlms-course-thumb-media'}>
+        <div className={'ohmylms-course-thumb-wrapper'}>
+          <div className={'ohmylms-course-thumb-media'}>
             {d ? (
               <React.Fragment>
                 <video
@@ -188,7 +188,7 @@ export function createCourseMedia(readRuntime) {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <div className={'omlms-course-thumb-placeholder'}>
+                <div className={'ohmylms-course-thumb-placeholder'}>
                   <svg
                     fill={'none'}
                     width={'88'}
@@ -214,7 +214,7 @@ export function createCourseMedia(readRuntime) {
               </React.Fragment>
             )}
             {!_ && (
-              <div className={'omlms-course-thumb-controls'}>
+              <div className={'ohmylms-course-thumb-controls'}>
                 {(c || d) && (
                   <div className={'clrms-course-thumb-controls-btns'}>
                     {c && d ? (
@@ -294,7 +294,7 @@ export function createCourseMedia(readRuntime) {
                       justify={'flex-start'}
                       align={'center'}
                       gap={2}
-                      className={'omlms-thumb-video-player'}
+                      className={'ohmylms-thumb-video-player'}
                     >
                       <Controls.TooltipWP text={(0, I18n.__)('Play Thumb Video', 'ohmylms')}>
                         <Controls.ButtonWP
@@ -307,7 +307,7 @@ export function createCourseMedia(readRuntime) {
                           padding={'0px'}
                         />
                       </Controls.TooltipWP>
-                      <span className={'omlms-thumb-video-player-line'} />
+                      <span className={'ohmylms-thumb-video-player-line'} />
                     </Controls.FlexWP>
                   </React.Fragment>
                 )}
@@ -315,7 +315,11 @@ export function createCourseMedia(readRuntime) {
             )}
           </div>
           <Controls.SpacerWP marginBottom={1.5} />
-          <Controls.FlexWP justify={'flex-start'} gap={1} className={'omlms-course-thumb-actions'}>
+          <Controls.FlexWP
+            justify={'flex-start'}
+            gap={1}
+            className={'ohmylms-course-thumb-actions'}
+          >
             {d && c && (
               <React.Fragment>
                 <Controls.TooltipWP text={(0, I18n.__)('Replace Thumbnail Image/Video', 'ohmylms')}>
@@ -390,46 +394,41 @@ export function createCourseMedia(readRuntime) {
                 onClick={function () {
                   return (function () {
                     var e;
-                    if (t)
-                      return null != B && null !== (e = B.ai_model) && void 0 !== e && e.is_enable
-                        ? (null != z && z.self) || 'anthropic' !== (null == z ? void 0 : z.platform)
-                          ? (null != z && z.self) || (null != z && z.api_key)
-                            ? void F(!0)
-                            : (i.updateProModalTitle(
-                                (0, I18n.__)('Please configure AI Model API Key', 'ohmylms'),
-                              ),
-                              i.updateProModalContent(
-                                (0, I18n.__)(
-                                  'Go to addons page and configure the AI Model API Key to use this feature.',
-                                  'ohmylms',
-                                ),
-                              ),
-                              i.updateProModalButtonText(null),
-                              void W(!0))
+                    return null != B && null !== (e = B.ai_model) && void 0 !== e && e.is_enable
+                      ? (null != z && z.self) || 'anthropic' !== (null == z ? void 0 : z.platform)
+                        ? (null != z && z.self) || (null != z && z.api_key)
+                          ? void F(!0)
                           : (i.updateProModalTitle(
-                              (0, I18n.__)(
-                                'Anthropic does not support image generation',
-                                'ohmylms',
-                              ),
+                              (0, I18n.__)('Please configure AI Model API Key', 'ohmylms'),
                             ),
                             i.updateProModalContent(
                               (0, I18n.__)(
-                                'Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).',
+                                'Go to addons page and configure the AI Model API Key to use this feature.',
                                 'ohmylms',
                               ),
                             ),
                             i.updateProModalButtonText(null),
                             void W(!0))
-                        : (W(!0),
-                          i.updateProModalTitle((0, I18n.__)('Please enable AI Suite', 'ohmylms')),
+                        : (i.updateProModalTitle(
+                            (0, I18n.__)('Anthropic does not support image generation', 'ohmylms'),
+                          ),
                           i.updateProModalContent(
                             (0, I18n.__)(
-                              'Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.',
+                              'Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).',
                               'ohmylms',
                             ),
                           ),
-                          void i.updateProModalButtonText(null));
-                    W(!0);
+                          i.updateProModalButtonText(null),
+                          void W(!0))
+                      : (W(!0),
+                        i.updateProModalTitle((0, I18n.__)('Please enable AI Suite', 'ohmylms')),
+                        i.updateProModalContent(
+                          (0, I18n.__)(
+                            'Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.',
+                            'ohmylms',
+                          ),
+                        ),
+                        void i.updateProModalButtonText(null));
                   })();
                 }}
                 padding={'0px'}

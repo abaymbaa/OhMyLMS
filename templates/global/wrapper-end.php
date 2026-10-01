@@ -2,9 +2,9 @@
 /**
  * Content wrappers
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/global/wrapper-end.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/global/wrapper-end.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

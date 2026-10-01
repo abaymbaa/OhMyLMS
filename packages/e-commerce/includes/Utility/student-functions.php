@@ -2,7 +2,7 @@
 /**
  * Utility functions for student operations in OhMyLMS.
  *
- * @package OMLMS\Ecommerce\Utility
+ * @package OhMyLMS\Ecommerce\Utility
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,13 +13,13 @@ defined( 'ABSPATH' ) || exit;
  * @param bool $show_admin_bar Whether to show the admin bar.
  * @return bool Whether to show the admin bar.
  */
-function creator_lms_disable_admin_bar( $show_admin_bar ) {
+function ohmylms_disable_admin_bar( $show_admin_bar ) {
 	if ( ! ( current_user_can( 'edit_posts' ) ) ) {
 		$show_admin_bar = false;
 	}
 	return $show_admin_bar;
 }
-add_filter( 'show_admin_bar', 'creator_lms_disable_admin_bar', 10, 1 ); // phpcs:ignore WordPress.VIP.AdminBarRemoval.RemovalDetected
+add_filter( 'show_admin_bar', 'ohmylms_disable_admin_bar', 10, 1 ); // phpcs:ignore WordPress.VIP.AdminBarRemoval.RemovalDetected
 
 
 /**
@@ -34,7 +34,7 @@ add_filter( 'show_admin_bar', 'creator_lms_disable_admin_bar', 10, 1 ); // phpcs
  *
  * @since 1.0.0
  */
-function creator_lms_create_new_student( $email, $username = '', $password = '', $args = array() ) {
+function ohmylms_create_new_student( $email, $username = '', $password = '', $args = array() ) {
 	if ( empty( $email ) || ! is_email( $email ) ) {
 		return new WP_Error( 'registration-error-invalid-email', __( 'Please provide a valid email address.', 'ohmylms' ) );
 	}
@@ -74,7 +74,7 @@ function creator_lms_create_new_student( $email, $username = '', $password = '',
 			'user_login' => $username,
 			'user_pass'  => $password,
 			'user_email' => $email,
-			'role'       => function_exists( 'creator_lms_get_assignable_student_role' ) ? creator_lms_get_assignable_student_role() : 'subscriber',
+			'role'       => function_exists( 'ohmylms_get_assignable_student_role' ) ? ohmylms_get_assignable_student_role() : 'subscriber',
 		)
 	);
 
@@ -84,7 +84,7 @@ function creator_lms_create_new_student( $email, $username = '', $password = '',
 		return $student_id;
 	}
 
-	do_action( 'creator_lms_created_customer', $student_id, $new_customer_data );
+	do_action( 'ohmylms_created_customer', $student_id, $new_customer_data );
 
 	return $student_id;
 }

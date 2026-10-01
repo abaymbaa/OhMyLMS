@@ -135,7 +135,7 @@ class StripeCustomer {
 		$this->set_customer_data( $response );
 
 		if ( $this->get_user_id() ) {
-			update_user_option( $this->get_user_id(), '_omlms_stripe_customer_id', $response->id, false );
+			update_user_option( $this->get_user_id(), '_ohmylms_stripe_customer_id', $response->id, false );
 		}
 
 		return $response->id;

@@ -27,14 +27,14 @@ var is = function (e) {
       }
       return a;
     }(e, ts),
-    s = (0, y.useDispatch)("creator-lms/store"),
+    s = (0, y.useDispatch)("ohmylms/store"),
     d = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []);
   return React.createElement(React.Fragment, null, React.createElement(I.RadioGroupWP, ns({
     value: r,
     onChange: a,
-    className: "omlms-grouped-radio ".concat("advanced" === c ? "omlms-advanced-radio" : "", " ").concat(i)
+    className: "ohmylms-grouped-radio ".concat("advanced" === c ? "ohmylms-advanced-radio" : "", " ").concat(i)
   }, u, {
     options: n
   })), "password_protected" === r && React.createElement(React.Fragment, null, React.createElement(I.SpacerWP, {
@@ -50,9 +50,7 @@ var is = function (e) {
     value: null == d ? void 0 : d.password_protected
   })));
 };
-
 const ls = (0, g.memo)(is);
-
 var cs = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -88,9 +86,7 @@ var cs = function () {
     d: "M14.544 20.168c-.98 0-1.839-.215-2.576-.644a4.637 4.637 0 01-1.722-1.778c-.41-.765-.616-1.647-.616-2.646 0-.999.205-1.876.616-2.632a4.611 4.611 0 011.722-1.792c.737-.43 1.596-.644 2.576-.644.97 0 1.825.215 2.562.644a4.484 4.484 0 011.722 1.792c.41.756.616 1.633.616 2.632 0 .933-.182 1.769-.546 2.506a4.413 4.413 0 01-1.512 1.736l2.268 2.436h-2.226l-1.54-1.764c-.43.103-.877.154-1.344.154zm0-1.61c.933 0 1.675-.308 2.226-.924.56-.616.84-1.46.84-2.534 0-1.073-.28-1.918-.84-2.534-.55-.616-1.293-.924-2.226-.924s-1.68.308-2.24.924c-.56.616-.84 1.46-.84 2.534 0 1.073.28 1.918.84 2.534.56.616 1.307.924 2.24.924zm37.188 1.61c-.719 0-1.367-.14-1.946-.42a3.32 3.32 0 01-1.386-1.302c-.336-.579-.504-1.311-.504-2.198V10.2h1.792v6.062c0 .765.182 1.335.546 1.708.373.373.887.56 1.54.56.644 0 1.153-.187 1.526-.56.373-.373.56-.943.56-1.708V10.2h1.792v6.048c0 .887-.177 1.62-.532 2.198a3.37 3.37 0 01-1.428 1.302 4.5 4.5 0 01-1.96.42zM88.952 20v-9.8h1.792V20h-1.792zm35.706 0v-1.372l4.508-6.93H124.7V10.2h6.538v1.372l-4.536 6.93h4.564V20h-6.608zM134 7h1v17h-1z"
   })));
 };
-
 const us = (0, g.memo)(cs);
-
 var ss = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -108,9 +104,7 @@ var ss = function () {
     d: "M17.544 20.168c-.98 0-1.839-.215-2.576-.644a4.637 4.637 0 01-1.722-1.778c-.41-.765-.616-1.647-.616-2.646 0-.999.205-1.876.616-2.632a4.611 4.611 0 011.722-1.792c.737-.43 1.596-.644 2.576-.644.97 0 1.825.215 2.562.644a4.484 4.484 0 011.722 1.792c.41.756.616 1.633.616 2.632 0 .933-.182 1.769-.546 2.506a4.413 4.413 0 01-1.512 1.736l2.268 2.436h-2.226l-1.54-1.764c-.43.103-.877.154-1.344.154zm0-1.61c.933 0 1.675-.308 2.226-.924.56-.616.84-1.46.84-2.534 0-1.073-.28-1.918-.84-2.534-.55-.616-1.293-.924-2.226-.924s-1.68.308-2.24.924c-.56.616-.84 1.46-.84 2.534 0 1.073.28 1.918.84 2.534.56.616 1.307.924 2.24.924zm9.154 1.61c-.868 0-1.54-.27-2.016-.812-.467-.541-.7-1.335-.7-2.38v-3.92h1.778v3.752c0 .597.12 1.055.364 1.372.242.317.625.476 1.148.476.494 0 .9-.177 1.218-.532.326-.355.49-.85.49-1.484v-3.584h1.792V20H29.19l-.14-1.176a2.44 2.44 0 01-.938.98c-.402.243-.873.364-1.414.364zm6.88-8.19c-.328 0-.598-.098-.813-.294a.982.982 0 01-.308-.742.94.94 0 01.308-.728c.215-.196.486-.294.812-.294.327 0 .593.098.798.294a.92.92 0 01.322.728.962.962 0 01-.322.742c-.205.196-.471.294-.798.294zM32.68 20v-6.944h1.792V20H32.68zm3.215 0v-1.442l3.542-4.018h-3.5v-1.484h5.544v1.442l-3.598 4.018h3.668V20h-5.656zM47 7h1v17h-1z"
   })));
 };
-
 const ds = (0, g.memo)(ss);
-
 function ms(e) {
   return ms = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -118,7 +112,6 @@ function ms(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, ms(e);
 }
-
 function ps(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -129,7 +122,6 @@ function ps(e, t) {
   }
   return n;
 }
-
 function fs(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -141,7 +133,6 @@ function fs(e) {
   }
   return e;
 }
-
 function vs(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -162,13 +153,11 @@ function vs(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function gs(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var hs = function () {
   var e,
     t,
@@ -176,7 +165,7 @@ var hs = function () {
     r,
     a,
     o,
-    i = (0, L.useIsPro)(),
+    i = true,
     l = function () {
       var e,
         t = (0, y.useSelect)(function (e) {
@@ -248,11 +237,11 @@ var hs = function () {
     f = ["statement", "fill-in-the-blank"],
     v = function (e, t, n) {
       var r, a;
-      (i || !["randomize", "required"].includes(e)) && (i || !f.includes(null == u || null === (r = u.settings) || void 0 === r ? void 0 : r.type)) ? n ? s.updateQuestionData(c, {
+      n ? s.updateQuestionData(c, {
         settings: fs(fs({}, null == u ? void 0 : u.settings), {}, vs({}, e, fs(fs({}, null == u || null === (a = u.settings) || void 0 === a ? void 0 : a[e]), {}, vs({}, n, t))))
       }) : s.updateQuestionData(c, {
         settings: fs(fs({}, null == u ? void 0 : u.settings), {}, vs({}, e, t))
-      }) : p(!0);
+      });
     },
     h = [{
       label: (0, b.__)("Separate Boxes", "ohmylms"),
@@ -318,7 +307,7 @@ var hs = function () {
       var e;
       (null == u || null === (e = u.settings) || void 0 === e || null === (e = e.score) || void 0 === e ? void 0 : e.value) < 0 && v("score", 0, "value");
     },
-    className: "omlms-question-score-input"
+    className: "ohmylms-question-score-input"
   })), (null == l ? void 0 : l.participateView) && React.createElement(Kt, {
     title: (0, b.__)("Participant View", "ohmylms"),
     onChange: function (e) {
@@ -339,9 +328,7 @@ var hs = function () {
     onClose: p
   }))) : null;
 };
-
 const ys = (0, g.memo)(hs);
-
 var bs = function (e) {
   var t,
     n = e.setHovered,
@@ -352,9 +339,7 @@ var bs = function (e) {
     setHovered: n
   })));
 };
-
 const _s = (0, g.memo)(bs);
-
 var ws = function (e) {
   var t = e.isHover,
     n = void 0 !== t && t,
@@ -367,12 +352,10 @@ var ws = function (e) {
     fill: "none"
   }, React.createElement("path", {
     d: "M15.7074 5.12841L7.31589 13.1606C6.74792 13.7028 5.9953 14 5.19402 14H5.18802C4.38407 13.9981 3.63012 13.6971 3.06349 13.153L0.296998 10.542C-0.0956433 10.1716 -0.0996431 9.56707 0.288999 9.19225C0.677641 8.81679 1.31027 8.81361 1.70358 9.18461L4.47673 11.8014C4.67205 11.9891 4.92337 12.0896 5.19202 12.0903H5.19402C5.46067 12.0903 5.71199 11.991 5.90131 11.8109L14.2921 3.77995C14.6814 3.40577 15.3154 3.40577 15.706 3.77804C16.0973 4.15032 16.098 4.75487 15.708 5.12778L15.7074 5.12841ZM3.34947 6.85169C3.87344 7.35633 4.57206 7.63442 5.31601 7.63633H5.32201C6.06397 7.63633 6.76125 7.36015 7.28989 6.85615L12.7102 1.62585C13.0989 1.25103 13.0955 0.646484 12.7029 0.275482C12.3102 -0.0948834 11.6776 -0.0910652 11.2883 0.282482L5.87131 5.50896C5.72465 5.6496 5.52933 5.7266 5.32135 5.7266H5.32001C5.11136 5.7266 4.91604 5.64832 4.77805 5.51532L2.38553 3.15377C2.00156 2.77449 1.36893 2.76495 0.971622 3.1315C0.574981 3.49804 0.564315 4.10195 0.94829 4.48123L3.35014 6.85106L3.34947 6.85169Z",
-    fill: "".concat(n ? "var(--omlms-primary-color)" : r || "#2B2F36")
+    fill: "".concat(n ? "var(--ohmylms-primary-color)" : r || "#2B2F36")
   })));
 };
-
 const Es = (0, g.memo)(ws);
-
 var Ss = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -388,7 +371,7 @@ var Ss = function () {
   }), React.createElement("rect", {
     width: "75",
     height: "8",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "4"
   }), React.createElement("rect", {
     width: "133",
@@ -400,7 +383,7 @@ var Ss = function () {
     width: "110",
     height: "8",
     y: "22",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "4"
   }), React.createElement("rect", {
     width: "133",
@@ -412,13 +395,11 @@ var Ss = function () {
     width: "93",
     height: "8",
     y: "44",
-    fill: "var(--omlms-primary-color)",
+    fill: "var(--ohmylms-primary-color)",
     rx: "4"
   })));
 };
-
 const Rs = (0, g.memo)(Ss);
-
 var xs = n(16118),
   Cs = function () {
     return React.createElement(React.Fragment, null, React.createElement("svg", {
@@ -435,9 +416,7 @@ var xs = n(16118),
       d: "M12.668 8h-6.97a.697.697 0 000 1.394h6.97a.697.697 0 000-1.394z"
     })));
   };
-
 const Ps = (0, g.memo)(Cs);
-
 var Os = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -461,15 +440,12 @@ var Os = function () {
     d: "M0 0h18v18H0z"
   })))));
 };
-
 const ks = (0, g.memo)(Os);
-
 function js(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const As = function (e) {
   var t,
     n,
@@ -531,7 +507,7 @@ const As = function (e) {
   return h().createElement(qt, {
     isVisible: !0
   }, h().createElement("div", {
-    className: "omlms-option-item-wrapper ".concat(y || "")
+    className: "ohmylms-option-item-wrapper ".concat(y || "")
   }, h().createElement(I.CardWP, {
     isBorderless: !0,
     draggable: !w,
@@ -591,7 +567,7 @@ const As = function (e) {
     onClick: function () {
       return f(a.id);
     },
-    className: "omlms-remove-option-btn",
+    className: "ohmylms-remove-option-btn",
     style: {
       minWidth: "26px",
       padding: "2px"
@@ -599,13 +575,13 @@ const As = function (e) {
   }), h().createElement(I.ButtonWP, {
     icon: h().createElement(ks, null),
     onClick: v,
-    className: "omlms-add-option-btn",
+    className: "ohmylms-add-option-btn",
     style: {
       minWidth: "26px",
       padding: "2px"
     }
   }), h().createElement(I.ButtonWP, {
-    className: "omlms-drag-icon",
+    className: "ohmylms-drag-icon",
     icon: h().createElement(gc, null),
     style: {
       cursor: "all-scroll",
@@ -615,16 +591,15 @@ const As = function (e) {
       padding: "2px"
     }
   })))))), l && !(null != a && null !== (n = a.answer) && void 0 !== n && n.trim()) && h().createElement("div", {
-    className: "omlms-option-correct",
+    className: "ohmylms-option-correct",
     style: {
       color: "red",
       marginTop: 4
     }
   }, (0, b.__)("Field cannot be empty", "ohmylms")), 1 == a.is_correct && Boolean(null == a || null === (r = a.answer) || void 0 === r ? void 0 : r.trim()) && h().createElement("span", {
-    className: "omlms-option-correct"
+    className: "ohmylms-option-correct"
   }, (0, b.__)("This answer is correct", "ohmylms"))));
 };
-
 function Ms(e) {
   return Ms = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -632,7 +607,6 @@ function Ms(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Ms(e);
 }
-
 function Ts(e) {
   return function (e) {
     if (Array.isArray(e)) return zs(e);
@@ -642,7 +616,6 @@ function Ts(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Is(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -653,7 +626,6 @@ function Is(e, t) {
   }
   return n;
 }
-
 function Fs(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -665,7 +637,6 @@ function Fs(e) {
   }
   return e;
 }
-
 function Ns(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -686,7 +657,6 @@ function Ns(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Ds(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -720,7 +690,6 @@ function Ds(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Ws(e, t) {
   if (e) {
     if ("string" == typeof e) return zs(e, t);
@@ -728,13 +697,11 @@ function Ws(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? zs(e, t) : void 0;
   }
 }
-
 function zs(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Bs = function (e) {
   var t = e.type,
     n = void 0 === t ? "multiple" : t,
@@ -827,10 +794,10 @@ var Bs = function (e) {
       v(!1);
     };
   return React.createElement("div", {
-    className: "omlms-options-list omlms-".concat(n, "-choice")
+    className: "ohmylms-options-list ohmylms-".concat(n, "-choice")
   }, (0, xs.I)(a).map(function (e, t) {
     return React.createElement(As, {
-      className: "omlms-quiz-option-item omlms-quiz-option-item-".concat(t),
+      className: "ohmylms-quiz-option-item ohmylms-quiz-option-item-".concat(t),
       key: e.id,
       option: e,
       index: t,
@@ -849,22 +816,19 @@ var Bs = function (e) {
       onInputBlur: j
     });
   }), d && React.createElement("p", {
-    className: "omlms-option-error-msg"
+    className: "ohmylms-option-error-msg"
   }, d), i && !a.some(function (e) {
     return 1 == e.is_correct;
   }) && React.createElement("p", {
-    className: "omlms-option-error-msg"
+    className: "ohmylms-option-error-msg"
   }, (0, b.__)("Please select at least one correct answer", "ohmylms")));
 };
-
 const Ls = (0, g.memo)(Bs);
-
 var Vs = function () {
   return React.createElement(React.Fragment, null, React.createElement(Ls, {
     type: "multiple"
   }));
 };
-
 const Hs = (0, g.memo)(Vs),
   Gs = {
     name: (0, b.__)("Multiple Choice", "ohmylms"),

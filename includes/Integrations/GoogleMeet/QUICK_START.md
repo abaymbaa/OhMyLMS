@@ -16,7 +16,7 @@
 
 ### Step 2: Configure Plugin (1 min)
 
-1. WordPress Admin → CreatorLMS → Settings → Integrations
+1. WordPress Admin → OhMyLMS → Settings → Integrations
 2. Click on **Google Meet** tab
 3. Paste **Client ID**
 4. Paste **Client Secret**
@@ -122,9 +122,9 @@ define('WP_DEBUG_DISPLAY', false);
 ### Check Token Storage
 ```php
 $user_id = get_current_user_id();
-$access_token = get_user_meta($user_id, 'creatorlms_googlemeet_access_token', true);
-$refresh_token = get_user_meta($user_id, 'creatorlms_googlemeet_refresh_token', true);
-$expires = get_user_meta($user_id, 'creatorlms_googlemeet_token_expires', true);
+$access_token = get_user_meta($user_id, 'ohmylms_googlemeet_access_token', true);
+$refresh_token = get_user_meta($user_id, 'ohmylms_googlemeet_refresh_token', true);
+$expires = get_user_meta($user_id, 'ohmylms_googlemeet_token_expires', true);
 
 var_dump([
     'has_access_token' => !empty($access_token),
@@ -136,7 +136,7 @@ var_dump([
 
 ### Test API Connection
 ```php
-use OMLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
+use OhMyLMS\Integrations\GoogleMeet\Includes\Services\TokenService;
 
 $token_service = new TokenService();
 $token = $token_service->get_valid_access_token();
@@ -249,7 +249,7 @@ var_dump([
 # Create 10 meetings simultaneously
 for i in {1..10}; do
     curl -X POST http://your-site.com/wp-admin/admin-ajax.php \
-    -d "action=creatorlms_create_googlemeet" \
+    -d "action=ohmylms_create_googlemeet" \
     -d "topic=Load Test $i" \
     -d "..." &
 done
@@ -259,7 +259,7 @@ done
 ```php
 // Force token expiry
 update_user_meta(get_current_user_id(), 
-    'creatorlms_googlemeet_token_expires', 
+    'ohmylms_googlemeet_token_expires', 
     time() - 3600
 );
 
@@ -294,7 +294,7 @@ add_filter('pre_http_request', function() {
 tail -f wp-content/debug.log
 
 # Check plugin files
-ls -la wp-content/plugins/creatorlms-pro/includes/Integrations/GoogleMeet/
+ls -la wp-content/plugins/ohmylms-pro/includes/Integrations/GoogleMeet/
 
 # Database check
 wp db query "SELECT * FROM wp_usermeta WHERE meta_key LIKE '%googlemeet%'"

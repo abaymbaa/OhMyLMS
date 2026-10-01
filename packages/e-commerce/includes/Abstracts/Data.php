@@ -245,7 +245,7 @@ abstract class Data {
 	 * @since 1.0.0
 	 */
 	protected function get_hook_prefix() {
-		return 'creator_lms_' . $this->object_type . '_get_';
+		return 'ohmylms_' . $this->object_type . '_get_';
 	}
 
 
@@ -253,7 +253,7 @@ abstract class Data {
 	 * Set a date property.
 	 *
 	 * @param string $prop The name of the property to set.
-	 * @param mixed $value The value to set for the property. Can be a string, timestamp, or CreatorLmsDateTime object.
+	 * @param mixed $value The value to set for the property. Can be a string, timestamp, or OhMyLmsDateTime object.
 	 *
 	 * @link https://github.com/woocommerce/woocommerce/blob/5907114d6eabae41edf39c593a36345b92990b38/plugins/woocommerce/includes/abstracts/abstract-wc-data.php#L898
 	 * @since 1.0.0
@@ -331,7 +331,7 @@ abstract class Data {
 	 * @param string $message The error message.
 	 * @param int $http_status_code The HTTP status code (default is 400).
 	 * @param array $data Additional data to pass with the exception.
-	 * @throws \OMLMS\DataException
+	 * @throws \OhMyLMS\DataException
 	 *
 	 * @since 1.0.0
 	 */

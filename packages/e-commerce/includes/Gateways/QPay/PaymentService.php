@@ -8,7 +8,7 @@ class PaymentService {
     public static function locked( $order_id, $operation ) {
         global $wpdb;
         // Connection-owned MySQL lock: atomic across workers, automatically released on disconnect.
-        $key = 'omlms_qpay_' . md5( $wpdb->prefix . ':' . (int) $order_id );
+        $key = 'ohmylms_qpay_' . md5( $wpdb->prefix . ':' . (int) $order_id );
         if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $key ) ) ) {
             return new \WP_Error( 'qpay_busy', __( 'Payment is being checked. Please try again shortly.', 'ohmylms' ) );
         }
@@ -61,7 +61,7 @@ class PaymentService {
     public static function settle( $order_id, $gateway, $verify = false ) {
         return self::locked( $order_id, function () use ( $order_id, $gateway, $verify ) {
             $order = ecommerce_get_order( $order_id );
-            if ( ! $order || 'omlms-order' !== get_post_type( $order_id ) || 'qpay' !== $order->get_payment_method() ) {
+            if ( ! $order || 'ohmylms-order' !== get_post_type( $order_id ) || 'qpay' !== $order->get_payment_method() ) {
                 return new \WP_Error( 'qpay_order', __( 'QPay order not found.', 'ohmylms' ) );
             }
             if ( in_array( $order->get_status(), array( 'completed', 'processing' ), true ) ) {
@@ -115,8 +115,8 @@ class PaymentService {
                 update_post_meta( $order_id, '_qpay_fulfilled', time() );
                 $posted = array( 'membership_id' => (int) get_post_meta( $order_id, '_membership_id', true ) );
                 do_action( 'ecommerce_after_payment_completed', $order, array( 'result' => 'success', 'payment_method' => 'qpay' ) );
-                do_action( 'creator_lms_checkout_after_create_order', $order, $posted );
-                do_action( 'creator_lms_after_checkout_process', $order );
+                do_action( 'ohmylms_checkout_after_create_order', $order, $posted );
+                do_action( 'ohmylms_after_checkout_process', $order );
             }
             return array( 'status' => 'paid', 'redirect_url' => $gateway->get_return_url( $order ) );
         } );

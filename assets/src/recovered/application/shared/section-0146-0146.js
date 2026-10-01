@@ -25,14 +25,14 @@ var FJ = [{
       u = (0, y.useSelect)(function (e) {
         return e(T.default).getDesignSettings();
       }, []),
-      s = (null == u || null === (e = u.creator_lms_archive_page_layout_style) || void 0 === e ? void 0 : e.value) || "grid-style1",
-      d = (null == u || null === (t = u.creator_lms_columns_per_row) || void 0 === t ? void 0 : t.value) || "4",
-      m = (null == u || null === (n = u.creator_lms_archive_page_search_is_enabled) || void 0 === n ? void 0 : n.value) || "no",
-      p = (null == u || null === (r = u.creator_lms_archive_page_sorting_is_enabled) || void 0 === r ? void 0 : r.value) || "no",
-      f = (null == u || null === (a = u.creator_lms_archive_page_filter_is_enabled) || void 0 === a ? void 0 : a.value) || "no",
-      v = (null == u || null === (o = u.creator_lms_archive_page_filters) || void 0 === o ? void 0 : o.value) || [],
-      g = (null == u || null === (i = u.creator_lms_archive_page_category_is_enabled) || void 0 === i ? void 0 : i.value) || "no",
-      h = (null == u || null === (l = u.creator_lms_archive_page_row) || void 0 === l ? void 0 : l.value) || [],
+      s = (null == u || null === (e = u.ohmylms_archive_page_layout_style) || void 0 === e ? void 0 : e.value) || "grid-style1",
+      d = (null == u || null === (t = u.ohmylms_columns_per_row) || void 0 === t ? void 0 : t.value) || "4",
+      m = (null == u || null === (n = u.ohmylms_archive_page_search_is_enabled) || void 0 === n ? void 0 : n.value) || "no",
+      p = (null == u || null === (r = u.ohmylms_archive_page_sorting_is_enabled) || void 0 === r ? void 0 : r.value) || "no",
+      f = (null == u || null === (a = u.ohmylms_archive_page_filter_is_enabled) || void 0 === a ? void 0 : a.value) || "no",
+      v = (null == u || null === (o = u.ohmylms_archive_page_filters) || void 0 === o ? void 0 : o.value) || [],
+      g = (null == u || null === (i = u.ohmylms_archive_page_category_is_enabled) || void 0 === i ? void 0 : i.value) || "no",
+      h = (null == u || null === (l = u.ohmylms_archive_page_row) || void 0 === l ? void 0 : l.value) || [],
       _ = function (e, t) {
         c.updateDesignSettings(IJ({}, t, {
           value: e ? "yes" : "no"
@@ -40,7 +40,7 @@ var FJ = [{
       },
       w = function (e, t) {
         c.updateDesignSettings({
-          creator_lms_archive_page_row: {
+          ohmylms_archive_page_row: {
             value: h.map(function (n, r) {
               return t === r ? TJ(TJ({}, n), {}, {
                 row_display_criteria: e
@@ -51,7 +51,7 @@ var FJ = [{
       },
       E = function (e, t) {
         c.updateDesignSettings({
-          creator_lms_archive_page_row: {
+          ohmylms_archive_page_row: {
             value: h.map(function (n, r) {
               return t === r ? TJ(TJ({}, n), {}, {
                 row_heading: e
@@ -62,7 +62,7 @@ var FJ = [{
       },
       S = function (e) {
         c.updateDesignSettings({
-          creator_lms_archive_page_row: {
+          ohmylms_archive_page_row: {
             value: h.filter(function (t, n) {
               return e !== n;
             })
@@ -107,7 +107,7 @@ var FJ = [{
         };
       };
     return React.createElement(React.Fragment, null, React.createElement("div", {
-      className: "omlms-course-list-layout-config"
+      className: "ohmylms-course-list-layout-config"
     }, React.createElement(I.SpacerWP, {
       margin: 0,
       marginBottom: 2,
@@ -133,7 +133,7 @@ var FJ = [{
         onClick: function () {
           return function (e) {
             c.updateDesignSettings({
-              creator_lms_columns_per_row: {
+              ohmylms_columns_per_row: {
                 value: e
               }
             });
@@ -161,7 +161,7 @@ var FJ = [{
       title: (0, b.__)("Search", "ohmylms"),
       tooltip: (0, b.__)("Enable course search.", "ohmylms"),
       onChange: function (e) {
-        return _(e, "creator_lms_archive_page_search_is_enabled");
+        return _(e, "ohmylms_archive_page_search_is_enabled");
       },
       isChecked: "yes" === m,
       showDivider: !1,
@@ -178,7 +178,7 @@ var FJ = [{
       title: (0, b.__)("Sorting", "ohmylms"),
       tooltip: (0, b.__)("Enable course sorting.", "ohmylms"),
       onChange: function (e) {
-        return _(e, "creator_lms_archive_page_sorting_is_enabled");
+        return _(e, "ohmylms_archive_page_sorting_is_enabled");
       },
       isChecked: "yes" === p,
       showDivider: !1,
@@ -197,21 +197,21 @@ var FJ = [{
       onChange: function (e) {
         return function (e) {
           e ? (c.updateDesignSettings({
-            creator_lms_archive_page_filters: {
+            ohmylms_archive_page_filters: {
               value: ["keyword", "category", "tag", "price_type", "difficulty_level"]
             },
-            creator_lms_archive_page_filter_is_enabled: {
+            ohmylms_archive_page_filter_is_enabled: {
               value: "yes"
             }
           }), 4 == d && c.updateDesignSettings({
-            creator_lms_columns_per_row: {
+            ohmylms_columns_per_row: {
               value: "3"
             }
           })) : c.updateDesignSettings({
-            creator_lms_archive_page_filters: {
+            ohmylms_archive_page_filters: {
               value: []
             },
-            creator_lms_archive_page_filter_is_enabled: {
+            ohmylms_archive_page_filter_is_enabled: {
               value: "no"
             }
           });
@@ -230,7 +230,7 @@ var FJ = [{
       marginTop: 2,
       marginBottom: 0
     }, React.createElement("div", {
-      className: "omlms-global-settings-filter-options"
+      className: "ohmylms-global-settings-filter-options"
     }, React.createElement(EJ, {
       size: "14px",
       title: (0, b.__)("Choose Course Filter", "ohmylms")
@@ -248,7 +248,7 @@ var FJ = [{
         onChange: function (t) {
           !function (e) {
             c.updateDesignSettings({
-              creator_lms_archive_page_filters: {
+              ohmylms_archive_page_filters: {
                 value: e
               }
             });
@@ -262,7 +262,7 @@ var FJ = [{
       title: (0, b.__)("Category", "ohmylms"),
       tooltip: (0, b.__)("Enable course category.", "ohmylms"),
       onChange: function (e) {
-        return _(e, "creator_lms_archive_page_category_is_enabled");
+        return _(e, "ohmylms_archive_page_category_is_enabled");
       },
       isChecked: "yes" === g,
       showDivider: !1,
@@ -303,7 +303,7 @@ var FJ = [{
       icon: React.createElement(RJ, null),
       onClick: function () {
         c.updateDesignSettings({
-          creator_lms_archive_page_row: {
+          ohmylms_archive_page_row: {
             value: [].concat(jJ(h), [{
               row_display_criteria: "all",
               row_heading: ""
@@ -322,7 +322,7 @@ var WJ = function (e) {
     r = e.lastItem,
     a = void 0 !== r && r;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-dummy-card-wrapper ".concat(n)
+    className: "ohmylms-dummy-card-wrapper ".concat(n)
   }, React.createElement("svg", {
     fill: "none",
     width: "79",
@@ -340,35 +340,35 @@ var WJ = function (e) {
     fill: "#E4E6EA",
     d: "M29.515 15.873a4.14 4.14 0 004.147-4.132 4.14 4.14 0 00-4.147-4.132 4.14 4.14 0 00-4.148 4.132 4.14 4.14 0 004.148 4.132z"
   })), React.createElement("div", {
-    className: "omlms-dummy-card-content"
+    className: "ohmylms-dummy-card-content"
   }, "grid-style1" === n && React.createElement(React.Fragment, null, React.createElement("span", {
-    className: "omlms-dummy-card-title"
+    className: "ohmylms-dummy-card-title"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-price"
+    className: "ohmylms-dummy-card-price"
   }, "$10.00"), React.createElement("span", {
-    className: "omlms-dummy-card-button"
+    className: "ohmylms-dummy-card-button"
   }, React.createElement("span", {
-    className: "omlms-dummy-card-button-text"
+    className: "ohmylms-dummy-card-button-text"
   }))), "grid-style2" === n && React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-dummy-card-header"
+    className: "ohmylms-dummy-card-header"
   }, React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   })), React.createElement("span", {
-    className: "omlms-dummy-card-title"
+    className: "ohmylms-dummy-card-title"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-title last-child"
+    className: "ohmylms-dummy-card-title last-child"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   })), "grid-style3" === n && React.createElement(React.Fragment, null, React.createElement("span", {
-    className: "omlms-dummy-card-title"
+    className: "ohmylms-dummy-card-title"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }), React.createElement("div", {
-    className: "omlms-dummy-card-ratings"
+    className: "ohmylms-dummy-card-ratings"
   }, Array.from({
     length: 5
   }).map(function (e, t) {
@@ -384,19 +384,19 @@ var WJ = function (e) {
       d: "M6.326 2.335a.139.139 0 00-.111-.094l-1.767-.256L3.657.39c-.046-.093-.2-.093-.246 0l-.79 1.595-1.767.256a.138.138 0 00-.11.094.133.133 0 00.034.14l1.279 1.24-.302 1.755a.137.137 0 00.199.144l1.58-.828 1.58.828a.139.139 0 00.145-.01.136.136 0 00.054-.134l-.301-1.754L6.29 2.474a.135.135 0 00.036-.14z"
     }));
   })), React.createElement("span", {
-    className: "omlms-dummy-card-price"
+    className: "ohmylms-dummy-card-price"
   }, "$10.00")), "grid-style3" === n && React.createElement(React.Fragment, null, React.createElement("span", {
-    className: "omlms-dummy-card-title"
+    className: "ohmylms-dummy-card-title"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }))), "grid-style4" === n && React.createElement("div", {
-    className: "omlms-dummy-card-footer"
+    className: "ohmylms-dummy-card-footer"
   }, React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-description"
+    className: "ohmylms-dummy-card-description"
   }))), a && "grid-style3" === n && React.createElement("div", {
-    className: "omlms-dummy-card-carrosole"
+    className: "ohmylms-dummy-card-carrosole"
   }, React.createElement("svg", {
     fill: "none",
     width: "19",
@@ -426,9 +426,9 @@ var BJ = function (e) {
     a = e.device,
     o = void 0 === a ? "desktop" : a;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-layout-frame ".concat(o, " ").concat(r)
+    className: "ohmylms-layout-frame ".concat(o, " ").concat(r)
   }, React.createElement("div", {
-    className: "omlms-frame-header"
+    className: "ohmylms-frame-header"
   }, Array.from({
     length: 3
   }).map(function (e, t) {
@@ -446,8 +446,8 @@ var BJ = function (e) {
       fill: "#D9D9D9"
     }));
   })), React.createElement("div", {
-    className: "omlms-frame-contents-wrapper"
-  }, t)), (0, wm.createPortal)(React.createElement("style", null, "\n.omlms-layout-frame {\n    border-radius: 8px;\n    border: 1px solid #EBECED;\n    background: #FFFFFF;\n    min-width: 400px;\n    min-height: 100px;\n}\n.omlms-layout-frame .omlms-frame-header {\n    border-radius: 10px 10px 0 0;\n    border-bottom: 1px solid #EBECED;\n    padding: 10px 17px;\n    display: flex;\n    align-items: center;\n    gap: 5px;\n}\n\n.omlms-layout-frame .omlms-frame-contents-wrapper {\n    padding: 30px;\n    display: flex;\n    align-items: stretch;\n    gap: 10px;\n}\n\n@media screen and (max-width: 1499px) {\n    .omlms-layout-frame .omlms-frame-contents-wrapper {\n        padding: 20px;\n    }\n    .omlms-layout-frame {\n        min-width: 100%;\n    }\n\n\n}\n\n"), document.head));
+    className: "ohmylms-frame-contents-wrapper"
+  }, t)), (0, wm.createPortal)(React.createElement("style", null, "\n.ohmylms-layout-frame {\n    border-radius: 8px;\n    border: 1px solid #EBECED;\n    background: #FFFFFF;\n    min-width: 400px;\n    min-height: 100px;\n}\n.ohmylms-layout-frame .ohmylms-frame-header {\n    border-radius: 10px 10px 0 0;\n    border-bottom: 1px solid #EBECED;\n    padding: 10px 17px;\n    display: flex;\n    align-items: center;\n    gap: 5px;\n}\n\n.ohmylms-layout-frame .ohmylms-frame-contents-wrapper {\n    padding: 30px;\n    display: flex;\n    align-items: stretch;\n    gap: 10px;\n}\n\n@media screen and (max-width: 1499px) {\n    .ohmylms-layout-frame .ohmylms-frame-contents-wrapper {\n        padding: 20px;\n    }\n    .ohmylms-layout-frame {\n        min-width: 100%;\n    }\n\n\n}\n\n"), document.head));
 };
 
 const LJ = (0, g.memo)(BJ);
@@ -463,17 +463,17 @@ var VJ = function () {
     l = (0, y.useSelect)(function (e) {
       return e(T.default).getDesignSettings();
     }, []),
-    c = (null == l || null === (e = l.creator_lms_archive_page_layout_style) || void 0 === e ? void 0 : e.value) || "grid-style1",
-    u = (null == l || null === (t = l.creator_lms_columns_per_row) || void 0 === t ? void 0 : t.value) || "4",
-    s = (null == l || null === (n = l.creator_lms_archive_page_search_is_enabled) || void 0 === n ? void 0 : n.value) || "no",
-    d = (null == l || null === (r = l.creator_lms_archive_page_sorting_is_enabled) || void 0 === r ? void 0 : r.value) || "no",
-    m = (null == l || null === (a = l.creator_lms_archive_page_filter_is_enabled) || void 0 === a ? void 0 : a.value) || "no",
-    p = (null == l || null === (o = l.creator_lms_archive_page_category_is_enabled) || void 0 === o ? void 0 : o.value) || "no",
-    f = (null == l || null === (i = l.creator_lms_archive_page_row) || void 0 === i ? void 0 : i.value) || [];
+    c = (null == l || null === (e = l.ohmylms_archive_page_layout_style) || void 0 === e ? void 0 : e.value) || "grid-style1",
+    u = (null == l || null === (t = l.ohmylms_columns_per_row) || void 0 === t ? void 0 : t.value) || "4",
+    s = (null == l || null === (n = l.ohmylms_archive_page_search_is_enabled) || void 0 === n ? void 0 : n.value) || "no",
+    d = (null == l || null === (r = l.ohmylms_archive_page_sorting_is_enabled) || void 0 === r ? void 0 : r.value) || "no",
+    m = (null == l || null === (a = l.ohmylms_archive_page_filter_is_enabled) || void 0 === a ? void 0 : a.value) || "no",
+    p = (null == l || null === (o = l.ohmylms_archive_page_category_is_enabled) || void 0 === o ? void 0 : o.value) || "no",
+    f = (null == l || null === (i = l.ohmylms_archive_page_row) || void 0 === i ? void 0 : i.value) || [];
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-global-layout-preview"
+    className: "ohmylms-global-layout-preview"
   }, React.createElement(LJ, null, "yes" === m && ["grid-style1", "grid-style2"].includes(c) && React.createElement("div", {
-    className: "omlms-frame-contents-sidebar"
+    className: "ohmylms-frame-contents-sidebar"
   }, React.createElement("svg", {
     fill: "none",
     width: "42",
@@ -633,9 +633,9 @@ var VJ = function () {
     fill: "#BDBFC7",
     rx: "1.5"
   }))), React.createElement("div", {
-    className: "omlms-frame-contents-main"
+    className: "ohmylms-frame-contents-main"
   }, ["grid-style1", "grid-style2"].includes(c) && ("yes" === s || "yes" === d) && React.createElement("div", {
-    className: "omlms-frame-contents-actions"
+    className: "ohmylms-frame-contents-actions"
   }, "yes" === s && React.createElement("svg", {
     fill: "none",
     width: "77",
@@ -678,7 +678,7 @@ var VJ = function () {
     fill: "#E4E6EA",
     rx: "1.5"
   }))), ["grid-style4", "grid-style3"].includes(c) && "yes" === p && React.createElement("div", {
-    className: "omlms-frame-contents-category"
+    className: "ohmylms-frame-contents-category"
   }, React.createElement("svg", {
     fill: "none",
     width: "350",
@@ -737,16 +737,16 @@ var VJ = function () {
     fill: "#E4E6EA",
     d: "M0 14h350v1H0z"
   }))), React.createElement("div", {
-    className: "omlms-frame-contents-main-content"
+    className: "ohmylms-frame-contents-main-content"
   }, Array.from({
     length: ["grid-style1", "grid-style2"].includes(c) ? 2 : f.length
   }).map(function (e, t) {
     return React.createElement("div", {
-      className: "omlms-frame-contents-row"
+      className: "ohmylms-frame-contents-row"
     }, "grid-style4" === c && React.createElement("div", {
-      className: "omlms-frame-contents-row-header"
+      className: "ohmylms-frame-contents-row-header"
     }, React.createElement("span", {
-      className: "omlms-dummy-card-title"
+      className: "ohmylms-dummy-card-title"
     }), React.createElement("svg", {
       fill: "none",
       width: "40",
@@ -786,11 +786,11 @@ var VJ = function () {
       d: "M0 0h6v5.946H0z",
       transform: "matrix(-1 0 0 1 12 6.48)"
     }))))), "grid-style3" === c && React.createElement("div", {
-      className: "omlms-frame-contents-row-header"
+      className: "ohmylms-frame-contents-row-header"
     }, React.createElement("span", {
-      className: "omlms-dummy-card-title"
+      className: "ohmylms-dummy-card-title"
     })), React.createElement("div", {
-      className: "omlms-frame-contents-cards"
+      className: "ohmylms-frame-contents-cards"
     }, Array.from({
       length: Number(u)
     }).map(function (e, t) {
@@ -801,13 +801,13 @@ var VJ = function () {
       });
     })));
   }), ["grid-style1", "grid-style2"].includes(c) && React.createElement("div", {
-    className: "omlms-frame-contents-load-more-button"
+    className: "ohmylms-frame-contents-load-more-button"
   }, React.createElement("span", {
-    className: "omlms-dummy-card-button"
+    className: "ohmylms-dummy-card-button"
   }, React.createElement("span", {
-    className: "omlms-dummy-card-button-text"
+    className: "ohmylms-dummy-card-button-text"
   }), React.createElement("span", {
-    className: "omlms-dummy-card-button-text"
+    className: "ohmylms-dummy-card-button-text"
   }))))))));
 };
 
@@ -846,7 +846,7 @@ var GJ = ["isItProFeature"],
       title: (0, b.__)("Layout Settings", "ohmylms"),
       level: 4
     })), React.createElement(I.FlexWP, {
-      className: "omlms-course-list-layout-config-wrapper",
+      className: "ohmylms-course-list-layout-config-wrapper",
       align: "start",
       gap: 6
     }, React.createElement(I.FlexItemWP, {
@@ -854,7 +854,7 @@ var GJ = ["isItProFeature"],
         width: "".concat(60, "%"),
         minWidth: "370px"
       },
-      className: "omlms-course-list-layout-config"
+      className: "ohmylms-course-list-layout-config"
     }, React.createElement(Ea, {
       isBorderless: !0
     }, React.createElement(I.SpacerWP, {
@@ -865,7 +865,7 @@ var GJ = ["isItProFeature"],
       style: {
         width: "".concat(60, "%")
       },
-      className: "omlms-course-list-layout-preview"
+      className: "ohmylms-course-list-layout-preview"
     }, React.createElement(HJ, null))))));
   };
 

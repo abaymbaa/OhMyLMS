@@ -1,14 +1,14 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Assignment;
+use OhMyLMS\Data\Assignment;
 /**
  * Class AssignmentFactory
  *
  * Factory class for creating and retrieving Lesson objects.
  *
- * @package OMLMS\Factory
+ * @package OhMyLMS\Factory
  * @since 1.0.0
  */
 class AssignmentFactory {
@@ -41,7 +41,7 @@ class AssignmentFactory {
 		global $post;
 
 		// Check if input is false and post is set
-		if ( false === $assignment && isset( $post, $post->ID ) && CREATOR_LMS_LESSON_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $assignment && isset( $post, $post->ID ) && OHMYLMS_LESSON_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		}
 
@@ -72,7 +72,7 @@ class AssignmentFactory {
 	 * Checks whether a assignment with the given ID exists.
 	 *
 	 * This method verifies that the assignment exists in the database and is of
-	 * the correct post type (`CREATOR_LMS_LESSON_CPT`).
+	 * the correct post type (`OHMYLMS_LESSON_CPT`).
 	 *
 	 * @param int $assignment_id The ID of the assignment to check.
 	 * @return bool Returns true if the assignment exists, otherwise false.
@@ -86,7 +86,7 @@ class AssignmentFactory {
 		$assignment = get_post( $assignment_id );
 
 		// Check if the post exists and the post type matches
-		if ( $assignment && CREATOR_LMS_ASSIGNMENT_CPT === get_post_type( $assignment_id ) ) {
+		if ( $assignment && OHMYLMS_ASSIGNMENT_CPT === get_post_type( $assignment_id ) ) {
 			return true;
 		} else {
 			return false;

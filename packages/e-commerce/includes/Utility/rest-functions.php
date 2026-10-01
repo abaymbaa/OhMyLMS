@@ -16,10 +16,10 @@ use CodeRex\Ecommerce\EcommerceDateTime;
 function ecommerce_rest_prepare_date_response( $date, $utc = true ) {
 	if ( is_numeric( $date ) ) {
 		$date = new EcommerceDateTime( "@$date", new DateTimeZone( 'UTC' ) );
-		$date->setTimezone( new \DateTimeZone( omlms_timezone_string() ) );
+		$date->setTimezone( new \DateTimeZone( ohmylms_timezone_string() ) );
 	} elseif ( is_string( $date ) ) {
 		$date = new EcommerceDateTime( $date, new \DateTimeZone( 'UTC' ) );
-		$date->setTimezone( new \DateTimeZone( omlms_timezone_string() ) );
+		$date->setTimezone( new \DateTimeZone( ohmylms_timezone_string() ) );
 	}
 
 	if ( is_null( $date ) || false === $date ) {

@@ -1,12 +1,12 @@
 
-.creator-lms-page {
-    #creator-lms-show-toast {
+.ohmylms-page {
+    #ohmylms-show-toast {
         padding: 10px 20px;
         font-size: 16px;
         cursor: pointer;
     }
 
-    .creator-lms-toast {
+    .ohmylms-toast {
         position: fixed;
         top: 40px;
         left: 50%;
@@ -27,14 +27,14 @@
             visibility: visible;
         }
 
-        .creator-lms-toast-content {
+        .ohmylms-toast-content {
             display: flex;
             align-items: center;
             flex-flow: row wrap;
             gap: 10px;
         }
 
-        .creator-lms-message {
+        .ohmylms-message {
             color: #19AA32;
             font-size: 16px;
             font-weight: 500;
@@ -54,7 +54,7 @@
             }
         }
 
-        .creator-lms-close {
+        .ohmylms-close {
             margin-left: auto;
             cursor: pointer;
             font-size: 20px;
@@ -70,16 +70,16 @@
             background-color: #FEF9F0;
             border-color: #FFC845;
 
-            .creator-lms-message {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-message {
+                color: var(--ohmylms-heading-color);
 
                 &::before {
                     content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0ZGQzg0NSIgZD0iTTEyIDI0QzUuNDA5IDI0IDAgMTguNTkxIDAgMTJTNS40MDkgMCAxMiAwczEyIDUuNDA5IDEyIDEyLTUuNDA5IDEyLTEyIDEyem0xLjQwNi0xNy42MjVjMC0uNzc1LS42My0xLjQwNi0xLjQwNi0xLjQwNi0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDZ2Ny4wMzFjMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNlY2LjM3NXpNMTIgMTYuMjE5Yy0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDYgMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNiAwLS43NzUtLjYzLTEuNDA2LTEuNDA2LTEuNDA2eiIvPjwvc3ZnPg==");
                 }
             }
 
-            .creator-lms-close path {
-                stroke: var(--creator-lms-heading-color);
+            .ohmylms-close path {
+                stroke: var(--ohmylms-heading-color);
             }
         }
 
@@ -87,21 +87,21 @@
             background-color: #FFF1F1;
             border-color: #F85656;
 
-            .creator-lms-message {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-message {
+                color: var(--ohmylms-heading-color);
 
                 &::before {
                     content: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbD0iI0Y4NTY1NiIgZD0iTTEyIDI0QzUuNDA5IDI0IDAgMTguNTkxIDAgMTJTNS40MDkgMCAxMiAwczEyIDUuNDA5IDEyIDEyLTUuNDA5IDEyLTEyIDEyem0xLjQwNi0xNy42MjVjMC0uNzc1LS42My0xLjQwNi0xLjQwNi0xLjQwNi0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDZ2Ny4wMzFjMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNlY2LjM3NXpNMTIgMTYuMjE5Yy0uNzc1IDAtMS40MDYuNjMtMS40MDYgMS40MDYgMCAuNzc1LjYzIDEuNDA2IDEuNDA2IDEuNDA2Ljc3NSAwIDEuNDA2LS42MyAxLjQwNi0xLjQwNiAwLS43NzUtLjYzLTEuNDA2LTEuNDA2LTEuNDA2eiIvPjwvc3ZnPg==");
                 }
             }
 
-            .creator-lms-close path {
-                stroke: var(--creator-lms-heading-color);
+            .ohmylms-close path {
+                stroke: var(--ohmylms-heading-color);
             }
 
         }
 
-        .omlms-error {
+        .ohmylms-error {
             margin: 0;
             padding: 0;
             list-style: none;
@@ -111,67 +111,67 @@
 
 }
 
-.admin-bar #creator-lms-toast {
+.admin-bar #ohmylms-toast {
     top: 60px;
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-toast {
+    .ohmylms-page .ohmylms-toast {
         width: 350px;
         border-radius: 8px;
         padding: 10px 20px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-message {
+    .ohmylms-page .ohmylms-toast .ohmylms-message {
         font-size: 14px;
         line-height: 1.2;
         padding-left: 28px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-message::before {
+    .ohmylms-page .ohmylms-toast .ohmylms-message::before {
         width: 21px;
         top: -2px;
     }
-    .creator-lms-page .creator-lms-toast.toast-warning .creator-lms-message::before {
+    .ohmylms-page .ohmylms-toast.toast-warning .ohmylms-message::before {
         top: -2px;
         width: 18px;
         transform: translateX(-2px);
     }
-    .creator-lms-page .creator-lms-toast.toast-danger .creator-lms-message::before {
+    .ohmylms-page .ohmylms-toast.toast-danger .ohmylms-message::before {
         width: 16px;
     }
 
-    .creator-lms-page .creator-lms-toast .creator-lms-close svg {
+    .ohmylms-page .ohmylms-toast .ohmylms-close svg {
         width: 12px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-close {
+    .ohmylms-page .ohmylms-toast .ohmylms-close {
         padding: 2px 5px 2px;
     }
 
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-toast {
+    .ohmylms-page .ohmylms-toast {
         max-width: 340px;
         padding: 8px 12px;
         right: 10px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-close svg {
+    .ohmylms-page .ohmylms-toast .ohmylms-close svg {
         width: 10px;
     }
 
 }
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-toast {
+    .ohmylms-page .ohmylms-toast {
         max-width: 280px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-message {
+    .ohmylms-page .ohmylms-toast .ohmylms-message {
         font-size: 12px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-message::before {
+    .ohmylms-page .ohmylms-toast .ohmylms-message::before {
         width: 16px;
         top: -1px;
     }
-    .creator-lms-page .creator-lms-toast .creator-lms-message {
+    .ohmylms-page .ohmylms-toast .ohmylms-message {
         padding-left: 23px;
     }
 

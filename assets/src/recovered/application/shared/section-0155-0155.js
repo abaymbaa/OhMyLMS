@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var E2 = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = _2((0, g.useState)({
       enable: !1,
@@ -31,14 +31,14 @@ var E2 = function () {
         return p2().w(function (t) {
           for (;;) switch (t.p = t.n) {
             case 0:
-              if (e) {
+              {
                 t.n = 1;
                 break;
               }
               return t.a(2);
             case 1:
               return t.p = 1, s(!0), t.n = 2, l()({
-                path: "creator-lms/v1/engagement/settings/leaderboard"
+                path: "ohmylms/v1/engagement/settings/leaderboard"
               });
             case 2:
               n = t.v, a(function (e) {
@@ -72,7 +72,7 @@ var E2 = function () {
         return p2().w(function (n) {
           for (;;) switch (n.p = n.n) {
             case 0:
-              if (e) {
+              {
                 n.n = 1;
                 break;
               }
@@ -95,7 +95,7 @@ var E2 = function () {
               return v("error", (0, b.__)("The fields cannot be empty.", "ohmylms")), n.a(2);
             case 3:
               return t.setLoadingSetting(!0), p(!0), n.p = 4, n.n = 5, l()({
-                path: "/creator-lms/v1/engagement/settings/leaderboard",
+                path: "/ohmylms/v1/engagement/settings/leaderboard",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -118,7 +118,7 @@ var E2 = function () {
       };
     }(),
     E = function (t, n) {
-      if (e) {
+      {
         var o = g2(g2({}, r), {}, h2({}, t, n));
         a(o);
       }
@@ -143,9 +143,7 @@ var E2 = function () {
     rows: 15
   }))));
   var R = "fastest_time" !== r.rules && ("" === r.threshold || null === r.threshold || r.threshold < 0) || "" === r.students_number || null === r.students_number || r.students_number < 0;
-  return React.createElement(React.Fragment, null, h, React.createElement(I.ProOverlayWP, {
-    title: (0, b.__)("Leaderboard is available in the OhMyLMS version. Upgrade to Pro today to unlock this and more powerful features.", "ohmylms")
-  }), React.createElement(I.CardWP, {
+  return React.createElement(React.Fragment, null, h, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary"
   }, React.createElement(I.SpacerWP, {
@@ -157,7 +155,7 @@ var E2 = function () {
     align: "flex-start",
     direction: "column",
     gap: 3
-  }, e && React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
+  }, React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     padding: "24px",
     fullWidth: !0
@@ -186,7 +184,7 @@ var E2 = function () {
   }, React.createElement(I.SelectWP, {
     placeholder: (0, b.__)("Select a criterion", "ohmylms"),
     onChange: function (t) {
-      if (e) {
+      {
         var n = g2(g2({}, r), {}, {
           rules: t
         });
@@ -264,9 +262,7 @@ var E2 = function () {
     disabled: R
   }, (0, b.__)("Save", "ohmylms")))));
 };
-
 const S2 = (0, g.memo)(E2);
-
 function R2(e) {
   return R2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -274,7 +270,6 @@ function R2(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, R2(e);
 }
-
 function x2() {
   var e,
     t,
@@ -361,7 +356,6 @@ function x2() {
     };
   })();
 }
-
 function C2(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -383,7 +377,6 @@ function C2(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, C2(e, t, n, r);
 }
-
 function P2(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -394,7 +387,6 @@ function P2(e, t) {
   }
   return n;
 }
-
 function O2(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -406,7 +398,6 @@ function O2(e) {
   }
   return e;
 }
-
 function k2(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -427,7 +418,6 @@ function k2(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function j2(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -437,7 +427,6 @@ function j2(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function A2(e) {
   return function () {
     var t = this,
@@ -454,7 +443,6 @@ function A2(e) {
     });
   };
 }
-
 function M2(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -488,7 +476,6 @@ function M2(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function T2(e, t) {
   if (e) {
     if ("string" == typeof e) return I2(e, t);
@@ -496,7 +483,6 @@ function T2(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? I2(e, t) : void 0;
   }
 }
-
 function I2(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

@@ -616,12 +616,12 @@
       default: 'full'
     }
   };
-  registerBlockType('creator-lms/course-list', {
+  registerBlockType('ohmylms/course-list', {
     title: __('OhMyLMS Course List', 'ohmylms'),
     description: __('Display a list of courses with customizable styling options.', 'ohmylms'),
     icon: 'index-card',
-    category: 'creator-lms',
-    keywords: [__('course', 'ohmylms'), __('list', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],
+    category: 'ohmylms',
+    keywords: [__('course', 'ohmylms'), __('list', 'ohmylms'), __('ohmylms', 'ohmylms'), __('ohmylms', 'ohmylms')],
     supports: {
       align: true,
       html: false
@@ -754,16 +754,16 @@
       var inspectorControls = createElement(InspectorControls, {}, createElement('Style', {
         dangerouslySetInnerHTML: {
           __html: `
-							.omlms-color-palate-wrapper {
+							.ohmylms-color-palate-wrapper {
 								padding: 0 !important;
 								border: none !important;
 								margin-bottom: 10px;
 							}
-							.omlms-color-palate-wrapper .components-tools-panel-item {
+							.ohmylms-color-palate-wrapper .components-tools-panel-item {
 								margin-top: 0 !important;
 							}
 
-							.creator-lms-course-cards {
+							.ohmylms-course-cards {
 								pointer-events: none;
 							}
 						`
@@ -896,26 +896,26 @@
       }, createElement('style', {
         dangerouslySetInnerHTML: {
           __html: `
-								.omlms-row-item {
+								.ohmylms-row-item {
 									border: 1px solid #ddd;
 									border-radius: 4px;
 									padding: 16px;
 									margin-bottom: 16px;
 									background-color: #f9f9f9;
 								}
-								.omlms-row-header {
+								.ohmylms-row-header {
 									display: flex;
 									justify-content: space-between;
 									align-items: center;
 									margin-bottom: 12px;
 								}
-								.omlms-row-title {
+								.ohmylms-row-title {
 									margin: 0;
 									font-size: 14px;
 									font-weight: 600;
 									color: #1e1e1e;
 								}
-								.omlms-add-row-container {
+								.ohmylms-add-row-container {
 									text-align: right;
 									margin-top: 16px;
 									padding-top: 16px;
@@ -928,11 +928,11 @@
       (attributes.courseRows || []).map(function (row, index) {
         return createElement('div', {
           key: index,
-          className: 'omlms-row-item'
+          className: 'ohmylms-row-item'
         }, createElement('div', {
-          className: 'omlms-row-header'
+          className: 'ohmylms-row-header'
         }, createElement('h4', {
-          className: 'omlms-row-title'
+          className: 'ohmylms-row-title'
         }, __('Select Course Display Criteria', 'ohmylms')),
         // Delete button (only show if more than one row)
         (attributes.courseRows || []).length > 1 && createElement(Button, {
@@ -996,7 +996,7 @@
       }),
       // Add Row Button
       createElement('div', {
-        className: 'omlms-add-row-container'
+        className: 'ohmylms-add-row-container'
       }, createElement(Button, {
         variant: 'primary',
         icon: 'plus',
@@ -1025,7 +1025,7 @@
           },
           label: __('Background', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Margin', 'ohmylms'),
         placeholder: __('e.g: 5px', 'ohmylms'),
@@ -1083,7 +1083,7 @@
           },
           label: __('Hover Border Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Border Radius', 'ohmylms'),
         value: attributes?.cardBorderRadius || attributesData?.cardBorderRadius?.default,
@@ -1167,7 +1167,7 @@
           },
           label: __('Content Background', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       })),
       // Title Typography
       createElement(PanelBody, {
@@ -1265,7 +1265,7 @@
           },
           label: __('Title Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Title Margin', 'ohmylms'),
         placeholder: __('e.g: 5px', 'ohmylms'),
@@ -1372,7 +1372,7 @@
           },
           label: __('Description Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Description Margin', 'ohmylms'),
         placeholder: __('e.g: 5px', 'ohmylms'),
@@ -1407,7 +1407,7 @@
           },
           label: __('Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }),
       // Spacing & Layout
       createElement(TextControl, {
@@ -1586,7 +1586,7 @@
           },
           label: __('Regular Price Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }),
       // Spacing & Layout
       createElement(TextControl, {
@@ -1734,7 +1734,7 @@
           },
           label: __('Button Hover Border Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Button Border Radius', 'ohmylms'),
         value: attributes.buttonBorderRadius,
@@ -1763,16 +1763,16 @@
         }
       })));
       var serverSideRender = createElement(ServerSideRender, {
-        block: 'creator-lms/course-list',
+        block: 'ohmylms/course-list',
         attributes: attributes,
         httpMethod: 'POST'
       });
       return [inspectorControls,
-      // Wrapped so any CSS scoped to `.wp-block-creator-lms-course-list` (WordPress
+      // Wrapped so any CSS scoped to `.wp-block-ohmylms-course-list` (WordPress
       // only ever attaches that class via useBlockProps(), which this block doesn't use)
       // has something to match, consistent with the other OhMyLMS blocks.
       createElement('div', {
-        className: 'wp-block-creator-lms-course-list'
+        className: 'wp-block-ohmylms-course-list'
       }, serverSideRender)];
     },
     save: function () {
@@ -1796,7 +1796,7 @@
       return;
     }
     function initSlick() {
-      jQuery('.creator-lms-course-cards-carousel', getEditorDocument()).each(function () {
+      jQuery('.ohmylms-course-cards-carousel', getEditorDocument()).each(function () {
         var $carousel = jQuery(this);
         if ($carousel.hasClass('slick-initialized')) {
           return;
@@ -1824,7 +1824,7 @@
               slidesToShow: 1
             }
           }]
-        }).addClass('creator-lms-initialized').css('display', 'block').siblings('.creator-lms-carousel-skeleton').remove();
+        }).addClass('ohmylms-initialized').css('display', 'block').siblings('.ohmylms-carousel-skeleton').remove();
       });
     }
 

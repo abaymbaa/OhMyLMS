@@ -15,7 +15,7 @@ export function createTransactionHistory(readRuntime) {
       uf: EmptyState,
       vn,
     } = readRuntime();
-    (0, Entitlements.useIsPro)();
+    true;
     var t = props.handleTypeFilters,
       n = props.handleOrderTypeFilters,
       r = props.orderTypeOptions,
@@ -93,9 +93,6 @@ export function createTransactionHistory(readRuntime) {
         o.reduce(function (e, t) {
           return e + t.order_total;
         }, 0),
-        (0, ReactHooks.useCallback)(function () {
-          window.open(Entitlements.pricingPageLink, '_blank');
-        }, []),
         (0, ReactHooks.useCallback)(function (e) {
           'custom_range' !== e && t(e);
         }, []));

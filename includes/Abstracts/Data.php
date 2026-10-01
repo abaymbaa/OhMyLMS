@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Abstracts;
+namespace OhMyLMS\Abstracts;
 
-use OMLMS\CreatorLmsDateTime;
-use OMLMS\DataException;
+use OhMyLMS\OhMyLmsDateTime;
+use OhMyLMS\DataException;
 
 abstract class Data {
 
@@ -78,7 +78,7 @@ abstract class Data {
 		 * @param DataStores $data_store The data store handling object data.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		// If the object already has an ID, update it, otherwise, create a new entry.
 		if ( $this->get_id() ) {
@@ -94,7 +94,7 @@ abstract class Data {
 		 * @param DataStores $data_store The data store handling object data.
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}
@@ -201,7 +201,7 @@ abstract class Data {
 	 * @since 1.0.0
 	 */
 	protected function get_hook_prefix() {
-		return 'creator_lms_' . $this->object_type . '_get_';
+		return 'ohmylms_' . $this->object_type . '_get_';
 	}
 
 
@@ -209,7 +209,7 @@ abstract class Data {
 	 * Set a date property.
 	 *
 	 * @param string $prop The name of the property to set.
-	 * @param string  $value The value to set for the property. Can be a string, timestamp, or CreatorLmsDateTime object.
+	 * @param string  $value The value to set for the property. Can be a string, timestamp, or OhMyLmsDateTime object.
 	 *
 	 * @link https://github.com/woocommerce/woocommerce/blob/5907114d6eabae41edf39c593a36345b92990b38/plugins/woocommerce/includes/abstracts/abstract-wc-data.php#L898
 	 * @since 1.0.0
@@ -221,27 +221,27 @@ abstract class Data {
 				return;
 			}
 
-			if ( is_a( $value, 'CreatorLmsDateTime' ) ) {
+			if ( is_a( $value, 'OhMyLmsDateTime' ) ) {
 				$datetime = $value;
 			} elseif ( is_numeric( $value ) ) {
 				// Timestamps are handled as UTC timestamps in all cases.
-				$datetime = new CreatorLmsDateTime( "@{$value}", new \DateTimeZone( 'UTC' ) );
+				$datetime = new OhMyLmsDateTime( "@{$value}", new \DateTimeZone( 'UTC' ) );
 			} else {
 				// Strings are defined in local WP timezone. Convert to UTC.
 				if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $value, $date_bits ) ) {
-					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : omlms_timezone_offset();
+					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : ohmylms_timezone_offset();
 					$timestamp = gmmktime( $date_bits[4], $date_bits[5], $date_bits[6], $date_bits[2], $date_bits[3], $date_bits[1] ) - $offset;
 				} else {
-					$timestamp = omlms_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', omlms_string_to_timestamp( $value ) ) ) );
+					$timestamp = ohmylms_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', ohmylms_string_to_timestamp( $value ) ) ) );
 				}
-				$datetime = new CreatorLmsDateTime( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+				$datetime = new OhMyLmsDateTime( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
 			}
 
 			// Set local timezone or offset.
 			if ( get_option( 'timezone_string' ) ) {
-				$datetime->setTimezone( new \DateTimeZone( omlms_timezone_string() ) );
+				$datetime->setTimezone( new \DateTimeZone( ohmylms_timezone_string() ) );
 			} else {
-				$datetime->set_utc_offset( omlms_timezone_string() );
+				$datetime->set_utc_offset( ohmylms_timezone_string() );
 			}
 
 			$this->set_prop( $prop, $datetime );
@@ -268,7 +268,7 @@ abstract class Data {
 	 * @param string $message The error message.
 	 * @param int    $http_status_code The HTTP status code (default is 400).
 	 * @param array  $data Additional data to pass with the exception.
-	 * @throws \OMLMS\DataException
+	 * @throws \OhMyLMS\DataException
 	 *
 	 * @since 1.0.0
 	 */

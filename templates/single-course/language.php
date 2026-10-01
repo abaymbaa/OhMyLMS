@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/duration.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -16,6 +16,6 @@ global $course;
 ?>
 
 <li class="course-language">
-	<?php include(CREATOR_LMS_DIR . '/assets/images/icon/speaker-icon.php'); ?>
+	<?php include(OHMYLMS_DIR . '/assets/images/icon/speaker-icon.php'); ?>
 	<?php echo __('English', 'ohmylms'); ?>
 </li>

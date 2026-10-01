@@ -1,19 +1,19 @@
 <?php
 
-namespace OMLMS\Data;
+namespace OhMyLMS\Data;
 
-use OMLMS\CPTData\PostTypeData;
-use OMLMS\DataStores\DataStores;
+use OhMyLMS\CPTData\PostTypeData;
+use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Lesson
  *
- * This class represents a lesson in the CreatorLMS system. It extends the base Data class and provides
+ * This class represents a lesson in the OhMyLMS system. It extends the base Data class and provides
  * methods for managing lesson data, including getting and setting properties, saving, and deleting lessons.
  *
- * @package OMLMS\Data
+ * @package OhMyLMS\Data
  * @since 1.0.0
  */
 class Lesson extends PostTypeData {
@@ -162,7 +162,7 @@ class Lesson extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function get_permalink(): string {
-		return creatorlms_get_pretty_content_permalink( $this->get_id() ) ?? '';
+		return ohmylms_get_pretty_content_permalink( $this->get_id() ) ?? '';
 	}
 
 
@@ -337,7 +337,7 @@ class Lesson extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function is_purchasable(): bool {
-		return apply_filters( 'creator_lms_lesson_is_purchasable', true, $this );
+		return apply_filters( 'ohmylms_lesson_is_purchasable', true, $this );
 	}
 
 
@@ -348,7 +348,7 @@ class Lesson extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function is_in_stock(): bool {
-		return apply_filters( 'creator_lms_lesson_is_in_stock', true, $this );
+		return apply_filters( 'ohmylms_lesson_is_in_stock', true, $this );
 	}
 
 	/**
@@ -409,7 +409,7 @@ class Lesson extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		if ( $this->get_id() ) {
 			$this->data_store->update( $this );
@@ -427,7 +427,7 @@ class Lesson extends PostTypeData {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creator_lms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( 'ohmylms_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}

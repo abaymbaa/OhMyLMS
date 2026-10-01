@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Abstracts\HookHandler;
-use OMLMS\Data\Lesson;
+use OhMyLMS\Abstracts\HookHandler;
+use OhMyLMS\Data\Lesson;
 
 /**
  * Handles hooks related to chapters in the OhMyLMS plugin.
@@ -13,10 +13,10 @@ use OMLMS\Data\Lesson;
 class ChapterHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		// add_action('creator_lms_rest_insert_chapter', [$this, 'link_chapter_with_course'], 10, 2);
-		add_action( 'creator_lms_after_remove_chapter_from_course', array( $this, 'unlink_lesson_from_chapter' ), 10 );
-		add_action( 'creator_lms_rest_delete_chapter', array( $this, 'unlink_course_from_chapter' ), 10 );
-		add_action( 'creator_lms_rest_delete_chapter', array( $this, 'unlink_lesson_from_chapter' ), 10 );
+		// add_action('ohmylms_rest_insert_chapter', [$this, 'link_chapter_with_course'], 10, 2);
+		add_action( 'ohmylms_after_remove_chapter_from_course', array( $this, 'unlink_lesson_from_chapter' ), 10 );
+		add_action( 'ohmylms_rest_delete_chapter', array( $this, 'unlink_course_from_chapter' ), 10 );
+		add_action( 'ohmylms_rest_delete_chapter', array( $this, 'unlink_lesson_from_chapter' ), 10 );
 	}
 
 
@@ -62,7 +62,7 @@ class ChapterHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		$wpdb->insert(
 			$table_name,
@@ -88,7 +88,7 @@ class ChapterHookHandler extends HookHandler {
 		 * @param int $chapter_id The ID of the chapter.
 		 * @param int $lesson_id The ID of the lesson.
 		 */
-		do_action( 'creator_lms_chapter_lesson_relationship_created', $chapter_id, $lesson_id );
+		do_action( 'ohmylms_chapter_lesson_relationship_created', $chapter_id, $lesson_id );
 	}
 
 
@@ -125,7 +125,7 @@ class ChapterHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		$wpdb->delete(
 			$table_name,
@@ -157,7 +157,7 @@ class ChapterHookHandler extends HookHandler {
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . CREATOR_LMS_CHAPTER_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
 		$wpdb->delete(
 			$table_name,
 			array(

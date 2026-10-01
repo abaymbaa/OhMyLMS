@@ -5,7 +5,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/continue-course.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -15,6 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<a href="<?php echo esc_url('#');?>" class="creator-lms-button creator-lms-button-disabled">
+<a href="<?php echo esc_url('#');?>" class="ohmylms-button ohmylms-button-disabled">
 	<?php echo __('Enrollment Closed','ohmylms'); ?>
 </a>

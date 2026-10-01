@@ -5,7 +5,7 @@ const dG = function (e) {
       r = void 0 === n ? null : n,
       a = e.enableSpin,
       o = void 0 !== a && a,
-      i = (0, L.useIsPro)(),
+      i = true,
       c = (0, f.g)(),
       u = c.id,
       s = c.step,
@@ -270,8 +270,8 @@ const dG = function (e) {
       }(),
       Ae = function (e, t, n) {
         var r;
-        if (i) {
-          if (null === (r = window) || void 0 === r || null === (r = r.creator_lms_params) || void 0 === r || !r.is_mailmint_active) {
+        {
+          if (null === (r = window) || void 0 === r || null === (r = r.ohmylms_params) || void 0 === r || !r.is_mailmint_active) {
             localStorage.setItem("clms_automation_for_what", e), localStorage.setItem("clms_automation_content_id", t), localStorage.setItem("clms_automation_content_name", n), _.setIsProModalOpen(!0), _.updateProModalTitle((0, b.__)("Missing Mail Mint Plugin!", "ohmylms")), _.updateProModalContent((0, b.__)("Mail Mint is required to enable automation. Please install and activate the plugin.", "ohmylms")), _.updateProModalButtonText((0, b.__)("Install and Activate", "ohmylms")), _.updateProModalButtonAction("activate-mail-mint");
             var a = function (e) {
               var t = e.detail,
@@ -285,17 +285,17 @@ const dG = function (e) {
             });
           }
           $(e), G(!0), ne(t), oe(n);
-        } else _.setIsProModalOpen(!0);
+        }
       },
       Me = function (e, t, n) {
-        i ? (X(e), Y(!0), ne(t), oe(n)) : _.setIsProModalOpen(!0);
+        X(e), Y(!0), ne(t), oe(n);
       };
     (0, g.useEffect)(function () {
-      if (localStorage.getItem("omlms_automation_modal_open") && !o) {
+      if (localStorage.getItem("ohmylms_automation_modal_open") && !o) {
         var e = localStorage.getItem("clms_automation_for_what"),
           t = localStorage.getItem("clms_automation_content_id"),
           n = localStorage.getItem("clms_automation_content_name");
-        Ae(e, t, n), localStorage.removeItem("omlms_automation_modal_open"), localStorage.removeItem("clms_automation_for_what"), localStorage.removeItem("clms_automation_content_id"), localStorage.removeItem("clms_automation_content_name");
+        Ae(e, t, n), localStorage.removeItem("ohmylms_automation_modal_open"), localStorage.removeItem("clms_automation_for_what"), localStorage.removeItem("clms_automation_content_id"), localStorage.removeItem("clms_automation_content_name");
       }
     }, []);
     (0, g.useEffect)(function () {
@@ -411,7 +411,7 @@ const dG = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/courses/".concat(r),
+                path: "/ohmylms/v1/courses/".concat(r),
                 method: "POST",
                 data: {
                   has_community: t ? "yes" : "no",
@@ -435,7 +435,7 @@ const dG = function (e) {
       };
     }();
     return h().createElement(h().Fragment, null, Se, h().createElement("div", {
-      className: "omlms-course-builder-wrapper omlms-steps-".concat(Ce)
+      className: "ohmylms-course-builder-wrapper ohmylms-steps-".concat(Ce)
     }, h().createElement(oz, {
       activeStep: me,
       setActiveStep: pe,
@@ -449,7 +449,7 @@ const dG = function (e) {
       onSave: Pe,
       isCommunityEnabled: null == Re || null === (t = Re.community) || void 0 === t ? void 0 : t.is_enable
     }), h().createElement("div", {
-      className: "omlms-course-builder-content"
+      className: "ohmylms-course-builder-content"
     }, W ? h().createElement(h().Fragment, null, h().createElement(I.SkeletonWP, {
       active: !0,
       rows: 10
@@ -592,7 +592,7 @@ const dG = function (e) {
         variant: "muted"
       }, e.label), e.tooltip && h().createElement(V.A, {
         text: e.tooltip,
-        className: "omlms-tooltip",
+        className: "ohmylms-tooltip",
         placement: "top"
       }, h().createElement(h().Fragment, null, h().createElement(Mt.A, null)))), h().createElement("span", {
         style: {
@@ -600,7 +600,7 @@ const dG = function (e) {
           fontWeight: "500",
           lineHeight: 1
         },
-        className: "omlms-card-value"
+        className: "ohmylms-card-value"
       }, e.value), a && h().createElement(I.BadgeWP, {
         isBorderLess: !0,
         variant: null == e ? void 0 : e.progression_state,
@@ -640,7 +640,6 @@ const dG = function (e) {
       }, (0, b.__)("".concat(e.progression_percent, " within ").concat(a), "ohmylms")))))))));
     }));
   };
-
 var pG = n(22601),
   fG = function () {
     return React.createElement(React.Fragment, null, React.createElement("svg", {
@@ -661,9 +660,7 @@ var pG = n(22601),
       clipRule: "evenodd"
     })));
   };
-
 const vG = (0, g.memo)(fG);
-
 var gG = n(53725),
   hG = function (e) {
     var t,
@@ -681,7 +678,7 @@ var gG = n(53725),
       gap: 4
     }, React.createElement(v.Link, {
       to: "/course-edit/".concat(null == n ? void 0 : n.id),
-      className: "omlms-td-thumbnail"
+      className: "ohmylms-td-thumbnail"
     }, null != n && n.image_src ? React.createElement(gG.A, {
       shape: "square",
       src: n.image_src,
@@ -690,7 +687,7 @@ var gG = n(53725),
       src: n.video_src
     }) : React.createElement("span", null, React.createElement(SB, null))), React.createElement(I.FlexWP, {
       direction: "column",
-      className: "omlms-td-thumbnail-title"
+      className: "ohmylms-td-thumbnail-title"
     }, React.createElement(v.Link, {
       to: "/course-edit/".concat(null == n ? void 0 : n.id),
       title: null == n ? void 0 : n.name,
@@ -707,7 +704,7 @@ var gG = n(53725),
       align: "center",
       justify: "flex-start",
       gap: 1,
-      className: "omlms-td-thumbnail-title-actions"
+      className: "ohmylms-td-thumbnail-title-actions"
     }, React.createElement(I.ButtonWP, {
       onClick: a,
       label: (0, b.__)("Edit", "ohmylms"),
@@ -726,9 +723,7 @@ var gG = n(53725),
       }
     })))));
   };
-
 const yG = (0, g.memo)(hG);
-
 function bG(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

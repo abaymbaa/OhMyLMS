@@ -2,15 +2,15 @@
 /**
  * Trigger Handler
  * 
- * Listens to CreatorLMS events and executes corresponding WP Fusion actions
+ * Listens to OhMyLMS events and executes corresponding WP Fusion actions
  * 
- * @package OMLMS\Integrations\WPFusion\Includes
+ * @package OhMyLMS\Integrations\WPFusion\Includes
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes;
+namespace OhMyLMS\Integrations\WPFusion\Includes;
 
-use OMLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
+use OhMyLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,44 +30,44 @@ class TriggerHandler {
      * @since 1.0.0
      */
     private function register_background_processor() {
-        add_action( 'creatorlms_wpfusion_process_integration', array( $this, 'process_integration_background' ), 10, 2 );
+        add_action( 'ohmylms_wpfusion_process_integration', array( $this, 'process_integration_background' ), 10, 2 );
     }
 
     /**
-     * Register event listeners for CreatorLMS events
+     * Register event listeners for OhMyLMS events
      * 
      * @since 1.0.0
      */
     private function register_event_listeners() {
         // Course events
-        add_action( 'creator_lms_course_completed', array( $this, 'handle_course_completed' ), 10, 3 );
-        add_action( 'creator_lms_manual_student_enrollment', array( $this, 'handle_manual_course_enrollment' ), 10, 2 );
+        add_action( 'ohmylms_course_completed', array( $this, 'handle_course_completed' ), 10, 3 );
+        add_action( 'ohmylms_manual_student_enrollment', array( $this, 'handle_manual_course_enrollment' ), 10, 2 );
 
-        add_action( 'creator_lms_update_order_status_to_completed', array( $this, 'handle_enrollment' ), 10 );
-		add_action( 'creator_lms_payment_completed', array( $this, 'handle_enrollment' ), 10 );
-		add_action( 'creator_lms_after_enrolled_student', array( $this, 'handle_enrollment' ), 10 );
+        add_action( 'ohmylms_update_order_status_to_completed', array( $this, 'handle_enrollment' ), 10 );
+		add_action( 'ohmylms_payment_completed', array( $this, 'handle_enrollment' ), 10 );
+		add_action( 'ohmylms_after_enrolled_student', array( $this, 'handle_enrollment' ), 10 );
 
-        add_action( 'creator_lms_student_unenrolled', array( $this, 'handle_course_unenrollment' ), 10, 2 );
+        add_action( 'ohmylms_student_unenrolled', array( $this, 'handle_course_unenrollment' ), 10, 2 );
         
         // Lesson events
-        add_action( 'creator_lms_lesson_completed', array( $this, 'handle_lesson_completed' ), 10, 3 );
+        add_action( 'ohmylms_lesson_completed', array( $this, 'handle_lesson_completed' ), 10, 3 );
         
         // Quiz events
-        add_action( 'creator_lms_quiz_submission', array( $this, 'handle_quiz_submitted' ), 10, 4 );
+        add_action( 'ohmylms_quiz_submission', array( $this, 'handle_quiz_submitted' ), 10, 4 );
         
         // Assignment events
-        add_action( 'creator_lms_after_assignment_submitted', array( $this, 'handle_assignment_submitted' ), 10, 3 );
+        add_action( 'ohmylms_after_assignment_submitted', array( $this, 'handle_assignment_submitted' ), 10, 3 );
 
-        add_action( 'creator_lms_course_completion_rate', array( $this, 'course_completion_rate' ), 10, 3 );
+        add_action( 'ohmylms_course_completion_rate', array( $this, 'course_completion_rate' ), 10, 3 );
 
-        add_action( 'creator_lms_update_order_status_to_cancelled', array( $this, 'after_cancelled_enrollment' ), 10 );
+        add_action( 'ohmylms_update_order_status_to_cancelled', array( $this, 'after_cancelled_enrollment' ), 10 );
 
-        add_action( 'creator_lms_rest_delete_course', array( $this, 'after_delete_course' ), 10 );
+        add_action( 'ohmylms_rest_delete_course', array( $this, 'after_delete_course' ), 10 );
 
-        add_action( 'creator_lms_after_assignment_review', array( $this, 'after_assignment_review' ), 10, 4 );
+        add_action( 'ohmylms_after_assignment_review', array( $this, 'after_assignment_review' ), 10, 4 );
 
-        add_action( 'creator_lms_order_refunded', array( $this, 'cancel_student_enrollment' ), 10, 2 );
-		add_action( 'creator_lms_rest_before_delete_order', array( $this, 'rest_delete_order' ), 10 );
+        add_action( 'ohmylms_order_refunded', array( $this, 'cancel_student_enrollment' ), 10, 2 );
+		add_action( 'ohmylms_rest_before_delete_order', array( $this, 'rest_delete_order' ), 10 );
     }
 
     /**
@@ -80,11 +80,11 @@ class TriggerHandler {
 	 */
 	public function cancel_student_enrollment( $refund, $order ) {
 	
-		$total_refunded = omlms_format_decimal( abs( $refund->get_total() ), omlms_get_price_decimals() );
-		$order_total    = omlms_format_decimal( $order->get_total(), omlms_get_price_decimals() );
+		$total_refunded = ohmylms_format_decimal( abs( $refund->get_total() ), ohmylms_get_price_decimals() );
+		$order_total    = ohmylms_format_decimal( $order->get_total(), ohmylms_get_price_decimals() );
         $student_id = $order->get_student_id();
         global $wpdb;
-        $table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+        $table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
         $enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
         if ( empty( $enroll_data['course_id'] ) ) {
             return;
@@ -92,7 +92,7 @@ class TriggerHandler {
         $course_id = $enroll_data['course_id'];
 
 		if ( $total_refunded == $order_total ) {
-            $this->process_triggers( 'creator_lms_student_unenrolled', array(
+            $this->process_triggers( 'ohmylms_student_unenrolled', array(
                 'student_id' => $student_id,
                 'course_id' => $course_id,
             ), 'course_unenrollment' );
@@ -110,14 +110,14 @@ class TriggerHandler {
 	public function rest_delete_order( $order_id ) {
         global $wpdb;
         
-        $table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+        $table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
         $enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d", $order_id ), ARRAY_A );
         if ( empty( $enroll_data['course_id'] ) ) {
             return;
         }
         $student_id = $enroll_data['user_id'];
         $course_id = $enroll_data['course_id'];
-        $this->process_triggers( 'creator_lms_student_unenrolled', array(
+        $this->process_triggers( 'ohmylms_student_unenrolled', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_unenrollment' );
@@ -137,13 +137,13 @@ class TriggerHandler {
 		}
 
         global $wpdb;
-        $table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+        $table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
         $enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE course_id = %d", $course_id ), ARRAY_A );
         if ( empty( $enroll_data['course_id'] ) ) {
             return;
         }
         $student_id = $enroll_data['user_id'];
-        $this->process_triggers( 'creator_lms_student_unenrolled', array(
+        $this->process_triggers( 'ohmylms_student_unenrolled', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_unenrollment' );
@@ -160,10 +160,10 @@ class TriggerHandler {
 	 * @return void
 	 */
 	public function after_assignment_review( $assignment_id, $course_id, $student_id, $status ) {
-        $student = new \OMLMS\Data\Student( $student_id );
+        $student = new \OhMyLMS\Data\Student( $student_id );
         $completion_rate = $student->get_over_all_completion_rate( $course_id );
         if( $completion_rate >= 100 ) {
-            $this->process_triggers( 'creator_lms_course_completed', array(
+            $this->process_triggers( 'ohmylms_course_completed', array(
                 'student_id' => $student_id,
                 'course_id' => $course_id,
             ), 'course_completed' );
@@ -187,13 +187,13 @@ class TriggerHandler {
         }
         $student_id = $order->get_student_id();
         global $wpdb;
-        $table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+        $table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
         $enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
         if ( empty( $enroll_data['course_id'] ) ) {
             return;
         }
         $course_id = $enroll_data['course_id'];
-        $this->process_triggers( 'creator_lms_student_unenrolled', array(
+        $this->process_triggers( 'ohmylms_student_unenrolled', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_unenrollment' );
@@ -210,7 +210,7 @@ class TriggerHandler {
 	 */
 	public function course_completion_rate( $student_id, $course_id, $completion_rate ) {
         if( $completion_rate >= 100 ) {
-            $this->process_triggers( 'creator_lms_course_completed', array(
+            $this->process_triggers( 'ohmylms_course_completed', array(
                 'student_id' => $student_id,
                 'course_id' => $course_id,
             ), 'course_completed' );
@@ -226,7 +226,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_course_completed( $student_id, $course_id, $order_id = 0 ) {
-        $this->process_triggers( 'creator_lms_course_completed', array(
+        $this->process_triggers( 'ohmylms_course_completed', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
             'order_id' => $order_id,
@@ -241,7 +241,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_manual_course_enrollment( $student_id, $course_id ) {
-        $this->process_triggers( 'creator_lms_manual_student_enrollment', array(
+        $this->process_triggers( 'ohmylms_manual_student_enrollment', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_enrollment' );
@@ -264,14 +264,14 @@ class TriggerHandler {
         }
         $student_id = $order->get_student_id();
         global $wpdb;
-		$table_name  = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
 		
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
 		}
         $course_id = $enroll_data['course_id'];
-        $this->process_triggers( 'creator_lms_manual_student_enrollment', array(
+        $this->process_triggers( 'ohmylms_manual_student_enrollment', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_enrollment' );
@@ -286,7 +286,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_course_unenrollment( $student_id, $course_id ) {
-        $this->process_triggers( 'creator_lms_student_unenrolled', array(
+        $this->process_triggers( 'ohmylms_student_unenrolled', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
         ), 'course_unenrollment' );
@@ -301,7 +301,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_lesson_completed( $lesson_id, $course_id, $student_id ) {
-        $this->process_triggers( 'creator_lms_lesson_completed', array(
+        $this->process_triggers( 'ohmylms_lesson_completed', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
             'lesson_id' => $lesson_id,
@@ -318,7 +318,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_quiz_submitted( $quiz_id, $course_id, $student_id, $argc ) {
-        $this->process_triggers( 'creator_lms_quiz_submission', array(
+        $this->process_triggers( 'ohmylms_quiz_submission', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
             'quiz_id' => $quiz_id,
@@ -335,7 +335,7 @@ class TriggerHandler {
      * @since 1.0.0
      */
     public function handle_assignment_submitted( $assignment_id, $course_id, $student_id ) {
-        $this->process_triggers( 'creator_lms_after_assignment_submitted', array(
+        $this->process_triggers( 'ohmylms_after_assignment_submitted', array(
             'student_id' => $student_id,
             'course_id' => $course_id,
             'assignment_id' => $assignment_id,
@@ -406,7 +406,7 @@ class TriggerHandler {
                 if ( isset( $action_data['actions'] ) && is_array( $action_data['actions'] ) ) {
                     $has_event = false;
                     foreach ( $action_data['actions'] as $action ) {
-                        // Check against the full event name (e.g., 'creator_lms_manual_student_enrollment')
+                        // Check against the full event name (e.g., 'ohmylms_manual_student_enrollment')
                         // NOT the trigger_type (e.g., 'course_enrollment')
                         if ( isset( $action['event'] ) && $action['event'] === $event_name ) {
                             $has_event = true;
@@ -458,18 +458,18 @@ class TriggerHandler {
         // Use Action Scheduler if available (comes with WooCommerce)
         if ( function_exists( 'as_enqueue_async_action' ) ) {
             as_enqueue_async_action(
-                'creatorlms_wpfusion_process_integration',
+                'ohmylms_wpfusion_process_integration',
                 array(
                     'trigger' => $trigger,
                     'event_data' => $event_data,
                 ),
-                'creatorlms-integrations'
+                'ohmylms-integrations'
             );
         } else {
             // Fallback to WordPress Cron
             wp_schedule_single_event(
                 time(),
-                'creatorlms_wpfusion_process_integration',
+                'ohmylms_wpfusion_process_integration',
                 array(
                     'trigger' => $trigger,
                     'event_data' => $event_data,
@@ -517,12 +517,12 @@ class TriggerHandler {
             if ( function_exists( 'as_schedule_single_action' ) ) {
                 as_schedule_single_action(
                     time() + 30,
-                    'creatorlms_wpfusion_process_integration',
+                    'ohmylms_wpfusion_process_integration',
                     array(
                         'trigger' => $trigger,
                         'event_data' => $event_data,
                     ),
-                    'creatorlms-integrations'
+                    'ohmylms-integrations'
                 );
             }
             return;
@@ -532,7 +532,7 @@ class TriggerHandler {
             // Process the trigger
             $this->execute_trigger( $trigger, $event_data );
         } catch ( \Exception $e ) {
-            do_action( 'creatorlms_wpfusion_integration_failed', $trigger, $event_data, $e );
+            do_action( 'ohmylms_wpfusion_integration_failed', $trigger, $event_data, $e );
         }
     }
 
@@ -565,7 +565,7 @@ class TriggerHandler {
             
             foreach ( $action_data['actions'] as $action ) {
                 // Check if this action's event matches the current event being triggered
-                // Compare full event names (e.g., 'creator_lms_manual_student_enrollment')
+                // Compare full event names (e.g., 'ohmylms_manual_student_enrollment')
                 if ( isset( $action['event'] ) && $action['event'] === $current_event ) {
                     // Execute this specific action
                     switch ( $action_type ) {
@@ -594,7 +594,7 @@ class TriggerHandler {
         }
 
         // Log trigger execution
-        do_action( 'creatorlms_wpfusion_trigger_executed', $trigger, $event_data );
+        do_action( 'ohmylms_wpfusion_trigger_executed', $trigger, $event_data );
     }
 
     /**
@@ -654,7 +654,7 @@ class TriggerHandler {
         }
 
         // Log the action for tracking
-        do_action( 'creatorlms_wpfusion_tags_applied', $student_id, $tags );
+        do_action( 'ohmylms_wpfusion_tags_applied', $student_id, $tags );
     }
 
     /**
@@ -689,6 +689,6 @@ class TriggerHandler {
         wp_fusion()->user->remove_tags( $tags, $student_id );
         
         // Log the action for tracking
-        do_action( 'creatorlms_wpfusion_tags_removed', $student_id, $tags );
+        do_action( 'ohmylms_wpfusion_tags_removed', $student_id, $tags );
     }
 }

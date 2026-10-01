@@ -4,13 +4,13 @@
  *
  * Gutenberg block for OhMyLMS student my courses functionality
  *
- * @package OMLMS\Blocks
+ * @package OhMyLMS\Blocks
  * @since 1.2.5
  */
 
-namespace OMLMS\Blocks;
+namespace OhMyLMS\Blocks;
 
-use OMLMS\Shortcodes\ShortCodeMyCourses;
+use OhMyLMS\Shortcodes\ShortCodeMyCourses;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,7 +24,7 @@ class MyCoursesGutenbergBlock {
 	 *
 	 * @var string
 	 */
-	const BLOCK_NAME = 'creator-lms/my-courses';
+	const BLOCK_NAME = 'ohmylms/my-courses';
 
 	/**
 	 * Constructor
@@ -42,9 +42,9 @@ class MyCoursesGutenbergBlock {
 		register_block_type( self::BLOCK_NAME, array(
 			'attributes' => $this->get_block_attributes(),
 			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+			'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
 		) );
 	}
 
@@ -320,44 +320,44 @@ class MyCoursesGutenbergBlock {
 		
 		// Enable preview mode for Gutenberg editor to show my courses even when not logged in
 		if ( $is_editor ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		// Add editor-specific styling for proper my courses rendering
 		if ( $is_editor ) {
 			?>
 			<style>
-				.wp-block-creator-lms-my-courses .creator-lms {
+				.wp-block-ohmylms-my-courses .ohmylms {
 					max-width: 100% !important;
 					background-color: #F9FAFD !important;
 					width: 100% !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-dashboard {
+				.wp-block-ohmylms-my-courses .ohmylms-dashboard {
 					padding: 30px !important;
 					background-color: #fff !important;
 					border-radius: 12px !important;
 					box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-header {
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-header {
 					margin-bottom: 30px !important;
 					padding-bottom: 20px !important;
 					border-bottom: 1px solid #eee !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-title {
-					color: var(--creator-lms-heading-color, #1e1e1e) !important;
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-title {
+					color: var(--ohmylms-heading-color, #1e1e1e) !important;
 					font-size: 24px !important;
 					font-weight: 600 !important;
 					line-height: 1.3 !important;
 					margin: 0 0 10px !important;
 					letter-spacing: 0 !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-tabs {
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-tabs {
 					display: flex !important;
 					gap: 20px !important;
 					margin-bottom: 30px !important;
 					border-bottom: 2px solid #eee !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-tab {
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-tab {
 					padding: 12px 24px !important;
 					background: transparent !important;
 					border: none !important;
@@ -369,31 +369,31 @@ class MyCoursesGutenbergBlock {
 					margin-bottom: -2px !important;
 					transition: all 0.3s ease !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-tab.active {
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-tab.active {
 					color: #6E42D3 !important;
 					border-bottom-color: #6E42D3 !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-my-courses-content {
+				.wp-block-ohmylms-my-courses .ohmylms-my-courses-content {
 					display: grid !important;
 					grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
 					gap: 20px !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-course-card {
+				.wp-block-ohmylms-my-courses .ohmylms-course-card {
 					background: #fff !important;
 					border: 1px solid #eee !important;
 					border-radius: 8px !important;
 					overflow: hidden !important;
 					transition: all 0.3s ease !important;
 				}
-				.wp-block-creator-lms-my-courses .creator-lms-course-card:hover {
+				.wp-block-ohmylms-my-courses .ohmylms-course-card:hover {
 					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 					transform: translateY(-2px) !important;
 				}
 				@media (max-width: 768px) {
-					.wp-block-creator-lms-my-courses .creator-lms-dashboard {
+					.wp-block-ohmylms-my-courses .ohmylms-dashboard {
 						padding: 20px !important;
 					}
-					.wp-block-creator-lms-my-courses .creator-lms-my-courses-content {
+					.wp-block-ohmylms-my-courses .ohmylms-my-courses-content {
 						grid-template-columns: 1fr !important;
 					}
 				}
@@ -420,16 +420,16 @@ class MyCoursesGutenbergBlock {
 		}
 
 		// Add proper wrapper classes for consistency with frontend
-		$wrapper_classes = array( 'creator-lms' );
+		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
-			$wrapper_classes[] = 'creator-lms-page';
+			$wrapper_classes[] = 'ohmylms-page';
 		}
 		
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 		
 		// Add preview notice in editor mode
 		if ( $is_editor ) {
-			echo '<div class="creator-lms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
+			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the my courses page will appear to logged-in users.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
@@ -437,7 +437,7 @@ class MyCoursesGutenbergBlock {
 		// Output the my courses
 		ShortCodeMyCourses::output( $shortcode_attrs );
 
-		echo '</div>'; // Close creator-lms wrapper
+		echo '</div>'; // Close ohmylms wrapper
 		
 		// Close alignment wrapper only if it was opened (frontend only)
 		if ( ! $is_editor && ! empty( $wrapper_attributes ) ) {
@@ -446,7 +446,7 @@ class MyCoursesGutenbergBlock {
 		
 		// Remove preview mode filter if it was set
 		if ( $is_editor ) {
-			remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		return ob_get_clean();

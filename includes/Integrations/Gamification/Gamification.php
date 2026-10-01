@@ -1,7 +1,7 @@
 <?php 
 
-namespace OMLMS\Integrations\Gamification;
-use \OMLMS\Integrations\Gamification\Includes\Hooks;
+namespace OhMyLMS\Integrations\Gamification;
+use \OhMyLMS\Integrations\Gamification\Includes\Hooks;
 
 class Gamification {
 

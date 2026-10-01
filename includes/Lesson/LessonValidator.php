@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Lesson;
+namespace OhMyLMS\Lesson;
 
 /**
  * Responsible to handle all lesson request validation

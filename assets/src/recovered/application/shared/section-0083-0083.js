@@ -4,7 +4,7 @@ var zN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Submit Assignment", "ohmylms"),
   foreground: "#2271b1",
@@ -43,7 +43,7 @@ var zN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "assignments", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "assignments", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -64,7 +64,7 @@ var zN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("If no assignment is selected, this will apply to all assignments under the course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.assignments) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.assignments) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -76,7 +76,7 @@ var zN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "assignments", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "assignments", e);
         }(e);
       },
       isDisabled: "assignment" === (null == c ? void 0 : c.automationFor)
@@ -129,7 +129,7 @@ var LN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Pass/Fail Status", "ohmylms"),
   foreground: "#2271b1",
@@ -170,7 +170,7 @@ var LN = {
           label: null == s ? void 0 : s.contentName,
           value: null == s ? void 0 : s.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "creator_lms_settings", "assignments", e);
+        (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "ohmylms_settings", "assignments", e);
       }
     }, [s]);
     var m = [{
@@ -199,7 +199,7 @@ var LN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("If no assignment is selected, this will apply to all assignments under the course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = i.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.assignments) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = i.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.assignments) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == d ? void 0 : d.filter(function (e) {
@@ -211,7 +211,7 @@ var LN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "creator_lms_settings", "assignments", e);
+          (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "ohmylms_settings", "assignments", e);
         }(e);
       },
       isDisabled: "assignment" === (null == s ? void 0 : s.automationFor)
@@ -222,14 +222,14 @@ var LN = {
     }, (0, b.__)("Assignment Status", "ohmylms")), React.createElement(yg.Ay, {
       className: "basic-single",
       classNamePrefix: "select",
-      value: null !== (r = null === (a = i.settings) || void 0 === a || null === (a = a.creator_lms_settings) || void 0 === a ? void 0 : a.compare_with) && void 0 !== r ? r : "",
+      value: null !== (r = null === (a = i.settings) || void 0 === a || null === (a = a.ohmylms_settings) || void 0 === a ? void 0 : a.compare_with) && void 0 !== r ? r : "",
       isClearable: !1,
       isSearchable: !1,
       name: "assignment-status",
       options: m,
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "creator_lms_settings", "compare_with", e);
+          (0, y.dispatch)(Lf).updateStepArgs(l, c, u, "ohmylms_settings", "compare_with", e);
         }(e);
       }
     }))))));
@@ -267,7 +267,7 @@ var HN = {
   group: "triggers",
   type: "trigger",
   package: "free",
-  category: "creator_lms",
+  category: "ohmylms",
   category_label: "OhMyLMS",
   title: (0, b.__)("Quiz Submit", "ohmylms"),
   foreground: "#2271b1",
@@ -306,7 +306,7 @@ var HN = {
           label: null == c ? void 0 : c.contentName,
           value: null == c ? void 0 : c.contentId
         }];
-        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "quizes", e);
+        (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "quizes", e);
       }
     }, [c]), React.createElement(React.Fragment, null, React.createElement(q.PanelBody, {
       opened: !0
@@ -327,7 +327,7 @@ var HN = {
     }, React.createElement(hy, null), React.createElement("p", null, (0, b.__)("If no quiz is selected, this will apply to all quizzes under the course.", "ohmylms")))), React.createElement(Jt.A, {
       cacheOptions: !0,
       isMulti: !0,
-      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.creator_lms_settings) || void 0 === n ? void 0 : n.quizes) && void 0 !== t ? t : "",
+      value: null !== (t = null === (n = a.settings) || void 0 === n || null === (n = n.ohmylms_settings) || void 0 === n ? void 0 : n.quizes) && void 0 !== t ? t : "",
       defaultOptions: !0,
       loadOptions: function (e, t) {
         var n = null == u ? void 0 : u.filter(function (e) {
@@ -339,7 +339,7 @@ var HN = {
       },
       onChange: function (e) {
         return function (e) {
-          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "creator_lms_settings", "quizes", e);
+          (0, y.dispatch)(Lf).updateStepArgs(o, i, l, "ohmylms_settings", "quizes", e);
         }(e);
       },
       isDisabled: "quiz" === (null == c ? void 0 : c.automationFor)

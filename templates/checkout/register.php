@@ -2,20 +2,20 @@
 /**
  * Template for displaying account registration form.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/register.php
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/register.php
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<div id="checkout-account-register" class="omlms-checkout-block left">
+<div id="checkout-account-register" class="ohmylms-checkout-block left">
 	<h4><?php esc_html_e( 'Sign up', 'ohmylms' ); ?></h4>
 
-	<ul class="omlms-form-fields">
-		<?php do_action( 'creator_lms_before_registration_fields' ); ?>
+	<ul class="ohmylms-form-fields">
+		<?php do_action( 'ohmylms_before_registration_fields' ); ?>
 
 		<li class="form-field">
 			<label for="reg_email"><?php esc_html_e( 'Email address', 'ohmylms' ); ?>&nbsp;<span class="required">*</span></label>
@@ -34,7 +34,7 @@ defined( 'ABSPATH' ) || exit();
 			<input id ="reg_password2" name="reg_password2" type="password" placeholder="<?php esc_attr_e( 'Password', 'ohmylms' ); ?>" autocomplete="off">
 		</li>
 
-		<?php do_action( 'creator_lms_after_registration_fields' ); ?>
+		<?php do_action( 'ohmylms_after_registration_fields' ); ?>
 	</ul>
 
 	<?php

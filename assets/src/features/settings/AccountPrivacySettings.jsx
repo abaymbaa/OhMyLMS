@@ -21,7 +21,7 @@ export function createAccountPrivacySettings(readRuntime) {
       y: WordPressData,
       zm,
     } = readRuntime();
-    (0, Entitlements.useIsPro)();
+    true;
     var t,
       n,
       r,
@@ -109,7 +109,7 @@ export function createAccountPrivacySettings(readRuntime) {
                           d.setLoadingSetting(!0),
                           (e.n = 1),
                           l()({
-                            path: 'creator-lms/v1/settings/account-and-privacy',
+                            path: 'ohmylms/v1/settings/account-and-privacy',
                           })
                         );
                       case 1:
@@ -141,7 +141,7 @@ export function createAccountPrivacySettings(readRuntime) {
       }, []),
       (
         <React.Fragment>
-          <Ea isBorderless={!0} variant={'secondary'} className={'omlms-full-screen-height'}>
+          <Ea isBorderless={!0} variant={'secondary'} className={'ohmylms-full-screen-height'}>
             <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
               <Controls.CardWP isBorderless={!0}>
                 <Controls.SpacerWP paddingY={4} paddingX={2} marginTop={0} marginBottom={4}>
@@ -161,7 +161,7 @@ export function createAccountPrivacySettings(readRuntime) {
                         checked={
                           'yes' ===
                           (null == v ||
-                          null === (t = v.creator_lms_allow_purchase_without_login) ||
+                          null === (t = v.ohmylms_allow_purchase_without_login) ||
                           void 0 === t
                             ? void 0
                             : t.value)
@@ -169,7 +169,7 @@ export function createAccountPrivacySettings(readRuntime) {
                         onChange={function (e) {
                           return (function (e) {
                             d.updateAccountPrivacySettings({
-                              creator_lms_allow_purchase_without_login: {
+                              ohmylms_allow_purchase_without_login: {
                                 value: e ? 'yes' : 'no',
                               },
                             });
@@ -195,7 +195,7 @@ export function createAccountPrivacySettings(readRuntime) {
                         checked={
                           'yes' ===
                           (null == v ||
-                          null === (n = v.omlms_require_email_verification) ||
+                          null === (n = v.ohmylms_require_email_verification) ||
                           void 0 === n
                             ? void 0
                             : n.value)
@@ -203,7 +203,7 @@ export function createAccountPrivacySettings(readRuntime) {
                         onChange={function (e) {
                           return (function (e) {
                             d.updateAccountPrivacySettings({
-                              omlms_require_email_verification: {
+                              ohmylms_require_email_verification: {
                                 value: e ? 'yes' : 'no',
                               },
                             });
@@ -228,7 +228,7 @@ export function createAccountPrivacySettings(readRuntime) {
                       <Controls.SelectWP
                         value={
                           (null == v ||
-                          null === (r = v.creator_lms_checkout_phone_field) ||
+                          null === (r = v.ohmylms_checkout_phone_field) ||
                           void 0 === r
                             ? void 0
                             : r.value) || 'optional'
@@ -250,7 +250,7 @@ export function createAccountPrivacySettings(readRuntime) {
                         onChange={function (e) {
                           return (function (e) {
                             d.updateAccountPrivacySettings({
-                              creator_lms_checkout_phone_field: {
+                              ohmylms_checkout_phone_field: {
                                 value: e,
                               },
                             });
@@ -268,15 +268,13 @@ export function createAccountPrivacySettings(readRuntime) {
                     inputType={'textarea'}
                     onChange={function (e) {
                       d.updateAccountPrivacySettings({
-                        creator_lms_privacy_policy_message: {
+                        ohmylms_privacy_policy_message: {
                           value: e,
                         },
                       });
                     }}
                     value={Ge(
-                      null == v ||
-                        null === (a = v.creator_lms_privacy_policy_message) ||
-                        void 0 === a
+                      null == v || null === (a = v.ohmylms_privacy_policy_message) || void 0 === a
                         ? void 0
                         : a.value,
                     )}

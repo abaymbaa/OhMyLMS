@@ -61,7 +61,7 @@ export function createAiCourseGenerator(readRuntime) {
       O = (0, WordPressData.useSelect)(function (e) {
         return e(StoreModule.default).getAllIntegrations();
       }, []),
-      k = (0, Entitlements.useIsPro)();
+      k = true;
     function j(e, t) {
       var n,
         r,
@@ -251,7 +251,7 @@ export function createAiCourseGenerator(readRuntime) {
                             : 'self-paced'),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/ai/course',
+                          path: '/ohmylms/v1/ai/course',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -286,8 +286,7 @@ export function createAiCourseGenerator(readRuntime) {
           return e.apply(this, arguments);
         };
       })();
-    return k &&
-      null != O &&
+    return null != O &&
       null !== (e = O.ai_model) &&
       void 0 !== e &&
       e.is_enable &&

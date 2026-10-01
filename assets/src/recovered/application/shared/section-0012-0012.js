@@ -39,7 +39,7 @@ var Gl = function (e) {
     k = (0, z.A)(),
     j = k.openNotificationWithIcon,
     A = k.contextHolder,
-    I = (0, L.useFeatureAccess)("googlemeet"),
+    I = true,
     F = Qi(),
     N = function (e) {
       var t,
@@ -60,7 +60,7 @@ var Gl = function (e) {
         return Nl().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (I) {
+              {
                 e.n = 1;
                 break;
               }
@@ -107,7 +107,7 @@ var Gl = function (e) {
         return Nl().w(function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
-              if (I) {
+              {
                 e.n = 1;
                 break;
               }
@@ -237,7 +237,7 @@ var Gl = function (e) {
       w || R || n();
     },
     onSave: function () {
-      I && (v ? B() : W());
+      v ? B() : W();
     },
     onPreview: function () {
       null != u && u.preview_url && window.open(u.preview_url, "_blank");
@@ -277,9 +277,7 @@ var Gl = function (e) {
     }
   })) : null;
 };
-
 const Ul = (0, g.memo)(Gl);
-
 function ql() {
   var e,
     t,
@@ -366,7 +364,6 @@ function ql() {
     };
   })();
 }
-
 function Yl(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -388,7 +385,6 @@ function Yl(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Yl(e, t, n, r);
 }
-
 function Ql(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -398,7 +394,6 @@ function Ql(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Zl(e) {
   return function () {
     var t = this,
@@ -415,7 +410,6 @@ function Zl(e) {
     });
   };
 }
-
 function $l(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -449,7 +443,6 @@ function $l(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Kl(e, t) {
   if (e) {
     if ("string" == typeof e) return Jl(e, t);
@@ -457,13 +450,11 @@ function Kl(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Jl(e, t) : void 0;
   }
 }
-
 function Jl(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const Xl = function (e) {
   var t,
     n = e.chapter,
@@ -482,7 +473,7 @@ const Xl = function (e) {
     b = (e.showEdit, e.setShowEdit, e.handleSaveName),
     w = (0, f.g)().id,
     S = Ze(),
-    R = (0, y.useDispatch)("creator-lms/store"),
+    R = (0, y.useDispatch)("ohmylms/store"),
     x = (0, y.useSelect)(function (e) {
       return e(T.default).getAISuggestedCourses();
     }, []),
@@ -513,7 +504,7 @@ const Xl = function (e) {
     K = $[0],
     J = $[1],
     X = (0, y.useSelect)(function (e) {
-      return e("creator-lms/store").getCourseChaptersContent();
+      return e("ohmylms/store").getCourseChaptersContent();
     }, [r]),
     ee = S ? (null === (t = x[w - 1]) || void 0 === t || null === (t = t.chapters.find(function (e) {
       return e.id === r;
@@ -642,7 +633,7 @@ const Xl = function (e) {
       I(["1"]), c(r);
     }, []);
   return h().createElement(h().Fragment, null, v === r && h().createElement("div", {
-    className: "omlms-single-chapter-content-item"
+    className: "ohmylms-single-chapter-content-item"
   }, h().createElement(ie, {
     name: n.name || n.title,
     description: k,
@@ -721,14 +712,12 @@ const Xl = function (e) {
     handleAutomation: s
   }));
 };
-
 var ec = function (e) {
-    var t = document.getElementById("omlms-chapter-name-".concat(e));
+    var t = document.getElementById("ohmylms-chapter-name-".concat(e));
     t && t.focus();
   },
   tc = n(78879),
   nc = n(40524);
-
 function rc() {
   var e,
     t,
@@ -815,7 +804,6 @@ function rc() {
     };
   })();
 }
-
 function ac(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -837,7 +825,6 @@ function ac(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, ac(e, t, n, r);
 }
-
 function oc(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -847,13 +834,11 @@ function oc(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function ic(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const lc = function (e) {
   var t = e.courseId,
     n = e.setActiveIndex,
@@ -1010,7 +995,6 @@ const lc = function (e) {
     icon: tc.A
   })))));
 };
-
 var cc = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -1026,5 +1010,4 @@ var cc = function () {
     d: "M6.504 1v11M1 6.5h11"
   })));
 };
-
 const uc = (0, g.memo)(cc);

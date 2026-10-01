@@ -550,7 +550,7 @@ var ao = function (e) {
       label: (0, b.__)("Report", "ohmylms"),
       icon: React.createElement(za, null),
       onClick: function () {
-        var e = "".concat(window.location.origin, "/wp-admin/admin.php?page=creator-lms#").concat("/assignment-report", "/").concat(c);
+        var e = "".concat(window.location.origin, "/wp-admin/admin.php?page=ohmylms#").concat("/assignment-report", "/").concat(c);
         window.open(e, "_blank");
       },
       variant: "default"

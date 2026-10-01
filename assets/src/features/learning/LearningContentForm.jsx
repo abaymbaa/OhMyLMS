@@ -32,7 +32,7 @@ export function createLearningContentForm(readRuntime) {
       O = void 0 === autofocus || autofocus,
       editorFor = props.editorFor;
     return (
-      <div className={'common-entity-form omlms-'.concat(p)}>
+      <div className={'common-entity-form ohmylms-'.concat(p)}>
         {('image_video' === v || 'image' === v) && (
           <React.Fragment>
             <LearningMediaField
@@ -79,7 +79,7 @@ export function createLearningContentForm(readRuntime) {
           />
         )}
         <Controls.SpacerWP marginBottom={4} />
-        <div className={'omlms-title-input-wrapper omlms-course-title'}>
+        <div className={'ohmylms-title-input-wrapper ohmylms-course-title'}>
           <Controls.InputWP
             type={'text'}
             value={Ge('Untitled' !== titleValue ? titleValue : '')}

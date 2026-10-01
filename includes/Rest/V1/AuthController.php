@@ -4,14 +4,14 @@
  *
  * Handles the "Sign in with Google" REST endpoints for the core plugin.
  *
- * @package OMLMS\Rest\V1
+ * @package OhMyLMS\Rest\V1
  * @since 1.0.0
  */
 
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
-use OMLMS\Services\GoogleAuthService;
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Services\GoogleAuthService;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -171,17 +171,17 @@ class AuthController extends RestController {
 	/**
 	 * Resolve the profile/dashboard URL, never returning a falsy value.
 	 *
-	 * creatorlms_get_dashboard_url() (omlms_get_page_url('profile')) can
+	 * ohmylms_get_dashboard_url() (ohmylms_get_page_url('profile')) can
 	 * return false when the "profile" page option isn't set — add_query_arg()
 	 * treats a false $url as "not given" and falls back to the current
 	 * REQUEST_URI, which would redirect this callback to itself in a loop.
-	 * omlms_get_page_permalink() has the same fallback-to-home_url() safety
+	 * ohmylms_get_page_permalink() has the same fallback-to-home_url() safety
 	 * net already used by Ajax::login() elsewhere in this plugin.
 	 *
 	 * @return string
 	 */
 	private function dashboard_url() {
-		return omlms_get_page_permalink( 'profile' );
+		return ohmylms_get_page_permalink( 'profile' );
 	}
 
 	/**

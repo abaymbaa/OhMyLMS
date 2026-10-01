@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
+use OhMyLMS\Abstracts\DataStore;
 
 defined( 'ABSPATH' ) || exit;
 

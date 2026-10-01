@@ -2,7 +2,7 @@ jQuery( function( $ ) {
 	'use strict';
 
 	try {
-		var stripe = Stripe( omlms_stripe_params.key);
+		var stripe = Stripe( ohmylms_stripe_params.key);
 	} catch( error ) {
 		console.error( error );
 		return;
@@ -24,7 +24,7 @@ jQuery( function( $ ) {
 		stripe_exp,
 		stripe_cvc;
 
-	var omlms_stripe_form = {
+	var ohmylms_stripe_form = {
 		$checkout_form: $( 'form.checkout' ),
 		selectedPaymentMethod:false,
 		/**
@@ -72,36 +72,36 @@ jQuery( function( $ ) {
 			stripe_cvc  = elements.create( 'cardCvc', { placeholder: 'CVC*', style: elementStyles, classes: elementClasses } );
 
 			stripe_card.addEventListener( 'change', function( event ) {
-				omlms_stripe_form.onCCFormChange();
-				omlms_stripe_form.updateCardBrand( event.brand );
+				ohmylms_stripe_form.onCCFormChange();
+				ohmylms_stripe_form.updateCardBrand( event.brand );
 				if ( event.error ) {
 					// $( document.body ).trigger( 'stripeError', event );
 				}
 			} );
 
 			stripe_exp.addEventListener( 'change', function( event ) {
-				omlms_stripe_form.onCCFormChange();
+				ohmylms_stripe_form.onCCFormChange();
 				if ( event.error ) {
 					// $( document.body ).trigger( 'stripeError', event );
 				}
 			} );
 
 			stripe_cvc.addEventListener( 'change', function( event ) {
-				omlms_stripe_form.onCCFormChange();
+				ohmylms_stripe_form.onCCFormChange();
 				if ( event.error ) {
 					// $( document.body ).trigger( 'stripeError', event );
 				}
 			} );
 
-			omlms_stripe_form.mountElements();
+			ohmylms_stripe_form.mountElements();
 		},
 
 		onCCFormChange: function() {
-			omlms_stripe_form.reset();
+			ohmylms_stripe_form.reset();
 		},
 
 		reset: function() {
-			$( '.omlms-stripe-error, .stripe-source' ).remove();
+			$( '.ohmylms-stripe-error, .stripe-source' ).remove();
 		},
 
 		updateCardBrand: function( brand ) {
@@ -132,20 +132,20 @@ jQuery( function( $ ) {
 		payment_method_selected: function ( e ) {
 
 			if ( $( '.payment_methods input.input-radio' ).length > 1 ) {
-				var target_payment_box = $(this).parents('.creator-lms-single-payment').find( 'div.payment_box.' + $( this ).attr( 'ID' ) ),
+				var target_payment_box = $(this).parents('.ohmylms-single-payment').find( 'div.payment_box.' + $( this ).attr( 'ID' ) ),
 					is_checked         = $( this ).is( ':checked' );
 
 				if ( is_checked && ! target_payment_box.is( ':visible' ) ) {
-					$(this).parents('.creator-lms-single-payment').find( 'div.payment_box' ).filter( ':visible' ).slideUp();
+					$(this).parents('.ohmylms-single-payment').find( 'div.payment_box' ).filter( ':visible' ).slideUp();
 
 					if ( is_checked ) {
-						$(this).parents('.creator-lms-single-payment').siblings().find('div.payment_box').slideUp();
+						$(this).parents('.ohmylms-single-payment').siblings().find('div.payment_box').slideUp();
 						target_payment_box.slideDown();
 					}
 				}
 			} else {
-				$(this).parents('.creator-lms-single-payment').siblings().find('div.payment_box').slideUp();
-				$(this).parents('.creator-lms-single-payment').find( 'div.payment_box' ).slideDown();
+				$(this).parents('.ohmylms-single-payment').siblings().find('div.payment_box').slideUp();
+				$(this).parents('.ohmylms-single-payment').find( 'div.payment_box' ).slideDown();
 			}
 
 			if ( $( this ).data( 'order_button_text' ) ) {
@@ -154,12 +154,12 @@ jQuery( function( $ ) {
 				$( '#place_order' ).text( $( '#place_order' ).data( 'value' ) );
 			}
 
-			var selectedPaymentMethod = $( '.creator-lms-checkout-form input[name="payment_method"]:checked' ).attr( 'id' );
+			var selectedPaymentMethod = $( '.ohmylms-checkout-form input[name="payment_method"]:checked' ).attr( 'id' );
 
-			if ( selectedPaymentMethod !== omlms_stripe_form.selectedPaymentMethod ) {
+			if ( selectedPaymentMethod !== ohmylms_stripe_form.selectedPaymentMethod ) {
 				$( document.body ).trigger( 'payment_method_selected' );
 			}
-			omlms_stripe_form.selectedPaymentMethod = selectedPaymentMethod;
+			ohmylms_stripe_form.selectedPaymentMethod = selectedPaymentMethod;
 		},
 
 		submit: async function(event) {
@@ -183,18 +183,18 @@ jQuery( function( $ ) {
 				},
 			});
 			if (error) {
-				var selectedPaymentMethod = $( '.creator-lms-checkout-form input[name="payment_method"]:checked' ).attr( 'id' );
+				var selectedPaymentMethod = $( '.ohmylms-checkout-form input[name="payment_method"]:checked' ).attr( 'id' );
 				if ( selectedPaymentMethod !== 'payment_method_stripe' ) {
 					return;
 				}
 
-				$('.creator-lms-place-order-button .creator-lms-loader').hide();
-				$('.creator-lms-place-order-button').prop('disabled', false);
-				$('.omlms-notices-wrapper').empty();
+				$('.ohmylms-place-order-button .ohmylms-loader').hide();
+				$('.ohmylms-place-order-button').prop('disabled', false);
+				$('.ohmylms-notices-wrapper').empty();
 				var errorHtml = `
-					<div class="omlms-notices-wrapper omlms-error-notices">
-						<div class="omlms-NoticeGroup">
-							<ul class="omlms-error" role="alert">
+					<div class="ohmylms-notices-wrapper ohmylms-error-notices">
+						<div class="ohmylms-NoticeGroup">
+							<ul class="ohmylms-error" role="alert">
 								<li data-id="email">
 									${error.message}
 								</li>
@@ -203,13 +203,13 @@ jQuery( function( $ ) {
 					</div>
 				`;
 
-				omlms_stripe_form.submit_error(errorHtml);
+				ohmylms_stripe_form.submit_error(errorHtml);
 				return;
 			}
-			omlms_stripe_form.formSubmit(paymentMethod);
+			ohmylms_stripe_form.formSubmit(paymentMethod);
 		},
 		scroll_to_notices: function() {
-			var scrollElement           = $( '.omlms-NoticeGroup-updateOrderReview, .omlms-notices-wrapper' );
+			var scrollElement           = $( '.ohmylms-NoticeGroup-updateOrderReview, .ohmylms-notices-wrapper' );
 
 			if ( ! scrollElement.length ) {
 				scrollElement = $( 'form.checkout' );
@@ -218,34 +218,34 @@ jQuery( function( $ ) {
 		},
 
 		submit_error: function( error_message ) {
-			// Remove all elements within the class 'omlms-notices-wrapper'
-			$( '.omlms-notices-wrapper' ).empty();
+			// Remove all elements within the class 'ohmylms-notices-wrapper'
+			$( '.ohmylms-notices-wrapper' ).empty();
 
 			// Remove other specific notice elements
-			$( '.omlms-NoticeGroup-checkout, .omlms-error, .omlms-message, .is-error, .is-success' ).remove();
+			$( '.ohmylms-NoticeGroup-checkout, .ohmylms-error, .ohmylms-message, .is-error, .is-success' ).remove();
 
-			// Add the error message within 'omlms-notices-wrapper' class
-			$( '.omlms-notices-wrapper' ).prepend( '<div class="creator-lms-checkout-notice">' + error_message + '</div>' );
+			// Add the error message within 'ohmylms-notices-wrapper' class
+			$( '.ohmylms-notices-wrapper' ).prepend( '<div class="ohmylms-checkout-notice">' + error_message + '</div>' );
 
-			if( $(".omlms-NoticeGroup .omlms-error li").length > 0 ){
-				let getErrorLength = $(".omlms-NoticeGroup .omlms-error li").length;
+			if( $(".ohmylms-NoticeGroup .ohmylms-error li").length > 0 ){
+				let getErrorLength = $(".ohmylms-NoticeGroup .ohmylms-error li").length;
 				if(getErrorLength == 1){
-					$(".creator-lms-checkout-notice").addClass('single-error');
+					$(".ohmylms-checkout-notice").addClass('single-error');
 
 				}else {
-					$(".creator-lms-checkout-notice").removeClass('single-error');
+					$(".ohmylms-checkout-notice").removeClass('single-error');
 				}
 
 				if(2 < getErrorLength){
-					$(".creator-lms-checkout-notice").addClass('more-then-two-error');
+					$(".ohmylms-checkout-notice").addClass('more-then-two-error');
 
 				}else {
-					$(".creator-lms-checkout-notice").removeClass('more-then-two-error');
+					$(".ohmylms-checkout-notice").removeClass('more-then-two-error');
 				}
 			}
 
 			// Scroll to the notices area
-			omlms_stripe_form.scroll_to_notices();
+			ohmylms_stripe_form.scroll_to_notices();
 		},
 
 		formSubmit: function(paymentMethod) {
@@ -275,28 +275,28 @@ jQuery( function( $ ) {
 					.val( 'stripe' )
 			);
 
-			this.$checkout_form.find('.creator-lms-place-order-button .creator-lms-loader').show();
+			this.$checkout_form.find('.ohmylms-place-order-button .ohmylms-loader').show();
 			this.$checkout_form.addClass( 'processing' );
-			this.$checkout_form.find('.creator-lms-place-order-button').prop('disabled', true);
+			this.$checkout_form.find('.ohmylms-place-order-button').prop('disabled', true);
 
 			$.ajax({
 				type: 'POST',
-				url: omlms_checkout_params.ajax_url,
-				data: this.$checkout_form.serialize() + '&action=creator_lms_checkout&stripe_source='+paymentMethod.id+'&payment_method=stripe',
+				url: ohmylms_checkout_params.ajax_url,
+				data: this.$checkout_form.serialize() + '&action=ohmylms_checkout&stripe_source='+paymentMethod.id+'&payment_method=stripe',
 				dataType: 'json',
 				success: function (response) {
-					that.$checkout_form.find('.creator-lms-place-order-button .creator-lms-loader').hide();
+					that.$checkout_form.find('.ohmylms-place-order-button .ohmylms-loader').hide();
 					that.$checkout_form.removeClass('processing');
-					that.$checkout_form.find('.creator-lms-place-order-button').prop('disabled', false);
+					that.$checkout_form.find('.ohmylms-place-order-button').prop('disabled', false);
 					if(response.success) {
 						window.location.href = response.redirect;
 					}
 
 					if ( response.messages ) {
-						$('.creator-lms-place-order-button .creator-lms-loader').hide();
-						$('.creator-lms-place-order-button').prop('disabled', false);
-						$('.omlms-notices-wrapper').empty();
-						omlms_stripe_form.submit_error(response.messages);
+						$('.ohmylms-place-order-button .ohmylms-loader').hide();
+						$('.ohmylms-place-order-button').prop('disabled', false);
+						$('.ohmylms-notices-wrapper').empty();
+						ohmylms_stripe_form.submit_error(response.messages);
 					}
 				}
 			});
@@ -306,9 +306,9 @@ jQuery( function( $ ) {
 
 			$.ajax({
 				type: 'POST',
-				url: omlms_checkout_params.ajax_url,
+				url: ohmylms_checkout_params.ajax_url,
 				data: {
-					security: omlms_checkout_params.stripe_nonce,
+					security: ohmylms_checkout_params.stripe_nonce,
 					action: 'create_stripe_payment_intent',
 				},
 				dataType: 'json',
@@ -321,12 +321,12 @@ jQuery( function( $ ) {
 			});
 
 
-			// if ( $( 'form.creator-lms-checkout-form' ).length ) {
-			// 	this.form = $( 'form#creator-lms-checkout-form' );
+			// if ( $( 'form.ohmylms-checkout-form' ).length ) {
+			// 	this.form = $( 'form#ohmylms-checkout-form' );
 			// 	this.$checkout_form.on( 'click', 'input[name="payment_method"]', this.payment_method_selected );
-			// 	omlms_stripe_form.createElements();
-			// 	if ( 'payment_method_stripe' !== omlms_stripe_form.selectedPaymentMethod ) {
-			// 		$( document.body ).on( 'submit', '#creator-lms-checkout-form', this.submit );
+			// 	ohmylms_stripe_form.createElements();
+			// 	if ( 'payment_method_stripe' !== ohmylms_stripe_form.selectedPaymentMethod ) {
+			// 		$( document.body ).on( 'submit', '#ohmylms-checkout-form', this.submit );
 			// 	}
 			// }
 		},
@@ -341,5 +341,5 @@ jQuery( function( $ ) {
 		},
 	}
 
-	omlms_stripe_form.init();
+	ohmylms_stripe_form.init();
 });

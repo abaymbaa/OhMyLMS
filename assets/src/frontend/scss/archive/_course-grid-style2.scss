@@ -1,7 +1,7 @@
-.creator-lms-page {
+.ohmylms-page {
     //-----when layout style-2----
     .grid-style2 {
-        .creator-lms-course-cards .course-card .course-info {
+        .ohmylms-course-cards .course-card .course-info {
             justify-content: flex-start;
 
             .course-meta {
@@ -22,8 +22,8 @@
                 }
             }
 
-            .creator-lms-loop-course-title {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-loop-course-title {
+                color: var(--ohmylms-heading-color);
                 margin: 0 0 36px;
 
                 @media screen and (max-width: 1199px) {
@@ -32,7 +32,7 @@
             }
 
             .course-author {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 13px;
                 font-weight: 400;
                 line-height: 1;

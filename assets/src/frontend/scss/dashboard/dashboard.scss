@@ -1,36 +1,36 @@
-.creator-lms-dashboard-wrapper * {
+.ohmylms-dashboard-wrapper * {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-dashboard {
+.ohmylms-page {
+    .ohmylms-dashboard {
         padding: 56px 0;
         margin: 0;
         background-color: #F9FAFD;
         position: relative;
         min-height: calc(100vh - 70px);
 
-        .omlms-notices-wrapper {
+        .ohmylms-notices-wrapper {
             background-color: transparent;
             margin-bottom: 0;
 
-            .omlms-NoticeGroup {
+            .ohmylms-NoticeGroup {
                 padding: 23px 15px;
                 background-color: #FCE8E8;
                 margin-bottom: 30px;
                 border-radius: 10px;
             }
 
-            .omlms-success {
-                .omlms-NoticeGroup {
+            .ohmylms-success {
+                .ohmylms-NoticeGroup {
                     padding: 13px 10px;
                     background-color: #35BD4C;
                 }
             }
         }
 
-        .creator-lms-dashboard-wrapper {
+        .ohmylms-dashboard-wrapper {
             padding: 43px 50px 50px;
             border-radius: 14px;
             background-color: #FFF;
@@ -42,7 +42,7 @@
             font-size: 28px;
             font-weight: 600;
             line-height: 1.3;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             margin-bottom: 20px;
 
             @media (max-width: 767px) {
@@ -51,14 +51,14 @@
             }
         }
 
-        .creator-lms-course-statistics-card {
+        .ohmylms-course-statistics-card {
             display: flex;
             align-items: center;
             gap: 20px;
             margin-bottom: 30px;
         }
 
-        .creator-lms-statistics-single-card {
+        .ohmylms-statistics-single-card {
             display: flex;
             flex: 1 1 calc(33.333% - 14px);
             align-items: center;
@@ -78,7 +78,7 @@
             }
 
             .stat-number {
-                color: var(--creator-lms-heading-color);
+                color: var(--ohmylms-heading-color);
                 font-size: 30px;
                 font-weight: 700;
                 line-height: 1;
@@ -95,7 +95,7 @@
 
             .stat-text {
                 font-size: 14px;
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-weight: 400;
                 line-height: 1.3;
                 display: block;
@@ -110,7 +110,7 @@
                 }
             }
 
-            &.membership-courses:not(:empty) ~ .creator-lms-statistics-single-card {
+            &.membership-courses:not(:empty) ~ .ohmylms-statistics-single-card {
                 flex: 1 1 calc(25% - 15px);
             }
 
@@ -129,7 +129,7 @@
 
         .my-membership-title,
         .my-courses-title {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 22px;
             font-weight: 700;
             line-height: 1.3;
@@ -137,14 +137,14 @@
         }
     }
 
-    .creator-lms-dashboard-courses {
+    .ohmylms-dashboard-courses {
         display: flex;
         flex-flow: column;
         gap: 22px;
         margin-bottom: 30px;
     }
 
-    .creator-lms-dashboard-single-course {
+    .ohmylms-dashboard-single-course {
         border-radius: 8px;
         background: #FFF;
         box-shadow: 0px 1px 4px 0px #D3D6DD;
@@ -172,8 +172,8 @@
                 border-radius: 10px;
             }
 
-            .creator-lms-course-title {
-                color: var(--creator-lms-heading-color);
+            .ohmylms-course-title {
+                color: var(--ohmylms-heading-color);
                 font-size: 18px;
                 font-weight: 600;
                 line-height: 1.4;
@@ -185,11 +185,11 @@
 
                 &:focus,
                 &:hover {
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                 }
             }
 
-            .creator-lms-progressbar {
+            .ohmylms-progressbar {
                 margin-top: 9px;
                 display: flex;
                 flex-flow: row wrap;
@@ -197,12 +197,12 @@
                 gap: 20px;
                 row-gap: 6px;
 
-                .creator-lms-progressbar-outer {
+                .ohmylms-progressbar-outer {
                     width: 175px;
                 }
 
                 .progressbar-title {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 14px;
                     font-weight: 400;
                     display: block;
@@ -210,7 +210,7 @@
                 }
 
                 .time-remaining {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                     font-size: 14px;
                     font-weight: 400;
                     line-height: 1.2;
@@ -239,7 +239,7 @@
         }
 
         .completed-date {
-            color: var(--creator-lms-body-text-color);
+            color: var(--ohmylms-body-text-color);
             font-size: 14px;
             font-weight: 400;
             line-height: 1.3;
@@ -249,7 +249,7 @@
             margin-top: 5px;
         }
 
-		.creator-lms-btn-area {
+		.ohmylms-btn-area {
 			margin-left: auto;
 			display: flex;
 			flex-flow: row wrap;
@@ -257,7 +257,7 @@
 			gap: 10px;
 		}
 
-        .creator-lms-button {
+        .ohmylms-button {
             border-radius: 10px;
             padding: 8px 17px;
 
@@ -266,12 +266,12 @@
             }
 
             &:hover {
-                color: var(--creator-lms-primary-color);
+                color: var(--ohmylms-primary-color);
             }
         }
 
-        &.creator-lms-course-locked {
-            .creator-lms-button {
+        &.ohmylms-course-locked {
+            .ohmylms-button {
                 background-color: #A1A1AA;
                 pointer-events: none;
                 display: flex;
@@ -288,8 +288,8 @@
             }
         }
 
-        &.creator-lms-course-completed {
-            .creator-lms-button {
+        &.ohmylms-course-completed {
+            .ohmylms-button {
                 display: flex;
                 align-items: center;
                 gap: 7px;
@@ -312,7 +312,7 @@
 
                 &:hover {
                     path {
-                        fill: var(--creator-lms-primary-color);
+                        fill: var(--ohmylms-primary-color);
                     }
                 }
             }
@@ -320,15 +320,15 @@
     }
 
     //-------Membership Card-------//
-    .creator-lms-dashboard-membership {
+    .ohmylms-dashboard-membership {
         display: flex;
         flex-flow: row wrap;
         gap: 20px;
     }
 
-    .creator-lms-dashboard-single-membership {
+    .ohmylms-dashboard-single-membership {
         .membership-title {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 18px;
             font-weight: 600;
             line-height: 1;
@@ -337,7 +337,7 @@
         }
 
         .membership-price {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 30px;
             font-weight: 700;
             line-height: 1;
@@ -356,7 +356,7 @@
         }
 
         .view-plan {
-            color: var(--creator-lms-primary-color);
+            color: var(--ohmylms-primary-color);
             font-size: 14px;
             font-weight: 500;
             line-height: 1;
@@ -365,20 +365,20 @@
             outline: none;
             box-shadow: none;
             border-radius: 10px;
-            border: 1px solid var(--creator-lms-primary-color);
+            border: 1px solid var(--ohmylms-primary-color);
             padding: 10px 19px;
             transition: all 0.3s ease;
 
             &:focus,
             &:hover {
-                background-color: var(--creator-lms-primary-color);
+                background-color: var(--ohmylms-primary-color);
                 color: #FFF;
             }
         }
     }
 
     // -------membership modal-------//
-    .creator-lms-membership-modal {
+    .ohmylms-membership-modal {
         position: fixed;
         left: 0;
         top: 0;
@@ -388,7 +388,7 @@
         z-index: 999999;
         display: none;
 
-        .creator-lms-membership-modal-wrapper {
+        .ohmylms-membership-modal-wrapper {
             width: 100%;
             height: 100%;
             display: flex;
@@ -398,7 +398,7 @@
             padding: 20px;
         }
 
-        .creator-lms-membership-modal-inner {
+        .ohmylms-membership-modal-inner {
             background-color: #F4F5F7;
             max-width: 600px;
             width: 100%;
@@ -411,7 +411,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 18px;
             font-weight: 700;
             line-height: 1;
@@ -435,7 +435,7 @@
         }
 
         .membership-table-header {
-            background-color: var(--creator-lms-primary-color);
+            background-color: var(--ohmylms-primary-color);
             border-radius: 12px 12px 0 0;
             padding: 30px 35px 25px;
 
@@ -475,7 +475,7 @@
             border-radius: 0 0 12px 12px;
 
             li {
-                color: var(--creator-lms-body-text-color);
+                color: var(--ohmylms-body-text-color);
                 font-size: 15px;
                 font-weight: 400;
                 line-height: 1.5;
@@ -500,7 +500,7 @@
         .membership-modal-footer {
             margin-top: 20px;
 
-            .creator-lms-button {
+            .ohmylms-button {
                 background: transparent;
                 border: 1px solid #FF6F6F;
                 display: block;
@@ -519,7 +519,7 @@
 
 }
 
-.omlms-membership-card {
+.ohmylms-membership-card {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0px 1px 4px 0px #D3D6DD;
@@ -528,40 +528,40 @@
     flex-direction: column;
     gap: 15px;
     width: calc(50% - 10px);
-    .omlms-membership-card-header {
+    .ohmylms-membership-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding-bottom: 10px;
         border-bottom: 1px solid #EBEBEF;
-        .omlms-membership-name {
+        .ohmylms-membership-name {
             font-size: 18px;
             font-weight: 600;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             margin: 0;
         }
-        .omlms-membership-status {
+        .ohmylms-membership-status {
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
             font-weight: 500;
             text-transform: capitalize;
-            &.omlms-status-active {
+            &.ohmylms-status-active {
                 background-color: #EAF7EC;
                 color: #35BD4C;
             }
-            &.omlms-status-expired, &.omlms-status-cancelled {
+            &.ohmylms-status-expired, &.ohmylms-status-cancelled {
                 background-color: #FCE8E8;
                 color: #FF6F6F;
             }
-            &.omlms-status-trialing {
+            &.ohmylms-status-trialing {
                 background-color: #FFF2E5;
                 color: #FFA500;
             }
         }
     }
-    .omlms-membership-card-body {
-        .omlms-membership-details {
+    .ohmylms-membership-card-body {
+        .ohmylms-membership-details {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -573,22 +573,22 @@
                 justify-content: space-between;
                 font-size: 14px;
                 strong {
-                    color: var(--creator-lms-heading-color);
+                    color: var(--ohmylms-heading-color);
                     font-weight: 500;
                 }
                 span {
-                    color: var(--creator-lms-body-text-color);
+                    color: var(--ohmylms-body-text-color);
                 }
             }
         }
     }
-    .omlms-membership-card-footer {
+    .ohmylms-membership-card-footer {
         display: flex;
         gap: 10px;
         margin-top: auto;
         padding-top: 15px;
         border-top: 1px solid #EBEBEF;
-        .omlms-button {
+        .ohmylms-button {
             flex: 1;
             text-align: center;
             padding: 10px;
@@ -597,15 +597,15 @@
             font-weight: 500;
             transition: all 0.3s ease;
             &.view-plan {
-                background-color: var(--creator-lms-primary-color);
+                background-color: var(--ohmylms-primary-color);
                 color: #fff;
-                border: 1px solid var(--creator-lms-primary-color);
+                border: 1px solid var(--ohmylms-primary-color);
                 &:hover {
                     background-color: #fff;
-                    color: var(--creator-lms-primary-color);
+                    color: var(--ohmylms-primary-color);
                 }
             }
-            &.omlms-button-danger {
+            &.ohmylms-button-danger {
                 background-color: transparent;
                 color: #FF6F6F;
                 border: 1px solid #FF6F6F;
@@ -620,94 +620,94 @@
 
 // Responsive adjustments
 @media (max-width: 991px) {
-    .omlms-membership-card {
+    .ohmylms-membership-card {
         width: 100%;
     }
 }
 
-.omlms-no-courses-message {
+.ohmylms-no-courses-message {
     padding: 20px;
     text-align: center;
-    color: var(--creator-lms-body-text-color);
+    color: var(--ohmylms-body-text-color);
 }
 
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .creator-lms-dashboard .creator-lms-dashboard-wrapper {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-dashboard-wrapper {
         padding: 20px 30px 30px;
         border-radius: 8px;
     }
-    .creator-lms-page .creator-lms-dashboard .student-name {
+    .ohmylms-page .ohmylms-dashboard .student-name {
         font-size: 22px;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card {
         padding: 18px 20px;
         border-radius: 10px;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card .stat-number {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card .stat-number {
         font-size: 24px;
     }
 
-    .creator-lms-page .creator-lms-dashboard .my-membership-title,
-    .creator-lms-page .creator-lms-dashboard .my-courses-title {
+    .ohmylms-page .ohmylms-dashboard .my-membership-title,
+    .ohmylms-page .ohmylms-dashboard .my-courses-title {
         font-size: 20px;
         margin-bottom: 15px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-course-title {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-course-title {
         font-size: 16px;
     }
 
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-header {
+    .ohmylms-page .ohmylms-header {
         padding: 10px 0;
     }
-    .creator-lms-page .creator-lms-dashboard {
+    .ohmylms-page .ohmylms-dashboard {
         padding: 46px 0;
     }
 
-    .creator-lms-page .creator-lms-dashboard .creator-lms-course-statistics-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-course-statistics-card {
         gap: 12px;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card {
         padding: 18px 17px;
         width: calc(25% - 9px);
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card .icon svg {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card .icon svg {
         width: auto;
         height: 34px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info {
         width: calc(100% - 133px);
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper {
         width: 55%;
         gap: 18px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper figure {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper figure {
         width: 115px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar .creator-lms-progressbar-outer {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar .ohmylms-progressbar-outer {
         width: 150px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar .progressbar-title {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar .progressbar-title {
         font-size: 13px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar .time-remaining {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar .time-remaining {
         font-size: 13px;
     }
 
     // -----Membership card-----//
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-title {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-title {
         font-size: 16px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-price {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-price {
         font-size: 26px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-price sub {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-price sub {
         font-size: 15px;
     }
 
@@ -715,140 +715,140 @@
 
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-dashboard .creator-lms-dashboard-wrapper {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-dashboard-wrapper {
         padding: 15px 20px 20px;
     }
 
-    .creator-lms-page .creator-lms-dashboard .student-name {
+    .ohmylms-page .ohmylms-dashboard .student-name {
         font-size: 20px;
     }
 
-    .creator-lms-page .creator-lms-dashboard .creator-lms-course-statistics-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-course-statistics-card {
         margin-bottom: 20px;
         gap: 10px;
         flex-wrap: wrap;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card {
         padding: 12px 14px;
         border-radius: 8px;
         width: calc(50% - 5px);
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card .icon svg {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card .icon svg {
         width: 30px;
         display: block;
         height: auto;
         line-height: 1;
     }
 
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card.enrolled-courses .icon svg {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card.enrolled-courses .icon svg {
         width: 26px;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card .stat-number {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card .stat-number {
         font-size: 22px;
     }
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card .stat-text {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card .stat-text {
         font-size: 13px;
         margin-top: 10px;
     }
 
-    .creator-lms-page .creator-lms-dashboard .my-membership-title,
-    .creator-lms-page .creator-lms-dashboard .my-courses-title {
+    .ohmylms-page .ohmylms-dashboard .my-membership-title,
+    .ohmylms-page .ohmylms-dashboard .my-courses-title {
         font-size: 18px;
         margin-bottom: 13px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-courses {
+    .ohmylms-page .ohmylms-dashboard-courses {
         flex-flow: row wrap;
         margin-bottom: 20px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course {
+    .ohmylms-page .ohmylms-dashboard-single-course {
         flex-flow: column;
         align-items: flex-start;
         width: calc(100% / 2 - 11px);
         padding: 15px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper {
         width: 100%;
         gap: 13px;
         flex-direction: column;
         align-items: flex-start;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper figure {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper figure {
         width: 100%;
         height: auto;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar {
         margin-top: 16px;
         row-gap: 10px;
         justify-content: space-between;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar .creator-lms-progressbar-outer {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar .ohmylms-progressbar-outer {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper .creator-lms-progressbar .time-remaining:before {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper .ohmylms-progressbar .time-remaining:before {
         display: none;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .completed-date {
+    .ohmylms-page .ohmylms-dashboard-single-course .completed-date {
         margin-top: 10px;
         font-size: 13px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course .creator-lms-btn-area {
+    .ohmylms-page .ohmylms-dashboard-single-course .ohmylms-btn-area {
         width: 100%;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .creator-lms-btn-area .creator-lms-button {
+    .ohmylms-page .ohmylms-dashboard-single-course .ohmylms-btn-area .ohmylms-button {
         width: 100%;
         text-align: center;
         justify-content: center;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course.creator-lms-course-completed .creator-lms-btn-area {
+    .ohmylms-page .ohmylms-dashboard-single-course.ohmylms-course-completed .ohmylms-btn-area {
         width: calc(100% - 28px);
     }
-    .creator-lms-page .creator-lms-dashboard-single-course.creator-lms-course-completed .creator-lms-button::before {
+    .ohmylms-page .ohmylms-dashboard-single-course.ohmylms-course-completed .ohmylms-button::before {
         right: -30px;
         left: inherit;
     }
 
     //-----Membership Card-----//
-    .creator-lms-page .creator-lms-dashboard-single-membership {
+    .ohmylms-page .ohmylms-dashboard-single-membership {
         padding: 20px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-membership .view-plan {
+    .ohmylms-page .ohmylms-dashboard-single-membership .view-plan {
         font-size: 13px;
         padding: 9px 14px;
     }
 
     // -----membership modal-----//
-    .creator-lms-page .creator-lms-membership-modal .creator-lms-membership-modal-inner {
+    .ohmylms-page .ohmylms-membership-modal .ohmylms-membership-modal-inner {
         max-width: 470px;
         padding: 16px 20px 20px;
         border-radius: 8px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-header {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-header {
         border-radius: 10px 10px 0 0;
         padding: 18px 20px 15px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-header .plan-name {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-header .plan-name {
         font-size: 16px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-header .price {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-header .price {
         font-size: 32px;
     }
 
-    .creator-lms-page .creator-lms-membership-modal .membership-table-list {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-list {
         padding: 20px 20px;
         border-radius: 0 0 10px 10px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-list li {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-list li {
         font-size: 14px;
         margin-bottom: 10px;
     }
@@ -856,36 +856,36 @@
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown {
+    .ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown {
         border-radius: 10px;
         padding: 12px;
         width: 173px;
     }
-    .creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a {
+    .ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a {
         padding: 8px 12px;
         font-size: 13px;
         gap: 8px;
     }
-    .creator-lms-page .creator-lms-header-right .creator-lms-user .creator-lms-user-dropdown li a svg {
+    .ohmylms-page .ohmylms-header-right .ohmylms-user .ohmylms-user-dropdown li a svg {
         width: 15px;
         height: auto;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-course {
+    .ohmylms-page .ohmylms-dashboard-single-course {
         width: 100%;
         padding: 20px;
         gap: 16px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .course-info-wrapper {
+    .ohmylms-page .ohmylms-dashboard-single-course .course-info-wrapper {
         gap: 16px;
 
     }
-    .creator-lms-page .creator-lms-dashboard-single-course .completed-date {
+    .ohmylms-page .ohmylms-dashboard-single-course .completed-date {
         margin-top: 14px;
         margin-bottom: 4px;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-membership {
+    .ohmylms-page .ohmylms-dashboard-single-membership {
         padding: 20px;
         width: 100%;
     }
@@ -893,28 +893,28 @@
 }
 
 @media screen and (max-width: 575px) {
-    .creator-lms-page .creator-lms-dashboard .creator-lms-statistics-single-card {
+    .ohmylms-page .ohmylms-dashboard .ohmylms-statistics-single-card {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-title {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-title {
         font-size: 15px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-price {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-price {
         font-size: 24px;
     }
-    .creator-lms-page .creator-lms-dashboard-single-membership .membership-price sub {
+    .ohmylms-page .ohmylms-dashboard-single-membership .membership-price sub {
         font-size: 14px;
     }
 
     //-------membership modal------//
-    .creator-lms-page .creator-lms-membership-modal .membership-modal-title {
+    .ohmylms-page .ohmylms-membership-modal .membership-modal-title {
         font-size: 16px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-header .plan-name {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-header .plan-name {
         font-size: 15px;
     }
-    .creator-lms-page .creator-lms-membership-modal .membership-table-header .price {
+    .ohmylms-page .ohmylms-membership-modal .membership-table-header .price {
         font-size: 28px;
     }
 

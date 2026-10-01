@@ -1,19 +1,19 @@
 <?php
 /**
- * CreatorLMS Checkout Widget for Elementor
+ * OhMyLMS Checkout Widget for Elementor
  *
- * @package OMLMS\Elementor\Widgets
+ * @package OhMyLMS\Elementor\Widgets
  * @since 1.0.0
  */
 
-namespace OMLMS\Elementor\Widgets;
+namespace OhMyLMS\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use OMLMS\Shortcodes\ShortCodeCheckout;
+use OhMyLMS\Shortcodes\ShortCodeCheckout;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -29,7 +29,7 @@ class CheckoutWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_name() {
-		return 'creator-lms-checkout';
+		return 'ohmylms-checkout';
 	}
 
 	/**
@@ -38,7 +38,7 @@ class CheckoutWidget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return esc_html__( 'CreatorLMS Checkout', 'ohmylms' );
+		return esc_html__( 'OhMyLMS Checkout', 'ohmylms' );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class CheckoutWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_categories() {
-		return array( 'creator-lms' );
+		return array( 'ohmylms' );
 	}
 
 	/**
@@ -75,7 +75,7 @@ class CheckoutWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'omlms-frontend', 'omlms-checkout', 'omlms-tax-calculation', 'omlms-slick' );
+		return array( 'ohmylms-frontend', 'ohmylms-checkout', 'ohmylms-tax-calculation', 'ohmylms-slick' );
 	}
 
 	/**
@@ -84,7 +84,7 @@ class CheckoutWidget extends Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'omlms-frontend', 'omlms-general' );
+		return array( 'ohmylms-frontend', 'ohmylms-general' );
 	}
 
 
@@ -128,7 +128,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#f8f9fa',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -147,7 +147,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -159,7 +159,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -185,7 +185,7 @@ class CheckoutWidget extends Widget_Base {
 				),
 				'default'   => 'center',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message' => 'text-align: {{VALUE}};',
 				),
 			)
 		);
@@ -194,7 +194,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'empty_cart_border',
-				'selector' => '{{WRAPPER}} .creator-lms-empty-cart-message',
+				'selector' => '{{WRAPPER}} .ohmylms-empty-cart-message',
 			)
 		);
 
@@ -205,7 +205,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -225,9 +225,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Title Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-heading-color)',
+				'default'   => 'var(--ohmylms-heading-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message h3' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message h3' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -236,7 +236,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'empty_cart_title_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-empty-cart-message h3',
+				'selector' => '{{WRAPPER}} .ohmylms-empty-cart-message h3',
 			)
 		);
 
@@ -255,9 +255,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Message Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-text-color)',
+				'default'   => 'var(--ohmylms-text-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-empty-cart-message p' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-empty-cart-message p' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -266,7 +266,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'empty_cart_message_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-empty-cart-message p',
+				'selector' => '{{WRAPPER}} .ohmylms-empty-cart-message p',
 			)
 		);
 
@@ -296,7 +296,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#FFF',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -308,7 +308,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#6e42d3',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -317,7 +317,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'empty_cart_button_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-browse-courses-btn',
+				'selector' => '{{WRAPPER}} .ohmylms-browse-courses-btn',
 			)
 		);
 
@@ -325,7 +325,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'empty_cart_button_border',
-				'selector' => '{{WRAPPER}} .creator-lms-browse-courses-btn',
+				'selector' => '{{WRAPPER}} .ohmylms-browse-courses-btn',
 			)
 		);
 
@@ -336,7 +336,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -348,7 +348,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -368,7 +368,7 @@ class CheckoutWidget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn:hover' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -379,7 +379,7 @@ class CheckoutWidget extends Widget_Base {
 				'label'     => esc_html__( 'Background Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn:hover' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -390,7 +390,7 @@ class CheckoutWidget extends Widget_Base {
 				'label'     => esc_html__( 'Border Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-browse-courses-btn:hover' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-browse-courses-btn:hover' => 'border-color: {{VALUE}};',
 				),
 			)
 		);
@@ -508,9 +508,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-heading-color)',
+				'default'   => 'var(--ohmylms-heading-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-checkout-title' => 'color: {{VALUE}} !important;',
+					'{{WRAPPER}} .ohmylms-checkout-title' => 'color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -519,7 +519,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-checkout-title',
+				'selector' => '{{WRAPPER}} .ohmylms-checkout-title',
 				'fields_options' => array(
 					'typography' => array(
 						'default' => 'yes',
@@ -562,7 +562,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-title' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-title' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -598,9 +598,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Label Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-heading-color)',
+				'default'   => 'var(--ohmylms-heading-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-form-row label' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-form-row label' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -609,7 +609,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'input_label_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-form-row label',
+				'selector' => '{{WRAPPER}} .ohmylms-form-row label',
 				'fields_options' => array(
 					'typography' => array(
 						'default' => 'yes',
@@ -642,9 +642,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Text Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-heading-color)',
+				'default'   => 'var(--ohmylms-heading-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -656,7 +656,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#FFF',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -665,7 +665,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'input_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select',
+				'selector' => '{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select',
 				'fields_options' => array(
 					'typography' => array(
 						'default' => 'yes',
@@ -687,7 +687,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'input_border',
-				'selector' => '{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select',
+				'selector' => '{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select',
 				'fields_options' => array(
 					'border' => array(
 						'default' => 'solid',
@@ -722,7 +722,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -734,7 +734,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-input-text, {{WRAPPER}} .creator-lms-input-select' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-input-text, {{WRAPPER}} .ohmylms-input-select' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -773,7 +773,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#FFF',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-place-order-button' => 'color: {{VALUE}} !important;',
+					'{{WRAPPER}} .ohmylms-place-order-button' => 'color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -785,7 +785,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#6e42d3',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-place-order-button' => 'background-color: {{VALUE}} !important;',
+					'{{WRAPPER}} .ohmylms-place-order-button' => 'background-color: {{VALUE}} !important;',
 				),
 			)
 		);
@@ -794,7 +794,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-place-order-button',
+				'selector' => '{{WRAPPER}} .ohmylms-place-order-button',
 				'fields_options' => array(
 					'typography' => array(
 						'default' => 'yes',
@@ -834,7 +834,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'button_border',
-				'selector' => '{{WRAPPER}} .creator-lms-place-order-button',
+				'selector' => '{{WRAPPER}} .ohmylms-place-order-button',
 				'fields_options' => array(
 					'border' => array(
 						'default' => 'solid',
@@ -869,7 +869,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-place-order-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-place-order-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -888,7 +888,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-place-order-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-place-order-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -907,7 +907,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-place-order-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-place-order-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -916,7 +916,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .creator-lms-place-order-button',
+				'selector' => '{{WRAPPER}} .ohmylms-place-order-button',
 			)
 		);
 
@@ -937,7 +937,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#6e42d3',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-place-order-button:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-place-order-button:hover' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -949,7 +949,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => 'transparent',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-place-order-button:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-place-order-button:hover' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -961,7 +961,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#6e42d3',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-place-order-button:hover' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-place-order-button:hover' => 'border-color: {{VALUE}};',
 				),
 			)
 		);
@@ -970,7 +970,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_hover_box_shadow',
-				'selector' => '{{WRAPPER}} .creator-lms-place-order-button:hover',
+				'selector' => '{{WRAPPER}} .ohmylms-place-order-button:hover',
 			)
 		);
 
@@ -999,9 +999,9 @@ class CheckoutWidget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Text Color', 'ohmylms' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => 'var(--creator-lms-heading-color)',
+				'default'   => 'var(--ohmylms-heading-color)',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-terms-and-conditions-wrapper' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-terms-and-conditions-wrapper' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -1010,7 +1010,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'privacy_text_typography',
-				'selector' => '{{WRAPPER}} .creator-lms-terms-and-conditions-wrapper',
+				'selector' => '{{WRAPPER}} .ohmylms-terms-and-conditions-wrapper',
 				'fields_options' => array(
 					'typography' => array(
 						'default' => 'yes',
@@ -1053,7 +1053,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-terms-and-conditions-wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-terms-and-conditions-wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1082,7 +1082,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '#fff',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-left' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-left' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -1091,7 +1091,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'checkout_box_border',
-				'selector' => '{{WRAPPER}} .creator-lms-checkout-form-left',
+				'selector' => '{{WRAPPER}} .ohmylms-checkout-form-left',
 				'fields_options' => array(
 					'border' => array(
 						'default' => 'solid',
@@ -1126,7 +1126,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-left' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-left' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1145,7 +1145,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-left' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-left' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1164,7 +1164,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-left' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-left' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1173,7 +1173,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'checkout_box_shadow',
-				'selector' => '{{WRAPPER}} .creator-lms-checkout-form-left',
+				'selector' => '{{WRAPPER}} .ohmylms-checkout-form-left',
 			)
 		);
 
@@ -1201,7 +1201,7 @@ class CheckoutWidget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'default'   => '',
 				'selectors' => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-right' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-right' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -1210,7 +1210,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'order_summary_border',
-				'selector' => '{{WRAPPER}} .creator-lms-checkout-form-right',
+				'selector' => '{{WRAPPER}} .ohmylms-checkout-form-right',
 				'fields_options' => array(
 					'border' => array(
 						'default' => '',
@@ -1245,7 +1245,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-right' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-right' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1264,7 +1264,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-right' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-right' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1283,7 +1283,7 @@ class CheckoutWidget extends Widget_Base {
 					'unit'   => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} .creator-lms-checkout-form-right' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .ohmylms-checkout-form-right' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1292,7 +1292,7 @@ class CheckoutWidget extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'order_summary_box_shadow',
-				'selector' => '{{WRAPPER}} .creator-lms-checkout-form-right',
+				'selector' => '{{WRAPPER}} .ohmylms-checkout-form-right',
 			)
 		);
 
@@ -1311,9 +1311,9 @@ class CheckoutWidget extends Widget_Base {
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 
 		// Use the same wrapper class as shortcode for consistency
-		// The shortcode handles all styling through its built-in CSS system with omlms-checkout-custom-styles
-		echo '<div class="creator-lms-page creator-lms-checkout">';
-		echo '<div class="creator-lms">';
+		// The shortcode handles all styling through its built-in CSS system with ohmylms-checkout-custom-styles
+		echo '<div class="ohmylms-page ohmylms-checkout">';
+		echo '<div class="ohmylms">';
 		
 		
 		// Check if we're in Elementor edit mode
@@ -1321,9 +1321,9 @@ class CheckoutWidget extends Widget_Base {
 			$this->render_edit_mode();
 		} else {
 			// Set preview mode to false for frontend
-			add_filter( 'creator_lms_elementor_preview_mode', '__return_false' );
+			add_filter( 'ohmylms_elementor_preview_mode', '__return_false' );
 			ShortCodeCheckout::output( $shortcode_attrs );
-			remove_filter( 'creator_lms_elementor_preview_mode', '__return_false' );
+			remove_filter( 'ohmylms_elementor_preview_mode', '__return_false' );
 		}
 		
 		echo '</div>';
@@ -1362,14 +1362,14 @@ class CheckoutWidget extends Widget_Base {
 		if ( 'yes' !== $show_message ) {
 			// If message is disabled, show a simple notice for administrators
 			if ( current_user_can( 'edit_posts' ) ) {
-				echo '<div class="creator-lms-admin-notice">';
+				echo '<div class="ohmylms-admin-notice">';
 				echo '<p><em>' . esc_html__( 'Empty cart message is disabled. Enable it in widget settings to show a message when cart is empty.', 'ohmylms' ) . '</em></p>';
 				echo '</div>';
 			}
 			return;
 		}
 
-		$archive_page_id  = get_option( 'creator_lms_course_page_id', 0 );
+		$archive_page_id  = get_option( 'ohmylms_course_page_id', 0 );
 		$archive_page_url = home_url();
 		if ( $archive_page_id ) {
 			$archive_page_url = get_permalink( $archive_page_id );
@@ -1379,10 +1379,10 @@ class CheckoutWidget extends Widget_Base {
 		$empty_cart_message = ! empty( $settings['empty_cart_message'] ) ? $settings['empty_cart_message'] : esc_html__( 'Add some courses to your cart to proceed with checkout.', 'ohmylms' );
 		$browse_courses_text = ! empty( $settings['browse_courses_text'] ) ? $settings['browse_courses_text'] : esc_html__( 'Browse Courses', 'ohmylms' );
 
-		echo '<div class="creator-lms-empty-cart-message">';
+		echo '<div class="ohmylms-empty-cart-message">';
 		echo '<h3>' . esc_html( $empty_cart_title ) . '</h3>';
 		echo '<p>' . esc_html( $empty_cart_message ) . '</p>';
-		echo '<a href="' . esc_url( $archive_page_url ) . '" class="creator-lms-browse-courses-btn">';
+		echo '<a href="' . esc_url( $archive_page_url ) . '" class="ohmylms-browse-courses-btn">';
 		echo esc_html( $browse_courses_text );
 		echo '</a>';
 		echo '</div>';
@@ -1401,16 +1401,16 @@ class CheckoutWidget extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 		
-		echo '<div class="creator-lms-elementor-edit-mode">';
-		echo '<div class="creator-lms-edit-mode-notice">';
+		echo '<div class="ohmylms-elementor-edit-mode">';
+		echo '<div class="ohmylms-edit-mode-notice">';
 		echo '<small>' . esc_html__( 'Preview Mode: This is how the checkout will appear to users with items in their cart.', 'ohmylms' ) . '</small>';
 		echo '</div>';
 		
 		// Always render the shortcode in edit mode with preview mode enabled
 		// This ensures consistency and proper styling preview
-		add_filter( 'creator_lms_elementor_preview_mode', '__return_true' );
+		add_filter( 'ohmylms_elementor_preview_mode', '__return_true' );
 		ShortCodeCheckout::output( $shortcode_attrs );
-		remove_filter( 'creator_lms_elementor_preview_mode', '__return_true' );
+		remove_filter( 'ohmylms_elementor_preview_mode', '__return_true' );
 		
 		echo '</div>';
 	}
@@ -1425,7 +1425,7 @@ class CheckoutWidget extends Widget_Base {
 		// Start with default attributes from shortcode (ensures consistent defaults)
 		$attrs = array(
 			// Title defaults
-			'title_color'                => 'var(--creator-lms-heading-color)',
+			'title_color'                => 'var(--ohmylms-heading-color)',
 			'title_font_size'           => '22px',
 			'title_font_weight'         => '600',
 			'title_font_family'         => '',
@@ -1435,7 +1435,7 @@ class CheckoutWidget extends Widget_Base {
 			'title_letter_spacing'      => '0',
 			
 			// Input label defaults
-			'input_label_color'         => 'var(--creator-lms-heading-color)',
+			'input_label_color'         => 'var(--ohmylms-heading-color)',
 			'input_label_font_size'     => '14px',
 			'input_label_font_weight'   => '500',
 			'input_label_font_family'   => '',
@@ -1443,7 +1443,7 @@ class CheckoutWidget extends Widget_Base {
 			// Input field defaults
 			'input_font_size'           => '14px',
 			'input_font_weight'         => '400',
-			'input_color'               => 'var(--creator-lms-heading-color)',
+			'input_color'               => 'var(--ohmylms-heading-color)',
 			'input_font_family'         => '',
 			'input_background_color'    => '#FFF',
 			'input_border_color'        => '#EBEBEF',
@@ -1482,7 +1482,7 @@ class CheckoutWidget extends Widget_Base {
 			'button_hover_box_shadow'       => 'none',
 			
 			// Privacy text defaults
-			'privacy_text_color'        => 'var(--creator-lms-heading-color)',
+			'privacy_text_color'        => 'var(--ohmylms-heading-color)',
 			'privacy_text_font_size'    => '14px',
 			'privacy_text_font_weight'  => '400',
 			'privacy_text_font_family'  => '',

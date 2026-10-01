@@ -4,9 +4,9 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/review-author.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version 1.0.0
- * @global \OMLMS\Data\Student $student
+ * @global \OhMyLMS\Data\Student $student
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -20,7 +20,7 @@ global $comment;
 	if ($student_profile_photo) {
 		echo '<img class="student-profile-photo" src="'.esc_url($student_profile_photo).'" alt="Student Profile Photo" id="student-profile-photo">';
 	}else {
-		echo creator_lms_get_initials($student->get_first_name(), $student->get_last_name());
+		echo ohmylms_get_initials($student->get_first_name(), $student->get_last_name());
 	}
 	?>
 </figure>

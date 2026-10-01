@@ -1,11 +1,11 @@
 <?php 
 
-namespace OMLMS\Integrations\Zoom;
+namespace OhMyLMS\Integrations\Zoom;
 
 if (!defined('ABSPATH')) exit;
 
-use OMLMS\Integrations\Zoom\Includes\Hooks;
-use OMLMS\Integrations\Zoom\Includes\SessionReminderScheduler;
+use OhMyLMS\Integrations\Zoom\Includes\Hooks;
+use OhMyLMS\Integrations\Zoom\Includes\SessionReminderScheduler;
 
 class Zoom {
 
@@ -24,13 +24,13 @@ class Zoom {
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
         \add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\Zoom\Includes\Rest\ZoomSettingsController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\Zoom\Includes\Rest\ZoomSettingsController::instance(), 'register_routes' )
         );
 
         // Register the recording.completed webhook receiver.
         \add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\Zoom\Includes\Rest\ZoomWebhookController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\Zoom\Includes\Rest\ZoomWebhookController::instance(), 'register_routes' )
         );
 
         new Hooks();
@@ -38,6 +38,6 @@ class Zoom {
     }
 
     private function define_constants() {
-        define( 'CREATORLMS_ZOOM_INTEGRATION_URL', plugins_url( '', CREATORLMS_PRO_FILE ) );
+        define( 'OHMYLMS_ZOOM_INTEGRATION_URL', plugins_url( '', OHMYLMS_PRO_FILE ) );
     }
 }

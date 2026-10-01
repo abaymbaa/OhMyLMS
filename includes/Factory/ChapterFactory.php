@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Factory;
+namespace OhMyLMS\Factory;
 
-use OMLMS\Data\Chapter;
+use OhMyLMS\Data\Chapter;
 
 /**
  * Factory class to retrieve and validate Chapter objects.
@@ -11,7 +11,7 @@ use OMLMS\Data\Chapter;
  * based on different inputs, such as a chapter ID or an existing chapter instance.
  * It also checks if a chapter exists in the database.
  *
- * @package OMLMS\Factory
+ * @package OhMyLMS\Factory
  * @since 1.0.0
  */
 class ChapterFactory {
@@ -39,7 +39,7 @@ class ChapterFactory {
 	 * Determines and returns a valid chapter ID.
 	 *
 	 * This method checks various inputs to determine a valid chapter ID.
-	 * It can validate if a post is of type `CREATOR_LMS_CHAPTER_CPT`.
+	 * It can validate if a post is of type `OHMYLMS_CHAPTER_CPT`.
 	 *
 	 * @param mixed $chapter Input which can be a chapter ID, an instance of Chapter, or other data.
 	 * @return bool|int Returns the chapter ID if valid, otherwise false.
@@ -49,7 +49,7 @@ class ChapterFactory {
 		global $post;
 
 		// Check if input is false and post is set
-		if ( false === $chapter && isset( $post, $post->ID ) && CREATOR_LMS_CHAPTER_CPT === get_post_type( $post->ID ) ) {
+		if ( false === $chapter && isset( $post, $post->ID ) && OHMYLMS_CHAPTER_CPT === get_post_type( $post->ID ) ) {
 			return absint( $post->ID );
 		}
 
@@ -79,7 +79,7 @@ class ChapterFactory {
 	 * Checks whether a chapter with the given ID exists.
 	 *
 	 * This method verifies that the chapter exists in the database and is of
-	 * the correct post type (`CREATOR_LMS_CHAPTER_CPT`).
+	 * the correct post type (`OHMYLMS_CHAPTER_CPT`).
 	 *
 	 * @param int $chapter_id The ID of the chapter to check.
 	 * @return bool Returns true if the chapter exists, otherwise false.
@@ -93,7 +93,7 @@ class ChapterFactory {
 		$chapter = get_post( $chapter_id );
 
 		// Check if the post exists and the post type matches
-		if ( $chapter && CREATOR_LMS_CHAPTER_CPT === get_post_type( $chapter_id ) ) {
+		if ( $chapter && OHMYLMS_CHAPTER_CPT === get_post_type( $chapter_id ) ) {
 			return true;
 		} else {
 			return false;

@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Webhook;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Webhook;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WebhookStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class WebhookStore extends DataStore {
@@ -38,7 +38,7 @@ class WebhookStore extends DataStore {
 		);
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'omlms_webhooks',
+			$wpdb->prefix . 'ohmylms_webhooks',
 			$data,
 			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
@@ -52,7 +52,7 @@ class WebhookStore extends DataStore {
 			 * @param int $webhook_id Webhook ID.
 			 * @param Webhook $webhook Webhook object.
 			 */
-			do_action( 'creator_lms_webhook_created', $webhook->get_id(), $webhook );
+			do_action( 'ohmylms_webhook_created', $webhook->get_id(), $webhook );
 		}
 	}
 
@@ -71,7 +71,7 @@ class WebhookStore extends DataStore {
 
 		$webhook_data = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}omlms_webhooks WHERE id = %d",
+				"SELECT * FROM {$wpdb->prefix}ohmylms_webhooks WHERE id = %d",
 				$webhook->get_id()
 			)
 		);
@@ -100,7 +100,7 @@ class WebhookStore extends DataStore {
 		 * @param int $webhook_id Webhook ID.
 		 * @param Webhook $webhook Webhook object.
 		 */
-		do_action( 'creator_lms_webhook_loaded', $webhook->get_id(), $webhook );
+		do_action( 'ohmylms_webhook_loaded', $webhook->get_id(), $webhook );
 	}
 
 	/**
@@ -125,7 +125,7 @@ class WebhookStore extends DataStore {
 		);
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'omlms_webhooks',
+			$wpdb->prefix . 'ohmylms_webhooks',
 			$data,
 			array( 'id' => $webhook->get_id() ),
 			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ),
@@ -139,7 +139,7 @@ class WebhookStore extends DataStore {
 			 * @param int $webhook_id Webhook ID.
 			 * @param Webhook $webhook Webhook object.
 			 */
-			do_action( 'creator_lms_webhook_updated', $webhook->get_id(), $webhook );
+			do_action( 'ohmylms_webhook_updated', $webhook->get_id(), $webhook );
 		}
 	}
 
@@ -166,10 +166,10 @@ class WebhookStore extends DataStore {
 		 * @param int $webhook_id Webhook ID.
 		 * @param Webhook $webhook Webhook object.
 		 */
-		do_action( 'creator_lms_before_delete_webhook', $id, $webhook );
+		do_action( 'ohmylms_before_delete_webhook', $id, $webhook );
 
 		$result = $wpdb->delete(
-			$wpdb->prefix . 'omlms_webhooks',
+			$wpdb->prefix . 'ohmylms_webhooks',
 			array( 'id' => $id ),
 			array( '%d' )
 		);
@@ -182,7 +182,7 @@ class WebhookStore extends DataStore {
 			 *
 			 * @param int $webhook_id Webhook ID.
 			 */
-			do_action( 'creator_lms_webhook_deleted', $id );
+			do_action( 'ohmylms_webhook_deleted', $id );
 		}
 	}
 
@@ -240,7 +240,7 @@ class WebhookStore extends DataStore {
 			}
 		}
 
-		$query = "SELECT * FROM {$wpdb->prefix}omlms_webhooks WHERE {$where}";
+		$query = "SELECT * FROM {$wpdb->prefix}ohmylms_webhooks WHERE {$where}";
 		
 		if ( $orderby ) {
 			$query .= " ORDER BY {$orderby}";
@@ -295,7 +295,7 @@ class WebhookStore extends DataStore {
 		}
 
 		$where = implode( ' AND ', $where_clauses );
-		$query = "SELECT COUNT(*) FROM {$wpdb->prefix}omlms_webhooks WHERE {$where}";
+		$query = "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_webhooks WHERE {$where}";
 
 		if ( ! empty( $values ) ) {
 			$query = $wpdb->prepare( $query, $values );

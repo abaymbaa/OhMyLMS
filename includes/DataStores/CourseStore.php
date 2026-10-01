@@ -1,16 +1,16 @@
 <?php
 
-namespace OMLMS\DataStores;
+namespace OhMyLMS\DataStores;
 
-use OMLMS\Abstracts\DataStore;
-use OMLMS\Data\Course;
+use OhMyLMS\Abstracts\DataStore;
+use OhMyLMS\Data\Course;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Class CourseStore
  *
- * @package OMLMS\DataStores
+ * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
 class CourseStore extends DataStore {
@@ -89,13 +89,13 @@ class CourseStore extends DataStore {
 			$slug = $course->get_name( 'edit' );
 		}
 
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_COURSE_CPT );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_COURSE_CPT );
 
 		$id = wp_insert_post(
 			apply_filters(
-				'creator_lms_new_course_data',
+				'ohmylms_new_course_data',
 				array(
-					'post_type'     => CREATOR_LMS_COURSE_CPT,
+					'post_type'     => OHMYLMS_COURSE_CPT,
 					'post_author'   => get_current_user_id(),
 					'post_status'   => $course->get_status() ? $course->get_status() : 'draft',
 					'post_title'    => $course->get_name() ? $course->get_name() : __( 'Untitled', 'ohmylms' ),
@@ -123,10 +123,10 @@ class CourseStore extends DataStore {
 			 *
 			 * @since 1.0.0
 			 */
-			do_action( 'creatorlms_new_course', $id, $course );
+			do_action( 'ohmylms_new_course', $id, $course );
 
-			if ( ! get_option( 'creatorlms_first_course_created', false ) ) {
-				do_action( 'creatorlms_after_creating_first_course', $id, $course );
+			if ( ! get_option( 'ohmylms_first_course_created', false ) ) {
+				do_action( 'ohmylms_after_creating_first_course', $id, $course );
 			}
 		}
 	}
@@ -142,7 +142,7 @@ class CourseStore extends DataStore {
 	 */
 	public function read( &$course ) {
 		$post_object = get_post( $course->get_id() );
-		if ( ! $course->get_id() || ! $post_object || CREATOR_LMS_COURSE_CPT !== $post_object->post_type ) {
+		if ( ! $course->get_id() || ! $post_object || OHMYLMS_COURSE_CPT !== $post_object->post_type ) {
 			return;
 			// throw new \Exception( __( 'Invalid course.', 'ohmylms' ) );
 		}
@@ -179,14 +179,14 @@ class CourseStore extends DataStore {
 			$slug = $course->get_name( 'edit' );
 		}
 
-		$slug = $this->generate_unique_slug( $slug, CREATOR_LMS_COURSE_CPT, $course->get_id() );
+		$slug = $this->generate_unique_slug( $slug, OHMYLMS_COURSE_CPT, $course->get_id() );
 		$post_data = array(
 			'post_content' => $course->get_description( 'edit' ),
 			'post_excerpt' => $course->get_short_description( 'edit' ),
 			'post_title'   => $course->get_name( 'edit' ),
 			'post_status'  => $course->get_status( 'edit' ) ? $course->get_status( 'edit' ) : 'publish',
 			'post_name'    => $slug,
-			'post_type'    => CREATOR_LMS_COURSE_CPT,
+			'post_type'    => OHMYLMS_COURSE_CPT,
 		);
 		if ( $course->get_date_created( 'edit' ) ) {
 			$post_data['post_date_gmt'] = $course->get_post_date() ? gmdate( 'Y-m-d H:i:s', $course->get_post_date( 'edit' )->getTimestamp() ) : gmdate( 'Y-m-d H:i:s', $course->get_date_created( 'edit' )->getTimestamp() );
@@ -216,7 +216,7 @@ class CourseStore extends DataStore {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'creatorlms_update_course', $course->get_id(), $course );
+		do_action( 'ohmylms_update_course', $course->get_id(), $course );
 	}
 
 
@@ -279,7 +279,7 @@ class CourseStore extends DataStore {
 			}
 			$course_price_props = array( '_regular_price', '_sale_price' );
 			if ( in_array( $meta_key, $course_price_props ) ) {
-				$value = omlms_format_decimal( $value );
+				$value = ohmylms_format_decimal( $value );
 				if ( $course->is_on_sale( 'edit' ) ) {
 					update_post_meta( $course->get_id(), '_price', $course->get_sale_price( 'edit' ) );
 					$course->set_price( $course->get_sale_price( 'edit' ) );
@@ -289,7 +289,7 @@ class CourseStore extends DataStore {
 				}
 			}
 			$this->update_or_delete_post_meta( $course, $meta_key, $value );
-			do_action("creatorlms_update_or_delete_course_meta_" . ltrim($meta_key, '_'), $course, ltrim($meta_key, '_'), $value );
+			do_action("ohmylms_update_or_delete_course_meta_" . ltrim($meta_key, '_'), $course, ltrim($meta_key, '_'), $value );
 		}
 	}
 
@@ -317,10 +317,10 @@ class CourseStore extends DataStore {
 			if ( $args['force_delete'] ) {
 				wp_delete_post( $course_id );
 				$course->set_id( 0 );
-				do_action( 'creatorlms_delete_course', $course_id );
+				do_action( 'ohmylms_delete_course', $course_id );
 			} else {
 				wp_trash_post( $course_id );
-				do_action( 'creatorlms_trash_course' , $course_id );
+				do_action( 'ohmylms_trash_course' , $course_id );
 			}
 		}
 	}
@@ -403,7 +403,7 @@ class CourseStore extends DataStore {
 		// Check if raw database results are cached
 		if ( ! isset( self::$raw_chapters_cache[ $course_id ] ) ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'omlms_chapter_relationship';
+			$table_name = $wpdb->prefix . 'ohmylms_chapter_relationship';
 			self::$raw_chapters_cache[ $course_id ] = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE course_id = %d ORDER BY order_number ASC", $course_id ) );
 		}
 		
@@ -412,7 +412,7 @@ class CourseStore extends DataStore {
 
 		if ( $chapters ) {
 			foreach ( $chapters as $chapter ) {
-				$chapter_obj = omlms_get_chapter( $chapter->chapter_id );
+				$chapter_obj = ohmylms_get_chapter( $chapter->chapter_id );
 				if ( 'objects' === $return ) {
 					$filtered_chapters[] = $chapter_obj;
 					continue;
@@ -452,7 +452,7 @@ class CourseStore extends DataStore {
 		}
 		
 		global $wpdb;
-		$table_name       = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name       = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enrollment_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE course_id = %d AND status = %s", $course_id, 'enrolled' ) );
 		
 		// Cache the result
@@ -472,7 +472,7 @@ class CourseStore extends DataStore {
 	 */
 	public function get_total_in_progress_users( $course ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$count      = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE course_id = %d AND progress = %s", $course->get_id(), 'running' ) );
 		return $count;
 	}
@@ -488,7 +488,7 @@ class CourseStore extends DataStore {
 	 */
 	public function get_total_completed_users( $course ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$count      = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE course_id = %d AND progress = %s", $course->get_id(), 'completed' ) );
 		return $count;
 	}
@@ -505,7 +505,7 @@ class CourseStore extends DataStore {
 	 */
 	public function set_chapters( $course, $chapters ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_chapter_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_chapter_relationship';
 		$course_id  = $course->get_id();
 		foreach ( $chapters as $chapter ) {
 			$chapter_id   = $chapter['id'];
@@ -566,8 +566,8 @@ class CourseStore extends DataStore {
 		}
 		
 		global $wpdb;
-		$chapter_relationship_table = $wpdb->prefix . 'omlms_chapter_relationship';
-		$lessons_relationship_table = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_relationship_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
+		$lessons_relationship_table = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		 $sql = "SELECT COUNT(*) FROM $chapter_relationship_table cr
             INNER JOIN $lessons_relationship_table lr ON cr.chapter_id = lr.chapter_id
@@ -600,8 +600,8 @@ class CourseStore extends DataStore {
 		}
 
 		global $wpdb;
-		$chapter_relationship_table = $wpdb->prefix . 'omlms_chapter_relationship';
-		$lessons_relationship_table = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_relationship_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
+		$lessons_relationship_table = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		$sql = "SELECT COUNT(*) FROM $chapter_relationship_table cr
 				INNER JOIN $lessons_relationship_table lr ON cr.chapter_id = lr.chapter_id
@@ -626,8 +626,8 @@ class CourseStore extends DataStore {
 	 */
 	public function get_quiz_ids( $course ) {
 		global $wpdb;
-		$chapter_relationship_table = $wpdb->prefix . 'omlms_chapter_relationship';
-		$lessons_relationship_table = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_relationship_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
+		$lessons_relationship_table = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		$sql = "SELECT p.ID FROM $chapter_relationship_table cr
 				INNER JOIN $lessons_relationship_table lr ON cr.chapter_id = lr.chapter_id
@@ -656,8 +656,8 @@ class CourseStore extends DataStore {
 		}
 
 		global $wpdb;
-		$chapter_relationship_table = $wpdb->prefix . 'omlms_chapter_relationship';
-		$lessons_relationship_table = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_relationship_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
+		$lessons_relationship_table = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		$sql = "SELECT COUNT(*) FROM $chapter_relationship_table cr
 				INNER JOIN $lessons_relationship_table lr ON cr.chapter_id = lr.chapter_id
@@ -679,8 +679,8 @@ class CourseStore extends DataStore {
 		}
 
 		global $wpdb;
-		$chapter_relationship_table = $wpdb->prefix . 'omlms_chapter_relationship';
-		$lessons_relationship_table = $wpdb->prefix . 'omlms_content_relationship';
+		$chapter_relationship_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
+		$lessons_relationship_table = $wpdb->prefix . 'ohmylms_content_relationship';
 
 		$sql = "SELECT COUNT(*) FROM $chapter_relationship_table cr
 				INNER JOIN $lessons_relationship_table lr ON cr.chapter_id = lr.chapter_id
@@ -710,7 +710,7 @@ class CourseStore extends DataStore {
 		global $wpdb;
 
 		// Prepare the query
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$query      = $wpdb->prepare( "SELECT course_id FROM $table_name WHERE user_id = %d AND course_id = %d AND status = %s", $user_id, $course_id, 'enrolled' );
 
 		// Execute the query and return the result
@@ -731,12 +731,12 @@ class CourseStore extends DataStore {
 		$user_id = get_current_user_id();
 
 		// Prepare the query
-		$table_name = $wpdb->prefix . 'omlms_certificate_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_certificate_relationship';
 		$query      = $wpdb->prepare( "SELECT certificate_id FROM $table_name WHERE course_id = %d", $course->get_id() );
 		// Execute the query and return the result
 		$result = $wpdb->get_row( $query, ARRAY_A );
 		if ( ! empty( $result ) ) {
-			$certificate = omlms_get_certificate( $result['certificate_id'] );
+			$certificate = ohmylms_get_certificate( $result['certificate_id'] );
 			return $certificate;
 		}
 	}
@@ -749,7 +749,7 @@ class CourseStore extends DataStore {
 		$course_id = $course->get_id();
 
 		// Prepare the table name
-		$table_name = $wpdb->prefix . 'omlms_certificate_relationship';
+		$table_name = $wpdb->prefix . 'ohmylms_certificate_relationship';
 
 		// Check if a relationship already exists for the course
 		$existing_entry = $wpdb->get_row(
@@ -799,8 +799,8 @@ class CourseStore extends DataStore {
 		global $wpdb;
 
 		// Table names
-		$content_table = $wpdb->prefix . 'omlms_content_relationship';
-		$chapter_table = $wpdb->prefix . 'omlms_chapter_relationship';
+		$content_table = $wpdb->prefix . 'ohmylms_content_relationship';
+		$chapter_table = $wpdb->prefix . 'ohmylms_chapter_relationship';
 
 		// Get the course ID
 		$course_id = $course->get_id();
@@ -818,7 +818,7 @@ class CourseStore extends DataStore {
 		if ( ! empty( $term ) ) {
 			$sql    .= " AND content.content_id IN (
 				SELECT ID FROM {$wpdb->posts}
-				WHERE post_type = 'omlms-lesson' AND post_title LIKE %s
+				WHERE post_type = 'ohmylms-lesson' AND post_title LIKE %s
 			)";
 			$search  = '%' . $wpdb->esc_like( $term ) . '%';
 			$lessons = $wpdb->get_results( $wpdb->prepare( $sql . ' ORDER BY content.order_number ASC', $course_id, $search ) );
@@ -834,7 +834,7 @@ class CourseStore extends DataStore {
 				if ( ! $post || $post->post_status !== 'publish' ) {
 					continue;
 				}
-				$lesson_obj         = omlms_get_lesson( $lesson->content_id );
+				$lesson_obj         = ohmylms_get_lesson( $lesson->content_id );
 				if( ! $lesson_obj ) {
 					continue;
 				}
@@ -852,7 +852,7 @@ class CourseStore extends DataStore {
 
 	public function get_students_count( &$course ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'omlms_user_enrollment';
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 
 		$query = $wpdb->prepare(
 			"SELECT COUNT(*) FROM $table_name WHERE course_id = %d AND status = %s",
@@ -917,7 +917,7 @@ class CourseStore extends DataStore {
 				ue.end_date,
 				ue.progress,
 				ue.status
-			FROM {$wpdb->prefix}omlms_user_enrollment ue
+			FROM {$wpdb->prefix}ohmylms_user_enrollment ue
 			WHERE ue.course_id = %d AND ue.status = %s" . $where_date_filter,
 			$course->get_id(),
 			'enrolled'
@@ -942,7 +942,7 @@ class CourseStore extends DataStore {
 				// Fetch profile image (uses Gravatar or a custom user meta field if available)
 				$student['profile_image'] = get_avatar_url( $student['student_id'], array( 'size' => 96 ) );
 
-				$student_obj     = new \OMLMS\Data\Student( $student['student_id'] );
+				$student_obj     = new \OhMyLMS\Data\Student( $student['student_id'] );
 				$completion_rate = $student_obj->get_over_all_completion_rate( $course->get_id() );
 
 				// Calculate duration only if the course is completed
@@ -959,7 +959,7 @@ class CourseStore extends DataStore {
 
 				$contents = array();
 				foreach ( $chapters as $chapter ) {
-					$chapter  = omlms_get_chapter( $chapter['id'] );
+					$chapter  = ohmylms_get_chapter( $chapter['id'] );
 					$lessons  = $chapter->get_lessons();
 					$contents = array_merge( $contents, $lessons );
 					// array_push( $contents, $lessons[0] )
@@ -1106,7 +1106,7 @@ class CourseStore extends DataStore {
 			return array(); // Return empty array if the course is not cohort-based
 		}
 		global $wpdb;
-		$table = $wpdb->prefix . 'omlms_cohorts';
+		$table = $wpdb->prefix . 'ohmylms_cohorts';
 		$course_id = is_object($course) && method_exists($course, 'get_id') ? $course->get_id() : (int)$course;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
@@ -1141,13 +1141,13 @@ class CourseStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function get_space_url( &$course ) {
-		if( class_exists('\OMLMS\Integrations\Community\Includes\Repository\SpaceRepository') ) {
-            $space_repository = new \OMLMS\Integrations\Community\Includes\Repository\SpaceRepository();
+		if( class_exists('\OhMyLMS\Integrations\Community\Includes\Repository\SpaceRepository') ) {
+            $space_repository = new \OhMyLMS\Integrations\Community\Includes\Repository\SpaceRepository();
 			$space_id = $space_repository->get_space_id_by_course_id( $course->get_id() );
 			if ( $space_id ) {
 				$space = $space_repository->get_by_id( $space_id );
 				if ( $space && isset( $space->slug ) ) {
-					return \OMLMS\Integrations\Community\Includes\Helper\CommunityHelper::get_default_channel_url( $space->slug, $space->id );
+					return \OhMyLMS\Integrations\Community\Includes\Helper\CommunityHelper::get_default_channel_url( $space->slug, $space->id );
 				}
 			}
 		}

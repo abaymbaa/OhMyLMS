@@ -1,6 +1,5 @@
 import { createElement, Fragment } from '@wordpress/element';
 import { validateMembership } from './validateMembership.mjs';
-
 export function createMembershipEditor(readRuntime) {
   return function MembershipEditor({ isOpen, setIsOpen, isFetch, setIsFetch, isLoading }) {
     const {
@@ -14,7 +13,6 @@ export function createMembershipEditor(readRuntime) {
       g: ReactHooks,
       y: WordPressData,
     } = readRuntime();
-    const isPro = Entitlements.useIsPro();
     const plan = WordPressData.useSelect(
       (select) => select(StoreModule.default).selectMembershipPlanData(),
       [],
@@ -41,10 +39,6 @@ export function createMembershipEditor(readRuntime) {
       if (saving || !validate(plan)) return;
       if (step === '1') {
         setStep('2');
-        return;
-      }
-      if (!isPro) {
-        setShowUpgrade(true);
         return;
       }
       setSaving(true);
@@ -100,11 +94,14 @@ export function createMembershipEditor(readRuntime) {
         {isOpen && (
           <Controls.ModalWP
             title={I18n.__('Add Plan', 'ohmylms')}
-            style={{ width: '830px', background: '#F5F5F5' }}
+            style={{
+              width: '830px',
+              background: '#F5F5F5',
+            }}
             onRequestClose={close}
             shouldCloseOnEsc
             shouldCloseOnClickOutside
-            className="omlms-full-height-modal"
+            className="ohmylms-full-height-modal"
             size="fill"
           >
             {isLoading ? (
@@ -116,7 +113,7 @@ export function createMembershipEditor(readRuntime) {
                   items={items}
                   activekey={step}
                   onChange={setStep}
-                  className="omlms-tab-has-custom-navigation"
+                  className="ohmylms-tab-has-custom-navigation"
                 />
                 <Controls.DividerWP marginStart={4} />
                 <Controls.SpacerWP marginTop={4}>
@@ -124,7 +121,7 @@ export function createMembershipEditor(readRuntime) {
                     <Controls.ButtonWP
                       variant="secondary"
                       onClick={close}
-                      className="omlms-membership-plan-cancel-button"
+                      className="ohmylms-membership-plan-cancel-button"
                     >
                       {I18n.__('Cancel', 'ohmylms')}
                     </Controls.ButtonWP>
@@ -133,7 +130,7 @@ export function createMembershipEditor(readRuntime) {
                       onClick={nextOrSave}
                       disabled={saving || Object.keys(errors).length > 0}
                       isBusy={saving}
-                      className="omlms-membership-plan-save-button"
+                      className="ohmylms-membership-plan-save-button"
                     >
                       {I18n.__(step === '1' ? 'Next' : 'Save', 'ohmylms')}
                     </Controls.ButtonWP>

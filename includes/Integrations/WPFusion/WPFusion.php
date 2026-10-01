@@ -2,20 +2,20 @@
 /**
  * WP Fusion Integration
  * 
- * Integrates CreatorLMS with WP Fusion to enable automated tag management,
- * contact field updates, and more based on CreatorLMS events.
+ * Integrates OhMyLMS with WP Fusion to enable automated tag management,
+ * contact field updates, and more based on OhMyLMS events.
  * 
- * @package OMLMS\Integrations\WPFusion
+ * @package OhMyLMS\Integrations\WPFusion
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion;
+namespace OhMyLMS\Integrations\WPFusion;
 
 if (!defined('ABSPATH')) exit;
 
-use OMLMS\Integrations\WPFusion\Includes\Hooks;
-use OMLMS\Integrations\WPFusion\Includes\WPFusionMigration;
-use OMLMS\Integrations\WPFusion\Includes\TriggerHandler;
+use OhMyLMS\Integrations\WPFusion\Includes\Hooks;
+use OhMyLMS\Integrations\WPFusion\Includes\WPFusionMigration;
+use OhMyLMS\Integrations\WPFusion\Includes\TriggerHandler;
 
 class WPFusion {
 
@@ -35,9 +35,9 @@ class WPFusion {
      * @since 1.0.0
      */
     public function define_constants() {
-        define( 'CREATORLMS_WPFUSION_VERSION', self::Version );
-        define( 'CREATORLMS_WPFUSION_DIR', dirname(__FILE__) );
-        define( 'CREATORLMS_WPFUSION_URL', plugins_url( '', __FILE__ ) );
+        define( 'OHMYLMS_WPFUSION_VERSION', self::Version );
+        define( 'OHMYLMS_WPFUSION_DIR', dirname(__FILE__) );
+        define( 'OHMYLMS_WPFUSION_URL', plugins_url( '', __FILE__ ) );
     }
 
     /**
@@ -49,12 +49,12 @@ class WPFusion {
         // Register REST API routes
         add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\WPFusion\Includes\Rest\WPFusionAuthController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\WPFusion\Includes\Rest\WPFusionAuthController::instance(), 'register_routes' )
         );
         
         add_action(
             'rest_api_init',
-            array( \OMLMS\Integrations\WPFusion\Includes\Rest\WPFusionTriggersController::instance(), 'register_routes' )
+            array( \OhMyLMS\Integrations\WPFusion\Includes\Rest\WPFusionTriggersController::instance(), 'register_routes' )
         );
 
         // Initialize hooks and migration
@@ -74,7 +74,7 @@ class WPFusion {
      * @since 1.0.0
      */
     public function is_enabled() {
-        $integrations = get_option( 'creatorlms_integrations', array() );
+        $integrations = get_option( 'ohmylms_integrations', array() );
         return isset( $integrations[ $this->integration_key ]['is_enable'] ) && 
                $integrations[ $this->integration_key ]['is_enable'] == 1;
     }

@@ -1,5 +1,5 @@
-.creator-lms-page {
-    .creator-lms-carousel-skeleton {
+.ohmylms-page {
+    .ohmylms-carousel-skeleton {
         display: grid;
         grid-template-columns: repeat(var(--per-row), 1fr);
         gap: 20px;
@@ -12,7 +12,7 @@
         height: 100%;
     }
 
-    .creator-lms-skeleton-card {
+    .ohmylms-skeleton-card {
         width: 100%;
         border-radius: 8px;
         background-color: #fff;
@@ -104,10 +104,10 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-carousel-skeleton {
+    .ohmylms-page .ohmylms-carousel-skeleton {
         grid-template-columns: repeat(3, 1fr);
     }
-    .creator-lms-page .creator-lms-carousel-skeleton .creator-lms-skeleton-card {
+    .ohmylms-page .ohmylms-carousel-skeleton .ohmylms-skeleton-card {
         display: none;
 
         &:nth-child(1),
@@ -119,11 +119,11 @@
 }
 
 @media screen and (max-width: 767px) {
-    .creator-lms-page .creator-lms-carousel-skeleton {
+    .ohmylms-page .ohmylms-carousel-skeleton {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .creator-lms-page .creator-lms-carousel-skeleton .creator-lms-skeleton-card {
+    .ohmylms-page .ohmylms-carousel-skeleton .ohmylms-skeleton-card {
         
         &:nth-child(1),
         &:nth-child(2){
@@ -131,17 +131,17 @@
         }
     }
 
-    .creator-lms-page .creator-lms-carousel-skeleton .creator-lms-skeleton-card:nth-child(3){
+    .ohmylms-page .ohmylms-carousel-skeleton .ohmylms-skeleton-card:nth-child(3){
         display: none;
     }
 }
 
 @media screen and (max-width: 574px) {
-    .creator-lms-page .creator-lms-carousel-skeleton {
+    .ohmylms-page .ohmylms-carousel-skeleton {
         grid-template-columns: repeat(1, 1fr);
     }
 
-    .creator-lms-page .creator-lms-carousel-skeleton .creator-lms-skeleton-card {
+    .ohmylms-page .ohmylms-carousel-skeleton .ohmylms-skeleton-card {
         &:nth-child(2),
         &:nth-child(3),
         &:nth-child(4){
@@ -149,7 +149,7 @@
         }
     }
 
-    .creator-lms-page .creator-lms-carousel-skeleton .creator-lms-skeleton-card:nth-child(1){
+    .ohmylms-page .ohmylms-carousel-skeleton .ohmylms-skeleton-card:nth-child(1){
         display: block;
     }
 }

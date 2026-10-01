@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Admin\Pages;
+namespace OhMyLMS\Admin\Pages;
 
-use OMLMS\Abstracts\SettingsPage;
+use OhMyLMS\Abstracts\SettingsPage;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,6 +34,6 @@ class PermalinkSettings extends SettingsPage {
 				'id'   => 'permalink_settings',
 			),
 		);
-		return apply_filters( 'creator_lms_permalink_settings', $settings );
+		return apply_filters( 'ohmylms_permalink_settings', $settings );
 	}
 }

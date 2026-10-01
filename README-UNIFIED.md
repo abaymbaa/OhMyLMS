@@ -1,14 +1,10 @@
 # OhMyLMS unified plugin
 
-This build combines CreatorLMS 1.2.19 and former Pro functionality in the `OMLMS` namespace. `ohmylms()` is the single runtime instance. Original CreatorLMS and Pro must be inactive; the bootstrap refuses simultaneous initialization. Classes remains a separate plugin.
+OhMyLMS is an LMS for WordPress, derived from CreatorLMS 1.2.19 and its Pro add-on, which were merged into one codebase in the `OhMyLMS` namespace. `ohmylms()` is the single runtime instance. The original CreatorLMS and Pro plugins must be inactive; the bootstrap refuses to load alongside them.
 
-## Storage and recovery
+## Naming and storage
 
-The plugin now uses `omlms_*` tables and `omlms-*` post types, along with renamed functions, hooks, metadata, options, CSS selectors, JavaScript globals and templates. Existing installations need the prefix migration before using this version. Run `php tests/prefix-migration.php` from a configured WordPress CLI environment to preview, and add `--apply` to migrate after taking a database backup. The script preserves serialized string lengths and rejects table-name collisions. It is CLI-only and a second run makes no changes. Put the site in maintenance mode during migration.
-
-The local math site was migrated with code and database backups on 2026-09-23. The QPay and custom-question add-ons were updated with the same prefix. For rollback, restore both the matching code backup and database backup together; old code cannot read the renamed storage. After migration, flush object caches and rewrite rules. Third-party themes and integrations using the previous prefix must update their references.
-
-`OMLMS()`, `OMLMS_PRO()`, legacy class namespaces, `/creator-lms/v1` routes and theme `creator-lms` template paths remain compatible. New REST aliases use `/ohmylms/v1`. Admin URLs intentionally retain `page=creator-lms` for the existing application.
+Everything uses the `ohmylms` prefix: tables (`wp_ohmylms_*`), post types (`ohmylms-*`), options and meta (`ohmylms_*`), functions, hooks, constants (`OHMYLMS_*`), CSS classes (`ohmylms-*`), blocks (`ohmylms/*`), the REST namespace (`/ohmylms/v1`), the admin page (`admin.php?page=ohmylms`), shortcodes, the text domain and theme template overrides (`<theme>/ohmylms/`). No compatibility aliases for the former CreatorLMS names are shipped.
 
 ## Extensions
 
@@ -36,7 +32,7 @@ Hooks receive one associative-array argument, after persisted changes where appl
 | `ohmylms_lesson_completed` | `lesson_id`, `course_id`, `student_id` |
 | `ohmylms_course_completed` | `course_id`, `student_id`, `order_id` |
 
-Normal and timeout submissions use `OMLMS\Quiz\Submission`. It checks enrollment/edit permission, attempt ownership, quiz membership, required answers, deadlines and registered validators; it serializes concurrent submissions and writes answers and the attempt in one transaction. Pending manual review does not complete the quiz.
+Normal and timeout submissions use `OhMyLMSQuizSubmission`. It checks enrollment/edit permission, attempt ownership, quiz membership, required answers, deadlines and registered validators; it serializes concurrent submissions and writes answers and the attempt in one transaction. Pending manual review does not complete the quiz.
 
 ## Dependencies and services
 
@@ -47,3 +43,6 @@ Composer lock/autoload files are bundled. Action Scheduler and Dompdf remain ava
 Workspace scripts in `.ohmylms-work` use disposable WordPress/MySQL databases for fresh installation, repeated upgrades and existing-record preservation. `integration-test.php` exercises nine built-in question types plus an extension type, ownership failures, timer grading, three built-in quiz displays, layout precedence/fallback, shortcode/block activities, REST aliases, merged models and PDF output. `preservation-test.php` compares 253 pre-existing records across nine content/progress tables. `audit.py` checks PHP syntax, duplicate declarations and filename case. `tests/unit.php` covers registry and grading edge cases.
 
 Browser acceptance and broader membership, assignment, cohort, certificate and Classes workflows must also be checked; class resolution alone is not evidence that these workflows pass. See the workspace verification notes for current results and outstanding work.
+
+## Naming (ohmylms)
+

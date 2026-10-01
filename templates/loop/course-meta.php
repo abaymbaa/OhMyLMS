@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Loop Course Meta
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/course-meta.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/course-meta.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -16,7 +16,7 @@ global $course;
 if( !$course ){
     return;
 }
-$layout_style = get_option('creator_lms_archive_page_layout_style','grid-style1');
+$layout_style = get_option('ohmylms_archive_page_layout_style','grid-style1');
 $level = $course->get_level();
 
 ?>
@@ -43,15 +43,15 @@ $level = $course->get_level();
             <span class="icon-text-align">
                 <?php
                     if ( 'beginner' === $level ) {
-                        include(CREATOR_LMS_DIR . '/assets/images/icon/level-beginner-icon.php');
+                        include(OHMYLMS_DIR . '/assets/images/icon/level-beginner-icon.php');
                         echo __( ' Beginner', 'ohmylms' );
 
                     } elseif ( 'experience' === $level ) {
-                        include(CREATOR_LMS_DIR . '/assets/images/icon/level-experience-icon.php');
+                        include(OHMYLMS_DIR . '/assets/images/icon/level-experience-icon.php');
                         echo __( ' Experience', 'ohmylms' );
 
                     } elseif ( 'expert' === $level ) {
-                        include(CREATOR_LMS_DIR . '/assets/images/icon/level-expert-icon.php');
+                        include(OHMYLMS_DIR . '/assets/images/icon/level-expert-icon.php');
                         echo __( 'Expert', 'ohmylms' );
                     }
                 ?>
@@ -68,7 +68,7 @@ $level = $course->get_level();
         ?>
         <li class="course-rating">
             <span class="icon-text-align">
-                <?php include(CREATOR_LMS_DIR . '/assets/images/icon/star-color-icon.php'); ?>
+                <?php include(OHMYLMS_DIR . '/assets/images/icon/star-color-icon.php'); ?>
                 <span class="rating">
                     <span class="average-rating"><?php echo $average; ?></span>
                     <?php 

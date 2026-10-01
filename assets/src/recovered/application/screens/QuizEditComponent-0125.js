@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var jZ = function () {
-  HG("creator-lms", "quizzes");
+  HG("ohmylms", "quizzes");
   var e = (0, f.g)().id,
     t = (0, y.useDispatch)(T.default).setSelectedQuizId,
     n = function (e, t) {
@@ -47,7 +47,7 @@ var jZ = function () {
   return (0, g.useEffect)(function () {
     t(e);
   }, [e]), React.createElement("div", {
-    className: "omlms-quiz-editor-page"
+    className: "ohmylms-quiz-editor-page"
   }, React.createElement(fp, {
     isSettingsOpen: r,
     setIsSettingsOpen: a

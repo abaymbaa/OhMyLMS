@@ -1,17 +1,17 @@
 <?php
 /**
- * CreatorLMS Dashboard Element for Bricks Builder
+ * OhMyLMS Dashboard Element for Bricks Builder
  *
  * Styling is handled entirely by ShortCodeDashboard output styles,
  * generated via shortcode attrs passed from Bricks controls.
  *
- * @package OMLMS\Bricks\Elements
+ * @package OhMyLMS\Bricks\Elements
  * @since 1.0.0
  */
 
-namespace OMLMS\Bricks\Elements;
+namespace OhMyLMS\Bricks\Elements;
 
-use OMLMS\Shortcodes\ShortCodeDashboard;
+use OhMyLMS\Shortcodes\ShortCodeDashboard;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -20,15 +20,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class DashboardElement extends \Bricks\Element {
 
-	public $category = 'creator-lms';
-	public $name     = 'creator-lms-dashboard';
+	public $category = 'ohmylms';
+	public $name     = 'ohmylms-dashboard';
 	public $icon     = 'ti-dashboard';
 	public $keywords = array( 'dashboard', 'student', 'creator', 'lms' );
-	public $scripts  = array( 'omlms-frontend' );
-	public $styles   = array( 'omlms-frontend' );
+	public $scripts  = array( 'ohmylms-frontend' );
+	public $styles   = array( 'ohmylms-frontend' );
 
 	public function get_label() {
-		return esc_html__( 'CreatorLMS Dashboard', 'ohmylms' );
+		return esc_html__( 'OhMyLMS Dashboard', 'ohmylms' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -409,11 +409,11 @@ class DashboardElement extends \Bricks\Element {
 		$shortcode_attrs = $this->build_shortcode_attrs( $settings );
 
 		if ( $is_edit_mode ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
-			add_filter( 'creator_lms_bricks_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 		}
 
-		echo '<div class="creator-lms-page creator-lms">';
+		echo '<div class="ohmylms-page ohmylms">';
 
 		try {
 			ob_start();
@@ -423,8 +423,8 @@ class DashboardElement extends \Bricks\Element {
 			if ( '' !== $output ) {
 				echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} elseif ( $is_edit_mode ) {
-				echo '<div class="creator-lms-bricks-preview-notice">';
-				echo '<p>' . esc_html__( 'CreatorLMS Dashboard — preview requires a logged-in student account.', 'ohmylms' ) . '</p>';
+				echo '<div class="ohmylms-bricks-preview-notice">';
+				echo '<p>' . esc_html__( 'OhMyLMS Dashboard — preview requires a logged-in student account.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
 		} catch ( \Throwable $e ) {
@@ -432,14 +432,14 @@ class DashboardElement extends \Bricks\Element {
 				ob_end_clean();
 			}
 			if ( $is_edit_mode ) {
-				echo '<div class="creator-lms-bricks-preview-notice">';
-				echo '<p>' . esc_html__( 'CreatorLMS Dashboard — render error.', 'ohmylms' ) . '</p>';
+				echo '<div class="ohmylms-bricks-preview-notice">';
+				echo '<p>' . esc_html__( 'OhMyLMS Dashboard — render error.', 'ohmylms' ) . '</p>';
 				echo '</div>';
 			}
 		} finally {
 			if ( $is_edit_mode ) {
-				remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
-				remove_filter( 'creator_lms_bricks_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
+				remove_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 			}
 		}
 

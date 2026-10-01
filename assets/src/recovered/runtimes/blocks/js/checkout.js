@@ -519,12 +519,12 @@
       default: ''
     }
   };
-  registerBlockType('creator-lms/checkout', {
+  registerBlockType('ohmylms/checkout', {
     title: __('OhMyLMS Checkout', 'ohmylms'),
     description: __('Display the OhMyLMS checkout form with customizable styling options.', 'ohmylms'),
     icon: 'cart',
-    category: 'creator-lms',
-    keywords: [__('checkout', 'ohmylms'), __('cart', 'ohmylms'), __('purchase', 'ohmylms'), __('creator-lms', 'ohmylms'), __('ohmylms', 'ohmylms')],
+    category: 'ohmylms',
+    keywords: [__('checkout', 'ohmylms'), __('cart', 'ohmylms'), __('purchase', 'ohmylms'), __('ohmylms', 'ohmylms'), __('ohmylms', 'ohmylms')],
     supports: {
       align: true,
       html: false
@@ -536,17 +536,17 @@
 
       // Apply checkout block styles immediately when editor loads
       wp.element.useEffect(function () {
-        var styleId = document.getElementById('creator-lms-checkout-block-style');
+        var styleId = document.getElementById('ohmylms-checkout-block-style');
         if (!styleId) {
           styleId = document.createElement('style');
-          styleId.id = 'creator-lms-checkout-block-style';
+          styleId.id = 'ohmylms-checkout-block-style';
           styleId.innerHTML = `
-						.creator-lms-page.creator-lms-checkout .creator-lms-input-label {
+						.ohmylms-page.ohmylms-checkout .ohmylms-input-label {
 							top: calc(50% - 10px) !important;
 							color: #7A8B9A !important;
 							font-size: 12px !important;
 						}
-						.creator-lms-page.creator-lms-checkout .creator-lms-folded .creator-lms-input-label {
+						.ohmylms-page.ohmylms-checkout .ohmylms-folded .ohmylms-input-label {
 							top: calc(50% - 10px) !important;
 							color: #7A8B9A !important;
 							font-size: 12px !important;
@@ -677,16 +677,16 @@
       var inspectorControls = createElement(InspectorControls, {}, createElement('Style', {
         dangerouslySetInnerHTML: {
           __html: `
-							.omlms-color-palate-wrapper {
+							.ohmylms-color-palate-wrapper {
 								padding: 0 !important;
 								border: none !important;
 								margin-bottom: 10px;
 							}
-							.omlms-color-palate-wrapper .components-tools-panel-item {
+							.ohmylms-color-palate-wrapper .components-tools-panel-item {
 								margin-top: 0 !important;
 							}
 
-							.creator-lms-page.creator-lms-checkout .creator-lms-input-label {
+							.ohmylms-page.ohmylms-checkout .ohmylms-input-label {
 								top: calc(50% - 10px) !important;
 								color: #7A8B9A !important;
 								font-size: 12px !important;
@@ -723,7 +723,7 @@
           },
           label: __('Label Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Font Size', 'ohmylms'),
         value: validatedAttributes?.titleFontSize || attributesData?.titleFontSize?.default || '',
@@ -816,7 +816,7 @@
           },
           label: __('Input Background Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Input Label Font Size', 'ohmylms'),
         value: validatedAttributes.inputLabelFontSize || attributesData?.inputLabelFontSize?.default || '',
@@ -923,7 +923,7 @@
           }),
           label: __('Button Hover Border Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }),
       // Font Size
       createElement(TextControl, {
@@ -1043,7 +1043,7 @@
           }),
           label: __('Background Color', 'ohmylms')
         }],
-        className: 'omlms-color-palate-wrapper'
+        className: 'ohmylms-color-palate-wrapper'
       }),
       // Padding controls
       createElement(TextControl, {
@@ -1115,7 +1115,7 @@
           }),
           label: __('Background Color', 'ohmylms')
         }],
-        className: 'omlms-color-palate-wrapper'
+        className: 'ohmylms-color-palate-wrapper'
       }),
       // Padding
       createElement(TextControl, {
@@ -1252,7 +1252,7 @@
           }),
           label: __('Privacy Text Color', 'ohmylms')
         }],
-        className: "omlms-color-palate-wrapper"
+        className: "ohmylms-color-palate-wrapper"
       }), createElement(TextControl, {
         label: __('Font Size', 'ohmylms'),
         value: validatedAttributes.privacyTextFontSize || attributesData?.privacyTextFontSize?.default || '',
@@ -1299,17 +1299,17 @@
 
       // Use ServerSideRender to show the real checkout form in editor
       var serverSideRender = createElement(ServerSideRender, {
-        block: 'creator-lms/checkout',
+        block: 'ohmylms/checkout',
         attributes: validatedAttributes,
         httpMethod: 'POST'
       });
       return [inspectorControls,
       // The block's own editor-only <style> override (rendered server-side
-      // in CheckoutBlock::render_block()) is scoped to `.wp-block-creator-lms-checkout`,
+      // in CheckoutBlock::render_block()) is scoped to `.wp-block-ohmylms-checkout`,
       // which WordPress only ever attaches via useBlockProps() - this block doesn't
       // use it, so without this wrapper that CSS never matches anything.
       createElement('div', {
-        className: 'wp-block-creator-lms-checkout'
+        className: 'wp-block-ohmylms-checkout'
       }, serverSideRender)];
     },
     save: function () {

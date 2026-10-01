@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Abstracts\HookHandler;
+use OhMyLMS\Abstracts\HookHandler;
 
 /**
  * Handles hooks related to lessons in the OhMyLMS plugin.
@@ -12,8 +12,8 @@ use OMLMS\Abstracts\HookHandler;
 class QuizHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		add_action( 'creator_lms_rest_insert_quiz', array( $this, 'link_quiz_with_chapter' ), 10, 2 );
-		add_action( 'creator_lms_rest_delete_quiz', array( $this, 'unlink_chapter_from_quiz' ), 10 );
+		add_action( 'ohmylms_rest_insert_quiz', array( $this, 'link_quiz_with_chapter' ), 10, 2 );
+		add_action( 'ohmylms_rest_delete_quiz', array( $this, 'unlink_chapter_from_quiz' ), 10 );
 	}
 
 
@@ -56,7 +56,7 @@ class QuizHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		// Check if the relationship already exists
 		$exists = $wpdb->get_var(
@@ -101,7 +101,7 @@ class QuizHookHandler extends HookHandler {
 		 * @param int $chapter_id The ID of the chapter.
 		 * @param int $quiz_id The ID of the lesson.
 		 */
-		do_action( 'creator_lms_chapter_lesson_relationship_created', $chapter_id, $quiz_id );
+		do_action( 'ohmylms_chapter_lesson_relationship_created', $chapter_id, $quiz_id );
 	}
 
 
@@ -121,7 +121,7 @@ class QuizHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CONTENT_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
 		$wpdb->delete(
 			$table_name,
@@ -134,7 +134,7 @@ class QuizHookHandler extends HookHandler {
 			)
 		);
 
-		$table_name = $wpdb->prefix . 'omlms_user_progress';
+		$table_name = $wpdb->prefix . 'ohmylms_user_progress';
 		$wpdb->delete(
 			$table_name,
 			array(
@@ -147,7 +147,7 @@ class QuizHookHandler extends HookHandler {
 		);
 
 		// Step 3: Get all question IDs linked to the quiz
-		$relationship_table = $wpdb->prefix . 'omlms_quiz_questions_relationship';
+		$relationship_table = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$question_ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT question_id FROM {$relationship_table} WHERE quiz_id = %d",
@@ -157,7 +157,7 @@ class QuizHookHandler extends HookHandler {
 		
 		if ( ! empty( $question_ids ) ) {
 			// Step 4: Get all answer IDs for the above question IDs
-			$answers_table = $wpdb->prefix . 'omlms_question_answers';
+			$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
 			$placeholders = implode( ',', array_fill( 0, count( $question_ids ), '%d' ) );
 			$answer_ids = $wpdb->get_col(
 				$wpdb->prepare(
@@ -168,7 +168,7 @@ class QuizHookHandler extends HookHandler {
 	
 			// Step 5: Delete answer meta
 			if ( ! empty( $answer_ids ) ) {
-				$ans_meta_table = $wpdb->prefix . 'omlms_question_answermeta';
+				$ans_meta_table = $wpdb->prefix . 'ohmylms_question_answermeta';
 				$meta_placeholders = implode( ',', array_fill( 0, count( $answer_ids ), '%d' ) );
 				$wpdb->query(
 					$wpdb->prepare(

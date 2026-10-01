@@ -141,9 +141,9 @@ function d(e, t, n) {
   }) : e[t] = n, e;
 }
 
-l().use(l().createNonceMiddleware(creator_lms_params.nonce)), l().use(l().createRootURLMiddleware("".concat(creator_lms_params.api_url))), l().use(function (e, t) {
+l().use(l().createNonceMiddleware(ohmylms_params.nonce)), l().use(l().createRootURLMiddleware("".concat(ohmylms_params.api_url))), l().use(function (e, t) {
   return e.headers = s(s({}, e.headers), {}, {
-    "X-WP-Nonce": creator_lms_params.nonce
+    "X-WP-Nonce": ohmylms_params.nonce
   }), t(e);
 });
 
@@ -495,7 +495,7 @@ const ne = function (e) {
       var e = window.getSelection();
       if (!e.rangeCount) return !1;
       var t = e.getRangeAt(0).getBoundingClientRect(),
-        n = document.querySelector(".omlms-editor-content");
+        n = document.querySelector(".ohmylms-editor-content");
       if (!n) return !1;
       var r = n.getBoundingClientRect(),
         a = t.bottom;
@@ -508,7 +508,7 @@ const ne = function (e) {
     var e = function (e) {
       var t = document.querySelector("html"),
         n = document.querySelector("[data-tippy-root]"),
-        r = document.querySelector("#omlms-editor-content");
+        r = document.querySelector("#ohmylms-editor-content");
       if (n) {
         var a;
         if (n.contains(e.target) || null != r && r.contains(e.target)) return;
@@ -560,10 +560,10 @@ const ne = function (e) {
     };
   }();
   return h().createElement("div", {
-    className: "omlms-editor-content-wrapper",
+    className: "ohmylms-editor-content-wrapper",
     ref: F
   }, 0 === _.length && h().createElement("div", {
-    className: "omlms-editor-placeholder",
+    className: "ohmylms-editor-placeholder",
     onClick: function () {
       var e;
       null == T || null === (e = T.commands) || void 0 === e || e.focus();
@@ -572,8 +572,8 @@ const ne = function (e) {
     editor: T,
     onSelect: W,
     onScroll: W,
-    id: "omlms-editor-content",
-    className: "omlms-editor-content"
+    id: "ohmylms-editor-content",
+    className: "ohmylms-editor-content"
   }), h().createElement(R.LinkMenu, {
     isShow: x,
     editor: T,
@@ -619,7 +619,7 @@ const ne = function (e) {
     },
     variant: "tertiary",
     size: "small",
-    className: "omlms-editor-add-button"
+    className: "ohmylms-editor-add-button"
   })), "assignment" !== f && h().createElement(G, {
     showImageGenerator: !0,
     showTextGenerator: !0,
@@ -675,7 +675,7 @@ var oe = function (e) {
     c = (e.handleOpenChapter, e.setIsDraggableItem),
     u = e.setIsSaved,
     s = e.handleSaveName,
-    d = (0, y.useDispatch)("creator-lms/store"),
+    d = (0, y.useDispatch)("ohmylms/store"),
     m = function (e, t) {
       return function (e) {
         if (Array.isArray(e)) return e;
@@ -721,7 +721,7 @@ var oe = function (e) {
   return (0, g.useEffect)(function () {
     var e = function () {
       if (v.current) {
-        var e = v.current.closest(".omlms-draggable-single-chapter");
+        var e = v.current.closest(".ohmylms-draggable-single-chapter");
         if (e) {
           var t = v.current.querySelector("[data-tippy-root]");
           e.style.zIndex = t ? "9999" : "998";
@@ -754,7 +754,7 @@ var oe = function (e) {
     name: "chapterName",
     onFocus: function () {
       c(!1);
-      var e = document.getElementById("omlms-chapter-name-".concat(o));
+      var e = document.getElementById("ohmylms-chapter-name-".concat(o));
       if (e) {
         var t = e.value;
         s(o, t);
@@ -765,7 +765,7 @@ var oe = function (e) {
     },
     size: "large",
     maxLength: 100,
-    id: "omlms-chapter-name-".concat(o),
+    id: "ohmylms-chapter-name-".concat(o),
     onClick: function () {
       d.setCourseInfoOpen(!1);
     },

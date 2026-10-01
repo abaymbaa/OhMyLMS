@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Rest;
+namespace OhMyLMS\Rest;
 
-use OMLMS\Admin\Settings\AdminSettings;
-use OMLMS\Admin\Settings\RegisterSettings;
+use OhMyLMS\Admin\Settings\AdminSettings;
+use OhMyLMS\Admin\Settings\RegisterSettings;
 
 /**
  * API Manager class.
@@ -32,29 +32,29 @@ class Api {
 		}
 
 		$controllers_v1  = array(
-			\OMLMS\Rest\V1\PluginController::class,
-			\OMLMS\Rest\V1\CourseController::class,
-			\OMLMS\Rest\V1\SetupWizardController::class,
-			\OMLMS\Rest\V1\StudentController::class,
-			\OMLMS\Rest\V1\UserController::class,
-			\OMLMS\Rest\V1\ChapterController::class,
-			\OMLMS\Rest\V1\LessonController::class,
-			\OMLMS\Rest\V1\QuizController::class,
-			\OMLMS\Rest\V1\QuestionController::class,
-			\OMLMS\Rest\V1\SettingsController::class,
-			\OMLMS\Rest\V1\CategoryController::class,
-			\OMLMS\Rest\V1\TagController::class,
-			\OMLMS\Rest\V1\EmailController::class,
-			\OMLMS\Rest\V1\DashboardController::class,
-			\OMLMS\Rest\V1\AnalyticsController::class,
-			\OMLMS\Rest\V1\CertificateController::class,
-			\OMLMS\Rest\V1\MigrationController::class,
-			\OMLMS\Rest\V1\NotificationController::class,
-			\OMLMS\Rest\V1\IntegrationsController::class,
-			\OMLMS\Rest\V1\AppController::class,
-			\OMLMS\Rest\V1\WebhookController::class,
+			\OhMyLMS\Rest\V1\PluginController::class,
+			\OhMyLMS\Rest\V1\CourseController::class,
+			\OhMyLMS\Rest\V1\SetupWizardController::class,
+			\OhMyLMS\Rest\V1\StudentController::class,
+			\OhMyLMS\Rest\V1\UserController::class,
+			\OhMyLMS\Rest\V1\ChapterController::class,
+			\OhMyLMS\Rest\V1\LessonController::class,
+			\OhMyLMS\Rest\V1\QuizController::class,
+			\OhMyLMS\Rest\V1\QuestionController::class,
+			\OhMyLMS\Rest\V1\SettingsController::class,
+			\OhMyLMS\Rest\V1\CategoryController::class,
+			\OhMyLMS\Rest\V1\TagController::class,
+			\OhMyLMS\Rest\V1\EmailController::class,
+			\OhMyLMS\Rest\V1\DashboardController::class,
+			\OhMyLMS\Rest\V1\AnalyticsController::class,
+			\OhMyLMS\Rest\V1\CertificateController::class,
+			\OhMyLMS\Rest\V1\MigrationController::class,
+			\OhMyLMS\Rest\V1\NotificationController::class,
+			\OhMyLMS\Rest\V1\IntegrationsController::class,
+			\OhMyLMS\Rest\V1\AppController::class,
+			\OhMyLMS\Rest\V1\WebhookController::class,
 		);
-		$controllers_v1  = apply_filters( 'creator_lms_rest_v1_controllers', $controllers_v1 );
+		$controllers_v1  = apply_filters( 'ohmylms_rest_v1_controllers', $controllers_v1 );
 		$controllers_v2  = array();
 		$this->class_map = array_merge( $controllers_v1, $controllers_v2 );
 

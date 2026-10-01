@@ -60,17 +60,17 @@ Use the configured WordPress table prefix. Proposed logical tables:
 
 | Table | Key fields and constraints |
 | --- | --- |
-| omlms_schools | ID, name, slug, timezone, status, created_by; unique slug |
-| omlms_school_memberships | school_id, user_id, role, status, joined_at, ended_at; unique school/user/role |
-| omlms_school_student_profiles | school_id, user_id, external_student_id; unique school/user and school/external ID |
-| omlms_academic_years | ID, school_id, label, starts_at, ends_at, status |
-| omlms_classes | ID, school_id, academic_year_id, name, subject, grade, status |
-| omlms_class_memberships | class_id, user_id, role, status, joined_at, ended_at; unique class/user/role |
-| omlms_guardian_links | guardian_user_id, student_user_id, status, approved_by, approved_at, revoked_at; unique guardian/student |
-| omlms_invitations | token_hash, purpose, school/class/student context, recipient, expires_at, consumed_at, invited_by |
-| omlms_learning_assignments | ID, school_id, class_id, creator_id, existing content type/ID, due_at, status, completion rule |
-| omlms_assignment_recipients | assignment_id, student_user_id, assigned_at, status, completed_at; unique assignment/student |
-| omlms_audit_log | actor_id, school_id, action, object type/ID, timestamp, minimal change metadata |
+| ohmylms_schools | ID, name, slug, timezone, status, created_by; unique slug |
+| ohmylms_school_memberships | school_id, user_id, role, status, joined_at, ended_at; unique school/user/role |
+| ohmylms_school_student_profiles | school_id, user_id, external_student_id; unique school/user and school/external ID |
+| ohmylms_academic_years | ID, school_id, label, starts_at, ends_at, status |
+| ohmylms_classes | ID, school_id, academic_year_id, name, subject, grade, status |
+| ohmylms_class_memberships | class_id, user_id, role, status, joined_at, ended_at; unique class/user/role |
+| ohmylms_guardian_links | guardian_user_id, student_user_id, status, approved_by, approved_at, revoked_at; unique guardian/student |
+| ohmylms_invitations | token_hash, purpose, school/class/student context, recipient, expires_at, consumed_at, invited_by |
+| ohmylms_learning_assignments | ID, school_id, class_id, creator_id, existing content type/ID, due_at, status, completion rule |
+| ohmylms_assignment_recipients | assignment_id, student_user_id, assigned_at, status, completed_at; unique assignment/student |
+| ohmylms_audit_log | actor_id, school_id, action, object type/ID, timestamp, minimal change metadata |
 
 Index membership lookups in both directions, school/status filters, and assignment recipients by student/status. Check parent-school-class consistency in service methods because table references alone do not establish authorization. Store timestamps in UTC and display them in school/user timezone.
 

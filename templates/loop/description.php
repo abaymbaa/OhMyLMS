@@ -2,9 +2,9 @@
 /**
  * OhMyLMS Loop Description
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/loop/description.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/loop/description.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 

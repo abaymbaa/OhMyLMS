@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Admin\Settings;
+namespace OhMyLMS\Admin\Settings;
 
-use OMLMS\Abstracts\Settings;
+use OhMyLMS\Abstracts\Settings;
 
 /**
  * General settings class.
@@ -42,10 +42,10 @@ class Permalink extends Settings {
 	public function get_settings() {
 		$settings = array(
 			array(
-				'id'      => 'creator_lms_permalink',
+				'id'      => 'ohmylms_permalink',
 				'type'    => 'text',
 				'default' => array(
-					'course_base'     => _x( 'omlms-courses', 'slug', 'ohmylms' ),
+					'course_base'     => _x( 'ohmylms-courses', 'slug', 'ohmylms' ),
 					'lesson_base'     => _x( 'course-lessons', 'slug', 'ohmylms' ),
 					'category_base'   => _x( 'course-categories', 'slug', 'ohmylms' ),
 					'tag_base'        => _x( 'course-tags', 'slug', 'ohmylms' ),

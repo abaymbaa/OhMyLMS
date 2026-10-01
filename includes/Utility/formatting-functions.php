@@ -8,7 +8,7 @@
  * @return bool
  * @since 1.0.0
  */
-function omlms_string_to_bool( $string ) {
+function ohmylms_string_to_bool( $string ) {
 	$string = $string ?? '';
 	return is_bool( $string ) ? $string : ( 'yes' === strtolower( $string ) || 1 === $string || 'true' === strtolower( $string ) || '1' === $string );
 }
@@ -21,9 +21,9 @@ function omlms_string_to_bool( $string ) {
  * @return array|string
  * @since 1.0.0
  */
-function omlms_clean( $var ) {
+function ohmylms_clean( $var ) {
 	if ( is_array( $var ) ) {
-		return array_map( 'omlms_clean', $var );
+		return array_map( 'ohmylms_clean', $var );
 	} else {
 		return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
 	}
@@ -39,26 +39,26 @@ function omlms_clean( $var ) {
  * @return string|string[]|null
  * @since 1.0.0
  */
-function omlms_format_decimal( $number, $dp = false, $trim_zeros = false ) {
+function ohmylms_format_decimal( $number, $dp = false, $trim_zeros = false ) {
 	$number = $number ?? '';
 
 	$locale   = localeconv();
-	$decimals = array( omlms_get_price_decimal_separator(), $locale['decimal_point'], $locale['mon_decimal_point'] );
+	$decimals = array( ohmylms_get_price_decimal_separator(), $locale['decimal_point'], $locale['mon_decimal_point'] );
 
 	// Remove locale from string.
 	if ( ! is_float( $number ) ) {
 		$number = str_replace( $decimals, '.', $number );
 
 		// Convert multiple dots to just one.
-		$number = preg_replace( '/\.(?![^.]+$)|[^0-9.-]/', '', omlms_clean( $number ) );
+		$number = preg_replace( '/\.(?![^.]+$)|[^0-9.-]/', '', ohmylms_clean( $number ) );
 	}
 
 	if ( false !== $dp ) {
-		$dp     = intval( '' === $dp ? omlms_get_price_decimals() : $dp );
+		$dp     = intval( '' === $dp ? ohmylms_get_price_decimals() : $dp );
 		$number = number_format( floatval( $number ), $dp, '.', '' );
 	} elseif ( is_float( $number ) ) {
 		// DP is false - don't use number format, just return a string using whatever is given. Remove scientific notation using sprintf.
-		$number = str_replace( $decimals, '.', sprintf( '%.' . omlms_get_rounding_precision() . 'f', $number ) );
+		$number = str_replace( $decimals, '.', sprintf( '%.' . ohmylms_get_rounding_precision() . 'f', $number ) );
 		// We already had a float, so trailing zeros are not needed.
 		$trim_zeros = true;
 	}
@@ -77,8 +77,8 @@ function omlms_format_decimal( $number, $dp = false, $trim_zeros = false ) {
  * @return mixed|null
  * @since 1.0.0
  */
-function omlms_get_price_format() {
-	$currency_pos = get_option( 'creator_lms_currency_pos' );
+function ohmylms_get_price_format() {
+	$currency_pos = get_option( 'ohmylms_currency_pos' );
 	$format       = '%1$s%2$s';
 
 	switch ( $currency_pos ) {
@@ -96,7 +96,7 @@ function omlms_get_price_format() {
 			break;
 	}
 
-	return apply_filters( 'creator_lms_price_format', $format, $currency_pos );
+	return apply_filters( 'ohmylms_price_format', $format, $currency_pos );
 }
 
 
@@ -106,8 +106,8 @@ function omlms_get_price_format() {
  * @return string
  * @since 1.0.0
  */
-function omlms_get_price_thousand_separator() {
-	return stripslashes( apply_filters( 'creator_lms_get_price_thousand_separator', get_option( 'creator_lms_price_thousand_sep' ) ) );
+function ohmylms_get_price_thousand_separator() {
+	return stripslashes( apply_filters( 'ohmylms_get_price_thousand_separator', get_option( 'ohmylms_price_thousand_sep' ) ) );
 }
 
 
@@ -117,8 +117,8 @@ function omlms_get_price_thousand_separator() {
  * @return string
  * @since 1.0.0
  */
-function omlms_get_price_decimal_separator() {
-	$separator = apply_filters( 'creator_lms_get_price_decimal_separator', get_option( 'creator_lms_price_decimal_sep', '.' ) );
+function ohmylms_get_price_decimal_separator() {
+	$separator = apply_filters( 'ohmylms_get_price_decimal_separator', get_option( 'ohmylms_price_decimal_sep', '.' ) );
 	return $separator ? stripslashes( $separator ) : '.';
 }
 
@@ -129,8 +129,8 @@ function omlms_get_price_decimal_separator() {
  * @return int
  * @since 1.0.0
  */
-function omlms_get_price_decimals() {
-	return absint( apply_filters( 'creator_lms_get_price_decimals', get_option( 'creator_lms_price_num_decimals', 2 ) ) );
+function ohmylms_get_price_decimals() {
+	return absint( apply_filters( 'ohmylms_get_price_decimals', get_option( 'ohmylms_price_num_decimals', 2 ) ) );
 }
 
 
@@ -141,8 +141,8 @@ function omlms_get_price_decimals() {
  * @return mixed|void
  * @since 1.0.0
  */
-function omlms_format_localized_price( $value ) {
-	return apply_filters( 'creator_lms_format_localized_price', str_replace( '.', omlms_get_price_decimal_separator(), strval( $value ) ), $value );
+function ohmylms_format_localized_price( $value ) {
+	return apply_filters( 'ohmylms_format_localized_price', str_replace( '.', ohmylms_get_price_decimal_separator(), strval( $value ) ), $value );
 }
 
 
@@ -153,16 +153,16 @@ function omlms_format_localized_price( $value ) {
  * @return mixed|null
  * @since 1.0.0
  */
-function omlms_get_currency_symbol( $currency = '' ) {
+function ohmylms_get_currency_symbol( $currency = '' ) {
 	if ( ! $currency ) {
-		$currency = get_omlms_currency();
+		$currency = get_ohmylms_currency();
 	}
 
-	$symbols = get_omlms_currency_symbols();
+	$symbols = get_ohmylms_currency_symbols();
 
 	$currency_symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : '';
 
-	return apply_filters( 'creator_lms_currency_symbol', $currency_symbol, $currency );
+	return apply_filters( 'ohmylms_currency_symbol', $currency_symbol, $currency );
 }
 
 
@@ -174,15 +174,15 @@ function omlms_get_currency_symbol( $currency = '' ) {
  * @return string
  * @since 1.0.0
  */
-function omlms_price( $price, $args = array() ) {
+function ohmylms_price( $price, $args = array() ) {
 	$args = wp_parse_args(
 		$args,
 		array(
 			'currency'           => '',
-			'decimal_separator'  => omlms_get_price_decimal_separator(),
-			'thousand_separator' => omlms_get_price_thousand_separator(),
-			'decimals'           => omlms_get_price_decimals(),
-			'price_format'       => omlms_get_price_format(),
+			'decimal_separator'  => ohmylms_get_price_decimal_separator(),
+			'thousand_separator' => ohmylms_get_price_thousand_separator(),
+			'decimals'           => ohmylms_get_price_decimals(),
+			'price_format'       => ohmylms_get_price_format(),
 		)
 	);
 
@@ -190,9 +190,9 @@ function omlms_price( $price, $args = array() ) {
 	$negative = $price < 0;
 	$price    = number_format( $price, $args['decimals'], $args['decimal_separator'], $args['thousand_separator'] );
 
-	$formatted_price = ( $negative ? '-' : '' ) . sprintf( $args['price_format'], '<span class="omlms-price-currency-symbol">' . get_omlms_currency_symbol( $args['currency'] ) . '</span>', $price );
+	$formatted_price = ( $negative ? '-' : '' ) . sprintf( $args['price_format'], '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( $args['currency'] ) . '</span>', $price );
 
-	return '<span class="omlms-price-amount amount"><bdi>' . $formatted_price . '</bdi></span>';
+	return '<span class="ohmylms-price-amount amount"><bdi>' . $formatted_price . '</bdi></span>';
 }
 
 
@@ -203,7 +203,7 @@ function omlms_price( $price, $args = array() ) {
  * @return string
  * @since 1.0.0
  */
-function omlms_implode_html_attributes( $attributes ) {
+function ohmylms_implode_html_attributes( $attributes ) {
 	$_attributes = array();
 	foreach ( $attributes as $name => $value ) {
 		$_attributes[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
@@ -224,7 +224,7 @@ function omlms_implode_html_attributes( $attributes ) {
  *
  * @since 1.0.0
  */
-function omlms_string_to_timestamp( $time_string, $from_timestamp = null ) {
+function ohmylms_string_to_timestamp( $time_string, $from_timestamp = null ) {
 	$time_string = $time_string ?? '';
 
 	$original_timezone = date_default_timezone_get();
@@ -251,7 +251,7 @@ function omlms_string_to_timestamp( $time_string, $from_timestamp = null ) {
  * @see wc_timezone_offset()
  * @since 1.0.0
  */
-function omlms_timezone_offset() {
+function ohmylms_timezone_offset() {
 	$timezone = get_option( 'timezone_string' );
 
 	if ( $timezone ) {
@@ -269,7 +269,7 @@ function omlms_timezone_offset() {
  * @return string The timezone string.
  * @since 1.0.0
  */
-function omlms_timezone_string() {
+function ohmylms_timezone_string() {
 	// Added in WordPress 5.3 Ref https://developer.wordpress.org/reference/functions/wp_timezone_string/.
 	if ( function_exists( 'wp_timezone_string' ) ) {
 		return wp_timezone_string();
@@ -318,7 +318,7 @@ function omlms_timezone_string() {
  * @return string
  * @since 1.0.0
  */
-function omlms_format_datetime( $date, $format = '' ) {
+function ohmylms_format_datetime( $date, $format = '' ) {
 	if ( ! $format ) {
 		$date_format = get_option( 'date_format' );
 		if ( empty( $date_format ) ) {
@@ -340,7 +340,7 @@ function omlms_format_datetime( $date, $format = '' ) {
  * @throws Exception
  * @since 1.0.0
  */
-function creatorlms_convert_to_utc($localDateTimeString, $localTimezone = 'Asia/Dhaka') {
+function ohmylms_convert_to_utc($localDateTimeString, $localTimezone = 'Asia/Dhaka') {
 	$date = new DateTime($localDateTimeString, new DateTimeZone($localTimezone));
 	$date->setTimezone(new DateTimeZone('UTC'));
 	return $date->format('Y-m-d\TH:i:s\Z');

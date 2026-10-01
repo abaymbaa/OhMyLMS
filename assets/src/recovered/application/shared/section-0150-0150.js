@@ -1,11 +1,11 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var j0 = function (e) {
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-body"
+    class: "ohmylms-checkout-dummy-preview-body"
   }, React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-content"
+    class: "ohmylms-checkout-dummy-preview-content"
   }, React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-left"
+    class: "ohmylms-checkout-dummy-preview-left"
   }, React.createElement("span", {
     className: "title"
   }, (0, b.__)("Contact", "ohmylms")), React.createElement("span", {
@@ -99,7 +99,7 @@ var j0 = function (e) {
       fontSize: "16px"
     }
   }, (0, b.__)("Complete Checkout", "ohmylms"))), React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-right"
+    class: "ohmylms-checkout-dummy-preview-right"
   }, React.createElement("span", {
     className: "title"
   }, (0, b.__)("Order Summary", "ohmylms")), React.createElement(I.FlexWP, {
@@ -221,14 +221,12 @@ var j0 = function (e) {
     }
   }, " "))))));
 };
-
 const A0 = (0, g.memo)(j0);
-
 var M0 = function (e) {
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-checkout-dummy-preview"
+    className: "ohmylms-checkout-dummy-preview"
   }, React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-header"
+    class: "ohmylms-checkout-dummy-preview-header"
   }, React.createElement("svg", {
     fill: "none",
     width: "7",
@@ -264,14 +262,12 @@ var M0 = function (e) {
     fill: "#D9D9D9"
   }))), React.createElement(A0, null)));
 };
-
 const T0 = (0, g.memo)(M0);
-
 var I0 = function (e) {
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-checkout-dummy-preview"
+    className: "ohmylms-checkout-dummy-preview"
   }, React.createElement("div", {
-    class: "omlms-checkout-dummy-preview-header"
+    class: "ohmylms-checkout-dummy-preview-header"
   }, React.createElement("svg", {
     fill: "none",
     width: "7",
@@ -372,17 +368,15 @@ var I0 = function (e) {
     }
   }, " ")))), React.createElement(A0, null)));
 };
-
 const F0 = (0, g.memo)(I0);
-
 var N0 = function () {
-  (0, L.useIsPro)();
+  true;
   var e,
     t = (0, y.useDispatch)(T.default),
     n = (0, y.useSelect)(function (e) {
       return e(T.default).getDesignSettings();
     }, []),
-    r = (null == n || null === (e = n.creator_lms_checkout_page_layout_type) || void 0 === e ? void 0 : e.value) || "with_header",
+    r = (null == n || null === (e = n.ohmylms_checkout_page_layout_type) || void 0 === e ? void 0 : e.value) || "with_header",
     a = (0, g.useMemo)(function () {
       return [{
         label: "Default",
@@ -394,14 +388,14 @@ var N0 = function () {
     }, []),
     o = (0, g.useCallback)(function (e) {
       t.updateDesignSettings({
-        creator_lms_checkout_page_layout_type: {
+        ohmylms_checkout_page_layout_type: {
           value: e
         }
       });
     }, []);
   return React.createElement(React.Fragment, null, React.createElement(Ea, {
     isBorderless: !0,
-    className: "omlms-checkout-page-settings"
+    className: "ohmylms-checkout-page-settings"
   }, React.createElement(I.SpacerWP, {
     marginTop: 2.5,
     padding: 2,
@@ -423,9 +417,7 @@ var N0 = function () {
     marginBottom: 0
   }, React.createElement(React.Fragment, null, "canvas" === r ? React.createElement(React.Fragment, null, React.createElement(T0, null)) : React.createElement(React.Fragment, null, React.createElement(F0, null))))));
 };
-
 const D0 = (0, g.memo)(N0);
-
 function W0() {
   var e,
     t,
@@ -512,7 +504,6 @@ function W0() {
     };
   })();
 }
-
 function z0(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -534,7 +525,6 @@ function z0(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, z0(e, t, n, r);
 }
-
 function B0(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -544,7 +534,6 @@ function B0(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 var L0 = function (e) {
   var t = e.activeTab,
     n = e.handleSave,
@@ -581,7 +570,7 @@ var L0 = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return i.setLoadingSetting(!0), e.n = 1, l()({
-                  path: "creator-lms/v1/settings/design"
+                  path: "ohmylms/v1/settings/design"
                 });
               case 1:
                 t = e.v, i.setDesignSettings(t), i.setLoadingSetting(!1);
@@ -611,7 +600,7 @@ var L0 = function (e) {
   }, []), React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     paddingTop: 2,
@@ -635,9 +624,7 @@ var L0 = function (e) {
     isSaving: o
   })))));
 };
-
 const V0 = (0, g.memo)(L0);
-
 function H0(e) {
   return H0 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -645,7 +632,6 @@ function H0(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, H0(e);
 }
-
 function G0() {
   var e,
     t,
@@ -732,7 +718,6 @@ function G0() {
     };
   })();
 }
-
 function U0(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -754,7 +739,6 @@ function U0(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, U0(e, t, n, r);
 }
-
 function q0(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -765,7 +749,6 @@ function q0(e, t) {
   }
   return n;
 }
-
 function Y0(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -777,7 +760,6 @@ function Y0(e) {
   }
   return e;
 }
-
 function Q0(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -798,7 +780,6 @@ function Q0(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Z0(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -808,15 +789,13 @@ function Z0(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function $0(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var K0 = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.gateway,
     r = e.config,
     a = (e.showTooltip, e.description, (0, y.useSelect)(function (e) {
@@ -882,22 +861,22 @@ var K0 = function (e) {
           return G0().w(function (e) {
             for (;;) switch (e.n) {
               case 0:
-                if (t || p.includes(f)) {
+                {
                   e.n = 1;
                   break;
                 }
                 return m(!0), e.a(2);
               case 1:
-                return r = (null == a ? void 0 : a["creatorlms_".concat(f, "_settings")]) || {}, i = (null == r ? void 0 : r.value) || {}, u = Y0(Y0({}, r), {}, {
+                return r = (null == a ? void 0 : a["ohmylms_".concat(f, "_settings")]) || {}, i = (null == r ? void 0 : r.value) || {}, u = Y0(Y0({}, r), {}, {
                   value: Y0(Y0({}, i), {}, {
                     enabled: n ? "yes" : "no"
                   })
                 }), S.forEach(function (e) {
                   e.option_name in u.value || (u.value[e.option_name] = e.default_value || "");
-                }), e.n = 2, o.updatePaymentSettings(Q0({}, "creatorlms_".concat(f, "_settings"), u));
+                }), e.n = 2, o.updatePaymentSettings(Q0({}, "ohmylms_".concat(f, "_settings"), u));
               case 2:
-                return s = Y0(Y0({}, a), {}, Q0({}, "creatorlms_".concat(f, "_settings"), u)), e.n = 3, l()({
-                  path: "/creator-lms/v1/settings/payment-gateway",
+                return s = Y0(Y0({}, a), {}, Q0({}, "ohmylms_".concat(f, "_settings"), u)), e.n = 3, l()({
+                  path: "/ohmylms/v1/settings/payment-gateway",
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json"
@@ -929,13 +908,13 @@ var K0 = function (e) {
       };
     }(),
     x = function () {
-      var e = (null == a ? void 0 : a["creatorlms_".concat(f, "_settings")]) || {};
+      var e = (null == a ? void 0 : a["ohmylms_".concat(f, "_settings")]) || {};
       return "yes" === (e.value || {}).enabled || "yes" === e.enabled;
     };
   return React.createElement(React.Fragment, null, u, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-single-payment omlms-".concat(f, "-payment")
+    className: "ohmylms-single-payment ohmylms-".concat(f, "-payment")
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     margin: 0,
@@ -1008,14 +987,14 @@ var K0 = function (e) {
     justify: "flex-end",
     gap: 2
   }, React.createElement(I.ButtonWP, {
-    className: "omlms-payment-manage-button",
+    className: "ohmylms-payment-manage-button",
     variant: "secondary",
     onClick: function () {
-      t || p.includes(f) ? null != r && r.handleManage && r.handleManage({
+      null != r && r.handleManage && r.handleManage({
         id: f,
         name: v,
         settings_fields: S
-      }) : m(!0);
+      });
     },
     disabled: !x(),
     icon: React.createElement("svg", {
@@ -1044,11 +1023,8 @@ var K0 = function (e) {
     onClose: m
   }));
 };
-
 const J0 = (0, g.memo)(K0);
-
 var X0 = n(66718);
-
 function e1(e) {
   return e1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;

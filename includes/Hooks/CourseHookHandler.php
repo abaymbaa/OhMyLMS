@@ -1,9 +1,9 @@
 <?php
 
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
-use OMLMS\Abstracts\HookHandler;
-use OMLMS\Data\Chapter;
+use OhMyLMS\Abstracts\HookHandler;
+use OhMyLMS\Data\Chapter;
 
 /**
  * Handles hooks related to courses in the OhMyLMS plugin.
@@ -13,22 +13,22 @@ use OMLMS\Data\Chapter;
 class CourseHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		add_action( 'creatorlms_after_creating_first_course', array( $this, 'save_first_course_creation_timestamp' ), 10, 2 );
-		add_action( 'creatorlms_after_creating_first_content', array( $this, 'save_first_content_creation_timestamp' ), 10, 2 );
-		add_action( 'creatorlms_rest_insert_course', array( $this, 'create_default_chapter' ), 10, 2 );
-		add_action( 'creator_lms_rest_delete_course', array( $this, 'unlink_chapter_from_course' ), 10 );
-		add_action( 'creator_lms_rest_delete_course', array( $this, 'unlink_course_from_membership' ), 10 );
+		add_action( 'ohmylms_after_creating_first_course', array( $this, 'save_first_course_creation_timestamp' ), 10, 2 );
+		add_action( 'ohmylms_after_creating_first_content', array( $this, 'save_first_content_creation_timestamp' ), 10, 2 );
+		add_action( 'ohmylms_rest_insert_course', array( $this, 'create_default_chapter' ), 10, 2 );
+		add_action( 'ohmylms_rest_delete_course', array( $this, 'unlink_chapter_from_course' ), 10 );
+		add_action( 'ohmylms_rest_delete_course', array( $this, 'unlink_course_from_membership' ), 10 );
 	}
 
 
 	public function save_first_course_creation_timestamp( $id, $course ) {
 		$timestamp = current_time( 'timestamp' );
-		update_option( 'creatorlms_first_course_created', $timestamp );
+		update_option( 'ohmylms_first_course_created', $timestamp );
 	}
 
 	public function save_first_content_creation_timestamp( $id, $course ) {
 		$timestamp = current_time( 'timestamp' );
-		update_option( 'creatorlms_first_content_created', $timestamp );
+		update_option( 'ohmylms_first_content_created', $timestamp );
 	}
 
 
@@ -74,7 +74,7 @@ class CourseHookHandler extends HookHandler {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . CREATOR_LMS_CHAPTER_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
 
 		// Check if the relationship already exists
 		$exists = $wpdb->get_var(
@@ -119,7 +119,7 @@ class CourseHookHandler extends HookHandler {
 		 * @param int $course_id The ID of the course.
 		 * @param int $chapter_id The ID of the chapter.
 		 */
-		do_action( 'creator_lms_course_chapter_relationship_created', $course_id, $chapter_id );
+		do_action( 'ohmylms_course_chapter_relationship_created', $course_id, $chapter_id );
 	}
 
 
@@ -139,7 +139,7 @@ class CourseHookHandler extends HookHandler {
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . CREATOR_LMS_CHAPTER_RELATIONSHIP;
+		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
 		// Fetch all chapter IDs before deleting
 		$chapter_ids = $wpdb->get_col(
 			$wpdb->prepare(
@@ -161,13 +161,13 @@ class CourseHookHandler extends HookHandler {
 
 			foreach ( $chapter_ids as $chapter_id ) {
 				/**
-				 * Executes the 'creator_lms_after_remove_chapter_from_course' action hook.
+				 * Executes the 'ohmylms_after_remove_chapter_from_course' action hook.
 				 * This hook is triggered when a chapter is being deleted via Hook.
 				 *
 				 * @param int $chapter_id The ID of the chapter being deleted.
 				 * @since 1.0.0
 				 */
-				do_action( 'creator_lms_after_remove_chapter_from_course', $chapter_id );
+				do_action( 'ohmylms_after_remove_chapter_from_course', $chapter_id );
 			}
 		}
 	}
@@ -188,7 +188,7 @@ class CourseHookHandler extends HookHandler {
 		// Get all membership post IDs
 		$membership_posts = get_posts(
 			array(
-				'post_type'      => sanitize_text_field( 'omlms-membership' ),
+				'post_type'      => sanitize_text_field( 'ohmylms-membership' ),
 				'posts_per_page' => -1, // Get all posts
 				'fields'         => 'ids', // Only get IDs
 			)
@@ -201,11 +201,11 @@ class CourseHookHandler extends HookHandler {
 
 		// Process each membership post ID
 		foreach ( $membership_posts as $membership_id ) {
-			if ( ! creator_lms_is_pro() ) {
+			if ( ! ohmylms_is_pro() ) {
 				continue;
 			}
 
-			$membership = omlms_get_membership( $membership_id );
+			$membership = ohmylms_get_membership( $membership_id );
 
 			if ( ! $membership ) {
 				continue; // Skip if no membership found

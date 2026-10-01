@@ -117,17 +117,17 @@
 		{ label: '900 - Black', value: 900 }
 	];
 
-	registerBlockType('creator-lms/profile', {
+	registerBlockType('ohmylms/profile', {
 title: __('OhMyLMS Profile', 'ohmylms'),
 description: __('Display the OhMyLMS student profile page with customizable styling options.', 'ohmylms'),
 icon: 'admin-users',
-category: 'creator-lms',
+category: 'ohmylms',
 keywords: [
 __('profile', 'ohmylms'),
 __('student', 'ohmylms'),
 __('account', 'ohmylms'),
 __('my profile', 'ohmylms'),
-__('creator-lms', 'ohmylms'),
+__('ohmylms', 'ohmylms'),
 __('ohmylms', 'ohmylms')
 ],
 supports: {
@@ -142,11 +142,11 @@ var attributes = props.attributes;
 			
 			// Apply profile block styles immediately when editor loads
 			wp.element.useEffect(function() {
-				var styleId = document.getElementById('creator-lms-profile-block-style');
+				var styleId = document.getElementById('ohmylms-profile-block-style');
 				if (!styleId) {
 					styleId = document.createElement('style');
-					styleId.id = 'creator-lms-profile-block-style';
-					styleId.innerHTML = '.wp-block-creator-lms-profile .creator-lms-student-profile { min-height: 400px; }';
+					styleId.id = 'ohmylms-profile-block-style';
+					styleId.innerHTML = '.wp-block-ohmylms-profile .ohmylms-student-profile { min-height: 400px; }';
 					document.head.appendChild(styleId);
 				}
 			}, []); // Empty dependency array means this runs once when component mounts
@@ -816,7 +816,7 @@ InspectorControls,
 
 			// Use ServerSideRender to show the real profile in editor
 			var serverSideRender = createElement(ServerSideRender, {
-				block: 'creator-lms/profile',
+				block: 'ohmylms/profile',
 				attributes: validatedAttributes,
 				httpMethod: 'POST'
 			});
@@ -826,10 +826,10 @@ InspectorControls,
 				{},
 				inspectorControls,
 				// The block's own editor-only <style> override (rendered server-side
-				// in ProfileBlock::render_block()) is scoped to `.wp-block-creator-lms-profile`,
+				// in ProfileBlock::render_block()) is scoped to `.wp-block-ohmylms-profile`,
 				// which WordPress only ever attaches via useBlockProps() - this block doesn't
 				// use it, so without this wrapper that CSS never matches anything.
-				createElement('div', { className: 'wp-block-creator-lms-profile' }, serverSideRender)
+				createElement('div', { className: 'wp-block-ohmylms-profile' }, serverSideRender)
 			);
 		},
 

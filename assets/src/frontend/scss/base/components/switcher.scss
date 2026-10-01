@@ -1,5 +1,5 @@
-.creator-lms-page {
-    .creator-lms-switcher {
+.ohmylms-page {
+    .ohmylms-switcher {
         input[type="checkbox"] {
             display: none;
         }
@@ -29,8 +29,8 @@
         }
 
         input[type="checkbox"]:checked + .switcher-slider {
-            background-color: var(--creator-lms-primary-color);
-            border-color: var(--creator-lms-primary-color);
+            background-color: var(--ohmylms-primary-color);
+            border-color: var(--ohmylms-primary-color);
         }
         input[type="checkbox"]:checked + .switcher-slider:before {
             background-color: #ffffff;
@@ -41,17 +41,17 @@
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-switcher .switcher-slider {
+    .ohmylms-page .ohmylms-switcher .switcher-slider {
         height: 20px;
         width: 32px;
     }
 
-    .creator-lms-page .creator-lms-switcher .switcher-slider:before {
+    .ohmylms-page .ohmylms-switcher .switcher-slider:before {
         width: 14px;
         height: 14px;
     }
 
-    .creator-lms-page .creator-lms-switcher input[type=checkbox]:checked + .switcher-slider:before {
+    .ohmylms-page .ohmylms-switcher input[type=checkbox]:checked + .switcher-slider:before {
         left: 15px;
     }
 

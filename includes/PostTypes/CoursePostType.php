@@ -1,8 +1,8 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
-use OMLMS\Abstracts\PostType;
+use OhMyLMS\Abstracts\PostType;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -29,14 +29,14 @@ class CoursePostType extends PostType {
 
 
 	public function __construct() {
-		$this->post_type = 'omlms-course';
+		$this->post_type = 'ohmylms-course';
 		parent::__construct();
 
 		add_action( 'init', array( $this, 'register_taxonomy' ) );
 	}
 
 	/**
-	 * Get arguments of CPT - omlms-course
+	 * Get arguments of CPT - ohmylms-course
 	 *
 	 * @return array|void
 	 * @since 1.0.0
@@ -73,8 +73,8 @@ class CoursePostType extends PostType {
 			'filter_items_list'     => __( 'Filter Courses list', 'ohmylms' ),
 		);
 
-		$permalinks = omlms_get_permalink_structure();
-		$course_page_id = omlms_get_page_id( 'course' );
+		$permalinks = ohmylms_get_permalink_structure();
+		$course_page_id = ohmylms_get_page_id( 'course' );
 		$has_archive    = $course_page_id && get_post( $course_page_id ) ? urldecode( get_page_uri( $course_page_id ) ) : 'course';		
 		$supports = array( 'title', 'editor', 'thumbnail', 'revisions', 'comments', 'excerpt' );
 
@@ -111,7 +111,7 @@ class CoursePostType extends PostType {
 	 * @since 1.0.0
 	 */
 	public function register_taxonomy() {
-		$permalinks = omlms_get_permalink_structure();
+		$permalinks = ohmylms_get_permalink_structure();
 
 		// register category
 		$labels = array(
@@ -206,52 +206,52 @@ class CoursePostType extends PostType {
 	 */
 	public function course_details_meta_box_callback( $post ) {
 
-		$course_duration      = get_post_meta( $post->ID, 'omlms_course_duration', true );
-		$course_price         = get_post_meta( $post->ID, 'omlms_course_price', true );
-		$sale_price           = get_post_meta( $post->ID, 'omlms_course_sale_price', true );
-		$max_students_allowed = get_post_meta( $post->ID, 'omlms_course_max_student_allowed', true );
-		$max_retake_allowed   = get_post_meta( $post->ID, 'omlms_course_max_retake_allowed', true );
-		$passing_grade        = get_post_meta( $post->ID, 'omlms_course_passing_grade', true );
+		$course_duration      = get_post_meta( $post->ID, 'ohmylms_course_duration', true );
+		$course_price         = get_post_meta( $post->ID, 'ohmylms_course_price', true );
+		$sale_price           = get_post_meta( $post->ID, 'ohmylms_course_sale_price', true );
+		$max_students_allowed = get_post_meta( $post->ID, 'ohmylms_course_max_student_allowed', true );
+		$max_retake_allowed   = get_post_meta( $post->ID, 'ohmylms_course_max_retake_allowed', true );
+		$passing_grade        = get_post_meta( $post->ID, 'ohmylms_course_passing_grade', true );
 
 		// Nonce field for security
-		wp_nonce_field( 'omlms_course_nonce', 'nonce' );
+		wp_nonce_field( 'ohmylms_course_nonce', 'nonce' );
 		?>
-		<div class="omlms-course-meta-box">
+		<div class="ohmylms-course-meta-box">
 			<h3><?php esc_html_e( 'General Settings', 'ohmylms' ); ?></h3>
 			<ul class="course-meta-list">
 				<li>
-					<label for="omlms_course_duration"><?php esc_html_e( 'Duration:', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_duration" name="omlms_course_duration" value="<?php echo esc_attr( $course_duration ); ?>" />
+					<label for="ohmylms_course_duration"><?php esc_html_e( 'Duration:', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_duration" name="ohmylms_course_duration" value="<?php echo esc_attr( $course_duration ); ?>" />
 				</li>
 				<li>
-					<label for="omlms_course_price"><?php esc_html_e( 'Course Price:', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_price" name="omlms_course_price" value="<?php echo esc_attr( $course_price ); ?>" />
+					<label for="ohmylms_course_price"><?php esc_html_e( 'Course Price:', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_price" name="ohmylms_course_price" value="<?php echo esc_attr( $course_price ); ?>" />
 				</li>
 				<li>
-					<label for="omlms_course_sale_price"><?php esc_html_e( 'Sale Price:', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_sale_price" name="omlms_course_sale_price" value="<?php echo esc_attr( $sale_price ); ?>" />
+					<label for="ohmylms_course_sale_price"><?php esc_html_e( 'Sale Price:', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_sale_price" name="ohmylms_course_sale_price" value="<?php echo esc_attr( $sale_price ); ?>" />
 				</li>
 				<li>
-					<label for="omlms_course_max_student_allowed"><?php esc_html_e( 'Max Students Allowed:', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_max_student_allowed" name="omlms_course_max_student_allowed" value="<?php echo esc_attr( $max_students_allowed ); ?>" />
+					<label for="ohmylms_course_max_student_allowed"><?php esc_html_e( 'Max Students Allowed:', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_max_student_allowed" name="ohmylms_course_max_student_allowed" value="<?php echo esc_attr( $max_students_allowed ); ?>" />
 				</li>
 				<li>
-					<label for="omlms_course_max_retake_allowed"><?php esc_html_e( 'Max Retake Allowed:', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_max_retake_allowed" name="omlms_course_max_retake_allowed" value="<?php echo esc_attr( $max_retake_allowed ); ?>" />
+					<label for="ohmylms_course_max_retake_allowed"><?php esc_html_e( 'Max Retake Allowed:', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_max_retake_allowed" name="ohmylms_course_max_retake_allowed" value="<?php echo esc_attr( $max_retake_allowed ); ?>" />
 				</li>
 				<li>
-					<label for="omlms_course_passing_grade"><?php esc_html_e( 'Passing Grade (%):', 'ohmylms' ); ?></label>
-					<input type="text" id="omlms_course_passing_grade" name="omlms_course_passing_grade" value="<?php echo esc_attr( $passing_grade ); ?>" />
+					<label for="ohmylms_course_passing_grade"><?php esc_html_e( 'Passing Grade (%):', 'ohmylms' ); ?></label>
+					<input type="text" id="ohmylms_course_passing_grade" name="ohmylms_course_passing_grade" value="<?php echo esc_attr( $passing_grade ); ?>" />
 				</li>
 			</ul>
 		</div>
 
-		<div class="omlms-loader" ></div>
+		<div class="ohmylms-loader" ></div>
 		<button id="save-course-data" class="button button-primary"><?php esc_html_e( 'Save Course Data', 'ohmylms' ); ?></button>
-		<div class="omlms-notice"></div>
+		<div class="ohmylms-notice"></div>
 
 		<style>
-			.omlms-course-meta-box {
+			.ohmylms-course-meta-box {
 				margin-bottom: 20px;
 			}
 
@@ -276,13 +276,13 @@ class CoursePostType extends PostType {
 				border: 1px solid #ccc;
 			}
 
-			.omlms-loader {
+			.ohmylms-loader {
 				display: none;
 				text-align: center;
 				margin-top: 10px;
 			}
 
-			.omlms-loader .spinner {
+			.ohmylms-loader .spinner {
 				display: inline-block;
 				float: left;
 				width: 20px;
@@ -300,12 +300,12 @@ class CoursePostType extends PostType {
 				}
 			}
 
-			.omlms-notice {
+			.ohmylms-notice {
 				display: none;
 				margin-top: 10px;
 			}
 
-			.omlms-notice .notice {
+			.ohmylms-notice .notice {
 				padding: 10px;
 				border-radius: 3px;
 			}

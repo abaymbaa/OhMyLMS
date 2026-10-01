@@ -216,7 +216,7 @@ const _G = function (e) {
       l = e.data,
       c = e.dataLoading,
       u = (0, f.Zp)(),
-      s = (0, L.useIsPro)();
+      s = true;
     return h().createElement(h().Fragment, null, h().createElement(I.SpacerWP, {
       marginBottom: 0,
       marginTop: 4
@@ -259,7 +259,7 @@ const _G = function (e) {
       variant: "muted"
     }, (0, b.__)("Total Sales", "ohmylms")), h().createElement(V.A, {
       text: "Total courses sold in the past 30 days",
-      className: "omlms-tooltip",
+      className: "ohmylms-tooltip",
       placement: "top"
     }, h().createElement(h().Fragment, null, h().createElement(Mt.A, null))), h().createElement(I.FlexItemWP, null, h().createElement(I.BadgeWP, {
       variant: 0 <= (null == l ? void 0 : l.sales_growth_rate) ? "success" : "danger",
@@ -291,7 +291,7 @@ const _G = function (e) {
         display: "block",
         lineHeight: 1
       },
-      className: "omlms-card-value"
+      className: "ohmylms-card-value"
     }, null == l ? void 0 : l.course_sold), h().createElement(I.SpacerWP, {
       marginBottom: 4
     }), h().createElement(I.ButtonWP, {
@@ -335,7 +335,7 @@ const _G = function (e) {
       variant: "muted"
     }, (0, b.__)("Enrollees", "ohmylms")), h().createElement(V.A, {
       text: "New Students in the past 30 days",
-      className: "omlms-tooltip",
+      className: "ohmylms-tooltip",
       placement: "top"
     }, h().createElement(h().Fragment, null, h().createElement(Mt.A, null))), h().createElement(I.FlexItemWP, null, h().createElement(I.BadgeWP, {
       variant: 0 <= (null == l ? void 0 : l.enrollment_growth_rate) ? "success" : "danger",
@@ -367,7 +367,7 @@ const _G = function (e) {
         display: "block",
         lineHeight: 1
       },
-      className: "omlms-card-value"
+      className: "ohmylms-card-value"
     }, null == l ? void 0 : l.total_enrollments), h().createElement(I.SpacerWP, {
       marginBottom: 4
     }), h().createElement(I.ButtonWP, {
@@ -375,7 +375,7 @@ const _G = function (e) {
       onClick: function () {
         u("/students");
       }
-    }, (0, b.__)("Go to all students", "ohmylms")))))), h().createElement(I.FlexBlockWP, null, creator_lms_params.is_communities_enabled ? h().createElement(I.CardWP, {
+    }, (0, b.__)("Go to all students", "ohmylms")))))), h().createElement(I.FlexBlockWP, null, ohmylms_params.is_communities_enabled ? h().createElement(I.CardWP, {
       style: {
         height: "100%"
       },
@@ -423,7 +423,7 @@ const _G = function (e) {
       variant: "secondary",
       onClick: function () {
         var e;
-        return window.open(null === (e = creator_lms_params) || void 0 === e || null === (e = e.community) || void 0 === e ? void 0 : e.communityPageUrl, "_blank");
+        return window.open(null === (e = ohmylms_params) || void 0 === e || null === (e = e.community) || void 0 === e ? void 0 : e.communityPageUrl, "_blank");
       }
     }, (0, b.__)("Manage Communities", "ohmylms")))) : h().createElement(I.CardWP, {
       style: {
@@ -438,13 +438,11 @@ const _G = function (e) {
       size: "16px"
     }, (0, b.__)("What's New in LMS", "ohmylms")), h().createElement(I.SpacerWP, {
       marginBottom: 0
-    }, h().createElement("p", null, (0, b.__)("Manual Student Enrollment — Admins can now enroll students directly from the Course Students tab with automatic email notifications.", "ohmylms")), h().createElement("p", null, (0, b.__)("Assignment & Quiz Submission Notifications — Admins and instructors receive email alerts when students submit work for review.", "ohmylms")), h().createElement("p", null, (0, b.__)("SCORM Support is now available in the free version — import SCORM courses without upgrading to Pro.", "ohmylms")), !s && h().createElement("p", null, (0, b.__)("License Management and advanced Pro features available. Upgrade to Pro today to unlock cohorts, community, AI course builder, and more.", "ohmylms")))))))));
+    }, h().createElement("p", null, (0, b.__)("Manual Student Enrollment — Admins can now enroll students directly from the Course Students tab with automatic email notifications.", "ohmylms")), h().createElement("p", null, (0, b.__)("Assignment & Quiz Submission Notifications — Admins and instructors receive email alerts when students submit work for review.", "ohmylms")), h().createElement("p", null, (0, b.__)("SCORM Support is now available in the free version — import SCORM courses without upgrading to Pro.", "ohmylms")))))))));
   };
-
 var EG = n(4315),
   SG = n(83154),
   RG = ["children", "position"];
-
 function xG() {
   return xG = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -454,7 +452,6 @@ function xG() {
     return e;
   }, xG.apply(null, arguments);
 }
-
 var CG = function (e) {
   var t = e.children,
     n = e.position,
@@ -488,9 +485,7 @@ var CG = function (e) {
     }
   }), t));
 };
-
 const PG = (0, g.memo)(CG);
-
 function OG(e) {
   return OG = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -498,7 +493,6 @@ function OG(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, OG(e);
 }
-
 function kG(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -509,7 +503,6 @@ function kG(e, t) {
   }
   return n;
 }
-
 function jG(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -521,7 +514,6 @@ function jG(e) {
   }
   return e;
 }
-
 function AG(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -542,7 +534,6 @@ function AG(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 const MG = function (e) {
   var t,
     n = e.data,
@@ -550,7 +541,7 @@ const MG = function (e) {
     a = e.dataLoading,
     o = e.handleAddCourse,
     i = (0, f.Zp)(),
-    l = (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.plugin_assets) + "images",
+    l = (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.plugin_assets) + "images",
     c = "".concat(l, "/dummy-thumbnail-image.svg"),
     u = {
       background: "#2A85FF",
@@ -771,7 +762,7 @@ const MG = function (e) {
     cx: "70.072",
     cy: "32.303",
     r: "16.303",
-    fill: "var(--omlms-primary-color)"
+    fill: "var(--ohmylms-primary-color)"
   }), React.createElement("path", {
     fill: "#fff",
     fillRule: "evenodd",

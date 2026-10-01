@@ -123,7 +123,7 @@ export function createDeleteLearningItem(readRuntime) {
             {
               variant: 'text',
               title: n,
-              className: 'omlms-outline-delete-button '.concat(a),
+              className: 'ohmylms-outline-delete-button '.concat(a),
               icon: React.createElement(zn, null),
               onClick: y,
             },
@@ -139,7 +139,7 @@ export function createDeleteLearningItem(readRuntime) {
             onClose={w}
             onDelete={_}
             isOpen={f}
-            className={'omlms-outline-delete-alert'}
+            className={'ohmylms-outline-delete-alert'}
             isDelete={!0}
           />
         )}

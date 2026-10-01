@@ -47,7 +47,7 @@ export function createAdvancedSettings(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: 'creator-lms/v1/settings/advanced',
+                          path: 'ohmylms/v1/settings/advanced',
                         })
                       );
                     case 2:
@@ -87,17 +87,17 @@ export function createAdvancedSettings(readRuntime) {
                         (e.p = 1),
                         (r = new URLSearchParams()).append(
                           'action',
-                          'omlms_delete_transient_cache',
+                          'ohmylms_delete_transient_cache',
                         ),
                         r.append(
                           'nonce',
-                          (null === (t = window.creator_lms_params) || void 0 === t
+                          (null === (t = window.ohmylms_params) || void 0 === t
                             ? void 0
                             : t.delete_cache_nonce) || '',
                         ),
                         (e.n = 2),
                         fetch(
-                          (null === (n = window.creator_lms_params) || void 0 === n
+                          (null === (n = window.ohmylms_params) || void 0 === n
                             ? void 0
                             : n.ajax_url) || '/wp-admin/admin-ajax.php',
                           {
@@ -158,7 +158,7 @@ export function createAdvancedSettings(readRuntime) {
                         (e.p = 1),
                         (e.n = 2),
                         l()({
-                          path: '/creator-lms/v1/restore-default-pages',
+                          path: '/ohmylms/v1/restore-default-pages',
                           method: 'POST',
                         })
                       );
@@ -190,7 +190,7 @@ export function createAdvancedSettings(readRuntime) {
     return (
       <React.Fragment>
         {s}
-        <Ea isBorderless={!0} variant={'secondary'} className={'omlms-full-screen-height'}>
+        <Ea isBorderless={!0} variant={'secondary'} className={'ohmylms-full-screen-height'}>
           <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
             <Controls.CardWP isBorderless={!0}>
               <Controls.SpacerWP padding={6} marginTop={0} marginBottom={4}>

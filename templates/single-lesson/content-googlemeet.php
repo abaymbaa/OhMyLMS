@@ -2,9 +2,9 @@
 /**
  * Template for displaying a Google Meet session inside a lesson
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-googlemeet.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-googlemeet.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version 1.1.0
  */
 
@@ -65,7 +65,7 @@ $join_url  = get_post_meta( $post_id, '_join_url', true ) ?: $meet_link;
 $current_user_id = get_current_user_id();
 $is_instructor    = false;
 if ( $current_user_id ) {
-	$course_id = creator_lms_get_course_by_content_id( $post_id );
+	$course_id = ohmylms_get_course_by_content_id( $post_id );
 	if ( $course_id ) {
 		$course        = get_post( $course_id );
 		$is_instructor = ( $course && $course->post_author == $current_user_id ) || current_user_can( 'manage_options' );
@@ -162,7 +162,7 @@ if ( $has_recording ) {
 		<h2 class="creator-zoom-recording__title"><?php esc_html_e( 'Session Replay', 'ohmylms' ); ?></h2>
 		<?php if ( $recording_uses_custom_player ) : ?>
 			<div
-				class="omlms-custom-video-player omlms-responsive-video-wrapper"
+				class="ohmylms-custom-video-player ohmylms-responsive-video-wrapper"
 				style="aspect-ratio: 16/9;"
 				data-video-url="<?php echo esc_attr( $recording_url ); ?>"
 				data-autoplay="false"
@@ -174,7 +174,7 @@ if ( $has_recording ) {
 				<iframe src="<?php echo esc_url( $recording_embed_src ); ?>" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen frameborder="0"></iframe>
 			</div>
 		<?php else : ?>
-			<a href="<?php echo esc_url( $recording_url ); ?>" target="_blank" rel="noopener noreferrer" class="creator-lms-btn"><?php esc_html_e( 'Watch Recording', 'ohmylms' ); ?></a>
+			<a href="<?php echo esc_url( $recording_url ); ?>" target="_blank" rel="noopener noreferrer" class="ohmylms-btn"><?php esc_html_e( 'Watch Recording', 'ohmylms' ); ?></a>
 		<?php endif; ?>
 	</div>
 	<?php
@@ -184,13 +184,13 @@ $recording_html = ob_get_clean();
 ob_start();
 if ( ! empty( $attachments ) ) {
 	?>
-	<ul class="creator-lms-resources-list creator-zoom-attachments-list">
+	<ul class="ohmylms-resources-list creator-zoom-attachments-list">
 		<?php foreach ( $attachments as $attachment ) : ?>
 			<?php if ( empty( $attachment['url'] ) ) continue; ?>
 			<li>
-				<div class="omlms-single-resource-info">
+				<div class="ohmylms-single-resource-info">
 					<span class="resource-icon">
-						<?php include( CREATOR_LMS_DIR . '/assets/images/icon/file-icon.php' ); ?>
+						<?php include( OHMYLMS_DIR . '/assets/images/icon/file-icon.php' ); ?>
 					</span>
 					<span class="resource-name"><?php echo esc_html( $attachment['name'] ?? '' ); ?></span>
 					<?php if ( ! empty( $attachment['size'] ) ) : ?>
@@ -199,7 +199,7 @@ if ( ! empty( $attachments ) ) {
 				</div>
 
 				<a href="<?php echo esc_url( $attachment['url'] ); ?>" class="resource-action" download>
-					<?php include( CREATOR_LMS_DIR . '/assets/images/icon/download-icon.php' ); ?>
+					<?php include( OHMYLMS_DIR . '/assets/images/icon/download-icon.php' ); ?>
 				</a>
 			</li>
 		<?php endforeach; ?>
@@ -216,7 +216,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 	<?php if ( 'not_started' === $meeting_state ) : ?>
 		<div class="meeting-status not-started">
 			<h1 class="meeting-title"><?php echo esc_html( $topic ); ?></h1>
-			<div class="meeting-agenda creator-lms-wysiwyg-content"><?php echo $agenda_html; ?></div>
+			<div class="meeting-agenda ohmylms-wysiwyg-content"><?php echo $agenda_html; ?></div>
 
 			<div id="meet-countdown" class="meet-countdown">
 				<div class="countdown-item"><span class="num" id="days">0</span><span class="label">Days</span></div>
@@ -249,12 +249,12 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 
 			<div class="meeting-actions">
 				<?php if ( $is_instructor ) : ?>
-					<a href="<?php echo esc_url( $start_url ); ?>" target="_blank" class="creator-lms-btn"><?php esc_html_e( 'Start Meeting', 'ohmylms' ); ?></a>
+					<a href="<?php echo esc_url( $start_url ); ?>" target="_blank" class="ohmylms-btn"><?php esc_html_e( 'Start Meeting', 'ohmylms' ); ?></a>
 				<?php else : ?>
-					<a href="#" class="creator-lms-btn disabled-btn" disabled><?php esc_html_e( 'Join Meeting', 'ohmylms' ); ?></a>
+					<a href="#" class="ohmylms-btn disabled-btn" disabled><?php esc_html_e( 'Join Meeting', 'ohmylms' ); ?></a>
 				<?php endif; ?>
 
-				<a href="<?php echo esc_url( $google_calendar_url ); ?>" target="_blank" class="creator-lms-btn-secondary add-to-calendar-btn">
+				<a href="<?php echo esc_url( $google_calendar_url ); ?>" target="_blank" class="ohmylms-btn-secondary add-to-calendar-btn">
 					<?php esc_html_e( 'Add to Calendar', 'ohmylms' ); ?>
 				</a>
 			</div>
@@ -263,7 +263,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 	<?php elseif ( 'ongoing' === $meeting_state ) : ?>
 		<div class="meeting-status ongoing">
 			<h1 class="meeting-title"><?php echo esc_html( $topic ); ?></h1>
-			<div class="meeting-agenda creator-lms-wysiwyg-content"><?php echo $agenda_html; ?></div>
+			<div class="meeting-agenda ohmylms-wysiwyg-content"><?php echo $agenda_html; ?></div>
 			<p class="meeting-live-notice"><?php esc_html_e( 'Meeting is live now!', 'ohmylms' ); ?></p>
 
 			<div class="meeting-info">
@@ -289,14 +289,14 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 			<?php echo $attachments_html; ?>
 
 			<div class="meeting-actions">
-				<a href="<?php echo esc_url( $join_url ); ?>" target="_blank" class="creator-lms-btn join-btn"><?php esc_html_e( 'Join Meeting', 'ohmylms' ); ?></a>
+				<a href="<?php echo esc_url( $join_url ); ?>" target="_blank" class="ohmylms-btn join-btn"><?php esc_html_e( 'Join Meeting', 'ohmylms' ); ?></a>
 			</div>
 		</div>
 
 	<?php else : ?>
 		<div class="meeting-status ended">
 			<h1 class="meeting-title"><?php echo esc_html( $topic ); ?></h1>
-			<div class="meeting-agenda creator-lms-wysiwyg-content"><?php echo $agenda_html; ?></div>
+			<div class="meeting-agenda ohmylms-wysiwyg-content"><?php echo $agenda_html; ?></div>
 
 			<?php echo $recording_html; ?>
 
@@ -314,7 +314,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 			<?php echo $attachments_html; ?>
 
 			<p class="meeting-ended-notice"><?php esc_html_e( 'This meeting has ended.', 'ohmylms' ); ?></p>
-			<?php do_action( 'creatorlms/after_meeting_end', $post_id ); ?>
+			<?php do_action( 'ohmylms/after_meeting_end', $post_id ); ?>
 		</div>
 	<?php endif; ?>
 </div>

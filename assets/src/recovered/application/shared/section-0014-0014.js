@@ -10,7 +10,7 @@ var Qc = function () {
     cx: "38",
     cy: "38",
     r: "38",
-    fill: "var(--omlms-primary-color)"
+    fill: "var(--ohmylms-primary-color)"
   }), React.createElement("g", {
     filter: "url(#filter0_d_3470_54)"
   }, React.createElement("path", {
@@ -49,9 +49,7 @@ var Qc = function () {
     result: "shape"
   })))));
 };
-
 const Zc = (0, g.memo)(Qc);
-
 function $c() {
   var e,
     t,
@@ -138,7 +136,6 @@ function $c() {
     };
   })();
 }
-
 function Kc(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -160,7 +157,6 @@ function Kc(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Kc(e, t, n, r);
 }
-
 function Jc(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -170,15 +166,13 @@ function Jc(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Xc(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var eu = function () {
-  var e = (0, L.useIsPro)(),
+  var e = true,
     t = (0, y.useDispatch)(T.default),
     n = ((0, y.useSelect)(function (e) {
       return e(T.default).getQuizContents();
@@ -351,27 +345,25 @@ var eu = function () {
       };
     }();
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-default-quiz-editor",
+    className: "ohmylms-default-quiz-editor",
     onDrop: function (t) {
       t.preventDefault();
       var n = JSON.parse(t.dataTransfer.getData("text/plain"));
-      e || null == n || !n.isPro ? c(n) : l(!0);
+      c(n);
     },
     onDragOver: function (e) {
       e.preventDefault();
     }
   }, React.createElement(Zc, null), React.createElement("p", {
-    className: "omlms-default-quiz-editor-title"
+    className: "ohmylms-default-quiz-editor-title"
   }, (0, b.__)("Drag & Drop", "ohmylms")), React.createElement("p", {
-    className: "omlms-default-quiz-editor-description"
+    className: "ohmylms-default-quiz-editor-description"
   }, (0, b.__)("Drag and drop a question here from right sidebar", "ohmylms"))), i && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: i,
     onClose: l
   })));
 };
-
 const tu = (0, g.memo)(eu);
-
 function nu(e) {
   return function (e) {
     if (Array.isArray(e)) return ru(e);
@@ -387,22 +379,18 @@ function nu(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ru(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var au = function (e) {
   var t = e.children;
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-box-wrapper"
+    className: "ohmylms-box-wrapper"
   }, t));
 };
-
 const ou = (0, g.memo)(au);
-
 var iu = function (e) {
   var t = e.icon,
     n = e.label,
@@ -418,9 +406,7 @@ var iu = function (e) {
     color: r
   }), n && React.createElement(I.TextWP, null, n)));
 };
-
 const lu = (0, g.memo)(iu);
-
 var cu = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -436,9 +422,7 @@ var cu = function () {
     d: "M6.76 11.636V6.545a.72.72 0 00-.218-.515.748.748 0 00-1.047 0 .72.72 0 00-.217.515v5.09a.72.72 0 00.217.515.748.748 0 001.047 0 .72.72 0 00.217-.514zm2.962 0V6.545a.72.72 0 00-.217-.515.748.748 0 00-1.047 0 .72.72 0 00-.217.515v5.09a.72.72 0 00.217.515.748.748 0 001.047 0 .72.72 0 00.217-.514z"
   })));
 };
-
 const uu = (0, g.memo)(cu);
-
 var su = function (e) {
   var t = e.handleCopy,
     n = e.handleDelete,
@@ -447,22 +431,19 @@ var su = function (e) {
     align: "center",
     justify: "flex-end",
     gap: 1,
-    className: "omlms-copy-and-delete ".concat(r)
+    className: "ohmylms-copy-and-delete ".concat(r)
   }, React.createElement(I.ButtonWP, {
     icon: React.createElement(yc, null),
     onClick: t,
-    className: "omlms-copy-btn"
+    className: "ohmylms-copy-btn"
   }), React.createElement(I.ButtonWP, {
     icon: React.createElement(uu, null),
-    className: "omlms-delete-btn",
+    className: "ohmylms-delete-btn",
     onClick: n
   })));
 };
-
 const du = (0, g.memo)(su);
-
 var mu = ["Icon", "onClick"];
-
 function pu() {
   return pu = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -472,7 +453,6 @@ function pu() {
     return e;
   }, pu.apply(null, arguments);
 }
-
 var fu = function (e) {
   var t = e.Icon,
     n = void 0 === t ? Re : t,
@@ -502,9 +482,7 @@ var fu = function (e) {
     onClick: r
   }, a), (0, b.__)("Replace", "ohmylms")));
 };
-
 const vu = (0, g.memo)(fu);
-
 var gu = function (e) {
   var t = e.handleEdit,
     n = e.handleDelete,
@@ -529,9 +507,7 @@ var gu = function (e) {
     alertDescription: i
   })));
 };
-
 const hu = (0, g.memo)(gu);
-
 function yu(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -571,15 +547,13 @@ function yu(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function bu(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var _u = function (e) {
-  var t = (0, L.useIsPro)();
+  var t = true;
   M().noConflict();
   var n = e.placeholder,
     r = e.question,
@@ -616,7 +590,7 @@ var _u = function (e) {
       return e(T.default).getAllIntegrations();
     }, []),
     N = function (e) {
-      t || !f.includes(m) ? function (e) {
+      (function (e) {
         var t = [];
         "image" === e ? t = ["jpg", "jpeg", "png", "gif", "webp", "avif"] : "video" === e && (t = ["mp4", "mov", "avi", "mkv", "flv", "wmv", "webm"]);
         var n = ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/webp"].join(","),
@@ -645,14 +619,14 @@ var _u = function (e) {
             o = "image" === e && "image" === n.type || "video" === e && "video" === n.type || n.type === e;
           r && o ? ("image" === e ? l(null == n ? void 0 : n.url, null == n ? void 0 : n.id) : "video" === e && c(null == n ? void 0 : n.url, null == n ? void 0 : n.id), d && d(n, e)) : alert((0, b.__)("Invalid file type or media type.", "ohmylms"));
         }), a.open();
-      }(e) : v.setIsProModalOpen(!0);
+      })(e);
     },
     D = function (e) {
       P(e);
     };
   (0, g.useEffect)(function () {
     var e = function (e) {
-      !S || !w.current || w.current.contains(e.target) || e.target.closest(".omlms-history-list") || e.target.closest(".omlms-tooltip-box") || e.target.closest(".omlms-ai-image-prompt") || (R(!1), D(null));
+      !S || !w.current || w.current.contains(e.target) || e.target.closest(".ohmylms-history-list") || e.target.closest(".ohmylms-tooltip-box") || e.target.closest(".ohmylms-ai-image-prompt") || (R(!1), D(null));
     };
     return document.addEventListener("mousedown", e), function () {
       document.removeEventListener("mousedown", e);
@@ -665,9 +639,9 @@ var _u = function (e) {
     borderRadius: "8px"
   };
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-quiz-question-box-wrapper ".concat(i, " omlms-quiz-type-").concat(m)
+    className: "ohmylms-quiz-question-box-wrapper ".concat(i, " ohmylms-quiz-type-").concat(m)
   }, React.createElement("div", {
-    className: "omlms-quiz-question-box"
+    className: "ohmylms-quiz-question-box"
   }, React.createElement(W.A, {
     variant: "borderless",
     value: Ge(r),
@@ -675,7 +649,7 @@ var _u = function (e) {
       return a("name", e);
     },
     placeholder: n,
-    className: "omlms-quiz-question-box-text",
+    className: "ohmylms-quiz-question-box-text",
     style: {
       border: "none",
       background: "transparent",
@@ -688,30 +662,30 @@ var _u = function (e) {
     name: "questionName",
     autoComplete: "off"
   }), _ && !(null != r && r.trim()) && React.createElement("div", {
-    className: "omlms-error-msg",
+    className: "ohmylms-error-msg",
     style: {
       color: "red",
       marginTop: 4,
       textAlign: "left"
     }
   }, (0, b.__)("Field cannot be empty", "ohmylms")), (Boolean(s) || Boolean(u) || Boolean(C)) && React.createElement("div", {
-    className: "omlms-quiz-question-box-media"
+    className: "ohmylms-quiz-question-box-media"
   }, C ? React.createElement(React.Fragment, null, React.createElement("img", {
     style: z,
     src: C,
     alt: "Course Thumb",
-    className: "omlms-quiz-question-box-img"
+    className: "ohmylms-quiz-question-box-img"
   })) : React.createElement(React.Fragment, null, Boolean(s) && React.createElement("img", {
-    className: "omlms-quiz-question-box-img",
+    className: "ohmylms-quiz-question-box-img",
     src: s,
     alt: "questions image",
     style: z
   })), Boolean(u) && React.createElement("video", {
-    className: "omlms-quiz-question-box-video",
+    className: "ohmylms-quiz-question-box-video",
     src: u,
     controls: !0
   }), !C && React.createElement("div", {
-    className: "omlms-quiz-question-box-media-controls"
+    className: "ohmylms-quiz-question-box-media-controls"
   }, React.createElement(hu, {
     handleEdit: function () {
       return N(Boolean(s) ? "image" : "video");
@@ -722,7 +696,7 @@ var _u = function (e) {
     alertTitle: (0, b.__)("Remove the ".concat(Boolean(s) ? "image" : "video", " "), "ohmylms"),
     alertDescription: (0, b.__)("Are you sure you want to remove this ".concat(Boolean(s) ? "image" : "video", "?"), "ohmylms")
   })), React.createElement("div", {
-    className: "omlms-quiz-question-box-media-controls"
+    className: "ohmylms-quiz-question-box-media-controls"
   }, React.createElement(hu, {
     handleEdit: function () {
       return N(Boolean(s) ? "image" : "video");
@@ -734,18 +708,18 @@ var _u = function (e) {
     alertDescription: (0, b.__)("Are you sure you want to remove this ".concat(Boolean(s) ? "image" : "video", "?"), "ohmylms")
   })))), React.createElement(I.FlexWP, {
     wrap: !0,
-    className: "omlms-quiz-question-box-media-btns",
+    className: "ohmylms-quiz-question-box-media-btns",
     align: "center",
     justify: "center"
   }, !Boolean(s) && !Boolean(u) && React.createElement(React.Fragment, null, React.createElement(I.ButtonWP, {
     icon: React.createElement(ar, null),
-    className: "omlms-media-uploader-button",
+    className: "ohmylms-media-uploader-button",
     onClick: function () {
       return N("image");
     }
   }, (0, b.__)("Add Image", "ohmylms")), React.createElement(I.ButtonWP, {
     icon: React.createElement(pe, null),
-    className: "omlms-media-uploader-button",
+    className: "ohmylms-media-uploader-button",
     onClick: function () {
       return N("video");
     }
@@ -753,12 +727,11 @@ var _u = function (e) {
     text: (0, b.__)("Generate Image with AI", "ohmylms")
   }, React.createElement(I.ButtonWP, {
     icon: React.createElement(wr.A, null),
-    className: "omlms-media-uploader-button",
+    className: "ohmylms-media-uploader-button",
     onClick: function () {
       return function () {
         var e;
-        if (t) return null != F && null !== (e = F.ai_model) && void 0 !== e && e.is_enable ? null != A && A.self || "anthropic" !== (null == A ? void 0 : A.platform) ? null != A && A.self || null != A && A.api_key ? void R(!0) : (v.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (v.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), v.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (j(!0), v.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void v.updateProModalButtonText(null));
-        j(!0);
+        return null != F && null !== (e = F.ai_model) && void 0 !== e && e.is_enable ? null != A && A.self || "anthropic" !== (null == A ? void 0 : A.platform) ? null != A && A.self || null != A && A.api_key ? void R(!0) : (v.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (v.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), v.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (j(!0), v.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void v.updateProModalButtonText(null));
       }();
     }
   }, (0, b.__)("Generate AI Photo", "ohmylms"))), S && React.createElement(Er.default, {
@@ -775,9 +748,7 @@ var _u = function (e) {
     onClose: j
   })));
 };
-
 const wu = (0, g.memo)(_u);
-
 function Eu(e) {
   return function (e) {
     if (Array.isArray(e)) return Su(e);
@@ -793,13 +764,11 @@ function Eu(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Su(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function Ru(e) {
   return function (e) {
     if (Array.isArray(e)) return xu(e);
@@ -815,13 +784,11 @@ function Ru(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function xu(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function Cu(e) {
   return Cu = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;

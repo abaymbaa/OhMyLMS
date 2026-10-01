@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/single-course/tabs/layout3-resources.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  */
 
@@ -19,11 +19,11 @@ if(!$course){
 }
 
 $current_student_id = get_current_user_id();
-$student 			= new \OMLMS\Data\Student( $current_student_id );
+$student 			= new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled     = !empty($student) ? $student->maybe_enrolled( $course->get_id() ) : null;
 
 $resources = method_exists( $course, 'get_resources' ) ? $course->get_resources() : [];
-$single_course_layout = get_option('creator_lms_single_course_page_layout','layout_1');
+$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
 
 if( !$maybe_enrolled ){
     return;
@@ -42,7 +42,7 @@ if( !empty($resources) ){
 <div class="layout3-content-box layout3-resources">
     <h2 class="content-box-title">
         <?php
-            echo apply_filters( 'creator_lms_course_resource_title', __( 'Resources', 'ohmylms' ) ); 
+            echo apply_filters( 'ohmylms_course_resource_title', __( 'Resources', 'ohmylms' ) ); 
         ?>
 
         <?php if( 0 < $total_resource ){ ?>
@@ -60,26 +60,26 @@ if( !empty($resources) ){
     <?php
     if( !empty($resources) ){
 
-        $expand_class = 2 < $total_resource ? 'creator-lms-expandable' : '';
+        $expand_class = 2 < $total_resource ? 'ohmylms-expandable' : '';
         ?>
 
-        <div class="creator-lms-table <?php echo esc_attr( $expand_class ); ?>">
+        <div class="ohmylms-table <?php echo esc_attr( $expand_class ); ?>">
             <?php
                 foreach ( $resources as $resource ) { 
                     foreach ( $resource['file'] as $file ) { 
                         ?>
-                        <div class="creator-lms-tr">
-                            <div class="creator-lms-td-handle" role="button">
+                        <div class="ohmylms-tr">
+                            <div class="ohmylms-td-handle" role="button">
                                 <svg width="10" height="6" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1 1l4 4 4-4"></path></svg>
                             </div>
 
-                            <div class="creator-lms-td title">
+                            <div class="ohmylms-td title">
                                 <?php echo $file['name']; ?>
                             </div>
 
-                            <div class="creator-lms-td action">
+                            <div class="ohmylms-td action">
                                 <a href="<?php echo esc_url($file['url']); ?>" title="Download Now" download >
-                                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/download-icon.php'); ?>
+                                    <?php include(OHMYLMS_DIR . '/assets/images/icon/download-icon.php'); ?>
                                 </a>
                             </div>
                         </div>
@@ -107,7 +107,7 @@ if( !empty($resources) ){
     }else{
         ?>
         <div class="no-course-data">
-            <?php include(CREATOR_LMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+            <?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
             <p>
                 <?php echo __( 'No Resource Found.', 'ohmylms' ); ?>
             </p>

@@ -2,9 +2,9 @@
 /**
  * Login form
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/global/form-billing.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/global/form-billing.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * * @version  1.0.0
  * * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -17,19 +17,19 @@ if ( is_user_logged_in() ) {
 	return;
 }
 
-$creator_lms_google_configured = \OMLMS\Services\GoogleAuthService::is_configured();
-$creator_lms_google_login_url  = rest_url( 'creator-lms/v1/auth/google' );
+$ohmylms_google_configured = \OhMyLMS\Services\GoogleAuthService::is_configured();
+$ohmylms_google_login_url  = rest_url( 'ohmylms/v1/auth/google' );
 if ( ! empty( $redirect_to ) ) {
-	$creator_lms_google_login_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $creator_lms_google_login_url );
+	$ohmylms_google_login_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $ohmylms_google_login_url );
 }
 
 ?>
-<form class="creator-lms-login-signup creator-lms-form-login login" method="post" <?php echo ( $hidden ) ? 'style="display:none;"' : ''; ?> >
+<form class="ohmylms-login-signup ohmylms-form-login login" method="post" <?php echo ( $hidden ) ? 'style="display:none;"' : ''; ?> >
 
 	<?php echo ( $message ) ? wpautop( wptexturize( $message ) ) : ''; // @codingStandardsIgnoreLine ?>
 
 	<?php if ( isset( $_GET['google_error'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
-		<p class="creator-lms-form-row creator-lms-notice creator-lms-notice-error">
+		<p class="ohmylms-form-row ohmylms-notice ohmylms-notice-error">
 			<?php
 			if ( 'google_link_required' === sanitize_key( wp_unslash( $_GET['google_error'] ) ) ) {
 				esc_html_e( 'Sign in with your existing account first, then choose Connect Google in the OhMyLMS school and family portal.', 'ohmylms' );
@@ -40,9 +40,9 @@ if ( ! empty( $redirect_to ) ) {
 		</p>
 	<?php endif; ?>
 
-	<?php if ( $creator_lms_google_configured ) : ?>
-		<p class="creator-lms-form-row">
-			<a href="<?php echo esc_url( $creator_lms_google_login_url ); ?>" class="creator-lms-button creator-lms-google-signin-button" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;">
+	<?php if ( $ohmylms_google_configured ) : ?>
+		<p class="ohmylms-form-row">
+			<a href="<?php echo esc_url( $ohmylms_google_login_url ); ?>" class="ohmylms-button ohmylms-google-signin-button" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;">
 				<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
 					<path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.09-1.81 2.73v2.27h2.92c1.71-1.57 2.69-3.89 2.69-6.64z"/>
 					<path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z"/>
@@ -52,16 +52,16 @@ if ( ! empty( $redirect_to ) ) {
 				<?php esc_html_e( 'Continue with Google', 'ohmylms' ); ?>
 			</a>
 		</p>
-		<p class="creator-lms-form-row creator-lms-auth-divider" style="text-align:center;color:#7A8B9A;font-size:13px;">
+		<p class="ohmylms-form-row ohmylms-auth-divider" style="text-align:center;color:#7A8B9A;font-size:13px;">
 			<?php esc_html_e( 'or', 'ohmylms' ); ?>
 		</p>
 	<?php endif; ?>
 
-	<?php do_action( 'creator_lms_login_form_start' ); ?>
+	<?php do_action( 'ohmylms_login_form_start' ); ?>
 
-	<p class="creator-lms-form-row creator-lms-form-row-first row-username">
-		<span class="creator-lms-input-wrapper">
-			<label for="username" class="creator-lms-input-label">
+	<p class="ohmylms-form-row ohmylms-form-row-first row-username">
+		<span class="ohmylms-input-wrapper">
+			<label for="username" class="ohmylms-input-label">
 				<?php esc_html_e( 'Username or email', 'ohmylms' ); ?>&nbsp;
 				<span class="required" aria-hidden="true">*</span>
 
@@ -70,13 +70,13 @@ if ( ! empty( $redirect_to ) ) {
 				</span>
 			</label>
 
-			<input type="text" class="creator-lms-input-text username" name="username" id="username" autocomplete="username" required aria-required="true" />
+			<input type="text" class="ohmylms-input-text username" name="username" id="username" autocomplete="username" required aria-required="true" />
 		</span>
 	</p>
 
-	<p class="creator-lms-form-row creator-lms-form-row-last row-password">
-		<span class="creator-lms-input-wrapper">
-			<label for="login-password" class="creator-lms-input-label">
+	<p class="ohmylms-form-row ohmylms-form-row-last row-password">
+		<span class="ohmylms-input-wrapper">
+			<label for="login-password" class="ohmylms-input-label">
 				<?php esc_html_e( 'Password', 'ohmylms' ); ?>&nbsp;
 				<span class="required" aria-hidden="true">*</span>
 
@@ -85,8 +85,8 @@ if ( ! empty( $redirect_to ) ) {
 				</span>
 			</label>
 
-			<span class="creator-lms-password-show">
-				<input class="creator-lms-input-text password" type="password" name="password" id="login-password" autocomplete="current-password" required aria-required="true" >
+			<span class="ohmylms-password-show">
+				<input class="ohmylms-input-text password" type="password" name="password" id="login-password" autocomplete="current-password" required aria-required="true" >
 
 				<label class="show-password-icon" tabindex="0">
 					<input type="checkbox" name="show-password-checkbox" class="show-password-checkbox" aria-required="true" aria-hidden="true" >
@@ -94,13 +94,13 @@ if ( ! empty( $redirect_to ) ) {
 					<span class="show-password" aria-label="Toggle password visibility">
 						<span class="eye-on">
 							<?php
-								include(CREATOR_LMS_DIR . '/assets/images/icon/eye-icon2.php');
+								include(OHMYLMS_DIR . '/assets/images/icon/eye-icon2.php');
 							?>
 						</span>
 
 						<span class="eye-off">
 							<?php
-								include(CREATOR_LMS_DIR . '/assets/images/icon/eye-off-icon.php');
+								include(OHMYLMS_DIR . '/assets/images/icon/eye-off-icon.php');
 							?>
 						</span>
 					</span>
@@ -109,13 +109,13 @@ if ( ! empty( $redirect_to ) ) {
 		</span>
 	</p>
 
-	<?php do_action( 'creator_lms_login_form' ); ?>
+	<?php do_action( 'ohmylms_login_form' ); ?>
 
-	<p class="creator-lms-form-row rememberme-row">
-		<label for="rememberme" class="creator-lms-checkbox creator-lms-form-login-rememberme" tabindex="0">
-			<input class="creator-lms-form__input creator-lms-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever" aria-required="true" aria-labelledby="rememberme-label" />
+	<p class="ohmylms-form-row rememberme-row">
+		<label for="rememberme" class="ohmylms-checkbox ohmylms-form-login-rememberme" tabindex="0">
+			<input class="ohmylms-form__input ohmylms-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever" aria-required="true" aria-labelledby="rememberme-label" />
 
-			<span class="creator-lms-checkbox-text">
+			<span class="ohmylms-checkbox-text">
 				<span class="checkedbox" aria-hidden="true" id="rememberme-label">
 					<svg width="11" height="8" fill="none" viewBox="0 0 11 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" fill-rule="evenodd" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5" d="M9.845 1.157c.207.21.207.55 0 .76L5.3 6.528c-.62.63-1.626.63-2.247 0L1.155 4.602a.543.543 0 010-.76.524.524 0 01.749 0L3.802 5.77c.207.21.542.21.749 0l4.545-4.612a.524.524 0 01.749 0z" clip-rule="evenodd"/></svg>
 				</span>
@@ -128,26 +128,26 @@ if ( ! empty( $redirect_to ) ) {
 		</a>
 	</p>
 
-	<p class="creator-lms-form-row form-submit-btn">
-		<?php wp_nonce_field( 'creator-lms-login', 'creator-lms-login-nonce' ); ?>
-		<input type="hidden" name="action" value="creator_lms_login">
+	<p class="ohmylms-form-row form-submit-btn">
+		<?php wp_nonce_field( 'ohmylms-login', 'ohmylms-login-nonce' ); ?>
+		<input type="hidden" name="action" value="ohmylms_login">
 		<input type="hidden" name="redirect_to" value="<?php echo esc_url( $redirect_to ); ?>" />
 
-		<button type="submit" class="creator-lms-button creator-lms-form-login-submit" name="login" value="<?php esc_attr_e( 'Login', 'ohmylms' ); ?>">
+		<button type="submit" class="ohmylms-button ohmylms-form-login-submit" name="login" value="<?php esc_attr_e( 'Login', 'ohmylms' ); ?>">
 			<?php esc_html_e( 'Log in', 'ohmylms' ); ?>
-			<span class="creator-lms-loader"></span>
+			<span class="ohmylms-loader"></span>
 		</button>
 	</p>
 
-	<?php if( !is_creator_lms_checkout() ) : ?>
-		<p class="creator-lms-form-row dont-have-account">
+	<?php if( !is_ohmylms_checkout() ) : ?>
+		<p class="ohmylms-form-row dont-have-account">
 			<?php echo __('Don\'t have an account?', 'ohmylms') ?>
-			<a href="#" class="creator-lms-show-signup-form">
+			<a href="#" class="ohmylms-show-signup-form">
 				<?php esc_html_e( 'Sign Up', 'ohmylms' ); ?>
 			</a>
 		</p>
 	<?php endif; ?>
 
-	<?php do_action( 'creator_lms_login_form_end' ); ?>
+	<?php do_action( 'ohmylms_login_form_end' ); ?>
 
 </form>

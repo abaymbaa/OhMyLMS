@@ -2,9 +2,9 @@
 /**
  * Template for displaying billing fields.
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/checkout/terms.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/checkout/terms.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
  * @global \CodeRex\Ecommerce\Checkout $checkout
  */
@@ -13,11 +13,11 @@ defined( 'ABSPATH' ) || exit();
 ?>
 
 
-<div class="creator-lms-tnc-wrapper">
-	<p class="creator-lms-form-row validate-required">
-		<label for="terms" class="creator-lms-checkbox creator-lms-tnc-label creator-lms-tnc-label-for-checkbox" tabindex="0">
-			<input type="checkbox" class="creator-lms-tnc-input-checkbox" name="terms" id="terms" aria-required="true" aria-labelledby="terms-label" />
-			<span class="creator-lms-checkbox-text">
+<div class="ohmylms-tnc-wrapper">
+	<p class="ohmylms-form-row validate-required">
+		<label for="terms" class="ohmylms-checkbox ohmylms-tnc-label ohmylms-tnc-label-for-checkbox" tabindex="0">
+			<input type="checkbox" class="ohmylms-tnc-input-checkbox" name="terms" id="terms" aria-required="true" aria-labelledby="terms-label" />
+			<span class="ohmylms-checkbox-text">
 				<span class="checkedbox" aria-hidden="true" id="terms-label"></span>
 				<?php
 					$link = '#';
@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit();
 						$link = $link ? $link : '#';
 					}
 					$privacy_policy_link = '<a href="'.$link.'">' . __('privacy policy', 'ohmylms') . '</a>';
-					$privacy_policy_text = get_option('creator_lms_privacy_policy_message', '');
+					$privacy_policy_text = get_option('ohmylms_privacy_policy_message', '');
 
 					if (empty($privacy_policy_text)) {
 						$privacy_policy_text = 'Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our [privacy_policy].';

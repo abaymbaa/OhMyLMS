@@ -4,13 +4,13 @@
  *
  * Gutenberg block for OhMyLMS checkout functionality
  *
- * @package OMLMS\Blocks
+ * @package OhMyLMS\Blocks
  * @since 1.0.0
  */
 
-namespace OMLMS\Blocks;
+namespace OhMyLMS\Blocks;
 
-use OMLMS\Shortcodes\ShortCodeCheckout;
+use OhMyLMS\Shortcodes\ShortCodeCheckout;
 use function CodeRex\Ecommerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
@@ -25,7 +25,7 @@ class CheckoutBlock {
 	 *
 	 * @var string
 	 */
-	const BLOCK_NAME = 'creator-lms/checkout';
+	const BLOCK_NAME = 'ohmylms/checkout';
 
 	/**
 	 * Constructor
@@ -43,9 +43,9 @@ class CheckoutBlock {
 		register_block_type( self::BLOCK_NAME, array(
 			'attributes' => $this->get_block_attributes(),
 			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'creator-lms-blocks-editor',
-			'editor_style' => 'creator-lms-blocks-editor',
-			'style' => 'creator-lms-blocks-frontend',
+			'editor_script' => 'ohmylms-blocks-editor',
+			'editor_style' => 'ohmylms-blocks-editor',
+			'style' => 'ohmylms-blocks-frontend',
 		) );
 	}
 
@@ -556,51 +556,51 @@ public function render_block( $attributes, $content = '' ) {
 		
 		// Enable preview mode for Gutenberg editor to show checkout form even with empty cart
 		if ( $is_editor ) {
-			add_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		// Add editor-specific styling for proper checkout form rendering
 		if ( $is_editor ) {
 			?>
 			<style>
-				.wp-block-creator-lms-checkout .creator-lms {
+				.wp-block-ohmylms-checkout .ohmylms {
 					max-width: 100% !important;
 					background-color: #F9FAFD !important;
 					width: 100% !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-checkout-form-wrapper {
+				.wp-block-ohmylms-checkout .ohmylms-checkout-form-wrapper {
 					display: flex !important;
 					flex-flow: row wrap !important;
 					align-items: flex-start !important;
 					position: relative !important;
 					z-index: 1 !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-checkout-form-left {
+				.wp-block-ohmylms-checkout .ohmylms-checkout-form-left {
 					width: 60% !important;
 					position: relative !important;
 					background-color: #fff !important;
 					padding: 30px 50px 30px 0 !important;
 					min-height: auto !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-checkout-form-right {
+				.wp-block-ohmylms-checkout .ohmylms-checkout-form-right {
 					width: 40% !important;
 					padding: 30px 0 30px 30px !important;
 					position: relative !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-checkout-title {
-					color: var(--creator-lms-heading-color, #1e1e1e) !important;
+				.wp-block-ohmylms-checkout .ohmylms-checkout-title {
+					color: var(--ohmylms-heading-color, #1e1e1e) !important;
 					font-size: 22px !important;
 					font-weight: 600 !important;
 					line-height: 1.3 !important;
 					margin: 0 0 22px !important;
 					letter-spacing: 0 !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-input-wrapper {
+				.wp-block-ohmylms-checkout .ohmylms-input-wrapper {
 					position: relative !important;
 					display: block !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-input-label {
-					color: var(--creator-lms-body-text-color, #333) !important;
+				.wp-block-ohmylms-checkout .ohmylms-input-label {
+					color: var(--ohmylms-body-text-color, #333) !important;
 					font-size: 14px !important;
 					font-weight: 400 !important;
 					line-height: 1.14 !important;
@@ -614,9 +614,9 @@ public function render_block( $attributes, $content = '' ) {
 					padding: 0 4px !important;
 					z-index: 2 !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-input-text,
-				.wp-block-creator-lms-checkout .creator-lms-input-select {
-					color: var(--creator-lms-body-text-color, #333) !important;
+				.wp-block-ohmylms-checkout .ohmylms-input-text,
+				.wp-block-ohmylms-checkout .ohmylms-input-select {
+					color: var(--ohmylms-body-text-color, #333) !important;
 					font-size: 14px !important;
 					font-weight: 400 !important;
 					line-height: 1.25 !important;
@@ -632,19 +632,19 @@ public function render_block( $attributes, $content = '' ) {
 					transition: all 0.3s ease !important;
 					height: auto !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-folded .creator-lms-input-label {
+				.wp-block-ohmylms-checkout .ohmylms-folded .ohmylms-input-label {
 					top: calc(50% - 10px) !important;
 					color: #7A8B9A !important;
 					font-size: 12px !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-form-group {
+				.wp-block-ohmylms-checkout .ohmylms-form-group {
 					width: 100% !important;
 					margin-bottom: 20px !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-form-group.half-width {
+				.wp-block-ohmylms-checkout .ohmylms-form-group.half-width {
 					width: calc(50% - 10px) !important;
 				}
-				.wp-block-creator-lms-checkout .creator-lms-form-wrapper {
+				.wp-block-ohmylms-checkout .ohmylms-form-wrapper {
 					display: flex !important;
 					flex-flow: row wrap !important;
 					align-items: flex-start !important;
@@ -652,12 +652,12 @@ public function render_block( $attributes, $content = '' ) {
 					row-gap: 24px !important;
 				}
 				@media (max-width: 768px) {
-					.wp-block-creator-lms-checkout .creator-lms-checkout-form-left,
-					.wp-block-creator-lms-checkout .creator-lms-checkout-form-right {
+					.wp-block-ohmylms-checkout .ohmylms-checkout-form-left,
+					.wp-block-ohmylms-checkout .ohmylms-checkout-form-right {
 						width: 100% !important;
 						padding: 20px !important;
 					}
-					.wp-block-creator-lms-checkout .creator-lms-form-group.half-width {
+					.wp-block-ohmylms-checkout .ohmylms-form-group.half-width {
 						width: 100% !important;
 					}
 				}
@@ -666,17 +666,17 @@ public function render_block( $attributes, $content = '' ) {
 		}
 
 		// Add proper wrapper classes for consistency with frontend
-		$wrapper_classes = array( 'creator-lms' );
+		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
-			$wrapper_classes[] = 'creator-lms-page';
-			$wrapper_classes[] = 'creator-lms-checkout';
+			$wrapper_classes[] = 'ohmylms-page';
+			$wrapper_classes[] = 'ohmylms-checkout';
 		}
 		
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 		
 		// Add preview notice in editor mode
 		if ( $is_editor ) {
-			echo '<div class="creator-lms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
+			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the checkout will appear to users with items in their cart.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
@@ -688,7 +688,7 @@ public function render_block( $attributes, $content = '' ) {
 		
 		// Remove preview mode filter if it was set
 		if ( $is_editor ) {
-			remove_filter( 'creator_lms_gutenberg_preview_mode', '__return_true' );
+			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
 		return ob_get_clean();
@@ -734,7 +734,7 @@ public function render_block( $attributes, $content = '' ) {
 	 * @return void
 	 */
 	private function render_empty_cart_message( $attributes ) {
-		$archive_page_id  = get_option( 'creator_lms_course_page_id', 0 );
+		$archive_page_id  = get_option( 'ohmylms_course_page_id', 0 );
 		$archive_page_url = home_url();
 		if ( $archive_page_id ) {
 			$archive_page_url = get_permalink( $archive_page_id );
@@ -744,10 +744,10 @@ public function render_block( $attributes, $content = '' ) {
 		$empty_cart_message = ! empty( $attributes['emptyCartMessage'] ) ? $attributes['emptyCartMessage'] : esc_html__( 'Add some courses to your cart to proceed with checkout.', 'ohmylms' );
 		$browse_courses_text = ! empty( $attributes['browseCoursesText'] ) ? $attributes['browseCoursesText'] : esc_html__( 'Browse Courses', 'ohmylms' );
 
-		echo '<div class="creator-lms-empty-cart-message">';
+		echo '<div class="ohmylms-empty-cart-message">';
 		echo '<h3>' . esc_html( $empty_cart_title ) . '</h3>';
 		echo '<p>' . esc_html( $empty_cart_message ) . '</p>';
-		echo '<a href="' . esc_url( $archive_page_url ) . '" class="creator-lms-browse-courses-btn">';
+		echo '<a href="' . esc_url( $archive_page_url ) . '" class="ohmylms-browse-courses-btn">';
 		echo esc_html( $browse_courses_text );
 		echo '</a>';
 		echo '</div>';

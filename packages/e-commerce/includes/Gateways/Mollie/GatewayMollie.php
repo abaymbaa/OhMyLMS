@@ -6,7 +6,7 @@
  * including support for various payment methods, Mollie Components for cards,
  * subscriptions, and refunds.
  *
- * @package     CreatorLMS/Gateways/Mollie
+ * @package     OhMyLMS/Gateways/Mollie
  * @author      WPFunnels Team
  * @since       1.0.0
  * @version     1.0.1
@@ -51,16 +51,16 @@ class GatewayMollie extends PaymentGateway {
 	 */
 	public function __construct() {
 		$this->id                 = 'mollie';
-		$this->title        = $this->get_option( 'title', __( 'Mollie', 'creator-lms' ) );
-		$this->description  = $this->get_option( 'description', __( 'Pay via Mollie using various payment methods.', 'creator-lms' ) );
+		$this->title        = $this->get_option( 'title', __( 'Mollie', 'ohmylms' ) );
+		$this->description  = $this->get_option( 'description', __( 'Pay via Mollie using various payment methods.', 'ohmylms' ) );
 		$this->testmode     = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->api_key      = $this->testmode ? $this->get_option( 'test_api_key' ) : $this->get_option( 'live_api_key' );
 		$this->profile_id   = $this->testmode ? $this->get_option( 'test_profile_id' ) : $this->get_option( 'live_profile_id' );
-		$settings = get_option( 'creatorlms_mollie_settings', [] );
+		$settings = get_option( 'ohmylms_mollie_settings', [] );
 		$this->has_fields         = true;
 		$this->subscription_support = true;
 		$this->enabled            = isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] ? 'yes' : 'no';
-		$this->order_button_text    = __( 'Place payment', 'creator-lms' );
+		$this->order_button_text    = __( 'Place payment', 'ohmylms' );
 		// Mollie needs a full billing address for several payment methods (Pay Later, Klarna, ...).
 		$this->required_checkout_fields = array( 'city', 'state', 'postcode', 'country' );
 
@@ -75,12 +75,12 @@ class GatewayMollie extends PaymentGateway {
 
 		// Actions.
 		add_action( 'rest_api_init', [ $this, 'register_webhook_endpoint' ] );
-		add_action( 'admin_post_creator_lms_mollie_refund_order', [ $this, 'handle_admin_refund_action' ] );
+		add_action( 'admin_post_ohmylms_mollie_refund_order', [ $this, 'handle_admin_refund_action' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_checkout_scripts' ] );
 	}
 
 	public function set_keys() {
-		$settings = get_option( 'creatorlms_mollie_settings', [] );
+		$settings = get_option( 'ohmylms_mollie_settings', [] );
 		$this->testmode     = isset($settings['testmode']) && 'yes' === $settings['testmode'];
 		$this->api_key      = $this->testmode ? $settings['test_api_key'] : $settings['live_api_key'];
 		$this->profile_id   = $this->testmode ? $settings['test_profile_id'] : $settings['live_profile_id'];
@@ -94,67 +94,67 @@ class GatewayMollie extends PaymentGateway {
 	public function init_form_fields() {
 		$this->form_fields = [
 			'enabled'         => [
-				'title'   => __( 'Enable/Disable', 'creator-lms' ),
+				'title'   => __( 'Enable/Disable', 'ohmylms' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Mollie Payment Gateway', 'creator-lms' ),
+				'label'   => __( 'Enable Mollie Payment Gateway', 'ohmylms' ),
 				'default' => 'no',
 			],
 			'title'           => [
-				'title'       => __( 'Title', 'creator-lms' ),
+				'title'       => __( 'Title', 'ohmylms' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __( 'This controls the title which the user sees during checkout.', 'creator-lms' ),
-				'default'     => __( 'Mollie', 'creator-lms' ),
+				'description' => __( 'This controls the title which the user sees during checkout.', 'ohmylms' ),
+				'default'     => __( 'Mollie', 'ohmylms' ),
 			],
 			'description'     => [
-				'title'       => __( 'Description', 'creator-lms' ),
+				'title'       => __( 'Description', 'ohmylms' ),
 				'type'        => 'textarea',
 				'desc_tip'    => true,
-				'description' => __( 'This controls the description which the user sees during checkout.', 'creator-lms' ),
-				'default'     => __( 'Pay via Mollie using various payment methods.', 'creator-lms' ),
+				'description' => __( 'This controls the description which the user sees during checkout.', 'ohmylms' ),
+				'default'     => __( 'Pay via Mollie using various payment methods.', 'ohmylms' ),
 			],
 			'testmode'        => [
-				'title'       => __( 'Test mode', 'creator-lms' ),
+				'title'       => __( 'Test mode', 'ohmylms' ),
 				'type'        => 'checkbox',
-				'label'       => __( 'Enable Mollie Test Mode', 'creator-lms' ),
+				'label'       => __( 'Enable Mollie Test Mode', 'ohmylms' ),
 				'default'     => 'yes',
 				'desc_tip'    => true,
-				'description' => __( 'Use Mollie in test mode. Requires Test API Key and Test Profile ID.', 'creator-lms' ),
+				'description' => __( 'Use Mollie in test mode. Requires Test API Key and Test Profile ID.', 'ohmylms' ),
 			],
 			'test_api_key'    => [
-				'title'       => __( 'Test API Key', 'creator-lms' ),
+				'title'       => __( 'Test API Key', 'ohmylms' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __( 'Get your Test API key from your Mollie dashboard.', 'creator-lms' ),
+				'description' => __( 'Get your Test API key from your Mollie dashboard.', 'ohmylms' ),
 				'default'     => '',
 			],
 			'test_profile_id' => [
-				'title'       => __( 'Test Profile ID', 'creator-lms' ),
+				'title'       => __( 'Test Profile ID', 'ohmylms' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __( 'Enter your Mollie Test Profile ID (starts with pfl_). Required for Mollie Components in test mode.', 'creator-lms' ),
+				'description' => __( 'Enter your Mollie Test Profile ID (starts with pfl_). Required for Mollie Components in test mode.', 'ohmylms' ),
 				'default'     => '',
 			],
 			'live_api_key'    => [
-				'title'       => __( 'Live API Key', 'creator-lms' ),
+				'title'       => __( 'Live API Key', 'ohmylms' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __( 'Get your Live API key from your Mollie dashboard.', 'creator-lms' ),
+				'description' => __( 'Get your Live API key from your Mollie dashboard.', 'ohmylms' ),
 				'default'     => '',
 			],
 			'live_profile_id' => [
-				'title'       => __( 'Lives Profile ID', 'creator-lms' ),
+				'title'       => __( 'Lives Profile ID', 'ohmylms' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __( 'Enter your Mollie Live Profile ID (starts with pfl_). Required for Mollie Components in live mode.', 'creator-lms' ),
+				'description' => __( 'Enter your Mollie Live Profile ID (starts with pfl_). Required for Mollie Components in live mode.', 'ohmylms' ),
 				'default'     => '',
 			],
 			/* Conceptual: Button or mechanism to clear payment method cache
             'clear_cache_button' => array(
-                'title' => __( 'Clear Payment Method Cache', 'creator-lms' ),
+                'title' => __( 'Clear Payment Method Cache', 'ohmylms' ),
                 'type'  => 'button', // This type would need custom rendering in the settings framework
-                'label' => __( 'Clear Cache', 'creator-lms' ),
-                'description' => __( 'Click this button to clear the cached list of payment methods from Mollie. This can be useful if you have recently updated your Mollie account settings and the changes are not reflecting.', 'creator-lms' ),
+                'label' => __( 'Clear Cache', 'ohmylms' ),
+                'description' => __( 'Click this button to clear the cached list of payment methods from Mollie. This can be useful if you have recently updated your Mollie account settings and the changes are not reflecting.', 'ohmylms' ),
                 // 'url'   => wp_nonce_url( add_query_arg( 'mollie_action', 'clear_cache' ), 'mollie_clear_cache_nonce', '_mollie_nonce' ),
             ),
             */
@@ -165,9 +165,9 @@ class GatewayMollie extends PaymentGateway {
 
 		if ( empty( $api_key_to_check ) ) {
 			$this->form_fields['api_key_notice'] = [
-				'title'       => __( 'API Key Required', 'creator-lms' ),
+				'title'       => __( 'API Key Required', 'ohmylms' ),
 				'type'        => 'title',
-				'description' => __( 'Please enter your Mollie API key (Test or Live) above and save settings to load available payment methods.', 'creator-lms' ),
+				'description' => __( 'Please enter your Mollie API key (Test or Live) above and save settings to load available payment methods.', 'ohmylms' ),
 			];
 			return;
 		}
@@ -183,9 +183,9 @@ class GatewayMollie extends PaymentGateway {
 				set_transient( $transient_name, $methods, HOUR_IN_SECONDS );
 			} elseif ( is_wp_error( $fetched_methods ) ) {
 				$this->form_fields['api_error_notice'] = [
-					'title'       => __( 'API Error', 'creator-lms' ),
+					'title'       => __( 'API Error', 'ohmylms' ),
 					'type'        => 'title',
-					'description' => sprintf(__( 'Could not fetch payment methods from Mollie. Error: %s', 'creator-lms' ), esc_html($fetched_methods->get_error_message())),
+					'description' => sprintf(__( 'Could not fetch payment methods from Mollie. Error: %s', 'ohmylms' ), esc_html($fetched_methods->get_error_message())),
 				];
 				if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 				}
@@ -193,18 +193,18 @@ class GatewayMollie extends PaymentGateway {
 			} else {
 				$methods = [];
 				$this->form_fields['no_methods_notice'] = [
-					'title'       => __( 'No Payment Methods Available', 'creator-lms' ),
+					'title'       => __( 'No Payment Methods Available', 'ohmylms' ),
 					'type'        => 'title',
-					'description' => __( 'No payment methods were returned by Mollie for the current mode (Test/Live). This might be due to your Mollie account configuration, API key restrictions, or no payment methods being activated in your Mollie dashboard.', 'creator-lms' ),
+					'description' => __( 'No payment methods were returned by Mollie for the current mode (Test/Live). This might be due to your Mollie account configuration, API key restrictions, or no payment methods being activated in your Mollie dashboard.', 'ohmylms' ),
 				];
 			}
 		}
 
 		if ( ! empty( $methods ) ) {
 			$this->form_fields['payment_methods_title'] = [
-				'title'       => __( 'Available Payment Methods', 'creator-lms' ),
+				'title'       => __( 'Available Payment Methods', 'ohmylms' ),
 				'type'        => 'title',
-				'description' => __( 'Enable or disable specific payment methods available through your Mollie account. Methods are cached for up to 1 hour.', 'creator-lms' ),
+				'description' => __( 'Enable or disable specific payment methods available through your Mollie account. Methods are cached for up to 1 hour.', 'ohmylms' ),
 			];
 			foreach ( $methods as $method_obj ) {
 				if ( ! is_object( $method_obj ) || ! isset( $method_obj['id'], $method_obj['description'] ) ) {
@@ -214,9 +214,9 @@ class GatewayMollie extends PaymentGateway {
 				$this->form_fields[ $method_id_key ] = [
 					'title'    => esc_html( $method_obj['description'] ),
 					'type'     => 'checkbox',
-					'label'    => sprintf( __( 'Enable %s', 'creator-lms' ), esc_html( $method_obj['description'] ) ),
+					'label'    => sprintf( __( 'Enable %s', 'ohmylms' ), esc_html( $method_obj['description'] ) ),
 					'default'  => 'yes',
-					'desc_tip' => sprintf( __( 'Allow customers to pay using %s.', 'creator-lms' ), esc_html( $method_obj['description'] ) ),
+					'desc_tip' => sprintf( __( 'Allow customers to pay using %s.', 'ohmylms' ), esc_html( $method_obj['description'] ) ),
 				];
 			}
 		}
@@ -230,24 +230,24 @@ class GatewayMollie extends PaymentGateway {
 	public function get_settings() {
 		$fields = array(
 			array(
-				'title' => __( 'Title', 'creator-lms' ),
-				'short_description' => __( 'Enter the title that will appear for Mollie payment during checkout.', 'creator-lms' ),
+				'title' => __( 'Title', 'ohmylms' ),
+				'short_description' => __( 'Enter the title that will appear for Mollie payment during checkout.', 'ohmylms' ),
 				'input_type' => 'text',
-				'default_value' => __( 'Mollie', 'creator-lms' ),
+				'default_value' => __( 'Mollie', 'ohmylms' ),
 				'option_name' => 'title',
 				'value' => $this->title
 			),
 			array(
-				'title' => __( 'Description', 'creator-lms' ),
-				'short_description' => __( 'This controls the description which the user sees during checkout.', 'creator-lms' ),
+				'title' => __( 'Description', 'ohmylms' ),
+				'short_description' => __( 'This controls the description which the user sees during checkout.', 'ohmylms' ),
 				'input_type' => 'textarea',
-				'default_value' => __( 'Pay via Mollie using various payment methods.', 'creator-lms' ),
+				'default_value' => __( 'Pay via Mollie using various payment methods.', 'ohmylms' ),
 				'option_name' => 'description',
 				'value' => $this->description
 			),
 			array(
-				'title' => __( 'Test Mode', 'creator-lms' ),
-				'short_description' => __( 'Use Mollie in test mode. Requires Test API Key and Test Profile ID.', 'creator-lms' ),
+				'title' => __( 'Test Mode', 'ohmylms' ),
+				'short_description' => __( 'Use Mollie in test mode. Requires Test API Key and Test Profile ID.', 'ohmylms' ),
 				'input_type' => 'switch',
 				'default_value' => $this->get_option( 'testmode', 'no' ),
 				'option_name' => 'testmode',
@@ -258,8 +258,8 @@ class GatewayMollie extends PaymentGateway {
 				)
 			),
 			array(
-				'title' => __( 'Test API Key', 'creator-lms' ),
-				'short_description' => __( 'Get your Test API key from your Mollie dashboard.', 'creator-lms' ) . ' <a href="https://my.mollie.com/dashboard/org_12908948/developers/api-keys" target="_blank">' . __( 'How to find your API keys', 'creator-lms' ) . '</a>',
+				'title' => __( 'Test API Key', 'ohmylms' ),
+				'short_description' => __( 'Get your Test API key from your Mollie dashboard.', 'ohmylms' ) . ' <a href="https://my.mollie.com/dashboard/org_12908948/developers/api-keys" target="_blank">' . __( 'How to find your API keys', 'ohmylms' ) . '</a>',
 				'input_type' => 'text',
 				'default_value' => '',
 				'value' => $this->get_option( 'test_api_key', '' ),
@@ -271,8 +271,8 @@ class GatewayMollie extends PaymentGateway {
 				)
 			),
 			array(
-				'title' => __( 'Test Profile ID', 'creator-lms' ),
-				'short_description' => __( 'Enter your Mollie Test Profile ID (starts with pfl_). Required for Mollie Components in test mode.', 'creator-lms' ),
+				'title' => __( 'Test Profile ID', 'ohmylms' ),
+				'short_description' => __( 'Enter your Mollie Test Profile ID (starts with pfl_). Required for Mollie Components in test mode.', 'ohmylms' ),
 				'input_type' => 'text',
 				'default_value' => '',
 				'value' => $this->get_option( 'test_profile_id', '' ),
@@ -284,8 +284,8 @@ class GatewayMollie extends PaymentGateway {
 				)
 			),
 			array(
-				'title' => __( 'Live API Key', 'creator-lms' ),
-				'short_description' => __( 'Get your Live API key from your Mollie dashboard.', 'creator-lms' ) . ' <a href="https://docs.mollie.com/overview/authentication" target="_blank">' . __( 'How to find your API keys', 'creator-lms' ) . '</a>',
+				'title' => __( 'Live API Key', 'ohmylms' ),
+				'short_description' => __( 'Get your Live API key from your Mollie dashboard.', 'ohmylms' ) . ' <a href="https://docs.mollie.com/overview/authentication" target="_blank">' . __( 'How to find your API keys', 'ohmylms' ) . '</a>',
 				'input_type' => 'text',
 				'default_value' => '',
 				'option_name' => 'live_api_key',
@@ -297,8 +297,8 @@ class GatewayMollie extends PaymentGateway {
 				)
 			),
 			array(
-				'title' => __( 'Live Profile ID', 'creator-lms' ),
-				'short_description' => __( 'Enter your Mollie Live Profile ID (starts with pfl_). Required for Mollie Components in live mode.', 'creator-lms' ),
+				'title' => __( 'Live Profile ID', 'ohmylms' ),
+				'short_description' => __( 'Enter your Mollie Live Profile ID (starts with pfl_). Required for Mollie Components in live mode.', 'ohmylms' ),
 				'input_type' => 'text',
 				'default_value' => '',
 				'option_name' => 'live_profile_id',
@@ -330,8 +330,8 @@ class GatewayMollie extends PaymentGateway {
 
 			if ( ! empty( $methods ) && is_array( $methods ) ) {
 				$fields[] = array(
-					'title' => __( 'Available Payment Methods', 'creator-lms' ),
-					'short_description' => __( 'Enable or disable specific payment methods available through your Mollie account. Methods are cached for up to 1 hour.', 'creator-lms' ),
+					'title' => __( 'Available Payment Methods', 'ohmylms' ),
+					'short_description' => __( 'Enable or disable specific payment methods available through your Mollie account. Methods are cached for up to 1 hour.', 'ohmylms' ),
 					'input_type' => 'section_header',
 					'option_name' => 'payment_methods_section'
 				);
@@ -343,7 +343,7 @@ class GatewayMollie extends PaymentGateway {
 					$method_id_key = 'method_' . esc_attr( $method_obj['id'] ) . '_enabled';
 					$fields[] = array(
 						'title' => esc_html( $method_obj['description'] ),
-						'short_description' => sprintf( __( 'Allow customers to pay using %s.', 'creator-lms' ), esc_html( $method_obj['description'] ) ),
+						'short_description' => sprintf( __( 'Allow customers to pay using %s.', 'ohmylms' ), esc_html( $method_obj['description'] ) ),
 						'input_type' => 'checkbox',
 						'default_value' => 'yes',
 						'option_name' => $method_id_key,
@@ -355,8 +355,8 @@ class GatewayMollie extends PaymentGateway {
 
 		$gateway_settings = array(
 			'id' => 'mollie',
-			'title' => __( 'Mollie', 'creator-lms' ),
-			'description' => __( 'Mollie Payment Gateway', 'creator-lms' ),
+			'title' => __( 'Mollie', 'ohmylms' ),
+			'description' => __( 'Mollie Payment Gateway', 'ohmylms' ),
 			'icon' => '<svg width="43" height="42" viewBox="0 0 43 42" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="43" height="42" rx="21" fill="#0A0B09"/><path d="M21.5 8C14.044 8 8 14.044 8 21.5S14.044 35 21.5 35 35 28.956 35 21.5 28.956 8 21.5 8zm0 24.375c-5.863 0-10.625-4.762-10.625-10.625S15.637 10.625 21.5 10.625 32.125 15.387 32.125 21.25 27.363 32.375 21.5 32.375zm-3.125-15.469c-1.378 0-2.5 1.122-2.5 2.5v5.469a2.5 2.5 0 005 0v-5.469c0-1.378-1.122-2.5-2.5-2.5z" fill="#fff"/></svg>',
 			'has_config' => true,
 			'subscription_support' => true,
@@ -389,13 +389,13 @@ class GatewayMollie extends PaymentGateway {
 				set_transient( $transient_name, $methods, HOUR_IN_SECONDS );
 			} else {
 				$methods = [];
-				echo '<p>' . esc_html__( 'Could not load payment methods at this time. Please try again or contact support.', 'creator-lms' ) . '</p>';
+				echo '<p>' . esc_html__( 'Could not load payment methods at this time. Please try again or contact support.', 'ohmylms' ) . '</p>';
 				return;
 			}
 		}
 
 		if ( empty( $methods ) ) {
-			echo '<p>' . esc_html__( 'No payment methods are currently available.', 'creator-lms' ) . '</p>';
+			echo '<p>' . esc_html__( 'No payment methods are currently available.', 'ohmylms' ) . '</p>';
 			return;
 		}
 
@@ -427,7 +427,7 @@ class GatewayMollie extends PaymentGateway {
 				// No need to show card input fields on checkout page
 				if ( ! empty( $method_obj['issuers'] ) && is_array( $method_obj['issuers'] ) ) : ?>
 					<div class="mollie-issuer-dropdown" style="display:none;" data-method-id="<?php echo esc_attr( $method_obj['id'] ); ?>">
-						<label for="mollie_issuer_<?php echo esc_attr( $method_obj['id'] ); ?>"><?php esc_html_e( 'Select your bank:', 'creator-lms' ); ?></label>
+						<label for="mollie_issuer_<?php echo esc_attr( $method_obj['id'] ); ?>"><?php esc_html_e( 'Select your bank:', 'ohmylms' ); ?></label>
 						<select name="mollie_issuer_<?php echo esc_attr( $method_obj['id'] ); ?>" id="mollie_issuer_<?php echo esc_attr( $method_obj['id'] ); ?>" class="mollie-issuer-select">
 							<?php foreach ( $method_obj['issuers'] as $issuer ) : ?>
 								<?php if ( is_array( $issuer ) && isset( $issuer['id'], $issuer['name']) ) : ?>
@@ -466,7 +466,7 @@ class GatewayMollie extends PaymentGateway {
 			
 			$line_items[] = array(
 				'type'        => 'digital', // Can be 'physical', 'digital', 'shipping_fee', 'discount', 'gift_card', etc.
-				'description' => ! empty( $item_name ) ? $item_name : __( 'Course Item', 'creator-lms' ),
+				'description' => ! empty( $item_name ) ? $item_name : __( 'Course Item', 'ohmylms' ),
 				'quantity'    => $quantity,
 				'unitPrice'   => array(
 					'currency' => $currency,
@@ -489,7 +489,7 @@ class GatewayMollie extends PaymentGateway {
 		if ( $discount > 0 ) {
 			$line_items[] = array(
 				'type'        => 'discount',
-				'description' => __( 'Discount', 'creator-lms' ),
+				'description' => __( 'Discount', 'ohmylms' ),
 				'quantity'    => 1,
 				'unitPrice'   => array(
 					'currency' => $currency,
@@ -513,7 +513,7 @@ class GatewayMollie extends PaymentGateway {
 			$tax_rate = $order->get_tax_rate();
 			$line_items[] = array(
 				'type'        => 'surcharge',
-				'description' => $tax_rate > 0 ? sprintf( __( 'Tax (%s%%)', 'creator-lms' ), $tax_rate ) : __( 'Tax', 'creator-lms' ),
+				'description' => $tax_rate > 0 ? sprintf( __( 'Tax (%s%%)', 'ohmylms' ), $tax_rate ) : __( 'Tax', 'ohmylms' ),
 				'quantity'    => 1,
 				'unitPrice'   => array(
 					'currency' => $currency,
@@ -542,34 +542,34 @@ class GatewayMollie extends PaymentGateway {
 		if ( ! $this->is_available() ) {
 			return;
 		}
-		$script_version = defined('CREATOR_LMS_VERSION') ? CREATOR_LMS_VERSION : '1.0.1';
+		$script_version = defined('OHMYLMS_VERSION') ? OHMYLMS_VERSION : '1.0.1';
 
 		wp_enqueue_script('mollie-js-sdk', 'https://js.mollie.com/v1/mollie.js', [], null, true);
-		wp_enqueue_script('creator-lms-mollie-checkout',  CREATOR_LMS_URL . '/packages/e-commerce/assets/js/mollie-checkout.js', ['jquery', 'mollie-js-sdk'], $script_version, true);
+		wp_enqueue_script('ohmylms-mollie-checkout',  OHMYLMS_URL . '/packages/e-commerce/assets/js/mollie-checkout.js', ['jquery', 'mollie-js-sdk'], $script_version, true);
 
 		// $profile_id = $this->testmode ? $this->get_option('test_profile_id') : $this->get_option('live_profile_id');
 		$card_method_enabled = 'yes' === $this->get_option('method_creditcard_enabled', 'yes');
 
 		if (empty($profile_id) && $card_method_enabled && current_user_can('manage_options')) {
 			 add_action('wp_footer', function() { // For frontend warning
-				echo "<script>console.warn('" . esc_js(__('Mollie Profile ID is not set. Credit Card payments via Mollie Components may not work correctly.', 'creator-lms')) . "');</script>";
+				echo "<script>console.warn('" . esc_js(__('Mollie Profile ID is not set. Credit Card payments via Mollie Components may not work correctly.', 'ohmylms')) . "');</script>";
 			});
         }
 
 		wp_localize_script(
-			'creator-lms-mollie-checkout',
-			'omlms_mollie_params',
+			'ohmylms-mollie-checkout',
+			'ohmylms_mollie_params',
 			[
 				'profile_id'             => $this->profile_id,
 				'locale'                 => str_replace( '_', '-', get_locale() ),
 				'ajax_url'               => admin_url( 'admin-ajax.php' ),
 				'testmode'               => (bool) $this->testmode,
-				'checkout_form_selector' => apply_filters('creator_lms_mollie_checkout_form_selector', 'form.checkout'),
+				'checkout_form_selector' => apply_filters('ohmylms_mollie_checkout_form_selector', 'form.checkout'),
 				'mollie_checkout_nonce'  => wp_create_nonce( 'mollie_checkout_nonce' ), // General nonce for JS actions if needed
 				'error_messages' => [
-					'unable_to_create_token' => __('Could not create payment token. Please try again or contact support.', 'creator-lms'),
-					'mollie_error'           => __('Mollie payment error:', 'creator-lms'),
-					'generic_error'          => __('An unexpected error occurred. Please try again.', 'creator-lms'),
+					'unable_to_create_token' => __('Could not create payment token. Please try again or contact support.', 'ohmylms'),
+					'mollie_error'           => __('Mollie payment error:', 'ohmylms'),
+					'generic_error'          => __('An unexpected error occurred. Please try again.', 'ohmylms'),
 				]
 			]
 		);
@@ -584,14 +584,14 @@ class GatewayMollie extends PaymentGateway {
 	public function process_payment( $order_id, $is_subscription = false ) {
 		$order = ecommerce_get_order( $order_id );
 		if ( ! $order ) {
-			return ['result' => 'failure', 'message' => __( 'Order not found.', 'creator-lms' ), 'redirect' => false];
+			return ['result' => 'failure', 'message' => __( 'Order not found.', 'ohmylms' ), 'redirect' => false];
 		}
 		$this->set_keys();
 		MollieAPI::set_api_key( $this->api_key );
 
 		if ( empty( $this->api_key ) ) {
-			$order->add_order_note( __( 'Mollie API key not configured. Payment cannot proceed.', 'creator-lms' ) );
-			return ['result' => 'failure', 'message' => __( 'Payment gateway is not configured. Please contact the site administrator.', 'creator-lms' )];
+			$order->add_order_note( __( 'Mollie API key not configured. Payment cannot proceed.', 'ohmylms' ) );
+			return ['result' => 'failure', 'message' => __( 'Payment gateway is not configured. Please contact the site administrator.', 'ohmylms' )];
 		}
 
 		$redirect_url = $this->get_return_url( $order );
@@ -600,8 +600,8 @@ class GatewayMollie extends PaymentGateway {
 		$selected_method_id = isset( $_POST['mollie_payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['mollie_payment_method'] ) ) : '';
 
 		if ( empty( $selected_method_id ) ) {
-			$order->add_order_note( __( 'No Mollie payment method selected by customer.', 'creator-lms' ) );
-			return ['result' => 'failure', 'message' => __( 'Please select a payment method.', 'creator-lms' )];
+			$order->add_order_note( __( 'No Mollie payment method selected by customer.', 'ohmylms' ) );
+			return ['result' => 'failure', 'message' => __( 'Please select a payment method.', 'ohmylms' )];
 		}
 
 		// Prepare billing address for Mollie (required for some payment methods)
@@ -620,7 +620,7 @@ class GatewayMollie extends PaymentGateway {
 
 		$payment_data = [
 			'amount'      => ['value' => number_format( $order->get_total(), 2, '.', '' ), 'currency' => $order->get_currency()],
-			'description' => sprintf( __( 'Order %s', 'creator-lms' ), $order->get_order_number() ),
+			'description' => sprintf( __( 'Order %s', 'ohmylms' ), $order->get_order_number() ),
 			'redirectUrl' => $redirect_url,
 			'webhookUrl'  => $webhook_url,
 			'method'      => $selected_method_id,
@@ -667,13 +667,13 @@ class GatewayMollie extends PaymentGateway {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$order->add_order_note( sprintf( __( 'Mollie payment creation failed. Error: %s', 'creator-lms' ), esc_html($error_message) ) );
-			return ['result' => 'failure', 'message' => sprintf( __( 'Payment creation failed: %s', 'creator-lms' ), esc_html($error_message) ), 'redirect' => false];
+			$order->add_order_note( sprintf( __( 'Mollie payment creation failed. Error: %s', 'ohmylms' ), esc_html($error_message) ) );
+			return ['result' => 'failure', 'message' => sprintf( __( 'Payment creation failed: %s', 'ohmylms' ), esc_html($error_message) ), 'redirect' => false];
 		}
 		if ( ! $response || ! isset( $response['id'] ) || ! isset( $response['_links']['checkout']['href'] ) ) {
 			$log_response = is_array($response) || is_object($response) ? print_r($response, true) : strval($response);
-			$order->add_order_note( sprintf( __( 'Mollie payment creation failed. Invalid response: %s', 'creator-lms' ), esc_html($log_response) ) );
-			return ['result' => 'failure', 'message' => __( 'Payment creation failed due to invalid response from provider.', 'creator-lms' ), 'redirect' => false];
+			$order->add_order_note( sprintf( __( 'Mollie payment creation failed. Invalid response: %s', 'ohmylms' ), esc_html($log_response) ) );
+			return ['result' => 'failure', 'message' => __( 'Payment creation failed due to invalid response from provider.', 'ohmylms' ), 'redirect' => false];
 		}
 		$order->update_meta_data( '_mollie_payment_id', sanitize_text_field($response['id']) );
 		$order->update_meta_data( '_transaction_id', sanitize_text_field($response['id']) );
@@ -682,7 +682,7 @@ class GatewayMollie extends PaymentGateway {
 		if ( isset( $payment_data['issuer'] ) ) {
 			$order->update_meta_data( '_mollie_issuer_selected_id', sanitize_text_field($payment_data['issuer']) );
 		}
-		$order->add_order_note( sprintf( __( 'Mollie payment initiated. ID: %s.', 'creator-lms' ), esc_html($response['id']) ) );
+		$order->add_order_note( sprintf( __( 'Mollie payment initiated. ID: %s.', 'ohmylms' ), esc_html($response['id']) ) );
 		$order->save();
 		return ['result' => 'success', 'redirect' => esc_url_raw($response['_links']['checkout']['href'])];
 	}
@@ -696,15 +696,15 @@ class GatewayMollie extends PaymentGateway {
 	public function process_subscription_payment( $order_id ) {
 		$order = ecommerce_get_order( $order_id );
 		if ( ! $order ) {
-			return ['result' => 'failure', 'message' => __( 'Order not found for subscription.', 'creator-lms' ), 'redirect' => false];
+			return ['result' => 'failure', 'message' => __( 'Order not found for subscription.', 'ohmylms' ), 'redirect' => false];
 		}
 		$this->testmode = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->api_key = $this->testmode ? $this->get_option( 'test_api_key' ) : $this->get_option( 'live_api_key' );
 		MollieAPI::set_api_key( $this->api_key );
 
 		if(empty($this->api_key)){
-			$order->add_order_note(__( 'Mollie API key not configured for subscription.', 'creator-lms' ));
-			return ['result' => 'failure', 'message' => __( 'Gateway not configured for subscription.', 'creator-lms' )];
+			$order->add_order_note(__( 'Mollie API key not configured for subscription.', 'ohmylms' ));
+			return ['result' => 'failure', 'message' => __( 'Gateway not configured for subscription.', 'ohmylms' )];
 		}
 		$user_id = $order->get_customer_id();
 		if ( ! $user_id && is_user_logged_in() ) { $user_id = get_current_user_id(); }
@@ -721,29 +721,29 @@ class GatewayMollie extends PaymentGateway {
 			$customer_name = $order->get_student_name();
 			$customer_email = $order->get_email();
 			if(empty($customer_name) || !is_email($customer_email)) {
-				$order->add_order_note(__( 'Cannot create Mollie customer: missing name or valid email.', 'creator-lms' ));
-				return ['result' => 'failure', 'message' => __( 'Valid customer name and email are required.', 'creator-lms' )];
+				$order->add_order_note(__( 'Cannot create Mollie customer: missing name or valid email.', 'ohmylms' ));
+				return ['result' => 'failure', 'message' => __( 'Valid customer name and email are required.', 'ohmylms' )];
 			}
 			$customer_data = ['name' => sanitize_text_field($customer_name), 'email' => sanitize_email($customer_email)];
 			$mollie_customer = MollieAPI::create_customer( $customer_data );
 
 			if ( is_wp_error( $mollie_customer ) || empty( $mollie_customer['id'] ) ) {
-				$error_message = is_wp_error( $mollie_customer ) ? $mollie_customer->get_error_message() : __('Unknown error during customer creation', 'creator-lms');
-				$order->add_order_note(sprintf(__( 'Failed to create Mollie customer. Error: %s', 'creator-lms' ), esc_html($error_message)));
-				return ['result' => 'failure', 'message' => sprintf(__( 'Failed to create customer profile: %s', 'creator-lms' ), esc_html($error_message))];
+				$error_message = is_wp_error( $mollie_customer ) ? $mollie_customer->get_error_message() : __('Unknown error during customer creation', 'ohmylms');
+				$order->add_order_note(sprintf(__( 'Failed to create Mollie customer. Error: %s', 'ohmylms' ), esc_html($error_message)));
+				return ['result' => 'failure', 'message' => sprintf(__( 'Failed to create customer profile: %s', 'ohmylms' ), esc_html($error_message))];
 			}
 			$mollie_customer_id = sanitize_text_field($mollie_customer['id']);
 			update_user_meta( $user_id, '_mollie_customer_id', $mollie_customer_id );
 		} elseif ( empty( $mollie_customer_id ) && ! $user_id ) { // Should not happen if LMS requires login for subscriptions
-			$order->add_order_note(__( 'User account required for subscriptions with Mollie.', 'creator-lms' ));
-			return ['result' => 'failure', 'message' => __( 'A customer account is required for subscriptions.', 'creator-lms' )];
+			$order->add_order_note(__( 'User account required for subscriptions with Mollie.', 'ohmylms' ));
+			return ['result' => 'failure', 'message' => __( 'A customer account is required for subscriptions.', 'ohmylms' )];
 		}
 
 		$redirect_url = $this->get_return_url( $order );
 		$webhook_url  = get_rest_url( null, 'cx-ecommerce/v1/mollie-webhook/' );
 		$selected_method_id = isset( $_POST['mollie_payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['mollie_payment_method'] ) ) : '';
         if ( empty( $selected_method_id ) ) {
-			return [ 'result' => 'failure', 'message' => __( 'Please select a payment method for your subscription.', 'creator-lms' ) ];
+			return [ 'result' => 'failure', 'message' => __( 'Please select a payment method for your subscription.', 'ohmylms' ) ];
 		}
 
 		// Prepare billing address for Mollie (required for some payment methods)
@@ -762,7 +762,7 @@ class GatewayMollie extends PaymentGateway {
 
 		$payment_data = [
 			'amount'       => ['value' => number_format( $order->get_total(), 2, '.', '' ), 'currency' => $order->get_currency()],
-			'description'  => sprintf( __( 'Subscription Order %s - First Payment', 'creator-lms' ), $order->get_order_number() ),
+			'description'  => sprintf( __( 'Subscription Order %s - First Payment', 'ohmylms' ), $order->get_order_number() ),
 			'redirectUrl'  => $redirect_url, 'webhookUrl'   => $webhook_url, 'method' => $selected_method_id,
 			'customerId'   => $mollie_customer_id, 'sequenceType' => 'first',
 			'metadata'     => ['order_id' => $order_id, 'order_number' => $order->get_order_number(), 'is_subscription_first_payment' => true, 'wordpress_user_id' => $user_id, 'wordpress_site' => get_bloginfo('url')],
@@ -802,13 +802,13 @@ class GatewayMollie extends PaymentGateway {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$order->add_order_note(sprintf(__( 'Mollie first payment failed. Error: %s', 'creator-lms' ), esc_html($error_message)));
-			return ['result' => 'failure', 'message' => sprintf(__( 'Subscription payment failed: %s', 'creator-lms' ), esc_html($error_message)), 'redirect' => false];
+			$order->add_order_note(sprintf(__( 'Mollie first payment failed. Error: %s', 'ohmylms' ), esc_html($error_message)));
+			return ['result' => 'failure', 'message' => sprintf(__( 'Subscription payment failed: %s', 'ohmylms' ), esc_html($error_message)), 'redirect' => false];
 		}
 		if ( ! $response || ! isset( $response['id'] ) || ! isset( $response['_links']['checkout']['href'] ) ) {
 			$log_response = is_array($response) || is_object($response) ? print_r($response, true) : strval($response);
-			$order->add_order_note(sprintf(__( 'Mollie first payment failed. Invalid response: %s', 'creator-lms' ), esc_html($log_response)));
-			return ['result' => 'failure', 'message' => __( 'Subscription payment failed due to invalid provider response.', 'creator-lms' ), 'redirect' => false];
+			$order->add_order_note(sprintf(__( 'Mollie first payment failed. Invalid response: %s', 'ohmylms' ), esc_html($log_response)));
+			return ['result' => 'failure', 'message' => __( 'Subscription payment failed due to invalid provider response.', 'ohmylms' ), 'redirect' => false];
 		}
 		$order->update_meta_data( '_mollie_first_payment_id', sanitize_text_field($response['id']) );
 		$order->update_meta_data( '_transaction_id', sanitize_text_field($response['id']) );
@@ -816,7 +816,7 @@ class GatewayMollie extends PaymentGateway {
 		$order->update_meta_data( '_mollie_payment_method_selected', sanitize_text_field($selected_method_id) );
 		if ( isset( $payment_data['issuer'] ) ) { $order->update_meta_data( '_mollie_issuer_selected_id', sanitize_text_field($payment_data['issuer']) ); }
 		if ( isset( $response['mandateId'] ) ) { $order->update_meta_data( '_mollie_mandate_id', sanitize_text_field($response['mandateId']) );}
-		$order->add_order_note(sprintf(__( 'Mollie first payment initiated. ID: %s. Customer: %s.', 'creator-lms' ), esc_html($response['id']), esc_html($mollie_customer_id)));
+		$order->add_order_note(sprintf(__( 'Mollie first payment initiated. ID: %s. Customer: %s.', 'ohmylms' ), esc_html($response['id']), esc_html($mollie_customer_id)));
 		$order->save();
 		return ['result' => 'success', 'redirect' => esc_url_raw($response['_links']['checkout']['href'])];
 	}
@@ -827,7 +827,7 @@ class GatewayMollie extends PaymentGateway {
 	 * @param int $original_order_id The ID of the original order.
 	 * @param int $renewal_order_id The ID of the renewal order.
 	 * @param float $amount The amount to charge.
-	 * @param int $subscription_id The ID of the omlms-subscription post.
+	 * @param int $subscription_id The ID of the ohmylms-subscription post.
 	 * @param int $student_id The ID of the student.
 	 * @return array Result of the payment attempt.
 	 * @since 1.0.0
@@ -1118,7 +1118,7 @@ class GatewayMollie extends PaymentGateway {
 				return new WP_REST_Response( [ 'message' => 'Original order for subscription not found.' ], 200 );
 			}
 			// Further subscription status handling (active, canceled, etc.)
-			$order->add_order_note(sprintf(__( 'Mollie subscription %s status updated to: %s.', 'creator-lms' ), esc_html($resource_id), esc_html($subscription['status'])));
+			$order->add_order_note(sprintf(__( 'Mollie subscription %s status updated to: %s.', 'ohmylms' ), esc_html($resource_id), esc_html($subscription['status'])));
 			// TODO: Implement LMS-specific subscription status updates and access control.
 			$order->save();
 			return new WP_REST_Response( [ 'message' => 'Subscription webhook processed.' ], 200 );
@@ -1149,7 +1149,7 @@ class GatewayMollie extends PaymentGateway {
 					if ( $sequence_type === 'first' && ($payment['metadata']['is_subscription_first_payment'] ?? false) ) {
 						$transaction_id = $order->get_prop( '_transaction_id' );
 						$order->payment_complete($transaction_id);
-						$order->add_order_note( sprintf( __( 'Mollie first payment %s confirmed. Mandate: %s.', 'creator-lms' ), esc_html($resource_id), esc_html($payment['mandateId'] ?? 'N/A') ) );
+						$order->add_order_note( sprintf( __( 'Mollie first payment %s confirmed. Mandate: %s.', 'ohmylms' ), esc_html($resource_id), esc_html($payment['mandateId'] ?? 'N/A') ) );
 						if ( isset( $payment['mandateId'] ) ) $order->update_meta_data( '_mollie_mandate_id', sanitize_text_field($payment['mandateId']) );
 						$order->update_meta_data( '_mollie_payment_method_confirmed', sanitize_text_field($payment['method']) );
 						$order->update_meta_data( '_mollie_transaction_id_confirmed', sanitize_text_field($payment['id']) );
@@ -1160,29 +1160,29 @@ class GatewayMollie extends PaymentGateway {
 						$mollie_interval = '1 month'; // FIXME: This should be dynamic based on product/order.
 
 						if ( $mollie_customer_id && $recurring_amount && $mollie_interval ) {
-							$sub_data = ['amount'=>['value'=>number_format((float)$recurring_amount,2,'.',''), 'currency'=>$recurring_currency], 'interval'=>$mollie_interval, 'description'=>sprintf(__( 'Subscription for Order %s', 'creator-lms' ), $order->get_order_number()), 'webhookUrl'=>get_rest_url(null,'creator-lms-mollie/v1/webhook/'), 'metadata'=>['order_id'=>$order_id, 'wordpress_user_id'=>$user_id]];
+							$sub_data = ['amount'=>['value'=>number_format((float)$recurring_amount,2,'.',''), 'currency'=>$recurring_currency], 'interval'=>$mollie_interval, 'description'=>sprintf(__( 'Subscription for Order %s', 'ohmylms' ), $order->get_order_number()), 'webhookUrl'=>get_rest_url(null,'ohmylms-mollie/v1/webhook/'), 'metadata'=>['order_id'=>$order_id, 'wordpress_user_id'=>$user_id]];
 							if(isset($payment['mandateId'])) $sub_data['mandateId'] = $payment['mandateId'];
 							$mollie_sub = MollieAPI::create_subscription( $mollie_customer_id, $sub_data );
 							if ( !is_wp_error($mollie_sub) && isset($mollie_sub['id']) ) {
 								$order->update_meta_data('_mollie_subscription_id', sanitize_text_field($mollie_sub['id']));
-								$order->add_order_note(sprintf(__( 'Mollie Subscription %s created. Status: %s.', 'creator-lms' ), esc_html($mollie_sub['id']), esc_html($mollie_sub['status'])));
-								// Placeholder: creator_lms_activate_subscription($order_id, $user_id);
-								// Placeholder: creator_lms_grant_course_access($order_id, $user_id);
+								$order->add_order_note(sprintf(__( 'Mollie Subscription %s created. Status: %s.', 'ohmylms' ), esc_html($mollie_sub['id']), esc_html($mollie_sub['status'])));
+								// Placeholder: ohmylms_activate_subscription($order_id, $user_id);
+								// Placeholder: ohmylms_grant_course_access($order_id, $user_id);
 							} else {
-								$order->add_order_note(sprintf(__( 'Failed to create Mollie subscription. Error: %s', 'creator-lms' ), is_wp_error($mollie_sub)?esc_html($mollie_sub->get_error_message()):'Unknown error'));
+								$order->add_order_note(sprintf(__( 'Failed to create Mollie subscription. Error: %s', 'ohmylms' ), is_wp_error($mollie_sub)?esc_html($mollie_sub->get_error_message()):'Unknown error'));
 							}
 						} else {
-							$order->add_order_note(__( 'Cannot create Mollie subscription: missing required data (customer ID, amount, or interval).', 'creator-lms' ));
+							$order->add_order_note(__( 'Cannot create Mollie subscription: missing required data (customer ID, amount, or interval).', 'ohmylms' ));
 						}
 					} elseif ( $sequence_type === 'recurring' ) {
-						$order->add_order_note( sprintf( __( 'Mollie recurring payment %s confirmed for subscription %s.', 'creator-lms' ), esc_html($payment['id']), esc_html($payment['subscriptionId'] ?? 'N/A') ) );
-						if ($order->get_status() === 'on-hold') $order->update_status('active', __('Subscription reactivated after successful recurring payment.', 'creator-lms'));
-						// Placeholder: creator_lms_record_renewal_payment($order_id, $payment['id'], $payment['amount']['value']);
-						// Placeholder: creator_lms_extend_subscription_access($order_id);
+						$order->add_order_note( sprintf( __( 'Mollie recurring payment %s confirmed for subscription %s.', 'ohmylms' ), esc_html($payment['id']), esc_html($payment['subscriptionId'] ?? 'N/A') ) );
+						if ($order->get_status() === 'on-hold') $order->update_status('active', __('Subscription reactivated after successful recurring payment.', 'ohmylms'));
+						// Placeholder: ohmylms_record_renewal_payment($order_id, $payment['id'], $payment['amount']['value']);
+						// Placeholder: ohmylms_extend_subscription_access($order_id);
 					} else {
-						$order->update_status( 'completed', __( 'Mollie payment successful.', 'creator-lms' ) );
-						$order->add_order_note( sprintf( __( 'Mollie payment %s confirmed as paid.', 'creator-lms' ), esc_html($resource_id) ) );
-						// Placeholder: creator_lms_grant_course_access($order_id, $user_id);
+						$order->update_status( 'completed', __( 'Mollie payment successful.', 'ohmylms' ) );
+						$order->add_order_note( sprintf( __( 'Mollie payment %s confirmed as paid.', 'ohmylms' ), esc_html($resource_id) ) );
+						// Placeholder: ohmylms_grant_course_access($order_id, $user_id);
 						if (isset($payment['method'])) $order->update_meta_data( '_mollie_payment_method_confirmed', sanitize_text_field($payment['method']) );
 						if (isset($payment['id'])) $order->update_meta_data( '_mollie_transaction_id_confirmed', sanitize_text_field($payment['id']) );
 						if ( isset( $payment['details']['issuer'] ) ) { // Issuer details might not always be present or relevant
@@ -1191,22 +1191,22 @@ class GatewayMollie extends PaymentGateway {
 						$order->update_meta_data( '_mollie_customer_id_for_order', sanitize_text_field( $mollie_customer_id ) );
 						update_post_meta( $order_id, '_mollie_customer_id_for_order', sanitize_text_field( $mollie_customer_id ) );
 					}
-					do_action( 'creator_lms_mollie_payment_completed', $order_id, $payment );
+					do_action( 'ohmylms_mollie_payment_completed', $order_id, $payment );
 					break;
 				case 'failed': case 'cancelled': case 'expired':
-					$status_note = sprintf( __( 'Mollie payment %s. Status: %s.', 'creator-lms' ), esc_html($resource_id), esc_html($payment_status) );
+					$status_note = sprintf( __( 'Mollie payment %s. Status: %s.', 'ohmylms' ), esc_html($resource_id), esc_html($payment_status) );
 					if ( $sequence_type === 'recurring' ) {
-						$order->update_status('on-hold', sprintf(__( 'Subscription payment %s failed.', 'creator-lms' ), esc_html($resource_id)));
-						$order->add_order_note( $status_note . __( ' Subscription put on hold.', 'creator-lms' ) );
-						// Placeholder: creator_lms_mark_subscription_payment_failed($order_id);
-						// Placeholder: creator_lms_revoke_course_access_or_start_dunning($order_id);
+						$order->update_status('on-hold', sprintf(__( 'Subscription payment %s failed.', 'ohmylms' ), esc_html($resource_id)));
+						$order->add_order_note( $status_note . __( ' Subscription put on hold.', 'ohmylms' ) );
+						// Placeholder: ohmylms_mark_subscription_payment_failed($order_id);
+						// Placeholder: ohmylms_revoke_course_access_or_start_dunning($order_id);
 					} else {
-						$order->update_status( 'failed', sprintf( __( 'Mollie payment %s.', 'creator-lms' ), esc_html($payment_status) ) );
+						$order->update_status( 'failed', sprintf( __( 'Mollie payment %s.', 'ohmylms' ), esc_html($payment_status) ) );
 						$order->add_order_note( $status_note );
 					}
 					break;
 				default: // open, pending, authorized etc.
-					$order->add_order_note( sprintf( __( 'Mollie payment %s status updated to %s.', 'creator-lms' ), esc_html($resource_id), esc_html($payment_status) ) );
+					$order->add_order_note( sprintf( __( 'Mollie payment %s status updated to %s.', 'ohmylms' ), esc_html($resource_id), esc_html($payment_status) ) );
 					break;
 			}
 			$order->save();
@@ -1227,26 +1227,26 @@ class GatewayMollie extends PaymentGateway {
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		$order = ecommerce_get_order( $order_id );
 		if ( ! $order ) {
-			return new WP_Error( 'mollie_refund_error', __( 'Order not found for refund.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_refund_error', __( 'Order not found for refund.', 'ohmylms' ) );
 		}
 		$this->set_keys();
 		$current_api_key = $this->api_key;
 		MollieAPI::set_api_key( $current_api_key );
 
 		if(empty($current_api_key)){
-            return new WP_Error( 'mollie_refund_error', __( 'Mollie API key not configured.', 'creator-lms' ) );
+            return new WP_Error( 'mollie_refund_error', __( 'Mollie API key not configured.', 'ohmylms' ) );
 		}
 		$mollie_payment_id = $order->get_transaction_id();
 
 		if ( empty( $mollie_payment_id ) ) {
-			$order->add_order_note( __( 'Mollie Payment ID not found. Cannot process refund.', 'creator-lms' ) );
-			return new WP_Error( 'mollie_refund_error', __( 'Mollie Payment ID not found for this order.', 'creator-lms' ) );
+			$order->add_order_note( __( 'Mollie Payment ID not found. Cannot process refund.', 'ohmylms' ) );
+			return new WP_Error( 'mollie_refund_error', __( 'Mollie Payment ID not found for this order.', 'ohmylms' ) );
 		}
 		$mollie_payment_id = sanitize_text_field($mollie_payment_id);
 
 		$refund_amount_val = ( null === $amount || '' === $amount ) ? $order->get_total() : floatval(str_replace(',', '.', $amount));
 		if ( $refund_amount_val <= 0 ) {
-			return new WP_Error( 'mollie_refund_error', __( 'Refund amount must be greater than zero.', 'creator-lms' ) );
+			return new WP_Error( 'mollie_refund_error', __( 'Refund amount must be greater than zero.', 'ohmylms' ) );
 		}
 		$data_to_send = ['amount' => ['value' => number_format( $refund_amount_val, 2, '.', '' ), 'currency' => $order->get_currency()]];
 		if ( ! empty( $reason ) ) { $data_to_send['description'] = sanitize_text_field( $reason ); }
@@ -1255,18 +1255,18 @@ class GatewayMollie extends PaymentGateway {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$order->add_order_note( sprintf( __( 'Mollie refund failed: %s', 'creator-lms' ), esc_html($error_message) ) );
+			$order->add_order_note( sprintf( __( 'Mollie refund failed: %s', 'ohmylms' ), esc_html($error_message) ) );
 			return $response;
 		}
 		if ( empty( $response['id'] ) || !isset($response['amount']['value']) ) {
-			$order->add_order_note( __( 'Mollie refund failed: Invalid response from API.', 'creator-lms' ) );
+			$order->add_order_note( __( 'Mollie refund failed: Invalid response from API.', 'ohmylms' ) );
 			return false;
 		}
 
 		$refund_id = sanitize_text_field($response['id']);
-		$note_text = sprintf(__( 'Mollie refund %s. Status: %s. Amount: %s %s. Reason: %s', 'creator-lms' ),
+		$note_text = sprintf(__( 'Mollie refund %s. Status: %s. Amount: %s %s. Reason: %s', 'ohmylms' ),
 			esc_html($refund_id), esc_html($response['status']), esc_html($response['amount']['value']), esc_html($response['amount']['currency']),
-			empty( $reason ) ? __( 'N/A', 'creator-lms' ) : esc_html($reason)
+			empty( $reason ) ? __( 'N/A', 'ohmylms' ) : esc_html($reason)
 		);
 		$order->add_order_note( $note_text );
 
@@ -1284,12 +1284,12 @@ class GatewayMollie extends PaymentGateway {
 	 */
 	public function handle_admin_refund_action() {
 		$nonce_value = isset($_POST['_wpnonce_mollie_refund']) ? sanitize_key($_POST['_wpnonce_mollie_refund']) : '';
-		if ( ! isset( $_POST['order_id'], $_POST['_wpnonce_mollie_refund'] ) || ! wp_verify_nonce( $nonce_value, 'creator_lms_mollie_refund_order_nonce' ) ) {
-			wp_die( esc_html__( 'Nonce verification failed. Please try again.', 'creator-lms' ) );
+		if ( ! isset( $_POST['order_id'], $_POST['_wpnonce_mollie_refund'] ) || ! wp_verify_nonce( $nonce_value, 'ohmylms_mollie_refund_order_nonce' ) ) {
+			wp_die( esc_html__( 'Nonce verification failed. Please try again.', 'ohmylms' ) );
 		}
 		// TODO: Replace 'manage_options' with a more appropriate capability.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to perform this action.', 'creator-lms' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to perform this action.', 'ohmylms' ) );
 		}
 
 		$order_id = absint( $_POST['order_id'] );
@@ -1298,17 +1298,17 @@ class GatewayMollie extends PaymentGateway {
 		$refund_reason = isset( $_POST['refund_reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['refund_reason'] ) ) : '';
 
 		if ( ! $order_id ) {
-			wp_die( esc_html__( 'Order ID is missing. Cannot process refund.', 'creator-lms' ) );
+			wp_die( esc_html__( 'Order ID is missing. Cannot process refund.', 'ohmylms' ) );
 		}
 
 		$result = $this->process_admin_refund( $order_id, $refund_amount, $refund_reason );
 
 		if ( true === $result ) {
-			set_transient( get_current_user_id() . '_mollie_refund_notice', __( 'Mollie refund initiated successfully.', 'creator-lms' ), 5 );
+			set_transient( get_current_user_id() . '_mollie_refund_notice', __( 'Mollie refund initiated successfully.', 'ohmylms' ), 5 );
 		} elseif ( is_wp_error( $result ) ) {
 			set_transient( get_current_user_id() . '_mollie_refund_error_notice', $result->get_error_message(), 5 );
 		} else {
-			set_transient( get_current_user_id() . '_mollie_refund_error_notice', __( 'Mollie refund failed. Please check order notes and Mollie dashboard for more details.', 'creator-lms' ), 5 );
+			set_transient( get_current_user_id() . '_mollie_refund_error_notice', __( 'Mollie refund failed. Please check order notes and Mollie dashboard for more details.', 'ohmylms' ), 5 );
 		}
 
 		$redirect_url = admin_url( 'post.php?post=' . $order_id . '&action=edit' );

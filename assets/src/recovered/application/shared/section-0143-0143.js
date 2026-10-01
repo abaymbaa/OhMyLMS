@@ -198,7 +198,7 @@ var _K = function (e) {
       return r ? [r] : [];
     };
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-settings-general-card-wrapper"
+    className: "ohmylms-settings-general-card-wrapper"
   }, React.createElement(I.CardWP, {
     isBorderless: !0
   }, React.createElement(I.SpacerWP, {
@@ -213,10 +213,10 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_course_page_id", e);
+      return i("ohmylms_course_page_id", e);
     },
     staticSearch: !1,
-    value: c("creator_lms_course_page_id"),
+    value: c("ohmylms_course_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -230,10 +230,10 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_checkout_page_id", e);
+      return i("ohmylms_checkout_page_id", e);
     },
     staticSearch: !1,
-    value: c("creator_lms_checkout_page_id"),
+    value: c("ohmylms_checkout_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -247,9 +247,9 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_student_dashboard_page_id", e);
+      return i("ohmylms_student_dashboard_page_id", e);
     },
-    value: c("creator_lms_student_dashboard_page_id"),
+    value: c("ohmylms_student_dashboard_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -263,9 +263,9 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_student_courses_page_id", e);
+      return i("ohmylms_student_courses_page_id", e);
     },
-    value: c("creator_lms_student_courses_page_id"),
+    value: c("ohmylms_student_courses_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -279,9 +279,9 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_student_profile_page_id", e);
+      return i("ohmylms_student_profile_page_id", e);
     },
-    value: c("creator_lms_student_profile_page_id"),
+    value: c("ohmylms_student_profile_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -295,9 +295,9 @@ var _K = function (e) {
     data: n,
     setData: r,
     onChange: function (e) {
-      return i("creator_lms_terms_page_id", e);
+      return i("ohmylms_terms_page_id", e);
     },
-    value: c("creator_lms_terms_page_id"),
+    value: c("ohmylms_terms_page_id"),
     defaultOptions: n,
     loadOptions: l,
     isClearable: !1,
@@ -534,11 +534,11 @@ var kK = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return i.setLoadingSetting(!0), e.n = 1, l()({
-                  path: "creator-lms/v1/settings/general"
+                  path: "ohmylms/v1/settings/general"
                 });
               case 1:
                 return t = e.v, i.setGeneralSettings(t), e.n = 2, l()({
-                  path: "/creator-lms/v1/page/search?value=",
+                  path: "/ohmylms/v1/page/search?value=",
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json"
@@ -574,7 +574,7 @@ var kK = function (e) {
   }, []), React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     marginTop: 0,
@@ -715,9 +715,9 @@ var IK = function (e) {
   }, React.createElement(I.FlexWP, {
     gap: 2,
     justify: "space-between",
-    className: "omlms-color-picker ".concat(o)
+    className: "ohmylms-color-picker ".concat(o)
   }, React.createElement("div", {
-    className: "omlms-color-picker-info"
+    className: "ohmylms-color-picker-info"
   }, t && React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     gap: "small",
     align: "center"
@@ -725,7 +725,7 @@ var IK = function (e) {
     level: "4"
   }, t), r && React.createElement(V.A, {
     title: r,
-    className: "omlms-tooltip"
+    className: "ohmylms-tooltip"
   }, React.createElement(React.Fragment, null, React.createElement(Mt.A, null)))), React.createElement(I.SpacerWP, {
     marginBottom: 1
   })), n && React.createElement(Yt.A, {
@@ -743,7 +743,7 @@ var IK = function (e) {
     style: {
       display: "inline-block"
     },
-    className: "omlms-color-picker-focusable-wrapper"
+    className: "ohmylms-color-picker-focusable-wrapper"
   }, React.createElement(I.ColorPickerWP, MK({
     onChange: function (e) {
       i(null == e ? void 0 : e.hex);
@@ -799,16 +799,16 @@ var WK = function (e) {
       return n;
     }(c, 2);
   return React.createElement(React.Fragment, null, React.createElement("div", DK({
-    className: "omlms-color-picker-card-wrapper ".concat(a)
+    className: "ohmylms-color-picker-card-wrapper ".concat(a)
   }, u), t && React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-color-picker-card-info"
+    className: "ohmylms-color-picker-card-info"
   }, React.createElement(I.HeadingWP, {
     level: "4"
   }, t), React.createElement(I.SpacerWP, {
     marginBottom: 1
   }), n && React.createElement(I.TextWP, null, n))), React.createElement(I.CardWP, {
     isBorderless: !0,
-    className: "omlms-color-picker-card",
+    className: "ohmylms-color-picker-card",
     variant: "secondary",
     style: {
       paddingInlineEnd: "7px"

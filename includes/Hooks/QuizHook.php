@@ -2,16 +2,16 @@
 /**
  * Hook for Quiz
  *
- * @package    CreatorLmsPro
- * @subpackage CreatorLmsPro/includes
+ * @package    OhMyLMSPro
+ * @subpackage OhMyLMSPro/includes
  */
-namespace OMLMS\Hooks;
+namespace OhMyLMS\Hooks;
 
 class QuizHook
 {
     public function register_hooks(){
-        add_filter('creator_lms_quiz_type', array( $this, 'pro_quiz_type' ), 10 );
-        add_filter('creator_lms_supported_question_types', array( $this, 'pro_question_types' ), 10 );
+        add_filter('ohmylms_quiz_type', array( $this, 'pro_quiz_type' ), 10 );
+        add_filter('ohmylms_supported_question_types', array( $this, 'pro_question_types' ), 10 );
     }
 
     public function pro_quiz_type( $types ){

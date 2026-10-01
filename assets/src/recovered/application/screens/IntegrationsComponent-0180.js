@@ -22,9 +22,9 @@ var H7 = {
       label: (0, b.__)("CRM", "ohmylms")
     }
   },
-  G7 = creator_lms_params.integrations,
+  G7 = ohmylms_params.integrations,
   U7 = function () {
-    HG("creator-lms", "integrations");
+    HG("ohmylms", "integrations");
     var e = (0, y.useDispatch)(T.default),
       t = (0, y.useSelect)(function (e) {
         return e(T.default).getIntegrations();
@@ -99,13 +99,8 @@ var H7 = {
           return D7().w(function (n) {
             for (;;) switch (n.p = n.n) {
               case 0:
-                if (null != r && r.is_valid) {
-                  n.n = 1;
-                  break;
-                }
-                return m(!0), e.updateProModalTitle((0, b.__)("Upgrade Your Plan!", "ohmylms")), e.updateProModalContent((0, b.__)("This feature is on ".concat(null == r ? void 0 : r.required_plan, " plan. Please upgrade your plan for access to this feature!"), "ohmylms")), n.a(2);
               case 1:
-                if ("wpfusion" !== r.key || null !== (a = window) && void 0 !== a && null !== (a = a.creator_lms_params) && void 0 !== a && a.is_wpfusion_active) {
+                if ("wpfusion" !== r.key || null !== (a = window) && void 0 !== a && null !== (a = a.ohmylms_params) && void 0 !== a && a.is_wpfusion_active) {
                   n.n = 2;
                   break;
                 }
@@ -135,7 +130,6 @@ var H7 = {
         };
       }(),
       j = function (t) {
-        if (null == t || !t.is_valid) return m(!0), e.updateProModalTitle((0, b.__)("Upgrade Your Plan!", "ohmylms")), void e.updateProModalContent((0, b.__)("This feature is on ".concat(null == t ? void 0 : t.required_plan, ". Please upgrade your plan!"), "ohmylms"));
         R(t);
       },
       A = C.filter(function (e) {
@@ -176,7 +170,7 @@ var H7 = {
       onCancel: function () {
         return R(null);
       },
-      className: "omlms-integrations-config"
+      className: "ohmylms-integrations-config"
     }) : React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
       gap: 4,
       justifyContent: "space-between"

@@ -4,13 +4,13 @@
  * 
  * Utility functions for WP Fusion integration
  * 
- * @package OMLMS\Integrations\WPFusion\Includes
+ * @package OhMyLMS\Integrations\WPFusion\Includes
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\WPFusion\Includes;
+namespace OhMyLMS\Integrations\WPFusion\Includes;
 
-use OMLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
+use OhMyLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class Helpers {
      * @since 1.0.0
      */
     public static function is_connected() {
-        $credentials = get_option( 'creatorlms_wpfusion_credentials', array() );
+        $credentials = get_option( 'ohmylms_wpfusion_credentials', array() );
         return ! empty( $credentials ) && isset( $credentials['api_key'] );
     }
 
@@ -38,7 +38,7 @@ class Helpers {
             return null;
         }
 
-        $credentials = get_option( 'creatorlms_wpfusion_credentials', array() );
+        $credentials = get_option( 'ohmylms_wpfusion_credentials', array() );
         
         return new WPFusionApiClient( 
             $credentials['api_url'], 
@@ -177,19 +177,19 @@ class Helpers {
     }
 
     /**
-     * Get available CreatorLMS events
+     * Get available OhMyLMS events
      * 
      * @return array
      * @since 1.0.0
      */
     public static function get_available_events() {
         return array(
-            'creator_lms_course_completed' => __( 'Course Completed', 'ohmylms' ),
-            'creator_lms_lesson_completed' => __( 'Lesson Completed', 'ohmylms' ),
-            'creator_lms_manual_student_enrollment' => __( 'Student Enrolled', 'ohmylms' ),
-            'creator_lms_quiz_submission' => __( 'Quiz Submitted', 'ohmylms' ),
-            'creator_lms_after_assignment_submitted' => __( 'Assignment Submitted', 'ohmylms' ),
-            'creator_lms_quiz_result' => __( 'Quiz Result', 'ohmylms' ),
+            'ohmylms_course_completed' => __( 'Course Completed', 'ohmylms' ),
+            'ohmylms_lesson_completed' => __( 'Lesson Completed', 'ohmylms' ),
+            'ohmylms_manual_student_enrollment' => __( 'Student Enrolled', 'ohmylms' ),
+            'ohmylms_quiz_submission' => __( 'Quiz Submitted', 'ohmylms' ),
+            'ohmylms_after_assignment_submitted' => __( 'Assignment Submitted', 'ohmylms' ),
+            'ohmylms_quiz_result' => __( 'Quiz Result', 'ohmylms' ),
         );
     }
 

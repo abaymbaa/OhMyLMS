@@ -92,9 +92,9 @@ class Cart {
 	public function __construct() {
 		$this->session = new CartSession( $this );
 		$this->session->init();
-		add_action( 'creator_lms_add_to_cart', array( $this, 'calculate_totals' ), 10, 0 );
-		add_action( 'creator_lms_applied_coupon', array( $this, 'calculate_totals' ), 10, 0 );
-		add_action( 'creator_lms_removed_coupon', array( $this, 'calculate_totals' ), 10, 0 );
+		add_action( 'ohmylms_add_to_cart', array( $this, 'calculate_totals' ), 10, 0 );
+		add_action( 'ohmylms_applied_coupon', array( $this, 'calculate_totals' ), 10, 0 );
+		add_action( 'ohmylms_removed_coupon', array( $this, 'calculate_totals' ), 10, 0 );
 	}
 
 
@@ -157,7 +157,7 @@ class Cart {
 	 * @return array
 	 */
 	public function get_cart() {
-		if ( ! did_action( 'creator_lms_load_cart_from_session' ) ) {
+		if ( ! did_action( 'ohmylms_load_cart_from_session' ) ) {
 			$this->session->get_cart_from_session();
 		}
 		return array_filter( $this->get_cart_contents() );
@@ -200,7 +200,7 @@ class Cart {
 	 * @return float The cart subtotal.
 	 */
 	public function get_cart_subtotal() {
-		$cart_subtotal = omlms_price( $this->get_totals_by_key( 'subtotal' ) );
+		$cart_subtotal = ohmylms_price( $this->get_totals_by_key( 'subtotal' ) );
 		return $cart_subtotal;
 	}
 
@@ -216,7 +216,7 @@ class Cart {
 
 		foreach ( $this->coupon_discount_totals as $key => $value ) {
 			if ( $value['code'] === $code ) {
-				return round( $value['discount'], omlms_get_price_decimals() );
+				return round( $value['discount'], ohmylms_get_price_decimals() );
 			}
 		}
 		return 0;
@@ -277,13 +277,13 @@ class Cart {
 			$course_id = absint( $course_id );
 			$post_type = get_post_type( $course_id );
 			$course   = null;
-			if ( $post_type === CREATOR_LMS_COURSE_CPT ) {
-				$course = omlms_get_course( $course_id );
+			if ( $post_type === OHMYLMS_COURSE_CPT ) {
+				$course = ohmylms_get_course( $course_id );
 				if ( ! $course ) {
 					throw new \Exception( __( 'Invalid course.', 'ohmylms' ) );
 				}
-			} elseif ( $post_type === CREATOR_LMS_MEMBERSHIP_CPT ) {
-				$course = omlms_get_membership( $course_id );
+			} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
+				$course = ohmylms_get_membership( $course_id );
 				if ( ! $course ) {
 					throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );
 				}
@@ -300,10 +300,10 @@ class Cart {
 				$cart_item_key = $cart_id;
 			}
 
-			//          $course = omlms_get_course( $course_id );
+			//          $course = ohmylms_get_course( $course_id );
 
 			$this->cart_contents[ $cart_item_key ] = apply_filters(
-				'creator_lms_add_cart_item',
+				'ohmylms_add_cart_item',
 				array_merge(
 					$cart_item_data,
 					array(
@@ -318,13 +318,13 @@ class Cart {
 			);
 
 			$this->cart_contents[ $cart_item_key ]['quantity'] = $quantity;
-			do_action( 'creator_lms_add_to_cart', $cart_item_key, $quantity, $course_id, $cart_item_data );
+			do_action( 'ohmylms_add_to_cart', $cart_item_key, $quantity, $course_id, $cart_item_data );
 
 			return $cart_item_key;
 
 		} catch ( \Exception $e ) {
 			if ( $e->getMessage() ) {
-				omlms_add_notice( $e->getMessage(), 'error' );
+				ohmylms_add_notice( $e->getMessage(), 'error' );
 			}
 			return false;
 		}
@@ -345,11 +345,11 @@ class Cart {
 			return;
 		}
 
-		do_action( 'creator_lms_before_calculate_totals', $this );
+		do_action( 'ohmylms_before_calculate_totals', $this );
 
 		$this->calculate_item_totals();
 
-		do_action( 'creator_lms_after_calculate_totals', $this );
+		do_action( 'ohmylms_after_calculate_totals', $this );
 	}
 
 
@@ -371,7 +371,7 @@ class Cart {
 		   // Set item total as full price (no discount per item)
 		   $item->total = $item->price;
 		   $item->subtotal = $item->subtotal;
-		   $item->total = apply_filters( 'creator_lms_cart_item_line_total', $item->total, $item, $item_key, $this );
+		   $item->total = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
 		   $this->cart_contents[ $item_key ]['line_total'] = $item->total;
 		   $total     += $item->total;
 		   $sub_total += $item->subtotal;
@@ -400,7 +400,7 @@ class Cart {
 	public function get_discounted_price_in_cents( $item_key ) {
 		$item = $this->items[ $item_key ];
 		$discounted_price = isset( $this->coupon_discount_totals[ $item_key ]['discount'] ) ? $item->price - $this->coupon_discount_totals[ $item_key ]['discount'] : $item->price;
-		return apply_filters( 'creator_lms_cart_discounted_price', $discounted_price, $item, $item_key, $this );
+		return apply_filters( 'ohmylms_cart_discounted_price', $discounted_price, $item, $item_key, $this );
 	}
 
 	/**
@@ -551,7 +551,7 @@ class Cart {
 	 * @param bool $clear_persistent_cart
 	 */
 	public function empty_cart( $clear_persistent_cart = true ) {
-		do_action( 'creator_lms_before_cart_emptied', $clear_persistent_cart );
+		do_action( 'ohmylms_before_cart_emptied', $clear_persistent_cart );
 
 		$this->cart_contents = array();
 		$this->totals        = array(
@@ -566,7 +566,7 @@ class Cart {
 			$this->session->persistent_cart_destroy();
 		}
 
-		do_action( 'creator_lms_cart_emptied', $clear_persistent_cart );
+		do_action( 'ohmylms_cart_emptied', $clear_persistent_cart );
 	}
 
 
@@ -580,7 +580,7 @@ class Cart {
 	 */
 	public function get_total( $context = 'view' ) {
 		$total = $this->get_total_by_var( 'total' );
-		return 'view' == $context ? omlms_price( $total ) : $total;
+		return 'view' == $context ? ohmylms_price( $total ) : $total;
 	}
 
 	/**
@@ -614,7 +614,7 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	public function needs_payment() {
-		return apply_filters( 'creator_lms_cart_needs_payment', 0 < self::get_total( $this->get_cart_contents() ), $this );
+		return apply_filters( 'ohmylms_cart_needs_payment', 0 < self::get_total( $this->get_cart_contents() ), $this );
 	}
 
 	/**
@@ -624,7 +624,7 @@ class Cart {
 	 * @return void
 	 */
 	public function set_total( $value ) {
-		$this->total = omlms_format_decimal( $value, omlms_get_price_decimals() );
+		$this->total = ohmylms_format_decimal( $value, ohmylms_get_price_decimals() );
 	}
 
 	/**
@@ -672,7 +672,7 @@ class Cart {
 			? (float) $cart_item['data']->get_price() * (float) $cart_item['quantity']
 			: (float) $cart_item['data']->get_regular_price() * (float) $cart_item['quantity'];
 			$item->subtotal = apply_filters(
-				'creator_lms_cart_item_subtotal',
+				'ohmylms_cart_item_subtotal',
 				$cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale() ? (float) $cart_item['data']->get_price() * (float) $cart_item['quantity'] : (float) $cart_item['data']->get_regular_price() * (float) $cart_item['quantity'],
 				$cart_item,
 				$cart_item_key,
@@ -712,20 +712,20 @@ class Cart {
 		$coupon_validity = $this->validate_coupon( $the_coupon, $this->cart_contents );
 		
 		if( isset( $coupon_validity['validity'] ) && ! $coupon_validity['validity'] ) {
-			omlmse_add_notice( $coupon_validity['message'], 'error' );
+			ohmylmse_add_notice( $coupon_validity['message'], 'error' );
 			return false;
 		}
 
 		// Prevent adding coupons by post ID.
 		if ( $the_coupon->get_code() !== $coupon_code ) {
 			$the_coupon->set_code( $coupon_code );
-			omlmse_add_notice( __( 'Invalid coupon code.', 'ohmylms' ), 'error' );
+			ohmylmse_add_notice( __( 'Invalid coupon code.', 'ohmylms' ), 'error' );
 			return false;
 		}
 
 		// Check if applied.
 		if ( $this->has_discount( $coupon_code ) ) {
-			omlmse_add_notice( __( 'Coupon already applied.', 'ohmylms' ), 'error' );
+			ohmylmse_add_notice( __( 'Coupon already applied.', 'ohmylms' ), 'error' );
 			return false;
 		}
 
@@ -752,7 +752,7 @@ class Cart {
 			foreach ( $this->applied_coupons as $code ) {
 				$coupon = new Coupon( $code );
 				if ( $coupon->get_individual_use() ) {
-					omlmse_add_notice( __( 'Coupon already applied.', 'ohmylms' ), 'error' );
+					ohmylmse_add_notice( __( 'Coupon already applied.', 'ohmylms' ), 'error' );
 					return false;
 				}
 			}
@@ -760,7 +760,7 @@ class Cart {
 
 		$this->applied_coupons[] = $coupon_code;
 		
-		do_action( 'creator_lms_applied_coupon', $coupon_code );
+		do_action( 'ohmylms_applied_coupon', $coupon_code );
 		// Recalculate totals including tax if tax information is available.
 		$this->recalculate_totals_with_tax();
 		return true;
@@ -877,7 +877,7 @@ class Cart {
 			unset( $this->applied_coupons[ $position ] );
 		}
 		
-		do_action( 'creator_lms_removed_coupon', $coupon_code );
+		do_action( 'ohmylms_removed_coupon', $coupon_code );
 		// Recalculate totals including tax if tax information is available.
 		$this->recalculate_totals_with_tax();
 		return true;
@@ -915,7 +915,7 @@ class Cart {
 							// Don't apply reverse charge for invalid VAT numbers.
 							$session_data['is_valid']      = false;
 							$session_data['error_message'] = $response->get_error_message();
-							ecommerce()->session->set( 'creator_lms_checkout_eu_vat_number', $session_data );
+							ecommerce()->session->set( 'ohmylms_checkout_eu_vat_number', $session_data );
 							// Continue with regular tax calculation instead of reverse charge.
 						} else {
 							// Valid VAT number - apply reverse charge.
@@ -923,14 +923,14 @@ class Cart {
 							$session_data['company_address'] = $response->address;
 							$session_data['is_valid']        = $response->is_valid();
 							$session_data['reverse_charged'] = true;
-							ecommerce()->session->set( 'creator_lms_checkout_eu_vat_number', $session_data );
+							ecommerce()->session->set( 'ohmylms_checkout_eu_vat_number', $session_data );
 							$tax_rate = 0;
 							// Apply reverse charge (no tax for valid VAT numbers).
 						}
 					} else {
 						// VAT validation is disabled - assume valid and apply reverse charge.
 						$session_data['reverse_charged'] = true;
-						ecommerce()->session->set( 'creator_lms_checkout_eu_vat_number', $session_data);
+						ecommerce()->session->set( 'ohmylms_checkout_eu_vat_number', $session_data);
 						$tax_rate = 0;
 						// Apply reverse charge when validation is disabled.
 					}
@@ -951,7 +951,7 @@ class Cart {
 			foreach ( $this->items as $item_key => $item ) {
 				$item->total    = $this->get_discounted_price_in_cents( $item_key );
 				$item->subtotal = $item->subtotal;
-				$item->total = apply_filters( 'creator_lms_cart_item_line_total', $item->total, $item, $item_key, $this );
+				$item->total = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
 				$this->cart_contents[$item_key]['line_total'] = $item->total;
 				$total     += $item->total;
 				$sub_total += $item->subtotal;

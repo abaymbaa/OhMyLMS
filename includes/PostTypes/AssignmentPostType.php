@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\PostTypes;
+namespace OhMyLMS\PostTypes;
 
 /**
  * Lesson post type to connect with topics
@@ -71,6 +71,6 @@ class AssignmentPostType {
 			'publicly_queryable'  => true,
 			'capability_type'     => 'post',
 		);
-		register_post_type( 'omlms-assignment', $args );
+		register_post_type( 'ohmylms-assignment', $args );
 	}
 }

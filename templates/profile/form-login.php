@@ -7,10 +7,10 @@ $args = [
 
 ?>
 
-<div class="creator-lms-user-login-wrapper">
+<div class="ohmylms-user-login-wrapper">
 
     <?php
-        creator_lms_login_form($args);
-        creator_lms_signup_form($args);
+        ohmylms_login_form($args);
+        ohmylms_signup_form($args);
     ?>
 </div>

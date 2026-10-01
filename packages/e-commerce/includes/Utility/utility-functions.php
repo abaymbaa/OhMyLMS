@@ -22,7 +22,7 @@ if ( ! function_exists( 'ecommerce_form_field' ) ) {
 			'required'        => false,
 			'id'              => $key,
 			'class'           => array(),
-			'label_class'     => array( 'creator-lms-input-label' ),
+			'label_class'     => array( 'ohmylms-input-label' ),
 			'input_class'     => array(),
 			'options'         => array(),
 			'default'         => '',
@@ -61,7 +61,7 @@ if ( ! function_exists( 'ecommerce_form_field' ) ) {
 
 		$field           = '';
 		$label_id        = $args['id'];
-		$field_container = '<p class="creator-lms-form-row %1$s" id="%2$s">%3$s</p>';
+		$field_container = '<p class="ohmylms-form-row %1$s" id="%2$s">%3$s</p>';
 
 		switch ( $args['type'] ) {
 			case 'text':
@@ -70,11 +70,11 @@ if ( ! function_exists( 'ecommerce_form_field' ) ) {
 			case 'password':
 			case 'number':
 			case 'url':
-				$field .= '<input type="' . esc_attr( $args['type'] ) . '" class="creator-lms-input-text ' . esc_attr( implode( ' ', $args['input_class'] ) ) . '" name="' . esc_attr( $key ) . '" id="' . esc_attr( $args['id'] ) . '" placeholder=""  value="' . esc_attr( $value ) . '" ' . implode( ' ', $custom_attributes ) . ' />';
+				$field .= '<input type="' . esc_attr( $args['type'] ) . '" class="ohmylms-input-text ' . esc_attr( implode( ' ', $args['input_class'] ) ) . '" name="' . esc_attr( $key ) . '" id="' . esc_attr( $args['id'] ) . '" placeholder=""  value="' . esc_attr( $value ) . '" ' . implode( ' ', $custom_attributes ) . ' />';
 				break;
 			case 'select':
 				if ( ! empty( $args['options'] ) && is_array( $args['options'] ) ) {
-					$field .= '<select class="creator-lms-input-select creator-lms-input-text' . esc_attr( implode( ' ', $args['input_class'] ) ) . '" name="' . esc_attr( $key ) . '" id="' . esc_attr( $args['id'] ) . '" ' . implode( ' ', $custom_attributes ) . '>';
+					$field .= '<select class="ohmylms-input-select ohmylms-input-text' . esc_attr( implode( ' ', $args['input_class'] ) ) . '" name="' . esc_attr( $key ) . '" id="' . esc_attr( $args['id'] ) . '" ' . implode( ' ', $custom_attributes ) . '>';
 					foreach ( $args['options'] as $key => $option ) {
 						$selected = selected( $value, $option['code'], false );
 						$field   .= '<option value="' . esc_attr( $option['code'] ) . '" ' . $selected . '>' . esc_html( $option['title'] ) . '</option>';
@@ -89,7 +89,7 @@ if ( ! function_exists( 'ecommerce_form_field' ) ) {
 
 		if ( ! empty( $field ) ) {
 			$field_html  = '';
-			$field_html .= '<span class="creator-lms-input-wrapper">';
+			$field_html .= '<span class="ohmylms-input-wrapper">';
 
 			if ( $args['label'] ) {
 				$field_html .= '<label for="' . esc_attr( $label_id ) . '" class="' . esc_attr( implode( ' ', $args['label_class'] ) ) . '">' . wp_kses_post( $args['label'] ) . $required . '</label>';

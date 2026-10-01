@@ -1,10 +1,10 @@
-.creator-lms-lesson-content-wrapper * {
+.ohmylms-lesson-content-wrapper * {
     padding: 0;
     margin: 0;
 }
 
-.creator-lms-page {
-    .creator-lms-lesson-details {
+.ohmylms-page {
+    .ohmylms-lesson-details {
         padding: 60px 0;
         min-height: calc(100vh - 220px);
         background-color: #F9FAFD;
@@ -25,7 +25,7 @@
             z-index: 9;
         }
 
-        .creator-lms-lesson-details-hamburger {
+        .ohmylms-lesson-details-hamburger {
             position: fixed;
             bottom: 10px;
             left: 10px;
@@ -40,7 +40,7 @@
             cursor: pointer;
         }
 
-        .creator-lms-lesson-content-wrapper {
+        .ohmylms-lesson-content-wrapper {
             display: flex;
             flex-flow: row wrap;
             gap: 40px;
@@ -48,11 +48,11 @@
             margin: 0;
         }
 
-        .creator-lms-lesson-content {
+        .ohmylms-lesson-content {
             width: calc(100% - 500px);
         }
 
-        .creator-lms-lesson-sidebar {
+        .ohmylms-lesson-sidebar {
             width: 460px;
             max-width: 100%;
             border-radius: 10px;
@@ -64,51 +64,51 @@
 }
 
 @media screen and (max-width: 1399px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content {
         width: calc(100% - 470px);
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-sidebar {
         width: 430px;
     }
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-wrapper {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-wrapper {
         gap: 24px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content {
         width: calc(100% - 414px);
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-sidebar {
         width: 390px;
     }
 }
 
 @media screen and (max-width: 991px) {
-    .creator-lms-page .creator-lms-lesson-details {
+    .ohmylms-page .ohmylms-lesson-details {
         padding: 50px 0;
     }
-    .creator-lms-page .creator-lms-lesson-details.open-sidebar:before {
+    .ohmylms-page .ohmylms-lesson-details.open-sidebar:before {
         opacity: 1;
         visibility: visible;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-details-hamburger {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-details-hamburger {
         display: flex;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content-wrapper {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content-wrapper {
         display: block;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-content {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-content {
         width: 100%;
     }
 
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-sidebar {
         max-width: 390px;
         width: calc(100% - 40px);
         height: calc(100% - 40px);
@@ -122,7 +122,7 @@
         transition: all 0.3s ease;
     }
 
-    .creator-lms-page .creator-lms-lesson-details.open-sidebar .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details.open-sidebar .ohmylms-lesson-sidebar {
         display: block;
         left: 20px;
         opacity: 1;
@@ -132,20 +132,20 @@
 }
 
 @media screen and (max-width: 425px) {
-    .creator-lms-page .creator-lms-lesson-details .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details .ohmylms-lesson-sidebar {
         width: calc(100% - 50px);
         height: calc(100% - 20px);
         inset: 10px;
         left: -10px;
     }
 
-    .creator-lms-page .creator-lms-lesson-details.open-sidebar .creator-lms-lesson-sidebar {
+    .ohmylms-page .ohmylms-lesson-details.open-sidebar .ohmylms-lesson-sidebar {
         left: 10px;
     }
 
 }
 
-.creator-lms-screenshot-protection {
+.ohmylms-screenshot-protection {
     position: fixed;
     top: 0;
     left: 0;

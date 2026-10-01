@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @param  string $default_url Default lost password URL.
  * @return string
  */
-function creator_lms_lostpassword_url( $default_url = '' ) {
+function ohmylms_lostpassword_url( $default_url = '' ) {
 	// Avoid loading too early.
 	if ( ! did_action( 'init' ) ) {
 		return $default_url;
@@ -26,33 +26,33 @@ function creator_lms_lostpassword_url( $default_url = '' ) {
 		return $default_url;
 	}
 
-	// Don't redirect to the creator_lms endpoint on global network admin lost passwords.
+	// Don't redirect to the ohmylms endpoint on global network admin lost passwords.
 	if ( is_multisite() && isset( $_GET['redirect_to'] ) && false !== strpos( wp_unslash( $_GET['redirect_to'] ), network_admin_url() ) ) { // WPCS: input var ok, sanitization ok, CSRF ok.
 		return $default_url;
 	}
 
-	$creator_lms_account_page_url    = omlms_get_page_permalink( 'student_profile' );
-	$creator_lms_account_page_exists = omlms_get_page_id( 'student_profile' ) > 0;
-	$lost_password_endpoint          = get_option( 'creator_lms_myaccount_lost_password_endpoint' );
+	$ohmylms_account_page_url    = ohmylms_get_page_permalink( 'student_profile' );
+	$ohmylms_account_page_exists = ohmylms_get_page_id( 'student_profile' ) > 0;
+	$lost_password_endpoint          = get_option( 'ohmylms_myaccount_lost_password_endpoint' );
 
-	if ( $creator_lms_account_page_exists && ! empty( $lost_password_endpoint ) ) {
-		return omlms_get_endpoint_url( $lost_password_endpoint, '', $creator_lms_account_page_url );
+	if ( $ohmylms_account_page_exists && ! empty( $lost_password_endpoint ) ) {
+		return ohmylms_get_endpoint_url( $lost_password_endpoint, '', $ohmylms_account_page_url );
 	} else {
 		return $default_url;
 	}
 }
 
-add_filter( 'lostpassword_url', 'creator_lms_lostpassword_url', 10, 1 );
+add_filter( 'lostpassword_url', 'ohmylms_lostpassword_url', 10, 1 );
 
 /**
  * Get the link to the edit account details page.
  *
  * @return string
  */
-function creator_lms_customer_edit_account_url() {
-	$edit_account_url = omlms_get_endpoint_url( 'edit-profile', '', omlms_get_page_permalink( 'student_profile' ) );
+function ohmylms_customer_edit_account_url() {
+	$edit_account_url = ohmylms_get_endpoint_url( 'edit-profile', '', ohmylms_get_page_permalink( 'student_profile' ) );
 
-	return apply_filters( 'creator_lms_customer_edit_account_url', $edit_account_url );
+	return apply_filters( 'ohmylms_customer_edit_account_url', $edit_account_url );
 }
 
 /**
@@ -63,9 +63,9 @@ function creator_lms_customer_edit_account_url() {
  *
  * @return string       Address slug i18n.
  */
-function creator_lms_edit_address_i18n( $id, $flip = false ) {
+function ohmylms_edit_address_i18n( $id, $flip = false ) {
 	$slugs = apply_filters(
-		'creator_lms_edit_address_slugs',
+		'ohmylms_edit_address_slugs',
 		array(
 			'billing'  => sanitize_title( _x( 'billing', 'edit-address-slug', 'ohmylms' ) ),
 			'shipping' => sanitize_title( _x( 'shipping', 'edit-address-slug', 'ohmylms' ) ),
@@ -89,18 +89,18 @@ function creator_lms_edit_address_i18n( $id, $flip = false ) {
  * @since 2.6.0
  * @return array
  */
-function creator_lms_get_account_menu_items() {
+function ohmylms_get_account_menu_items() {
 	$endpoints = array(
-		'profile'              => get_option( 'creator_lms_myprofile_profile_endpoint', 'profile' ),
-		'profile-edit'         => get_option( 'creator_lms_myprofile_profile_edit_endpoint', 'profile-edit' ),
-		'my-courses'           => get_option( 'creator_lms_myprofile_course_endpoint', 'my-courses' ),
-		'settings'             => get_option( 'creator_lms_myprofile_settings_endpoint', 'settings' ),
-		'notification'         => get_option( 'creator_lms_myprofile_notification_endpoint', 'notification' ),
-		'transactions-history' => get_option( 'creator_lms_myprofile_transactions_history_endpoint', 'transactions-history' ),
-		'membership'           => get_option( 'creator_lms_myprofile_membership_endpoint', 'membership' ),
-		'invoice-details'      => get_option( 'creator_lms_myprofile_invoice_details_endpoint', 'invoice-details' ),
-		'billing-information'  => get_option( 'creator_lms_myprofile_edit_account_endpoint', 'billing-information' ),
-		'customer-logout'      => get_option( 'creator_lms_logout_endpoint', 'customer-logout' ),
+		'profile'              => get_option( 'ohmylms_myprofile_profile_endpoint', 'profile' ),
+		'profile-edit'         => get_option( 'ohmylms_myprofile_profile_edit_endpoint', 'profile-edit' ),
+		'my-courses'           => get_option( 'ohmylms_myprofile_course_endpoint', 'my-courses' ),
+		'settings'             => get_option( 'ohmylms_myprofile_settings_endpoint', 'settings' ),
+		'notification'         => get_option( 'ohmylms_myprofile_notification_endpoint', 'notification' ),
+		'transactions-history' => get_option( 'ohmylms_myprofile_transactions_history_endpoint', 'transactions-history' ),
+		'membership'           => get_option( 'ohmylms_myprofile_membership_endpoint', 'membership' ),
+		'invoice-details'      => get_option( 'ohmylms_myprofile_invoice_details_endpoint', 'invoice-details' ),
+		'billing-information'  => get_option( 'ohmylms_myprofile_edit_account_endpoint', 'billing-information' ),
+		'customer-logout'      => get_option( 'ohmylms_logout_endpoint', 'customer-logout' ),
 	);
 
 	$items = array(
@@ -138,7 +138,7 @@ function creator_lms_get_account_menu_items() {
 	// }
 	// }
 
-	return apply_filters( 'creator_lms_account_menu_items', $items, $endpoints );
+	return apply_filters( 'ohmylms_account_menu_items', $items, $endpoints );
 }
 
 /**
@@ -148,7 +148,7 @@ function creator_lms_get_account_menu_items() {
  * @param string $endpoint Endpoint.
  * @return bool
  */
-function omlms_is_current_account_menu_item( $endpoint ) {
+function ohmylms_is_current_account_menu_item( $endpoint ) {
 	global $wp;
 
 	$current = isset( $wp->query_vars[ $endpoint ] );
@@ -171,16 +171,16 @@ function omlms_is_current_account_menu_item( $endpoint ) {
  * @param string $endpoint Endpoint.
  * @return string
  */
-function omlms_get_account_menu_item_classes( $endpoint ) {
+function ohmylms_get_account_menu_item_classes( $endpoint ) {
 	$classes = array(
-		'creator_lms-profile--' . $endpoint,
+		'ohmylms-profile--' . $endpoint,
 	);
 
-	if ( omlms_is_current_account_menu_item( $endpoint ) ) {
+	if ( ohmylms_is_current_account_menu_item( $endpoint ) ) {
 		$classes[] = ' active ';
 	}
 
-	$classes = apply_filters( 'creator_lms_account_menu_item_classes', $classes, $endpoint );
+	$classes = apply_filters( 'ohmylms_account_menu_item_classes', $classes, $endpoint );
 
 	return implode( ' ', array_map( 'sanitize_html_class', $classes ) );
 }
@@ -192,20 +192,20 @@ function omlms_get_account_menu_item_classes( $endpoint ) {
  * @param string $endpoint Endpoint.
  * @return string
  */
-function omlms_get_account_endpoint_url( $endpoint, $query_params = array() ) {
+function ohmylms_get_account_endpoint_url( $endpoint, $query_params = array() ) {
 	if ( 'dashboard' === $endpoint ) {
-		return omlms_get_page_permalink( 'student_dashboard' );
+		return ohmylms_get_page_permalink( 'student_dashboard' );
 	}
 	
 	if ( 'profile' === $endpoint ) {
-		return omlms_get_page_permalink( 'student_profile' );
+		return ohmylms_get_page_permalink( 'student_profile' );
 	}
 	
 	if ( 'my-courses' === $endpoint ) {
-		return omlms_get_page_permalink( 'student_courses' );
+		return ohmylms_get_page_permalink( 'student_courses' );
 	}
 
-	$url = omlms_get_endpoint_url( $endpoint, '', omlms_get_page_permalink( 'student_profile' ) );
+	$url = ohmylms_get_endpoint_url( $endpoint, '', ohmylms_get_page_permalink( 'student_profile' ) );
 
 	$url = add_query_arg( $query_params, $url );
 
@@ -221,7 +221,7 @@ function omlms_get_account_endpoint_url( $endpoint, $query_params = array() ) {
  * @since 2.6.0
  * @return array
  */
-function creator_lms_get_account_orders_columns() {
+function ohmylms_get_account_orders_columns() {
 	/**
 	 * Filters the array of My Account > Orders columns.
 	 *
@@ -229,7 +229,7 @@ function creator_lms_get_account_orders_columns() {
 	 * @param array $columns Array of column labels keyed by column IDs.
 	 */
 	return apply_filters(
-		'creator_lms_account_orders_columns',
+		'ohmylms_account_orders_columns',
 		array(
 			'order-number'  => __( 'Order', 'ohmylms' ),
 			'order-date'    => __( 'Date', 'ohmylms' ),
@@ -246,9 +246,9 @@ function creator_lms_get_account_orders_columns() {
  * @since 2.6.0
  * @return array
  */
-function creator_lms_get_account_downloads_columns() {
+function ohmylms_get_account_downloads_columns() {
 	$columns = apply_filters(
-		'creator_lms_account_downloads_columns',
+		'ohmylms_account_downloads_columns',
 		array(
 			'download-product'   => __( 'Product', 'ohmylms' ),
 			'download-remaining' => __( 'Downloads remaining', 'ohmylms' ),
@@ -258,7 +258,7 @@ function creator_lms_get_account_downloads_columns() {
 		)
 	);
 
-	if ( ! has_filter( 'creator_lms_account_download_actions' ) ) {
+	if ( ! has_filter( 'ohmylms_account_download_actions' ) ) {
 		unset( $columns['download-actions'] );
 	}
 
@@ -271,9 +271,9 @@ function creator_lms_get_account_downloads_columns() {
  * @since 2.6.0
  * @return array
  */
-function creator_lms_get_account_payment_methods_columns() {
+function ohmylms_get_account_payment_methods_columns() {
 	return apply_filters(
-		'creator_lms_account_payment_methods_columns',
+		'ohmylms_account_payment_methods_columns',
 		array(
 			'method'  => __( 'Method', 'ohmylms' ),
 			'expires' => __( 'Expires', 'ohmylms' ),
@@ -288,9 +288,9 @@ function creator_lms_get_account_payment_methods_columns() {
  * @since 2.6.0
  * @return array
  */
-function creator_lms_get_account_payment_methods_types() {
+function ohmylms_get_account_payment_methods_types() {
 	return apply_filters(
-		'creator_lms_payment_methods_types',
+		'ohmylms_payment_methods_types',
 		array(
 			'cc'     => __( 'Credit card', 'ohmylms' ),
 			'echeck' => __( 'eCheck', 'ohmylms' ),
@@ -307,7 +307,7 @@ function creator_lms_get_account_payment_methods_types() {
  *
  * @since 1.0.0
  */
-function creator_lms_get_initials( $firstName = '', $lastName = '' ) {
+function ohmylms_get_initials( $firstName = '', $lastName = '' ) {
 	$firstInitial  = ! empty( $firstName ) ? strtoupper( $firstName[0] ) : '';
 	$secondInitial = ! empty( $lastName ) ? strtoupper( $lastName[0] ) : '';
 
@@ -326,10 +326,10 @@ function creator_lms_get_initials( $firstName = '', $lastName = '' ) {
  * @param  int|WC_Order $order Order instance or ID.
  * @return array
  */
-function creator_lms_get_account_orders_actions( $order ) {
+function ohmylms_get_account_orders_actions( $order ) {
 	if ( ! is_object( $order ) ) {
 		$order_id = absint( $order );
-		$order    = creator_lms_get_order( $order_id );
+		$order    = ohmylms_get_order( $order_id );
 	}
 
 	$actions = array(
@@ -342,7 +342,7 @@ function creator_lms_get_account_orders_actions( $order ) {
 			'name' => __( 'View', 'ohmylms' ),
 		),
 		'cancel' => array(
-			'url'  => $order->get_cancel_order_url( creator_lms_get_page_permalink( 'myaccount' ) ),
+			'url'  => $order->get_cancel_order_url( ohmylms_get_page_permalink( 'myaccount' ) ),
 			'name' => __( 'Cancel', 'ohmylms' ),
 		),
 	);
@@ -351,9 +351,9 @@ function creator_lms_get_account_orders_actions( $order ) {
 		unset( $actions['pay'] );
 	}
 
-	if ( ! in_array( $order->get_status(), apply_filters( 'creator_lms_valid_order_statuses_for_cancel', array( 'pending', 'failed' ), $order ), true ) ) {
+	if ( ! in_array( $order->get_status(), apply_filters( 'ohmylms_valid_order_statuses_for_cancel', array( 'pending', 'failed' ), $order ), true ) ) {
 		unset( $actions['cancel'] );
 	}
 
-	return apply_filters( 'creator_lms_my_account_my_orders_actions', $actions, $order );
+	return apply_filters( 'ohmylms_my_account_my_orders_actions', $actions, $order );
 }

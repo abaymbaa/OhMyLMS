@@ -17,11 +17,11 @@ var $ne = function (e) {
     currentStep: "experienced" == (null == a ? void 0 : a.level) || "intermediate" == (null == a ? void 0 : a.level) ? 2 : 0,
     isShowIndicator: !0
   }), React.createElement(I.ContainerWP, null, React.createElement("div", {
-    className: "omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper"
+    className: "ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper"
   }, React.createElement("div", {
-    className: "omlms-setup-wizard__container"
+    className: "ohmylms-setup-wizard__container"
   }, React.createElement("div", {
-    className: "omlms-setup-wizard__header"
+    className: "ohmylms-setup-wizard__header"
   }, React.createElement(I.HeadingWP, {
     as: "h2",
     color: "#000d25",
@@ -335,7 +335,7 @@ function ore(e, t) {
   return r;
 }
 
-var ire = (null === (Jne = window.creator_lms_params) || void 0 === Jne ? void 0 : Jne.plugin_assets) + "images/",
+var ire = (null === (Jne = window.ohmylms_params) || void 0 === Jne ? void 0 : Jne.plugin_assets) + "images/",
   lre = function (e) {
     var t,
       n,
@@ -402,19 +402,19 @@ var ire = (null === (Jne = window.creator_lms_params) || void 0 === Jne ? void 0
           return t.apply(this, arguments);
         };
       }(),
-      _ = [].concat(Xne(null !== (t = window) && void 0 !== t && null !== (t = t.creator_lms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
+      _ = [].concat(Xne(null !== (t = window) && void 0 !== t && null !== (t = t.ohmylms_params) && void 0 !== t && t.is_tutor_lms_active ? [{
         label: (0, b.__)("Tutor LMS", "ohmylms"),
         value: "tutorLMS",
         icon: ire + "tutor_icon.svg"
-      }] : []), Xne(null !== (n = window) && void 0 !== n && null !== (n = n.creator_lms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
+      }] : []), Xne(null !== (n = window) && void 0 !== n && null !== (n = n.ohmylms_params) && void 0 !== n && n.is_learndash_lms_active ? [{
         label: (0, b.__)("LearnDash", "ohmylms"),
         value: "learnDash",
         icon: ire + "learndash_icon.svg"
-      }] : []), Xne(null !== (r = window) && void 0 !== r && null !== (r = r.creator_lms_params) && void 0 !== r && r.is_learnpress_active ? [{
+      }] : []), Xne(null !== (r = window) && void 0 !== r && null !== (r = r.ohmylms_params) && void 0 !== r && r.is_learnpress_active ? [{
         label: (0, b.__)("LearnPress", "ohmylms"),
         value: "learnPress",
         icon: ire + "learnpress_icon.svg"
-      }] : []), Xne(null !== (a = window) && void 0 !== a && null !== (a = a.creator_lms_params) && void 0 !== a && a.is_masterstudy_active ? [{
+      }] : []), Xne(null !== (a = window) && void 0 !== a && null !== (a = a.ohmylms_params) && void 0 !== a && a.is_masterstudy_active ? [{
         label: (0, b.__)("MasterStudy LMS", "ohmylms"),
         value: "masterStudy",
         icon: ire + "masterstudy_icon.svg"
@@ -434,11 +434,11 @@ var ire = (null === (Jne = window.creator_lms_params) || void 0 === Jne ? void 0
         return null == i ? void 0 : i("course-creation");
       }
     }), React.createElement(I.ContainerWP, null, React.createElement("div", {
-      className: "omlms-setup-wizard-level-selection-wrapper omlms-setup-wizard-card-wrapper"
+      className: "ohmylms-setup-wizard-level-selection-wrapper ohmylms-setup-wizard-card-wrapper"
     }, React.createElement("div", {
-      className: "omlms-setup-wizard__container"
+      className: "ohmylms-setup-wizard__container"
     }, React.createElement("div", {
-      className: "omlms-setup-wizard__header"
+      className: "ohmylms-setup-wizard__header"
     }, React.createElement(I.HeadingWP, {
       as: "h2",
       color: "#000d25",
@@ -499,7 +499,7 @@ var ire = (null === (Jne = window.creator_lms_params) || void 0 === Jne ? void 0
         padding: 4,
         marginBottom: 0
       }, c.selectedPlatform === e.value && React.createElement("div", {
-        className: "omlms-setup-wizard__check",
+        className: "ohmylms-setup-wizard__check",
         style: {
           position: "absolute",
           height: "16px",

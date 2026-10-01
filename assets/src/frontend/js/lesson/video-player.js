@@ -1,10 +1,10 @@
 /**
- * CreatorLMS Custom Video Player
+ * OhMyLMS Custom Video Player
  * 
  * A custom video player that supports YouTube, Vimeo, and self-hosted videos
  * with minimal branding and enhanced playback controls.
  * 
- * @package CreatorLMS
+ * @package OhMyLMS
  * @version 1.0.0
  */
 
@@ -552,7 +552,7 @@
                 try {
                     // Create video element
                     const video = document.createElement('video');
-                    video.className = 'omlms-html5-video';
+                    video.className = 'ohmylms-html5-video';
                     video.controls = this.config.showControls;
                     video.autoplay = this.config.autoplay;
                     video.loop = this.config.loop;
@@ -794,9 +794,9 @@
     }
 
     /**
-     * Main CreatorLMS Video Player
+     * Main OhMyLMS Video Player
      */
-    class CreatorLMSVideoPlayer {
+    class OhMyLMSVideoPlayer {
         constructor(element, options = {}) {
             this.element = $(element);
             this.options = $.extend({
@@ -860,7 +860,7 @@
             const logo = $('<img />', {
                 src: this.options.logoUrl,
                 alt: '',
-                class: 'omlms-player-logo',
+                class: 'ohmylms-player-logo',
             }).css({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' });
 
             const self = this;
@@ -889,14 +889,14 @@
         }
 
         createPlayerContainer() {
-            this.playerContainer = $('<div class="omlms-video-player-container"></div>');
+            this.playerContainer = $('<div class="ohmylms-video-player-container"></div>');
             this.element.append(this.playerContainer);
             
             // Add click/touch-to-play/pause functionality for all video types
             const self = this;
             this.playerContainer.on('click touchend', function(e) {
                 // Don't trigger if clicking on controls
-                if ($(e.target).closest('.omlms-custom-controls').length > 0) {
+                if ($(e.target).closest('.ohmylms-custom-controls').length > 0) {
                     return;
                 }
                 
@@ -922,9 +922,9 @@
             // Reduce blocking on mobile for better interaction
             if (this.platform === 'youtube' || this.platform === 'vimeo') {
                 const brandingBlockers = $(`
-                    <div class="omlms-video-interaction-blocker"></div>
-                    <div class="omlms-branding-blocker-top"></div>
-                    <div class="omlms-branding-blocker-bottom-right"></div>
+                    <div class="ohmylms-video-interaction-blocker"></div>
+                    <div class="ohmylms-branding-blocker-top"></div>
+                    <div class="ohmylms-branding-blocker-bottom-right"></div>
                 `);
                 this.element.append(brandingBlockers);
                 this.brandingBlockers = brandingBlockers;
@@ -951,7 +951,7 @@
             const buttonSize = this.isMobile ? 70 : 140;
             
             const bigPlayButton = $(`
-                <div class="omlms-big-play-button">
+                <div class="ohmylms-big-play-button">
                     <svg width="${buttonSize}" height="${buttonSize}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle class="play-button-circle" cx="50" cy="50" r="48" stroke-width="4"/>
                         <path class="play-button-icon" d="M40 30L70 50L40 70V30Z"/>
@@ -962,7 +962,7 @@
             // For YouTube, add a full-screen invisible overlay to block YouTube's own play button
             // But NOT on mobile devices where it can block necessary interactions
             if (this.platform === 'youtube' && !this.isMobile) {
-                const clickBlocker = $('<div class="omlms-youtube-click-blocker"></div>');
+                const clickBlocker = $('<div class="ohmylms-youtube-click-blocker"></div>');
                 this.element.append(clickBlocker);
                 this.clickBlocker = clickBlocker; // Store reference to remove it later
                 
@@ -994,51 +994,51 @@
             });
         }
 
-        createCustomControls() {            const controls = $(`                <div class="omlms-custom-controls">
-                    <div class="omlms-controls-progress-container">
-                        <div class="omlms-progress-bar">
-                            <div class="omlms-progress-filled"></div>
-                            <div class="omlms-progress-handle"></div>
+        createCustomControls() {            const controls = $(`                <div class="ohmylms-custom-controls">
+                    <div class="ohmylms-controls-progress-container">
+                        <div class="ohmylms-progress-bar">
+                            <div class="ohmylms-progress-filled"></div>
+                            <div class="ohmylms-progress-handle"></div>
                         </div>
-                        <div class="omlms-time-display">
-                            <span class="omlms-current-time">0:00</span>
-                            <span class="omlms-separator">/</span>
-                            <span class="omlms-duration">--:--</span>
+                        <div class="ohmylms-time-display">
+                            <span class="ohmylms-current-time">0:00</span>
+                            <span class="ohmylms-separator">/</span>
+                            <span class="ohmylms-duration">--:--</span>
                         </div>
                     </div>
-                    <div class="omlms-controls-bottom">
-                        <div class="omlms-controls-left">
-                            <button class="omlms-control-btn omlms-play-pause" aria-label="Play">
-                                <svg class="omlms-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="ohmylms-controls-bottom">
+                        <div class="ohmylms-controls-left">
+                            <button class="ohmylms-control-btn ohmylms-play-pause" aria-label="Play">
+                                <svg class="ohmylms-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M8 5v14l11-7z" fill="currentColor"/>
                                 </svg>
-                                <svg class="omlms-pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                                <svg class="ohmylms-pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
                                     <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>
                                 </svg>
                             </button>
-                            <div class="omlms-volume-control">
-                                <button class="omlms-control-btn omlms-volume-btn" aria-label="Mute">
-                                    <svg class="omlms-volume-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <div class="ohmylms-volume-control">
+                                <button class="ohmylms-control-btn ohmylms-volume-btn" aria-label="Mute">
+                                    <svg class="ohmylms-volume-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/>
                                     </svg>
-                                    <svg class="omlms-mute-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                                    <svg class="ohmylms-mute-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
                                         <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="currentColor"/>
                                     </svg>
                                 </button>
-                                <div class="omlms-volume-slider">
-                                    <div class="omlms-volume-track" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">
-                                        <div class="omlms-volume-fill"></div>
-                                        <div class="omlms-volume-thumb"></div>
+                                <div class="ohmylms-volume-slider">
+                                    <div class="ohmylms-volume-track" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">
+                                        <div class="ohmylms-volume-fill"></div>
+                                        <div class="ohmylms-volume-thumb"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="omlms-controls-right">
-                            <div class="omlms-speed-control">
-                                <button class="omlms-control-btn omlms-speed-btn" aria-label="Playback speed">
-                                    <span class="omlms-speed-text">1x</span>
+                        <div class="ohmylms-controls-right">
+                            <div class="ohmylms-speed-control">
+                                <button class="ohmylms-control-btn ohmylms-speed-btn" aria-label="Playback speed">
+                                    <span class="ohmylms-speed-text">1x</span>
                                 </button>
-                                <div class="omlms-speed-menu">
+                                <div class="ohmylms-speed-menu">
                                     <button data-speed="0.5">0.5x</button>
                                     <button data-speed="0.75">0.75x</button>
                                     <button data-speed="1" class="active">1x</button>
@@ -1047,11 +1047,11 @@
                                     <button data-speed="2">2x</button>
                                 </div>
                             </div>
-                            <button class="omlms-control-btn omlms-fullscreen-btn" aria-label="Fullscreen">
-                                <svg class="omlms-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <button class="ohmylms-control-btn ohmylms-fullscreen-btn" aria-label="Fullscreen">
+                                <svg class="ohmylms-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/>
                                 </svg>
-                                <svg class="omlms-exit-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                                <svg class="ohmylms-exit-fullscreen-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
                                     <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" fill="currentColor"/>
                                 </svg>
                             </button>
@@ -1073,7 +1073,7 @@
             const self = this;
 
             // Play/Pause button - add touch support
-            this.controls.find('.omlms-play-pause').on('click touchend', function(e) {
+            this.controls.find('.ohmylms-play-pause').on('click touchend', function(e) {
                 // Prevent default for touch to avoid double-firing
                 if (e.type === 'touchend') {
                     e.preventDefault();
@@ -1087,7 +1087,7 @@
             });
 
             // Volume controls - add touch support
-            this.controls.find('.omlms-volume-btn').on('click touchend', function(e) {
+            this.controls.find('.ohmylms-volume-btn').on('click touchend', function(e) {
                 // Prevent default for touch to avoid double-firing
                 if (e.type === 'touchend') {
                     e.preventDefault();
@@ -1102,7 +1102,7 @@
             });
 
             // Custom volume slider handling with full touch support
-            const volumeTrack = this.controls.find('.omlms-volume-track');
+            const volumeTrack = this.controls.find('.ohmylms-volume-track');
             let isDraggingVolume = false;
             
             const updateVolumeFromPosition = (e) => {
@@ -1202,15 +1202,15 @@
             });
 
             // Speed control - add touch support
-            this.controls.find('.omlms-speed-btn').on('click touchend', function(e) {
+            this.controls.find('.ohmylms-speed-btn').on('click touchend', function(e) {
                 // Prevent default for touch to avoid double-firing
                 if (e.type === 'touchend') {
                     e.preventDefault();
                 }
-                self.controls.find('.omlms-speed-menu').toggleClass('active');
+                self.controls.find('.ohmylms-speed-menu').toggleClass('active');
             });
 
-            this.controls.find('.omlms-speed-menu button').on('click touchend', function(e) {
+            this.controls.find('.ohmylms-speed-menu button').on('click touchend', function(e) {
                 e.stopPropagation();
                 // Prevent default for touch to avoid double-firing
                 if (e.type === 'touchend') {
@@ -1218,10 +1218,10 @@
                 }
                 const speed = parseFloat($(this).data('speed'));
                 self.setPlaybackRate(speed);
-                self.controls.find('.omlms-speed-menu button').removeClass('active');
+                self.controls.find('.ohmylms-speed-menu button').removeClass('active');
                 $(this).addClass('active');
-                self.controls.find('.omlms-speed-text').text(speed + 'x');
-                self.controls.find('.omlms-speed-menu').removeClass('active');
+                self.controls.find('.ohmylms-speed-text').text(speed + 'x');
+                self.controls.find('.ohmylms-speed-menu').removeClass('active');
             });
 
             // Progress bar - handle async for Vimeo with smooth dragging
@@ -1233,10 +1233,10 @@
             let cachedBarWidth = 0;
             
             // Cache DOM elements for better performance during drag
-            const progressBar = self.controls.find('.omlms-progress-bar');
-            const progressFilledEl = progressBar.find('.omlms-progress-filled')[0];
-            const progressHandleEl = progressBar.find('.omlms-progress-handle')[0];
-            const currentTimeDisplay = self.controls.find('.omlms-current-time');
+            const progressBar = self.controls.find('.ohmylms-progress-bar');
+            const progressFilledEl = progressBar.find('.ohmylms-progress-filled')[0];
+            const progressHandleEl = progressBar.find('.ohmylms-progress-handle')[0];
+            const currentTimeDisplay = self.controls.find('.ohmylms-current-time');
             
             const updateProgressUI = (percent, targetTime) => {
                 // Direct DOM updates for instant feedback
@@ -1354,7 +1354,7 @@
             });
 
             // Fullscreen - add touch support
-            this.controls.find('.omlms-fullscreen-btn').on('click touchend', function(e) {
+            this.controls.find('.ohmylms-fullscreen-btn').on('click touchend', function(e) {
                 // Prevent default for touch to avoid double-firing
                 if (e.type === 'touchend') {
                     e.preventDefault();
@@ -1524,7 +1524,7 @@
 
         showVolumeIndicator(volume, delta) {
             // Remove existing indicator
-            this.element.find('.omlms-volume-indicator').remove();
+            this.element.find('.ohmylms-volume-indicator').remove();
             
             const percentage = Math.round(volume * 100);
             const deltaPercentage = Math.abs(Math.round(delta * 100));
@@ -1535,13 +1535,13 @@
                 `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="white"/>`;
             
             const indicator = $(`
-                <div class="omlms-volume-indicator">
+                <div class="ohmylms-volume-indicator">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         ${volumeIcon}
                     </svg>
-                    <div class="omlms-volume-text">
-                        <span class="omlms-volume-current">${percentage}%</span>
-                        <span class="omlms-volume-delta">${deltaPercentage}%</span>
+                    <div class="ohmylms-volume-text">
+                        <span class="ohmylms-volume-current">${percentage}%</span>
+                        <span class="ohmylms-volume-delta">${deltaPercentage}%</span>
                     </div>
                 </div>
             `);
@@ -1558,7 +1558,7 @@
 
         showSeekIndicator(seconds) {
             // Remove existing indicator
-            this.element.find('.omlms-seek-indicator').remove();
+            this.element.find('.ohmylms-seek-indicator').remove();
             
             const absSeconds = Math.abs(seconds);
             const text = seconds > 0 ? `${absSeconds}s >>` : `<< ${absSeconds}s`;
@@ -1575,7 +1575,7 @@
                 </svg>`;
             
             const indicator = $(`
-                <div class="omlms-seek-indicator">
+                <div class="ohmylms-seek-indicator">
                     ${icon}
                     <span>${text}</span>
                 </div>
@@ -1619,15 +1619,15 @@
                     }
                 }
                 
-                this.controls.find('.omlms-current-time').text(this.formatTime(timeToShow));
-                this.controls.find('.omlms-progress-filled').css('width', percentForBar + '%');
-                this.controls.find('.omlms-progress-handle').css('left', percentForBar + '%');
-                this.controls.find('.omlms-duration').text(this.formatTime(duration));
+                this.controls.find('.ohmylms-current-time').text(this.formatTime(timeToShow));
+                this.controls.find('.ohmylms-progress-filled').css('width', percentForBar + '%');
+                this.controls.find('.ohmylms-progress-handle').css('left', percentForBar + '%');
+                this.controls.find('.ohmylms-duration').text(this.formatTime(duration));
                 this.durationKnown = true;
             } else {
                 // If duration not available, show loading state
-                this.controls.find('.omlms-current-time').text(this.formatTime(currentTime || 0));
-                this.controls.find('.omlms-duration').text('00:00');
+                this.controls.find('.ohmylms-current-time').text(this.formatTime(currentTime || 0));
+                this.controls.find('.ohmylms-duration').text('00:00');
             }
         }
 
@@ -1678,14 +1678,14 @@
                     if (this.controls) {
                         const duration = this.platformHandler.getDuration();
                         if (typeof duration === 'number' && duration > 0) {
-                            this.controls.find('.omlms-current-time').text(this.formatTime(duration));
-                            this.controls.find('.omlms-progress-filled').css('width', '100%');
+                            this.controls.find('.ohmylms-current-time').text(this.formatTime(duration));
+                            this.controls.find('.ohmylms-progress-filled').css('width', '100%');
                         } else {
                             // For async getDuration (Vimeo)
                             Promise.resolve(duration).then(dur => {
                                 if (dur && dur > 0) {
-                                    this.controls.find('.omlms-current-time').text(this.formatTime(dur));
-                                    this.controls.find('.omlms-progress-filled').css('width', '100%');
+                                    this.controls.find('.ohmylms-current-time').text(this.formatTime(dur));
+                                    this.controls.find('.ohmylms-progress-filled').css('width', '100%');
                                 }
                             });
                         }
@@ -1726,14 +1726,14 @@
 
             videoEl.addEventListener('webkitbeginfullscreen', () => {
                 this.isFullscreen = true;
-                this.controls.find('.omlms-fullscreen-icon').hide();
-                this.controls.find('.omlms-exit-fullscreen-icon').show();
+                this.controls.find('.ohmylms-fullscreen-icon').hide();
+                this.controls.find('.ohmylms-exit-fullscreen-icon').show();
             });
 
             videoEl.addEventListener('webkitendfullscreen', () => {
                 this.isFullscreen = false;
-                this.controls.find('.omlms-fullscreen-icon').show();
-                this.controls.find('.omlms-exit-fullscreen-icon').hide();
+                this.controls.find('.ohmylms-fullscreen-icon').show();
+                this.controls.find('.ohmylms-exit-fullscreen-icon').hide();
             });
         }
 
@@ -1741,11 +1741,11 @@
             if (!this.controls) return;
 
             if (isPaused) {
-                this.controls.find('.omlms-play-icon').show();
-                this.controls.find('.omlms-pause-icon').hide();
+                this.controls.find('.ohmylms-play-icon').show();
+                this.controls.find('.ohmylms-pause-icon').hide();
             } else {
-                this.controls.find('.omlms-play-icon').hide();
-                this.controls.find('.omlms-pause-icon').show();
+                this.controls.find('.ohmylms-play-icon').hide();
+                this.controls.find('.ohmylms-pause-icon').show();
             }
         }
 
@@ -1774,21 +1774,21 @@
                 this.updateVolumeFill(this.volume * 100);
                 
                 if (this.volume === 0) {
-                    this.controls.find('.omlms-volume-icon').hide();
-                    this.controls.find('.omlms-mute-icon').show();
+                    this.controls.find('.ohmylms-volume-icon').hide();
+                    this.controls.find('.ohmylms-mute-icon').show();
                 } else {
-                    this.controls.find('.omlms-volume-icon').show();
-                    this.controls.find('.omlms-mute-icon').hide();
+                    this.controls.find('.ohmylms-volume-icon').show();
+                    this.controls.find('.ohmylms-mute-icon').hide();
                 }
             }
         }
 
         updateVolumeFill(percentage) {
             if (this.controls) {
-                this.controls.find('.omlms-volume-fill').css('width', percentage + '%');
-                this.controls.find('.omlms-volume-thumb').css('left', percentage + '%');
+                this.controls.find('.ohmylms-volume-fill').css('width', percentage + '%');
+                this.controls.find('.ohmylms-volume-thumb').css('left', percentage + '%');
                 // Update ARIA attribute for accessibility
-                this.controls.find('.omlms-volume-track').attr('aria-valuenow', Math.round(percentage));
+                this.controls.find('.ohmylms-volume-track').attr('aria-valuenow', Math.round(percentage));
             }
         }
 
@@ -1838,8 +1838,8 @@
                     elem.msRequestFullscreen();
                 }
                 this.isFullscreen = true;
-                this.controls.find('.omlms-fullscreen-icon').hide();
-                this.controls.find('.omlms-exit-fullscreen-icon').show();
+                this.controls.find('.ohmylms-fullscreen-icon').hide();
+                this.controls.find('.ohmylms-exit-fullscreen-icon').show();
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -1851,8 +1851,8 @@
                     document.msExitFullscreen();
                 }
                 this.isFullscreen = false;
-                this.controls.find('.omlms-fullscreen-icon').show();
-                this.controls.find('.omlms-exit-fullscreen-icon').hide();
+                this.controls.find('.ohmylms-fullscreen-icon').show();
+                this.controls.find('.ohmylms-exit-fullscreen-icon').hide();
             }
         }
 
@@ -1879,7 +1879,7 @@
             }
             
             const errorMessage = $(`
-                <div class="omlms-video-error">
+                <div class="ohmylms-video-error">
                     <p>${errorText}</p>
                 </div>
             `);
@@ -1898,14 +1898,14 @@
     }
 
     // jQuery plugin wrapper
-    $.fn.creatorLMSVideoPlayer = function(options) {
+    $.fn.ohMyLMSVideoPlayer = function(options) {
         return this.each(function() {
             const $this = $(this);
-            let instance = $this.data('creatorLMSVideoPlayer');
+            let instance = $this.data('ohMyLMSVideoPlayer');
 
             if (!instance) {
-                instance = new CreatorLMSVideoPlayer(this, options);
-                $this.data('creatorLMSVideoPlayer', instance);
+                instance = new OhMyLMSVideoPlayer(this, options);
+                $this.data('ohMyLMSVideoPlayer', instance);
             }
 
             return instance;
@@ -1914,7 +1914,7 @@
 
     // Auto-initialize video players
     function initVideoPlayers() {
-        const players = $('.omlms-custom-video-player');
+        const players = $('.ohmylms-custom-video-player');
         
         if (players.length === 0) {
             return;
@@ -1936,7 +1936,7 @@
             };
             
             if (videoUrl) {
-                $player.creatorLMSVideoPlayer(options);
+                $player.ohMyLMSVideoPlayer(options);
             }
         });
     }
@@ -1947,7 +1947,7 @@
     });
 
     // Expose to global scope
-    window.CreatorLMSVideoPlayer = CreatorLMSVideoPlayer;
-    window.initCreatorLMSVideoPlayers = initVideoPlayers;
+    window.OhMyLMSVideoPlayer = OhMyLMSVideoPlayer;
+    window.initOhMyLMSVideoPlayers = initVideoPlayers;
 
 })(jQuery);

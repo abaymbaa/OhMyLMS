@@ -1,18 +1,18 @@
 <?php 
 
-namespace OMLMS\Integrations\Zoom\Includes;
+namespace OhMyLMS\Integrations\Zoom\Includes;
 
-use OMLMS\Integrations\Zoom\Includes\Api\Endpoints\MeetingApi;
-use OMLMS\Integrations\Zoom\Includes\Api\ZoomApiClient;
-use OMLMS\Integrations\Zoom\Includes\Services\MeetingService;
-use OMLMS\Integrations\Zoom\Includes\Services\TokenService;
+use OhMyLMS\Integrations\Zoom\Includes\Api\Endpoints\MeetingApi;
+use OhMyLMS\Integrations\Zoom\Includes\Api\ZoomApiClient;
+use OhMyLMS\Integrations\Zoom\Includes\Services\MeetingService;
+use OhMyLMS\Integrations\Zoom\Includes\Services\TokenService;
 
 class Hooks {
     public function __construct() {
-        add_filter ('creatorlms_integrations', array( $this, 'register_zoom_integrations' ), 10, 1 );
-        add_action( 'creatorlms_zoom_session_created', array( $this, 'create_zoom_session' ), 10, 2 );
-        add_action( 'creatorlms_zoom_session_updated', array( $this, 'create_zoom_session' ), 10, 2 );
-        add_action( 'creatorlms_zoom_session_deleted', array( $this, 'delete_zoom_session' ), 10, 2 );
+        add_filter ('ohmylms_integrations', array( $this, 'register_zoom_integrations' ), 10, 1 );
+        add_action( 'ohmylms_zoom_session_created', array( $this, 'create_zoom_session' ), 10, 2 );
+        add_action( 'ohmylms_zoom_session_updated', array( $this, 'create_zoom_session' ), 10, 2 );
+        add_action( 'ohmylms_zoom_session_deleted', array( $this, 'delete_zoom_session' ), 10, 2 );
 
     }
 
@@ -53,7 +53,7 @@ class Hooks {
             $auto_recording = ( 'paid' === $zoom_plan ) ? 'cloud' : 'local';
         }
 
-        $meeting_time = creatorlms_convert_to_utc($start_date, $time_zone);
+        $meeting_time = ohmylms_convert_to_utc($start_date, $time_zone);
         $meeting_details = [
             'topic'      => $post->post_title,
             'type'       => 2,
@@ -97,7 +97,7 @@ class Hooks {
                 if ( false !== $encoded_meeting_data ) {
                     update_post_meta( $session_id, '_zoom_meeting_data', $encoded_meeting_data );
                 } else {
-                    error_log( 'CreatorLMS Zoom: failed to json_encode meeting data for session ' . $session_id . ': ' . json_last_error_msg() );
+                    error_log( 'OhMyLMS Zoom: failed to json_encode meeting data for session ' . $session_id . ': ' . json_last_error_msg() );
                 }
             }
             update_post_meta ( $session_id, '_is_zoom_session_created', 'yes' );
@@ -142,14 +142,13 @@ class Hooks {
     public function register_zoom_integrations( $integrations ) {
         $integrations['zoom'] = array(
             'label' => __('Zoom', 'ohmylms'),
-            'icon' => CREATORLMS_PRO_URL.'/includes/Integrations/Zoom/Assets/Images/zoom-icon.svg',
+            'icon' => OHMYLMS_PRO_URL.'/includes/Integrations/Zoom/Assets/Images/zoom-icon.svg',
             'description' => __('Integrate Zoom to host live, interactive classes directly within your LMS for better student engagement.', 'ohmylms'),
             'categories' => array('live-classes'),
             'hasSettings' => true,
-            'class' => 'OMLMS\Integrations\Zoom',
+            'class' => 'OhMyLMS\Integrations\Zoom',
             'dependency' => __('Requires Cohorts', 'ohmylms'),
-            'is_valid'    => \OMLMS\Utility\LicenseHelper::is_feature_enabled('zoom'),
-            'required_plan'    => \OMLMS\Utility\LicenseHelper::get_required_plan_for_feature('zoom'),
+            'is_valid'    => true,
 
         );
         return $integrations;

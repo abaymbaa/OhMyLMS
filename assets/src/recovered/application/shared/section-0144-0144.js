@@ -62,8 +62,8 @@ var GK = [{
       f = (0, y.useSelect)(function (e) {
         return e(T.default).getDesignSettings();
       }, []),
-      v = (null == f || null === (t = f.creator_lms_video_player_logo) || void 0 === t ? void 0 : t.value) || "",
-      h = (null == f || null === (n = f.creator_lms_video_player_logo_bg_color) || void 0 === n ? void 0 : n.value) || "#6E42D3",
+      v = (null == f || null === (t = f.ohmylms_video_player_logo) || void 0 === t ? void 0 : t.value) || "",
+      h = (null == f || null === (n = f.ohmylms_video_player_logo_bg_color) || void 0 === n ? void 0 : n.value) || "#6E42D3",
       _ = function (e, t) {
         return function (e) {
           if (Array.isArray(e)) return e;
@@ -109,17 +109,17 @@ var GK = [{
       R = (0, g.useCallback)(function () {
         var e, t, n, r;
         return {
-          primary: null == f || null === (e = f.creator_lms_primary_color_scheme) || void 0 === e || null === (e = e.value) || void 0 === e ? void 0 : e.toLowerCase(),
-          heading: null == f || null === (t = f.creator_lms_heading_color_scheme) || void 0 === t || null === (t = t.value) || void 0 === t ? void 0 : t.toLowerCase(),
-          text: null == f || null === (n = f.creator_lms_body_text_color_scheme) || void 0 === n || null === (n = n.value) || void 0 === n ? void 0 : n.toLowerCase(),
-          progress: null == f || null === (r = f.creator_lms_body_progress_color_scheme) || void 0 === r || null === (r = r.value) || void 0 === r ? void 0 : r.toLowerCase()
+          primary: null == f || null === (e = f.ohmylms_primary_color_scheme) || void 0 === e || null === (e = e.value) || void 0 === e ? void 0 : e.toLowerCase(),
+          heading: null == f || null === (t = f.ohmylms_heading_color_scheme) || void 0 === t || null === (t = t.value) || void 0 === t ? void 0 : t.toLowerCase(),
+          text: null == f || null === (n = f.ohmylms_body_text_color_scheme) || void 0 === n || null === (n = n.value) || void 0 === n ? void 0 : n.toLowerCase(),
+          progress: null == f || null === (r = f.ohmylms_body_progress_color_scheme) || void 0 === r || null === (r = r.value) || void 0 === r ? void 0 : r.toLowerCase()
         };
       }, [f]);
     (0, g.useEffect)(function () {
       var e, t;
-      if (!S.current && null != f && null !== (e = f.creator_lms_primary_color_scheme) && void 0 !== e && e.value) {
+      if (!S.current && null != f && null !== (e = f.ohmylms_primary_color_scheme) && void 0 !== e && e.value) {
         S.current = !0;
-        var n = null == f || null === (t = f.creator_lms_color_preset) || void 0 === t ? void 0 : t.value;
+        var n = null == f || null === (t = f.ohmylms_color_preset) || void 0 === t ? void 0 : t.value;
         if (n && GK.find(function (e) {
           return e.value === n;
         })) E(n);else {
@@ -164,19 +164,19 @@ var GK = [{
             return t.value === e;
           });
           t && (E(e), p.updateDesignSettings({
-            creator_lms_color_preset: {
+            ohmylms_color_preset: {
               value: e
             },
-            creator_lms_primary_color_scheme: {
+            ohmylms_primary_color_scheme: {
               value: t.colors.primary
             },
-            creator_lms_heading_color_scheme: {
+            ohmylms_heading_color_scheme: {
               value: t.colors.heading
             },
-            creator_lms_body_text_color_scheme: {
+            ohmylms_body_text_color_scheme: {
               value: t.colors.text
             },
-            creator_lms_body_progress_color_scheme: {
+            ohmylms_body_progress_color_scheme: {
               value: t.colors.progress
             }
           }));
@@ -193,10 +193,10 @@ var GK = [{
         description: (0, b.__)("Choose the main brand color used for buttons and highlights.", "ohmylms"),
         isShowResetBtn: !0,
         defaultColor: k.primary,
-        initialColor: null == f || null === (r = f.creator_lms_primary_color_scheme) || void 0 === r ? void 0 : r.value,
+        initialColor: null == f || null === (r = f.ohmylms_primary_color_scheme) || void 0 === r ? void 0 : r.value,
         onChange: function (e) {
           p.updateDesignSettings({
-            creator_lms_primary_color_scheme: {
+            ohmylms_primary_color_scheme: {
               value: e
             }
           });
@@ -206,10 +206,10 @@ var GK = [{
         description: (0, b.__)("Set the color for all main headings and titles.", "ohmylms"),
         isShowResetBtn: !0,
         defaultColor: k.heading,
-        initialColor: null == f || null === (a = f.creator_lms_heading_color_scheme) || void 0 === a ? void 0 : a.value,
+        initialColor: null == f || null === (a = f.ohmylms_heading_color_scheme) || void 0 === a ? void 0 : a.value,
         onChange: function (e) {
           p.updateDesignSettings({
-            creator_lms_heading_color_scheme: {
+            ohmylms_heading_color_scheme: {
               value: e
             }
           });
@@ -219,10 +219,10 @@ var GK = [{
         description: (0, b.__)("Define the default color for body text.", "ohmylms"),
         isShowResetBtn: !0,
         defaultColor: k.text,
-        initialColor: null == f || null === (o = f.creator_lms_body_text_color_scheme) || void 0 === o ? void 0 : o.value,
+        initialColor: null == f || null === (o = f.ohmylms_body_text_color_scheme) || void 0 === o ? void 0 : o.value,
         onChange: function (e) {
           p.updateDesignSettings({
-            creator_lms_body_text_color_scheme: {
+            ohmylms_body_text_color_scheme: {
               value: e
             }
           });
@@ -232,10 +232,10 @@ var GK = [{
         description: (0, b.__)("Choose the color used for course progress bars.", "ohmylms"),
         isShowResetBtn: !0,
         defaultColor: k.progress,
-        initialColor: null == f || null === (i = f.creator_lms_body_progress_color_scheme) || void 0 === i ? void 0 : i.value,
+        initialColor: null == f || null === (i = f.ohmylms_body_progress_color_scheme) || void 0 === i ? void 0 : i.value,
         onChange: function (e) {
           p.updateDesignSettings({
-            creator_lms_body_progress_color_scheme: {
+            ohmylms_body_progress_color_scheme: {
               value: e
             }
           });
@@ -252,7 +252,7 @@ var GK = [{
         e.on("select", function () {
           var t = e.state().get("selection").first().toJSON();
           "image" === t.type && p.updateDesignSettings({
-            creator_lms_video_player_logo: {
+            ohmylms_video_player_logo: {
               value: t.url
             }
           });
@@ -267,7 +267,7 @@ var GK = [{
               for (;;) switch (e.n) {
                 case 0:
                   return p.setLoadingSetting(!0), e.n = 1, l()({
-                    path: "creator-lms/v1/settings/design"
+                    path: "ohmylms/v1/settings/design"
                   });
                 case 1:
                   t = e.v, p.setDesignSettings(t), p.setLoadingSetting(!1);
@@ -297,7 +297,7 @@ var GK = [{
     }, []), React.createElement(React.Fragment, null, React.createElement(I.CardWP, {
       isBorderless: !0,
       variant: "secondary",
-      className: "omlms-full-screen-height"
+      className: "ohmylms-full-screen-height"
     }, React.createElement(I.SpacerWP, {
       padding: 4,
       marginTop: 0,
@@ -363,7 +363,7 @@ var GK = [{
       handleEdit: A,
       handleDelete: function () {
         p.updateDesignSettings({
-          creator_lms_video_player_logo: {
+          ohmylms_video_player_logo: {
             value: ""
           }
         });
@@ -386,7 +386,7 @@ var GK = [{
         initialColor: h,
         onChange: function (e) {
           return p.updateDesignSettings({
-            creator_lms_video_player_logo_bg_color: {
+            ohmylms_video_player_logo_bg_color: {
               value: e
             }
           });
@@ -401,9 +401,7 @@ var GK = [{
       isSaving: m
     }))));
   };
-
 const qK = (0, g.memo)(UK);
-
 function YK() {
   var e,
     t,
@@ -490,7 +488,6 @@ function YK() {
     };
   })();
 }
-
 function QK(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -512,7 +509,6 @@ function QK(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, QK(e, t, n, r);
 }
-
 function ZK(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -522,15 +518,13 @@ function ZK(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function $K(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var KK = function (e) {
-  (0, L.useIsPro)();
+  true;
   var t,
     n,
     r,
@@ -594,7 +588,7 @@ var KK = function (e) {
             for (;;) switch (e.n) {
               case 0:
                 return d.setLoadingSetting(!0), e.n = 1, l()({
-                  path: "creator-lms/v1/settings/account-and-privacy"
+                  path: "ohmylms/v1/settings/account-and-privacy"
                 });
               case 1:
                 t = e.v, d.setAccountPrivacySettings(t), d.setLoadingSetting(!1);
@@ -624,7 +618,7 @@ var KK = function (e) {
   }, []), React.createElement(React.Fragment, null, React.createElement(Ea, {
     isBorderless: !0,
     variant: "secondary",
-    className: "omlms-full-screen-height"
+    className: "ohmylms-full-screen-height"
   }, React.createElement(I.SpacerWP, {
     padding: 4,
     marginTop: 0,
@@ -647,11 +641,11 @@ var KK = function (e) {
     variant: "v2",
     align: "flex-start"
   }, React.createElement(I.SwitchWP, {
-    checked: "yes" === (null == v || null === (t = v.creator_lms_allow_purchase_without_login) || void 0 === t ? void 0 : t.value),
+    checked: "yes" === (null == v || null === (t = v.ohmylms_allow_purchase_without_login) || void 0 === t ? void 0 : t.value),
     onChange: function (e) {
       return function (e) {
         d.updateAccountPrivacySettings({
-          creator_lms_allow_purchase_without_login: {
+          ohmylms_allow_purchase_without_login: {
             value: e ? "yes" : "no"
           }
         });
@@ -669,11 +663,11 @@ var KK = function (e) {
     variant: "v2",
     align: "flex-start"
   }, React.createElement(I.SwitchWP, {
-    checked: "yes" === (null == v || null === (n = v.omlms_require_email_verification) || void 0 === n ? void 0 : n.value),
+    checked: "yes" === (null == v || null === (n = v.ohmylms_require_email_verification) || void 0 === n ? void 0 : n.value),
     onChange: function (e) {
       return function (e) {
         d.updateAccountPrivacySettings({
-          omlms_require_email_verification: {
+          ohmylms_require_email_verification: {
             value: e ? "yes" : "no"
           }
         });
@@ -691,7 +685,7 @@ var KK = function (e) {
     variant: "v2",
     align: "flex-start"
   }, React.createElement(I.SelectWP, {
-    value: (null == v || null === (r = v.creator_lms_checkout_phone_field) || void 0 === r ? void 0 : r.value) || "optional",
+    value: (null == v || null === (r = v.ohmylms_checkout_phone_field) || void 0 === r ? void 0 : r.value) || "optional",
     options: [{
       label: (0, b.__)("Optional", "ohmylms"),
       value: "optional"
@@ -705,7 +699,7 @@ var KK = function (e) {
     onChange: function (e) {
       return function (e) {
         d.updateAccountPrivacySettings({
-          creator_lms_checkout_phone_field: {
+          ohmylms_checkout_phone_field: {
             value: e
           }
         });
@@ -717,12 +711,12 @@ var KK = function (e) {
     inputType: "textarea",
     onChange: function (e) {
       d.updateAccountPrivacySettings({
-        creator_lms_privacy_policy_message: {
+        ohmylms_privacy_policy_message: {
           value: e
         }
       });
     },
-    value: Ge(null == v || null === (a = v.creator_lms_privacy_policy_message) || void 0 === a ? void 0 : a.value)
+    value: Ge(null == v || null === (a = v.ohmylms_privacy_policy_message) || void 0 === a ? void 0 : a.value)
   }))), React.createElement(SK, {
     activeTab: o,
     handleSave: i,
@@ -734,9 +728,7 @@ var KK = function (e) {
     onClose: f
   })));
 };
-
 const JK = (0, g.memo)(KK);
-
 function XK(e) {
   return XK = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -744,7 +736,6 @@ function XK(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, XK(e);
 }
-
 function eJ() {
   var e,
     t,
@@ -831,7 +822,6 @@ function eJ() {
     };
   })();
 }
-
 function tJ(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -853,7 +843,6 @@ function tJ(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, tJ(e, t, n, r);
 }
-
 function nJ(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -863,7 +852,6 @@ function nJ(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function rJ(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -874,7 +862,6 @@ function rJ(e, t) {
   }
   return n;
 }
-
 function aJ(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -886,7 +873,6 @@ function aJ(e) {
   }
   return e;
 }
-
 function oJ(e, t, n) {
   return (t = function (e) {
     var t = function (e) {

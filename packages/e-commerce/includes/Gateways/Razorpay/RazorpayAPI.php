@@ -50,7 +50,7 @@ class RazorpayAPI {
      */
     private static function request( $endpoint, $payload = array(), $method = 'POST' ) {
         if ( empty( self::$key_id ) || empty( self::$key_secret ) ) {
-            return new WP_Error( 'api_credentials_missing', __( 'Razorpay API credentials are not configured.', 'creator-lms' ) );
+            return new WP_Error( 'api_credentials_missing', __( 'Razorpay API credentials are not configured.', 'ohmylms' ) );
         }
 
         $url = self::$base_url . $endpoint;
@@ -82,7 +82,7 @@ class RazorpayAPI {
         if ( $http_code >= 200 && $http_code < 300 ) {
             return $decoded_body;
         } else {
-            $error_message = __( 'Razorpay API Error', 'creator-lms' );
+            $error_message = __( 'Razorpay API Error', 'ohmylms' );
             if ( isset( $decoded_body['error']['description'] ) ) {
                 $error_message = $decoded_body['error']['description'];
             } elseif ( isset( $decoded_body['error']['message'] ) ) {

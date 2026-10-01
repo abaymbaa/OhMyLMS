@@ -99,7 +99,6 @@ const vH = function (e) {
       }
     }))))));
   };
-
 function hH(e) {
   return hH = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -107,7 +106,6 @@ function hH(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, hH(e);
 }
-
 function yH(e) {
   return function (e) {
     if (Array.isArray(e)) return bH(e);
@@ -123,13 +121,11 @@ function yH(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function bH(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 function _H(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -140,7 +136,6 @@ function _H(e, t) {
   }
   return n;
 }
-
 function wH(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -152,7 +147,6 @@ function wH(e) {
   }
   return e;
 }
-
 function EH(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -173,7 +167,6 @@ function EH(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 const SH = function () {
   var e = (0, y.useDispatch)(T.default),
     t = (0, y.useSelect)(function (e) {
@@ -253,7 +246,6 @@ const SH = function () {
     hasCapacity: l
   })))));
 };
-
 function RH(e) {
   return RH = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -261,7 +253,6 @@ function RH(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, RH(e);
 }
-
 function xH(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -272,7 +263,6 @@ function xH(e, t) {
   }
   return n;
 }
-
 function CH(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -284,7 +274,6 @@ function CH(e) {
   }
   return e;
 }
-
 function PH(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -305,7 +294,6 @@ function PH(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function OH() {
   var e = (0, y.useDispatch)(T.default),
     t = (0, y.useSelect)(function (e) {
@@ -384,7 +372,6 @@ function OH() {
     description: (0, b.__)("Reward points motivate students by rewarding them for course activities. Disable this if you don’t want to use reward points in this course.", "ohmylms")
   })))))));
 }
-
 function kH(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -418,7 +405,6 @@ function kH(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function jH(e, t) {
   if (e) {
     if ("string" == typeof e) return AH(e, t);
@@ -426,15 +412,13 @@ function jH(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? AH(e, t) : void 0;
   }
 }
-
 function AH(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const MH = function (e) {
-  (0, L.useIsPro)(), e.onSave, e.setActiveStep, e.activeStep;
+  true, e.onSave, e.setActiveStep, e.activeStep;
   var t = (0, f.g)(),
     n = t.id,
     r = t.step,
@@ -500,7 +484,6 @@ const MH = function (e) {
     activekey: l
   })))));
 };
-
 function TH(e) {
   return TH = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -508,7 +491,6 @@ function TH(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, TH(e);
 }
-
 function IH(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -519,7 +501,6 @@ function IH(e, t) {
   }
   return n;
 }
-
 function FH(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -531,7 +512,6 @@ function FH(e) {
   }
   return e;
 }
-
 function NH(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -552,7 +532,6 @@ function NH(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function DH() {
   var e,
     t,
@@ -639,7 +618,6 @@ function DH() {
     };
   })();
 }
-
 function WH(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -661,7 +639,6 @@ function WH(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, WH(e, t, n, r);
 }
-
 function zH(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -671,7 +648,6 @@ function zH(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function BH(e) {
   return function () {
     var t = this,
@@ -688,7 +664,6 @@ function BH(e) {
     });
   };
 }
-
 function LH(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -722,7 +697,6 @@ function LH(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function VH(e, t) {
   if (e) {
     if ("string" == typeof e) return HH(e, t);
@@ -730,7 +704,6 @@ function VH(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? HH(e, t) : void 0;
   }
 }
-
 function HH(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

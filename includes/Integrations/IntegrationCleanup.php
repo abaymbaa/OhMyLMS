@@ -4,13 +4,13 @@
  * 
  * Handles cleanup of integrations when content (course/lesson/quiz/assignment) is deleted
  * 
- * @package CreatorLMS_Pro
+ * @package OhMyLMS_Pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations;
+namespace OhMyLMS\Integrations;
 
-use OMLMS\Integrations\WPFusion\Includes\WPFusionMigration;
+use OhMyLMS\Integrations\WPFusion\Includes\WPFusionMigration;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -47,13 +47,13 @@ class IntegrationCleanup {
         
         // Map post types to content types
         $content_type_map = array(
-            'omlms-course'     => 'course',
-            'omlms-lesson'     => 'lesson',
-            'omlms-quiz'       => 'quiz',
-            'omlms-assignment' => 'assignment',
+            'ohmylms-course'     => 'course',
+            'ohmylms-lesson'     => 'lesson',
+            'ohmylms-quiz'       => 'quiz',
+            'ohmylms-assignment' => 'assignment',
         );
         
-        // Check if this is a CreatorLMS content type
+        // Check if this is a OhMyLMS content type
         if ( ! isset( $content_type_map[ $post_type ] ) ) {
             return;
         }
@@ -124,7 +124,7 @@ class IntegrationCleanup {
         // Log the deletion
         if ( $deleted > 0 ) {
             do_action( 
-                'creatorlms_integrations_deleted', 
+                'ohmylms_integrations_deleted', 
                 $content_type, 
                 $content_id, 
                 $deleted,
@@ -132,7 +132,7 @@ class IntegrationCleanup {
             );
             
             error_log( sprintf(
-                'CreatorLMS: Deleted %d integration(s) for %s ID %d',
+                'OhMyLMS: Deleted %d integration(s) for %s ID %d',
                 $deleted,
                 $content_type,
                 $content_id
@@ -180,6 +180,6 @@ class IntegrationCleanup {
     public static function restore_integrations( $content_type, $content_id ) {
         // Placeholder for future undo functionality
         // Could store deleted integrations in a separate table with timestamp
-        do_action( 'creatorlms_integrations_restore_requested', $content_type, $content_id );
+        do_action( 'ohmylms_integrations_restore_requested', $content_type, $content_id );
     }
 }

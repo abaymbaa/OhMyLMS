@@ -1,7 +1,7 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var A6 = function () {
-  var e = (0, L.useIsPro)();
-  HG("creator-lms", "settings");
+  var e = true;
+  HG("ohmylms", "settings");
   var t = (0, y.useDispatch)(T.default),
     n = (0, y.useSelect)(function (e) {
       return e(T.default).isSettingsLoading();
@@ -56,7 +56,7 @@ var A6 = function () {
           for (;;) switch (e.p = e.n) {
             case 0:
               return t.setLoadingSetting(!0), e.p = 1, e.n = 2, l()({
-                path: "/creator-lms/v1/settings/".concat(n),
+                path: "/ohmylms/v1/settings/".concat(n),
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -80,20 +80,20 @@ var A6 = function () {
     }(),
     M = function () {
       t.updateDesignSettings({
-        creator_lms_archive_page_layout_style: {
+        ohmylms_archive_page_layout_style: {
           value: "grid-style1"
         },
-        creator_lms_archive_page_row: {
+        ohmylms_archive_page_row: {
           value: []
         },
-        creator_lms_archive_page_category_is_enabled: {
+        ohmylms_archive_page_category_is_enabled: {
           value: "no"
         }
       });
     },
     F = function () {
       t.updateDesignSettings({
-        creator_lms_single_course_page_layout: {
+        ohmylms_single_course_page_layout: {
           value: "layout_2"
         }
       });
@@ -104,7 +104,7 @@ var A6 = function () {
         return R6().w(function (n) {
           for (;;) switch (n.p = n.n) {
             case 0:
-              return l = j(i), s = j(r), d = j(a), m = j(o), f = j(c), v = j(u), g = !0, h = "layout_2" !== (null == m ? void 0 : m.creator_lms_single_course_page_layout) || "grid-style1" !== (null == m ? void 0 : m.creator_lms_archive_page_layout_style), !e && h && "design-settings" === x && (t.setIsProModalOpen(!0), g = !1, "layout_2" !== (null == m ? void 0 : m.creator_lms_single_course_page_layout) && "grid-style1" !== (null == m ? void 0 : m.creator_lms_archive_page_layout_style) ? (t.updateProModalContent((0, b.__)("This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.", "ohmylms")), m.creator_lms_archive_page_layout_style = "grid-style1", m.creator_lms_archive_page_row = [], m.creator_lms_archive_page_category_is_enabled = "no", M(), m.creator_lms_single_course_page_layout = "layout_2", F()) : "layout_2" !== (null == m ? void 0 : m.creator_lms_single_course_page_layout) ? (t.updateProModalContent((0, b.__)("This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.", "ohmylms")), m.creator_lms_single_course_page_layout = "layout_2", F()) : (t.updateProModalContent((0, b.__)("This feature requires OhMyLMS. Please activate the Pro version with a valid license to unlock this feature.", "ohmylms")), m.creator_lms_archive_page_layout_style = "grid-style1", m.creator_lms_archive_page_row = [], m.creator_lms_archive_page_category_is_enabled = "no", M())), n.p = 1, k(!0), n.n = 2, A("account-and-privacy", l);
+              return l = j(i), s = j(r), d = j(a), m = j(o), f = j(c), v = j(u), g = !0, h = "layout_2" !== (null == m ? void 0 : m.ohmylms_single_course_page_layout) || "grid-style1" !== (null == m ? void 0 : m.ohmylms_archive_page_layout_style), false, n.p = 1, k(!0), n.n = 2, A("account-and-privacy", l);
             case 2:
               return n.n = 3, A("general", s);
             case 3:
@@ -239,11 +239,11 @@ var A6 = function () {
       label: React.createElement(React.Fragment, null, (0, b.__)("Migration", "ohmylms")),
       key: "migration-settings",
       children: React.createElement(E6, null)
-    }].concat(S6(window.creator_lms_params.is_gamification_enabled ? [{
+    }].concat(S6(window.ohmylms_params.is_gamification_enabled ? [{
       label: React.createElement(React.Fragment, null, (0, b.__)("Gamification", "ohmylms")),
       key: "gamification-settings",
       children: React.createElement(C5, null)
-    }] : []), S6(window.creator_lms_params.is_webhook_enabled ? [{
+    }] : []), S6(window.ohmylms_params.is_webhook_enabled ? [{
       label: React.createElement(React.Fragment, null, (0, b.__)("Webhooks", "ohmylms")),
       key: "webhooks-settings",
       children: React.createElement(o4, null)
@@ -263,7 +263,7 @@ var A6 = function () {
     showAddButton: !1
   }), React.createElement(I.CardWP, {
     isBorderless: !0,
-    className: "omlms-full-screen-height omlms-settings-page"
+    className: "ohmylms-full-screen-height ohmylms-settings-page"
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0,
     padding: 7.5

@@ -9,8 +9,8 @@
         t.preventDefault();
         var o = a(this),
           d = o.data();
-        o.hasClass("loading") || (1 != o.attr("is_already_purchased") ? (d.action = "creator_lms_add_to_cart", d.nonce = omlms_add_to_cart_params.nonce, o.removeClass("added"), o.addClass("loading"), a(document.body).trigger("course_adding_to_cart", [o, d]), a.ajax({
-          url: omlms_add_to_cart_params.ajax_url,
+        o.hasClass("loading") || (1 != o.attr("is_already_purchased") ? (d.action = "ohmylms_add_to_cart", d.nonce = ohmylms_add_to_cart_params.nonce, o.removeClass("added"), o.addClass("loading"), a(document.body).trigger("course_adding_to_cart", [o, d]), a.ajax({
+          url: ohmylms_add_to_cart_params.ajax_url,
           type: "POST",
           data: d,
           dataType: "json",
@@ -26,8 +26,8 @@
         t.preventDefault();
         var o = a(this),
           d = o.data();
-        o.hasClass("loading") || (1 != o.attr("is_already_purchased") ? (d.action = "creator_lms_add_to_cart", d.purchase_by = "point", d.nonce = omlms_add_to_cart_params.nonce, o.removeClass("added"), o.addClass("loading"), a(document.body).trigger("course_adding_to_cart", [o, d]), a.ajax({
-          url: omlms_add_to_cart_params.ajax_url,
+        o.hasClass("loading") || (1 != o.attr("is_already_purchased") ? (d.action = "ohmylms_add_to_cart", d.purchase_by = "point", d.nonce = ohmylms_add_to_cart_params.nonce, o.removeClass("added"), o.addClass("loading"), a(document.body).trigger("course_adding_to_cart", [o, d]), a.ajax({
+          url: ohmylms_add_to_cart_params.ajax_url,
           type: "POST",
           data: d,
           dataType: "json",

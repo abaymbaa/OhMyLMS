@@ -35,7 +35,7 @@ for(const file of files) {
       const modulePath=`modules/${bundle}/${table}-${id}.js`;
       const text=generate(prop.value,{comments:true,compact:false}).code;
       write(modulePath,`// Reconstructed Webpack factory ${id}; arguments retain original semantics.\n(${text});\n`);
-      const marker=`__OMLMS_FACTORY_${table}_${id}__`;
+      const marker=`__OHMYLMS_FACTORY_${table}_${id}__`;
       substitutions.push({marker,source:modulePath,id});
       manifest.modules.push({bundle,id,source:modulePath,kind:bundle.startsWith('dist/vendors/')?'third-party':'unclassified',bytes:text.length});
       prop.value=t.identifier(marker);

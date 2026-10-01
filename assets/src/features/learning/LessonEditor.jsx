@@ -173,7 +173,7 @@ export function createLessonEditor(readRuntime) {
               <LearningEditorHeader
                 title={(0, I18n.__)('Lesson Outline', 'ohmylms')}
                 redirection={'/lessons'}
-                className={'omlms-lesson-editor-page-header'}
+                className={'ohmylms-lesson-editor-page-header'}
                 rightContent={
                   <React.Fragment>
                     <Controls.ButtonWP
@@ -184,11 +184,11 @@ export function createLessonEditor(readRuntime) {
                       }}
                       icon={<Br />}
                       iconPosition={'right'}
-                      className={'omlms-preview-btn'}
+                      className={'ohmylms-preview-btn'}
                     >
                       {(0, I18n.__)('Preview', 'ohmylms')}
                     </Controls.ButtonWP>
-                    <Controls.ButtonWP onClick={P} className={'omlms-lesson-save-btn'}>
+                    <Controls.ButtonWP onClick={P} className={'ohmylms-lesson-save-btn'}>
                       {(0, I18n.__)('Save', 'ohmylms')}
                     </Controls.ButtonWP>
                   </React.Fragment>
@@ -197,8 +197,8 @@ export function createLessonEditor(readRuntime) {
             )}
             <Controls.FlexWP
               className={Vr()(
-                'omlms-lesson-editor-wrapper',
-                !chapterId && 'omlms-lesson-editor-page',
+                'ohmylms-lesson-editor-wrapper',
+                !chapterId && 'ohmylms-lesson-editor-page',
               )}
               justify={'space-between'}
               gap={5}

@@ -2,11 +2,11 @@
 /**
  * ZoomSettingsController class.
  *
- * @package creator-lms-pro
+ * @package ohmylms-pro
  * @since 1.0.0
  */
 
-namespace OMLMS\Integrations\Zoom\Includes\Rest;
+namespace OhMyLMS\Integrations\Zoom\Includes\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
@@ -15,7 +15,7 @@ use WP_REST_Server;
 /**
  * Class ZoomSettingsController
  *
- * @package OMLMS\Rest\V1
+ * @package OhMyLMS\Rest\V1
  * @since 1.0.0
  */
 class ZoomSettingsController {
@@ -39,7 +39,7 @@ class ZoomSettingsController {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'creatorlms/v1';
+	protected $namespace = 'ohmylms/v1';
 
 	/**
 	 * Get instance
@@ -115,13 +115,13 @@ class ZoomSettingsController {
 			'client_id'     => $client_id,
 			'client_secret' => $client_secret,
 		);
-		\update_user_meta( $user_id, 'creatorlms_zoom_api_credentials', $settings );
+		\update_user_meta( $user_id, 'ohmylms_zoom_api_credentials', $settings );
 
 		// Webhook secret token is site-wide (verifies an unauthenticated
 		// endpoint), so it's stored as an option rather than user meta.
 		if ( null !== $request->get_param( 'webhook_secret_token' ) ) {
 			\update_option(
-				'creatorlms_zoom_webhook_secret_token',
+				'ohmylms_zoom_webhook_secret_token',
 				\sanitize_text_field( $request->get_param( 'webhook_secret_token' ) )
 			);
 		}
@@ -147,12 +147,12 @@ class ZoomSettingsController {
 	 */
 	public function get_credentials( $request ) {
 		$user_id = \get_current_user_id();
-		$settings = \get_user_meta( $user_id, 'creatorlms_zoom_api_credentials', true );
+		$settings = \get_user_meta( $user_id, 'ohmylms_zoom_api_credentials', true );
 		if ( empty( $settings ) ) {
 			$settings = array();
 		}
-		$settings['webhook_secret_token'] = \get_option( 'creatorlms_zoom_webhook_secret_token', '' );
-		$settings['webhook_url']          = \rest_url( 'creatorlms/v1/zoom/webhook' );
+		$settings['webhook_secret_token'] = \get_option( 'ohmylms_zoom_webhook_secret_token', '' );
+		$settings['webhook_url']          = \rest_url( 'ohmylms/v1/zoom/webhook' );
 
 		return new \WP_REST_Response(
 			array(

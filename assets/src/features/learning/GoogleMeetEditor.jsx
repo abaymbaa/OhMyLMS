@@ -69,7 +69,7 @@ export function createGoogleMeetEditor(readRuntime) {
       k = (0, Notifications.A)(),
       openNotificationWithIcon = k.openNotificationWithIcon,
       contextHolder = k.contextHolder,
-      I = (0, Entitlements.useFeatureAccess)('googlemeet'),
+      I = true,
       F = Qi(),
       N = function (e) {
         var t,
@@ -99,7 +99,7 @@ export function createGoogleMeetEditor(readRuntime) {
                 for (;;)
                   switch ((e.p = e.n)) {
                     case 0:
-                      if (I) {
+                      {
                         e.n = 1;
                         break;
                       }
@@ -167,7 +167,7 @@ export function createGoogleMeetEditor(readRuntime) {
                 for (;;)
                   switch ((e.p = e.n)) {
                     case 0:
-                      if (I) {
+                      {
                         e.n = 1;
                         break;
                       }
@@ -365,7 +365,7 @@ export function createGoogleMeetEditor(readRuntime) {
               w || R || onClose();
             },
             onSave: function () {
-              I && (v ? B() : W());
+              v ? B() : W();
             },
             onPreview: function () {
               null != u && u.preview_url && window.open(u.preview_url, '_blank');

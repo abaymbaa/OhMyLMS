@@ -2,10 +2,10 @@
 /**
  * ShortCodeBuyNow
  *
- * @package OMLMS\Shortcodes
+ * @package OhMyLMS\Shortcodes
  */
 
-namespace OMLMS\Shortcodes;
+namespace OhMyLMS\Shortcodes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -40,7 +40,7 @@ class ShortCodeBuyNow {
 			return;
 		}
 
-		$course = function_exists('omlms_get_course') ? omlms_get_course($atts['course_id']) : null;
+		$course = function_exists('ohmylms_get_course') ? ohmylms_get_course($atts['course_id']) : null;
 		if (!$course) {
 			echo '<span style="color:red">Invalid Course ID.</span>';
 			return;
@@ -53,7 +53,7 @@ class ShortCodeBuyNow {
         }
 
 		// Set default class and attributes as in add-to-cart.php
-		$default_class = $course->is_purchasable() && $course->is_in_stock() ? 'add_to_cart_button enroll-button creator-lms-button' : 'creator-lms-button enroll-button';
+		$default_class = $course->is_purchasable() && $course->is_in_stock() ? 'add_to_cart_button enroll-button ohmylms-button' : 'ohmylms-button enroll-button';
 		$defaults = array(
 			'quantity'   => 1,
 			'class'      => trim($default_class . ' ' . $atts['class']),

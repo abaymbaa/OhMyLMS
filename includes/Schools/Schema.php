@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Schools;
+namespace OhMyLMS\Schools;
 
 defined('ABSPATH') || exit;
 
@@ -8,10 +8,10 @@ final class Schema {
     const VERSION = '1';
     public static function table($name) {
         global $wpdb;
-        return $wpdb->prefix . 'omlms_' . $name;
+        return $wpdb->prefix . 'ohmylms_' . $name;
     }
     public static function install() {
-        if (get_option('omlms_school_schema') === self::VERSION) { return; }
+        if (get_option('ohmylms_school_schema') === self::VERSION) { return; }
         global $wpdb;
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $definitions = [
@@ -33,9 +33,9 @@ final class Schema {
             dbDelta("CREATE TABLE $table (\n id bigint unsigned NOT NULL AUTO_INCREMENT,\n $columns,\n PRIMARY KEY  (id)\n) ENGINE=InnoDB " . $wpdb->get_charset_collate() . ';');
             if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))) !== $table) { return; }
         }
-        add_role('omlms_parent', 'OhMyLMS Parent', ['read' => true]);
-        add_role('omlms_teacher', 'OhMyLMS Teacher', ['read' => true]);
-        add_role('omlms_school_admin', 'OhMyLMS School Administrator', ['read' => true]);
-        update_option('omlms_school_schema', self::VERSION, false);
+        add_role('ohmylms_parent', 'OhMyLMS Parent', ['read' => true]);
+        add_role('ohmylms_teacher', 'OhMyLMS Teacher', ['read' => true]);
+        add_role('ohmylms_school_admin', 'OhMyLMS School Administrator', ['read' => true]);
+        update_option('ohmylms_school_schema', self::VERSION, false);
     }
 }

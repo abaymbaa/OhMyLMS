@@ -74,16 +74,16 @@
 		{ label: '900 - Black', value: 900 }
 	];
 
-	registerBlockType('creator-lms/dashboard', {
+	registerBlockType('ohmylms/dashboard', {
 		title: __('OhMyLMS Dashboard', 'ohmylms'),
 		description: __('Display the OhMyLMS student dashboard with customizable styling options.', 'ohmylms'),
 		icon: 'dashboard',
-		category: 'creator-lms',
+		category: 'ohmylms',
 		keywords: [
 			__('dashboard', 'ohmylms'),
 			__('student', 'ohmylms'),
 			__('profile', 'ohmylms'),
-			__('creator-lms', 'ohmylms'),
+			__('ohmylms', 'ohmylms'),
 			__('ohmylms', 'ohmylms')
 		],
 		supports: {
@@ -98,12 +98,12 @@
 			
 			// Apply dashboard block styles immediately when editor loads
 			wp.element.useEffect(function() {
-				var styleId = document.getElementById('creator-lms-dashboard-block-style');
+				var styleId = document.getElementById('ohmylms-dashboard-block-style');
 				if (!styleId) {
 					styleId = document.createElement('style');
-					styleId.id = 'creator-lms-dashboard-block-style';
+					styleId.id = 'ohmylms-dashboard-block-style';
 					styleId.innerHTML = `
-						.wp-block-creator-lms-dashboard .creator-lms-dashboard {
+						.wp-block-ohmylms-dashboard .ohmylms-dashboard {
 							min-height: 400px;
 						}
 					`;
@@ -418,7 +418,7 @@
 
 			// Use ServerSideRender to show the real dashboard in editor
 			var serverSideRender = createElement(ServerSideRender, {
-				block: 'creator-lms/dashboard',
+				block: 'ohmylms/dashboard',
 				attributes: validatedAttributes,
 				httpMethod: 'POST'
 			});
@@ -428,10 +428,10 @@
 				{},
 				inspectorControls,
 				// The block's own editor-only <style> override (rendered server-side
-				// in DashboardBlock::render_block()) is scoped to `.wp-block-creator-lms-dashboard`,
+				// in DashboardBlock::render_block()) is scoped to `.wp-block-ohmylms-dashboard`,
 				// which WordPress only ever attaches via useBlockProps() - this block doesn't
 				// use it, so without this wrapper that CSS never matches anything.
-				createElement('div', { className: 'wp-block-creator-lms-dashboard' }, serverSideRender)
+				createElement('div', { className: 'wp-block-ohmylms-dashboard' }, serverSideRender)
 			);
 		},
 

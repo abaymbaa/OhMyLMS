@@ -19,7 +19,7 @@ export function createRewardSettings(readRuntime) {
       y5,
       z: Notifications,
     } = readRuntime();
-    var e = (0, Entitlements.useIsPro)(),
+    var e = true,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = h5(
         (0, ReactHooks.useState)({
@@ -71,7 +71,7 @@ export function createRewardSettings(readRuntime) {
                       d(!0),
                       (e.n = 1),
                       l()({
-                        path: 'creator-lms/v1/engagement/settings/reward',
+                        path: 'ohmylms/v1/engagement/settings/reward',
                       })
                     );
                   case 1:
@@ -99,7 +99,7 @@ export function createRewardSettings(readRuntime) {
           return e.apply(this, arguments);
         };
       })();
-      e && t();
+      t();
     }, []);
     var w = function (e, t) {
       var n = (function (e) {
@@ -146,7 +146,7 @@ export function createRewardSettings(readRuntime) {
                 for (;;)
                   switch ((n.p = n.n)) {
                     case 0:
-                      if (e) {
+                      {
                         n.n = 1;
                         break;
                       }
@@ -158,7 +158,7 @@ export function createRewardSettings(readRuntime) {
                         (n.p = 2),
                         (n.n = 3),
                         l()({
-                          path: '/creator-lms/v1/engagement/settings/reward',
+                          path: '/ohmylms/v1/engagement/settings/reward',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -229,12 +229,7 @@ export function createRewardSettings(readRuntime) {
     ) : (
       <React.Fragment>
         {contextHolder}
-        <Controls.ProOverlayWP
-          title={(0, I18n.__)(
-            'The Reward System is a Pro feature and will be available soon. Stay tuned to unlock advanced gamification tools that boost learner motivation and course completion rates.',
-            'ohmylms',
-          )}
-        />
+
         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
           <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>
             <Controls.FlexWP
@@ -243,7 +238,7 @@ export function createRewardSettings(readRuntime) {
               direction={'column'}
               gap={3}
             >
-              {e && (
+              {
                 <React.Fragment>
                   {r.rules.map(function (e, t) {
                     return (
@@ -358,7 +353,7 @@ export function createRewardSettings(readRuntime) {
                     );
                   })}
                 </React.Fragment>
-              )}
+              }
             </Controls.FlexWP>
           </Controls.SpacerWP>
         </Controls.CardWP>

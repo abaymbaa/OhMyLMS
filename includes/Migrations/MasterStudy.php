@@ -1,13 +1,13 @@
 <?php
 /**
  * @access public
- * @package OMLMS\Migrations
+ * @package OhMyLMS\Migrations
  *
- * @author CreatorLms
+ * @author OhMyLMS
  * @since 1.0.0
  */
 
-namespace OMLMS\Migrations;
+namespace OhMyLMS\Migrations;
 
 /**
  * Migration class for MasterStudy LMS.
@@ -78,7 +78,7 @@ class MasterStudy {
 			return $this->ms_course;
 		}
 
-		$existing_course_id = $this->find_existing_migrated_post( 'omlms-course', intval( $this->ms_course['ID'] ) );
+		$existing_course_id = $this->find_existing_migrated_post( 'ohmylms-course', intval( $this->ms_course['ID'] ) );
 		if ( $existing_course_id ) {
 			$this->migrate_terms_and_taxonomies( $existing_course_id );
 			$this->migrate_curriculum( $existing_course_id );
@@ -92,7 +92,7 @@ class MasterStudy {
 			'post_excerpt'  => isset( $this->ms_course['post_excerpt'] ) ? sanitize_text_field( $this->ms_course['post_excerpt'] ) : '',
 			'post_status'   => 'draft',
 			'post_author'   => isset( $this->ms_course['post_author'] ) ? intval( $this->ms_course['post_author'] ) : get_current_user_id(),
-			'post_type'     => 'omlms-course',
+			'post_type'     => 'ohmylms-course',
 			'post_date'     => isset( $this->ms_course['post_date'], $this->ms_course['post_status'] ) && 'future' === $this->ms_course['post_status'] ? gmdate( 'Y-m-d H:i:s', strtotime( $this->ms_course['post_date'] ) ) : current_datetime()->format( 'Y-m-d H:i:s' ),
 			'post_password' => isset( $this->ms_course['post_password'] ) ? $this->ms_course['post_password'] : '',
 		);
@@ -156,7 +156,7 @@ class MasterStudy {
 	/**
 	 * Migrate course metadata.
 	 *
-	 * @param int   $new_course_id CreatorLMS course id.
+	 * @param int   $new_course_id OhMyLMS course id.
 	 * @param array $meta_data Source meta data.
 	 */
 	private function migrate_course_metadata( $new_course_id, $meta_data ) {
@@ -199,7 +199,7 @@ class MasterStudy {
 	}
 
 	/**
-	 * Migrate source taxonomies to CreatorLMS taxonomies.
+	 * Migrate source taxonomies to OhMyLMS taxonomies.
 	 *
 	 * @param int $new_course_id Course id.
 	 */
@@ -256,7 +256,7 @@ class MasterStudy {
 	private function migrate_curriculum( $new_course_id ) {
 		$curriculum = $this->get_normalized_curriculum();
 		if ( empty( $curriculum ) ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $this->ms_course_id, 'curriculum_not_found' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $this->ms_course_id, 'curriculum_not_found' );
 			return;
 		}
 
@@ -284,7 +284,7 @@ class MasterStudy {
 				} elseif ( $this->is_quiz_type( $item_type ) ) {
 					$this->migrate_quiz( $chapter_id, $item_id, $item_order );
 				} else {
-					do_action( 'creatorlms_migration_skipped', $this->source_key, $item_id, 'unsupported_curriculum_item_' . $item_type );
+					do_action( 'ohmylms_migration_skipped', $this->source_key, $item_id, 'unsupported_curriculum_item_' . $item_type );
 				}
 			}
 		}
@@ -431,7 +431,7 @@ class MasterStudy {
 			$repository = new \MasterStudy\Lms\Repositories\CurriculumRepository();
 			$sections   = $repository->get_curriculum( intval( $this->ms_course_id ), true );
 		} catch ( \Throwable $throwable ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $this->ms_course_id, 'curriculum_repository_unavailable' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $this->ms_course_id, 'curriculum_repository_unavailable' );
 			return array();
 		}
 
@@ -825,7 +825,7 @@ class MasterStudy {
 
 		$old_lesson = get_post( $old_lesson_id );
 		if ( ! $old_lesson || 'stm-lessons' !== $old_lesson->post_type ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $old_lesson_id, 'lesson_not_found' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $old_lesson_id, 'lesson_not_found' );
 			return;
 		}
 
@@ -841,7 +841,7 @@ class MasterStudy {
 			$description_content = (string) $this->get_first_meta_value( $source_meta, array( 'lesson_excerpt', 'excerpt', '_lesson_excerpt', '_excerpt' ) );
 		}
 		$description_content = wp_kses_post( $description_content );
-		$new_lesson_id = $this->find_existing_migrated_post( 'omlms-lesson', $old_lesson_id );
+		$new_lesson_id = $this->find_existing_migrated_post( 'ohmylms-lesson', $old_lesson_id );
 		if ( ! $new_lesson_id ) {
 			$new_lesson_data = array(
 				'post_title'   => sanitize_text_field( $old_lesson->post_title ),
@@ -849,7 +849,7 @@ class MasterStudy {
 				'post_excerpt' => $excerpt,
 				'post_status'  => $old_lesson->post_status,
 				'post_author'  => intval( $old_lesson->post_author ),
-				'post_type'    => 'omlms-lesson',
+				'post_type'    => 'ohmylms-lesson',
 				'menu_order'   => intval( $old_lesson->menu_order ) > 0 ? intval( $old_lesson->menu_order ) : intval( $index ),
 			);
 
@@ -924,7 +924,7 @@ class MasterStudy {
 	}
 
 	/**
-	 * Get CreatorLMS lesson content type.
+	 * Get OhMyLMS lesson content type.
 	 *
 	 * @param array $meta_data Source meta.
 	 * @return string
@@ -1055,11 +1055,11 @@ class MasterStudy {
 	private function migrate_quiz( $new_chapter_id, $old_quiz_id, $index = 0 ) {
 		$old_quiz = get_post( $old_quiz_id );
 		if ( ! $old_quiz || 'stm-quizzes' !== $old_quiz->post_type ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $old_quiz_id, 'quiz_not_found' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $old_quiz_id, 'quiz_not_found' );
 			return;
 		}
 
-		$new_quiz_id = $this->find_existing_migrated_post( 'omlms-quiz', $old_quiz_id );
+		$new_quiz_id = $this->find_existing_migrated_post( 'ohmylms-quiz', $old_quiz_id );
 		$source_meta = get_post_meta( $old_quiz_id );
 		$quiz_excerpt = isset( $old_quiz->post_excerpt ) ? $old_quiz->post_excerpt : '';
 		if ( '' === trim( (string) $quiz_excerpt ) ) {
@@ -1072,7 +1072,7 @@ class MasterStudy {
 				'post_excerpt' => sanitize_textarea_field( $quiz_excerpt ),
 				'post_status'  => $old_quiz->post_status,
 				'post_author'  => intval( $old_quiz->post_author ),
-				'post_type'    => 'omlms-quiz',
+				'post_type'    => 'ohmylms-quiz',
 				'menu_order'   => intval( $old_quiz->menu_order ) > 0 ? intval( $old_quiz->menu_order ) : intval( $index ),
 			);
 
@@ -1168,11 +1168,11 @@ class MasterStudy {
 		foreach ( $question_ids as $index => $old_question_id ) {
 			$old_question = get_post( $old_question_id );
 			if ( ! $old_question || ! in_array( $old_question->post_type, array( 'stm-questions', 'question', 'stm_question' ), true ) ) {
-				do_action( 'creatorlms_migration_skipped', $this->source_key, $old_question_id, 'question_not_found' );
+				do_action( 'ohmylms_migration_skipped', $this->source_key, $old_question_id, 'question_not_found' );
 				continue;
 			}
 
-			$new_question_id = $this->find_existing_migrated_post( 'omlms-question', $old_question_id );
+			$new_question_id = $this->find_existing_migrated_post( 'ohmylms-question', $old_question_id );
 			if ( ! $new_question_id ) {
 				$source_question_meta = get_post_meta( $old_question_id );
 				$question_title = sanitize_text_field( $old_question->post_title );
@@ -1190,7 +1190,7 @@ class MasterStudy {
 					'post_excerpt' => sanitize_text_field( $old_question->post_excerpt ),
 					'post_status'  => $old_question->post_status,
 					'post_author'  => intval( $old_question->post_author ),
-					'post_type'    => 'omlms-question',
+					'post_type'    => 'ohmylms-question',
 					'menu_order'   => intval( $old_question->menu_order ),
 				);
 
@@ -1207,7 +1207,7 @@ class MasterStudy {
 
 			$exists = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}omlms_quiz_questions_relationship WHERE quiz_id = %d AND question_id = %d",
+					"SELECT id FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship WHERE quiz_id = %d AND question_id = %d",
 					$new_quiz_id,
 					$new_question_id
 				)
@@ -1215,7 +1215,7 @@ class MasterStudy {
 
 			if ( ! $exists ) {
 				$wpdb->insert(
-					$wpdb->prefix . 'omlms_quiz_questions_relationship',
+					$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
 					array(
 						'quiz_id'      => $new_quiz_id,
 						'question_id'  => $new_question_id,
@@ -1225,7 +1225,7 @@ class MasterStudy {
 				);
 			} else {
 				$wpdb->update(
-					$wpdb->prefix . 'omlms_quiz_questions_relationship',
+					$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
 					array(
 						'order_number' => $index,
 					),
@@ -1312,7 +1312,7 @@ class MasterStudy {
 		}
 
 		if ( empty( $parsed_answers ) ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $new_question_id, 'answers_not_found' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $new_question_id, 'answers_not_found' );
 			return;
 		}
 
@@ -1372,7 +1372,7 @@ class MasterStudy {
 
 			$exists = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}omlms_question_answers WHERE question_id = %d AND answer = %s",
+					"SELECT id FROM {$wpdb->prefix}ohmylms_question_answers WHERE question_id = %d AND answer = %s",
 					$new_question_id,
 					$answer_text
 				)
@@ -1380,7 +1380,7 @@ class MasterStudy {
 
 			if ( $exists ) {
 				$wpdb->update(
-					$wpdb->prefix . 'omlms_question_answers',
+					$wpdb->prefix . 'ohmylms_question_answers',
 					array(
 						'order_number' => $index,
 						'is_correct'   => $is_correct ? 1 : 0,
@@ -1399,7 +1399,7 @@ class MasterStudy {
 			}
 
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_question_answers',
+				$wpdb->prefix . 'ohmylms_question_answers',
 				array(
 					'question_id'  => $new_question_id,
 					'answer'       => wp_kses_post( $answer_text ),
@@ -1428,7 +1428,7 @@ class MasterStudy {
 		}
 
 		global $wpdb;
-		$table = $wpdb->prefix . 'omlms_question_answermeta';
+		$table = $wpdb->prefix . 'ohmylms_question_answermeta';
 
 		foreach ( $meta_entries as $meta_key => $meta_value ) {
 			$exists = $wpdb->get_var(
@@ -1488,7 +1488,7 @@ class MasterStudy {
 
 		$enrolled_user_ids = array_values( array_unique( $enrolled_user_ids ) );
 		if ( empty( $enrolled_user_ids ) ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $this->ms_course_id, 'enrollments_not_found' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $this->ms_course_id, 'enrollments_not_found' );
 			return;
 		}
 
@@ -1496,7 +1496,7 @@ class MasterStudy {
 		foreach ( $enrolled_user_ids as $user_id ) {
 			$exists = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}omlms_user_enrollment WHERE user_id = %d AND course_id = %d",
+					"SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d",
 					$user_id,
 					$new_course_id
 				)
@@ -1507,7 +1507,7 @@ class MasterStudy {
 			}
 
 			$wpdb->insert(
-				$wpdb->prefix . 'omlms_user_enrollment',
+				$wpdb->prefix . 'ohmylms_user_enrollment',
 				array(
 					'user_id'    => $user_id,
 					'course_id'  => $new_course_id,
@@ -1534,7 +1534,7 @@ class MasterStudy {
 
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}omlms_chapter_relationship WHERE course_id = %d AND chapter_id = %d",
+				"SELECT id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id = %d AND chapter_id = %d",
 				$course_id,
 				$chapter_id
 			)
@@ -1545,7 +1545,7 @@ class MasterStudy {
 		}
 
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_chapter_relationship',
+			$wpdb->prefix . 'ohmylms_chapter_relationship',
 			array(
 				'course_id'    => $course_id,
 				'chapter_id'   => $chapter_id,
@@ -1568,7 +1568,7 @@ class MasterStudy {
 
 		$exact_match = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}omlms_content_relationship WHERE chapter_id = %d AND content_id = %d AND content_type = %s LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d AND content_type = %s LIMIT 1",
 				$chapter_id,
 				$content_id,
 				$content_type
@@ -1577,7 +1577,7 @@ class MasterStudy {
 
 		if ( $exact_match ) {
 			$wpdb->update(
-				$wpdb->prefix . 'omlms_content_relationship',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				array(
 					'order_number' => $index,
 				),
@@ -1589,7 +1589,7 @@ class MasterStudy {
 			);
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}omlms_content_relationship WHERE chapter_id = %d AND content_id = %d AND id <> %d",
+					"DELETE FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d AND id <> %d",
 					$chapter_id,
 					$content_id,
 					intval( $exact_match )
@@ -1600,7 +1600,7 @@ class MasterStudy {
 
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}omlms_content_relationship WHERE chapter_id = %d AND content_id = %d LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d LIMIT 1",
 				$chapter_id,
 				$content_id
 			)
@@ -1608,7 +1608,7 @@ class MasterStudy {
 
 		if ( $exists ) {
 			$wpdb->update(
-				$wpdb->prefix . 'omlms_content_relationship',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				array(
 					'content_type' => $content_type,
 					'order_number' => $index,
@@ -1623,7 +1623,7 @@ class MasterStudy {
 		}
 
 		$wpdb->insert(
-			$wpdb->prefix . 'omlms_content_relationship',
+			$wpdb->prefix . 'ohmylms_content_relationship',
 			array(
 				'chapter_id'   => $chapter_id,
 				'content_id'   => $content_id,
@@ -1644,7 +1644,7 @@ class MasterStudy {
 	 * @return int
 	 */
 	private function upsert_chapter( $new_course_id, $title, $index, $section_key ) {
-		$mapped_chapter_id = $this->find_existing_migrated_post( 'omlms-chapter', $section_key );
+		$mapped_chapter_id = $this->find_existing_migrated_post( 'ohmylms-chapter', $section_key );
 		if ( $mapped_chapter_id ) {
 			$this->insert_chapter_relationship( $new_course_id, $mapped_chapter_id, $index );
 			return $mapped_chapter_id;
@@ -1654,7 +1654,7 @@ class MasterStudy {
 
 		$existing = get_posts(
 			array(
-				'post_type'      => 'omlms-chapter',
+				'post_type'      => 'ohmylms-chapter',
 				'post_status'    => array( 'publish', 'draft', 'private', 'pending', 'future' ),
 				'name'           => $chapter_slug,
 				'posts_per_page' => 1,
@@ -1673,7 +1673,7 @@ class MasterStudy {
 			'post_content' => '',
 			'post_status'  => 'publish',
 			'post_author'  => get_current_user_id(),
-			'post_type'    => 'omlms-chapter',
+			'post_type'    => 'ohmylms-chapter',
 			'post_name'    => $chapter_slug,
 		);
 
@@ -1688,7 +1688,7 @@ class MasterStudy {
 	}
 
 	/**
-	 * Normalize source level values to CreatorLMS level values.
+	 * Normalize source level values to OhMyLMS level values.
 	 *
 	 * @param string $source_level Source level.
 	 * @return string
@@ -1712,7 +1712,7 @@ class MasterStudy {
 		}
 
 		if ( '' !== $level ) {
-			do_action( 'creatorlms_migration_skipped', $this->source_key, $this->ms_course_id, 'unsupported_level_value' );
+			do_action( 'ohmylms_migration_skipped', $this->source_key, $this->ms_course_id, 'unsupported_level_value' );
 		}
 
 		return 'beginner';
@@ -1732,7 +1732,7 @@ class MasterStudy {
 	}
 
 	/**
-	 * Find mapped CreatorLMS post by source id.
+	 * Find mapped OhMyLMS post by source id.
 	 *
 	 * @param string $post_type Post type.
 	 * @param int    $source_id Source id.
@@ -1748,11 +1748,11 @@ class MasterStudy {
 				'meta_query'     => array(
 					'relation' => 'AND',
 					array(
-						'key'   => '_creatorlms_migration_source',
+						'key'   => '_ohmylms_migration_source',
 						'value' => $this->source_key,
 					),
 					array(
-						'key'   => '_creatorlms_migration_source_id',
+						'key'   => '_ohmylms_migration_source_id',
 						'value' => strval( $source_id ),
 					),
 				),
@@ -1769,8 +1769,8 @@ class MasterStudy {
 	 * @param int $source_id Source id.
 	 */
 	private function save_source_mapping( $new_id, $source_id ) {
-		update_post_meta( $new_id, '_creatorlms_migration_source', $this->source_key );
-		update_post_meta( $new_id, '_creatorlms_migration_source_id', strval( $source_id ) );
+		update_post_meta( $new_id, '_ohmylms_migration_source', $this->source_key );
+		update_post_meta( $new_id, '_ohmylms_migration_source_id', strval( $source_id ) );
 	}
 
 	/**

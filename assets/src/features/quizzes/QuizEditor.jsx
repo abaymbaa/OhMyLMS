@@ -51,7 +51,7 @@ export function createQuizEditor(readRuntime) {
           <PageHeader
             title={__('Quiz Outline', 'ohmylms')}
             redirection="/quizzes"
-            className="omlms-quiz-header"
+            className="ohmylms-quiz-header"
             rightContent={
               <Fragment>
                 <Button
@@ -77,7 +77,7 @@ export function createQuizEditor(readRuntime) {
                   variant="tertiary"
                   onClick={openSettings}
                   icon={<SettingsIcon />}
-                  className="omlms-quize-settings-btn"
+                  className="ohmylms-quize-settings-btn"
                 />
               </Fragment>
             }
@@ -91,13 +91,13 @@ export function createQuizEditor(readRuntime) {
         ) : (
           <Controls.CardWP isBorderless variant="secondary">
             <Controls.SpacerWP marginBottom={0} padding={6} marginTop={4}>
-              <div className="omlms-quiz-editor-header">
+              <div className="ohmylms-quiz-editor-header">
                 <Controls.InputWP
                   value={editor.quiz?.name === 'Untitled' ? '' : decodeTitle(editor.quiz?.name)}
                   onChange={(value) => editor.updateField('name', value)}
                   placeholder={__('Enter Quiz Title', 'ohmylms')}
                   name="chapterName"
-                  className="omlms-quiz-name-title"
+                  className="ohmylms-quiz-name-title"
                   autoComplete="off"
                 />
                 <Controls.SpacerWP />
@@ -105,7 +105,7 @@ export function createQuizEditor(readRuntime) {
                   value={editor.quiz?.description || ''}
                   onChange={(value) => editor.updateField('description', value)}
                   placeholder={__('Add Quiz description ...', 'ohmylms')}
-                  className="omlms-quiz-description"
+                  className="ohmylms-quiz-description"
                   name="descriptionName"
                   rows={3}
                 />
@@ -121,7 +121,7 @@ export function createQuizEditor(readRuntime) {
                     </Controls.FlexItemWP>
                     <Controls.FlexItemWP
                       flex={1}
-                      className={`omlms-editor-sider omlms-editor-right ${hovered ? 'omlms-editor-right-hovered' : ''}`}
+                      className={`ohmylms-editor-sider ohmylms-editor-right ${hovered ? 'ohmylms-editor-right-hovered' : ''}`}
                       style={{ borderLeft: '1px solid #EBEBEF' }}
                     >
                       <QuestionSettings chapterId={chapterId} setHovered={setHovered} />

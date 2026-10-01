@@ -20,7 +20,7 @@ test('access changes preserve server errors and use the unblock endpoint',async(
 });
 
 test('registration preserves nonce and extension fields and handles verification',async()=>{
- const data=new FormData();data.set('creator-lms-signup-nonce','nonce');data.set('extension','custom');
+ const data=new FormData();data.set('ohmylms-signup-nonce','nonce');data.set('extension','custom');
  const result=await submitRegistration('/ajax',data,async(url,options)=>{
   assert.equal(options.body,data);assert.equal(options.credentials,'same-origin');
   return Response.json({status:'pending_verification',message:'Check inbox'});

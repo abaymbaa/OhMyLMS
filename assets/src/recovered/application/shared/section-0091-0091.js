@@ -393,7 +393,7 @@ var NB = function (e) {
                   contents: (null == r ? void 0 : r.contents) || {},
                   html_contents: CB(null == r || null === (t = r.contents) || void 0 === t ? void 0 : t.elements)
                 }, e.n = 1, l()({
-                  path: "/creator-lms/v1/certificates",
+                  path: "/ohmylms/v1/certificates",
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json"
@@ -435,7 +435,7 @@ var NB = function (e) {
   return React.createElement(React.Fragment, null, React.createElement("div", {
     tabIndex: 0,
     role: "button",
-    className: "omlms-single-certificate-template ".concat((null == r ? void 0 : r.id) == (null == d ? void 0 : d.certificate_id) || (null == r ? void 0 : r.id) == (null == d || null === (t = d.certificate) || void 0 === t ? void 0 : t.id) ? "omlms-selected-certificate" : "", " "),
+    className: "ohmylms-single-certificate-template ".concat((null == r ? void 0 : r.id) == (null == d ? void 0 : d.certificate_id) || (null == r ? void 0 : r.id) == (null == d || null === (t = d.certificate) || void 0 === t ? void 0 : t.id) ? "ohmylms-selected-certificate" : "", " "),
     onMouseEnter: function () {
       return f(!0);
     },
@@ -455,12 +455,12 @@ var NB = function (e) {
   }, null != r && r.image_src ? React.createElement(React.Fragment, null, React.createElement("img", {
     src: null == r ? void 0 : r.image_src,
     alt: (0, b.__)("Certificate Template", "ohmylms"),
-    className: "omlms-certificate-template-thumb",
+    className: "ohmylms-certificate-template-thumb",
     style: {
       maxWidth: "100%"
     }
   })) : React.createElement(React.Fragment, null, React.createElement(SB, null)), (null == r ? void 0 : r.isPaid) && React.createElement("span", {
-    className: "omlms-paid-badge"
+    className: "ohmylms-paid-badge"
   }, React.createElement(wB, null)), p && !(null != r && r.isPaid) && React.createElement(I.FlexWP, {
     gap: 4,
     align: "center",
@@ -474,7 +474,7 @@ var NB = function (e) {
     }
   }, !((null == r ? void 0 : r.id) == (null == d ? void 0 : d.certificate_id) || (null == r ? void 0 : r.id) == (null == d || null === (n = d.certificate) || void 0 === n ? void 0 : n.id)) && React.createElement(I.ButtonWP, {
     variant: "primary",
-    className: "omlms-use-template-btn",
+    className: "ohmylms-use-template-btn",
     onClick: function () {
       return e = null == r ? void 0 : r.id, void ("templates" === a ? w() : s.setCourse(AB(AB({}, d), {}, {
         certificate_id: e,
@@ -486,9 +486,9 @@ var NB = function (e) {
     tabIndex: 0
   }, (0, b.__)("Use this", "ohmylms")), React.createElement(I.ButtonWP, {
     variant: "secondary",
-    className: "omlms-preview-template-btn",
+    className: "ohmylms-preview-template-btn",
     onClick: function () {
-      return null == r || r.id, (e = document.querySelector(".omlms-course-settings-modal-wrap")) && (e.style.display = "none"), c(!0), void u(null == r ? void 0 : r.id);
+      return null == r || r.id, (e = document.querySelector(".ohmylms-course-settings-modal-wrap")) && (e.style.display = "none"), c(!0), void u(null == r ? void 0 : r.id);
       var e;
     },
     tabIndex: 0,
@@ -502,7 +502,7 @@ const DB = (0, g.memo)(NB);
 
 var WB = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
-    className: "omlms-back-arrow-btn-icon",
+    className: "ohmylms-back-arrow-btn-icon",
     fill: "none",
     width: "12",
     height: "12",
@@ -520,7 +520,7 @@ const zB = (0, g.memo)(WB);
 
 var BB = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
-    className: "omlms-back-arrow-btn-icon",
+    className: "ohmylms-back-arrow-btn-icon",
     fill: "none",
     width: "12",
     height: "12",
@@ -613,17 +613,17 @@ var HB = function (e) {
       }))
     }),
     footer: null,
-    className: "omlms-preview-modal",
-    wrapClassName: "omlms-preview-modal-wrap",
+    className: "ohmylms-preview-modal",
+    wrapClassName: "ohmylms-preview-modal-wrap",
     centered: !0,
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0,
     onRequestClose: function () {
-      var e = document.querySelector(".omlms-course-settings-modal-wrap");
+      var e = document.querySelector(".ohmylms-course-settings-modal-wrap");
       e && (e.style.display = "block"), i();
     }
   }, React.createElement(I.CardWP, {
-    className: "omlms-certificate-preview"
+    className: "ohmylms-certificate-preview"
   }, React.createElement(I.SpacerWP, {
     marginBottom: 0,
     padding: 5
@@ -634,7 +634,7 @@ var HB = function (e) {
       maxWidth: "100%"
     }
   })) : React.createElement(React.Fragment, null, React.createElement(SB, null)))), React.createElement(I.FlexWP, {
-    className: "omlms-preview-bottom",
+    className: "ohmylms-preview-bottom",
     justify: "center",
     align: "center",
     gap: 10,

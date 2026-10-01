@@ -83,7 +83,7 @@ export function createLevelEditor(readRuntime) {
                         p(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/levels',
+                          path: '/ohmylms/v1/engagement/levels',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export function createLevelEditor(readRuntime) {
                         p(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/levels',
+                          path: '/ohmylms/v1/engagement/levels',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',

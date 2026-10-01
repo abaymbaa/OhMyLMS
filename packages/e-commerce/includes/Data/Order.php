@@ -72,7 +72,7 @@ class Order extends Data {
 		'vat_number'           => '',
 		'parent_id'            => 0,
 		'related_orders'       => array(),
-		'order_version'        => CREATOR_LMS_VERSION,
+		'order_version'        => OHMYLMS_VERSION,
 		'subscription_id'	   => 0,
 		'line_items'		   => array(),
 		'tax_amount'           => 0,
@@ -158,12 +158,12 @@ class Order extends Data {
 			return;
 		}
 		try {
-			do_action( 'creatorlms_order_status_' . $status_transition['to'], $this->get_id(), $this, $status_transition );
+			do_action( 'ohmylms_order_status_' . $status_transition['to'], $this->get_id(), $this, $status_transition );
 			if ( ! empty( $status_transition['from'] ) ) {
 				$transition_note = sprintf( __( 'Order status changed from %1$s to %2$s.', 'ohmylms' ), $status_transition['from'], $status_transition['to'] );
 				$this->add_order_note( $transition_note );
-				do_action( 'creatorlms_order_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
-				do_action( 'creatorlms_order_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
+				do_action( 'ohmylms_order_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
+				do_action( 'ohmylms_order_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
 			}
 			else {
 				$transition_note = sprintf( __( 'Order status set to %s.', 'ohmylms' ), $status_transition['to'] );
@@ -218,7 +218,7 @@ class Order extends Data {
 			$this->add_order_note( 'Payment completed' );
 
 			$this->save();
-			do_action( 'creator_lms_payment_completed', $this->get_id() );
+			do_action( 'ohmylms_payment_completed', $this->get_id() );
 		} catch ( \Exception $e ) {
 			// TODO: Add the error at Log file
 			// TODO: Add order note with the error message
@@ -318,9 +318,9 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_checkout_redirect_url() {
-		$checkout_page_id   = get_option( 'creator_lms_checkout_page_id' );
+		$checkout_page_id   = get_option( 'ohmylms_checkout_page_id' );
 		$checkout_page_url  = get_permalink( $checkout_page_id );
-		$order_received_url = ecommerce_get_endpoint_url( 'cr-order-received', $this->get_id(), $checkout_page_url );
+		$order_received_url = ecommerce_get_endpoint_url( 'ohmylms-order-received', $this->get_id(), $checkout_page_url );
 		$order_received_url = add_query_arg( 'key', $this->get_order_key(), $order_received_url );
 		return $order_received_url;
 	}
@@ -347,7 +347,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_currency() {
-		return get_omlms_currency();
+		return get_ohmylms_currency();
 	}
 
 	/**
@@ -394,10 +394,10 @@ class Order extends Data {
 	public function get_formatted_order_total() {
 		$order_total     = $this->get_total();
 		$total_refunded  = $this->get_total_refunded();
-		$formatted_total = omlms_price( $order_total, array( 'currency' => $this->get_currency() ) );
+		$formatted_total = ohmylms_price( $order_total, array( 'currency' => $this->get_currency() ) );
 
 		if ( $total_refunded ) {
-			$formatted_total = '<del aria-hidden="true">' . wp_strip_all_tags( $formatted_total ) . '</del> <ins>' . omlms_price( $order_total - $total_refunded, array( 'currency' => $this->get_currency() ) )  . '</ins>';
+			$formatted_total = '<del aria-hidden="true">' . wp_strip_all_tags( $formatted_total ) . '</del> <ins>' . ohmylms_price( $order_total - $total_refunded, array( 'currency' => $this->get_currency() ) )  . '</ins>';
 		}
 
 		return $formatted_total;
@@ -493,7 +493,7 @@ class Order extends Data {
 	public function get_student_profile_url() {
 		$student_id = $this->get_student_id();
 		if ( $student_id ) {
-			return admin_url( 'admin.php?page=creator-lms#/students/' . $student_id . '/report' );
+			return admin_url( 'admin.php?page=ohmylms#/students/' . $student_id . '/report' );
 		}
 		return '';
 	}
@@ -519,7 +519,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_post_type() {
-		return 'omlms-order';
+		return 'ohmylms-order';
 	}
 
 	/**
@@ -743,7 +743,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_remaining_refund_amount() {
-		return omlms_format_decimal( $this->get_total() - $this->get_total_refunded(), omlms_get_price_decimals() );
+		return ohmylms_format_decimal( $this->get_total() - $this->get_total_refunded(), ohmylms_get_price_decimals() );
 	}
 
 	/**
@@ -829,7 +829,7 @@ class Order extends Data {
 	 * Get the refunds associated with the order.
 	 *
 	 * This function retrieves the refunds associated with the order by querying the database
-	 * for posts of type 'omlms_order_refund' that have the current order as their parent.
+	 * for posts of type 'ohmylms_order_refund' that have the current order as their parent.
 	 *
 	 * @return array The refunds associated with the order.
 	 * @since 1.0.0
@@ -838,7 +838,7 @@ class Order extends Data {
 		$args  = array(
 			'limit'       => -1,
 			'post_parent' => $this->get_id(),
-			'post_type'   => 'omlms_order_refund',
+			'post_type'   => 'ohmylms_order_refund',
 			'post_status' => 'any',
 		);
 		$query = new \WP_Query( $args );
@@ -887,7 +887,7 @@ class Order extends Data {
 	 */
 	public function calculate_totals() {
 		$cart_total = (float) $this->get_cart_total_for_order();
-		$this->set_total( round( $cart_total, omlms_get_price_decimals() ) );
+		$this->set_total( round( $cart_total, ohmylms_get_price_decimals() ) );
 		$this->save();
 		return $this->get_total();
 	}
@@ -926,7 +926,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function set_currency( $value ) {
-		$this->set_prop( 'currency', $value ? $value : get_omlms_currency() );
+		$this->set_prop( 'currency', $value ? $value : get_ohmylms_currency() );
 	}
 
 	/**
@@ -938,7 +938,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function set_total( $value ) {
-		$this->set_prop( 'total', omlms_format_decimal( $value, omlms_get_price_decimals() ) );
+		$this->set_prop( 'total', ohmylms_format_decimal( $value, ohmylms_get_price_decimals() ) );
 	}
 
 	/**
@@ -986,7 +986,7 @@ class Order extends Data {
 	 */
 	public function set_status( $new_status, $note = '', $manual_update = false ) {
 		$old_status = $this->get_status();
-		$new_status = 'omlms-' === substr( $new_status, 0, 6 ) ? substr( $new_status, 6 ) : $new_status;
+		$new_status = 'ohmylms-' === substr( $new_status, 0, 6 ) ? substr( $new_status, 6 ) : $new_status;
 		$this->set_prop( 'status', $new_status );
 		$this->status_transition = array(
 			'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
@@ -1280,7 +1280,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function set_cart_discount( $value ) {
-		$this->set_prop( 'cart_discount', omlms_format_decimal( $value, false, true ) );
+		$this->set_prop( 'cart_discount', ohmylms_format_decimal( $value, false, true ) );
 	}
 
 	/**
@@ -1293,7 +1293,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function set_tax_amount( $value ) {
-		$this->set_prop( 'tax_amount', omlms_format_decimal( $value, false, true ) );
+		$this->set_prop( 'tax_amount', ohmylms_format_decimal( $value, false, true ) );
 	}
 
 	/**
@@ -1386,7 +1386,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_formatted_line_subtotal( $item, $tax_display = '' ) {
-		return omlms_price( $item->get_subtotal(), array( 'currency' => $this->get_currency() ) );
+		return ohmylms_price( $item->get_subtotal(), array( 'currency' => $this->get_currency() ) );
 	}
 
 	/**
@@ -1405,7 +1405,7 @@ class Order extends Data {
 		$subtotal = 0;
 		if ( is_callable( array( $item, 'get_subtotal' ) ) ) {
 			$subtotal = (float) $item->get_subtotal();
-			$subtotal = $round ? round( $subtotal, omlms_get_price_decimals() ) : $subtotal;
+			$subtotal = $round ? round( $subtotal, ohmylms_get_price_decimals() ) : $subtotal;
 		}
 		return $subtotal;
 	}
@@ -1436,7 +1436,7 @@ class Order extends Data {
 		if ( $subtotal ) {
 			$total_rows['cart_subtotal'] = array(
 				'label' => __( 'Subtotal', 'ohmylms' ),
-				'value' => omlms_price( $subtotal, array( 'currency' => $this->get_currency() ) ),
+				'value' => ohmylms_price( $subtotal, array( 'currency' => $this->get_currency() ) ),
 			);
 		}
 		return $subtotal;
@@ -1454,7 +1454,7 @@ class Order extends Data {
 		$tax_amount = $this->get_tax_amount();
 		$total_rows['order_total'] = array(
 			'label' => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ? esc_html(sprintf('Total ( Including tax : %s )', number_format($tax_amount, 2))) : __( 'Total:', 'ohmylms' ),
-			'value' => omlms_price( $this->get_formatted_order_total(), array( 'currency' => $this->get_currency() ) ),
+			'value' => ohmylms_price( $this->get_formatted_order_total(), array( 'currency' => $this->get_currency() ) ),
 		);
 	}
 
@@ -1489,7 +1489,7 @@ class Order extends Data {
 		if ( $this->get_cart_discount() > 0 ) {
 			$total_rows['discount'] = array(
 				'label' => __( 'Discount', 'ohmylms' ),
-				'value' => '-' . omlms_price( $this->get_cart_discount(), array( 'currency' => $this->get_currency() ) ),
+				'value' => '-' . ohmylms_price( $this->get_cart_discount(), array( 'currency' => $this->get_currency() ) ),
 			);
 		}
 	}
@@ -1516,7 +1516,7 @@ class Order extends Data {
 
 			$total_rows['tax'] = array(
 				'label' => $tax_label,
-				'value' => omlms_price( $tax_amount, array( 'currency' => $this->get_currency() ) ),
+				'value' => ohmylms_price( $tax_amount, array( 'currency' => $this->get_currency() ) ),
 			);
 		}
 	}

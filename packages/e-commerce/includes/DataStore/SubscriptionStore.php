@@ -11,14 +11,14 @@ class SubscriptionStore extends DataStore {
     public function read( &$subscription ) {
         $subscription_id   = $subscription->get_id();
         $student_id        = get_post_meta( $subscription_id, '_student_id', true );
-        $student           = \omlms_get_student( $student_id );
+        $student           = \ohmylms_get_student( $student_id );
 		$post_object 	   = get_post( $subscription->get_id() );
 		$subscription->set_props(
 			array(
 				'student_id'        => $student_id,
                 'student_name'      => $student->get_name(),
                 'student_email'     => $student->get_email(),
-                'student_profile'   => admin_url( 'admin.php?page=creator-lms#/students/' . $student_id . '/report' ),
+                'student_profile'   => admin_url( 'admin.php?page=ohmylms#/students/' . $student_id . '/report' ),
 				'membership_id'     => get_post_meta( $subscription_id, '_membership_id', true ),
 				'original_order_id' => get_post_meta( $subscription_id, '_original_order_id', true ),
 				'payment_gateway_id'=> get_post_meta( $subscription_id, '_payment_gateway_id', true ),
@@ -57,8 +57,8 @@ class SubscriptionStore extends DataStore {
 		$post_status    = $order_status;
 		$valid_statuses = get_post_stati();
 
-		if ( ! in_array( $post_status, array( 'auto-draft', 'draft', 'trash' ), true ) && in_array( 'creatorlms-' . $post_status, $valid_statuses, true ) ) {
-			$post_status = 'creatorlms-' . $post_status;
+		if ( ! in_array( $post_status, array( 'auto-draft', 'draft', 'trash' ), true ) && in_array( 'ohmylms-' . $post_status, $valid_statuses, true ) ) {
+			$post_status = 'ohmylms-' . $post_status;
 		}
 
 		return $post_status;
@@ -141,7 +141,7 @@ class SubscriptionStore extends DataStore {
             INNER JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
             WHERE m.meta_key = %s AND m.meta_value = %d AND p.post_type = %s
             ORDER BY p.post_date DESC",
-            '_subscription_renewal_id', $subscription_id, 'omlms-order'
+            '_subscription_renewal_id', $subscription_id, 'ohmylms-order'
         ) );
 
         if ( $renewal_orders ) {

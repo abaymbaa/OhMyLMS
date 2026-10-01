@@ -7,7 +7,7 @@ import { createElement } from '@wordpress/element';
 export function createOrdersPage(readRuntime) {
   return function OrdersPage() {
     const { $Y: OrderListMemo, HG: setScreenId, React } = readRuntime();
-    setScreenId('creator-lms', 'orders');
+    setScreenId('ohmylms', 'orders');
 
     return (
       <React.Fragment>

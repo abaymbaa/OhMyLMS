@@ -391,9 +391,9 @@ const cQ = function (e) {
         justify: "space-between",
         align: "center",
         gap: 5,
-        className: "omlms-order-details-tfoot-td-flex"
+        className: "ohmylms-order-details-tfoot-td-flex"
       }, h().createElement(I.FlexItemWP, {
-        className: "omlms-order-details-tfoot-td-left"
+        className: "ohmylms-order-details-tfoot-td-left"
       }, h().createElement(I.TextWP, {
         as: "span",
         color: "#000D25",
@@ -402,7 +402,7 @@ const cQ = function (e) {
         align: "right",
         isBlock: !0
       }, e, ":")), h().createElement(I.FlexItemWP, {
-        className: "omlms-order-details-tfoot-td-right"
+        className: "ohmylms-order-details-tfoot-td-right"
       }, h().createElement(I.TextWP, {
         as: "span",
         color: "#000D25",
@@ -422,9 +422,9 @@ const cQ = function (e) {
         justify: "space-between",
         align: "center",
         gap: 5,
-        className: "omlms-order-details-tfoot-td-flex"
+        className: "ohmylms-order-details-tfoot-td-flex"
       }, h().createElement(I.FlexItemWP, {
-        className: "omlms-order-details-tfoot-td-left"
+        className: "ohmylms-order-details-tfoot-td-left"
       }, h().createElement(I.TextWP, {
         as: "span",
         color: "Refunded" === e ? "#FF4D4F" : "#000D25",
@@ -433,7 +433,7 @@ const cQ = function (e) {
         align: "right",
         isBlock: !0
       }, e, ":")), h().createElement(I.FlexItemWP, {
-        className: "omlms-order-details-tfoot-td-right"
+        className: "ohmylms-order-details-tfoot-td-right"
       }, h().createElement(I.TextWP, {
         as: "span",
         color: "Refunded" === e ? "#FF4D4F" : "#000D25",
@@ -530,7 +530,7 @@ const cQ = function (e) {
     rowKey: "key",
     columns: G,
     dataSource: u,
-    className: "omlms-order-details-summary-table"
+    className: "ohmylms-order-details-summary-table"
   }), h().createElement(I.SpacerWP, {
     marginBottom: 0,
     paddingY: 3,
@@ -539,7 +539,7 @@ const cQ = function (e) {
     justify: "space-between",
     align: "flex-start",
     gap: 3,
-    className: "omlms-order-details-tfoot-row"
+    className: "ohmylms-order-details-tfoot-row"
   }, s.code ? h().createElement("div", null, h().createElement(I.TextWP, {
     as: "p",
     color: "#000D25",
@@ -564,9 +564,9 @@ const cQ = function (e) {
     justify: "space-between",
     align: "flex-start",
     gap: 5,
-    className: "omlms-order-details-tfoot-td-flex"
+    className: "ohmylms-order-details-tfoot-td-flex"
   }, h().createElement(I.FlexItemWP, {
-    className: "omlms-order-details-tfoot-td-left"
+    className: "ohmylms-order-details-tfoot-td-left"
   }, h().createElement(I.TextWP, {
     as: "span",
     color: "#000D25",
@@ -575,7 +575,7 @@ const cQ = function (e) {
     align: "right",
     isBlock: !0
   }, (0, b.__)("Order total", "ohmylms"), ":")), h().createElement(I.FlexItemWP, {
-    className: "omlms-order-details-tfoot-td-right"
+    className: "ohmylms-order-details-tfoot-td-right"
   }, h().createElement(I.TextWP, {
     as: "span",
     color: "#000D25",
@@ -611,7 +611,7 @@ const cQ = function (e) {
     justify: "space-between",
     align: "flex-start",
     gap: 3,
-    className: "omlms-order-details-tfoot-row"
+    className: "ohmylms-order-details-tfoot-row"
   }, h().createElement("div", null), h().createElement(I.SpacerWP, {
     marginBottom: 0
   }, L("Paid", "".concat(m)), h().createElement(I.SpacerWP, {
@@ -622,7 +622,7 @@ const cQ = function (e) {
     justify: "space-between",
     align: "flex-start",
     gap: 3,
-    className: "omlms-order-details-tfoot-row"
+    className: "ohmylms-order-details-tfoot-row"
   }, h().createElement("div", null), h().createElement(I.SpacerWP, {
     marginBottom: 0
   }, c.refunds.map(function (e, t) {

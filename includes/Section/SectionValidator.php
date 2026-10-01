@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Section;
+namespace OhMyLMS\Section;
 
 use WP_Error;
 

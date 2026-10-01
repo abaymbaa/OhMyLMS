@@ -10,7 +10,7 @@ export function createTopCoursePerformance(readRuntime) {
       o = props.handleAddCourse,
       i = (0, Router.Zp)(),
       l =
-        (null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.plugin_assets) +
+        (null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.plugin_assets) +
         'images',
       c = ''.concat(l, '/dummy-thumbnail-image.svg'),
       u = {
@@ -267,7 +267,7 @@ export function createTopCoursePerformance(readRuntime) {
                               cx={'70.072'}
                               cy={'32.303'}
                               r={'16.303'}
-                              fill={'var(--omlms-primary-color)'}
+                              fill={'var(--ohmylms-primary-color)'}
                             />
                             <path
                               fill={'#fff'}

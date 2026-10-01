@@ -1,5 +1,5 @@
 <?php
-namespace OMLMS\Schools;
+namespace OhMyLMS\Schools;
 
 defined('ABSPATH') || exit;
 
@@ -78,20 +78,23 @@ final class Service {
     }
     public static function classes($school, $page = 1) {
         global $wpdb;
-        Access::require_access(Access::school($school, ['school_admin', 'teacher', 'student']));
-        $c = Schema::table('classes'); $m = Schema::table('class_memberships');
-        $scope = Access::school($school) ? '' : $wpdb->prepare(" AND EXISTS (SELECT 1 FROM $m m WHERE m.class_id=c.id AND m.user_id=%d AND m.status='active')", get_current_user_id());
-        return $wpdb->get_results($wpdb->prepare("SELECT c.* FROM $c c WHERE c.school_id=%d $scope ORDER BY c.id DESC LIMIT 50 OFFSET %d", $school, (max(1, $page) - 1) * 50), ARRAY_A);
+        Access::require_access($school ? Access::school($school, ['school_admin', 'teacher', 'student']) : Access::teacher());
+        $c = Schema::table('classes'); $m = Schema::table('class_memberships'); $audit = Schema::table('school_audit_log');
+        $scope = ($school ? Access::school($school) : Access::platform()) ? '' : $wpdb->prepare(" AND EXISTS (SELECT 1 FROM $m m WHERE m.class_id=c.id AND m.user_id=%d AND m.status='active')", get_current_user_id());
+        return $wpdb->get_results($wpdb->prepare("SELECT c.*,(SELECT MIN(a.created_at) FROM $audit a WHERE a.action='class_created' AND a.object_id=c.id) AS created_at FROM $c c WHERE c.school_id=%d $scope ORDER BY c.id DESC LIMIT 50 OFFSET %d", $school, (max(1, $page) - 1) * 50), ARRAY_A);
     }
     public static function create_class($school, $data) {
-        Access::require_access(Access::school($school));
-        $year = self::row('academic_years', absint($data['academic_year_id'] ?? 0));
-        self::need($year && (int) $year['school_id'] === $school && $year['status'] === 'active', 'Select an active academic year in this school.');
+        Access::require_access($school ? Access::school($school) : Access::teacher());
+        $year = $school ? self::row('academic_years', absint($data['academic_year_id'] ?? 0)) : ['id' => 0];
+        if ($school) { self::need($year && (int) $year['school_id'] === $school && $year['status'] === 'active', 'Select an active academic year in this school.'); }
         $name = self::text($data['name'] ?? '');
         self::need($name, 'A class name is required.');
-        $id = self::insert('classes', ['school_id' => $school, 'academic_year_id' => $year['id'], 'name' => $name, 'subject' => self::text($data['subject'] ?? '', 100), 'grade' => self::text($data['grade'] ?? '', 50)]);
-        self::audit($school, 'class_created', $id);
-        return ['id' => $id];
+        return self::transaction(function () use ($school, $year, $name, $data) {
+            $id = self::insert('classes', ['school_id' => $school, 'academic_year_id' => $year['id'], 'name' => $name, 'subject' => self::text($data['subject'] ?? '', 100), 'grade' => self::text($data['grade'] ?? '', 50)]);
+            if (!$school) { self::membership('class_memberships', ['class_id' => $id, 'user_id' => get_current_user_id(), 'role' => 'teacher']); }
+            self::audit($school, 'class_created', $id);
+            return ['id' => $id];
+        });
     }
     public static function roster($school, $class = 0, $page = 1, $search = '') {
         global $wpdb;
@@ -99,6 +102,10 @@ final class Service {
             $record = Access::classroom($class);
             Access::require_access($record && (int) $record['school_id'] === $school);
         } else { Access::require_access(Access::school($school)); }
+        if (!$school && $class) {
+            $c = Schema::table('class_memberships'); $like = '%' . $wpdb->esc_like($search) . '%';
+            return $wpdb->get_results($wpdb->prepare("SELECT m.id,m.user_id,m.role,m.status,u.display_name,u.user_login FROM $c m JOIN {$wpdb->users} u ON u.ID=m.user_id WHERE m.class_id=%d AND m.status='active' AND u.display_name LIKE %s ORDER BY u.display_name,m.id LIMIT 50 OFFSET %d", $class, $like, (max(1, $page) - 1) * 50), ARRAY_A);
+        }
         $m = Schema::table('school_memberships'); $c = Schema::table('class_memberships'); $p = Schema::table('school_student_profiles');
         $scope = $class ? $wpdb->prepare(" AND EXISTS (SELECT 1 FROM $c cm WHERE cm.class_id=%d AND cm.user_id=m.user_id AND cm.role=m.role AND cm.status='active')", $class) : '';
         $like = '%' . $wpdb->esc_like($search) . '%';
@@ -139,14 +146,14 @@ final class Service {
         global $wpdb;
         $p = Schema::table('school_student_profiles');
         self::need(!$wpdb->get_var($wpdb->prepare("SELECT id FROM $p WHERE school_id=%d AND external_student_id=%s", $school, $external)), 'This school student ID already exists. Use the existing roster entry.');
-        $role = function_exists('creator_lms_get_assignable_student_role') ? creator_lms_get_assignable_student_role() : 'subscriber';
+        $role = function_exists('ohmylms_get_assignable_student_role') ? ohmylms_get_assignable_student_role() : 'subscriber';
         $id = wp_insert_user(['user_login' => 'student-' . $school . '-' . strtolower(wp_generate_password(12, false)), 'user_pass' => wp_generate_password(40), 'display_name' => $name, 'role' => $role]);
         if (is_wp_error($id)) { throw new \RuntimeException($id->get_error_message(), 400); }
         try {
             self::transaction(function () use ($school, $id, $external) {
                 self::insert('school_student_profiles', ['school_id' => $school, 'user_id' => $id, 'external_student_id' => $external]);
                 self::membership('school_memberships', ['school_id' => $school, 'user_id' => $id, 'role' => 'student']);
-                update_user_meta($id, '_omlms_managed_school', $school);
+                update_user_meta($id, '_ohmylms_managed_school', $school);
                 self::audit($school, 'student_created', $id);
             });
         } catch (\Throwable $error) {
@@ -161,14 +168,14 @@ final class Service {
         self::need(in_array($role, ['school_admin', 'teacher', 'student', 'guardian', 'activation'], true), 'Invalid invitation type.');
         self::need($role === 'activation' || is_email($email), 'A valid recipient email is required.');
         if ($role === 'activation' || $role === 'guardian') { Access::require_access(Access::student($school, $student)); }
-        if ($role === 'activation') { Access::require_access((int) get_user_meta($student, '_omlms_managed_school', true) === $school); }
+        if ($role === 'activation') { Access::require_access((int) get_user_meta($student, '_ohmylms_managed_school', true) === $school); }
         if ($class) {
             $record = Access::classroom($class, true);
             self::need($record && (int) $record['school_id'] === $school && in_array($role, ['teacher', 'student'], true), 'Select a valid class for this invitation.');
         }
         $token = bin2hex(random_bytes(32));
         $id = self::insert('school_invitations', ['token_hash' => hash('sha256', $token), 'school_id' => $school, 'class_id' => $class, 'student_user_id' => $student, 'role' => $role, 'email' => $email, 'expires_at' => gmdate('Y-m-d H:i:s', time() + 2 * DAY_IN_SECONDS), 'invited_by' => get_current_user_id(), 'created_at' => self::now()]);
-        $url = add_query_arg('omlms_invite', $token, Views::portal_url());
+        $url = add_query_arg('ohmylms_invite', $token, Views::portal_url());
         // Return the link to the authorized staff member. Mail is sent only on an explicit UI action.
         if (!empty($data['send_email']) && $role !== 'activation') {
             $sent = wp_mail($email, __('Your OhMyLMS invitation', 'ohmylms'), sprintf(__('Open this invitation within 48 hours: %s', 'ohmylms'), $url));
@@ -203,7 +210,7 @@ final class Service {
             self::need($issuer && (user_can($issuer, 'manage_options') || Access::school($school, ['school_admin'], $issuer->ID)), 'The invitation issuer no longer has permission.');
             if ($invite['role'] === 'activation') {
                 $user_id = (int) $invite['student_user_id'];
-                Access::require_access(Access::student($school, $user_id) && (int) get_user_meta($user_id, '_omlms_managed_school', true) === $school);
+                Access::require_access(Access::student($school, $user_id) && (int) get_user_meta($user_id, '_ohmylms_managed_school', true) === $school);
                 self::need(strlen($password) >= 12 && strlen($password) <= 128, 'Choose a password between 12 and 128 characters.');
                 wp_set_password($password, $user_id);
                 // Invalidate other outstanding recovery links for this child.
@@ -212,7 +219,7 @@ final class Service {
                 $user = wp_get_current_user(); $user_id = $user->ID;
                 Access::require_access($user_id && strtolower($user->user_email) === strtolower($invite['email']));
                 // Possession of a single-use token sent to this address proves mailbox access.
-                update_user_meta($user_id, \OMLMS\Services\EmailVerificationService::META_VERIFIED, 'yes');
+                update_user_meta($user_id, \OhMyLMS\Services\EmailVerificationService::META_VERIFIED, 'yes');
                 if ($invite['role'] === 'guardian') {
                     Access::require_access(Access::student($school, $invite['student_user_id']));
                     $links = Schema::table('guardian_links');
@@ -220,10 +227,10 @@ final class Service {
                     $record = ['status' => 'active', 'approved_by' => $invite['invited_by'], 'approved_at' => self::now()];
                     if ($link) { self::update('guardian_links', $record, ['id' => $link]); }
                     else { self::insert('guardian_links', array_merge($record, ['school_id' => $school, 'guardian_user_id' => $user_id, 'student_user_id' => $invite['student_user_id']])); }
-                    $user->add_role('omlms_parent');
+                    $user->add_role('ohmylms_parent');
                 } else {
                     self::membership('school_memberships', ['school_id' => $school, 'user_id' => $user_id, 'role' => $invite['role']]);
-                    $role_map = ['school_admin' => 'omlms_school_admin', 'teacher' => 'omlms_teacher', 'student' => function_exists('creator_lms_get_assignable_student_role') ? creator_lms_get_assignable_student_role() : 'subscriber'];
+                    $role_map = ['school_admin' => 'ohmylms_school_admin', 'teacher' => 'ohmylms_teacher', 'student' => function_exists('ohmylms_get_assignable_student_role') ? ohmylms_get_assignable_student_role() : 'subscriber'];
                     $user->add_role($role_map[$invite['role']]);
                     if ($invite['class_id']) {
                         $class = self::row('classes', $invite['class_id']);
@@ -261,7 +268,7 @@ final class Service {
         $record = Access::classroom($class, true); Access::require_access($record);
         $course_id = absint($data['course_id'] ?? 0); $content = absint($data['content_id'] ?? 0);
         $course = get_post($course_id);
-        self::need($course && $course->post_type === CREATOR_LMS_COURSE_CPT && $course->post_status === 'publish', 'Select a published course.');
+        self::need($course && $course->post_type === OHMYLMS_COURSE_CPT && $course->post_status === 'publish', 'Select a published course.');
         // Content distribution does not grant access or change purchases/enrollments.
         if ($content) {
             $rel = Schema::table('content_relationship'); $chapters = Schema::table('chapter_relationship');
@@ -272,7 +279,7 @@ final class Service {
         if (!empty($data['student_ids'])) { $selected = array_unique(array_map('absint', (array) $data['student_ids'])); self::need(!array_diff($selected, $users), 'A selected student is outside this class.'); $users = $selected; }
         self::need($users, 'Add students to the class first.');
         foreach ($users as $user) {
-            $student = new \OMLMS\Data\Student($user);
+            $student = new \OhMyLMS\Data\Student($user);
             self::need($student->maybe_enrolled($course_id), 'Every recipient must already have access to this course. Assignment does not enroll students.');
             self::need(!empty($data['prior_completion']) || !($content ? $student->maybe_completed($content) : $student->is_course_completed($course_id)), 'A recipient already completed this work. Enable counting prior completion or choose different work.');
         }
@@ -285,7 +292,7 @@ final class Service {
         return self::transaction(function () use ($record, $class, $course_id, $content, $due, $title, $users, $data) {
             $id = self::insert('learning_assignments', ['school_id' => $record['school_id'], 'class_id' => $class, 'creator_id' => get_current_user_id(), 'title' => $title, 'course_id' => $course_id, 'content_id' => $content, 'due_at' => $due, 'prior_completion' => !empty($data['prior_completion']) ? 1 : 0, 'created_at' => self::now()]);
             foreach ($users as $user) {
-                $student = new \OMLMS\Data\Student($user);
+                $student = new \OhMyLMS\Data\Student($user);
                 $done = !empty($data['prior_completion']) && ($content ? $student->maybe_completed($content) : $student->is_course_completed($course_id));
                 self::insert('assignment_recipients', ['assignment_id' => $id, 'student_user_id' => $user, 'assigned_at' => self::now(), 'completed_at' => $done ? self::now() : null]);
             }
@@ -316,7 +323,7 @@ final class Service {
         global $wpdb;
         $a = Schema::table('learning_assignments'); $r = Schema::table('assignment_recipients');
         // Re-check actual LMS state instead of trusting event arguments from integrations.
-        $person = new \OMLMS\Data\Student($student);
+        $person = new \OhMyLMS\Data\Student($student);
         if (!($content ? $person->maybe_completed($content) : $person->is_course_completed($course))) { return; }
         $wpdb->query($wpdb->prepare("UPDATE $r r JOIN $a a ON a.id=r.assignment_id SET r.completed_at=%s WHERE r.student_user_id=%d AND a.course_id=%d AND a.content_id=%d AND a.status='active' AND r.completed_at IS NULL", self::now(), $student, $course, $content));
     }
@@ -349,7 +356,7 @@ final class Service {
             try { [$learning, $attempt] = self::submission_scope($row['learning_id'], $row['id']); }
             catch (\RuntimeException $error) { continue; }
             $files = maybe_unserialize($attempt['files']);
-            $result[] = ['id' => $attempt['id'], 'learning_id' => $learning['id'], 'title' => $learning['title'], 'student_name' => get_userdata($attempt['user_id'])->display_name, 'content' => wp_strip_all_tags($attempt['content']), 'score' => $attempt['score'], 'status' => $attempt['status'], 'note' => wp_strip_all_tags($attempt['note'] ?? ''), 'total_points' => (int) get_post_meta($attempt['assignment_id'], '_total_points', true), 'file_url' => is_array($files) && !empty($files['file']) ? add_query_arg(['ohmylms_school_file' => $attempt['id'], 'learning_id' => $learning['id'], '_wpnonce' => wp_create_nonce('omlms_school_file')], home_url('/')) : ''];
+            $result[] = ['id' => $attempt['id'], 'learning_id' => $learning['id'], 'title' => $learning['title'], 'student_name' => get_userdata($attempt['user_id'])->display_name, 'content' => wp_strip_all_tags($attempt['content']), 'score' => $attempt['score'], 'status' => $attempt['status'], 'note' => wp_strip_all_tags($attempt['note'] ?? ''), 'total_points' => (int) get_post_meta($attempt['assignment_id'], '_total_points', true), 'file_url' => is_array($files) && !empty($files['file']) ? add_query_arg(['ohmylms_school_file' => $attempt['id'], 'learning_id' => $learning['id'], '_wpnonce' => wp_create_nonce('ohmylms_school_file')], home_url('/')) : ''];
         }
         return $result;
     }
@@ -363,7 +370,7 @@ final class Service {
         $request->set_url_params(['id' => (int) $attempt['assignment_id'], 'user_id' => (int) $attempt['user_id']]);
         $request->set_header('Content-Type', 'application/json');
         $request->set_body(wp_json_encode([['id' => (int) $attempt_id, 'score' => (int) $score, 'status' => 'reviewed', 'note' => self::text($data['note'] ?? '', 2000)]]));
-        $result = (new \OMLMS\Rest\V1\AssignmentController())->update_attempt_report($request);
+        $result = (new \OhMyLMS\Rest\V1\AssignmentController())->update_attempt_report($request);
         if (is_wp_error($result)) { throw new \RuntimeException('Unable to grade this submission.', 400); }
         self::content_completed($attempt['assignment_id'], $attempt['course_id'], $attempt['user_id']);
         self::audit($learning['school_id'], 'submission_graded', $attempt_id);
@@ -371,7 +378,7 @@ final class Service {
     }
     public static function archive_class($id) {
         $class = self::row('classes', $id);
-        Access::require_access($class && Access::school($class['school_id']));
+        Access::require_access($class && ((int) $class['school_id'] ? Access::school($class['school_id']) : Access::classroom($id, true)));
         self::update('classes', ['status' => 'archived'], ['id' => $id]);
         self::audit($class['school_id'], 'class_archived', $id);
         return ['success' => true];
@@ -402,7 +409,7 @@ final class Service {
         global $wpdb;
         Access::require_access(Access::school($school));
         $csv = (string) ($data['csv'] ?? ''); self::need(strlen($csv) <= 100000, 'CSV must be smaller than 100 KB.');
-        $preview_key = 'omlms_roster_preview_' . hash('sha256', get_current_user_id() . ':' . $school . ':' . $csv);
+        $preview_key = 'ohmylms_roster_preview_' . hash('sha256', get_current_user_id() . ':' . $school . ':' . $csv);
         if (!empty($data['commit'])) { self::need(get_transient($preview_key), 'Preview this exact CSV before importing it.'); }
         $stream = fopen('php://temp', 'r+'); fwrite($stream, $csv); rewind($stream);
         $headers = fgetcsv($stream); self::need($headers && in_array('name', $headers, true) && in_array('external_student_id', $headers, true), 'CSV headers must include name and external_student_id.');

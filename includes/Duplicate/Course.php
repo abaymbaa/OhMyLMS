@@ -1,16 +1,16 @@
 <?php
 /**
- * @package    OMLMS\Duplicate
- * @subpackage CreatorLmsPro
+ * @package    OhMyLMS\Duplicate
+ * @subpackage OhMyLMSPro
  * @since      1.0.0
  */
-namespace OMLMS\Duplicate;
+namespace OhMyLMS\Duplicate;
 
 /**
  * Course class for duplicate courses.
  * 
- * @package    OMLMS\Duplicate
- * @subpackage CreatorLmsPro
+ * @package    OhMyLMS\Duplicate
+ * @subpackage OhMyLMSPro
  *
  * @since 1.0.0
  * 
@@ -49,8 +49,8 @@ class Course {
 
         // Duplicate the course post.
         $original_post = get_post($this->course_id);
-        if (!$original_post || $original_post->post_type !== CREATOR_LMS_COURSE_CPT) {
-            throw new \Exception(__('Invalid course type.', 'creator-lms'));
+        if (!$original_post || $original_post->post_type !== OHMYLMS_COURSE_CPT) {
+            throw new \Exception(__('Invalid course type.', 'ohmylms'));
         }
        
         $new_post = [
@@ -64,14 +64,14 @@ class Course {
         ];
 
         $new_course_id = wp_insert_post($new_post);
-        $new_course = omlms_get_course($new_course_id);
+        $new_course = ohmylms_get_course($new_course_id);
         if (!$new_course) {
-            throw new \Exception(__('Failed to create new course.', 'creator-lms'));
+            throw new \Exception(__('Failed to create new course.', 'ohmylms'));
         }
         $new_course->save();
 
         if (is_wp_error($new_course_id)) {
-            throw new \Exception(__('Failed to duplicate course.', 'creator-lms'));
+            throw new \Exception(__('Failed to duplicate course.', 'ohmylms'));
         }
 
         // Duplicate meta data.
@@ -84,7 +84,7 @@ class Course {
         }
 
         // Duplicate terms.
-        $taxonomies = get_object_taxonomies(CREATOR_LMS_COURSE_CPT);
+        $taxonomies = get_object_taxonomies(OHMYLMS_COURSE_CPT);
         foreach ($taxonomies as $taxonomy) {
             $terms = wp_get_post_terms($this->course_id, $taxonomy, ['fields' => 'ids']);
             if (!is_wp_error($terms)) {
@@ -94,7 +94,7 @@ class Course {
 
         // Duplicate chapters and contents.
         $chapter_query = $wpdb->prepare("
-            SELECT * FROM {$wpdb->prefix}omlms_chapter_relationship
+            SELECT * FROM {$wpdb->prefix}ohmylms_chapter_relationship
             WHERE course_id = %d
             ORDER BY order_number ASC
         ", $this->course_id);
@@ -116,7 +116,7 @@ class Course {
 
             $this->duplicate_meta($original_chapter_id, $new_chapter_id);
 
-            $wpdb->insert("{$wpdb->prefix}omlms_chapter_relationship", [
+            $wpdb->insert("{$wpdb->prefix}ohmylms_chapter_relationship", [
                 'course_id'    => $new_course_id,
                 'chapter_id'   => $new_chapter_id,
                 'order_number' => $chapter['order_number'],
@@ -124,7 +124,7 @@ class Course {
 
             // Duplicate contents.
             $content_query = $wpdb->prepare("
-                SELECT * FROM {$wpdb->prefix}omlms_content_relationship
+                SELECT * FROM {$wpdb->prefix}ohmylms_content_relationship
                 WHERE chapter_id = %d
                 ORDER BY order_number ASC
             ", $original_chapter_id);
@@ -146,7 +146,7 @@ class Course {
 
                 $this->duplicate_meta($original_content_id, $new_content_id);
 
-                $wpdb->insert("{$wpdb->prefix}omlms_content_relationship", [
+                $wpdb->insert("{$wpdb->prefix}ohmylms_content_relationship", [
                     'chapter_id'   => $new_chapter_id,
                     'content_id'   => $new_content_id,
                     'content_type'   => $content['content_type'],
@@ -154,7 +154,7 @@ class Course {
                 ]);
 
                 // If content is quiz, duplicate quiz questions and answers
-                if ($content_post->post_type === 'omlms-quiz') {
+                if ($content_post->post_type === 'ohmylms-quiz') {
                     $this->duplicate_quiz_questions($original_content_id, $new_content_id);
                 }
             }
@@ -190,7 +190,7 @@ class Course {
         global $wpdb;
 
         $questions = $wpdb->get_results($wpdb->prepare("
-            SELECT * FROM {$wpdb->prefix}omlms_quiz_questions_relationship
+            SELECT * FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship
             WHERE quiz_id = %d
             ORDER BY order_number ASC
         ", $from_quiz_id), ARRAY_A);
@@ -209,7 +209,7 @@ class Course {
 
             $this->duplicate_meta($original_question_id, $new_question_id);
 
-            $wpdb->insert("{$wpdb->prefix}omlms_quiz_questions_relationship", [
+            $wpdb->insert("{$wpdb->prefix}ohmylms_quiz_questions_relationship", [
                 'quiz_id'      => $to_quiz_id,
                 'question_id'  => $new_question_id,
                 'order_number' => $question['order_number'],
@@ -217,13 +217,13 @@ class Course {
 
             // Duplicate answers.
             $answers = $wpdb->get_results($wpdb->prepare("
-                SELECT * FROM {$wpdb->prefix}omlms_question_answers
+                SELECT * FROM {$wpdb->prefix}ohmylms_question_answers
                 WHERE question_id = %d
                 ORDER BY order_number ASC
             ", $original_question_id), ARRAY_A);
 
             foreach ($answers as $answer) {
-                $wpdb->insert("{$wpdb->prefix}omlms_question_answers", [
+                $wpdb->insert("{$wpdb->prefix}ohmylms_question_answers", [
                     'question_id'  => $new_question_id,
                     'answer'       => $answer['answer'],
                     'order_number' => $answer['order_number'],
@@ -234,12 +234,12 @@ class Course {
 
                 // Duplicate answer meta.
                 $answer_meta = $wpdb->get_results($wpdb->prepare("
-                    SELECT * FROM {$wpdb->prefix}omlms_question_answermeta
+                    SELECT * FROM {$wpdb->prefix}ohmylms_question_answermeta
                     WHERE answer_id = %d
                 ", $answer['id']), ARRAY_A);
 
                 foreach ($answer_meta as $meta_entry) {
-                    $wpdb->insert("{$wpdb->prefix}omlms_question_answermeta", [
+                    $wpdb->insert("{$wpdb->prefix}ohmylms_question_answermeta", [
                         'answer_id' => $new_answer_id,
                         'meta_key'  => $meta_entry['meta_key'],
                         'meta_value'=> $meta_entry['meta_value'],

@@ -1,7 +1,7 @@
 # Native QPay
 
 QPay is registered by the e-commerce gateway registry and uses the existing
-`creatorlms_qpay_settings` option and `qpay` payment method. Configure it in
+`ohmylms_qpay_settings` option and `qpay` payment method. Configure it in
 OhMyLMS payment settings. New installs are disabled. Checkout requires MNT,
 credentials for the selected environment, an invoice code, and a one-time
 purchase. Automatic renewals and provider refunds are not supported.
@@ -19,13 +19,13 @@ otherwise deactivate the old add-on before enabling native QPay.
   the pending order with `payment_error` so an uncertain invoice is not discarded.
 - Pending enrollment is created by the existing checkout. Paid hooks, purchase
   rewards, funnels, and cart clearing are deferred while payment is pending.
-- QPay notifies `GET /wp-json/creatorlms/v1/qpay/callback?order_id=...`.
+- QPay notifies `GET /wp-json/ohmylms/v1/qpay/callback?order_id=...`.
   New invoices add a separate random `qpay_token`. Historical URLs still work.
   A callback is only a notification: the server verifies the stored invoice via
   QPay before completing the order.
-- Browser AJAX `omlms_qpay_check_payment` verifies with QPay at most once every
+- Browser AJAX `ohmylms_qpay_check_payment` verifies with QPay at most once every
   ten seconds per pending order, including across browser tabs. It requires the
-  checkout nonce and either ownership or `payment_token`. `omlms_qpay_resume`
+  checkout nonce and either ownership or `payment_token`. `ohmylms_qpay_resume`
   verifies immediately and reopens the same invoice if unpaid. Closing the dialog pauses polling; five minutes of
   waiting does not cancel or expire the invoice. A session-storage resume button
   survives reloads in the same tab. Form contents are not stored.

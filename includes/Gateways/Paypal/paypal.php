@@ -6,9 +6,9 @@
  *
  * @version 1.0.0
  */
-define( 'CREATORLMS_PAYPAL_VERSION', '1.0.0' );
-define( 'CREATORLMS_PAYPAL_MAIN_FILE', __FILE__ );
-define( 'CREATORLMS_PAYPAL_ABSPATH', __DIR__ . '/' );
+define( 'OHMYLMS_PAYPAL_VERSION', '1.0.0' );
+define( 'OHMYLMS_PAYPAL_MAIN_FILE', __FILE__ );
+define( 'OHMYLMS_PAYPAL_ABSPATH', __DIR__ . '/' );
 
 /**
  * Register Paypal Gateway
@@ -19,7 +19,7 @@ define( 'CREATORLMS_PAYPAL_ABSPATH', __DIR__ . '/' );
  * @return array The updated list of payment gateways including Paypal.
  * @since 1.0.0
  */
-add_filter('creatorlms_payment_gateways', function ($gateways) {
+add_filter('ohmylms_payment_gateways', function ($gateways) {
     $gateways[] = GatewayPaypal::class;
     return $gateways;
 });
@@ -33,7 +33,7 @@ add_filter('creatorlms_payment_gateways', function ($gateways) {
  * @return array The updated settings array including Paypal.
  * @since 1.0.0
  */
-add_filter('creatorlms_payment_gateways_settings', function ($settings) {
+add_filter('ohmylms_payment_gateways_settings', function ($settings) {
     $settings['paypal'] = array();
     return $settings;
 });

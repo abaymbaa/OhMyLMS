@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS\Admin;
+namespace OhMyLMS\Admin;
 
 defined( 'ABSPATH' ) || exit;
 

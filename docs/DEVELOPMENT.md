@@ -47,18 +47,18 @@ npm run test:reproducible
 
 `recover`, `split-admin.mjs` and `import-static.mjs` are one-time migration tools, not build steps. Do not regenerate over edits. Installed PHP packages are included; do not clone another e-commerce package over this modified implementation.
 
-For the disposable WordPress installation, set `OMLMS_TEST_CREDENTIALS` to its external JSON file and run `npm run test:browser` (Edge), then `php tests/php/extensions-integration.php` with mysqli/mbstring. The PHP suite refuses databases other than `ohmylms_source_test`. Also run `php tests/unit.php` and `php tests/membership-permissions.php`.
+For the disposable WordPress installation, set `OHMYLMS_TEST_CREDENTIALS` to its external JSON file and run `npm run test:browser` (Edge), then `php tests/php/extensions-integration.php` with mysqli/mbstring. The PHP suite refuses databases other than `ohmylms_source_test`. Also run `php tests/unit.php` and `php tests/membership-permissions.php`.
 
 ## Opt-in and rollback
 
 On a test site:
 
 ```php
-define('OMLMS_SOURCE_ASSETS', true);
-define('OMLMS_ENABLED_MODULES', ['examples']); // Optional, disabled by default.
+define('OHMYLMS_SOURCE_ASSETS', true);
+define('OHMYLMS_ENABLED_MODULES', ['examples']); // Optional, disabled by default.
 ```
 
-Without these constants, shipped assets remain active and examples remain disabled. Missing generated files currently fall back to shipped assets; check browser inventories for fallback URLs before release. Turning off `OMLMS_SOURCE_ASSETS` restores the old JavaScript. Full rollback restores all three matching plugin folders from the source-baseline snapshot. Restore a database only with its matching code backup. This stage performs no additional prefix migration.
+Without these constants, shipped assets remain active and examples remain disabled. Missing generated files currently fall back to shipped assets; check browser inventories for fallback URLs before release. Turning off `OHMYLMS_SOURCE_ASSETS` restores the old JavaScript. Full rollback restores all three matching plugin folders from the source-baseline snapshot. Restore a database only with its matching code backup. This stage performs no additional prefix migration.
 
 ## Fixtures and provenance
 

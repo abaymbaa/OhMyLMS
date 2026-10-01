@@ -84,7 +84,7 @@ export function createBadgeEditor(readRuntime) {
                         p(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/badges',
+                          path: '/ohmylms/v1/engagement/badges',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export function createBadgeEditor(readRuntime) {
                         p(!0),
                         (e.n = 1),
                         l()({
-                          path: '/creator-lms/v1/engagement/badges',
+                          path: '/ohmylms/v1/engagement/badges',
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',

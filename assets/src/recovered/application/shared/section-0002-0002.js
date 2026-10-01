@@ -14,7 +14,7 @@ var at = function (e) {
     m = d[0],
     p = d[1],
     f = function (e) {
-      var t = document.querySelectorAll(".omlms-draggable-single-chapter");
+      var t = document.querySelectorAll(".ohmylms-draggable-single-chapter");
       t.length > 0 && t.forEach(function (t) {
         t.draggable = e;
       });
@@ -147,9 +147,7 @@ var at = function (e) {
     height: "24px"
   }), React.createElement("span", null, (0, b.__)("Add Content", "ohmylms")))));
 };
-
 const ot = (0, g.memo)(at);
-
 function it(e) {
   return it = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -157,7 +155,6 @@ function it(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, it(e);
 }
-
 function lt(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -168,7 +165,6 @@ function lt(e, t) {
   }
   return n;
 }
-
 function ct(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -180,7 +176,6 @@ function ct(e) {
   }
   return e;
 }
-
 function ut(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -201,15 +196,13 @@ function ut(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function st(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var dt = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.lessonType,
     r = void 0 === n ? "text" : n,
     a = e.icon,
@@ -288,7 +281,7 @@ var dt = function (e) {
       left: "0",
       width: "100%",
       height: "100%",
-      background: "color-mix(in srgb, var(--omlms-primary-color) 50%, transparent)",
+      background: "color-mix(in srgb, var(--ohmylms-primary-color) 50%, transparent)",
       borderRadius: "4px"
     }
   }, React.createElement(I.SpinWP, {
@@ -318,11 +311,8 @@ var dt = function (e) {
     size: 14
   }, i))));
 };
-
 const mt = (0, g.memo)(dt);
-
 var pt = ["width", "height"];
-
 function ft() {
   return ft = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -332,7 +322,6 @@ function ft() {
     return e;
   }, ft.apply(null, arguments);
 }
-
 const vt = function (e) {
   var t = e.width,
     n = void 0 === t ? 24 : t,
@@ -385,7 +374,6 @@ const vt = function (e) {
     fill: "#00832D"
   }));
 };
-
 function gt(e) {
   return function (e) {
     if (Array.isArray(e)) return bt(e);
@@ -395,7 +383,6 @@ function gt(e) {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function ht(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -429,7 +416,6 @@ function ht(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function yt(e, t) {
   if (e) {
     if ("string" == typeof e) return bt(e, t);
@@ -437,17 +423,15 @@ function yt(e, t) {
     return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? bt(e, t) : void 0;
   }
 }
-
 function bt(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var _t = function (e) {
   var t,
     n,
-    r = (0, L.useIsPro)(),
+    r = true,
     a = e.setOpenModal,
     o = e.handleCreateLesson,
     i = e.handleCreateQuiz,
@@ -469,10 +453,10 @@ var _t = function (e) {
     w = ht((0, g.useState)(!1), 2),
     E = (w[0], w[1], ht((0, g.useState)({}), 2)),
     S = (E[0], E[1], (0, g.useCallback)(function () {
-      r ? o("assignment") : _(!0);
+      o("assignment");
     }, [r, o])),
-    R = (0, L.useFeatureAccess)("zoom"),
-    x = (0, L.useFeatureAccess)("googlemeet"),
+    R = true,
+    x = true,
     C = [{
       key: 1,
       lessonType: "text",
@@ -589,9 +573,7 @@ var _t = function (e) {
     onClose: _
   }))));
 };
-
 const wt = (0, g.memo)(_t);
-
 function Et() {
   return Et = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -601,7 +583,6 @@ function Et() {
     return e;
   }, Et.apply(null, arguments);
 }
-
 var St = function (e) {
   var t, n, r;
   return React.createElement(React.Fragment, null, React.createElement("svg", {
@@ -621,9 +602,7 @@ var St = function (e) {
     d: "M10 7c-1.714 0-3.104 1.343-3.104 3s1.39 3 3.104 3c1.714 0 3.104-1.343 3.104-3S11.714 7 10 7zm8.712.86l-.84.668a1.867 1.867 0 000 2.944l.84.669a.745.745 0 01.182.97l-1.66 2.778a.802.802 0 01-.96.333l-1.019-.37c-1.163-.42-2.434.29-2.638 1.473l-.18 1.038a.782.782 0 01-.777.637H8.34a.782.782 0 01-.778-.637l-.179-1.038c-.204-1.184-1.475-1.893-2.638-1.472l-1.02.369a.802.802 0 01-.96-.333l-1.66-2.778a.745.745 0 01.183-.97l.84-.669a1.867 1.867 0 000-2.944l-.84-.669a.745.745 0 01-.182-.97l1.66-2.778a.802.802 0 01.96-.333l1.019.37c1.163.42 2.434-.29 2.638-1.473l.18-1.038A.782.782 0 018.34 1h3.32c.385 0 .714.27.778.637l.179 1.038c.204 1.184 1.475 1.893 2.638 1.472l1.02-.369c.36-.13.767.01.96.333l1.66 2.778a.745.745 0 01-.183.97z"
   }, e))));
 };
-
 const Rt = (0, g.memo)(St);
-
 var xt = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -638,9 +617,7 @@ var xt = function () {
     d: "M11.011 2.398h0L9.576.988l1.435 1.41zm0 0c.604.59.941 1.389.939 2.22v0m-.939-2.22l.939 2.22m0 0v6.174c-.002 1.742-1.455 3.156-3.25 3.158H3.3C1.505 13.948.052 12.534.05 10.792V3.208C.052 1.466 1.505.052 3.3.05h3.965m4.685 4.568L7.265.05m0 0c.868.002 1.699.34 2.31.937L7.266.05zm-.615 1.7V1.7H3.3c-.855 0-1.55.674-1.55 1.508v7.584c0 .834.695 1.508 1.55 1.508h5.4c.855 0 1.55-.674 1.55-1.508V5.2H7.8c-.636 0-1.15-.501-1.15-1.117V1.75z"
   })));
 };
-
 const Ct = (0, g.memo)(xt);
-
 var Pt = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -658,9 +635,7 @@ var Pt = function () {
     clipRule: "evenodd"
   })));
 };
-
 const Ot = (0, g.memo)(Pt);
-
 var kt = n(27268),
   jt = function (e) {
     var t = e.status,
@@ -672,13 +647,10 @@ var kt = n(27268),
       className: "".concat("draft" === n ? "draft" : "published")
     }, "draft" === n ? React.createElement(Ct, null) : React.createElement(Ot, null), t));
   };
-
 const At = (0, g.memo)(jt);
-
 var Mt = n(79476),
   Tt = n(50127),
   It = ["title", "onChange", "defaultValue", "options", "customClass", "showDivider", "horizontal", "tooltip", "row"];
-
 function Ft() {
   return Ft = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -688,7 +660,6 @@ function Ft() {
     return e;
   }, Ft.apply(null, arguments);
 }
-
 var Nt = function (e) {
   var t = e.title,
     n = e.onChange,
@@ -728,7 +699,7 @@ var Nt = function (e) {
     }(e, It);
   return React.createElement(React.Fragment, null, React.createElement(I.FlexWP, {
     justify: "space-between",
-    className: "omlms-radio-button-wrapper ".concat(u),
+    className: "ohmylms-radio-button-wrapper ".concat(u),
     gap: 4,
     wrap: "wrap",
     direction: v ? "row" : "column"
@@ -742,10 +713,10 @@ var Nt = function (e) {
     justify: "flex-start"
   }, React.createElement(I.HeadingWP, {
     level: "4",
-    className: "omlms-radio-button-title"
+    className: "ohmylms-radio-button-title"
   }, t), p && React.createElement(V.A, {
     title: p,
-    className: "omlms-tooltip"
+    className: "ohmylms-tooltip"
   }, React.createElement(React.Fragment, null, React.createElement(Mt.A, null))))), React.createElement(I.FlexItemWP, {
     style: {
       flex: "1"
@@ -757,12 +728,10 @@ var Nt = function (e) {
   }, g, {
     options: l
   })))), d && React.createElement(Tt.A, {
-    className: "omlms-radio-divider"
+    className: "ohmylms-radio-divider"
   }));
 };
-
 const Dt = (0, g.memo)(Nt);
-
 var Wt = function (e) {
   var t = e.visibility,
     n = e.onVisibilityChange,
@@ -790,12 +759,9 @@ var Wt = function (e) {
     onChange: n
   }));
 };
-
 const zt = (0, g.memo)(Wt);
-
 var Bt = n(25946),
   Lt = ["isVisible", "animationDuration", "children"];
-
 function Vt() {
   return Vt = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -805,7 +771,6 @@ function Vt() {
     return e;
   }, Vt.apply(null, arguments);
 }
-
 function Ht(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -845,13 +810,11 @@ function Ht(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Gt(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var Ut = function (e) {
   var t = e.isVisible,
     n = e.animationDuration,
@@ -903,12 +866,9 @@ var Ut = function (e) {
     }
   }, o), a) : null;
 };
-
 const qt = (0, g.memo)(Ut);
-
 var Yt = n(71847),
   Qt = ["title", "onChange", "isChecked", "isItProFeature", "customClass", "tooltip", "conditionalChild", "description", "spacerPadding", "paddingBottom", "align", "headerFontSize"];
-
 function Zt() {
   return Zt = Object.assign ? Object.assign.bind() : function (e) {
     for (var t = 1; t < arguments.length; t++) {
@@ -918,9 +878,8 @@ function Zt() {
     return e;
   }, Zt.apply(null, arguments);
 }
-
 var $t = function (e) {
-  var t = (0, L.useIsPro)(),
+  var t = true,
     n = e.title,
     r = e.onChange,
     a = void 0 === r ? function () {
@@ -967,7 +926,7 @@ var $t = function (e) {
     marginBottom: 0,
     paddingBottom: null != h ? h : g
   }, React.createElement("div", {
-    className: " ".concat(s, " ").concat(i ? "omlms-checked" : "")
+    className: " ".concat(s, " ").concat(i ? "ohmylms-checked" : "")
   }, React.createElement(I.FlexWP, {
     className: "",
     align: b
@@ -998,10 +957,9 @@ var $t = function (e) {
   }, React.createElement(Bt.A, Zt({
     checked: i,
     onChange: a,
-    className: c && !t ? "omlms-disabled-switcher" : ""
+    className: c && !t ? "ohmylms-disabled-switcher" : ""
   }, E))))), p && React.createElement(qt, {
     isVisible: i
   }, p)));
 };
-
 const Kt = (0, g.memo)($t);

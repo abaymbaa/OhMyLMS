@@ -21,7 +21,7 @@ export function createAssignmentReport(readRuntime) {
       uf,
       v,
     } = readRuntime();
-    HG('creator-lms', 'assignments');
+    HG('ohmylms', 'assignments');
     var e = Q$((0, ReactHooks.useState)(''), 2),
       t = e[0],
       n = e[1],
@@ -54,7 +54,7 @@ export function createAssignmentReport(readRuntime) {
                             m(!0),
                             (e.n = 1),
                             l()({
-                              path: '/creator-lms/v1/assignment/'.concat(y, '/report'),
+                              path: '/ohmylms/v1/assignment/'.concat(y, '/report'),
                               method: 'GET',
                               headers: {
                                 'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 <?php
 
-namespace OMLMS;
+namespace OhMyLMS;
 
 class Packages {
 
@@ -9,7 +9,7 @@ class Packages {
 	);
 
 	public static function init() {
-		add_action( 'creator_lms_init', array( __CLASS__, 'on_init' ) );
+		add_action( 'ohmylms_init', array( __CLASS__, 'on_init' ) );
 	}
 
 	public static function on_init(): void {
@@ -22,7 +22,7 @@ class Packages {
 	}
 
 	public static function package_exists( $package ): bool {
-		return file_exists( CREATOR_LMS_DIR . '/packages/' . $package );
+		return file_exists( OHMYLMS_DIR . '/packages/' . $package );
 	}
 
 	public static function load_packages(): void {
@@ -30,8 +30,8 @@ class Packages {
 			if ( ! self::package_exists( $package_name ) ) {
 				continue;
 			}
-			if ( file_exists( CREATOR_LMS_DIR . '/packages/' . $package_name . '/' . $package_class . '.php' ) ) {
-				require_once CREATOR_LMS_DIR . '/packages/' . $package_name . '/' . $package_class . '.php';
+			if ( file_exists( OHMYLMS_DIR . '/packages/' . $package_name . '/' . $package_class . '.php' ) ) {
+				require_once OHMYLMS_DIR . '/packages/' . $package_name . '/' . $package_class . '.php';
 				call_user_func( array( $package_class, 'init' ) );
 			}
 		}

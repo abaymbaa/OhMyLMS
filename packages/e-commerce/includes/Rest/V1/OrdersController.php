@@ -144,7 +144,7 @@ class OrdersController extends RestController {
 			'name'                => isset( $request['slug'] ) ? sanitize_text_field( $request['slug'] ) : '',
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
-			'post_type'           => 'omlms-order',
+			'post_type'           => 'ohmylms-order',
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 			'meta_query'          => isset( $request['meta_key'] ) && isset( $request['meta_value'] ) ? array(
 				array(
@@ -324,8 +324,8 @@ class OrdersController extends RestController {
 				'orders'        => $posts,
 				'status_counts' => $status_count,
 				'currency'      => array(
-					'currency'     => html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-					'currency_pos' => get_omlms_currency_position(),
+					'currency'     => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+					'currency_pos' => get_ohmylms_currency_position(),
 				),
 			)
 		);
@@ -354,10 +354,10 @@ class OrdersController extends RestController {
 
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( ! empty( $post->post_type ) && 'omlms-order' !== $post->post_type ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_omlms-order_id', __( 'To manipulate order you should use the /orders/&lt;order_id&gt; endpoint.', 'ohmylms' ), array( 'status' => 404 ) );
+		if ( ! empty( $post->post_type ) && 'ohmylms-order' !== $post->post_type ) {
+			return new \WP_Error( 'ohmylms_rest_invalid_ohmylms-order_id', __( 'To manipulate order you should use the /orders/&lt;order_id&gt; endpoint.', 'ohmylms' ), array( 'status' => 404 ) );
 		} elseif ( empty( $id ) || empty( $post->ID ) ) {
-			return new \WP_Error( 'creator_lms_rest_invalid_omlms-order_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'ohmylms_rest_invalid_ohmylms-order_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
 		$response_data = $this->prepare_item_for_response( $post, $request );
@@ -368,7 +368,7 @@ class OrdersController extends RestController {
 			$item_meta            = array(
 				'key'   => 'course_id',
 				'name'  => $item->get_name(),
-				'price' => omlms_format_decimal( $item->get_total(), omlms_get_price_decimals() ),
+				'price' => ohmylms_format_decimal( $item->get_total(), ohmylms_get_price_decimals() ),
 				'quantity' => 1,
 			);
 			$data['line_items'][] = $item_meta;
@@ -379,7 +379,7 @@ class OrdersController extends RestController {
 			$coupon_line = array(
 				'title'    => $item->get_name(),
 				'code'     => $item->get_code(),
-				'discount' => omlms_format_decimal( $item->get_discount(), omlms_get_price_decimals() ),
+				'discount' => ohmylms_format_decimal( $item->get_discount(), ohmylms_get_price_decimals() ),
 			);
 			$data['coupon_lines'] = $coupon_line;
 		}
@@ -389,13 +389,13 @@ class OrdersController extends RestController {
 			$data['refunds'][] = array(
 				'id'     => $refund_id,
 				'refund' => get_post_meta( $refund_id, '_refund_reason', true ),
-				'total'  => '-' . omlms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), omlms_get_price_decimals() ),
+				'total'  => '-' . ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() ),
 			);
 		}
 
 		$data['currency'] = array(
-			'currency'     => html_entity_decode( get_omlms_currency_symbol( get_omlms_currency() ) ),
-			'currency_pos' => get_omlms_currency_position(),
+			'currency'     => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+			'currency_pos' => get_ohmylms_currency_position(),
 		);
 
 		// Save tracking meta data to check this order is already opened or not.
@@ -422,7 +422,7 @@ class OrdersController extends RestController {
 			$post_id = (int) $request['id'];
 
 			if ( empty( $post_id ) ) {
-				return new \WP_Error( 'creator_lms_rest_omlms-order_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
+				return new \WP_Error( 'ohmylms_rest_ohmylms-order_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
 			$previous_order      = ecommerce_get_order( $post_id );
 			$get_previous_status = $previous_order->get_status();
@@ -449,11 +449,11 @@ class OrdersController extends RestController {
 			}
 
 			if ( 'completed' !== $get_previous_status && 'completed' === $get_current_status ) {
-				do_action( 'creator_lms_update_order_status_to_completed', $current_order );
+				do_action( 'ohmylms_update_order_status_to_completed', $current_order );
 			}
 			if ( 'cancelled' !== $get_previous_status && 'cancelled' === $get_current_status ) {
-				do_action( 'creator_lms_update_order_status_to_cancelled', $current_order );
-				$student_data_instance = new \OMLMS\DataStores\StudentStore();
+				do_action( 'ohmylms_update_order_status_to_cancelled', $current_order );
+				$student_data_instance = new \OhMyLMS\DataStores\StudentStore();
 				$student_data_instance->delete_enrollment( $current_order->get_student_id(), $current_order->get_id() );
 			}
 
@@ -474,12 +474,12 @@ class OrdersController extends RestController {
 	public function delete_item( $request ) {
 		$order_id = $request->get_param( 'id' );
 
-		if ( get_post_type( $order_id ) !== 'omlms-order' ) {
+		if ( get_post_type( $order_id ) !== 'ohmylms-order' ) {
 			return new \WP_REST_Response( array( 'message' => 'Invalid order ID.' ), 400 );
 		}
-		do_action( 'creator_lms_rest_before_delete_order', $order_id );
+		do_action( 'ohmylms_rest_before_delete_order', $order_id );
 		if ( wp_trash_post( $order_id ) ) {
-			do_action( 'creator_lms_rest_delete_order', $order_id );
+			do_action( 'ohmylms_rest_delete_order', $order_id );
 			return new \WP_REST_Response( array( 'message' => 'Order trashed successfully.' ), 200 );
 		}
 
@@ -499,12 +499,12 @@ class OrdersController extends RestController {
 		$order_ids = $request->get_param( 'order_ids' );
 		if ( is_array( $order_ids ) ) {
 			foreach ( $order_ids as $order_id ) {
-				if ( get_post_type( $order_id ) !== 'omlms-order' ) {
+				if ( get_post_type( $order_id ) !== 'ohmylms-order' ) {
 					return new \WP_REST_Response( array( 'message' => 'Invalid order ID.' ), 400 );
 				}
-				do_action( 'creator_lms_rest_before_delete_order', $order_id );
+				do_action( 'ohmylms_rest_before_delete_order', $order_id );
 				wp_trash_post( $order_id );
-				do_action( 'creator_lms_rest_delete_order', $order_id );
+				do_action( 'ohmylms_rest_delete_order', $order_id );
 			}
 			return new \WP_REST_Response( array( 'message' => 'Order trashed successfully.' ), 200 );
 		}
@@ -536,7 +536,7 @@ class OrdersController extends RestController {
 	/**
 	 * Get the count of posts by status.
 	 *
-	 * This method retrieves the count of posts grouped by their status for the 'omlms-order' post type.
+	 * This method retrieves the count of posts grouped by their status for the 'ohmylms-order' post type.
 	 *
 	 * @return array The array containing the count of posts for each status.
 	 *
@@ -545,8 +545,8 @@ class OrdersController extends RestController {
 	private function get_post_status_counts() {
 		global $wpdb;
 
-		$post_type      = 'omlms-order';
-		$prefix         = 'omlms-';
+		$post_type      = 'ohmylms-order';
+		$prefix         = 'ohmylms-';
 		$valid_statuses = array( 'pending', 'processing', 'completed', 'on-hold', 'failed', 'refunded', 'cancelled' );
 
 		$prefixed_statuses = array_map(
@@ -614,8 +614,8 @@ class OrdersController extends RestController {
 	 */
 	public function get_order_stats( $request ) {
 		$args = array(
-			'post_type'      => 'omlms-order',
-			'post_status'    => 'omlms-completed',
+			'post_type'      => 'ohmylms-order',
+			'post_status'    => 'ohmylms-completed',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		);
@@ -712,7 +712,7 @@ class OrdersController extends RestController {
 				 *
 				 * @param mixed $prepared_args[ $var ] The query_var value.
 				 */
-				$query_args[ $var ] = apply_filters( "creator_lms_rest_query_var-{$var}", $prepared_args[ $var ] );
+				$query_args[ $var ] = apply_filters( "ohmylms_rest_query_var-{$var}", $prepared_args[ $var ] );
 			}
 		}
 
@@ -743,7 +743,7 @@ class OrdersController extends RestController {
 		$data     = $this->get_order_data( $order );
 		$response = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $order, $request ) );
-		return apply_filters( 'creator_lms_rest_prepare_order', $response, $post, $request );
+		return apply_filters( 'ohmylms_rest_prepare_order', $response, $post, $request );
 	}
 
 	/**
@@ -764,7 +764,7 @@ class OrdersController extends RestController {
 			$payment_gateways = array();
 		}
 		$payment_method_title = $order->get_payment_method_title();
-		$student 			  = \omlms_get_student( $order->get_student_id() );
+		$student 			  = \ohmylms_get_student( $order->get_student_id() );
 		$related_orders		  = $order->get_related_orders();
 		$purchased_by		  = get_post_meta( $order->get_id(), '_purchased_by', true );
 		$post = get_post( $order->get_id() );
@@ -787,10 +787,10 @@ class OrdersController extends RestController {
 			'student_timezone'     => $student ? $student->get_timezone() : '',
 			'address'              => $order->get_address(),
 			'country'              => $order->get_country(),
-			'cart_discount'        => omlms_format_decimal( $order->get_cart_discount(), omlms_get_price_decimals() ),
-			'total'                => omlms_format_decimal( $order->get_total(), omlms_get_price_decimals() ),
+			'cart_discount'        => ohmylms_format_decimal( $order->get_cart_discount(), ohmylms_get_price_decimals() ),
+			'total'                => ohmylms_format_decimal( $order->get_total(), ohmylms_get_price_decimals() ),
 			'formattedTotal'       => $order->get_formatted_order_total(),
-			'subtotal'             => omlms_format_decimal( $order->get_cart_subtotal(), omlms_get_price_decimals() ),
+			'subtotal'             => ohmylms_format_decimal( $order->get_cart_subtotal(), ohmylms_get_price_decimals() ),
 			'payment_method'       => $payment_method,
 			'purchased_by'       => $purchased_by ? $purchased_by : 'currency',
 			'payment_method_title' => $payment_method_title ? $payment_method_title : 'N/A',
@@ -813,7 +813,7 @@ class OrdersController extends RestController {
 			'is_renewal_order'	   => $order->is_renewal_order(),
 			'is_parent_order'	   => $order->is_parent_order(),
 			'is_normal_order'	   => ! $order->is_renewal_order() && ! $order->is_parent_order(),
-			'tax_amount'           => omlms_format_decimal( $order->get_tax_amount(), omlms_get_price_decimals() ),
+			'tax_amount'           => ohmylms_format_decimal( $order->get_tax_amount(), ohmylms_get_price_decimals() ),
 			'tax_rate'             => $order->get_tax_rate(),
 			'is_included_tax'      => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax(),
 		);
@@ -875,7 +875,7 @@ class OrdersController extends RestController {
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
-		$post_type_obj = get_post_type_object( CREATOR_LMS_COURSE_CPT );
+		$post_type_obj = get_post_type_object( OHMYLMS_COURSE_CPT );
 		if ( current_user_can( $post_type_obj->cap->edit_posts ) ) {
 			$valid_vars = array_merge( $valid_vars, $wp->private_query_vars );
 		}
@@ -907,7 +907,7 @@ class OrdersController extends RestController {
 		 *
 		 * @param array $valid_vars The array of valid query variables.
 		 */
-		$valid_vars = apply_filters( 'creator_lms_rest_query_vars', $valid_vars );
+		$valid_vars = apply_filters( 'ohmylms_rest_query_vars', $valid_vars );
 
 		return $valid_vars;
 	}

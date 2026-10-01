@@ -7,6 +7,6 @@ export function createSubscriptionEditPage(readRuntime) {
       React,
       iZ
     } = readRuntime();
-    return HG("creator-lms", "subscriptions"), <React.Fragment>{React.createElement(iZ, null)}</React.Fragment>;
+    return HG("ohmylms", "subscriptions"), <React.Fragment>{React.createElement(iZ, null)}</React.Fragment>;
   };
 }

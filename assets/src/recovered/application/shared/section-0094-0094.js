@@ -90,7 +90,7 @@ var aV = function (e) {
           for (;;) switch (e.p = e.n) {
             case 0:
               return e.p = 0, e.n = 1, l()({
-                path: "/creator-lms/v1/courses?search=".concat(t),
+                path: "/ohmylms/v1/courses?search=".concat(t),
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json"
@@ -210,7 +210,7 @@ var aV = function (e) {
     key: "Save",
     variant: "primary",
     onClick: d,
-    className: "omlms-course-settings-modal-save-btn"
+    className: "ohmylms-course-settings-modal-save-btn"
   }, (0, b.__)("Save", "ohmylms")))));
 };
 
@@ -284,7 +284,7 @@ var cV = function (e) {
     justify: "start",
     direction: "column",
     gap: 0,
-    className: "omlms-classic-certificate-builder"
+    className: "ohmylms-classic-certificate-builder"
   }, React.createElement(_L, {
     saveAsPDF: function () {
       try {
@@ -352,8 +352,8 @@ var sV = function (e) {
   return React.createElement(React.Fragment, null, React.createElement(I.ModalWP, {
     open: t,
     footer: null,
-    className: "omlms-classic-editor-modal",
-    overlayClassName: "omlms-classic-editor-modal-wrap",
+    className: "ohmylms-classic-editor-modal",
+    overlayClassName: "ohmylms-classic-editor-modal-wrap",
     top: 0,
     shouldCloseOnEsc: !0,
     shouldCloseOnClickOutside: !0,
@@ -491,7 +491,7 @@ var yV = function () {
       label: (0, b.__)("Custom Certificates", "ohmylms")
     }];
   return React.createElement(React.Fragment, null, React.createElement("div", {
-    className: "omlms-course-certificate-settings"
+    className: "ohmylms-course-certificate-settings"
   }, React.createElement(I.FlexWP, {
     justify: "space-between",
     align: "flex-start"
@@ -514,7 +514,7 @@ var yV = function () {
     onChange: function (e) {
       var t;
       e ? (m(!0), n.setCourse(fV(fV({}, r), {}, {
-        certificate_id: null === (t = window.creator_lms_params) || void 0 === t ? void 0 : t.setup_wizard_certificate_id,
+        certificate_id: null === (t = window.ohmylms_params) || void 0 === t ? void 0 : t.setup_wizard_certificate_id,
         certificate: {}
       })), i("custom")) : (m(!1), n.setCourse(fV(fV({}, r), {}, {
         certificate_id: 0,
@@ -533,7 +533,7 @@ var yV = function () {
     marginBottom: 0,
     padding: 5
   }, React.createElement(I.FlexWP, {
-    className: "omlms-certificates-container-header"
+    className: "ohmylms-certificates-container-header"
   }, React.createElement(I.HeadingWP, {
     level: 4
   }, (0, b.__)("".concat("custom" === o ? "Previously created certificate" : "Pre-build certificate templates"), "ohmylms")), React.createElement(I.RadioGroupWP, {
@@ -716,7 +716,7 @@ const OV = function (e) {
     },
     label: Ge(n.name)
   }), u && h().createElement("span", {
-    className: "omlms-category-delete-icon",
+    className: "ohmylms-category-delete-icon",
     onClick: function () {
       p(!0), s(!0);
     }
@@ -867,7 +867,7 @@ var MV = function (e) {
     defaultExpandAll: !0,
     autoExpandParent: !0,
     switcherIcon: null,
-    className: "omlms-course-settings-categories-tree ".concat((null == c ? void 0 : c.length) > 0 ? "has-category" : ""),
+    className: "ohmylms-course-settings-categories-tree ".concat((null == c ? void 0 : c.length) > 0 ? "has-category" : ""),
     selectable: !1
   });
 };

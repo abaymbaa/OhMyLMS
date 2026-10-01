@@ -4,30 +4,8 @@ import { parseExpression } from '@babel/parser';
 import * as t from '@babel/types';
 const traverse = traverseModule.default || traverseModule;
 export function adaptApplication(ast) {
-  const removedRoutes = new Set(['/license', '/free-vs-pro']);
-  const removedBindings = new Set([
-    'o2',
-    'i2',
-    'l2',
-    'c2',
-    'u2',
-    's2',
-    'd2',
-    'Zae',
-    '$ae',
-    'Kae',
-    'Jae',
-    'Xae',
-    'eoe',
-    'noe',
-    'roe',
-    'aoe',
-    'ooe',
-  ]);
   const hits = {
     routes: 0,
-    removedRoutes: 0,
-    removedBindings: 0,
     membership: 0,
     membershipValidation: 0,
     questions: 0,
@@ -44,11 +22,6 @@ export function adaptApplication(ast) {
     );
   traverse(ast, {
     VariableDeclarator(p) {
-      if (t.isIdentifier(p.node.id) && removedBindings.has(p.node.id.name)) {
-        p.remove();
-        hits.removedBindings++;
-        return;
-      }
       if (p.node.id.name !== 'B8' || !t.isFunctionExpression(p.node.init)) return;
       p.traverse({
         VariableDeclarator(rule) {
@@ -70,21 +43,9 @@ export function adaptApplication(ast) {
         )
       )
         return;
-      p.node.elements = p.node.elements.filter((element) => {
-        if (!t.isObjectExpression(element)) return true;
-        const route = element.properties.find(
-          (property) => property.key?.name === 'path' && t.isStringLiteral(property.value),
-        );
-        if (!route || !removedRoutes.has(route.value.value)) return true;
-        hits.removedRoutes++;
-        return false;
-      });
       p.replaceWith(t.callExpression(sdk('extendRoutes'), [p.node]));
       hits.routes++;
       p.skip();
-    },
-    FunctionDeclaration(p) {
-      if (t.isIdentifier(p.node.id, { name: 'toe' })) p.remove();
     },
     CallExpression(p) {
       const n = p.node;
@@ -164,8 +125,6 @@ export function adaptApplication(ast) {
   });
   if (
     hits.routes !== 1 ||
-    hits.removedRoutes !== removedRoutes.size ||
-    hits.removedBindings !== removedBindings.size ||
     hits.membership !== 1 ||
     hits.membershipValidation !== 1 ||
     hits.questions < 1 ||

@@ -49,7 +49,7 @@ class GatewayStripeIntents extends PaymentGateway {
      */
     public function __construct() {
         $this->id                   = 'stripe';
-		$gateway_settings_key 		= 'creatorlms_' . $this->id . '_settings';
+		$gateway_settings_key 		= 'ohmylms_' . $this->id . '_settings';
 		$this->settings 			=  get_option( $gateway_settings_key, array() );
         $this->title                = $this->get_setting( 'title', __( 'Stripe', 'ohmylms' ) );
         $this->description          = $this->get_setting( 'instruction', __( 'Pay via Stripe; accepts various payment methods.', 'ohmylms' ) );
@@ -229,7 +229,7 @@ class GatewayStripeIntents extends PaymentGateway {
 	 * @return string
 	 */
 	private function get_current_currency() {
-		return strtolower(function_exists('get_omlms_currency') ? get_omlms_currency() : 'usd');
+		return strtolower(function_exists('get_ohmylms_currency') ? get_ohmylms_currency() : 'usd');
 	}
 
 	/**
@@ -272,7 +272,7 @@ class GatewayStripeIntents extends PaymentGateway {
 
         <div id="stripe-payment-element-wrapper">
             <p>Loading payment form...</p>
-            <div id="payment-element" data-email="<?php echo esc_attr( $user_email ); ?>" data-currency="<?php echo esc_attr( strtolower( function_exists('get_omlms_currency') ? get_omlms_currency() : 'usd' ) ); ?>"/>
+            <div id="payment-element" data-email="<?php echo esc_attr( $user_email ); ?>" data-currency="<?php echo esc_attr( strtolower( function_exists('get_ohmylms_currency') ? get_ohmylms_currency() : 'usd' ) ); ?>"/>
             <div id="card-element" style="display:none;"></div>
             <div id="payment-message" class="hidden"></div>
             <div id="stripe-error-message" role="alert" style="color: red;"></div>
@@ -280,7 +280,7 @@ class GatewayStripeIntents extends PaymentGateway {
 
         <?php ob_end_flush();
 
-        do_action( 'creator_lms_stripe_payment_fields_stripe', $this->id );
+        do_action( 'ohmylms_stripe_payment_fields_stripe', $this->id );
 
     }
 
@@ -296,7 +296,7 @@ class GatewayStripeIntents extends PaymentGateway {
      * @return void
      */
     public function payment_scripts() {
-        if ( ! is_creator_lms_checkout() && ! is_creator_lms_order_received_page() ) {
+        if ( ! is_ohmylms_checkout() && ! is_ohmylms_order_received_page() ) {
             return;
         }
 
@@ -307,10 +307,10 @@ class GatewayStripeIntents extends PaymentGateway {
         wp_register_script( 'stripe-v3', 'https://js.stripe.com/v3/', array(), null, true ); // Version is handled by Stripe
 
         // Determine JS file URL and version (assuming constants are defined in the main plugin)
-        $js_file_url = defined('CREATOR_LMS_URL') ? CREATOR_LMS_URL . '/packages/e-commerce/assets/js/stripe-intents.js' : plugins_url( '../../../../assets/js/stripe-intents.js', __FILE__ );
-        $js_version  = defined('CREATOR_LMS_VERSION') ? CREATOR_LMS_VERSION : time(); // Use time for cache busting during dev
+        $js_file_url = defined('OHMYLMS_URL') ? OHMYLMS_URL . '/packages/e-commerce/assets/js/stripe-intents.js' : plugins_url( '../../../../assets/js/stripe-intents.js', __FILE__ );
+        $js_version  = defined('OHMYLMS_VERSION') ? OHMYLMS_VERSION : time(); // Use time for cache busting during dev
 
-        wp_register_script( 'omlms-stripe-intents', $js_file_url, array( 'jquery', 'stripe-v3' ), $js_version, true );
+        wp_register_script( 'ohmylms-stripe-intents', $js_file_url, array( 'jquery', 'stripe-v3' ), $js_version, true );
 
         // Prepare parameters to pass to the frontend script
         $current_order_id = 0;
@@ -325,20 +325,20 @@ class GatewayStripeIntents extends PaymentGateway {
         $stripe_params = array(
             'publishableKey'        => $this->publishable_key,
             'ajax_url'              => admin_url( 'admin-ajax.php' ),
-            'create_intent_nonce'   => wp_create_nonce( 'omlms_stripe_intents_create_intent_nonce' ),
-            'handle_success_nonce'  => wp_create_nonce( 'omlms_stripe_intents_handle_success_nonce' ),
-            'create_intent_action'  => 'omlms_stripe_intents_create_payment_intent',
-            'handle_success_action' => 'omlms_stripe_intents_handle_payment_success',
+            'create_intent_nonce'   => wp_create_nonce( 'ohmylms_stripe_intents_create_intent_nonce' ),
+            'handle_success_nonce'  => wp_create_nonce( 'ohmylms_stripe_intents_handle_success_nonce' ),
+            'create_intent_action'  => 'ohmylms_stripe_intents_create_payment_intent',
+            'handle_success_action' => 'ohmylms_stripe_intents_handle_payment_success',
             'order_id'              => $current_order_id, // Pass current order ID if available
-            'currency'              => strtolower( function_exists('get_omlms_currency') ? get_omlms_currency() : 'usd' ),
+            'currency'              => strtolower( function_exists('get_ohmylms_currency') ? get_ohmylms_currency() : 'usd' ),
             'error_prefix'          => __('Payment error: ', 'ohmylms'),
             'return_url'            => $this->get_return_url(),
             'is_subscription'       => $is_subscription_purchase,
             'amount_in_cents'       => Helper::get_stripe_amount(ecommerce()->cart->get_total('edit'))
         );
 
-        wp_localize_script( 'omlms-stripe-intents', 'omlms_stripe_intents_params', $stripe_params );
-        wp_enqueue_script( 'omlms-stripe-intents' );
+        wp_localize_script( 'ohmylms-stripe-intents', 'ohmylms_stripe_intents_params', $stripe_params );
+        wp_enqueue_script( 'ohmylms-stripe-intents' );
     }
 
     /**
@@ -464,12 +464,12 @@ class GatewayStripeIntents extends PaymentGateway {
     public function handle_stripe_return() {
 
         // Check if we're on the thank you page
-        if (isset($_GET['cr-order-received']) || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'cr-order-received') !== false)) {
-            $order_id = isset($_GET['cr-order-received']) ? absint( wp_unslash( $_GET['cr-order-received'] ) ) : 0;
+        if (isset($_GET['ohmylms-order-received']) || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'ohmylms-order-received') !== false)) {
+            $order_id = isset($_GET['ohmylms-order-received']) ? absint( wp_unslash( $_GET['ohmylms-order-received'] ) ) : 0;
 
             // If order ID is not in GET, try to get it from the URL
             if (!$order_id && isset($_SERVER['REQUEST_URI'])) {
-                preg_match('/cr-order-received\/(\d+)/', $_SERVER['REQUEST_URI'], $matches);
+                preg_match('/ohmylms-order-received\/(\d+)/', $_SERVER['REQUEST_URI'], $matches);
                 if (!empty($matches[1])) {
                     $order_id = absint($matches[1]);
                 }
@@ -643,8 +643,8 @@ class GatewayStripeIntents extends PaymentGateway {
         $order->add_order_note($note);
         if (method_exists($order, 'payment_complete')) {
             $order->payment_complete( $payment_info['charge_id'] );
-        } elseif (did_action('creator_lms_payment_completed') || has_action('creator_lms_payment_completed')) {
-            do_action('creator_lms_payment_completed', $order_id);
+        } elseif (did_action('ohmylms_payment_completed') || has_action('ohmylms_payment_completed')) {
+            do_action('ohmylms_payment_completed', $order_id);
         }
 
         return array('result' => 'success', 'transaction_id' => $payment_info['charge_id'], 'redirect' => $this->get_return_url($order));
@@ -807,7 +807,7 @@ class GatewayStripeIntents extends PaymentGateway {
 			$user = wp_get_current_user();
 		}
         if ( ! $customer_id ) {
-            $customer_id = get_user_meta( $user->ID, '_omlms_stripe_customer_id', true );
+            $customer_id = get_user_meta( $user->ID, '_ohmylms_stripe_customer_id', true );
             if( $customer_id ) {
                 return $customer_id;
             }
@@ -868,7 +868,7 @@ class GatewayStripeIntents extends PaymentGateway {
 	 */
 	function get_valid_stripe_payment_method_types($currency = 'usd', $stripe_customer_id = null) {
 		$currency = strtolower($currency);
-		$cache_key = 'creatorlms_stripe_payment_methods_' . $currency;
+		$cache_key = 'ohmylms_stripe_payment_methods_' . $currency;
 
 		$cached = get_transient($cache_key);
 		if (!empty($cached) && is_array($cached)) {
@@ -906,7 +906,7 @@ class GatewayStripeIntents extends PaymentGateway {
     private function get_return_url_for_order($order_id) {
         return add_query_arg(
             array(
-                'action' => 'omlms_stripe_return',
+                'action' => 'ohmylms_stripe_return',
                 'order_id' => $order_id,
             ),
             home_url('/')
@@ -946,7 +946,7 @@ class GatewayStripeIntents extends PaymentGateway {
 	*
 	* @param int $original_order_id The ID of the original order.
 	* @param float $amount The amount to charge.
-	* @param int $subscription_id The ID of the omlms-subscription post.
+	* @param int $subscription_id The ID of the ohmylms-subscription post.
 	* @param int $student_id The ID of the student.
 	* @return array Result of the payment attempt. Details defined in parent::process_recurring_payment().
 	* @since 1.0.0
@@ -1102,7 +1102,7 @@ class GatewayStripeIntents extends PaymentGateway {
 
             // Create and confirm payment intent using existing gateway API
             $upsell_step_id  = $step_data['step_id'] ?? uniqid('upsell_', true);
-            $idempotency_key = 'omlms-' . $original_order->get_id() . '-' . $upsell_step_id;
+            $idempotency_key = 'ohmylms-' . $original_order->get_id() . '-' . $upsell_step_id;
 
             $payment_intent = StripeApi::request(
                 $intent_params,

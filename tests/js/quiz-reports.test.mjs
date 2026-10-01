@@ -10,7 +10,7 @@ import {normalizeQuizReport} from '../../assets/src/features/quiz-reports/model.
 const generate = generatorModule.default || generatorModule;
 const source = 'assets/src/recovered/';
 const manifest = JSON.parse(fs.readFileSync(source + 'manifest.json'));
-const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/creatorlms.js').factories.find(f => f.id === '1841');
+const factory = manifest.assets.find(a => a.output === 'assets/dist/admin/ohmylms.js').factories.find(f => f.id === '1841');
 const ast = parse(factory.fragments.map(file => fs.readFileSync(source + file, 'utf8')).join('\n'));
 const declarations = new Map();
 for (const statement of ast.program.body) {
@@ -96,7 +96,7 @@ test('report preserves filtering, pagination, grade navigation, and request cont
   assert.deepEqual(h.navigations, ['grade-quiz/0']);
   h.globals.response = {report: submissions, passing_mark: 5, question_total_marks: 10};
   h.effects[0](); await new Promise(resolve => setImmediate(resolve));
-  assert.equal(h.requests[0].path, '/creator-lms/v1/quiz/987/report');
+  assert.equal(h.requests[0].path, '/ohmylms/v1/quiz/987/report');
   assert.deepEqual(h.updates.get(2), submissions);
   const filtered = harness(['student 11', 1, submissions, false, 10, 5, 10]);
   assert.equal(find(filtered.render('QuizReport'), 'Table').props.dataSource.length, 1);
@@ -120,7 +120,7 @@ test('grading preserves attempt loading, edited payload, success reload and fail
   assert.deepEqual(plain(tree), plain(h.render('QuizGrading', {}, true)));
   h.globals.response = attempt;
   h.effects[0](); await new Promise(resolve => setImmediate(resolve));
-  assert.equal(h.requests[0].path, '/creator-lms/v1/quiz/987/report/123');
+  assert.equal(h.requests[0].path, '/ohmylms/v1/quiz/987/report/123');
   assert.deepEqual(h.updates.get(0), normalizeQuizReport(attempt));
   await find(tree, 'ButtonWP').props.onClick();
   assert.deepEqual(JSON.parse(h.requests[1].body), edited);
@@ -139,9 +139,9 @@ test('live REST ID types produce checked answers and correct result badges witho
   const h = harness();
   const single = h.render('SingleChoiceResult', {data: normalized.report.questions[0], index: 0});
   assert.equal(find(single, 'RadioWP').props.selected, '1');
-  assert.match(find(single, 'div').props.className, /omlms-correct$/);
+  assert.match(find(single, 'div').props.className, /ohmylms-correct$/);
   const multiple = h.render('MultipleChoiceResult', {data: normalized.report.questions[1], index: 0});
-  assert.match(find(multiple, 'div').props.className, /omlms-correct$/);
+  assert.match(find(multiple, 'div').props.className, /ohmylms-correct$/);
   for (const [name,index] of [['ReorderResult',2], ['MatchingResult',3]]) {
     assert.equal(find(h.render(name, {data: normalized.report.questions[index], index}), 'p$').props.isCorrect, true);
   }

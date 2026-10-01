@@ -2,17 +2,17 @@
 /**
  * The template for displaying lesson's Assignment content
  *
- * This template can be overridden by copying it to yourtheme/creator-lms/single-lesson/content-assignment.php.
+ * This template can be overridden by copying it to yourtheme/ohmylms/single-lesson/content-assignment.php.
  *
- * @package OMLMS\Templates
+ * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \OMLMS\Data\Assignment $assignment
+ * @global \OhMyLMS\Data\Assignment $assignment
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-$assignment = omlms_get_assignment(get_the_ID());
+$assignment = ohmylms_get_assignment(get_the_ID());
 $is_time_limit = $assignment->get_enable_time_limit();
 $timeValue = $assignment->get_time_limit();
 $timeUnit = $assignment->get_time_limit_type();
@@ -21,7 +21,7 @@ if( is_string($timeUnit) ){
 }
 
 $get_submissions_files = $assignment->get_submission(get_current_user_id());
-$student = new \OMLMS\Data\Student( get_current_user_id() );
+$student = new \OhMyLMS\Data\Student( get_current_user_id() );
 $deadline = false;
 if( $student ){
     $deadline = $student->get_assignment_remaining_time( $assignment->get_id() );
@@ -56,10 +56,10 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
 <?php while ( have_posts() ) : ?>
 	<?php the_post(); ?>
 
-    <div class="creator-lms-lesson-content-body content-type-assignment" >
+    <div class="ohmylms-lesson-content-body content-type-assignment" >
         <h1><?php echo $assignment->get_name() ?></h1>
 
-        <ul class="creator-lms-assignment-quiz-meta">
+        <ul class="ohmylms-assignment-quiz-meta">
             <?php if($assignment->get_enable_time_limit() && $assignment->get_time_limit_type() && $assignment->get_time_limit()) { ?>
                 <li class="duratioin">
                     <strong><?php echo __('Duration: ', 'ohmylms'); ?></strong>
@@ -89,7 +89,7 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
             <?php } ?>
         </ul>
 
-        <div class="creator-lms-wysiwyg-content" >
+        <div class="ohmylms-wysiwyg-content" >
             <?php
                 the_content();
             ?>
@@ -100,22 +100,22 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
 
             if(!empty($resources['file'])){
                 ?>
-                <ul class="creator-lms-resources-list">
+                <ul class="ohmylms-resources-list">
                     <?php
                     foreach($resources['file'] as $resource){
                         ?>
 
                         <li>
-                            <div class="omlms-single-resource-info">
+                            <div class="ohmylms-single-resource-info">
                                 <span class="resource-icon">
-                                    <?php include(CREATOR_LMS_DIR . '/assets/images/icon/file-icon.php'); ?>
+                                    <?php include(OHMYLMS_DIR . '/assets/images/icon/file-icon.php'); ?>
                                 </span>
                                 <span class="resource-name"><?php echo $resource['name'] ?></span>
                                 <span class="resource-size"><?php echo $resource['size'] ?></span>
                             </div>
 
                             <a href="<?php echo $resource['url'] ?>" class="resource-action" download>
-                                <?php include(CREATOR_LMS_DIR . '/assets/images/icon/download-icon.php'); ?>
+                                <?php include(OHMYLMS_DIR . '/assets/images/icon/download-icon.php'); ?>
                             </a>
                         </li>
                         <?php
@@ -126,7 +126,7 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
             }
         ?>
 
-        <div class="creator-lms-assignment-submit" style="display: none">
+        <div class="ohmylms-assignment-submit" style="display: none">
             <div class="assignment-submit-head">
                 <div class="assignment-submit-title">
                     <h6><?php echo __('Submit Assignment', 'ohmylms'); ?></h6>
@@ -135,9 +135,9 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
 
                 
                 <?php if( $is_time_limit ) : ?>
-                <div class="creator-lms-timer submission-time-limit" style="display: none;">
+                <div class="ohmylms-timer submission-time-limit" style="display: none;">
                     <span class="clock">
-                        <?php include(CREATOR_LMS_DIR . '/assets/images/icon/clock-icon.php'); ?>
+                        <?php include(OHMYLMS_DIR . '/assets/images/icon/clock-icon.php'); ?>
                         <span class="timer-display" data-timer="<?php echo $timeInMinutes ?>">
                             <!-- <?php echo $formattedTimer ?>:00 -->
                         </span>
@@ -150,15 +150,15 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                <?php endif; ?>
             </div>
 
-            <form  class="creator-lms-assignment-form" enctype="multipart/form-data">
-                <div class="creator-lms-form-group submission-body">
+            <form  class="ohmylms-assignment-form" enctype="multipart/form-data">
+                <div class="ohmylms-form-group submission-body">
                     <label for=""><?php echo __('Submission Body', 'ohmylms'); ?></label>
                     <textarea name="submission-body" id="" placeholder="Write something... "></textarea>
                 </div>
 
 
                 <?php if ($assignment->get_allow_upload_files()) { ?>
-                    <div class="creator-lms-form-group submission-file">
+                    <div class="ohmylms-form-group submission-file">
                         <label for="submission-file" class="file-upload-label">
                             <?php echo __('File', 'ohmylms'); ?>
 
@@ -175,17 +175,17 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                             </span>
                         </label>
 
-                        <label for="submission-file" class="creator-lms-file-upload" tabindex="0">
+                        <label for="submission-file" class="ohmylms-file-upload" tabindex="0">
                             <input 
                                 id="submission-file" 
                                 type="file" 
-                                name="creator-lms-submission-file" 
+                                name="ohmylms-submission-file" 
                                 draggable="true"
                                 accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx,.xls,.xlsx,.csv,.mp3,.mp4,.zip"
                                 upload-limit="<?php echo $assignment->get_max_file_size_limit(); ?>"
                                 aria-describedby="submission-max-file-limit submission-instructions"
                             >
-                            <span class="creator-lms-button" role="button" aria-hidden="true">
+                            <span class="ohmylms-button" role="button" aria-hidden="true">
                                 <?php echo __('Select a File', 'ohmylms'); ?>
                             </span>
 
@@ -200,21 +200,21 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                     </div>
                 <?php } ?>
 
-                <div class="creator-lms-form-group attached-resources" style="display: none">
+                <div class="ohmylms-form-group attached-resources" style="display: none">
                     <?php if ($assignment->get_allow_upload_files()) { ?>
                         <div class="attached-file">
                             <label class="attached-file-label">
                                 <?php echo __('File', 'ohmylms'); ?>
                             </label>
 
-                            <!-- <label class="creator-lms-button" type="button" for="creator-lms-add-new-attachment">
-                                <input id="creator-lms-add-new-attachment" type="file" name="creator-lms-submission-file" draggable="true">
+                            <!-- <label class="ohmylms-button" type="button" for="ohmylms-add-new-attachment">
+                                <input id="ohmylms-add-new-attachment" type="file" name="ohmylms-submission-file" draggable="true">
                                 <?php echo __('Add Attachment', 'ohmylms'); ?>
                             </label> -->
                         </div>
                     <?php } ?>
 
-                    <ul class="creator-lms-resources-list" id="creator-lms-submission-file-list">
+                    <ul class="ohmylms-resources-list" id="ohmylms-submission-file-list">
                         <?php
                         $get_submissions_files = $assignment->get_submission(get_current_user_id());
 
@@ -224,20 +224,20 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                                 $file_data  = maybe_unserialize($file['files']);
                                 $name       = basename($file_data['file']);
 	                            $file_size  = filesize($file_data['file']);
-                                $file_size  = omlms_format_file_size($file_size);
+                                $file_size  = ohmylms_format_file_size($file_size);
 	                            ?>
 
                                 <!-- <li>
-                                    <div class="omlms-single-resource-info">
+                                    <div class="ohmylms-single-resource-info">
                                         <span class="resource-icon">
-                                            <?php include(CREATOR_LMS_DIR . '/assets/images/icon/file-icon.php'); ?>
+                                            <?php include(OHMYLMS_DIR . '/assets/images/icon/file-icon.php'); ?>
                                         </span>
                                         <span class="resource-name"><?php echo $name ?></span>
                                         <span class="resource-size"><?php echo $file_size ?></span>
                                     </div>
 
                                     <a href="#" class="resource-action" title="Remove">
-                                        <?php include(CREATOR_LMS_DIR . '/assets/images/icon/delete-icon.php'); ?>
+                                        <?php include(OHMYLMS_DIR . '/assets/images/icon/delete-icon.php'); ?>
                                     </a>
                                 </li> -->
                                 <?php
@@ -252,11 +252,11 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                 </div>
                 <input type="hidden" name="action" value="save_assignment_submission_file">
                 <input type="hidden" name="assignment_id" value="<?php echo $assignment->get_id() ?>">
-                <input type="hidden" name="creator_lms_assignment_id" value="<?php echo $assignment->get_id() ?>">
-                <input type="hidden" name="creator_lms_assignment_deadline" value="<?php echo $deadline ?>">
-                <input type="hidden" name="course_id" value="<?php echo creator_lms_get_course_by_content_id($assignment->get_id()) ?>">
+                <input type="hidden" name="ohmylms_assignment_id" value="<?php echo $assignment->get_id() ?>">
+                <input type="hidden" name="ohmylms_assignment_deadline" value="<?php echo $deadline ?>">
+                <input type="hidden" name="course_id" value="<?php echo ohmylms_get_course_by_content_id($assignment->get_id()) ?>">
 
-                <div class="creator-lms-form-group submission-submit">
+                <div class="ohmylms-form-group submission-submit">
                     <p class="assignment-submit-alert">
                         <svg width="16" height="16" fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path fill="#FF6F6F" d="M8 16a8 8 0 118-8 8.009 8.009 0 01-8 8zM8 1.333A6.667 6.667 0 1014.667 8 6.674 6.674 0 008 1.333z"/><path fill="#FF6F6F" d="M8 12.667A.667.667 0 017.333 12V6.667a.667.667 0 111.334 0V12a.667.667 0 01-.667.667zM8.667 4a.667.667 0 11-1.334 0 .667.667 0 011.334 0z"/></svg>
                         <span>
@@ -264,7 +264,7 @@ $formattedTimer = str_pad($hours, 2, '0', STR_PAD_LEFT) . 'h ' . str_pad($minute
                         </span>
                     </p>
 
-                    <button class="creator-lms-button" type="submit" disabled>
+                    <button class="ohmylms-button" type="submit" disabled>
                         <?php echo __('Submit Assignment', 'ohmylms'); ?>
                     </button>
                 </div>

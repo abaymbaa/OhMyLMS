@@ -1,5 +1,5 @@
-.creator-lms-page {
-    .creator-lms-leaderboard {
+.ohmylms-page {
+    .ohmylms-leaderboard {
         width: 100%;
         padding: 14px 20px;
         border-radius: 8px;
@@ -11,7 +11,7 @@
         justify-content: space-between;
         gap: 12px;
 
-        .creator-lms-leaderboard-content {
+        .ohmylms-leaderboard-content {
             width: calc(100% - 65px);
             display: flex;
             align-items: center;
@@ -33,7 +33,7 @@
         }
 
         .student-name {
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 15px;
             font-weight: 500;
             line-height: 1.1;
@@ -48,12 +48,12 @@
             }
         }
 
-        .creator-lms-leaderboard-position {
+        .ohmylms-leaderboard-position {
             border-radius: 8px;
             background: #FFF;
             box-shadow: 0px 1px 2px 0px #D3D6DD;
             display: inline-block;
-            color: var(--creator-lms-heading-color);
+            color: var(--ohmylms-heading-color);
             font-size: 16px;
             font-weight: 500;
             line-height: 1;
@@ -63,7 +63,7 @@
         }
 
         &.position-success {
-            .creator-lms-leaderboard-position {
+            .ohmylms-leaderboard-position {
                 background-color: #35bd4c1a;
                 color: #35BD4C;
             }
@@ -72,21 +72,21 @@
 }
 
 @media screen and (max-width: 1199px) {
-    .creator-lms-page .creator-lms-leaderboard {
+    .ohmylms-page .ohmylms-leaderboard {
         padding: 11px 13px;
         border-radius: 8px;
     }
 
-    .creator-lms-page .creator-lms-leaderboard .student-name {
+    .ohmylms-page .ohmylms-leaderboard .student-name {
         font-size: 14px;
     }
 
-    .creator-lms-page .creator-lms-leaderboard .creator-lms-leaderboard-position {
+    .ohmylms-page .ohmylms-leaderboard .ohmylms-leaderboard-position {
         font-size: 13px;
         padding: 4px 6px;
         width: 46px;
     }
-    .creator-lms-page .creator-lms-leaderboard .student-name .score {
+    .ohmylms-page .ohmylms-leaderboard .student-name .score {
         font-size: 12px;
     }
 }

@@ -24,7 +24,7 @@ test('taxonomy conversion exposes categories, tags and their shared editor',()=>
 
 test('taxonomy adapter replaces both routes and the shared modal',()=>{
  const manifest=JSON.parse(fs.readFileSync(sourceRoot+'manifest.json'));
- const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/creatorlms.js').factories.find(item=>item.id==='1841');
+ const factory=manifest.assets.find(asset=>asset.output==='assets/dist/admin/ohmylms.js').factories.find(item=>item.id==='1841');
  const fragments=factory.fragments.map(file=>fs.readFileSync(sourceRoot+file,'utf8')).join('\n');
  const ast=parse(`({1841:function(){${fragments}}})`);
  assert.deepEqual(adaptTaxonomies(ast),{components:expected.length});

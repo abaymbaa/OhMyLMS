@@ -30,7 +30,7 @@ class Subscription extends Data {
         'billing_period'                  => '',
         'billing_interval'              => 1,
 		'order_total'                  	=> 0,
-		'order_version'					=> CREATOR_LMS_VERSION
+		'order_version'					=> OHMYLMS_VERSION
     );
 
     public function __construct($data = 0) {
@@ -150,7 +150,7 @@ class Subscription extends Data {
         $this->set_prop('next_payment_date', $next_payment_date);
     }
     public function set_status( $new_status ) {
-		$new_status = 'creatorlms-' === substr( $new_status, 0, 11 ) ? substr( $new_status, 11 ) : $new_status;
+		$new_status = 'ohmylms-' === substr( $new_status, 0, 11 ) ? substr( $new_status, 11 ) : $new_status;
 		$this->set_prop( 'status', $new_status );
 	}
     public function set_student_name($status) {

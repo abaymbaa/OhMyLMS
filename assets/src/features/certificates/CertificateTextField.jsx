@@ -14,7 +14,7 @@ export function createCertificateTextField(readRuntime) {
       g: ReactHooks,
       xL,
     } = readRuntime();
-    var t = (0, Entitlements.useIsPro)(),
+    var t = true,
       n = props.label,
       r = props.value,
       a = props.color,

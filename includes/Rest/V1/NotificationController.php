@@ -1,7 +1,7 @@
 <?php
-namespace OMLMS\Rest\V1;
+namespace OhMyLMS\Rest\V1;
 
-use OMLMS\Abstracts\RestController;
+use OhMyLMS\Abstracts\RestController;
 use WP_Query;
 
 /**
@@ -143,7 +143,7 @@ class NotificationController extends RestController {
 	private function save_notification_record( $data ) {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'omlms_notifications';
+		$table_name = $wpdb->prefix . 'ohmylms_notifications';
 
 		$inserted = $wpdb->insert(
 			$table_name,
