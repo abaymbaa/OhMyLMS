@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 $current_post_type = get_post_type();
+ohmylms_enqueue_interactivity_module('ohmylms/ui');
 ?>
 
 <?php
@@ -25,10 +26,10 @@ $current_post_type = get_post_type();
 do_action( 'ohmylms_before_lesson_main_content' );
 ?>
 
-<section class="ohmylms-lesson-details">
+<section class="ohmylms-lesson-details" data-wp-interactive="ohmylms/ui" <?php echo wp_interactivity_data_wp_context(['sidebarOpen' => false]); ?> data-wp-class--open-sidebar="context.sidebarOpen" data-wp-on-document--click="actions.outside" data-wp-on-document--keydown="actions.escape">
 	<?php ohmylms_get_template( 'global/ohmylms-celebration.php' ); ?>
 	
-	<span class="ohmylms-lesson-details-hamburger">
+	<span class="ohmylms-lesson-details-hamburger" role="button" tabindex="0" aria-label="<?php esc_attr_e('Open lesson navigation', 'ohmylms'); ?>" aria-expanded="false" data-wp-bind--aria-expanded="context.sidebarOpen" data-wp-on--click="actions.openSidebar" data-wp-on--keydown="actions.sidebarKey">
 		<?php include(OHMYLMS_DIR . '/assets/images/icon/hamburger-icon.php'); ?>
 	</span>
 	

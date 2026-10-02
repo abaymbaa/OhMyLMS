@@ -7,8 +7,10 @@ function ohmylms_register_activity($id,array $definition) { \OhMyLMS\Extensions\
 function ohmylms_register_extension_settings($id,array $definition) { \OhMyLMS\Extensions\Settings::register($id,$definition); }
 function ohmylms_register_checkout_field($id,array $definition) { \OhMyLMS\Extensions\CheckoutFields::register($id,$definition); }
 function ohmylms_render_slot($name,array $context=[]) { \OhMyLMS\Extensions\Slots::render($name,$context); }
+function ohmylms_enqueue_interactivity_module($id) { \OhMyLMS\Extensions\Interactivity::enqueue($id); }
 add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
 \OhMyLMS\Extensions\SourceAssets::init();
+\OhMyLMS\Extensions\Interactivity::init();
 \OhMyLMS\Extensions\Settings::init();
 \OhMyLMS\Extensions\CheckoutFields::init();
 \OhMyLMS\Extensions\Slots::init();

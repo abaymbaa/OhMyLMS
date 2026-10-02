@@ -28,7 +28,8 @@ class EngagementHook
         add_action( 'ohmylms_after_assignment_submitted', array( $this, 'after_assignment_submitted' ), 10, 3 );
         add_action( 'ohmylms_pro_after_assignment_review', array( $this, 'assignment_achievement' ), 10, 4 );
         add_action( 'ohmylms_after_point_added', array( $this, 'after_point_added' ), 10, 2 );
-        add_action( 'wp_footer', array( $this, 'show_celebration' ), 10 );
+        // Render and enqueue before WordPress prints import maps/modules in the footer.
+        add_action( 'wp_footer', array( $this, 'show_celebration' ), 2 );
         add_action( 'comment_post', array( $this, 'after_comment' ), 10 );
         add_action( 'user_register', array( $this, 'after_user_register' ), 10 );
         add_action( 'ohmylms_after_enrolled_student', array( $this, 'after_enrolled_student' ), 10 );
@@ -455,6 +456,7 @@ class EngagementHook
         }
 
         if ( ! empty( $message ) ) {
+        ohmylms_get_template('global/ohmylms-celebration.php');
         ?>
             <script>
             document.addEventListener("DOMContentLoaded", function () {

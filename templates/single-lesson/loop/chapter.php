@@ -18,11 +18,12 @@ $chapter_title 			            = $chapter->get_name();
 $current_chapter_id                 = ohmylms_get_chapter_id_by_content_id(get_the_ID());
 $is_active = $current_chapter_id    == $chapter_id ? 'active' : '';
 $display = $current_chapter_id      == $chapter_id ? 'block' : 'none';
+ohmylms_enqueue_interactivity_module('ohmylms/ui');
 ?>
 
 
-<div class="ohmylms-accordion-item <?php echo $is_active ?>">
-	<div class="ohmylms-accordion-head" role="button" tabindex="0" aria-expanded="true" aria-controls="lms-accordion-body-<?php echo $chapter_id; ?>" id="lms-accordion-head-<?php echo $chapter_id; ?>">
+<div class="ohmylms-accordion-item <?php echo $is_active ?>" data-wp-interactive="ohmylms/ui" <?php echo wp_interactivity_data_wp_context(['open' => (bool) $is_active]); ?> data-wp-class--active="context.open">
+	<div class="ohmylms-accordion-head" role="button" tabindex="0" aria-expanded="<?php echo $is_active ? 'true' : 'false'; ?>" data-wp-bind--aria-expanded="context.open" data-wp-on--click="actions.toggle" data-wp-on--keydown="actions.keyToggle" aria-controls="lms-accordion-body-<?php echo $chapter_id; ?>" id="lms-accordion-head-<?php echo $chapter_id; ?>">
 		<?php
 		$is_lesson_completed = $chapter->maybe_all_content_is_completed(get_current_user_id());
 		$lessonProgress = $chapter->total_completion_rate(get_current_user_id());
@@ -46,7 +47,7 @@ $display = $current_chapter_id      == $chapter_id ? 'block' : 'none';
 		</div>
 	</div>
 
-	<div class="ohmylms-accordion-body" id="lms-accordion-body-<?php echo $chapter_id; ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo $chapter_id; ?>" style="display: <?php echo $display; ?>">
+	<div class="ohmylms-accordion-body" id="lms-accordion-body-<?php echo $chapter_id; ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo $chapter_id; ?>" style="display: <?php echo $display; ?>" data-wp-style--display="state.display">
 		<ul class="ohmylms-lesson-list">
 			<?php
 			foreach ( $chapter_lessons as $lesson ) {

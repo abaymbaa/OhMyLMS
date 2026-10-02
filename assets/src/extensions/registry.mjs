@@ -5,6 +5,7 @@ export const KINDS = Object.freeze([
   'editor-panel',
   'question-editor',
   'lesson-editor',
+  'slash-command',
   'slot',
   'membership-settings',
   'checkout-field',
@@ -23,13 +24,17 @@ export function createRegistry() {
     if (!/^[a-z][a-z0-9_-]*$/.test(id))
       throw new TypeError('Extension IDs must be lowercase slugs.');
     if (entries.get(kind).has(id)) throw new Error(`Duplicate extension: ${kind}/${id}`);
+    // Slash-menu commands run an editor action instead of rendering a component.
+    const behavior = kind === 'slash-command' ? 'action' : 'render';
     if (
       !definition ||
       typeof definition.label !== 'string' ||
       !definition.label.trim() ||
-      typeof definition.render !== 'function'
+      typeof definition[behavior] !== 'function'
     )
-      throw new TypeError('Extensions require a label and render component.');
+      throw new TypeError(
+        `Extensions require a label and ${behavior} ${behavior === 'action' ? 'function' : 'component'}.`,
+      );
     if (definition.apiVersion !== undefined && definition.apiVersion !== API_VERSION)
       throw new Error('Unsupported extension API version.');
     if (definition.priority !== undefined && !Number.isFinite(definition.priority))
@@ -69,6 +74,7 @@ export function createRegistry() {
     registerEditorPanel: 'editor-panel',
     registerQuestionEditor: 'question-editor',
     registerLessonEditor: 'lesson-editor',
+    registerSlashCommand: 'slash-command',
     registerSlot: 'slot',
     registerMembershipSettings: 'membership-settings',
     registerCheckoutField: 'checkout-field',

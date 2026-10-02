@@ -12,6 +12,11 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
     );
 
     public static $prefixLengthsPsr4 = array (
+        'W' =>
+        array (
+            'WP\\McpSchema\\' => 13,
+            'WP\\MCP\\' => 7,
+        ),
         'S' =>
         array (
             'Svg\\' => 4,
@@ -33,9 +38,21 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         array (
             'Dompdf\\' => 7,
         ),
+        'A' =>
+        array (
+            'Automattic\\Jetpack\\Autoloader\\' => 30,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'WP\\McpSchema\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/wordpress/php-mcp-schema/src',
+        ),
+        'WP\\MCP\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/wordpress/mcp-adapter/includes',
+        ),
         'Svg\\' =>
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
@@ -59,6 +76,10 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'Dompdf\\' =>
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+        ),
+        'Automattic\\Jetpack\\Autoloader\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src',
         ),
     );
 
@@ -144,6 +165,7 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'Action_Scheduler\\WP_CLI\\Migration_Command' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/Migration_Command.php',
         'Action_Scheduler\\WP_CLI\\ProgressBar' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/ProgressBar.php',
         'Action_Scheduler\\WP_CLI\\System_Command' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/System_Command.php',
+        'Automattic\\Jetpack\\Autoloader\\AutoloadGenerator' => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php',
         'CodeRex\\ECommerce\\CustomEndpoints' => __DIR__ . '/../..' . '/packages/e-commerce/includes/CustomEndpoints.php',
         'CodeRex\\ECommerce\\DataStore\\SubscriptionStore' => __DIR__ . '/../..' . '/packages/e-commerce/includes/DataStore/SubscriptionStore.php',
         'CodeRex\\Ecommerce\\Abstracts\\Data' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Abstracts/Data.php',

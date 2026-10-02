@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { MCPSettings } from './MCPSettings';
 export function createSettingsPage(readRuntime) {
   return function SettingsPage() {
     const {
@@ -279,6 +280,11 @@ export function createSettingsPage(readRuntime) {
       })(),
       W = [
         {
+          label: <React.Fragment>{(0, I18n.__)('MCP connections', 'ohmylms')}</React.Fragment>,
+          key: 'mcp-settings',
+          children: <MCPSettings />,
+        },
+        {
           label: <React.Fragment>{(0, I18n.__)('General', 'ohmylms')}</React.Fragment>,
           key: 'general-settings',
           children: (
@@ -416,7 +422,7 @@ export function createSettingsPage(readRuntime) {
             className={'ohmylms-full-screen-height ohmylms-settings-page'}
           >
             <Controls.SpacerWP marginBottom={0} padding={7.5}>
-              {n && !O && (
+              {n && !O && x !== 'mcp-settings' && (
                 <React.Fragment>
                   <Controls.SkeletonWP
                     active={!0}

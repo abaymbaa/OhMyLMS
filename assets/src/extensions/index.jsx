@@ -1,5 +1,6 @@
 import { createElement, createRoot, render } from '@wordpress/element';
 import { createRegistry } from './registry.mjs';
+import { registerBuiltinSlashCommands, slashGroups } from './slashCommands.mjs';
 import { ExtensionSlot } from './ExtensionSlot';
 import * as api from './api.mjs';
 import { MembershipSettingsPanels } from './MembershipSettingsPanels';
@@ -27,6 +28,7 @@ import { setupComponents } from '../features/setup';
 import { aiCourseComponents } from '../features/ai-course-outline';
 import { mountRegistration } from '../features/students/mountRegistration';
 const registry = createRegistry();
+registerBuiltinSlashCommands(registry);
 const roots = new WeakMap();
 const publicApi = {
   ...registry,
@@ -67,6 +69,7 @@ const publicApi = {
     const entry = registry.get('lesson-editor', editor.lesson?.type);
     return entry?.enabled ? createElement(LessonEditor, { entry, editor }) : fallback;
   },
+  slashGroups: () => slashGroups(registry),
   questionTypes(store) {
     const manifest = window.ohmylmsExtensionManifest?.question || {};
     return registry

@@ -4,6 +4,7 @@ namespace OhMyLMS\Extensions;
 final class Bootstrap {
     public static function init() {
         QuestionTypes::register_defaults();
+        Activities::register_defaults();
         foreach (['text','audio','video'] as $type) Registry::register('lesson',$type,[
             'label'=>ucfirst($type),'render'=>static function(){ the_content(); },'editor'=>['format'=>'wordpress-content'],
         ]);
@@ -33,7 +34,8 @@ final class Bootstrap {
     public static function activity($attributes, $content='') {
         $definition=Registry::get('activity',$attributes['type'] ?? '');
         if (!$definition) return '';
-        $data=json_decode($attributes['data'] ?? '{}',true);
+        // Shortcodes may carry plain attributes (prompt="..." answer="...") instead of a JSON data blob.
+        $data=isset($attributes['data']) ? json_decode($attributes['data'],true) : array_diff_key((array)$attributes,['type'=>1]);
         if (!is_array($data)) return '';
         ob_start(); call_user_func($definition['render'],$data); return ob_get_clean();
     }

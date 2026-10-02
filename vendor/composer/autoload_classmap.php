@@ -87,6 +87,7 @@ return array(
     'Action_Scheduler\\WP_CLI\\Migration_Command' => $baseDir . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/Migration_Command.php',
     'Action_Scheduler\\WP_CLI\\ProgressBar' => $baseDir . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/ProgressBar.php',
     'Action_Scheduler\\WP_CLI\\System_Command' => $baseDir . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/System_Command.php',
+    'Automattic\\Jetpack\\Autoloader\\AutoloadGenerator' => $vendorDir . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php',
     'CodeRex\\ECommerce\\CustomEndpoints' => $baseDir . '/packages/e-commerce/includes/CustomEndpoints.php',
     'CodeRex\\ECommerce\\DataStore\\SubscriptionStore' => $baseDir . '/packages/e-commerce/includes/DataStore/SubscriptionStore.php',
     'CodeRex\\Ecommerce\\Abstracts\\Data' => $baseDir . '/packages/e-commerce/includes/Abstracts/Data.php',

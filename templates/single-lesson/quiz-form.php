@@ -25,10 +25,12 @@ $is_timer 	= $quiz->get_timer() > 0 ? true : false;
 
 $settings = $quiz->get_settings();
 $quiz_layout = is_array($settings) && isset($settings['layout']) ? $settings['layout'] : 'one_question_per_page';
+if (!in_array($quiz_layout, ['one_question_per_page', 'all_questions_in_one_page', 'number_of_questions_per_page'], true)) $quiz_layout = 'one_question_per_page';
 $layout_class = '';
 $questions_per_group = '';
 $totalGroups = '';
 $supported_question_count = 0;
+$supported_question_types = apply_filters('ohmylms_supported_question_types', array_keys(\OhMyLMS\Extensions\Registry::all('question')));
 foreach ($questions as $index => $question){
     $supported_question_types = array_keys(\OhMyLMS\Extensions\Registry::all('question'));
     $supported_question_types = apply_filters('ohmylms_supported_question_types', $supported_question_types);
@@ -52,6 +54,14 @@ if('all_questions_in_one_page' === $quiz_layout){
 if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
     shuffle($questions);
 }
+
+// Keep supported questions contiguous so grouped layouts and add-ons share the same page indices.
+$questions = array_values(array_filter($questions, static function ($question) use ($supported_question_types) {
+    return in_array($question['settings']['type'], $supported_question_types, true);
+}));
+$supported_question_count = count($questions);
+if ($quiz_layout === 'number_of_questions_per_page') $totalGroups = (int) ceil($supported_question_count / $questions_per_group);
+ob_start();
 
 
 ?>
@@ -168,6 +178,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
     </div> -->
 
     <form action="" method="post">
+        <?php ohmylms_render_slot('student.quiz.before', ['quizId' => get_the_ID(), 'attemptId' => (int) $attempt['id']]); ?>
         <div class="ohmylms-quiz-form">
 			<input type="hidden" name="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
             <div class="ohmylms-container">
@@ -347,5 +358,17 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                 </div>
             </div>
         </div>
+        <?php ohmylms_render_slot('student.quiz.after', ['quizId' => get_the_ID(), 'attemptId' => (int) $attempt['id']]); ?>
     </form>
 </section>
+<?php
+$duration = max(0, (int) round($timer * 60));
+echo \OhMyLMS\Extensions\Interactivity::quiz(ob_get_clean(), [
+    'quizId' => (int) get_the_ID(), 'attemptId' => (int) $attempt['id'], 'layout' => $quiz_layout,
+    'page' => 1, 'perPage' => max(1, (int) $questions_per_group),
+    'totalPages' => max(1, $quiz_layout === 'all_questions_in_one_page' ? 1 : ($quiz_layout === 'number_of_questions_per_page' ? $totalGroups : $supported_question_count)),
+    'errors' => (object) [], 'submitting' => false, 'exitOpen' => false, 'error' => '',
+    'timed' => $is_timer, 'duration' => $duration, 'remaining' => $duration,
+    'ajaxUrl' => admin_url('admin-ajax.php'), 'expiryNonce' => wp_create_nonce('quiz_exit_submission'),
+    'submissionError' => __('Submission failed. Your answers remain on this page. Please press Submit to retry.', 'ohmylms'),
+]); // phpcs:ignore WordPress.Security.EscapeOutput -- templates escape their own fields.

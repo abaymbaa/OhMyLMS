@@ -6,7 +6,7 @@
  * Author: OhMyLMS contributors; original work by WPFunnels Team
  * License: GPL-2.0-or-later
  * Text Domain: ohmylms
- * Requires at least: 6.0
+ * Requires at least: 6.8
  * Requires PHP: 7.4
  */
 defined('ABSPATH') || exit;
@@ -33,6 +33,7 @@ define('OHMYLMS_PRO_URL', plugins_url('', __FILE__));
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/includes/compatibility.php';
 require_once __DIR__ . '/includes/extensions.php';
+require_once __DIR__ . '/includes/mcp.php';
 if (!class_exists('ActionScheduler', false)) require_once __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
 require_once __DIR__ . '/includes/Packages.php';
 require_once __DIR__ . '/includes/OhMyLMS.php';

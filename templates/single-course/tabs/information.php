@@ -22,11 +22,14 @@ $chapter_classs = 'ohmylms-chapter-layout-1';
 
 if( 'layout_2' === $single_course_layout ) {
 	$chapter_classs = 'ohmylms-chapter-layout-2';
+    ohmylms_enqueue_interactivity_module('ohmylms/curriculum');
 }
+$expanded = [];
+foreach ($chapters as $chapter) $expanded[$chapter->get_id()] = false;
 
 ?>
 
-<div class="ohmylms-course-chapters <?php echo $chapter_classs; ?>">
+<div class="ohmylms-course-chapters <?php echo $chapter_classs; ?>" <?php if ($single_course_layout === 'layout_2') { echo 'data-wp-interactive="ohmylms/curriculum" ' . wp_interactivity_data_wp_context(['expanded' => (object) $expanded, 'showAll' => false]); } ?>>
 	<?php if( 'layout_2' === $single_course_layout && count($chapters) > 0 ) { ?>
 		<div class="chapters-header">
 			<div class="chapters-header-left">
@@ -70,11 +73,11 @@ if( 'layout_2' === $single_course_layout ) {
 
 			<div class="chapters-header-right">
 				<div class="ohmylms-chapter-toggle">
-					<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="ohmylms-chapters">
+					<button class="chapter-expand" type="button" aria-expanded="false" aria-controls="ohmylms-chapters" data-wp-on--click="actions.expand" data-wp-bind--hidden="state.allExpanded">
 						<?php echo __( 'Expand all chapters', 'ohmylms' ); ?>
 					</button>
 
-					<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="ohmylms-chapters" style="display: none;">
+					<button class="chapter-collapse" type="button" aria-expanded="true" aria-controls="ohmylms-chapters" hidden data-wp-on--click="actions.collapse" data-wp-bind--hidden="!state.allExpanded">
 						<?php echo __( 'Collapse all chapters', 'ohmylms' ); ?>
 					</button>
 				</div>
@@ -93,7 +96,7 @@ if( 'layout_2' === $single_course_layout ) {
 
 		$chapter_lesson_titles 	= array();?>
 
-		<div class="ohmylms-single-chapter">
+		<div class="ohmylms-single-chapter" <?php if ($single_course_layout === 'layout_2') { echo wp_interactivity_data_wp_context(['chapterId' => (int) $chapter_id]) . ' data-wp-class--active="state.chapterOpen" data-wp-style--display="state.chapterDisplay"'; } ?>>
 			<?php if( 'layout_1' === $single_course_layout ) { ?>
 				<div class="chapter-title-wrapper">
 					<h2 class="chapter-title">
@@ -111,7 +114,7 @@ if( 'layout_2' === $single_course_layout ) {
 			<?php } ?>
 
 			<?php if( 'layout_2' === $single_course_layout ) { ?>
-				<h3 class="chapter-title" role="button" tabindex="0" aria-expanded="false">
+				<h3 class="chapter-title" role="button" tabindex="0" aria-expanded="false" data-wp-bind--aria-expanded="state.chapterOpen" data-wp-on--click="actions.toggle" data-wp-on--keydown="actions.key">
 					<span class="arrow">
 						<svg width="12" height="7" fill="none" viewBox="0 0 12 7" xmlns="http://www.w3.org/2000/svg"><path fill="#A1A1AA" d="M11.59.841a.832.832 0 00-1.184 0L6.59 4.658a.833.833 0 01-1.184 0L1.59.84A.833.833 0 10.406 2.016l3.825 3.825a2.5 2.5 0 003.534 0l3.825-3.825a.833.833 0 000-1.175z"/></svg>
 					</span>
@@ -140,7 +143,7 @@ if( 'layout_2' === $single_course_layout ) {
 				</h3>
 			<?php } ?>
 
-			<ul class="ohmylms-chapter-content-list <?php echo 'layout_1' === $single_course_layout && count($chapter_lessons) > 2 ? 'enabled-readmore' : '' ?>">
+			<ul class="ohmylms-chapter-content-list <?php echo 'layout_1' === $single_course_layout && count($chapter_lessons) > 2 ? 'enabled-readmore' : '' ?>" <?php if ($single_course_layout === 'layout_2') echo 'data-wp-style--display="state.display"'; ?>>
 				<?php
 					//----add chapter description in the li item for layout 2----
 					if( 'layout_2' === $single_course_layout && $chapter->get_description()) {
@@ -281,7 +284,7 @@ if( 'layout_2' === $single_course_layout ) {
 		$additional_chapters = count($chapters) - 5;
 		$more_section_text = __( 'More Sections', 'ohmylms' );
 
-		echo '<button type="button" class="show-more-chapter">' . $additional_chapters . ' ' . $more_section_text . '<svg width="12" height="7" fill="none" viewBox="0 0 12 7" xmlns="http://www.w3.org/2000/svg"><path fill="var(--ohmylms-primary-color)" d="M11.59.841a.832.832 0 00-1.184 0L6.59 4.658a.833.833 0 01-1.184 0L1.59.84A.833.833 0 10.406 2.016l3.825 3.825a2.5 2.5 0 003.534 0l3.825-3.825a.833.833 0 000-1.175z"/></svg></button>';
+		echo '<button type="button" class="show-more-chapter" data-wp-on--click="actions.showAll" data-wp-bind--hidden="context.showAll">' . $additional_chapters . ' ' . $more_section_text . '<svg width="12" height="7" fill="none" viewBox="0 0 12 7" xmlns="http://www.w3.org/2000/svg"><path fill="var(--ohmylms-primary-color)" d="M11.59.841a.832.832 0 00-1.184 0L6.59 4.658a.833.833 0 01-1.184 0L1.59.84A.833.833 0 10.406 2.016l3.825 3.825a2.5 2.5 0 003.534 0l3.825-3.825a.833.833 0 000-1.175z"/></svg></button>';
 	}
 
 	?>
