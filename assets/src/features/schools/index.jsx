@@ -8,7 +8,10 @@ const t = (text) => __(text, 'ohmylms');
 const api = (path, data, method = 'POST') =>
   request(config, path, { method, body: data ? JSON.stringify(data) : undefined });
 
-function useRemote(path, revision) {
+// Skill reports live outside the school API; empty when practice and skills are switched off.
+const skillsConfig = config?.skillsApi ? { ...config, api: config.skillsApi } : null;
+
+function useRemote(path, revision, source = config) {
   const [state, setState] = useState({ path, data: null, error: '', loading: true });
   useEffect(() => {
     if (!path) {
@@ -22,7 +25,7 @@ function useRemote(path, revision) {
       error: '',
       loading: true,
     }));
-    request(config, path, { signal: controller.signal }).then(
+    request(source, path, { signal: controller.signal }).then(
       (data) => {
         if (!controller.signal.aborted) setState({ path, data, error: '', loading: false });
       },
@@ -386,6 +389,13 @@ function Family({ revision }) {
                 child={child}
                 revision={revision}
               />
+              {skillsConfig && (
+                <ChildSkills
+                  key={`skills-${child.school_id}-${child.student_user_id}`}
+                  child={child}
+                  revision={revision}
+                />
+              )}
             </>
           ) : (
             <p>{t('No linked children yet.')}</p>
@@ -581,6 +591,122 @@ function ClassView({ classroom, isAdmin, revision, run }) {
           {t('Archive class')}
         </button>
       )}
+      {skillsConfig && <ClassSkills classroom={classroom} revision={revision} />}
+    </section>
+  );
+}
+
+const levelBadge = (level, label, reviewDue) => (
+  <>
+    <span className={`ohmylms-skill-level ohmylms-skill-${level}`}>{label}</span>
+    {reviewDue && <span className="ohmylms-skill-review"> · {t('Review due')}</span>}
+  </>
+);
+
+/** A guardian's view of one child's skill levels and suggested next steps. */
+function ChildSkills({ child, revision }) {
+  const state = useRemote(
+    `reports/skills/students/${child.student_user_id}?school_id=${child.school_id}`,
+    revision,
+    skillsConfig,
+  );
+  return (
+    <section className="ohmylms-child-skills">
+      <h3>{t('Skills')}</h3>
+      <p>
+        {t(
+          'Skill levels come from quiz answers, lesson checks and practice. They are separate from grades.',
+        )}
+      </p>
+      <Remote state={state}>
+        {(data) => (
+          <>
+            <Table
+              rows={data.skills}
+              columns={[
+                ['name', 'Skill'],
+                [
+                  'level',
+                  'Level',
+                  (level, row) => levelBadge(level, row.level_label, row.review_due),
+                ],
+                ['independent_correct', 'Correct on their own'],
+                ['families', 'Kinds of question'],
+              ]}
+            />
+            {data.recommendations?.length > 0 && (
+              <>
+                <h4>{t('Suggested next steps')}</h4>
+                <ul className="ohmylms-recommendations">
+                  {data.recommendations
+                    .filter((item) => item.skill)
+                    .map((item, index) => (
+                      <li key={`${item.type}-${item.skill.id}-${index}`}>
+                        <strong>{item.skill.name}</strong> — {item.message}
+                        {(item.lessons || []).map((lesson) => (
+                          <span key={lesson.id}>
+                            {' '}
+                            <a href={lesson.url}>{lesson.title}</a>
+                          </span>
+                        ))}
+                      </li>
+                    ))}
+                </ul>
+              </>
+            )}
+          </>
+        )}
+      </Remote>
+    </section>
+  );
+}
+
+/** Class skill matrix for the class's teachers: one row per student, one column per skill. */
+function ClassSkills({ classroom, revision }) {
+  const state = useRemote(`reports/skills?class_id=${classroom.id}`, revision, skillsConfig);
+  return (
+    <section className="ohmylms-class-skills">
+      <h4>{t('Class skills')}</h4>
+      <Remote state={state}>
+        {(data) =>
+          data.skills.length && data.students.length ? (
+            <div className="ohmylms-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{t('Student')}</th>
+                    {data.skills.map((skill) => (
+                      <th key={skill.id} scope="col">
+                        {skill.code ? `${skill.code} ` : ''}
+                        {skill.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.students.map((student) => (
+                    <tr key={student.id}>
+                      <th scope="row">{student.name}</th>
+                      {data.skills.map((skill) => {
+                        const cell = student.skills?.[skill.id];
+                        return (
+                          <td key={skill.id}>
+                            {cell
+                              ? levelBadge(cell.level, data.levels[cell.level], cell.review_due)
+                              : data.levels['not-assessed']}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="ohmylms-empty">{t('No skill evidence for this class yet.')}</p>
+          )
+        }
+      </Remote>
     </section>
   );
 }

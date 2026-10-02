@@ -46,7 +46,8 @@ final class Recommendations {
         foreach ($items as &$item) {
             $skill = Taxonomy::describe($item['term_id']);
             $item['skill'] = $skill ? ['id' => $skill['id'], 'name' => $skill['name']] : null;
-            $item['lessons'] = array_map(static function ($id) { return ['id' => $id, 'title' => get_the_title($id), 'url' => get_permalink($id)]; }, array_slice($item['lessons'], 0, 3));
+            $published = array_values(array_filter($item['lessons'], static function ($id) { return get_post_status($id) === 'publish'; }));
+            $item['lessons'] = array_map(static function ($id) { return ['id' => $id, 'title' => get_the_title($id), 'url' => get_permalink($id)]; }, array_slice($published, 0, 3));
             $item['prerequisites'] = array_map(static function ($id) { $term = get_term($id, Taxonomy::NAME); return ['id' => (int) $id, 'name' => $term && !is_wp_error($term) ? $term->name : '']; }, $item['prerequisites']);
         }
         return array_slice($items, 0, $limit);

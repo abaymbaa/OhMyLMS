@@ -63,7 +63,7 @@ final class Views {
         wp_enqueue_script('ohmylms-schools'); wp_enqueue_style('ohmylms-schools');
         static $configured = false;
         if (!$configured) {
-            $config = ['api' => rest_url('ohmylms/v1/school/'), 'nonce' => wp_create_nonce('wp_rest'), 'loggedIn' => is_user_logged_in(), 'loginUrl' => wp_login_url(self::portal_url()), 'logoutUrl' => wp_logout_url(self::portal_url()), 'portalUrl' => self::portal_url(), 'googleUrl' => \OhMyLMS\Services\GoogleAuthService::is_configured() ? add_query_arg('redirect_to', self::portal_url(), rest_url('ohmylms/v1/auth/google')) : ''];
+            $config = ['api' => rest_url('ohmylms/v1/school/'), 'nonce' => wp_create_nonce('wp_rest'), 'loggedIn' => is_user_logged_in(), 'loginUrl' => wp_login_url(self::portal_url()), 'logoutUrl' => wp_logout_url(self::portal_url()), 'portalUrl' => self::portal_url(), 'googleUrl' => \OhMyLMS\Services\GoogleAuthService::is_configured() ? add_query_arg('redirect_to', self::portal_url(), rest_url('ohmylms/v1/auth/google')) : '', 'skillsApi' => class_exists(\OhMyLMS\Practice\Frontend::class) && \OhMyLMS\Practice\Frontend::enabled() ? rest_url('ohmylms/v1/') : ''];
             if (is_admin()) {
                 $config['usersUrl'] = current_user_can('create_users') ? admin_url('user-new.php') : '';
                 $config['studentsUrl'] = current_user_can('manage_options') ? admin_url('admin.php?page=' . OHMYLMS_SLUG . '#/accounthub') : '';

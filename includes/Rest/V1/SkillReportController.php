@@ -52,14 +52,29 @@ class SkillReportController extends RestController {
     }
 
     public function student_permission(WP_REST_Request $request) {
+        $access = $this->student_access($request);
+        return is_wp_error($access) ? $access : true;
+    }
+
+    /**
+     * How the viewer reaches this learner: 'full' (the learner, an administrator or a
+     * teacher/course scope) or 'guardian' (summary and suggestions only, no answer log).
+     */
+    private function student_access(WP_REST_Request $request) {
+        if (!Schema::ready()) { return new WP_Error('ohmylms_reports_unavailable', __('Reports are not installed yet.', 'ohmylms'), ['status' => 503]); }
         $student = (int) $request['student'];
-        if ($student === get_current_user_id() || current_user_can('manage_options')) { return true; }
+        if (!is_user_logged_in()) { return new WP_Error('ohmylms_forbidden', __('Sign in to view skills.', 'ohmylms'), ['status' => rest_authorization_required_code()]); }
+        if ($student === get_current_user_id() || current_user_can('manage_options')) { return 'full'; }
         // Guardians and teachers see a learner only through an explicit school relationship.
         $school = (int) $request['school_id'];
-        if ($school && class_exists(Access::class) && (Access::guardian($school, $student) || (Access::school($school, ['school_admin', 'teacher']) && Access::student($school, $student)))) { return true; }
+        if ($school && class_exists(Access::class)) {
+            if (Access::school($school, ['school_admin', 'teacher']) && Access::student($school, $student)) { return 'full'; }
+            if (Access::guardian($school, $student)) { return 'guardian'; }
+        }
+        if (!(int) $request['class_id'] && !(int) $request['course_id']) { return new WP_Error('ohmylms_forbidden', __('This learner is not in your scope.', 'ohmylms'), ['status' => 403]); }
         $students = $this->scope_students($request);
         if (is_wp_error($students)) { return $students; }
-        return in_array($student, $students, true) ? true : new WP_Error('ohmylms_forbidden', __('This learner is not in your scope.', 'ohmylms'), ['status' => 403]);
+        return in_array($student, $students, true) ? 'full' : new WP_Error('ohmylms_forbidden', __('This learner is not in your scope.', 'ohmylms'), ['status' => 403]);
     }
 
     public function matrix(WP_REST_Request $request) {
@@ -92,6 +107,9 @@ class SkillReportController extends RestController {
         global $wpdb;
         $student = (int) $request['student'];
         Evidence::process(100);
+        if ($this->student_access($request) !== 'full') {
+            return rest_ensure_response(['skills' => Evidence::summary($student), 'recommendations' => Recommendations::for_student($student), 'evidence' => []]);
+        }
         $evidence = $wpdb->get_results($wpdb->prepare(
             "SELECT e.term_id, e.part_id, e.role, e.awarded, e.available, e.independent, e.first_try, e.difficulty, e.source_type, e.source_id, e.question_id, e.version_id, e.evidence_at, e.superseded
              FROM " . Schema::table('skill_evidence') . " e WHERE e.student_id=%d ORDER BY e.evidence_at DESC, e.id DESC LIMIT 200", $student
