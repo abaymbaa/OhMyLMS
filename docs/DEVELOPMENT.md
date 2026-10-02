@@ -8,7 +8,7 @@ For component conventions, factory contracts and the feature development workflo
 
 - `assets/src/manifest.json`: original SHA-256/size, asset-to-source and numeric module mappings.
 - `assets/src/modules/`: 831 extracted Webpack factories. Vendor-bundle modules are under `dist/vendors/`.
-- `assets/src/application/`: ordered fragments of factory 1841. `routes.js` is the admin route table, `screens/<feature>/` holds each screen (`*Route.js` is the memoized route wrapper, `*Screen.js` the implementation), and `shared/section-*.js` are unnamed byte-sized slices of shared code. Fragment order in `manifest.json` is significant; rebuilding must produce an identical `ohmylms.js`.
+- `assets/src/application/`: ordered fragments of factory 1841. `routes.js` is the admin route table, `screens/<feature>/` holds each screen (`*Route.js` is the memoized route wrapper, `*Screen.js` the implementation), and `shared/<topic>.js` are byte-sized slices of shared code, named after the feature they mostly contain (a slice can include helpers for neighbouring features because the original scope was cut by size, not by feature). Fragment order in `manifest.json` is significant; rebuilding must produce an identical `ohmylms.js`.
 - `assets/src/extensions/`: authored React components, registry, API client, error boundaries and editor integrations.
 - `assets/src/features/`: membership validation and 17 quiz/question React components, including an authored quiz hook/API client and choice-options editor. See QUIZ-SOURCE.md for the compatibility boundaries and tested coverage.
 - `tools/quiz-adapters.mjs`: checked integration of native quiz components into the recovered runtime.
