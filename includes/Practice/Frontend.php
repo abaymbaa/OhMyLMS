@@ -97,6 +97,7 @@ final class Frontend {
             wp_localize_script('ohmylms-inline-check', 'ohmylmsInlineCheck', Inline::client_config());
         }
         wp_enqueue_script('ohmylms-practice', plugins_url('assets/js/practice.js', OHMYLMS_FILE), ['ohmylms-inline-check'], OHMYLMS_VERSION, true);
+        wp_enqueue_style('ohmylms-quiz-a11y', plugins_url('assets/css/quiz-a11y.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
         wp_enqueue_style('ohmylms-practice', plugins_url('assets/css/practice.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
         wp_localize_script('ohmylms-practice', 'ohmylmsPractice', Inline::client_config() + ['practiceI18n' => [
             'start' => __('Start practice', 'ohmylms'),

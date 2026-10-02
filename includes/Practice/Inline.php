@@ -152,6 +152,7 @@ final class Inline {
         if (wp_script_is('ohmylms-inline-check', 'enqueued')) { return; }
         wp_enqueue_script('ohmylms-inline-check', plugins_url('assets/js/inline-check.js', OHMYLMS_FILE), [], OHMYLMS_VERSION, true);
         wp_localize_script('ohmylms-inline-check', 'ohmylmsInlineCheck', self::client_config());
+        wp_enqueue_style('ohmylms-quiz-a11y', plugins_url('assets/css/quiz-a11y.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
         wp_enqueue_style('ohmylms-practice', plugins_url('assets/css/practice.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
     }
 
