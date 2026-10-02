@@ -584,11 +584,12 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function localization_setup() {
-		load_plugin_textdomain( 'ohmylms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		// The plugin's own languages/ folder (this file lives in includes/).
+		load_plugin_textdomain( 'ohmylms', false, dirname( plugin_basename( OHMYLMS_FILE ) ) . '/languages/' );
 
 		// Load the React-pages translations.
 		if ( is_admin() ) {
-			wp_set_script_translations( 'ohmylms-app', 'ohmylms', OHMYLMS_FILE . 'languages/' );
+			wp_set_script_translations( 'ohmylms-app', 'ohmylms', OHMYLMS_DIR . '/languages' );
 		}
 	}
 
