@@ -132,8 +132,8 @@ export function EditModal({ id, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
-    window
-      .wp.apiFetch({ path: `/ohmylms/v1/school/users/${id}` })
+    window.wp
+      .apiFetch({ path: `/ohmylms/v1/school/users/${id}` })
       .then(setUser, (failure) => setError(failure.message));
   }, [id]);
   const fields = [

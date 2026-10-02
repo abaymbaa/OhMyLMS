@@ -43,6 +43,20 @@ export function adaptApplication(ast) {
         )
       )
         return;
+      // Old Students URL: keep bookmarks working by forwarding to Account Hub.
+      const hub = p.node.elements.findIndex(
+        (e) =>
+          t.isObjectExpression(e) &&
+          e.properties.some((v) => v.key?.name === 'path' && v.value?.value === '/accounthub'),
+      );
+      if (hub < 0) throw new Error('Application adapter drift: /accounthub route not found');
+      p.node.elements.splice(
+        hub + 1,
+        0,
+        parseExpression(
+          '({path:"/students",element:function(){React.useEffect(function(){var query=window.location.hash.split("?")[1];window.location.replace("#/accounthub"+(query?"?"+query:""));},[]);return null;}})',
+        ),
+      );
       p.replaceWith(t.callExpression(sdk('extendRoutes'), [p.node]));
       hits.routes++;
       p.skip();
