@@ -73,3 +73,26 @@ Five Communities admin components now build from assets/src/features/communities
 ## Dashboard and analytics source
 
 Eighteen components now build from assets/src/features/analytics through tools/analytics-adapters.mjs. They cover the dashboard, course analytics, earnings reports and supporting controls; the existing course-row source is reused. See the feature README for compatibility boundaries and verification.
+
+## Known issues
+
+- Source-built vendor bundles break the lesson editor. `tools/vendor-adapters.mjs` redirects the ESM copy of prosemirror-state to the CJS copy, but prosemirror-model and prosemirror-transform stay duplicated (ESM 58903/38262 vs CJS 77712/36553). In the browser, Enter and the `/` block menu throw `Can not convert <paragraph> to a Fragment (looks like multiple versions of prosemirror-model were loaded)`. Removing the state adapter is worse (`Adding different instances of a keyed plugin`). `SourceAssets::url()` therefore keeps `assets/dist/vendors/*` on the shipped files while the app and SDK use the source build. A proper fix must unify all three ProseMirror packages onto one copy, mapping the minified ESM export names; then remove that exception.
+
+## Block-based Text lessons and the future quiz/question engine
+
+Status: an embedded standalone WordPress block editor for Text lessons was tried and rolled back (the editing experience was not what was wanted). Text lessons use the original lesson editor again. Any future custom blocks must be added to that editor, or a new editor approach agreed first. Video and audio lessons are unchanged: the media is played directly from the lesson page. Video/audio lesson design will be discussed separately.
+
+- Instructors author. Students only view and interact.
+- Lessons render through `the_content()`. Lesson navigation uses full page loads today.
+
+### Requirements recorded for the Question Bank and Exam Engine (not built yet)
+
+Build these into the question bank / exam builder, not into the Text lesson editor.
+
+1. **Inline quiz blocks record performance data.** Quiz blocks inside Text lessons (`ohmylms/quiz` -> `quiz-question` -> `quiz-answer`, core paragraph/group/columns nested inside) feed a Student Performance dashboard used for recommendations and for skills mastered or needing improvement. They are not practice-only.
+2. **Skills.** Each question links to one or more skills (taxonomy terms). The old creatorlms-skills plugin was removed on purpose; build the skills model fresh in ohmylms.
+3. **Record every attempt**: user, lesson, question uuid, chosen option, correct/incorrect, timestamp. Keep a snapshot of correctness on each attempt.
+4. **Edits after attempts exist.** If a teacher changes a quiz after students have taken it, previous scores stay valid and performance is evaluated against what the student saw then. Questions need a persistent `uuid` and a version; attempts store the correctness snapshot.
+5. **Answer key stays server-side.** `isCorrect` is never output to the page. The Interactivity store posts the choice to a REST endpoint that grades and records it.
+6. **Anonymous students.** If a student is not logged in, keep the attempts in the browser (local storage). Ask them to create an account or log in right after the quiz ends, then attach the stored attempts to the account. Design the exam engine and question bank with this in mind.
+7. **Completion is unchanged.** Blocks never gate "Mark Complete".

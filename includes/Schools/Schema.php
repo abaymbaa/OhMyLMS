@@ -5,7 +5,7 @@ defined('ABSPATH') || exit;
 
 /** Additive, independently versioned school schema. Existing learning tables stay intact. */
 final class Schema {
-    const VERSION = '1';
+    const VERSION = '2';
     public static function table($name) {
         global $wpdb;
         return $wpdb->prefix . 'ohmylms_' . $name;
@@ -15,6 +15,9 @@ final class Schema {
         global $wpdb;
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $definitions = [
+            'course_classes' => "course_id bigint unsigned NOT NULL, class_id bigint unsigned NOT NULL, created_by bigint unsigned NOT NULL, created_at datetime NOT NULL, UNIQUE KEY course_class (course_id,class_id), KEY class_id (class_id)",
+            'course_class_students' => "course_id bigint unsigned NOT NULL, class_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, created_at datetime NOT NULL, UNIQUE KEY course_class_student (course_id,class_id,user_id), KEY course_user (course_id,user_id)",
+            'gradebook_overrides' => "course_id bigint unsigned NOT NULL, content_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, score decimal(12,4) NOT NULL, max_score decimal(12,4) NOT NULL, note text NOT NULL, updated_by bigint unsigned NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY grade_cell (course_id,content_id,user_id)",
             'schools' => "name varchar(190) NOT NULL, slug varchar(190) NOT NULL, timezone varchar(80) NOT NULL DEFAULT 'UTC', status varchar(20) NOT NULL DEFAULT 'active', created_by bigint unsigned NOT NULL, created_at datetime NOT NULL, UNIQUE KEY slug (slug)",
             'school_memberships' => "school_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, role varchar(30) NOT NULL, status varchar(20) NOT NULL DEFAULT 'active', joined_at datetime NOT NULL, UNIQUE KEY membership (school_id,user_id,role), KEY user_scope (user_id,status), KEY school_scope (school_id,status)",
             'school_student_profiles' => "school_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, external_student_id varchar(100) NOT NULL, UNIQUE KEY student (school_id,user_id), UNIQUE KEY external_student (school_id,external_student_id)",

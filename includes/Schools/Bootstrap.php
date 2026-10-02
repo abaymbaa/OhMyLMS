@@ -10,6 +10,7 @@ final class Bootstrap {
         add_action('init', [Schema::class, 'install'], 6);
         add_action('rest_api_init', [Controller::class, 'register']);
         add_action('rest_api_init', [ViewAs::class, 'register']);
+        add_action('rest_api_init', [Gradebook::class, 'register']);
         add_action('init', [ViewAs::class, 'protect_session'], 1);
         add_action('wp_footer', [ViewAs::class, 'banner']);
         add_action('admin_footer', [ViewAs::class, 'banner']);

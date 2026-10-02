@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { CourseGradebook } from './CourseGradebook';
 export function createCourseToolbar(readRuntime) {
   return function CourseToolbar(props) {
     const {
@@ -22,6 +23,7 @@ export function createCourseToolbar(readRuntime) {
       tz,
       y: WordPressData,
     } = readRuntime();
+    const [gradebookOpen, setGradebookOpen] = ReactHooks.useState(false);
     var t = true,
       activeStep = props.activeStep,
       r = (props.setActiveStep, props.courseDescription),
@@ -93,6 +95,9 @@ export function createCourseToolbar(readRuntime) {
       };
     return (
       <React.Fragment>
+        {gradebookOpen && (
+          <CourseGradebook courseId={Number(courseId)} onClose={() => setGradebookOpen(false)} />
+        )}
         <Controls.CardWP
           padding={'10px 10px 10px 20px'}
           className={'ohmylms-top-navigation '
@@ -190,6 +195,13 @@ export function createCourseToolbar(readRuntime) {
             </Controls.FlexItemWP>
             <Controls.FlexItemWP flex={1} className={'ohmylms-course-actions-wrapper'}>
               <Controls.FlexWP align={'center'} justify={'flex-end'} gap={1}>
+                <Controls.ButtonWP
+                  variant="secondary"
+                  disabled={loading || !Number(courseId)}
+                  onClick={() => setGradebookOpen(true)}
+                >
+                  {(0, I18n.__)('Gradebook', 'ohmylms')}
+                </Controls.ButtonWP>
                 {'content' === activeStep && (
                   <React.Fragment>
                     <Controls.ButtonWP variant={'primary'} onClick={N}>

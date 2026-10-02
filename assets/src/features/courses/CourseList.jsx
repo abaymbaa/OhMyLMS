@@ -1,6 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
+import { CourseGradebook } from './CourseGradebook';
 export function createCourseList(readRuntime) {
   return function CourseList() {
     const {
@@ -47,6 +48,7 @@ export function createCourseList(readRuntime) {
       z: Notifications,
     } = readRuntime();
     const [viewAs, setViewAs] = ReactHooks.useState(null);
+    const [gradebook, setGradebook] = ReactHooks.useState(null);
     var e = true,
       t = (0, WordPressData.useDispatch)(StoreModule.default),
       n = (0, WordPressData.useSelect)(function (e) {
@@ -894,6 +896,10 @@ export function createCourseList(readRuntime) {
             return (
               <Controls.DropdownMenuWP
                 controls={[
+                  {
+                    title: (0, I18n.__)('Gradebook', 'ohmylms'),
+                    onClick: () => setGradebook(Number(t.id)),
+                  },
                   ...(canViewAs()
                     ? ['student', 'instructor'].map((role) => ({
                         title: (0, I18n.__)(
@@ -1008,6 +1014,7 @@ export function createCourseList(readRuntime) {
       (
         <React.Fragment>
           {contextHolder}
+          {gradebook && <CourseGradebook courseId={gradebook} onClose={() => setGradebook(null)} />}
           {viewAs && <ViewAsModal {...viewAs} onClose={() => setViewAs(null)} />}
           <Controls.ContainerWP>
             <YG

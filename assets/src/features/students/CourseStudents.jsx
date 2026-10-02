@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { CourseGradebook } from '../courses/CourseGradebook';
 export function createCourseStudents(readRuntime) {
   return function CourseStudents() {
     const {
@@ -36,6 +37,7 @@ export function createCourseStudents(readRuntime) {
       z: Notifications,
       zn,
     } = readRuntime();
+    const [gradebookOpen, setGradebookOpen] = ReactHooks.useState(false);
     HG('ohmylms', 'courses');
     var e = (0, WordPressData.useDispatch)(StoreModule.default),
       t = (0, Router.Zp)(),
@@ -349,6 +351,15 @@ export function createCourseStudents(readRuntime) {
         <React.Fragment>
           <Controls.ContainerWP>
             {contextHolder}
+            {gradebookOpen && (
+              <CourseGradebook
+                courseId={Number(i)}
+                onClose={() => {
+                  setGradebookOpen(false);
+                  de();
+                }}
+              />
+            )}
             <Controls.SpacerWP marginY={4}>
               <Controls.FlexWP gap={4} justify={'space-between'}>
                 <Controls.CardWP>
@@ -366,6 +377,9 @@ export function createCourseStudents(readRuntime) {
                     </Controls.SpacerWP>
                   </Controls.FlexWP>
                 </Controls.CardWP>
+                <Controls.ButtonWP variant="secondary" onClick={() => setGradebookOpen(true)}>
+                  {(0, I18n.__)('Gradebook / Add class', 'ohmylms')}
+                </Controls.ButtonWP>
                 <Controls.ButtonWP
                   variant={'primary'}
                   onClick={se}
