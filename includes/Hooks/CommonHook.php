@@ -1315,7 +1315,7 @@ class CommonHook extends HookHandler {
 
 	function create_contact_on_mm_from_appsero_optin( $data ) {
 		if ( isset( $data['admin_email'], $data['first_name'], $data['last_name'] ) ) {
-			$json_body_data = json_encode(
+			$json_body_data = wp_json_encode(
 				array(
 					'email'      => $data['admin_email'],
 					'first_name' => $data['first_name'],

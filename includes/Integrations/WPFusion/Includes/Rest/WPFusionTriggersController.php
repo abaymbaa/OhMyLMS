@@ -271,7 +271,7 @@ class WPFusionTriggersController {
                 'content_type' => $content_type,
                 'content_id' => $content_id,
                 'action_type' => $action_type,
-                'action_data' => json_encode( $action_data ),
+                'action_data' => wp_json_encode( $action_data ),
                 'status' => $status,
             ),
             array( '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s' )
@@ -337,7 +337,7 @@ class WPFusionTriggersController {
                 'content_type' => $content_type,
                 'content_id' => $content_id,
                 'action_type' => $action_type,
-                'action_data' => json_encode( $action_data ),
+                'action_data' => wp_json_encode( $action_data ),
                 'status' => $status,
             ),
             array( 'id' => $id ),

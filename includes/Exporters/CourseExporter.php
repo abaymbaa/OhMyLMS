@@ -48,7 +48,7 @@ class CourseExporter {
         }
 
         // Convert data to JSON.
-        $json_data = json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $json_data = wp_json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         if (!$json_data) {
             wp_die(__('Error encoding course data to JSON.', 'ohmylms'));

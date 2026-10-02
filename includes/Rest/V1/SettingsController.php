@@ -590,23 +590,12 @@ class SettingsController extends RestController {
 	 * @return string The page title or empty string.
 	 */
 	private function get_page_title( $page_id ) {
-		global $wpdb;
-
 		if ( ! $page_id ) {
 			return '';
 		}
-
-		// Direct database query to get the post title
-		$title = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_title FROM {$wpdb->posts} WHERE ID = %d AND post_type = 'page' AND post_status = 'publish'",
-				$page_id
-			)
-		);
-
-		return $title ? $title : '';
+		$page = get_post( $page_id );
+		return $page && 'page' === $page->post_type && 'publish' === $page->post_status ? $page->post_title : '';
 	}
-
 
 	/**
 	 * Prepare a single item for response.

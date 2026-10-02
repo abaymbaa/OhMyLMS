@@ -23,7 +23,7 @@ class ScormHelper {
 			$log_message = sprintf( '[SCORM] [%s] %s', strtoupper( $level ), $message );
 
 			if ( ! empty( $context ) ) {
-				$log_message .= ' | Context: ' . json_encode( $context );
+				$log_message .= ' | Context: ' . wp_json_encode( $context );
 			}
 
 			error_log( $log_message );

@@ -136,7 +136,7 @@ class CreateContact {
 				: '',
 		);
 
-		$json_body_data = json_encode( $data );
+		$json_body_data = wp_json_encode( $data );
 		try {
 			if ( ! empty( $this->webHookUrl ) ) {
 				foreach ( $this->webHookUrl as $url ) {

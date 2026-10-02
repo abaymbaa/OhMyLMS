@@ -196,22 +196,36 @@ function Pager({ page, setPage, count }) {
   );
 }
 
-function Signup({ initialRole = 'student', onDone }) {
+function Signup({ initialRole = 'student', lockedRole = false, onDone }) {
   const [role, setRole] = useState(initialRole);
   return (
     <section>
-      <h2>{t('Create your account')}</h2>
+      <h2>
+        {t(
+          {
+            student: 'Student registration',
+            teacher: 'Teacher registration',
+            parent: 'Parent registration',
+          }[role],
+        )}
+      </h2>
       <p>{t('Start with an account. No course selection or purchase is required.')}</p>
-      <div className="ohmylms-tabs">
-        {['student', 'parent'].map((kind) => (
-          <button aria-pressed={role === kind} key={kind} onClick={() => setRole(kind)}>
-            {kind === 'parent' ? t('Parent / guardian') : t('Student')}
-          </button>
-        ))}
-      </div>
+      {!lockedRole && (
+        <div className="ohmylms-tabs">
+          {['student', 'teacher', 'parent'].map((kind) => (
+            <button aria-pressed={role === kind} key={kind} onClick={() => setRole(kind)}>
+              {kind === 'parent'
+                ? t('Parent / guardian')
+                : kind === 'teacher'
+                  ? t('Teacher')
+                  : t('Student')}
+            </button>
+          ))}
+        </div>
+      )}
       <Form
         key={role}
-        title={role === 'parent' ? 'Parent registration' : 'Student registration'}
+        title="Account details"
         submit="Create account"
         fields={[
           field('first_name', 'First name', 'text', false),
@@ -231,7 +245,7 @@ function Signup({ initialRole = 'student', onDone }) {
           onDone(result.message);
         }}
       />
-      {config.googleUrl && (
+      {config.googleUrl && !lockedRole && role === 'student' && (
         <a className="ohmylms-school-button secondary" href={config.googleUrl}>
           {t('Continue with Google')}
         </a>
@@ -241,7 +255,7 @@ function Signup({ initialRole = 'student', onDone }) {
       </p>
       <p>
         {t(
-          'School staff: sign in or create an account with your invited email, then accept your invitation. Staff permissions are granted by the invitation.',
+          'School and class access is assigned separately. If you have an invitation, sign in with the invited email address to accept it.',
         )}
       </p>
     </section>
@@ -1460,6 +1474,40 @@ function App({ view }) {
   );
 }
 
+function RegistrationBlock({ role }) {
+  const [message, setMessage] = useState('');
+  return (
+    <div className="ohmylms-school-shell ohmylms-account-block">
+      {config.loggedIn ? (
+        <>
+          <h2>{t('You are signed in')}</h2>
+          <p>
+            <a href={config.portalUrl}>{t('Open your dashboard')}</a>
+          </p>
+          <p>
+            <a href={config.logoutUrl}>{t('Sign out to create another account')}</a>
+          </p>
+        </>
+      ) : message ? (
+        <>
+          <p role="status" className="ohmylms-success">
+            {message}
+          </p>
+          <a href={config.loginUrl}>{t('Sign in')}</a>
+        </>
+      ) : (
+        <Signup initialRole={role} lockedRole onDone={setMessage} />
+      )}
+    </div>
+  );
+}
+
 document.querySelectorAll('[data-ohmylms-school-view]').forEach((node) => {
-  createRoot(node).render(<App view={node.dataset.ohmylmsSchoolView} />);
+  const view = node.dataset.ohmylmsSchoolView;
+  const role = {
+    'student-registration': 'student',
+    'teacher-registration': 'teacher',
+    'parent-registration': 'parent',
+  }[view];
+  createRoot(node).render(role ? <RegistrationBlock role={role} /> : <App view={view} />);
 });

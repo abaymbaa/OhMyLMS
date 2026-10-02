@@ -110,7 +110,6 @@ class CourseStore extends DataStore {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$course->set_id( $id );
-			flush_rewrite_rules(true);
 			$this->update_post_meta( $course );
 
 			/**
@@ -159,7 +158,6 @@ class CourseStore extends DataStore {
 				'thumbnail_id'       => get_post_thumbnail_id( $course->get_id() ),
 			)
 		);
-		flush_rewrite_rules(true);
 		$this->read_course_data( $course );
 	}
 
@@ -173,7 +171,6 @@ class CourseStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function update( &$course ) {
-		global $wpdb;
 		$slug = $course->get_slug( 'edit' );
 		if ( strpos( $slug, 'untitled' ) !== false && $course->get_name( 'edit' ) ) {
 			$slug = $course->get_name( 'edit' );
@@ -190,6 +187,7 @@ class CourseStore extends DataStore {
 		);
 		if ( $course->get_date_created( 'edit' ) ) {
 			$post_data['post_date_gmt'] = $course->get_post_date() ? gmdate( 'Y-m-d H:i:s', $course->get_post_date( 'edit' )->getTimestamp() ) : gmdate( 'Y-m-d H:i:s', $course->get_date_created( 'edit' )->getTimestamp() );
+			$post_data['post_date'] = get_date_from_gmt( $post_data['post_date_gmt'] );
 		}
 		if ( 'password_protected' == $course->get_access_type() ) {
 			$post_data['post_password'] = $course->get_password_protected();
@@ -199,13 +197,11 @@ class CourseStore extends DataStore {
 		$post_data['post_modified']     = current_time( 'mysql' );
 		$post_data['post_modified_gmt'] = current_time( 'mysql', 1 );
 
-		$wpdb->update(
-			$wpdb->posts,
-			$post_data,
-			array( 'ID' => $course->get_id() ),
-		);
-		clean_post_cache( $course->get_id() );
-		flush_rewrite_rules(true);
+		$result = wp_update_post( wp_slash( array_merge( array( 'ID' => $course->get_id() ), $post_data ) ), true );
+		if ( is_wp_error( $result ) ) {
+			throw new \RuntimeException( $result->get_error_message() );
+		}
+		$course->set_slug( get_post_field( 'post_name', $result ) );
 		$this->update_post_meta( $course );
 
 		/**

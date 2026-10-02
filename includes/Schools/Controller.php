@@ -48,12 +48,13 @@ final class Controller {
         Service::need(!is_user_logged_in(), 'You are already signed in.');
         Service::need(empty($data['website']), 'Unable to create this account.');
         $role = $data['role'] ?? 'student';
-        Service::need(in_array($role, ['student', 'parent'], true), 'Public registration is for students and parents only. Staff must accept an invitation.');
+        Service::need(in_array($role, ['student', 'teacher', 'parent'], true), 'Choose student, teacher or parent.');
         $email = sanitize_email($data['email'] ?? ''); $password = (string) ($data['password'] ?? '');
         Service::need(is_email($email) && !email_exists($email), 'Use a valid unused email, or sign in to your existing account.');
         Service::need(strlen($password) >= 12 && strlen($password) <= 128, 'Use a password between 12 and 128 characters.');
         $student_role = function_exists('ohmylms_get_assignable_student_role') ? ohmylms_get_assignable_student_role() : 'subscriber';
-        $id = wp_insert_user(['user_login' => 'learner-' . strtolower(wp_generate_password(16, false)), 'user_email' => $email, 'user_pass' => $password, 'first_name' => Service::text($data['first_name'] ?? ''), 'last_name' => Service::text($data['last_name'] ?? ''), 'display_name' => trim(Service::text($data['first_name'] ?? '') . ' ' . Service::text($data['last_name'] ?? '')) ?: __('Learner', 'ohmylms'), 'role' => $role === 'parent' ? 'ohmylms_parent' : $student_role]);
+        $roles = ['student' => $student_role, 'teacher' => 'ohmylms_teacher', 'parent' => 'ohmylms_parent'];
+        $id = wp_insert_user(['user_login' => 'learner-' . strtolower(wp_generate_password(16, false)), 'user_email' => $email, 'user_pass' => $password, 'first_name' => Service::text($data['first_name'] ?? ''), 'last_name' => Service::text($data['last_name'] ?? ''), 'display_name' => trim(Service::text($data['first_name'] ?? '') . ' ' . Service::text($data['last_name'] ?? '')) ?: __('Learner', 'ohmylms'), 'role' => $roles[$role]]);
         if (is_wp_error($id)) { throw new \RuntimeException($id->get_error_message(), 400); }
         if (\OhMyLMS\Services\EmailVerificationService::is_required() || $role === 'parent') { \OhMyLMS\Services\EmailVerificationService::generate_and_send($id); }
         Service::audit(0, 'account_created', $id);

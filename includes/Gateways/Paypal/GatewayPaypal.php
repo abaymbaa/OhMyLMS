@@ -704,7 +704,7 @@ class GatewayPaypal extends PaymentGateway {
                 ];
                 $response = wp_remote_request($this->webhook_url, array(
                     'method' => 'POST',
-                    'body' => json_encode(
+                    'body' => wp_json_encode(
                         array(
                             'parent_order_id'   => $original_order_id,
                             'order_id'          => $renewal_order_id,

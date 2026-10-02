@@ -62,63 +62,7 @@ class Ajax {
 			wp_send_json_error( array( 'message' => __( 'Unauthorized access', 'ohmylms' ) ) );
 		}
 
-		global $wpdb;
-
-		// Delete all OhMyLMS related transients
-		$count = $wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
-				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%'
-			)
-		);
-		
-		// Delete specific Mollie frontend test transients
-		$count += $wpdb->query(
-			"DELETE FROM {$wpdb->options} WHERE option_name IN ('_transient_timeout_mollie_methods_cache_frontend_test', '_transient_mollie_methods_cache_frontend_test')"
-		);
-
-		// Also delete transients with 'ohmylms' and 'ohmylms' prefix
-		$count += $wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
-				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
-				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%'
-			)
-		);
-
-		// For multisite, also delete from sitemeta
-		if ( is_multisite() ) {
-			$count += $wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s",
-					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
-					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
-					$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
-					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%'
-				)
-			);
-		}
+		$count = self::clear_transient_cache();
 
 		wp_send_json_success( 
 			array( 
@@ -129,6 +73,45 @@ class Ajax {
 				)
 			) 
 		);
+	}
+
+	/**
+	 * Clear known cache keys through core so object caches and hooks are respected.
+	 * SQL only discovers legacy keys: WordPress has no prefix enumeration API.
+	 *
+	 * @return int Number of transient values deleted (not database rows).
+	 */
+	public static function clear_transient_cache() {
+		global $wpdb;
+		$keys = array( 'ohmylms_count_comments', 'ohmylms_installing', 'mollie_methods_cache_test', 'mollie_methods_cache_live', 'mollie_methods_cache_frontend_test', 'mollie_methods_cache_frontend_live' );
+		foreach ( array( '_transient_', '_transient_timeout_' ) as $prefix ) {
+			foreach ( array( 'ohmylms_', 'mollie_methods_cache_' ) as $name ) {
+				$rows = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $prefix . $name ) . '%' ) );
+				foreach ( $rows as $row ) {
+					$keys[] = substr( $row, strlen( $prefix ) );
+				}
+			}
+		}
+		$count = 0;
+		foreach ( array_unique( $keys ) as $key ) {
+			$count += (int) delete_transient( $key );
+		}
+		$site_keys = array( 'update_plugins' );
+		foreach ( array( '_site_transient_', '_site_transient_timeout_' ) as $prefix ) {
+			foreach ( array( 'ohmylms_', 'update_ohmylms_' ) as $name ) {
+				$pattern = $wpdb->esc_like( $prefix . $name ) . '%';
+				$rows = is_multisite()
+					? $wpdb->get_col( $wpdb->prepare( "SELECT meta_key FROM {$wpdb->sitemeta} WHERE site_id = %d AND meta_key LIKE %s", get_current_network_id(), $pattern ) )
+					: $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $pattern ) );
+				foreach ( $rows as $row ) {
+					$site_keys[] = substr( $row, strlen( $prefix ) );
+				}
+			}
+		}
+		foreach ( array_unique( $site_keys ) as $key ) {
+			$count += (int) delete_site_transient( $key );
+		}
+		return $count;
 	}
 
 	/**

@@ -136,7 +136,7 @@ class GoogleMeetApiClient implements GoogleMeetApiInterface {
 		);
 
 		if ( ! empty( $data ) ) {
-			$args['body'] = json_encode( $data );
+			$args['body'] = wp_json_encode( $data );
 		}
 
 		$response = \wp_remote_request( $url, $args );

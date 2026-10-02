@@ -25,3 +25,4 @@
 .ohmylms-schools a{color:var(--school-accent)}
 .ohmylms-schools .ohmylms-people-tabs a{color:var(--school-muted)}
 .ohmylms-schools .ohmylms-people-tabs a[aria-current=page]{color:var(--school-accent)}
+.ohmylms-account-block{max-width:620px}.ohmylms-account-block .ohmylms-school-form fieldset{grid-template-columns:1fr}.ohmylms-account-block h2{margin-top:0}.ohmylms-account-block .login-remember label{flex-direction:row;align-items:center}.ohmylms-schools .ohmylms-account-block input[type=submit]{width:auto;cursor:pointer;background:var(--school-accent);color:#fff;border:0;padding:11px 20px}

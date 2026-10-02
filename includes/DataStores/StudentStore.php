@@ -616,7 +616,7 @@ public function get_enrolled_courses( $student ) {
 
 		if ( ! file_exists( $pdf_dir ) ) {
 			// Create directory if it doesn't exist
-			if ( ! mkdir( $pdf_dir, 0755, true ) ) {
+			if ( ! wp_mkdir_p( $pdf_dir ) ) {
 				return '#'; // Return fallback URL if directory creation fails
 			}
 		}

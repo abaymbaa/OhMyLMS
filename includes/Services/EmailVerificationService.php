@@ -79,7 +79,6 @@ class EmailVerificationService {
 	 * @return array{status: 'verified'|'expired'|'invalid', user_id: int}
 	 */
 	public static function verify_token_detailed( string $token ): array {
-		global $wpdb;
 
 		$invalid = array( 'status' => 'invalid', 'user_id' => 0 );
 
@@ -87,15 +86,16 @@ class EmailVerificationService {
 			return $invalid;
 		}
 
-		$user_id = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT user_id FROM {$wpdb->usermeta}
-				 WHERE meta_key = %s AND meta_value = %s
-				 LIMIT 1",
-				self::META_TOKEN,
-				$token
+		$user_ids = get_users(
+			array(
+				'meta_key' => self::META_TOKEN,
+				'meta_value' => $token,
+				'fields' => 'ID',
+				'number' => 1,
+				'count_total' => false,
 			)
 		);
+		$user_id = $user_ids ? (int) $user_ids[0] : 0;
 
 		if ( ! $user_id ) {
 			return $invalid;

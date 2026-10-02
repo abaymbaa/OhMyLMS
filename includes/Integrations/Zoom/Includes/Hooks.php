@@ -93,7 +93,7 @@ class Hooks {
             }
 
             if ( isset( $response['data'] ) && !empty( $response['data'] ) ) {
-                $encoded_meeting_data = json_encode( $response['data'] );
+                $encoded_meeting_data = wp_json_encode( $response['data'] );
                 if ( false !== $encoded_meeting_data ) {
                     update_post_meta( $session_id, '_zoom_meeting_data', $encoded_meeting_data );
                 } else {

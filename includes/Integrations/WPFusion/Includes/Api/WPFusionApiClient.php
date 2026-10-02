@@ -137,7 +137,7 @@ class WPFusionApiClient {
                 'Authorization' => 'Bearer ' . $this->api_key,
                 'Content-Type' => 'application/json',
             ),
-            'body' => json_encode( array(
+            'body' => wp_json_encode( array(
                 'user_id' => $user_id,
                 'tags' => $tags,
             ) ),
@@ -184,7 +184,7 @@ class WPFusionApiClient {
                 'Authorization' => 'Bearer ' . $this->api_key,
                 'Content-Type' => 'application/json',
             ),
-            'body' => json_encode( array(
+            'body' => wp_json_encode( array(
                 'user_id' => $user_id,
                 'tags' => $tags,
             ) ),
@@ -231,7 +231,7 @@ class WPFusionApiClient {
                 'Authorization' => 'Bearer ' . $this->api_key,
                 'Content-Type' => 'application/json',
             ),
-            'body' => json_encode( array(
+            'body' => wp_json_encode( array(
                 'user_id' => $user_id,
                 'fields' => $fields,
             ) ),

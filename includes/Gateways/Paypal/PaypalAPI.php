@@ -113,7 +113,7 @@ class PaypalAPI {
         ];
 
         if (!empty($params)) {
-            $args['body'] = json_encode($params);
+            $args['body'] = wp_json_encode($params);
         }
 
         $response = wp_remote_request($this->api_url . $endpoint, $args);

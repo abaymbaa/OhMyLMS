@@ -35,8 +35,8 @@ final class Views {
         }
     }
     public static function blocks() {
-        wp_register_script('ohmylms-school-blocks', plugins_url('assets/schools/blocks.js', OHMYLMS_FILE), ['wp-blocks', 'wp-element', 'wp-i18n'], filemtime(OHMYLMS_DIR . '/assets/schools/blocks.js'), true);
-        foreach (['student-registration', 'parent-registration', 'school-dashboard', 'teacher-dashboard', 'parent-dashboard', 'student-assignments'] as $kind) {
+        wp_register_script('ohmylms-school-blocks', plugins_url('assets/schools/blocks.js', OHMYLMS_FILE), ['wp-blocks', 'wp-block-editor', 'wp-element', 'wp-i18n'], filemtime(OHMYLMS_DIR . '/assets/schools/blocks.js'), true);
+        foreach (['student-registration', 'teacher-registration', 'parent-registration', 'sign-in', 'school-dashboard', 'teacher-dashboard', 'parent-dashboard', 'student-assignments'] as $kind) {
             register_block_type('ohmylms/' . $kind, ['api_version' => 2, 'editor_script' => 'ohmylms-school-blocks', 'render_callback' => function () use ($kind) { return self::render($kind); }]);
             add_shortcode('ohmylms_' . str_replace('-', '_', $kind), function () use ($kind) { return self::render($kind); });
         }
@@ -59,6 +59,7 @@ final class Views {
     public static function render($kind) {
         if (!defined('DONOTCACHEPAGE')) { define('DONOTCACHEPAGE', true); }
         self::assets();
+        if ($kind === 'sign-in') { return self::sign_in(); }
         wp_enqueue_script('ohmylms-schools'); wp_enqueue_style('ohmylms-schools');
         static $configured = false;
         if (!$configured) {
@@ -72,6 +73,18 @@ final class Views {
             $configured = true;
         }
         return '<div class="ohmylms-schools" data-ohmylms-school-view="' . esc_attr($kind) . '"><p>' . esc_html__('Loading OhMyLMS…', 'ohmylms') . '</p></div>';
+    }
+    private static function sign_in() {
+        wp_enqueue_style('ohmylms-schools');
+        $id = wp_unique_id('ohmylms-login-');
+        $body = is_user_logged_in()
+            ? '<p>' . esc_html__('You are signed in.', 'ohmylms') . '</p><p><a href="' . esc_url(self::portal_url()) . '">' . esc_html__('Open your dashboard', 'ohmylms') . '</a> · <a href="' . esc_url(wp_logout_url(get_permalink() ?: self::portal_url())) . '">' . esc_html__('Sign out', 'ohmylms') . '</a></p>'
+            : wp_login_form(['echo' => false, 'redirect' => self::portal_url(), 'form_id' => $id, 'id_username' => $id . '-username', 'id_password' => $id . '-password', 'id_remember' => $id . '-remember', 'id_submit' => $id . '-submit', 'label_username' => __('Email or username', 'ohmylms'), 'label_log_in' => __('Sign in', 'ohmylms')])
+                . '<p><a href="' . esc_url(wp_lostpassword_url(get_permalink() ?: self::portal_url())) . '">' . esc_html__('Forgot your password?', 'ohmylms') . '</a></p>';
+        if (!is_user_logged_in() && \OhMyLMS\Services\GoogleAuthService::is_configured()) {
+            $body .= '<p><a href="' . esc_url(add_query_arg('redirect_to', self::portal_url(), rest_url('ohmylms/v1/auth/google'))) . '">' . esc_html__('Continue with Google', 'ohmylms') . '</a></p>';
+        }
+        return '<div class="ohmylms-schools"><section class="ohmylms-school-shell ohmylms-account-block"><h2>' . esc_html__('Sign in', 'ohmylms') . '</h2>' . $body . '</section></div>';
     }
     public static function portal() {
         if (isset($_GET['ohmylms_school_file'])) {

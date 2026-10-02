@@ -103,23 +103,9 @@ abstract class DataStore {
 	 * @return string Unique slug.
 	 */
 	public function generate_unique_slug( $slug, $post_type, $exclude_id = null ) {
-		global $wpdb;
-		$original_slug = $slug;
-		$counter = 1;
-		do {
-			$query = "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = %s";
-			$params = [ $slug, $post_type ];
-			if ( $exclude_id ) {
-				$query .= " AND ID != %d";
-				$params[] = $exclude_id;
-			}
-			$query .= " LIMIT 1";
-			$existing_post = $wpdb->get_var( $wpdb->prepare( $query, ...$params ) );
-			if ( $existing_post ) {
-				$slug = $original_slug . '-' . $counter;
-				$counter++;
-			}
-		} while ( $existing_post );
-		return $slug;
+		$post_id = absint( $exclude_id );
+		$parent  = $post_id ? (int) get_post_field( 'post_parent', $post_id ) : 0;
+		// LMS URLs are reserved even while their content is still a draft.
+		return wp_unique_post_slug( sanitize_title( $slug ), $post_id, 'publish', $post_type, $parent );
 	}
 }

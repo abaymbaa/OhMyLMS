@@ -213,21 +213,11 @@ class General extends Settings {
 	 * @return string The page title or empty string.
 	 */
 	private function get_page_title( $page_type ) {
-		global $wpdb;
 		$page_id = ohmylms_get_page_id( $page_type );
-
 		if ( ! $page_id ) {
 			return '';
 		}
-
-		// Direct database query to get the post title
-		$title = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_title FROM {$wpdb->posts} WHERE ID = %d AND post_type = 'page' AND post_status = 'publish'",
-				$page_id
-			)
-		);
-
-		return $title ? $title : '';
+		$page = get_post( $page_id );
+		return $page && 'page' === $page->post_type && 'publish' === $page->post_status ? $page->post_title : '';
 	}
 }

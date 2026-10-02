@@ -18,7 +18,7 @@ An administrator can assign the **OhMyLMS Teacher** WordPress role to a teacher 
 2. Open **Years** and create an academic year with start/end dates.
 3. Open **Classes** and create classes for the year.
 4. Use **Invitations** to invite a school administrator or teacher. Select the recipient email; optionally select a class for a teacher. The invitation link is shown once and expires after 48 hours. Email is sent only when the checkbox is selected.
-5. The recipient signs in with the invited email and accepts the link. New staff can first create an account through registration; the invitation grants their school permissions. No public form grants staff permissions.
+5. The recipient signs in with the invited email and accepts the link. New teachers can first register publicly; the invitation grants their school permissions. Public teacher registration grants the teacher account role and independent-class creation, without adding school membership.
 6. In **Roster**, create school-managed students, or invite existing student accounts rather than duplicating them. Existing-account student invitations can also place a student in a class.
 7. For a new school-managed child, issue a **Student password setup / recovery** invitation. Share it privately with the child or authorized guardian. The student selects a password using that link, receives their generated username, then signs in. School staff cannot retrieve plaintext passwords.
 8. Open a class and select school roster members to add students or co-teachers.
@@ -53,16 +53,22 @@ The due date uses the school's timezone. Completion comes from existing LMS comp
 
 ## Gutenberg blocks
 
-Six new blocks appear under **OhMyLMS**:
+Eight school and account blocks appear under **OhMyLMS**. In the page editor, click **+**, search for the block name, insert it, and publish the page:
 
 - OhMyLMS Student Registration
+- OhMyLMS Teacher Registration
 - OhMyLMS Parent Registration
+- OhMyLMS Sign In
 - OhMyLMS School Dashboard
 - OhMyLMS Teacher Dashboard
 - OhMyLMS Parent Dashboard
 - OhMyLMS Student Assignments
 
-Equivalent shortcodes use underscores, for example `[ohmylms_student_registration]`, `[ohmylms_teacher_dashboard]`, and `[ohmylms_parent_dashboard]`. Blocks use sample editor previews, and frontend content is based on the signed-in account's current permissions.
+Each registration block displays a dedicated form for its role, with email and password fields. Teacher registration is public. Registration does not create school/class memberships, child links, orders or enrollments. Existing email verification, duplicate-email checks, nonce checks, rate limits and spam protection remain active. Signed-in visitors see dashboard and sign-out links instead of a registration form.
+
+The Sign In block uses WordPress's native login form, supports email or username, Remember Me and password recovery, and redirects successful sign-ins to the learning portal. Configured Google sign-in is also available on this block. Failed sign-ins use the standard WordPress login error screen.
+
+Equivalent shortcodes use underscores, for example `[ohmylms_student_registration]`, `[ohmylms_teacher_registration]`, `[ohmylms_parent_registration]`, and `[ohmylms_sign_in]`. Account blocks show form previews in the editor; private student records are not loaded into those previews.
 
 ## Google sign-in
 

@@ -131,15 +131,16 @@ class CouponStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function get_ids_by_code( $code ) {
-		global $wpdb;
-		return $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = 'ohmylms_coupon' AND post_status = 'publish' ORDER BY post_date DESC",
-				ecommerce_format_coupon_code( $code )
-			)
-		);
+		return get_posts( array(
+			'post_type' => 'ohmylms_coupon',
+			'post_status' => 'publish',
+			'title' => ecommerce_format_coupon_code( $code ),
+			'fields' => 'ids',
+			'posts_per_page' => -1,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		) );
 	}
-
 	/**
 	 * Update post meta data for the given coupon.
 	 *
