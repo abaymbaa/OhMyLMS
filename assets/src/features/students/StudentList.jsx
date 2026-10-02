@@ -5,6 +5,7 @@ import { useStudents } from './useStudents';
 import { ListTableFrame } from './ListTableFrame';
 import { PeopleDirectory } from '../schools/PeopleDirectory';
 import { AddModal } from '../schools/AddModal';
+import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
 
 export function createStudentList(readRuntime) {
   function StudentTable() {
@@ -30,6 +31,7 @@ export function createStudentList(readRuntime) {
     const navigate = Router.Zp();
     const [selected, setSelected] = useState([]);
     const [confirmation, setConfirmation] = useState(null);
+    const [viewAs, setViewAs] = useState(null);
     const { contextHolder, openNotificationWithIcon } = Notifications.A();
     const badge = (value, variant = 'secondary') => (
       <Controls.BadgeWP variant={variant} isBorderLess>
@@ -96,6 +98,19 @@ export function createStudentList(readRuntime) {
           <Controls.DropdownMenuWP
             icon={<Icon icon={MenuIcon.A} />}
             controls={[
+              ...(canViewAs()
+                ? [
+                    {
+                      title: __('View as student', 'ohmylms'),
+                      key: 'view-as',
+                      onClick: () =>
+                        setViewAs({
+                          id: student.user_id,
+                          name: student.student_name || student.student_email,
+                        }),
+                    },
+                  ]
+                : []),
               {
                 title: __('Analytics', 'ohmylms'),
                 key: 'analytics',
@@ -172,6 +187,7 @@ export function createStudentList(readRuntime) {
     return (
       <Fragment>
         {contextHolder}
+        {viewAs && <ViewAsModal role="student" user={viewAs} onClose={() => setViewAs(null)} />}
         {students.error && (
           <div role="alert">
             {students.error}{' '}
@@ -289,6 +305,7 @@ export function createStudentList(readRuntime) {
     const [tab, setTab] = useState(currentTab);
     const [adding, setAdding] = useState(false);
     const [version, setVersion] = useState(0);
+    const [viewRole, setViewRole] = useState('');
     useEffect(() => {
       const sync = () => setTab(currentTab());
       window.addEventListener('hashchange', sync);
@@ -301,6 +318,20 @@ export function createStudentList(readRuntime) {
     return (
       <Controls.ContainerWP>
         <Header title={__('Students', 'ohmylms')} showAddButton={false} />
+        {canViewAs() && (
+          <div style={{ marginBottom: 16 }}>
+            <label>
+              {__('View as', 'ohmylms')}{' '}
+              <select value="" onChange={(event) => setViewRole(event.target.value)}>
+                <option value="">{__('Choose a role…', 'ohmylms')}</option>
+                <option value="student">{__('Student', 'ohmylms')}</option>
+                <option value="teacher">{__('Teacher', 'ohmylms')}</option>
+                <option value="parent">{__('Parent', 'ohmylms')}</option>
+              </select>
+            </label>
+          </div>
+        )}
+        {viewRole && <ViewAsModal role={viewRole} onClose={() => setViewRole('')} />}
         <PeopleTabs
           active={tab}
           onChange={(next) => {

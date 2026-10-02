@@ -30,6 +30,9 @@ final class Views {
         wp_register_script('ohmylms-schools', plugins_url('build/sdk/schools.js', OHMYLMS_FILE), $meta['dependencies'], $meta['version'], true);
         wp_register_style('ohmylms-schools', plugins_url('assets/schools/schools.css', OHMYLMS_FILE), [], filemtime(OHMYLMS_DIR . '/assets/schools/schools.css'));
         if (is_admin() && in_array($_GET['page'] ?? '', ['ohmylms-schools', OHMYLMS_SLUG], true)) { wp_enqueue_style('ohmylms-schools'); }
+        if (is_admin()) {
+            wp_add_inline_script('wp-element', 'window.ohmylmsViewAs=' . wp_json_encode(['enabled' => current_user_can('manage_options')]) . ';', 'before');
+        }
     }
     public static function blocks() {
         wp_register_script('ohmylms-school-blocks', plugins_url('assets/schools/blocks.js', OHMYLMS_FILE), ['wp-blocks', 'wp-element', 'wp-i18n'], filemtime(OHMYLMS_DIR . '/assets/schools/blocks.js'), true);
@@ -95,7 +98,8 @@ final class Views {
         add_action('wp_enqueue_scripts', [self::class, 'standalone_assets'], PHP_INT_MAX);
         nocache_headers(); header('Referrer-Policy: no-referrer'); header('X-Robots-Tag: noindex');
         // Enqueue before wp_head so styles render in the document head.
-        $body = self::render('school-dashboard');
+        $view = sanitize_key($_GET['view'] ?? 'school-dashboard');
+        $body = self::render(in_array($view, ['parent-dashboard', 'student-assignments', 'teacher-dashboard'], true) ? $view : 'school-dashboard');
         ?><!doctype html><html <?php language_attributes(); ?>><head><meta charset="<?php bloginfo('charset'); ?>"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title><?php esc_html_e('OhMyLMS Learning Portal', 'ohmylms'); ?></title><?php wp_head(); ?></head><body <?php body_class('ohmylms-school-portal'); ?>><?php wp_body_open(); ?><main><?php echo $body; ?></main><?php wp_footer(); ?></body></html><?php
         exit;
     }

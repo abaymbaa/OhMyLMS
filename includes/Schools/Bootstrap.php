@@ -9,6 +9,10 @@ final class Bootstrap {
         if (defined('OHMYLMS_SCHOOLS_ENABLED') && !OHMYLMS_SCHOOLS_ENABLED) { return; }
         add_action('init', [Schema::class, 'install'], 6);
         add_action('rest_api_init', [Controller::class, 'register']);
+        add_action('rest_api_init', [ViewAs::class, 'register']);
+        add_action('init', [ViewAs::class, 'protect_session'], 1);
+        add_action('wp_footer', [ViewAs::class, 'banner']);
+        add_action('admin_footer', [ViewAs::class, 'banner']);
         add_action('init', [Views::class, 'blocks'], 20);
         add_action('admin_menu', [Views::class, 'menu'], 30);
         add_action('admin_init', [Views::class, 'redirect_management']);

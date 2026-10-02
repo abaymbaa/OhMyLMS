@@ -2,6 +2,7 @@ import { createElement, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ListTableFrame } from '../students/ListTableFrame';
 import { AddModal, EditModal, addLabel } from './AddModal';
+import { ViewAsModal, canViewAs } from './ViewAsModal';
 
 const labels = {
   teachers: 'Teachers',
@@ -35,6 +36,7 @@ export function PeopleDirectory({ tab, readRuntime }) {
   const [failedAvatars, setFailedAvatars] = useState([]);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState(0);
+  const [viewAs, setViewAs] = useState(null);
   const accounts = ['teachers', 'parents', 'users'].includes(tab);
   useEffect(() => {
     let active = true;
@@ -200,8 +202,31 @@ export function PeopleDirectory({ tab, readRuntime }) {
       render: (_, row) => (
         <Controls.DropdownMenuWP
           icon={<Icon icon={MenuIcon.A} />}
-          controls={
-            accounts
+          controls={[
+            ...(canViewAs() && ['teachers', 'parents'].includes(tab)
+              ? [
+                  {
+                    title: __(tab === 'teachers' ? 'View as teacher' : 'View as parent', 'ohmylms'),
+                    key: 'view-as',
+                    onClick: () =>
+                      setViewAs({
+                        role: tab === 'teachers' ? 'teacher' : 'parent',
+                        user: { id: row.id, name: row.display_name },
+                      }),
+                  },
+                ]
+              : []),
+            ...(canViewAs() && tab === 'classes'
+              ? ['student', 'instructor'].map((role) => ({
+                  title: __(
+                    role === 'student' ? 'View as student' : 'View as instructor',
+                    'ohmylms',
+                  ),
+                  key: `view-as-${role}`,
+                  onClick: () => setViewAs({ role, classId: Number(row.id) }),
+                }))
+              : []),
+            ...(accounts
               ? row.edit_url
                 ? [
                     {
@@ -240,8 +265,8 @@ export function PeopleDirectory({ tab, readRuntime }) {
                         },
                       ]
                     : []),
-                ]
-          }
+                ]),
+          ]}
         />
       ),
     },
@@ -291,6 +316,7 @@ export function PeopleDirectory({ tab, readRuntime }) {
   ].map(([value, label]) => ({ value, label: __(label, 'ohmylms') }));
   return (
     <>
+      {viewAs && <ViewAsModal {...viewAs} onClose={() => setViewAs(null)} />}
       {error && (
         <div role="alert">
           {error}{' '}

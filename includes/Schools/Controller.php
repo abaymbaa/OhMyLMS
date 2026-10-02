@@ -132,7 +132,7 @@ final class Controller {
         if ($route === '/ohmylms/v1/school/classes') { return $write ? Service::create_class(0, $data) : Service::classes(0, $page); }
         if ($route === '/ohmylms/v1/school/schools') { return $write ? Service::create_school($data) : Service::schools($page); }
         if ($route === '/ohmylms/v1/school/children') { return Service::children(); }
-        if ($route === '/ohmylms/v1/school/work') { return Service::assignments(0, absint($r['student']), absint($r['school_id']), $page); }
+        if ($route === '/ohmylms/v1/school/work') { return Service::assignments(0, absint($r['student']), absint($r['school_id']), $page, absint($r['class_id'])); }
         if ($route === '/ohmylms/v1/school/courses') {
             Access::require_access($r['class_id'] && Access::classroom(absint($r['class_id']), true));
             $posts = get_posts(['post_type' => OHMYLMS_COURSE_CPT, 'post_status' => 'publish', 'posts_per_page' => 50, 'paged' => $page, 's' => Service::text($r['search'] ?? '')]);

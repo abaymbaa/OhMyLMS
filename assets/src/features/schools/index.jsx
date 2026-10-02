@@ -298,7 +298,7 @@ function Invitation({ token, onDone }) {
 function Work({ revision, child = null }) {
   const [page, setPage] = useState(1);
   const state = useRemote(
-    `work?page=${page}${child ? `&student=${child.student_user_id}&school_id=${child.school_id}` : ''}`,
+    `work?page=${page}${child ? `&student=${child.student_user_id}&school_id=${child.school_id}` : ''}${new URLSearchParams(window.location.search).get('class') ? `&class_id=${encodeURIComponent(new URLSearchParams(window.location.search).get('class'))}` : ''}`,
     revision,
   );
   return (
@@ -722,7 +722,7 @@ function SchoolView({ school, me, revision, run, section = 'classes', management
   const [tab, setTab] = useState(!isAdmin && section === 'roster' ? 'classes' : section);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(
-    () => new URLSearchParams(window.location.search).get('school') || '',
+    () => new URLSearchParams(window.location.search).get('class') || '',
   );
   const [search, setSearch] = useState('');
   const classes = useRemote(`schools/${school.id}/classes?page=${page}`, revision);
@@ -1163,6 +1163,9 @@ function Users({ revision, role = '' }) {
 
 function IndependentClasses({ revision, run }) {
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState(
+    () => new URLSearchParams(window.location.search).get('class') || '',
+  );
   const classes = useRemote(`classes?page=${page}`, revision);
   return (
     <section>
@@ -1179,19 +1182,33 @@ function IndependentClasses({ revision, run }) {
                 ['grade', 'Grade'],
                 ['status', 'Status'],
               ]}
-              actions={(row) =>
-                row.status === 'active' && (
-                  <button
-                    onClick={() => {
-                      if (window.confirm(t('Archive this class?')))
-                        run(`classes/${row.id}/archive`, {});
-                    }}
-                  >
-                    {t('Archive class')}
-                  </button>
-                )
-              }
+              actions={(row) => (
+                <>
+                  <button onClick={() => setSelected(String(row.id))}>{t('Open classroom')}</button>
+                  {row.status === 'active' && (
+                    <button
+                      onClick={() => {
+                        if (window.confirm(t('Archive this class?')))
+                          run(`classes/${row.id}/archive`, {});
+                      }}
+                    >
+                      {t('Archive class')}
+                    </button>
+                  )}
+                </>
+              )}
             />
+            {rows
+              .filter((row) => String(row.id) === selected)
+              .map((row) => (
+                <ClassView
+                  key={row.id}
+                  classroom={row}
+                  isAdmin={false}
+                  revision={revision}
+                  run={run}
+                />
+              ))}
             <Pager page={page} setPage={setPage} count={rows.length} />
           </>
         )}
@@ -1222,7 +1239,11 @@ function App({ view }) {
         ? 'family'
         : view === 'student-assignments'
           ? 'work'
-          : 'schools',
+          : view === 'teacher-dashboard' &&
+              new URLSearchParams(window.location.search).get('class') &&
+              !Number(new URLSearchParams(window.location.search).get('school'))
+            ? 'classes'
+            : 'schools',
   );
   const [selected, setSelected] = useState(
     () => new URLSearchParams(window.location.search).get('school') || '',

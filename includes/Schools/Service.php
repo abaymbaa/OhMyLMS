@@ -300,7 +300,7 @@ final class Service {
             return ['id' => $id, 'recipients' => count($users)];
         });
     }
-    public static function assignments($class = 0, $student = 0, $school = 0, $page = 1) {
+    public static function assignments($class = 0, $student = 0, $school = 0, $page = 1, $filter_class = 0) {
         global $wpdb;
         $a = Schema::table('learning_assignments'); $r = Schema::table('assignment_recipients'); $c = Schema::table('classes'); $s = Schema::table('schools'); $sm = Schema::table('school_memberships'); $cm = Schema::table('class_memberships');
         if ($class) {
@@ -312,6 +312,7 @@ final class Service {
             $scope = $wpdb->prepare('r.student_user_id=%d', $student);
             if ($school) { $scope .= $wpdb->prepare(' AND a.school_id=%d', $school); }
         }
+        if ($filter_class) { $scope .= $wpdb->prepare(' AND a.class_id=%d', $filter_class); }
         // Report only distributed school work and current memberships; never global student history.
         $rows = $wpdb->get_results($wpdb->prepare("SELECT a.id,a.title,a.course_id,a.content_id,a.due_at,a.created_at,a.class_id,c.name AS class_name,a.school_id,r.student_user_id,u.display_name AS student_name,r.completed_at FROM $a a JOIN $r r ON r.assignment_id=a.id JOIN $c c ON c.id=a.class_id JOIN $s s ON s.id=a.school_id AND s.status='active' JOIN {$wpdb->users} u ON u.ID=r.student_user_id JOIN $sm sm ON sm.school_id=a.school_id AND sm.user_id=r.student_user_id AND sm.role='student' AND sm.status='active' JOIN $cm cm ON cm.class_id=a.class_id AND cm.user_id=r.student_user_id AND cm.role='student' AND cm.status='active' WHERE a.status='active' AND $scope ORDER BY a.id DESC,r.student_user_id LIMIT 50 OFFSET %d", (max(1, $page) - 1) * 50), ARRAY_A);
         foreach ($rows as &$row) { $row['url'] = get_permalink($row['content_id'] ?: $row['course_id']); }
