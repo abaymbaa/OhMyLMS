@@ -90,7 +90,7 @@
     "binding": "T$",
     "name": "QuizQuestionResults",
     "file": "QuizQuestionResults.jsx",
-    "dependencies": ["C$", "E$", "I", "M$", "React", "h$", "v$"]
+    "dependencies": ["C$", "E$", "I", "M$", "React", "h$", "p$", "v$"]
   },
   {
     "binding": "F$",

@@ -81,6 +81,14 @@ Eighteen named React components now build from `assets/src/features/ai-course-ou
 
 Focused source and adapter tests cover the conversion boundary. Complete generation/regeneration, malformed AI responses, credit exhaustion, course creation, provider differences, responsive and permission browser acceptance remain release gates.
 
+## Question bank, versioned assessment and skills increment (2026-10-02)
+
+Implemented the repository-based implementation plan v2.0 (tickets A01–A12) on branch `assessment-engine`; see [ASSESSMENT-ENGINE.md](ASSESSMENT-ENGINE.md). Object-level authorization and atomic saves for questions/quizzes; immutable question versions, quiz revisions and frozen attempt items with opaque option tokens; shared question banks with approval and pins; skill taxonomy with part-level mapping; autosave/resume, UTC deadlines with finalization, decimal scoring and an exam preset; a durable grade-event → evidence pipeline with transparent mastery rules; skill practice, inline lesson checks and guest claims; numerical and structured question types, random pools, a non-recording preview and a migration rehearsal tool.
+
+Verification on the isolated site: 266 assessment integration checks, 49 assessment unit checks, all pre-existing PHP suites passing, JavaScript 91/92 (the remaining failure is the pre-existing shipped-bundle parity check), and browser checks of the authoring, learner, grading, practice, guest-claim and report flows. Pre-existing defects fixed along the way: the renamed completion hooks recursing into each other, `Review::save()` calling a missing method, question titles/descriptions losing LaTeX backslashes, matching/reorder markup revealing answers, and the question list endpoint querying quizzes.
+
+Not done: classroom pilot, math-site enablement, translations of new strings, and the items listed under "Limitations" in ASSESSMENT-ENGINE.md.
+
 ## Remaining release gates
 
 - The standalone License and Free vs Pro admin modules are intentionally retired. Adapted builds remove both routes and their component implementations; the recovered snapshot retains them only as immutable provenance for parity verification.

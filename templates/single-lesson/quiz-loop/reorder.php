@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 
 // Randomize the questions array
 $options = $question['questions'];
-shuffle($options);
+if (empty($question['frozen'])) shuffle($options);
 
 ?>
 

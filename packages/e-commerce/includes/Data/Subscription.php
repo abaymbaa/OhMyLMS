@@ -150,7 +150,7 @@ class Subscription extends Data {
         $this->set_prop('next_payment_date', $next_payment_date);
     }
     public function set_status( $new_status ) {
-		$new_status = 'ohmylms-' === substr( $new_status, 0, 11 ) ? substr( $new_status, 11 ) : $new_status;
+		$new_status = 0 === strpos( $new_status, 'ohmylms-' ) ? substr( $new_status, strlen( 'ohmylms-' ) ) : $new_status;
 		$this->set_prop( 'status', $new_status );
 	}
     public function set_student_name($status) {

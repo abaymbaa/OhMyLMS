@@ -14,7 +14,9 @@ if (!defined('ABSPATH')) {
 
 // Randomize the questions array
 $options = $question['questions'];
-shuffle($options);
+// Frozen (versioned) deliveries keep the order stored at attempt start.
+$frozen = !empty($question['frozen']);
+if (!$frozen) shuffle($options);
 
 ?>
 
@@ -44,8 +46,9 @@ shuffle($options);
 
     <div class="quiz-matching-definition">
         <?php
-        shuffle($options);
-        foreach ($options as $option) { ?>
+        $definitions = $frozen && !empty($question['definitions']) ? $question['definitions'] : $options;
+        if (!$frozen) shuffle($definitions);
+        foreach ($definitions as $option) { ?>
             <div class="matching-definition" data-definition-id="<?php echo esc_attr($option['id']); ?>" data-question-id="<?php echo esc_attr($option['question_id']); ?>">
                 <span class="definition-label">
                     <?php echo esc_html(isset($option['matching_data']['label']) ? $option['matching_data']['label'] : ''); ?>

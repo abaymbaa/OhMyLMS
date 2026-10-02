@@ -44,8 +44,9 @@ class QuestionStore extends DataStore {
 			apply_filters(
 				'ohmylms_new_question_data', // Custom filter hook name
 				array(
-					'post_title'    => $question->get_name() ? $question->get_name() : __( 'Untitled', 'ohmylms' ),
-					'post_content'  => $question->get_description(),
+					// wp_insert_post() unslashes its input; slash so backslashes (e.g. LaTeX) are kept.
+					'post_title'    => wp_slash( $question->get_name() ? $question->get_name() : __( 'Untitled', 'ohmylms' ) ),
+					'post_content'  => wp_slash( (string) $question->get_description() ),
 					'post_author'   => get_current_user_id(),
 					'post_type'     => OHMYLMS_QUESTION_CPT,
 					'post_status'   => 'publish',
@@ -58,7 +59,6 @@ class QuestionStore extends DataStore {
 		);
 		if ( $question_id && ! is_wp_error( $question_id ) ) {
 			$question->set_id( $question_id );
-			flush_rewrite_rules(true);
 			$this->update_post_meta( $question );
 
 			/**
@@ -108,9 +108,10 @@ class QuestionStore extends DataStore {
 		do_action( 'ohmylms_before_updating_question', $question );
 
 		$post_data = array(
-			'post_content' => $question->get_description( 'edit' ),
-			'post_excerpt' => $question->get_short_description( 'edit' ),
-			'post_title'   => $question->get_name( 'edit' ),
+			// wp_update_post() unslashes its input; slash so backslashes (e.g. LaTeX) are kept.
+			'post_content' => wp_slash( (string) $question->get_description( 'edit' ) ),
+			'post_excerpt' => wp_slash( (string) $question->get_short_description( 'edit' ) ),
+			'post_title'   => wp_slash( (string) $question->get_name( 'edit' ) ),
 			'post_status'  => $question->get_status( 'edit' ) ? $question->get_status( 'edit' ) : 'publish',
 			'post_name'    => $question->get_slug( 'edit' ),
 			'post_type'    => OHMYLMS_QUESTION_CPT,
@@ -274,56 +275,18 @@ class QuestionStore extends DataStore {
 		$wpdb->insert( $table_name, $data );
 	}
 
+	/**
+	 * Legacy option writer. Delegates to the ownership-checked QuestionBank writer so an
+	 * answer ID from another question can never be rewritten through this question.
+	 *
+	 * @return true|\WP_Error
+	 */
 	public function save_quiz_answer( $question, $questions, $question_id ) {
-
-		$question_data    = ohmylms_get_question( $question_id );
-		$all_ready_answer = $this->get_questions( $question_data );
-		$answers          = ! empty( $questions['questions'] ) ? $questions['questions'] : array();
+		$answers = ! empty( $questions['questions'] ) ? $questions['questions'] : array();
 		if ( empty( $answers ) ) {
-			return;
+			return true;
 		}
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'ohmylms_question_answers';
-
-		$existing_ids = array_column( $all_ready_answer, 'id' );
-		$new_ids      = array_column( $answers, 'id' );
-
-		// Update or insert answers
-		foreach ( $answers as $answer ) {
-			$data = array(
-				'question_id'  => $question_data->get_id(),
-				'answer'       => $answer['answer'],
-				'order_number' => isset( $answer['order_number'] ) ? $answer['order_number'] : 0,
-				'is_correct'   => isset( $answer['is_correct'] ) ? $answer['is_correct'] : 0,
-			);
-
-			$format = array( '%d', '%s', '%d', '%d' );
-
-			if ( isset( $answer['id'] ) && ! empty( $answer['id'] ) ) {
-				// Update existing record
-				$wpdb->update(
-					$table_name,
-					$data,
-					array( 'id' => $answer['id'] ),
-					$format,
-					array( '%d' )
-				);
-			} else {
-				// Insert new record
-				$wpdb->insert(
-					$table_name,
-					$data,
-					$format
-				);
-			}
-		}
-
-		// Delete answers that are not in the new answers list
-		$ids_to_delete = array_diff( $existing_ids, $new_ids );
-		if ( ! empty( $ids_to_delete ) ) {
-			foreach ( $ids_to_delete as $id ) {
-				$wpdb->delete( $table_name, array( 'id' => $id ), array( '%d' ) );
-			}
-		}
+		$saved = \OhMyLMS\QuestionBank\DraftWriter::save( array( 'id' => (int) $question_id, 'questions' => $answers ) );
+		return is_wp_error( $saved ) ? $saved : true;
 	}
 }

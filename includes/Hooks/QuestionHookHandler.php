@@ -11,12 +11,13 @@ use OhMyLMS\Abstracts\HookHandler;
  */
 class QuestionHookHandler extends HookHandler {
 
+	/**
+	 * Quiz placement and answer options are written by QuestionBank\DraftWriter inside the
+	 * authorized save transaction, and removal by QuestionBank\Usage. The legacy listeners
+	 * below remain callable for third-party code but are no longer attached: they wrote
+	 * options by answer ID alone and unlinked a question from every quiz on delete.
+	 */
 	public function register_hooks() {
-		add_action( 'ohmylms_rest_insert_question', array( $this, 'link_question_with_quiz' ), 10, 2 );
-		add_action( 'ohmylms_rest_question_updated', array( $this, 'link_question_with_quiz' ), 10, 2 );
-		add_action( 'ohmylms_rest_delete_question', array( $this, 'unlink_quiz_from_question' ), 10 );
-		add_action( 'ohmylms_rest_insert_question', array( $this, 'save_or_update_question_answer' ), 10, 2 );
-		add_action( 'ohmylms_rest_question_updated', array( $this, 'save_or_update_question_answer' ), 10, 2 );
 	}
 
 
@@ -140,64 +141,12 @@ class QuestionHookHandler extends HookHandler {
 	}
 
 	public function save_or_update_question_answer( $question, $request ) {
-
-		$question_data    = ohmylms_get_question( $question->ID );
-		$all_ready_answer = $question_data->get_questions();
-		$answers          = ! empty( $request['questions'] ) ? $request['questions'] : array();
-		if ( empty( $answers ) ) {
+		$answers = ! empty( $request['questions'] ) ? $request['questions'] : array();
+		if ( empty( $answers ) || ! is_a( $question, 'WP_Post' ) ) {
 			return;
 		}
-		global $wpdb;
-		$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
-
-		$existing_ids = array_column( $all_ready_answer, 'id' );
-		$new_ids      = array_filter( array_column( $answers, 'id' ) );
-
-		// Update or insert answers
-		foreach ( $answers as $answer ) {
-			$data = array(
-				'question_id'  => $question_data->get_id(),
-				'answer'       => $answer['answer'],
-				'order_number' => isset( $answer['order_number'] ) ? $answer['order_number'] : 0,
-				'is_correct'   => isset( $answer['is_correct'] ) ? $answer['is_correct'] : 0,
-			);
-			$format = array( '%d', '%s', '%d', '%d' );
-
-			$answer_id = 0;
-			if ( isset( $answer['id'] ) && ! empty( $answer['id'] ) ) {
-				// Update existing record
-				$wpdb->update(
-					$answers_table,
-					$data,
-					array( 'id' => $answer['id'] ),
-					$format,
-					array( '%d' )
-				);
-				$answer_id = (int) $answer['id'];
-			} else {
-				// Insert new record
-				$wpdb->insert(
-					$answers_table,
-					$data,
-					$format
-				);
-				$answer_id = $wpdb->insert_id;
-			}
-
-			if ( $answer_id ) {
-				$this->update_question_answer_meta( $answer_id, $answer );
-			}
-		}
-
-		// Delete answers that are not in the new answers list
-		$ids_to_delete = array_diff( $existing_ids, $new_ids );
-		if ( ! empty( $ids_to_delete ) ) {
-			$answermeta_table = $wpdb->prefix . 'ohmylms_question_answermeta';
-			foreach ( $ids_to_delete as $id ) {
-				$wpdb->delete( $answers_table, array( 'id' => $id ), array( '%d' ) );
-				$wpdb->delete( $answermeta_table, array( 'answer_id' => $id ), array( '%d' ) );
-			}
-		}
+		// Delegate to the ownership-checked writer; foreign option IDs are rejected.
+		\OhMyLMS\QuestionBank\DraftWriter::save( array( 'id' => $question->ID, 'questions' => $answers ) );
 	}
 
 	/**

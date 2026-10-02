@@ -7,6 +7,8 @@ add_action('ohmylms_register_extensions', static function () {
     ]);
     ohmylms_register_question_type('example-number', [
         'label'=>'Example number',
+        // The grader reads only the question object it is given, so it can grade frozen versions.
+        'snapshot'=>true,
         'editor'=>['schema'=>['type'=>'object','properties'=>['expected'=>['type'=>'number']], 'required'=>['expected']]],
         'render'=>static function($question,$attempt) {
             printf('<label>Number <input type="number" step="any" name="attempt[%d][quiz_question][%d][]"></label>', (int)$attempt['id'], (int)$question['id']);

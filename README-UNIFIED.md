@@ -25,12 +25,17 @@ Hooks receive one associative-array argument, after persisted changes where appl
 
 | Hook | Payload |
 | --- | --- |
-| `ohmylms_attempt_started` | `quiz_id`, `attempt_id`, `student_id`, `course_id` |
+| `ohmylms_attempt_started` | `quiz_id`, `attempt_id`, `student_id`, `course_id`, `revision_id` (0 on the legacy engine) |
 | `ohmylms_attempt_submitted` | above plus `total`, `status`, `reason` (`submit`, `timeout`, `exit`) |
 | `ohmylms_attempt_graded` | same attempt identifiers and totals; manual review uses `reason=manual-review` |
 | `ohmylms_answer_graded` | stored answer fields: `quiz_id`, `student_id`, `question_id`, `quiz_attempt_id`, serialized `given_answer`, `question_marks`, `achive_mark`, `minus_mark`, `is_correct`, plus attempt `status` |
-| `ohmylms_lesson_completed` | `lesson_id`, `course_id`, `student_id` |
-| `ohmylms_course_completed` | `course_id`, `student_id`, `order_id` |
+| `ohmylms_answer_regraded` | `quiz_id`, `attempt_id`, `student_id`, `course_id`, `question_id`, `item_id`, optional `part_id`, `before`, `after`, `grade_event_id`, `reviewer_id`, `reason` — fired per changed item even when the attempt total is unchanged |
+| `ohmylms_question_version_created` | positional: question ID, version ID, version number |
+| `ohmylms_quiz_revision_published` | positional: quiz ID, revision ID, revision number |
+| `ohmylms_practice_answered` | positional: practice session ID, item ID, correct, source (`practice` or `inline`) |
+| `ohmylms_skill_state_updated` | positional: student ID, skill term ID, state |
+| `ohmylms_lesson_completed_event` | `lesson_id`, `course_id`, `student_id` |
+| `ohmylms_course_completed_event` | `course_id`, `student_id`, `order_id` |
 
 Normal and timeout submissions use `OhMyLMSQuizSubmission`. It checks enrollment/edit permission, attempt ownership, quiz membership, required answers, deadlines and registered validators; it serializes concurrent submissions and writes answers and the attempt in one transaction. Pending manual review does not complete the quiz.
 

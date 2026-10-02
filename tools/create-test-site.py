@@ -15,7 +15,7 @@ content = target / 'wp-content'
 content.mkdir()
 shutil.copytree(live / 'wp-content/themes', content / 'themes')
 (content / 'plugins').mkdir()
-for name in ('ohmylms', 'creatorlms-qpay', 'creatorlms-custom-question'):
+for name in ('ohmylms', 'ohmylms-qpay', 'ohmylms-custom-question'):
     dest = str(content / 'plugins' / name).replace("'", "''")
     src = str(plugin.parent / name).replace("'", "''")
     subprocess.run(['powershell', '-NoProfile', '-Command', f"New-Item -ItemType Junction -Path '{dest}' -Target '{src}' | Out-Null"], check=True)
@@ -38,13 +38,13 @@ define('WP_DEBUG_DISPLAY', false);
 define('DISABLE_WP_CRON', true);
 define('AUTOMATIC_UPDATER_DISABLED', true);
 define('WP_MEMORY_LIMIT', '512M');
-define('OMLMS_TEST_SITE', true);
-define('OMLMS_SOURCE_ASSETS', file_exists(__DIR__ . '/.source-assets'));
-define('OMLMS_ENABLED_MODULES', file_exists(__DIR__ . '/.example-modules') ? ['examples'] : []);
+define('OHMYLMS_TEST_SITE', true);
+define('OHMYLMS_SOURCE_ASSETS', file_exists(__DIR__ . '/.source-assets'));
+define('OHMYLMS_ENABLED_MODULES', file_exists(__DIR__ . '/.example-modules') ? ['examples'] : []);
 """
 for key in ('AUTH_KEY','SECURE_AUTH_KEY','LOGGED_IN_KEY','NONCE_KEY','AUTH_SALT','SECURE_AUTH_SALT','LOGGED_IN_SALT','NONCE_SALT'):
     config += f"define('{key}', '{secrets.token_urlsafe(48)}');\n"
 config += "if (!defined('ABSPATH')) define('ABSPATH', __DIR__ . '/');\nrequire ABSPATH . 'wp-settings.php';\n"
 (target / 'wp-config.php').write_text(config, encoding='utf-8')
-(target.parent / 'test-credentials.json').write_text(json.dumps({'username':'omlms-test-admin','password':secret,'site':str(target)}), encoding='utf-8')
+(target.parent / 'test-credentials.json').write_text(json.dumps({'username':'ohmylms-test-admin','password':secret,'site':str(target)}), encoding='utf-8')
 print('Isolated code installed; credentials stored outside the repository.')

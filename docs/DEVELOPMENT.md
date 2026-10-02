@@ -85,7 +85,20 @@ Status: an embedded standalone WordPress block editor for Text lessons was tried
 - Instructors author. Students only view and interact.
 - Lessons render through `the_content()`. Lesson navigation uses full page loads today.
 
-### Requirements recorded for the Question Bank and Exam Engine (not built yet)
+### Requirements recorded for the Question Bank and Exam Engine
+
+Implemented on branch `assessment-engine`; see [ASSESSMENT-ENGINE.md](ASSESSMENT-ENGINE.md) for the
+design, rollout and limitations. Status per requirement:
+
+| # | Status |
+|---|---|
+| 1 | Inline checks (`[ohmylms_question uuid="…"]` / `question-check` activity) record practice evidence that feeds the skill dashboard and recommendations. They are inserted as shortcode text from the lesson-editor panel rather than as a native editor node. |
+| 2 | Skills are `ohmylms_skill` terms with UUIDs and prerequisites; questions map skills per part. |
+| 3 | Attempts record user, context, question UUID, version, response, correctness and time (attempt items, practice items, grade events). |
+| 4 | Immutable question versions; attempts and reports read the version the learner saw. |
+| 5 | Answer keys never reach the page; option values are per-delivery tokens graded by REST/form submission. |
+| 6 | Guests keep history in localStorage with a server credential; results attach after login through a one-time claim. |
+| 7 | Inline checks and practice never call completion hooks. |
 
 Build these into the question bank / exam builder, not into the Text lesson editor.
 

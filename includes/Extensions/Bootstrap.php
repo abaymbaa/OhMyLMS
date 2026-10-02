@@ -4,6 +4,7 @@ namespace OhMyLMS\Extensions;
 final class Bootstrap {
     public static function init() {
         QuestionTypes::register_defaults();
+        QuestionTypes::register_math();
         foreach (['text','audio','video'] as $type) Registry::register('lesson',$type,[
             'label'=>ucfirst($type),'render'=>static function(){ the_content(); },'editor'=>['format'=>'wordpress-content'],
         ]);
@@ -27,8 +28,8 @@ final class Bootstrap {
             ]);
         });
         Editor::init();
-        add_action('ohmylms_lesson_completed',static function($lesson,$course,$student){do_action('ohmylms_lesson_completed',['lesson_id'=>(int)$lesson,'course_id'=>(int)$course,'student_id'=>(int)$student]);},10,3);
-        add_action('ohmylms_course_completed',static function($student,$course,$order){do_action('ohmylms_course_completed',['student_id'=>(int)$student,'course_id'=>(int)$course,'order_id'=>(int)$order]);},10,3);
+        add_action('ohmylms_lesson_completed',static function($lesson,$course,$student){do_action('ohmylms_lesson_completed_event',['lesson_id'=>(int)$lesson,'course_id'=>(int)$course,'student_id'=>(int)$student]);},10,3);
+        add_action('ohmylms_course_completed',static function($student,$course,$order){do_action('ohmylms_course_completed_event',['student_id'=>(int)$student,'course_id'=>(int)$course,'order_id'=>(int)$order]);},10,3);
     }
     public static function activity($attributes, $content='') {
         $definition=Registry::get('activity',$attributes['type'] ?? '');

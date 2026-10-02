@@ -19,3 +19,34 @@ test('option drag reorders and renumbers without mutating saved answer objects',
  assert.equal(options[0].order_number,1);
  assert.equal(moveOption(options,null,1),options);
 });
+import {mergeSavedQuiz,mergeSavedQuestions,failedQuestion} from '../../assets/src/features/quizzes/model.mjs';
+import {removeQuestionFromQuiz} from '../../assets/src/features/quizzes/api.mjs';
+test('duplicated questions never send option IDs that belong to the original question',()=>{
+ const payload=prepareQuizPayload({id:4,modified:'2026-10-01 10:00:00'},[{id:77,temp:true,modified:'x',usage:{},questions:[{id:9,answer:'A'},{id:10,answer:'B'}]},{id:8,modified:'2026-10-01 09:00:00',questions:[{id:11,answer:'C'}]}]);
+ assert.deepEqual(payload.content[0].questions.map(o=>o.id),[undefined,undefined]);
+ assert.equal(payload.content[0].base_modified,undefined);
+ assert.equal(payload.content[1].questions[0].id,11);
+ assert.equal(payload.content[1].base_modified,'2026-10-01 09:00:00');
+ assert.equal(payload.base_modified,'2026-10-01 10:00:00');
+ assert.equal('modified' in payload,false);
+});
+test('edits made while a save is pending survive the server response',()=>{
+ const submitted=[{id:5,name:'A',modified:'t1'},{id:900,temp:true,name:'New'}];
+ const current=[{id:5,name:'A edited',modified:'t1'},{id:900,temp:true,name:'New'},{id:901,temp:true,name:'Added later'}];
+ const saved=[{id:5,name:'A',modified:'t2'},{id:6,name:'New',modified:'t2'}];
+ const merged=mergeSavedQuestions(saved,submitted,current,[5,6]);
+ assert.deepEqual(merged.map(q=>q.id),[5,6,901]);
+ assert.equal(merged[0].name,'A edited');assert.equal(merged[0].modified,'t2');
+ assert.equal(merged[1].temp,undefined);assert.equal(merged[2].temp,true);
+ const quiz=mergeSavedQuiz({id:1,name:'Saved',modified:'t2',content:[],saved_ids:[]},{id:1,name:'Old',settings:{a:1}},{id:1,name:'Old',settings:{a:2},modified:'t1'});
+ assert.deepEqual(quiz,{id:1,name:'Saved',modified:'t2',settings:{a:2}});
+});
+test('a failed batch save identifies the question to show',()=>{
+ const submitted=[{id:1},{id:2}];
+ assert.equal(failedQuestion({data:{errors:[{index:1}]}},submitted),submitted[1]);
+ assert.equal(failedQuestion({message:'x'},submitted),null);
+});
+test('removing a question targets the quiz relationship, not the question',async()=>{
+ let call;await removeQuestionFromQuiz(4,9,(args)=>{call=args;return Promise.resolve({});});
+ assert.deepEqual(call,{path:'/ohmylms/v1/quiz/4/questions/9',method:'DELETE'});
+});

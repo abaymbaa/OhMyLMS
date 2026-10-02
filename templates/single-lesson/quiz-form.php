@@ -19,11 +19,23 @@ $quiz_start = isset($_GET['quiz']) && $_GET['quiz'] == 'start' ? true : false;
 $quiz 		= ohmylms_get_quiz(get_the_ID());
 $questions = array_values(array_filter($quiz->get_questions(), static function($q){return \OhMyLMS\Extensions\Registry::get('question',$q['settings']['type'] ?? '');}));
 $attempt 	= $quiz->get_quiz_attempt(get_current_user_id());
-$timer = $quiz->get_timer();
-if ($timer > 0 && !empty($attempt['start_date'])) $timer = max(0, ($timer * 60 - (current_time('timestamp') - strtotime($attempt['start_date']))) / 60);
-$is_timer 	= $quiz->get_timer() > 0 ? true : false;
-
 $settings = $quiz->get_settings();
+// Versioned attempts render the frozen items issued at start, in their stored order.
+$attempt_context = !empty($attempt['id']) && \OhMyLMS\Assessment\Schema::ready() ? \OhMyLMS\Assessment\AttemptItems::context($attempt['id']) : null;
+if ($attempt_context) {
+    $questions = \OhMyLMS\Assessment\AttemptItems::delivery($attempt['id']);
+    $revision = \OhMyLMS\Assessment\RevisionPublisher::revision($attempt_context['revision_id']);
+    $settings = array_merge(is_array($settings) ? $settings : [], $revision ? $revision['settings'] : []);
+    $remaining_seconds = \OhMyLMS\Assessment\Deadlines::remaining($attempt_context);
+    \OhMyLMS\Assessment\Delivery::require_script();
+    $is_timer = $remaining_seconds !== null;
+    $timer = $is_timer ? $remaining_seconds / 60 : 0;
+} else {
+    $timer = $quiz->get_timer();
+    if ($timer > 0 && !empty($attempt['start_date'])) $timer = max(0, ($timer * 60 - (current_time('timestamp') - strtotime($attempt['start_date']))) / 60);
+    $is_timer 	= $quiz->get_timer() > 0 ? true : false;
+}
+
 $quiz_layout = is_array($settings) && isset($settings['layout']) ? $settings['layout'] : 'one_question_per_page';
 $layout_class = '';
 $questions_per_group = '';
@@ -49,7 +61,7 @@ if('all_questions_in_one_page' === $quiz_layout){
     $layout_class = 'ohmylms-one-question-per-page';
 }
 
-if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
+if( ! $attempt_context && isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
     shuffle($questions);
 }
 
@@ -59,7 +71,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 <input type="hidden" class="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
 <input type="hidden" class="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
 
-<section class="ohmylms-quiz <?php echo $layout_class; ?>">
+<section class="ohmylms-quiz <?php echo $layout_class; ?>"<?php if ($attempt_context) { ?> data-attempt-engine="versioned" data-autosave="<?php echo esc_url(rest_url('ohmylms/v1/attempts/' . (int) $attempt['id'] . '/responses')); ?>" data-deadline="<?php echo esc_attr($attempt_context['deadline_at'] ? gmdate('c', strtotime($attempt_context['deadline_at'] . ' UTC')) : ''); ?>"<?php } ?>>
     <div class="ohmylms-quiz-header">
         <div class="ohmylms-container">
             <div class="quiz-header-wrapper">
@@ -177,7 +189,9 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 					<?php
 					$count = 0;
 					foreach ($questions as $index => $question){
-                        $get_question = ohmylms_get_question($question['id']);
+                        $get_question = empty($question['frozen']) ? ohmylms_get_question($question['id']) : null;
+                        $question_image = $get_question ? $get_question->get_image_url() : ($question['image_src'] ?? '');
+                        $question_video = $get_question ? wp_get_attachment_url( $get_question->get_video_id() ) : ($question['video_src'] ?? '');
                         $supported_question_types = array_keys(\OhMyLMS\Extensions\Registry::all('question'));
                         $supported_question_types = apply_filters('ohmylms_supported_question_types', $supported_question_types);
 
@@ -199,6 +213,9 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                         }
 						?>
 
+                        <?php if (!empty($question['section']) && ($question['section'] !== ($previous_section ?? null))) { $previous_section = $question['section']; ?>
+                            <h2 class="ohmylms-quiz-section-title"><?php echo esc_html($question['section']); ?></h2>
+                        <?php } ?>
                         <div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ('one_question_per_page' === $quiz_layout && $count == 1) ? 'active' : ''; ?>">
 							<div class="quiz-box-header">
 								<span class="question-number">
@@ -217,23 +234,23 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                                     <input type="hidden" class="is-required" value= "<?php echo !empty($question['settings']['required']) ? $question['settings']['required'] : '' ?>" question-type="<?php echo $question['settings']['type']; ?>" />
 								</p>
 
-								<?php if(!empty($get_question->get_image_url())){?>
-									<img src="<?php echo $get_question->get_image_url() ?>" alt="question image" class="question-image">
+								<?php if(!empty($question_image)){?>
+									<img src="<?php echo esc_url($question_image) ?>" alt="question image" class="question-image">
 								<?php } ?>
 
 								<?php
-								$video = wp_get_attachment_url( $get_question->get_video_id() );
+								$video = $question_video;
 								if($video){
                                     ?>
                                     <video class="question-video" controls controlsList="nodownload nopictureinpicture">
-                                        <source src="<?php echo $video; ?>" type="video/mp4">
+                                        <source src="<?php echo esc_url($video); ?>" type="video/mp4">
                                     </video>
 								<?php } ?>
  							</div>
 
 							<?php
 
-                            if( isset( $question['settings']['randomize']) && $question['settings']['randomize'] && is_array( $question['questions'] ) ){
+                            if( empty( $question['frozen'] ) && isset( $question['settings']['randomize']) && $question['settings']['randomize'] && is_array( $question['questions'] ) ){
                                 shuffle($question['questions']);
                             }
 
