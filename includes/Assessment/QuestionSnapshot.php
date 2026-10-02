@@ -15,6 +15,12 @@ class QuestionSnapshot {
 
     public function __construct(array $version) {
         $this->version = $version;
+        // Option images resolve to the copies frozen with this version.
+        foreach ((array) ($version['options'] ?? []) as $index => $option) {
+            $id = (int) ($option['id'] ?? 0);
+            if (!empty($option['image_url'])) { $this->version['options'][$index]['image_url'] = $this->frozen_url('option:' . $id, (string) $option['image_url']); }
+            if (!empty($option['matching_data']['image_url'])) { $this->version['options'][$index]['matching_data']['image_url'] = $this->frozen_url('match:' . $id, (string) $option['matching_data']['image_url']); }
+        }
     }
 
     /** Decode a qb_question_versions row (JSON columns) into a snapshot. */
@@ -34,7 +40,7 @@ class QuestionSnapshot {
     public function get_uuid() { return (string) $this->version['question_uuid']; }
     public function get_type() { return (string) $this->version['type']; }
     public function get_name() { return (string) $this->version['title']; }
-    public function get_description() { return (string) $this->version['body']; }
+    public function get_description() { return \OhMyLMS\QuestionBank\MediaFreezer::body((string) $this->version['body'], $this->frozen()); }
     public function get_settings(): array { return $this->version['settings']; }
     /** Full option rows, including correctness. Server-side use only. */
     public function get_questions(): array { return $this->version['options']; }
@@ -46,8 +52,14 @@ class QuestionSnapshot {
     public function get_thumbnail_id() { return (int) ($this->version['media']['thumbnail_id'] ?? 0); }
     public function get_image_id() { return (int) ($this->version['media']['image_id'] ?? 0); }
     public function get_video_id() { return (int) ($this->version['media']['video_id'] ?? 0); }
-    public function get_image_url() { return (string) ($this->version['media']['image_url'] ?? ''); }
-    public function get_video_url() { return (string) ($this->version['media']['video_url'] ?? ''); }
+    public function get_image_url() { return $this->frozen_url('image', (string) ($this->version['media']['image_url'] ?? '')); }
+    public function get_video_url() { return $this->frozen_url('video', (string) ($this->version['media']['video_url'] ?? '')); }
+    /** Frozen media copies captured with this version (see QuestionBank\MediaFreezer). */
+    public function frozen() { return (array) ($this->version['media']['frozen'] ?? []); }
+    private function frozen_url($key, $live) {
+        $frozen = $this->frozen();
+        return isset($frozen[$key]['url']) ? (string) $frozen[$key]['url'] : $live;
+    }
     public function is_migration_snapshot() { return !empty($this->version['is_migration_snapshot']); }
     public function to_array() { return $this->version; }
 

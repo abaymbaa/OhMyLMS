@@ -109,7 +109,7 @@ final class VersionPublisher {
         $hash = self::hash($content);
         $versions = Schema::table('qb_question_versions');
         $latest = $wpdb->get_row($wpdb->prepare("SELECT * FROM $versions WHERE question_id=%d ORDER BY version_no DESC LIMIT 1", $question_id), ARRAY_A);
-        if ($latest && $latest['content_hash'] === $hash) {
+        if ($latest && $latest['content_hash'] === $hash && !self::media_replaced($latest, $content)) {
             self::sync_identity($question_id, (int) $latest['id'], (int) $latest['version_no'], $content['type']);
             return $latest;
         }
@@ -126,7 +126,8 @@ final class VersionPublisher {
             'body' => $content['body'],
             'settings' => wp_json_encode($content['settings']),
             'options' => wp_json_encode($content['options']),
-            'media' => wp_json_encode($content['media']),
+            // Frozen media copies are not part of the content hash; a replaced file is detected separately.
+            'media' => wp_json_encode($content['media'] + ['frozen' => (object) MediaFreezer::freeze($content)]),
             'extension' => wp_json_encode($content['extension']),
             'parts' => wp_json_encode($content['parts']),
             'is_migration_snapshot' => $migration ? 1 : 0,
@@ -144,6 +145,12 @@ final class VersionPublisher {
         SkillMap::freeze($question_id, $version_id);
         do_action('ohmylms_question_version_created', $question_id, $version_id, $version_no);
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $versions WHERE id=%d", $version_id), ARRAY_A);
+    }
+
+    /** A media file the latest version froze was replaced in place. */
+    private static function media_replaced(array $latest, array $content) {
+        $media = json_decode((string) $latest['media'], true);
+        return is_array($media) && !empty($media['frozen']) && MediaFreezer::changed((array) $media['frozen'], $content);
     }
 
     private static function sync_identity($question_id, $version_id, $version_no, $type) {
