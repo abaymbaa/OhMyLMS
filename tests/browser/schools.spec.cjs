@@ -27,7 +27,7 @@ test('Students tabs share the native table and stay in the admin application', a
   await tabs.getByRole('link', { name: 'All accounts', exact: true }).click();
   await page.getByPlaceholder('Search All accounts', { exact: true }).fill(credentials.username);
   await expect(page.getByRole('cell', { name: credentials.username, exact: true }).first()).toBeVisible();
-  await page.getByRole('combobox').selectOption('last_12_months');
+  await page.locator('select[placeholder="Filter By Days"]').selectOption('last_12_months');
   await expect(page.getByRole('cell', { name: credentials.username, exact: true })).toBeVisible();
   await page.locator('.student-listing-table tbody tr').first().getByRole('button').click();
   await expect(page.getByRole('menuitem', { name: 'Edit user', exact: true })).toBeVisible();
@@ -50,7 +50,7 @@ test('school registration is accessible on mobile and validates required fields'
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
   expect(await page.getByLabel('Email', { exact: false }).evaluate((node) => node.validity.valueMissing)).toBe(true);
   await page.getByRole('button', { name: 'Parent / guardian', exact: true }).click();
-  await expect(page.getByRole('group', { name: 'Parent registration' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Parent registration' })).toBeVisible();
   await page.screenshot({ path: 'test-results/schools-registration-mobile.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
