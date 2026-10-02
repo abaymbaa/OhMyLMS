@@ -143,6 +143,20 @@ The admin pages and editor panels are SDK extensions and need `OHMYLMS_SOURCE_AS
 existing ones finish. Never restore an old database over new submissions; the new tables
 can stay in place with the code switched off.
 
+Roll back with the switches, not by reinstalling older plugin code. The rollback rehearsal
+(`tools/assessment-rollback-rehearsal.php`, steps `prepare`, `engine-off`, `old-code`,
+`forward`, on a migrated database copy) showed:
+
+- Engine off: new attempts start on the legacy engine; an attempt already started on the
+  versioned engine still resumes, submits, grades from its frozen items and reports; no other
+  attempt or gradebook total changes.
+- Pre-assessment code (`ebe2cc5`) on the migrated data keeps the decimal columns and reads
+  identical gradebook totals and attempts, and opens versioned attempt reports. It grades a new
+  attempt but then crashes on the completion event (`EngagementHook::lesson_completed` receives
+  one argument), a bug in that code fixed on this branch, so lesson/quiz completion would break.
+- Forward again: the new code reads everything written meanwhile and new attempts use the
+  versioned engine.
+
 ## Verification
 
 ```sh
@@ -151,10 +165,18 @@ php tests/assessment-unit.php
 node --test tests/js/assessment.test.mjs tests/js/question-bank.test.mjs tests/js/quizzes.test.mjs tests/js/quiz-reports.test.mjs
 ```
 
-Latest run: 306 integration checks (phases above plus `completion`), 49 unit checks, all existing PHP suites passing
-(extensions 60, gradebook, schools, students, WordPress API 27, account blocks 44,
-leaderboard, view-as, membership 15, QPay 59), JavaScript 92/93 — the one failure is the
-pre-existing parity check of the shipped admin bundle, failing before this work.
+Latest run: 306 integration checks (phases above plus `completion`), 49 unit checks, `php tests/unit.php`,
+all existing PHP suites passing (extensions 60, gradebook, schools, students, WordPress API 27,
+account blocks 44, leaderboard, view-as, membership 15, QPay 59). `npm run check` passes
+(JavaScript 94/94 including source parity) and `npm run test:reproducible` passes.
+
+Browser suite (`npx playwright test`): `tests/browser/assessment.spec.cjs` covers exam page
+breaks, autosave and resume, keyboard-only answering and phone layouts, lesson checks with
+guest claim, skill practice, guardian and teacher portal skill views, and the skills/question
+bank pages. Known failures unrelated to this work: course, lesson and learning editor specs
+report ProseMirror's `Adding different instances of a keyed plugin` because the shipped vendor
+bundles are kept (see DEVELOPMENT.md), and the student registration specs expect a published
+registration page with ID 210 on the test site.
 
 Browser checks on the isolated site: quiz editor (version bar, bank picker, numerical and
 structured editors, assessment settings), question bank and skills pages, learner quiz
