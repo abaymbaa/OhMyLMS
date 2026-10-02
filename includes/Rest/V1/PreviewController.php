@@ -63,6 +63,7 @@ class PreviewController extends RestController {
             $view['token'] = $token;
             $view['marks'] = (float) $slot['marks'];
             $view['section'] = (string) $slot['section'];
+            $view['page'] = (int) $slot['page'];
             $view['drawn_from_pool'] = !(int) $slot['version_id'];
             $questions[] = $view;
         }

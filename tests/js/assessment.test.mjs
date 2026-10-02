@@ -60,3 +60,8 @@ test('per-part marks update the question total and are clamped to the part maxim
  const rows=structuredRows({...next.report.questions[0],settings:{parts:[{id:'a',kind:'numerical',answer:1},{id:'c',kind:'written'}]}});
  assert.deepEqual(rows.map(r=>[r.id,r.awarded,r.max]),[['a',2,2],['c',2.5,3]]);
 });
+test('moving questions between sections keeps each section page break',()=>{
+ const sections=[{title:'A',questions:[1],marks:{},new_page:false},{title:'B',questions:[],marks:{},new_page:true}];
+ const next=assignQuestion(sections,1,1);
+ assert.deepEqual(next.map(s=>[s.questions,s.new_page]),[[[],false],[[1],true]]);
+});

@@ -49,13 +49,34 @@ foreach ($questions as $index => $question){
     }
 }
 
+// Frozen exam papers may carry page breaks (sections that start a new page). With all
+// questions on one page they split the paper into pages; with grouped pages they also
+// start a new group. One question per page already breaks everywhere.
+$page_starts = [];
+$has_page_breaks = false;
+foreach ($questions as $question) { if (!empty($question['page']) && $question['page'] > 1) { $has_page_breaks = true; } }
+if ($has_page_breaks && 'all_questions_in_one_page' === $quiz_layout) {
+    $quiz_layout = 'number_of_questions_per_page';
+    $settings['question_in_one_page'] = PHP_INT_MAX;
+}
+
 if('all_questions_in_one_page' === $quiz_layout){
     $layout_class = 'ohmylms-all-questions';
 
 }else if ('number_of_questions_per_page' === $quiz_layout){
     $layout_class = 'ohmylms-grouped-questions';
     $questions_per_group = max(1, (int)($settings['question_in_one_page'] ?? 1)); // Get the number of questions per group
-    $totalGroups = ceil($supported_question_count / $questions_per_group); // Calculate the total number of groups
+    $ordinal = 0; $group_start = 0; $previous_page = null;
+    foreach ($questions as $question) {
+        if (!in_array($question['settings']['type'], apply_filters('ohmylms_supported_question_types', array_keys(\OhMyLMS\Extensions\Registry::all('question'))), true)) { continue; }
+        $page = (int) ($question['page'] ?? 0);
+        if ($ordinal === 0 || $ordinal - $group_start >= $questions_per_group || ($previous_page !== null && $page !== $previous_page)) {
+            $page_starts[$ordinal] = count($page_starts) + 1;
+            $group_start = $ordinal;
+        }
+        $previous_page = $page; $ordinal++;
+    }
+    $totalGroups = count($page_starts); // Calculate the total number of groups
 
 }else {
     $layout_class = 'ohmylms-one-question-per-page';
@@ -202,13 +223,13 @@ if( ! $attempt_context && isset( $settings['randomize_questions'] ) && $settings
                         $count++;
 
                         // Check if layout grouped question and we're at the start of a new group
-                        if ('number_of_questions_per_page' === $quiz_layout && $index % $questions_per_group === 0) {
+                        if ('number_of_questions_per_page' === $quiz_layout && isset($page_starts[$count - 1])) {
                             // Close the previous group div if it's not the first group
-                            if ($index > 0) {
+                            if ($count > 1) {
                                 echo "</div>";
                             }
                             // Start a new group div
-                            $groupNumber = floor($index / $questions_per_group) + 1;
+                            $groupNumber = $page_starts[$count - 1];
                             echo "<div class='ohmylms-question-group question-group-{$groupNumber} " . ($groupNumber == 1 ? 'active' : '') . "'>";
                         }
 						?>
@@ -263,7 +284,7 @@ if( ! $attempt_context && isset( $settings['randomize_questions'] ) && $settings
 
                         <?php
                         // Checked if layout grouped question and close the last group div after the last question
-                        if ('number_of_questions_per_page' === $quiz_layout &&$index === $supported_question_count - 1) {
+                        if ('number_of_questions_per_page' === $quiz_layout && $count === $supported_question_count) {
                             echo "</div>";
                         }
                     }

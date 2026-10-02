@@ -75,7 +75,7 @@ final class AttemptItems {
                 'version_id' => $version_id,
                 'marks' => (float) $slot['marks'],
                 'option_order' => wp_json_encode($option_ids),
-                'display' => wp_json_encode($display + ['section' => (string) ($slot['section'] ?? ''), 'required' => (int) ($slot['required'] ?? 0)]),
+                'display' => wp_json_encode($display + ['section' => (string) ($slot['section'] ?? ''), 'page' => (int) ($slot['page'] ?? 0), 'required' => (int) ($slot['required'] ?? 0)]),
                 'status' => 'unanswered',
             ];
             if (!$wpdb->insert(Schema::table('attempt_items'), $row)) { throw new \RuntimeException('Attempt item write failed'); }
@@ -146,6 +146,7 @@ final class AttemptItems {
             $view['position'] = (int) $item['position'];
             $view['marks'] = (float) $item['marks'];
             $view['section'] = (string) ($item['display']['section'] ?? '');
+            $view['page'] = (int) ($item['display']['page'] ?? 0);
             $view['settings']['required'] = !empty($item['display']['required']);
             $view['settings']['score'] = ['enabled' => true, 'value' => (float) $item['marks']];
             $questions[] = $view;

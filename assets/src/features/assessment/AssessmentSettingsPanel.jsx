@@ -165,7 +165,7 @@ export function AssessmentSettingsPanel(props) {
             <h3>{__('Sections and marks', 'ohmylms')}</h3>
             <p>
               {__(
-                'Questions without a section come first. Slot marks override the question score for this assessment only.',
+                'Questions without a section come first. Slot marks override the question score for this assessment only. Page breaks apply to newly published revisions.',
                 'ohmylms',
               )}
             </p>
@@ -178,6 +178,18 @@ export function AssessmentSettingsPanel(props) {
                     set('sections')(
                       settings.sections.map((item, position) =>
                         position === index ? { ...item, title } : item,
+                      ),
+                    )
+                  }
+                />
+                <CheckboxControl
+                  label={__('Start on a new page', 'ohmylms')}
+                  help={__('Splits the paper into pages when learners take it.', 'ohmylms')}
+                  checked={!!section.new_page}
+                  onChange={(newPage) =>
+                    set('sections')(
+                      settings.sections.map((item, position) =>
+                        position === index ? { ...item, new_page: newPage } : item,
                       ),
                     )
                   }
@@ -196,7 +208,10 @@ export function AssessmentSettingsPanel(props) {
             <Button
               variant="secondary"
               onClick={() =>
-                set('sections')([...settings.sections, { title: '', questions: [], marks: {} }])
+                set('sections')([
+                  ...settings.sections,
+                  { title: '', questions: [], marks: {}, new_page: false },
+                ])
               }
             >
               {__('Add section', 'ohmylms')}

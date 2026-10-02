@@ -76,6 +76,18 @@ final class RevisionPublisher {
             });
             foreach ($slots as $index => &$slot) { $slot['slot_no'] = $index + 1; }
             unset($slot);
+            // Page breaks: a section marked "new page" starts a new page of the paper.
+            $breaks = [];
+            foreach ((array) ($raw['sections'] ?? []) as $index => $section) { if (!empty($section['new_page'])) { $breaks[$index + 1] = true; } }
+            if ($breaks) {
+                $page = 1; $previous = null;
+                foreach ($slots as $index => &$slot) {
+                    $current = $section_order[$slot['question_id']] ?? 0;
+                    if ($index > 0 && $current !== $previous && isset($breaks[$current])) { $page++; }
+                    $slot['page'] = $page; $previous = $current;
+                }
+                unset($slot);
+            }
         }
         $pools = Pools::slots_for($quiz_id, count($slots));
         if (is_wp_error($pools)) { return $pools; }

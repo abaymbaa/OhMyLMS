@@ -66,7 +66,7 @@ final class AssessmentSettings {
                 if (!is_numeric($value) || (float) $value < 0 || !is_finite((float) $value)) { return self::invalid(__('Slot marks must be zero or more.', 'ohmylms')); }
                 $marks[(int) $question_id] = round((float) $value, 4);
             }
-            $sections[] = ['title' => $title, 'questions' => $questions, 'marks' => $marks];
+            $sections[] = ['title' => $title, 'questions' => $questions, 'marks' => $marks, 'new_page' => !empty($section['new_page'])];
         }
         $settings['sections'] = $sections;
         $accommodations = [];
