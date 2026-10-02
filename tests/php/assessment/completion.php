@@ -154,3 +154,25 @@ ok((float) ohmylms_get_quiz($exam)->get_total_marks() === 7.0, 'Live total did n
 ok(abs(\OhMyLMS\Schools\Gradebook::items($exam_course)[0]['max'] - 3.0) < 1e-9, 'Unpublished edit changed the gradebook max');
 RevisionPublisher::publish($exam);
 ok(abs(\OhMyLMS\Schools\Gradebook::items($exam_course)[0]['max'] - 7.0) < 1e-9, 'Published revision total not used');
+
+// ---- New question written directly in the bank (no quiz) ----
+$writer = make_user('author');
+as_user($writer);
+$created = call('POST', 'question', ['name' => 'Bank-only fraction', 'description' => '\(\frac{1}{2}\) of 8?',
+    'settings' => ['type' => 'single-choice', 'required' => false, 'score' => ['enabled' => true, 'value' => 2]],
+    'questions' => [['answer' => '4', 'is_correct' => 1, 'order_number' => 1], ['answer' => '2', 'is_correct' => 0, 'order_number' => 2]]]);
+ok(status_of($created) === 201, 'Bank-only question not created: ' . wp_json_encode($created->get_data()));
+$bank_only = remember_post($created->get_data()['id']);
+ok(!$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship WHERE question_id=%d", $bank_only)), 'Bank-only question was placed in a quiz');
+ok(strpos(get_post_field('post_content', $bank_only), '\frac{1}{2}') !== false, 'LaTeX lost on bank-only question');
+$listed = call('GET', 'question-bank', [], ['search' => 'Bank-only fraction'])->get_data();
+ok(in_array($bank_only, array_map('intval', array_column($listed['items'], 'id')), true), 'Bank-only question missing from the bank');
+ok(status_of(call('POST', 'question-bank/' . $bank_only . '/approve')) === 200, 'Bank-only question could not be approved');
+$structured = call('POST', 'question', ['name' => 'Bank-only parts', 'settings' => ['type' => 'structured', 'score' => ['enabled' => true, 'value' => 3],
+    'parts' => [['id' => 'a', 'kind' => 'numerical', 'marks' => 1, 'answer' => 4], ['id' => 'b', 'kind' => 'written', 'marks' => 2]]], 'questions' => []]);
+ok(status_of($structured) === 201, 'Bank-only structured question not created: ' . wp_json_encode($structured->get_data()));
+remember_post($structured->get_data()['id']);
+ok(status_of(call('POST', 'question', ['name' => 'Bad numerical', 'settings' => ['type' => 'numerical', 'answer' => 'x', 'score' => ['enabled' => true, 'value' => 1]], 'questions' => []])) === 400, 'Invalid bank-only question accepted');
+as_user(make_user('subscriber'));
+ok(status_of(call('POST', 'question', ['name' => 'Learner question', 'settings' => ['type' => 'long-text'], 'questions' => []])) === 403, 'A learner created a bank question');
+as_user($admin);

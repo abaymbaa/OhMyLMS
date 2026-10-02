@@ -192,6 +192,47 @@ test('guardian sees the child skills on a phone and the teacher sees the class m
   expect(errors).toEqual([]);
 });
 
+test('author writes a new question directly in the bank', async ({ page }) => {
+  const errors = trackErrors(page);
+  await login(page, admin().username, admin().password);
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/extensions/question-bank');
+  await page.getByRole('button', { name: 'New question', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'New question' });
+  await dialog.getByRole('button', { name: 'Save question' }).click();
+  await expect(dialog.getByText('Give the question a title.')).toBeVisible();
+  const title = `Bank button ${state.tag}`;
+  await dialog.getByLabel('Title').fill(title);
+  await dialog.getByLabel('Question text').fill('What is \\(\\frac{1}{2}\\) of 8?');
+  await dialog.getByLabel('Marks', { exact: true }).fill('2');
+  await dialog.getByRole('textbox', { name: 'Answer 1' }).fill('4');
+  await dialog.getByRole('textbox', { name: 'Answer 2' }).fill('2');
+  await dialog.getByRole('button', { name: 'Add answer' }).click();
+  await dialog.getByRole('textbox', { name: 'Answer 3' }).fill('8');
+  await dialog.getByRole('checkbox', { name: 'Correct answer 1' }).check();
+  const created = page.waitForResponse(
+    (r) => r.url().includes('/ohmylms/v1/question') && r.request().method() === 'POST',
+  );
+  await dialog.getByRole('button', { name: 'Save question' }).click();
+  const question = await (await created).json();
+  try {
+    expect(question.id).toBeGreaterThan(0);
+    // The detail view opens for bank, skills, difficulty and approval.
+    await expect(page.getByRole('dialog', { name: title })).toBeVisible();
+    await expect(page.getByText('Not used in any quiz.')).toBeVisible();
+    const saved = await page.evaluate(
+      (id) => wp.apiFetch({ path: `/ohmylms/v1/question-bank/${id}` }),
+      question.id,
+    );
+    expect(saved.name).toBe(title);
+    expect(errors).toEqual([]);
+  } finally {
+    await page.evaluate(
+      (id) => wp.apiFetch({ path: `/ohmylms/v1/question/${id}`, method: 'DELETE' }),
+      question.id,
+    );
+  }
+});
+
 test('admin links the skill to a course and finds the questions in the bank', async ({ page }) => {
   const errors = trackErrors(page);
   await login(page, admin().username, admin().password);

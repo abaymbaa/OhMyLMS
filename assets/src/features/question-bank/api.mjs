@@ -88,3 +88,6 @@ export const linkTargetTitles = (type, ids, fetch = request) =>
   ids.length
     ? fetch({ path: `/ohmylms/v1/skills/link-targets${query({ type, include: ids.join(',') })}` })
     : Promise.resolve([]);
+/** Create a question directly in the bank (not placed in any quiz). */
+export const createBankQuestion = (payload, fetch = request) =>
+  fetch({ path: '/ohmylms/v1/question', method: 'POST', data: payload });

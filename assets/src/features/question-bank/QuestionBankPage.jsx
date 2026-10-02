@@ -27,6 +27,7 @@ import {
 } from './api.mjs';
 import { cleanFilters, versionLabel, DIFFICULTIES, flattenTree, skillTree } from './model.mjs';
 import { SkillMapEditor } from './SkillMapEditor';
+import { NewQuestionModal } from './NewQuestionModal';
 
 const TYPES = [
   'single-choice',
@@ -39,6 +40,7 @@ const TYPES = [
   'reorder',
   'matching',
   'numerical',
+  'structured',
 ];
 
 /** Question bank management: search, approve, archive, duplicate, metadata and sharing. */
@@ -74,6 +76,7 @@ function QuestionsTab() {
   const [skills, setSkills] = useState([]);
   const [banks, setBanks] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [creating, setCreating] = useState(false);
   const [reload, setReload] = useState(0);
   useEffect(() => {
     listSkills()
@@ -121,6 +124,19 @@ function QuestionsTab() {
   const pages = Math.max(1, Math.ceil(result.total / (result.per_page || 20)));
   return (
     <Fragment>
+      <Button variant="primary" onClick={() => setCreating(true)} style={{ margin: '12px 0' }}>
+        {__('New question', 'ohmylms')}
+      </Button>
+      {creating && (
+        <NewQuestionModal
+          onClose={() => setCreating(false)}
+          onCreated={(id) => {
+            setCreating(false);
+            setReload((value) => value + 1);
+            setSelected(id);
+          }}
+        />
+      )}
       <div
         className="ohmylms-bank-filters"
         style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}

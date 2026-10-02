@@ -133,3 +133,116 @@ export function updatePart(parts, index, fields) {
 export function removePart(parts, index) {
   return (parts || []).filter((_, position) => position !== index);
 }
+
+/** Types the bank's New question form can write; others are authored inside a quiz. */
+export const NEW_QUESTION_TYPES = [
+  'single-choice',
+  'multiple-choice',
+  'true-false',
+  'short-text',
+  'long-text',
+  'numerical',
+  'structured',
+];
+const CHOICE_TYPES = ['single-choice', 'multiple-choice'];
+
+/** A blank draft for the New question form. */
+export function emptyDraft(type = 'single-choice') {
+  return {
+    type,
+    name: '',
+    description: '',
+    marks: 1,
+    options:
+      type === 'true-false'
+        ? [
+            { answer: 'True', correct: true },
+            { answer: 'False', correct: false },
+          ]
+        : CHOICE_TYPES.includes(type)
+          ? [
+              { answer: '', correct: true },
+              { answer: '', correct: false },
+            ]
+          : [],
+    settings: type === 'structured' ? { parts: addPart([]) } : {},
+  };
+}
+
+/** Change the draft's type, keeping the shared fields. */
+export function changeDraftType(draft, type) {
+  const blank = emptyDraft(type);
+  const keepOptions = CHOICE_TYPES.includes(type) && CHOICE_TYPES.includes(draft.type);
+  return {
+    ...blank,
+    name: draft.name,
+    description: draft.description,
+    marks: draft.marks,
+    options: keepOptions ? draft.options : blank.options,
+  };
+}
+
+/** Mark one option correct (single choice, true/false) or toggle it (multiple choice). */
+export function setOptionCorrect(draft, index, correct) {
+  const single = draft.type !== 'multiple-choice';
+  return {
+    ...draft,
+    options: draft.options.map((option, position) => ({
+      ...option,
+      correct: position === index ? correct : single ? false : option.correct,
+    })),
+  };
+}
+
+/** Problems that block saving, as message keys for the form. */
+export function validateDraft(draft) {
+  const problems = [];
+  if (!String(draft.name || '').trim()) problems.push('name');
+  if (!(Number(draft.marks) >= 0)) problems.push('marks');
+  if (CHOICE_TYPES.includes(draft.type) || draft.type === 'true-false') {
+    if (draft.options.length < 2) problems.push('options-count');
+    if (draft.options.some((option) => !String(option.answer || '').trim()))
+      problems.push('options-empty');
+    const correct = draft.options.filter((option) => option.correct).length;
+    if (draft.type === 'multiple-choice' ? correct < 1 : correct !== 1)
+      problems.push('options-correct');
+  }
+  if (draft.type === 'numerical') {
+    const answers = [draft.settings.answer, ...(draft.settings.answers || [])].filter(
+      (value) => value !== undefined && value !== null && value !== '',
+    );
+    if (!answers.length || answers.some((value) => !Number.isFinite(Number(value))))
+      problems.push('numerical-answer');
+  }
+  if (draft.type === 'structured' && !(draft.settings.parts || []).length) problems.push('parts');
+  return problems;
+}
+
+/** REST payload for POST /question (no quiz: the question goes straight to the bank). */
+export function draftToPayload(draft) {
+  const options = CHOICE_TYPES.includes(draft.type) || draft.type === 'true-false';
+  return {
+    name: String(draft.name).trim(),
+    description: draft.description || '',
+    settings: {
+      ...draft.settings,
+      type: draft.type,
+      required: false,
+      // A structured question is worth the sum of its parts.
+      score: {
+        enabled: true,
+        value:
+          draft.type === 'structured'
+            ? (draft.settings.parts || []).reduce((sum, part) => sum + (Number(part.marks) || 0), 0)
+            : Number(draft.marks) || 0,
+      },
+    },
+    questions: options
+      ? draft.options.map((option, index) => ({
+          answer: String(option.answer).trim(),
+          is_correct: option.correct ? 1 : 0,
+          order_number: index + 1,
+        }))
+      : [],
+  };
+}
