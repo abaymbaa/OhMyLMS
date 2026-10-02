@@ -4,8 +4,6 @@ namespace CodeRex\Ecommerce\Gateways;
 
 use OhMyLMS\Abstracts\SettingsPage;
 
-require_once plugin_dir_path( __FILE__ ) . 'Razorpay/GatewayRazorPay.php';
-
 class Gateways extends SettingsPage {
 
 	/**
@@ -56,8 +54,6 @@ class Gateways extends SettingsPage {
 			'GatewayOffline',
 			'GatewayStripeIntents',
 			'GatewayPaypal',
-			'GatewayMollie',
-			'GatewayRazorPay',
 			\CodeRex\Ecommerce\Gateways\QPay\GatewayQPay::class,
 		);
 

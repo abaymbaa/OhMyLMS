@@ -184,12 +184,6 @@ export function createOrderList(readRuntime) {
           value: "offline",
           label: (0, I18n.__)("Offline", "ohmylms")
         }, {
-          value: "mollie",
-          label: (0, I18n.__)("Mollie", "ohmylms")
-        }, {
-          value: "razorpay",
-          label: (0, I18n.__)("Razorpay", "ohmylms")
-        }, {
           value: "authorize_net",
           label: (0, I18n.__)("Authorize.Net", "ohmylms")
         }];

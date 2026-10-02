@@ -67,25 +67,18 @@ class Ajax {
 		// Delete all OhMyLMS related transients
 		$count = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
 				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
 				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
 				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
 				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%'
 			)
 		);
 		
-		// Delete specific Mollie frontend test transients
-		$count += $wpdb->query(
-			"DELETE FROM {$wpdb->options} WHERE option_name IN ('_transient_timeout_mollie_methods_cache_frontend_test', '_transient_mollie_methods_cache_frontend_test')"
-		);
-
 		// Also delete transients with 'ohmylms' and 'ohmylms' prefix
 		$count += $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
 				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
 				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
 				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
@@ -94,8 +87,6 @@ class Ajax {
 				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
 				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
 				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
-				$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
 				$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%'
 			)
 		);
@@ -104,7 +95,7 @@ class Ajax {
 		if ( is_multisite() ) {
 			$count += $wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s",
+					"DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s",
 					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
 					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
 					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
@@ -113,8 +104,6 @@ class Ajax {
 					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
 					$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
 					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%',
-					$wpdb->esc_like( '_transient_mollie_methods_cache_' ) . '%',
-					$wpdb->esc_like( '_transient_timeout_mollie_methods_cache_' ) . '%',
 					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%'
 				)
 			);

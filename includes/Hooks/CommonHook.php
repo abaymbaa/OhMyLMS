@@ -51,8 +51,6 @@ class CommonHook extends HookHandler {
 		// 	add_action( 'the_password_form', array( $this, 'ohmylms_password_protected_form_class' ));
 		// }	
 
-		add_action( 'ohmylms_mollie_payment_completed', [ $this, 'handle_payment_completed' ], 10, 2 );
-
 		add_filter( 'admin_footer_text', array( $this, 'review_text_in_footer' ), 1 );
 
 
@@ -1468,70 +1466,6 @@ class CommonHook extends HookHandler {
 			$classes .= ' ohmylms-ui-express-active';
 		}
 		return $classes;
-	}
-
-
-	/**
-	 * Handle Mollie payment completed event
-	 *
-	 * @param int   $order_id The ID of the order that was completed.
-	 * @param array $payment  Payment details.
-	 */
-	public function handle_payment_completed( $order_id, $payment ) {
-		$order = ecommerce_get_order( $order_id );
-		if ( ! $order ) {
-			return;
-		}
-
-		global $wpdb;
-		
-		// Get student status from ohmylms_user_enrollment table
-		$student_status = $wpdb->get_var( $wpdb->prepare(
-			"SELECT status FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE order_id = %d LIMIT 1",
-			$order_id
-		) );
-		if ( $student_status && $student_status !== 'enrolled' ) {
-			// Update student status to 'enrolled'
-			$updated = $wpdb->update(
-				"{$wpdb->prefix}ohmylms_user_enrollment",
-				['status' => 'enrolled'],
-				['order_id' => $order_id],
-				['%s'],
-				['%d']
-			);
-			if ( false === $updated ) {
-				error_log( "Mollie Payment Completed Handler: Failed to update student status for order {$order_id}." );
-			} else {
-				$order->add_order_note( __( 'Student status updated to enrolled after payment completion.', 'ohmylms' ) );
-			}
-		}
-
-		if ( ohmylms_is_pro() ) {
-			// Get student status from ohmylms_user_membership table
-			$student_status = $wpdb->get_var( $wpdb->prepare(
-				"SELECT status FROM {$wpdb->prefix}ohmylms_user_membership WHERE order_id = %d LIMIT 1",
-				$order_id
-			) );
-			if ( $student_status && $student_status !== 'enrolled' ) {
-				// Update student status to 'enrolled'
-				$updated = $wpdb->update(
-					"{$wpdb->prefix}ohmylms_user_membership",
-					['status' => 'enrolled'],
-					['order_id' => $order_id],
-					['%s'],
-					['%d']
-				);
-				if ( false === $updated ) {
-					error_log( "Mollie Payment Completed Handler: Failed to update student status for order {$order_id}." );
-				} else {
-					$order->add_order_note( __( 'Student status updated to enrolled after payment completion.', 'ohmylms' ) );
-				}
-			}
-		}
-		
-		// Trigger email notifications after payment is confirmed
-		// The duplicate prevention in email classes will ensure emails are only sent once
-		do_action( 'ohmylms_checkout_after_create_order', $order, array() );
 	}
 
 

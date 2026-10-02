@@ -467,7 +467,7 @@ class Checkout {
                 }
 
                 // Only trigger order creation hook after confirmed payment or for free orders
-                // Check if payment requires external redirect ( like Mollie, PayPal, etc. )
+                // Check if payment requires external redirect ( like PayPal, etc. )
                 $has_redirect = is_array( $result ) && ! empty( $result[ 'redirect' ] );
 
                 // Payment is confirmed if:
@@ -482,10 +482,8 @@ class Checkout {
 						|| ( isset( $result['success'] ) && true === $result['success'] )
 					) );
 				
-				$is_razorpay = isset($result['payment_method']) && $result['payment_method'] === 'razorpay';
-				
-				if( $is_razorpay || $payment_pending ) {
-					$payment_confirmed = false; // Razorpay requires webhook confirmation, so we don't confirm payment here
+				if ( $payment_pending ) {
+					$payment_confirmed = false;
 				}
 				
 				if ( $payment_confirmed ) {
@@ -509,30 +507,6 @@ class Checkout {
                         }
                     }
                 }
-
-                // Handle Razorpay subscriptions separately (created in gateway before redirect)
-                if ( $is_razorpay && ! empty( $posted_data[ 'membership_id' ] ) && class_exists( 'CodeRex\Ecommerce\SubscriptionManager' ) ) {
-                    // For Razorpay subscriptions, the subscription is already created in the gateway
-                    // before redirecting to payment. Check if it exists.
-                    $existing_subscription_id = get_post_meta( $order_id, '_subscription_id', true );
-                    
-                    if ( empty( $existing_subscription_id ) ) {
-                        // Fallback: create subscription if not already created
-                        $membership = ohmylms_get_membership( $posted_data[ 'membership_id' ] );
-                        if ( $membership && 'one_time' !== $membership->get_subscription_period() ) {
-                            $gateway_meta_data = isset( $result[ 'gateway_meta' ] ) && is_array( $result[ 'gateway_meta' ] ) ? $result[ 'gateway_meta' ] : array();
-                            $subscription_id = SubscriptionManager::create_subscription( $order, $posted_data[ 'membership_id' ], $gateway_meta_data );
-                            
-                            if ( ! is_wp_error( $subscription_id ) && $subscription_id ) {
-                                if ( isset( $result['razorpay_subscription_id'] ) ) {
-                                    update_post_meta( $subscription_id, '_razorpay_subscription_id', sanitize_text_field( $result['razorpay_subscription_id'] ) );
-                                    update_post_meta( $order_id, '_subscription_id', $subscription_id );
-                                }
-                            }
-                        }
-                    }
-                }
-
                 $this->set_student_to_order( $order, $student_id );
                 $this->process_enrollment( $order_id, $posted_data );
 

@@ -149,12 +149,6 @@ var ZY = function () {
         value: "offline",
         label: (0, b.__)("Offline", "ohmylms")
       }, {
-        value: "mollie",
-        label: (0, b.__)("Mollie", "ohmylms")
-      }, {
-        value: "razorpay",
-        label: (0, b.__)("Razorpay", "ohmylms")
-      }, {
         value: "authorize_net",
         label: (0, b.__)("Authorize.Net", "ohmylms")
       }];

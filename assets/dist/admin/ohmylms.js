@@ -84302,12 +84302,6 @@
                 value: "offline",
                 label: (0, b.__)("Offline", "ohmylms")
               }, {
-                value: "mollie",
-                label: (0, b.__)("Mollie", "ohmylms")
-              }, {
-                value: "razorpay",
-                label: (0, b.__)("Razorpay", "ohmylms")
-              }, {
                 value: "authorize_net",
                 label: (0, b.__)("Authorize.Net", "ohmylms")
               }];
@@ -98649,7 +98643,7 @@
             }((0, g.useState)(!1), 2),
             d = s[0],
             m = s[1],
-            p = ["offline", "stripe", "mollie"],
+            p = ["offline", "stripe"],
             f = n.id,
             v = n.title,
             h = (n.description, n.icon),

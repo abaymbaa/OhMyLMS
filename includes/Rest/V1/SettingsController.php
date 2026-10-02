@@ -294,8 +294,6 @@ class SettingsController extends RestController {
 			'ohmylms_offline_settings',
 			'ohmylms_stripe_settings',
 			'ohmylms_paypal_settings',
-			'ohmylms_mollie_settings',
-			'ohmylms_razorpay_settings',
 			'ohmylms_qpay_settings',
 			'ohmylms_authorize_net_settings',
 			'ohmylms_currency',

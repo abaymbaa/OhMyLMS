@@ -4,7 +4,7 @@
  * Gateway Autoloader for OhMyLMS
  *
  * Automatically loads gateway files based on folder names.
- * For example, if a folder is named "Mollie", it will try to load "mollie.php"
+ * For example, if a folder is named "Stripe", it will try to load "stripe.php"
  *
  * @package    OhMyLMSPro
  * @subpackage OhMyLMSPro/includes
@@ -39,7 +39,7 @@ class GatewayAutoloader {
      * Load gateway files based on folder names
      * 
      * This method scans the Gateways directory and loads files that match the folder name
-     * For example, if there's a folder named "Mollie", it will try to load "mollie.php"
+     * For example, if there's a folder named "Stripe", it will try to load "stripe.php"
      */
     public function load_gateways() {
         $gateways_path = $this->base_dir . '/includes/Gateways/';
@@ -47,8 +47,7 @@ class GatewayAutoloader {
             return;
         }
 
-        // Temporarily exclude these gateways
-        $excluded_gateways = array( 'Mollie' );
+        $excluded_gateways = array();
 
         $folders = glob( $gateways_path . '/*', GLOB_ONLYDIR );
         foreach ( $folders as $folder ) {

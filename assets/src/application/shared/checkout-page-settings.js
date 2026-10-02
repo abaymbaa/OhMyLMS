@@ -846,7 +846,7 @@ var K0 = function (e) {
     }((0, g.useState)(!1), 2),
     d = s[0],
     m = s[1],
-    p = ["offline", "stripe", "mollie"],
+    p = ["offline", "stripe"],
     f = n.id,
     v = n.title,
     h = (n.description, n.icon),

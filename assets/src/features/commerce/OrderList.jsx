@@ -199,8 +199,6 @@ export function createOrderList(readRuntime) {
         { value: 'stripe', label: I18n.__('Stripe', 'ohmylms') },
         { value: 'paypal', label: I18n.__('PayPal', 'ohmylms') },
         { value: 'offline', label: I18n.__('Offline', 'ohmylms') },
-        { value: 'mollie', label: I18n.__('Mollie', 'ohmylms') },
-        { value: 'razorpay', label: I18n.__('Razorpay', 'ohmylms') },
         { value: 'authorize_net', label: I18n.__('Authorize.Net', 'ohmylms') },
       ],
       [],

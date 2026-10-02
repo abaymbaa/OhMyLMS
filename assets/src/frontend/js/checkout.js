@@ -251,9 +251,6 @@
 				if (selectedGateway && 'payment_method_stripe' === selectedGateway) {
 					return;
 				}
-				if (selectedGateway && 'payment_method_razorpay' === selectedGateway) {
-					return;
-				}
 				$.ajax({
 					type: 'POST',
 					url: ohmylms_checkout_params.ajax_url,
