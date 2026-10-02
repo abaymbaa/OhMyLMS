@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-$page_features = get_option('ohmylms_single_course_page_features');
+$page_features = (array) get_option('ohmylms_single_course_page_features', array());
 $is_enabeled_category = in_array('category', $page_features);
 $is_enabeled_enrolled_category = in_array('category_with_enroll', $page_features);
 
