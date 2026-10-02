@@ -28,8 +28,11 @@ class SkillController extends RestController {
             ['methods' => WP_REST_Server::EDITABLE, 'callback' => [$this, 'update'], 'permission_callback' => [$this, 'author_permission']],
             ['methods' => WP_REST_Server::DELETABLE, 'callback' => [$this, 'delete'], 'permission_callback' => [$this, 'admin_permission']],
         ]);
-        register_rest_route($this->namespace, '/skills/(?P<id>[\d]+)/lessons', [
-            ['methods' => WP_REST_Server::EDITABLE, 'callback' => [$this, 'link_lessons'], 'permission_callback' => [$this, 'author_permission']],
+        register_rest_route($this->namespace, '/skills/(?P<id>[\d]+)/(?P<kind>lessons|courses)', [
+            ['methods' => WP_REST_Server::EDITABLE, 'callback' => [$this, 'link_posts'], 'permission_callback' => [$this, 'author_permission']],
+        ]);
+        register_rest_route($this->namespace, '/skills/link-targets', [
+            ['methods' => WP_REST_Server::READABLE, 'callback' => [$this, 'link_targets'], 'permission_callback' => [$this, 'author_permission']],
         ]);
         register_rest_route($this->namespace, '/question/(?P<id>[\d]+)/skills', [
             ['methods' => WP_REST_Server::READABLE, 'callback' => [$this, 'question_skills'], 'permission_callback' => [$this, 'question_permission']],
@@ -125,19 +128,37 @@ class SkillController extends RestController {
         return is_wp_error($deleted) ? $deleted : rest_ensure_response(['id' => $id, 'deleted' => true]);
     }
 
-    /** Replace the set of lessons linked to a skill (only lessons the user may edit change). */
-    public function link_lessons(WP_REST_Request $request) {
+    /** Replace the set of lessons or courses linked to a skill (only posts the user may edit change). */
+    public function link_posts(WP_REST_Request $request) {
         $id = (int) $request['id'];
         if (!term_exists($id, Taxonomy::NAME)) { return new WP_Error('ohmylms_skill_missing', __('Skill not found.', 'ohmylms'), ['status' => 404]); }
-        $wanted = array_values(array_unique(array_map('intval', (array) $request['lesson_ids'])));
-        foreach ($wanted as $lesson_id) {
-            if (get_post_type($lesson_id) !== OHMYLMS_LESSON_CPT || !current_user_can('edit_post', $lesson_id)) { return AccessPolicy::denied(__('You cannot link one of these lessons.', 'ohmylms')); }
+        $courses = $request['kind'] === 'courses';
+        $post_type = $courses ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
+        $wanted = array_values(array_unique(array_map('intval', (array) $request[$courses ? 'course_ids' : 'lesson_ids'])));
+        foreach ($wanted as $post_id) {
+            if (get_post_type($post_id) !== $post_type || !current_user_can('edit_post', $post_id)) {
+                return AccessPolicy::denied($courses ? __('You cannot link one of these courses.', 'ohmylms') : __('You cannot link one of these lessons.', 'ohmylms'));
+            }
         }
-        foreach (Taxonomy::linked_posts($id, OHMYLMS_LESSON_CPT) as $lesson_id) {
-            if (!in_array($lesson_id, $wanted, true) && current_user_can('edit_post', $lesson_id)) { wp_remove_object_terms($lesson_id, $id, Taxonomy::NAME); }
+        foreach (Taxonomy::linked_posts($id, $post_type) as $post_id) {
+            if (!in_array($post_id, $wanted, true) && current_user_can('edit_post', $post_id)) { wp_remove_object_terms($post_id, $id, Taxonomy::NAME); }
         }
-        foreach ($wanted as $lesson_id) { wp_add_object_terms($lesson_id, $id, Taxonomy::NAME); }
+        foreach ($wanted as $post_id) { wp_add_object_terms($post_id, $id, Taxonomy::NAME); }
         return rest_ensure_response(Taxonomy::describe($id));
+    }
+
+    /** Lessons or courses the author may link: search results, or titles for known IDs. */
+    public function link_targets(WP_REST_Request $request) {
+        $post_type = $request['type'] === 'course' ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
+        $ids = array_filter(array_map('intval', explode(',', (string) $request['include'])));
+        $args = ['post_type' => $post_type, 'post_status' => ['publish', 'draft', 'pending', 'private', 'future'], 'numberposts' => 20, 'orderby' => 'title', 'order' => 'ASC'];
+        if ($ids) { $args['post__in'] = $ids; $args['numberposts'] = count($ids); }
+        else { $args['s'] = sanitize_text_field((string) $request['search']); }
+        $rows = [];
+        foreach (get_posts($args) as $post) {
+            if (current_user_can('edit_post', $post->ID)) { $rows[] = ['id' => (int) $post->ID, 'title' => get_the_title($post) ?: '#' . $post->ID]; }
+        }
+        return rest_ensure_response($rows);
     }
 
     public function question_skills(WP_REST_Request $request) {

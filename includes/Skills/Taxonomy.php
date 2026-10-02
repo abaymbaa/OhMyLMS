@@ -104,6 +104,7 @@ final class Taxonomy {
             'parent' => (int) $term->parent,
             'prerequisites' => self::prerequisites($term->term_id),
             'lessons' => self::linked_posts($term->term_id, OHMYLMS_LESSON_CPT),
+            'courses' => self::linked_posts($term->term_id, OHMYLMS_COURSE_CPT),
         ];
     }
 

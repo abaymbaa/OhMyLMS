@@ -68,11 +68,12 @@ export const updateSkill = (id, data, fetch = request) =>
   fetch({ path: `/ohmylms/v1/skills/${id}`, method: 'PUT', data });
 export const deleteSkill = (id, force = false, fetch = request) =>
   fetch({ path: `/ohmylms/v1/skills/${id}${force ? '?force=1' : ''}`, method: 'DELETE' });
-export const linkSkillLessons = (id, lessonIds, fetch = request) =>
+/** Replace the lessons ('lessons') or courses ('courses') linked to a skill. */
+export const linkSkillPosts = (id, kind, ids, fetch = request) =>
   fetch({
-    path: `/ohmylms/v1/skills/${id}/lessons`,
+    path: `/ohmylms/v1/skills/${id}/${kind}`,
     method: 'PUT',
-    data: { lesson_ids: lessonIds },
+    data: { [kind === 'courses' ? 'course_ids' : 'lesson_ids']: ids },
   });
 export const saveSkillMap = (questionId, skillMap, fetch = request) =>
   fetch({
@@ -80,5 +81,10 @@ export const saveSkillMap = (questionId, skillMap, fetch = request) =>
     method: 'PUT',
     data: { skill_map: skillMap },
   });
-export const searchLessons = (search, fetch = request) =>
-  fetch({ path: `/ohmylms/v1/lessons${query({ search, per_page: 20 })}` });
+/** Lessons or courses the author may link: by search text, or titles for known IDs. */
+export const searchLinkTargets = (type, search, fetch = request) =>
+  fetch({ path: `/ohmylms/v1/skills/link-targets${query({ type, search })}` });
+export const linkTargetTitles = (type, ids, fetch = request) =>
+  ids.length
+    ? fetch({ path: `/ohmylms/v1/skills/link-targets${query({ type, include: ids.join(',') })}` })
+    : Promise.resolve([]);

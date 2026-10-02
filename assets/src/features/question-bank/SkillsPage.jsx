@@ -14,8 +14,9 @@ import {
   createSkill,
   updateSkill,
   deleteSkill,
-  linkSkillLessons,
-  searchLessons,
+  linkSkillPosts,
+  linkTargetTitles,
+  searchLinkTargets,
 } from './api.mjs';
 import { createsCycle, flattenTree, skillTree } from './model.mjs';
 
@@ -27,9 +28,10 @@ const EMPTY = {
   parent: 0,
   prerequisites: [],
   lessons: [],
+  courses: [],
 };
 
-/** Skill catalogue: hierarchy, prerequisites (acyclic) and linked lessons. */
+/** Skill catalogue: hierarchy, prerequisites (acyclic) and linked lessons and courses. */
 export function SkillsPage() {
   const [skills, setSkills] = useState(null);
   const [editing, setEditing] = useState(null);
@@ -47,7 +49,7 @@ export function SkillsPage() {
       <h1>{__('Skills', 'ohmylms')}</h1>
       <p>
         {__(
-          'Skills are linked to questions (per part) and lessons. They power skill practice, performance reports and recommendations.',
+          'Skills are linked to questions (per part), lessons and courses. They power skill practice, performance reports and recommendations.',
           'ohmylms',
         )}
       </p>
@@ -70,6 +72,7 @@ export function SkillsPage() {
               <th>{__('Prerequisites', 'ohmylms')}</th>
               <th>{__('Questions', 'ohmylms')}</th>
               <th>{__('Lessons', 'ohmylms')}</th>
+              <th>{__('Courses', 'ohmylms')}</th>
             </tr>
           </thead>
           <tbody>
@@ -89,6 +92,7 @@ export function SkillsPage() {
                 </td>
                 <td>{skill.questions}</td>
                 <td>{skill.lessons.length}</td>
+                <td>{(skill.courses || []).length}</td>
               </tr>
             ))}
           </tbody>
@@ -111,19 +115,8 @@ export function SkillsPage() {
 }
 
 function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
-  const [draft, setDraft] = useState(skill);
+  const [draft, setDraft] = useState({ ...skill, courses: skill.courses || [] });
   const [saving, setSaving] = useState(false);
-  const [lessonSearch, setLessonSearch] = useState('');
-  const [lessonResults, setLessonResults] = useState([]);
-  useEffect(() => {
-    if (!lessonSearch.trim()) return setLessonResults([]);
-    const timer = setTimeout(() => {
-      searchLessons(lessonSearch)
-        .then((data) => setLessonResults(Array.isArray(data) ? data : data?.data || []))
-        .catch(() => setLessonResults([]));
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [lessonSearch]);
   const set = (key) => (value) => setDraft({ ...draft, [key]: value });
   async function save() {
     setSaving(true);
@@ -136,7 +129,8 @@ function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
         prerequisites: draft.prerequisites,
       };
       const saved = draft.id ? await updateSkill(draft.id, body) : await createSkill(body);
-      await linkSkillLessons(saved.id, draft.lessons);
+      await linkSkillPosts(saved.id, 'lessons', draft.lessons);
+      await linkSkillPosts(saved.id, 'courses', draft.courses);
       onSaved();
     } catch (cause) {
       onError(cause.message || __('Could not save the skill.', 'ohmylms'));
@@ -205,33 +199,20 @@ function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
           );
         })}
       </fieldset>
-      <fieldset>
-        <legend>{__('Linked lessons', 'ohmylms')}</legend>
-        <p>
-          {draft.lessons.length
-            ? draft.lessons.map((id) => `#${id}`).join(', ')
-            : __('None yet.', 'ohmylms')}
-        </p>
-        <TextControl
-          label={__('Find lessons', 'ohmylms')}
-          value={lessonSearch}
-          onChange={setLessonSearch}
-        />
-        {lessonResults.map((lesson) => (
-          <CheckboxControl
-            key={lesson.id}
-            label={lesson.name || lesson.title?.rendered || `#${lesson.id}`}
-            checked={draft.lessons.includes(lesson.id)}
-            onChange={(checked) =>
-              set('lessons')(
-                checked
-                  ? [...draft.lessons, lesson.id]
-                  : draft.lessons.filter((id) => id !== lesson.id),
-              )
-            }
-          />
-        ))}
-      </fieldset>
+      <LinkedPosts
+        type="lesson"
+        legend={__('Linked lessons', 'ohmylms')}
+        searchLabel={__('Find lessons', 'ohmylms')}
+        value={draft.lessons}
+        onChange={set('lessons')}
+      />
+      <LinkedPosts
+        type="course"
+        legend={__('Linked courses', 'ohmylms')}
+        searchLabel={__('Find courses', 'ohmylms')}
+        value={draft.courses}
+        onChange={set('courses')}
+      />
       <Button variant="primary" isBusy={saving} disabled={!draft.name.trim()} onClick={save}>
         {__('Save skill', 'ohmylms')}
       </Button>{' '}
@@ -244,5 +225,71 @@ function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
         </Button>
       )}
     </div>
+  );
+}
+
+/** Linked lessons or courses: current links by title (removable) and a search to add more. */
+function LinkedPosts({ type, legend, searchLabel, value, onChange }) {
+  const [titles, setTitles] = useState({});
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
+  const remember = (rows) =>
+    setTitles((known) => ({
+      ...known,
+      ...Object.fromEntries((rows || []).map((row) => [row.id, row.title])),
+    }));
+  useEffect(() => {
+    const missing = value.filter((id) => !(id in titles));
+    if (missing.length)
+      linkTargetTitles(type, missing)
+        .then(remember)
+        .catch(() => {});
+  }, [type, value.join(',')]);
+  useEffect(() => {
+    if (!search.trim()) return setResults([]);
+    const timer = setTimeout(() => {
+      searchLinkTargets(type, search)
+        .then((rows) => {
+          remember(rows);
+          setResults(rows || []);
+        })
+        .catch(() => setResults([]));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [type, search]);
+  const toggle = (id, checked) =>
+    onChange(checked ? [...value, id] : value.filter((other) => other !== id));
+  return (
+    <fieldset className={`ohmylms-skill-links ohmylms-skill-links-${type}`}>
+      <legend>{legend}</legend>
+      {value.length ? (
+        <ul>
+          {value.map((id) => (
+            <li key={id}>
+              {titles[id] || `#${id}`}{' '}
+              <Button
+                variant="link"
+                isDestructive
+                label={sprintf(__('Unlink %s', 'ohmylms'), titles[id] || `#${id}`)}
+                onClick={() => toggle(id, false)}
+              >
+                {__('Unlink', 'ohmylms')}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>{__('None yet.', 'ohmylms')}</p>
+      )}
+      <TextControl label={searchLabel} value={search} onChange={setSearch} />
+      {results.map((row) => (
+        <CheckboxControl
+          key={row.id}
+          label={row.title}
+          checked={value.includes(row.id)}
+          onChange={(checked) => toggle(row.id, checked)}
+        />
+      ))}
+    </fieldset>
   );
 }
