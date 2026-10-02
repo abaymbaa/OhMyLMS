@@ -107,9 +107,9 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
 | `quiz/{id}/assessment-settings`, `quiz/{id}/pools` | quiz editors | Exam settings; random pools |
 | `quiz/{id}/preview`, `…/preview/grade` | quiz editors | Non-recording preview |
 | `attempts/{id}`, `attempts/{id}/responses` | the attempt's learner | Resume; autosave |
-| `skills`, `skills/{id}`, `skills/{id}/lessons`, `question/{id}/skills` | authors | Catalogue and mappings |
+| `skills`, `skills/{id}`, `skills/{id}/lessons`, `skills/{id}/courses`, `skills/link-targets`, `question/{id}/skills` | authors | Catalogue and lesson/course/question mappings |
 | `practice/sessions…`, `practice/inline`, `practice/guest`, `practice/claim`, `me/skills` | learners/guests | Practice, inline checks, claims, own progress |
-| `reports/skills?course_id|class_id`, `reports/skills/students/{id}` | course editors, class teachers, guardians (with `school_id`) | Skill reports |
+| `reports/skills?course_id|class_id`, `reports/skills/students/{id}` | course editors, class teachers, guardians (with `school_id`; summary and suggestions only, no answer log) | Skill reports; shown in the school portal (family view per child, class view per class) |
 | `assessment/migration` | administrators | Inventory and migration |
 
 Existing question/quiz routes are unchanged in shape; `quiz/{id}` updates now also return
@@ -146,14 +146,14 @@ can stay in place with the code switched off.
 ## Verification
 
 ```sh
-OHMYLMS_TEST_CREDENTIALS=/path/test-credentials.json php tests/php/assessment-integration.php authoring versioning bank deadlines evidence math
+OHMYLMS_TEST_CREDENTIALS=/path/test-credentials.json php tests/php/assessment-integration.php authoring versioning bank deadlines evidence math completion
 php tests/assessment-unit.php
 node --test tests/js/assessment.test.mjs tests/js/question-bank.test.mjs tests/js/quizzes.test.mjs tests/js/quiz-reports.test.mjs
 ```
 
-Latest run: 266 integration checks, 49 unit checks, all existing PHP suites passing
+Latest run: 306 integration checks (phases above plus `completion`), 49 unit checks, all existing PHP suites passing
 (extensions 60, gradebook, schools, students, WordPress API 27, account blocks 44,
-leaderboard, view-as, membership 15, QPay 59), JavaScript 91/92 — the one failure is the
+leaderboard, view-as, membership 15, QPay 59), JavaScript 92/93 — the one failure is the
 pre-existing parity check of the shipped admin bundle, failing before this work.
 
 Browser checks on the isolated site: quiz editor (version bar, bank picker, numerical and
@@ -166,9 +166,7 @@ performance report.
 ## Limitations and later work
 
 - Classroom pilot, full RTL/mobile acceptance and enabling on the math site remain.
-- Translations: new strings use the `ohmylms` text domain but `languages/ohmylms.pot` has not
-  been regenerated (WP-CLI is not installed here): run `wp i18n make-pot . languages/ohmylms.pot`
-  and `wp i18n make-json languages`. The site currently runs in English and there is no
+- Translations: `languages/ohmylms.pot` is regenerated (WP-CLI bundled with Local). There is no
   Mongolian plugin translation yet. Mongolian (Cyrillic) content itself is verified: question
   text, skill names, family IDs and case-insensitive text answers.
 - Math rendering uses the site's KaTeX auto-render (`wpmath`). Server-rendered quizzes and
@@ -177,7 +175,13 @@ performance report.
 - Inline checks are authored as shortcode text. A spike in the retained lesson editor confirmed
   the shortcode round-trips intact (saved inside its own paragraph); curly quotes or a bare UUID
   are also accepted. A native editor node was not built.
-- Media are frozen by attachment ID and URL; replacing a file in place still changes it.
+- Media: each version copies the local uploads it references (question image/video, option and
+  matching images, images in the question text) to `uploads/ohmylms-frozen/` by SHA-256 and serves
+  those copies. Replacing a file in place produces a new version on the next save; files outside
+  uploads or over 25 MB keep their live URL. Frozen copies are never deleted automatically.
+- Exams: a section can start a new page; the paper is then split into pages even when the quiz
+  shows all questions on one page. The gradebook maximum for unattempted quizzes is the
+  published revision's total.
 - Structured questions: teachers can mark each part in the grading screen (sent as
   `part_marks`) or enter a whole-question mark (automatic parts keep their scores, the rest goes
   to written parts). Choice-type parts are not supported.
