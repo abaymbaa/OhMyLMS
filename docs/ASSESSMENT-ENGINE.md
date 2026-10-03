@@ -117,15 +117,22 @@ Existing question/quiz routes are unchanged in shape; `quiz/{id}` updates now al
 
 ### Previewing a quiz on the site
 
-Opening a quiz from the editor's Preview button runs the real quiz page. A user who can edit
-the quiz but is not enrolled in its course (`Submission::is_preview()`) is previewing: attempts
-have no limit and leave no record. The in-progress attempt exists only while the quiz is open;
-on submit, exit or timeout it is graded, summarised for the quiz page (a one-hour transient,
-shown as "Last preview result"), and erased. No grade or evidence events are written, the lesson
-is not completed, and none of the `ohmylms_*` attempt/quiz events fire, so instructors get no
-email and webhooks, achievements and automations are not triggered. Enrolled users, including an
-admin who enrols themselves to test the learner experience, are recorded as normal.
-Checked by `php tests/php/quiz-preview-unit.php`.
+Opening a quiz from the editor's Preview button runs the real quiz page. Administrators and the
+quiz's author are always previewing (`Submission::is_preview()`), enrolled or not; any other user
+who can edit the quiz previews until they enrol. Students never preview. Attempts have no limit
+and leave no record. The in-progress attempt exists only while the quiz is open (a reload resumes
+it); on submit, exit or timeout it is graded, summarised for the quiz page (a one-hour transient,
+shown once as "Last preview result"), and erased. No grade or evidence events are written, the
+lesson is not completed, and none of the `ohmylms_*` attempt/quiz events fire, so instructors get
+no email and webhooks, achievements and automations are not triggered.
+
+When an author opens their own quiz, attempts and completion recorded by earlier versions (which
+treated their testing as a learner's) are cleared, along with a course completion that depended on
+them; an attempt in progress is kept. Other people's quizzes are previewed but never wiped. Skill
+evidence written by those earlier versions is not removed. A site that wants enrolled staff recorded
+as learners can return `false` from the `ohmylms_quiz_is_preview` filter
+(`$preview, $quiz_id, $user_id`).
+Checked by `php tests/php/quiz-preview-unit.php` and `php tests/php/restrict-access-unit.php`.
 
 ## Release switches
 

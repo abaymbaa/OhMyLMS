@@ -181,8 +181,11 @@ if( 'ohmylms-session' === get_post_type() ){
 
     <?php if( 'quiz' == $get_type ) {
 		$currentUrl = ohmylms_get_pretty_content_permalink($lesson_id);
-		// Admins and authors previewing a quiz they are not enrolled in can retry without limit.
+		// Admins and authors previewing a quiz can retry without limit and never see it as completed.
 		$is_quiz_preview = \OhMyLMS\Quiz\Submission::is_preview($lesson_id, get_current_user_id());
+		if ( $is_quiz_preview ) {
+			$is_checked = '';
+		}
         ?>
         <div class="assignment-quiz-navigation quiz-navigation">
             <?php if( !empty(ohmylms_get_next_content_permalink($lesson_id) ) ){ ?>

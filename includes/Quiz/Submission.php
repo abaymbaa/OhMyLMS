@@ -33,25 +33,51 @@ final class Submission {
         return $course_id;
     }
     /**
-     * A user who can edit the quiz but is not enrolled in its course is previewing it: access()
-     * admits them only because of the edit capability. Their attempts are disposable, so they must
-     * not use up attempt limits, record grades or evidence, complete the lesson, or fire the events
-     * that email instructors, call webhooks and award achievements. Enrolled users, including
-     * admins who enrolled themselves, are real learners and are recorded as usual.
+     * Admins and a quiz's author are always previewing it, enrolled or not: their own testing must
+     * never become a learner record. Other users who can edit the quiz preview only until they enrol,
+     * when they become real learners. Previewing attempts are disposable, so they do not use up
+     * attempt limits, record grades or evidence, complete the lesson, or fire the events that email
+     * instructors, call webhooks and award achievements. Students and other non-editors never preview.
+     * Sites can override with the `ohmylms_quiz_is_preview` filter.
      */
     public static function is_preview($quiz_id,$student_id) {
         $quiz_id=(int)$quiz_id; $student_id=(int)$student_id;
-        if (!$quiz_id || !$student_id || get_post_type($quiz_id)!=='ohmylms-quiz') return false;
-        $course_id=(int)ohmylms_get_course_by_content_id($quiz_id);
-        return $course_id>0 && !(new Student($student_id))->maybe_enrolled($course_id) && user_can($student_id,'edit_post',$quiz_id);
+        if (!$quiz_id || !$student_id || get_post_type($quiz_id)!=='ohmylms-quiz' || !user_can($student_id,'edit_post',$quiz_id)) return false;
+        $preview=user_can($student_id,'manage_options') || (int)get_post_field('post_author',$quiz_id)===$student_id;
+        if (!$preview) {
+            $course_id=(int)ohmylms_get_course_by_content_id($quiz_id);
+            $preview=$course_id>0 && !(new Student($student_id))->maybe_enrolled($course_id);
+        }
+        return (bool)apply_filters('ohmylms_quiz_is_preview',$preview,$quiz_id,$student_id);
     }
     private static function preview_key($quiz_id,$student_id) {
         return 'ohmylms_quiz_preview_'.(int)$student_id.'_'.(int)$quiz_id;
     }
-    /** The last preview's score, kept briefly so the quiz page can show it after the attempt is erased. */
-    public static function preview_result($quiz_id,$student_id) {
-        $result=get_transient(self::preview_key($quiz_id,$student_id));
+    /** The score of the preview just taken, shown once on the quiz page (the attempt itself is erased). */
+    public static function take_preview_result($quiz_id,$student_id) {
+        $key=self::preview_key($quiz_id,$student_id);
+        $result=get_transient($key);
+        if ($result!==false) delete_transient($key);
         return is_array($result)?$result:null;
+    }
+    /**
+     * Earlier versions recorded staff attempts like learners': a pass, a completed quiz, used-up
+     * attempts. When an author opens their own quiz, clear what is left (keeping any attempt in
+     * progress) so a preview never opens on an old "passed". Other people's quizzes are only
+     * previewed, never wiped.
+     */
+    public static function clear_preview_record($quiz_id,$student_id) {
+        global $wpdb;
+        $quiz_id=(int)$quiz_id; $student_id=(int)$student_id;
+        if (!self::is_preview($quiz_id,$student_id) || (int)get_post_field('post_author',$quiz_id)!==$student_id) return;
+        $attempts=$wpdb->get_col($wpdb->prepare("SELECT id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id=%d AND student_id=%d AND status<>'in-progress'",$quiz_id,$student_id));
+        foreach ((array)$attempts as $attempt_id) self::erase_attempt((int)$attempt_id);
+        $removed=$wpdb->query($wpdb->prepare("DELETE p FROM {$wpdb->prefix}ohmylms_user_progress p JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON p.enrollment_id=e.id WHERE e.user_id=%d AND p.content_id=%d AND p.status='completed'",$student_id,$quiz_id));
+        $course_id=(int)ohmylms_get_course_by_content_id($quiz_id);
+        if ($removed && $course_id && (int)(new Student($student_id))->get_over_all_completion_rate($course_id)<100) {
+            // Completing this quiz had also completed the course; take that back with it.
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}ohmylms_user_enrollment SET progress='running', end_date='0000-00-00 00:00:00' WHERE user_id=%d AND course_id=%d AND progress='completed'",$student_id,$course_id));
+        }
     }
     /** Remember the outcome for the quiz page, then erase the attempt so a preview leaves no record. */
     private static function finish_preview(array $attempt,array $graded,array $event) {
