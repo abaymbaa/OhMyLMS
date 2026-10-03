@@ -8,8 +8,7 @@
         },
 		"classmap": [
 			"includes/Gateways/GatewayOffline.php",
-			"includes/Gateways/Stripe/GatewayStripeIntents.php",
-            "includes/Gateways/Mollie/GatewayMollie.php"
+			"includes/Gateways/Stripe/GatewayStripeIntents.php"
 		]
     },
     "authors": [

@@ -1,0 +1,6 @@
+.ohmylms-reveal { border: 1px solid #dcdcde; border-radius: 8px; padding: 16px; margin: 16px 0; background: #fafafa; }
+.ohmylms-reveal__prompt { font-weight: 600; margin-bottom: 12px; }
+.ohmylms-reveal__toggle { cursor: pointer; border: 1px solid var(--ohmylms-primary-color, #6e42d3); color: var(--ohmylms-primary-color, #6e42d3); background: #fff; border-radius: 6px; padding: 6px 14px; font: inherit; }
+.ohmylms-reveal__toggle:hover { background: var(--ohmylms-primary-color, #6e42d3); color: #fff; }
+.ohmylms-reveal__answer { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #dcdcde; }
+.ohmylms-reveal__answer[hidden], .ohmylms-reveal [hidden] { display: none; }

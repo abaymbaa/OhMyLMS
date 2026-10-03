@@ -41,7 +41,7 @@ OhMyLMS is the go-to WordPress coaching plugin for:
 1. **Cohort-based learning (Business & Agency)** — Students start together, progress together. Creates accountability, higher completion, and justifies premium pricing.
 2. **Built-in community (Agency)** — Students connect, ask questions, and support each other — no BuddyPress, no Facebook Groups.
 3. **AI course builder (Pro)** — Describe your coaching topic and AI generates a complete course outline in minutes.
-4. **Native checkout** — Sell coaching programs with Stripe or Mollie. No WooCommerce. No cart abandonment.
+4. **Native checkout** — Sell coaching programs with Stripe. No WooCommerce. No cart abandonment.
 5. **Memberships & subscriptions (Pro)** — Monthly or yearly coaching memberships for predictable recurring revenue.
 6. **One-click upsells (Pro)** — Increase revenue per student with post-purchase upsell offers, no redirect needed.
 
@@ -71,7 +71,7 @@ OhMyLMS offers more in its free version than most paid WordPress LMS plugins. No
 
 **Free version includes:**
 - ✅ Unlimited courses, lessons, and students
-- ✅ Native Stripe and Mollie checkout — no WooCommerce
+- ✅ Native Stripe checkout — no WooCommerce
 - ✅ Quiz builder with 6+ question types
 - ✅ Certificate builder with verification
 - ✅ Gutenberg, Elementor, and Bricks Builder support
@@ -90,7 +90,7 @@ OhMyLMS offers more in its free version than most paid WordPress LMS plugins. No
 - Memberships and subscriptions
 - Advanced email automation (Mail Mint)
 - Content protection (screen recording prevention)
-- Additional payment gateways (PayPal, Razorpay, Authorize.net)
+- Additional payment gateways (PayPal, Authorize.net)
 - Advanced analytics and reporting
 
 == OhMyLMS vs. Kajabi, Teachable, LearnDash & More ==
@@ -236,8 +236,8 @@ Issue branded completion certificates that students can download, share on Linke
 
 OhMyLMS includes a complete native checkout system built for selling coaching courses and programs — no WooCommerce required.
 
-**Free: Stripe, Mollie, offline payments**
-**Pro: PayPal, Razorpay, Authorize.net**
+**Free: Stripe, offline payments**
+**Pro: PayPal, Authorize.net**
 
 **Pricing models:**
 - One-time course purchases
@@ -326,7 +326,7 @@ Describe your coaching topic, target audience, and expertise level. AI creates a
 
 **Page Builders:** Gutenberg, Elementor, Bricks Builder, WPBakery
 
-**Payment Gateways:** Stripe (free), Mollie (free), Offline (free), PayPal (Pro), Razorpay (Pro), Authorize.net (Pro)
+**Payment Gateways:** Stripe (free), Offline (free), PayPal (Pro), Authorize.net (Pro)
 
 **Email & CRM:** Mail Mint (Pro), WP Fusion (Pro), Webhooks for Zapier and Make
 
@@ -393,7 +393,7 @@ OhMyLMS is built specifically for coaches, consultants, and course creators. It 
 
 = Is OhMyLMS free? =
 
-Yes. The core OhMyLMS plugin is 100% free and includes unlimited courses, lessons, students, native Stripe and Mollie checkout, quiz builder, certificate builder, and basic analytics. No credit card. No time limit. Pro adds AI, gamification, memberships, and advanced monetization on every plan, cohorts on Business & Agency, and community on Agency.
+Yes. The core OhMyLMS plugin is 100% free and includes unlimited courses, lessons, students, native Stripe checkout, quiz builder, certificate builder, and basic analytics. No credit card. No time limit. Pro adds AI, gamification, memberships, and advanced monetization on every plan, cohorts on Business & Agency, and community on Agency.
 
 = Is OhMyLMS a good Kajabi alternative? =
 
@@ -413,7 +413,7 @@ Yes, on the Business and Agency plans. OhMyLMS includes cohort-based learning de
 
 = Do I need WooCommerce to sell coaching programs? =
 
-No. OhMyLMS includes a fully native checkout powered by Stripe and Mollie — WooCommerce is never needed. Students purchase your coaching programs in a streamlined two-step checkout. Manage all orders, refunds, and revenue reports entirely inside OhMyLMS.
+No. OhMyLMS includes a fully native checkout powered by Stripe — WooCommerce is never needed. Students purchase your coaching programs in a streamlined two-step checkout. Manage all orders, refunds, and revenue reports entirely inside OhMyLMS.
 
 = Can I sell coaching memberships and subscriptions? =
 
@@ -449,7 +449,7 @@ Yes. OhMyLMS supports multiple instructors, bulk student enrollment, progress tr
 
 = What payment methods can I use to sell coaching programs? =
 
-Free: Stripe (credit/debit cards), Mollie (European payment methods), offline/manual payments. Pro adds PayPal, Authorize.net, and Razorpay for global payment flexibility.
+Free: Stripe (credit/debit cards), offline/manual payments. Pro adds PayPal and Authorize.net for global payment flexibility.
 
 = Can I create quizzes and assessments for my coaching courses? =
 

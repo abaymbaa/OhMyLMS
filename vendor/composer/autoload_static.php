@@ -12,6 +12,11 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
     );
 
     public static $prefixLengthsPsr4 = array (
+        'W' =>
+        array (
+            'WP\\McpSchema\\' => 13,
+            'WP\\MCP\\' => 7,
+        ),
         'S' =>
         array (
             'Svg\\' => 4,
@@ -33,9 +38,21 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         array (
             'Dompdf\\' => 7,
         ),
+        'A' =>
+        array (
+            'Automattic\\Jetpack\\Autoloader\\' => 30,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'WP\\McpSchema\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/wordpress/php-mcp-schema/src',
+        ),
+        'WP\\MCP\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/wordpress/mcp-adapter/includes',
+        ),
         'Svg\\' =>
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
@@ -59,6 +76,10 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'Dompdf\\' =>
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+        ),
+        'Automattic\\Jetpack\\Autoloader\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src',
         ),
     );
 
@@ -144,6 +165,7 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'Action_Scheduler\\WP_CLI\\Migration_Command' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/Migration_Command.php',
         'Action_Scheduler\\WP_CLI\\ProgressBar' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/ProgressBar.php',
         'Action_Scheduler\\WP_CLI\\System_Command' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/classes/WP_CLI/System_Command.php',
+        'Automattic\\Jetpack\\Autoloader\\AutoloadGenerator' => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php',
         'CodeRex\\ECommerce\\CustomEndpoints' => __DIR__ . '/../..' . '/packages/e-commerce/includes/CustomEndpoints.php',
         'CodeRex\\ECommerce\\DataStore\\SubscriptionStore' => __DIR__ . '/../..' . '/packages/e-commerce/includes/DataStore/SubscriptionStore.php',
         'CodeRex\\Ecommerce\\Abstracts\\Data' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Abstracts/Data.php',
@@ -179,8 +201,9 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'CodeRex\\Ecommerce\\Factory\\OrderItemCourseFactory' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Factory/OrderItemCourseFactory.php',
         'CodeRex\\Ecommerce\\Factory\\SubscriptionFactory' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Factory/SubscriptionFactory.php',
         'CodeRex\\Ecommerce\\Gateways\\Gateways' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Gateways.php',
-        'CodeRex\\Ecommerce\\Gateways\\Mollie\\Helper' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Mollie/Helper.php',
-        'CodeRex\\Ecommerce\\Gateways\\Mollie\\MollieAPI' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Mollie/MollieAPI.php',
+        'CodeRex\\Ecommerce\\Gateways\\QPay\\GatewayQPay' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/QPay/GatewayQPay.php',
+        'CodeRex\\Ecommerce\\Gateways\\QPay\\PaymentService' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/QPay/PaymentService.php',
+        'CodeRex\\Ecommerce\\Gateways\\QPay\\QPayAPI' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/QPay/QPayAPI.php',
         'CodeRex\\Ecommerce\\Gateways\\Stripe\\Helper' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Stripe/Helper.php',
         'CodeRex\\Ecommerce\\Gateways\\Stripe\\StripeApi' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Stripe/StripeApi.php',
         'CodeRex\\Ecommerce\\Gateways\\Stripe\\StripeCustomer' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Stripe/StripeCustomer.php',
@@ -212,12 +235,9 @@ class ComposerStaticInita3fcaf904fcecd2eafd24ec5038e4445
         'Dompdf\\Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
         'EuVatApi' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Tax/EuVatApi.php',
         'EuVatApiResponse' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Tax/EuVatApiResponse.php',
-        'GatewayMollie' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Mollie/GatewayMollie.php',
         'GatewayOffline' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/GatewayOffline.php',
-        'GatewayRazorPay' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Razorpay/GatewayRazorPay.php',
         'GatewayStripeIntents' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Stripe/GatewayStripeIntents.php',
         'Package' => __DIR__ . '/../..' . '/packages/e-commerce/Package.php',
-        'RazorpayAPI' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Gateways/Razorpay/RazorpayAPI.php',
         'TaxCalculator' => __DIR__ . '/../..' . '/packages/e-commerce/includes/Tax/TaxCalculator.php',
         'WP_Async_Request' => __DIR__ . '/../..' . '/packages/e-commerce/vendor/woocommerce/action-scheduler/lib/WP_Async_Request.php',
     );

@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit5b54732061010c9d5d546c3e39373072
 {
     public static $prefixLengthsPsr4 = array (
-        'C' => 
+        'C' =>
         array (
             'CodeRex\\Ecommerce\\' => 18,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'CodeRex\\Ecommerce\\' => 
+        'CodeRex\\Ecommerce\\' =>
         array (
             0 => __DIR__ . '/../..' . '/includes',
         ),
@@ -22,7 +22,6 @@ class ComposerStaticInit5b54732061010c9d5d546c3e39373072
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'GatewayMollie' => __DIR__ . '/../..' . '/includes/Gateways/Mollie/GatewayMollie.php',
         'GatewayOffline' => __DIR__ . '/../..' . '/includes/Gateways/GatewayOffline.php',
         'GatewayStripeIntents' => __DIR__ . '/../..' . '/includes/Gateways/Stripe/GatewayStripeIntents.php',
     );

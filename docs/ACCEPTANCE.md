@@ -1,5 +1,18 @@
 # Acceptance status — 2026-09-24
 
+## Frontend Interactivity migration — 2026-10-02
+
+Default quiz navigation/validation/timers, matching/reorder, SmartScore practice, reward notifications,
+course tabs, layout-2 chapter expansion and common disclosures now use frontend stores. Public module,
+validator, mount, event and slot contracts are documented in INTERACTIVITY.md. The custom-question
+add-on uses the question registry and no longer replaces the quiz template or regrades after submission.
+
+Eleven isolated browser scenarios pass using the actual PHP templates and installed WordPress runtime
+with mocked data/REST. This is not full authenticated database/theme acceptance. Grading and payment
+schemas are unchanged. The repository's aggregate check still has existing formatting failures in
+LessonEditor.jsx and schools/AddModal.jsx, and a recovered admin AST parity mismatch; these files
+were not changed by the frontend migration.
+
 **Not released to the math site.** This is a tested source-recovery/extension foundation, not completion of every approved release gate.
 
 ## Evidence

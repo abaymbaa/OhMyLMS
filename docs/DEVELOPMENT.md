@@ -1,5 +1,11 @@
 # Source development
 
+Student frontend modules and add-on contracts are documented in [INTERACTIVITY.md](INTERACTIVITY.md).
+They load on demand independently of the opt-in admin source build. The maintained frontend
+`assets/src/frontend/js/ohmylms.js` handles remaining legacy integrations; its URL is selected by
+`Extensions/Interactivity.php`. Original compiled frontend assets remain provenance, so turning off
+`OHMYLMS_SOURCE_ASSETS` restores the admin asset selection but does not disable the migrated frontend.
+
 The source build is opt-in. Read ACCEPTANCE.md before enabling it on a working site.
 
 For component conventions, factory contracts and the feature development workflow, read [REACT-DEVELOPMENT.md](REACT-DEVELOPMENT.md). Run `npm run check` before delivering source changes.
@@ -8,7 +14,7 @@ For component conventions, factory contracts and the feature development workflo
 
 - `assets/src/manifest.json`: original SHA-256/size, asset-to-source and numeric module mappings.
 - `assets/src/modules/`: 831 extracted Webpack factories. Vendor-bundle modules are under `dist/vendors/`.
-- `assets/src/application/`: ordered fragments of factory 1841. `routes.js` is the admin route table, `screens/<feature>/` holds each screen (`*Route.js` is the memoized route wrapper, `*Screen.js` the implementation), and `shared/section-*.js` are unnamed byte-sized slices of shared code. Fragment order in `manifest.json` is significant; rebuilding must produce an identical `ohmylms.js`.
+- `assets/src/application/`: ordered fragments of factory 1841. `routes.js` is the admin route table, `screens/<feature>/` holds each screen (`*Route.js` is the memoized route wrapper, `*Screen.js` the implementation), and `shared/<topic>.js` are byte-sized slices of shared code, named after the feature they mostly contain (a slice can include helpers for neighbouring features because the original scope was cut by size, not by feature). Fragment order in `manifest.json` is significant; rebuilding must produce an identical `ohmylms.js`.
 - `assets/src/extensions/`: authored React components, registry, API client, error boundaries and editor integrations.
 - `assets/src/features/`: membership validation and 17 quiz/question React components, including an authored quiz hook/API client and choice-options editor. See QUIZ-SOURCE.md for the compatibility boundaries and tested coverage.
 - `tools/quiz-adapters.mjs`: checked integration of native quiz components into the recovered runtime.
@@ -130,3 +136,11 @@ Build these into the question bank / exam builder, not into the Text lesson edit
 5. **Answer key stays server-side.** `isCorrect` is never output to the page. The Interactivity store posts the choice to a REST endpoint that grades and records it.
 6. **Anonymous students.** If a student is not logged in, keep the attempts in the browser (local storage). Ask them to create an account or log in right after the quiz ends, then attach the stored attempts to the account. Design the exam engine and question bank with this in mind.
 7. **Completion is unchanged.** Blocks never gate "Mark Complete".
+
+## Interactive items in the lesson editor's "/" menu
+
+The Text lesson editor's slash menu is a fixed list in a recovered module (`0-66427.js`). `tools/slash-adapters.mjs` patches the slash extension (`0-70181.js`) so the menu also reads `window.ohmylms.extensions.slashGroups()`: commands registered with `registerSlashCommand(id, {label, description, aliases, iconName, action(editor)})` appear in an "Interactive" group (`iconName` is any Lucide icon name; unknown names show no icon).
+
+Interactive content is stored as a shortcode, e.g. `[ohmylms_activity type="reveal" prompt="..." answer="..."]`, and rendered by PHP (`ohmylms_register_activity`, see `includes/Extensions/Activities.php`). Behaviour uses the WordPress Interactivity API (`assets/extensions/reveal.js`, a script module). Only the shortcode is saved, so content filtering never strips markup. Plain shortcode attributes cannot contain double quotes; use a `data='{...}'` JSON attribute for richer data.
+
+To add an activity: register the PHP activity, add a script module if it needs behaviour, and register a slash command whose action inserts its shortcode. Lesson pages render content after `wp_head`; on block themes `Activities::ensure_import_map()` prints the module import map in the footer so late-enqueued modules resolve `@wordpress/interactivity`.

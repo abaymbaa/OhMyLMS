@@ -1,0 +1,8 @@
+[data-wp-interactive] [hidden] { display: none !important; }
+[data-wp-interactive="ohmylms/tabs"] .ohmylms-carousel-inner { overflow-x: auto; }
+[data-wp-interactive="ohmylms/tabs"] .ohmylms-course-tab-nav { flex-wrap: nowrap; width: max-content; min-width: 100%; }
+[data-wp-interactive="ohmylms/questions"] [role="button"]:focus-visible { outline: 2px solid var(--ohmylms-primary-color, #3858e9); outline-offset: 2px; }
+[data-wp-interactive="ohmylms/questions"] .matching-option[aria-pressed="true"] { outline: 2px solid var(--ohmylms-primary-color, #3858e9); }
+@media (prefers-reduced-motion: reduce) {
+  [data-wp-interactive="ohmylms/gamification"] .ohmylms-celebration-popup { animation: none; right: 20px; }
+}

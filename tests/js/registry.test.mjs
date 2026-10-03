@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRegistry,KINDS} from '../../assets/src/extensions/registry.mjs';
-const item={label:'Example',render:()=>null};
+const item={label:'Example',render:()=>null,action:()=>{}};
 test('all extension categories register, unregister and enforce duplicate IDs',()=>{
  const r=createRegistry();for(const kind of KINDS){const remove=r.register(kind,'example',item);assert.equal(r.list(kind).length,1);assert.throws(()=>r.register(kind,'example',item),/Duplicate/);remove();assert.equal(r.list(kind).length,0);}
 });

@@ -1,7 +1,9 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { walk, parseSource, checkContracts } from './source-contracts.mjs';
 const root = path.resolve(import.meta.dirname, '../assets/src');
-const files = walk(root).filter((file) => /\.(m?js|jsx)$/.test(file));
+const frontendRoots = [path.resolve(root, '../interactivity'), path.resolve(root, '../../../ohmylms-smartscore/assets')];
+const files = [...walk(root), ...frontendRoots.filter(dir => fs.existsSync(dir)).flatMap(dir => walk(dir))].filter((file) => /\.(m?js|jsx)$/.test(file));
 for (const file of files) {
   try {
     parseSource(file);

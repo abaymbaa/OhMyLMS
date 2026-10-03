@@ -51,9 +51,6 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 							if ( $has_membership && ! $gateway->subscription_support ) {
 								continue;
 							}
-							if( 'razorpay' === $gateway->id && $is_recurring_daily ) {
-								continue;
-							}
 
 							ohmylms_get_template(
 								'checkout/payment-method.php',

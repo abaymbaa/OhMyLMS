@@ -3,6 +3,9 @@
  * Celebration Template
  * Include this once in your theme or plugin footer.
  */
+if (!defined('ABSPATH')) exit;
+if (!\OhMyLMS\Extensions\Interactivity::once('celebration')) return;
+ohmylms_enqueue_interactivity_module('ohmylms/gamification');
 ?>
 
 <style>
@@ -73,6 +76,12 @@
 </style>
 
 <canvas id="ohmylms-confetti-canvas"></canvas>
+<div data-wp-interactive="ohmylms/gamification" data-wp-init="callbacks.mount">
+  <div class="ohmylms-celebration-popup" role="status" aria-live="polite" hidden data-wp-bind--hidden="!state.visible">
+    <span data-wp-text="state.message"></span>
+    <button type="button" aria-label="<?php esc_attr_e('Dismiss notification', 'ohmylms'); ?>" data-wp-on--click="actions.dismiss">×</button>
+  </div>
+</div>
 
 <script>
 /**
@@ -172,15 +181,12 @@
     show: function(message) {
       if (!this.canvas) this.initCanvas();
 
-      // Create toast
-      const popup = document.createElement("div");
-      popup.className = "ohmylms-celebration-popup";
-      popup.textContent = message;
-      document.body.appendChild(popup);
-      setTimeout(() => popup.remove(), 3500);
-
-      // Start confetti
-      this.startConfetti();
+      // Backwards-compatible facade: the Interactivity store owns notification state.
+      if (window.ohmylmsCelebrationReady) {
+        document.dispatchEvent(new CustomEvent('ohmylms:celebrate', {detail: {message: String(message)}}));
+      } else {
+        (window.ohmylmsCelebrationQueue ||= []).push(String(message));
+      }
     }
   };
 

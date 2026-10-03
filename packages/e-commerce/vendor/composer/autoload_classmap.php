@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'GatewayMollie' => $baseDir . '/includes/Gateways/Mollie/GatewayMollie.php',
     'GatewayOffline' => $baseDir . '/includes/Gateways/GatewayOffline.php',
     'GatewayStripeIntents' => $baseDir . '/includes/Gateways/Stripe/GatewayStripeIntents.php',
 );

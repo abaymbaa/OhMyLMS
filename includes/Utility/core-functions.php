@@ -51,7 +51,16 @@ function ohmylms_get_template( $template_name, $args = array(), $template_path =
 
 	do_action( 'ohmylms_before_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
 
-	include $action_args['located'];
+	// A public rendering boundary lets frontend modules decorate trusted PHP templates.
+	ob_start();
+	try {
+		include $action_args['located'];
+		$ohmylms_template_html = ob_get_clean();
+	} catch (\Throwable $error) {
+		ob_end_clean();
+		throw $error;
+	}
+	echo apply_filters('ohmylms_template_html', $ohmylms_template_html, $action_args['template_name'], $action_args['args']); // phpcs:ignore WordPress.Security.EscapeOutput -- templates escape their own fields.
 
 	do_action( 'ohmylms_after_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
 }

@@ -62,7 +62,53 @@ class Ajax {
 			wp_send_json_error( array( 'message' => __( 'Unauthorized access', 'ohmylms' ) ) );
 		}
 
-		$count = self::clear_transient_cache();
+global $wpdb;
+
+		// Delete all OhMyLMS related transients
+		$count = $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
+				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%'
+			)
+		);
+		
+		// Also delete transients with 'ohmylms' and 'ohmylms' prefix
+		$count += $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
+				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_transient_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
+				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
+				$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%'
+			)
+		);
+
+		// For multisite, also delete from sitemeta
+		if ( is_multisite() ) {
+			$count += $wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s OR meta_key LIKE %s",
+					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_timeout_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_update_plugins' ) . '%',
+					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%',
+					$wpdb->esc_like( '_site_transient_update_ohmylms_' ) . '%'
+				)
+			);
+		}
+
 
 		wp_send_json_success( 
 			array( 

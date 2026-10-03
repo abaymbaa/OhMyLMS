@@ -751,8 +751,8 @@
 			}
 
 			function ohMyLMSJQueryTab(tabSelector, contentSelector){
-				const $tabs = $(tabSelector);
-        		const $contents = $(contentSelector);
+				const $tabs = $(tabSelector).filter(function() { return !this.closest('[data-wp-interactive="ohmylms/tabs"]'); });
+				const $contents = $(contentSelector).filter(function() { return !this.closest('[data-wp-interactive="ohmylms/tabs"]'); });
 
 				function clearActiveClasses() {
 					$tabs.each(function() {
@@ -822,7 +822,7 @@
 			})
 
 			//----if nav width is less than navOuterWidth will show carousel nav----
-			if( navOuterWidth < navWidth ) {
+			if( navOuterWidth < navWidth && !$('.ohmylms-course-details-tab[data-wp-interactive="ohmylms/tabs"]').length ) {
 				$(document).on("click", ".ohmylms-course-tab-nav li button", function() {
 					let dataTarget = $(this).attr('data-target');
 
@@ -1824,6 +1824,7 @@
 
 			//------quiz submit----
 			$(document).on("click", ".ohmylms-button.quiz-submit", function(e) {
+				if ($(this).closest('[data-wp-interactive="ohmylms/quiz"]').length) return;
 				let isAnsweredRequiredQuestion = true;
 
 				$(".ohmylms-quiz-box").each(function(){
@@ -1895,6 +1896,7 @@
 
 				if( !isAnsweredRequiredQuestion ) {
 					e.preventDefault();
+					return;
 				}
 
 				$(this).prop('disabled', true);
@@ -2005,7 +2007,7 @@
 				});
 			}
 
-			if ($('.ohmylms-quiz-timer').length > 0) {
+			if ($('.ohmylms-quiz-timer').filter(function() { return !this.closest('[data-wp-interactive="ohmylms/quiz"]'); }).length > 0) {
 				// Get the timer value from the data attribute
 				let time = $('.ohmylms-timer .timer-display').attr('data-timer');
 				isTimerStart = true;
