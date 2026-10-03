@@ -1,7 +1,7 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var H$ = function () {
   var e, t, n, r, a, o, i, c, u, s, d;
-  HG("ohmylms", "quizzes");
+  HG("ohmylms", "assessments");
   var m = L$((0, g.useState)([]), 2),
     p = m[0],
     h = m[1],

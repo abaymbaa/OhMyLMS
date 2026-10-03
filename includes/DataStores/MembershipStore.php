@@ -152,6 +152,9 @@ class MembershipStore extends DataStore {
 			'_subscription_period'   => 'subscription_period',
 			'_subscription_period_interval'   => 'subscription_period_interval',
 			'_products'              => 'products',
+            '_course_categories' => 'course_categories',
+            '_course_tags' => 'course_tags',
+            '_excluded_courses' => 'excluded_courses',
 		);
 
 		$props_to_update = $meta_key_to_props;
@@ -235,6 +238,9 @@ class MembershipStore extends DataStore {
 			'_subscription_period'   => 'subscription_period',
 			'_subscription_period_interval'   => 'subscription_period_interval',
 			'_products'              => 'products',
+            '_course_categories' => 'course_categories',
+            '_course_tags' => 'course_tags',
+            '_excluded_courses' => 'excluded_courses',
 		);
 
 		foreach ( $meta_key_to_props as $meta_key => $prop ) {
@@ -364,6 +370,7 @@ class MembershipStore extends DataStore {
                 'order_id' => $order_id,
             ]
 		);
+        \OhMyLMS\Membership\CourseSelection::sync($membership->get_id());
 	}
 
 

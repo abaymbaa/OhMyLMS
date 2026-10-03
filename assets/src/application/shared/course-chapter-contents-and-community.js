@@ -13,10 +13,10 @@ const Sf = function (e) {
     d = e.handleRemoveMedia,
     m = e.handleUploadComplete,
     p = (e.hasMedia, (0, f.g)().id),
-    v = Ze(),
+    v = false,
     w = (0, y.useDispatch)(T.default),
     E = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISuggestedCourses();
+      return e(T.default).getCourse();
     }, []),
     S = ((0, y.useSelect)(function (e) {
       return e(T.default).getCourse();

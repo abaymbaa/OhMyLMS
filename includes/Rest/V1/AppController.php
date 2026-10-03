@@ -52,9 +52,7 @@ class AppController extends RestController {
             $result['categories'] = $this->get_categories();
             $result['integrations'] = $this->get_integrations();
             $result['currency_settings'] = $this->get_currency_settings();
-            $result['engagement_settings'] = $this->get_engagement_settings();
-            $result['ai_settings'] = $this->get_ai_settings();
-        } else {
+            $result['engagement_settings'] = $this->get_engagement_settings();        } else {
             switch ( $type ) {
                 case 'categories':
                     $result['categories'] = $this->get_categories();
@@ -67,9 +65,6 @@ class AppController extends RestController {
                     break;
                 case 'engagement_settings':
                     $result['engagement_settings'] = $this->get_engagement_settings();
-                    break;
-                case 'ai_settings':
-                    $result['ai_settings'] = $this->get_ai_settings();
                     break;
                 default:
                     return new \WP_Error( 'invalid_type', \__( 'Invalid type parameter.', 'ohmylms' ), array( 'status' => 400 ) );
@@ -99,23 +94,6 @@ class AppController extends RestController {
         );
     }
 
-
-    /**
-     * Get AI settings for the app.
-     */
-    public function get_ai_settings() {
-        if ( !ohmylms_is_pro() ) return array();
-        $user_id = \get_current_user_id();
-		$settings = \get_user_meta( $user_id, 'ohmylms_ai_api_credentials', true );
-        $text_credit = get_option( 'ohmylms_pro_token_remaining', 0 );
-        $image_count = get_option( 'ohmylms_pro_image_token_remaining', 0 );
-		if ( empty( $settings ) ) {
-			$settings = array();
-		}
-        $settings['text_credit'] = $text_credit;
-        $settings['image_count'] = $image_count;
-		return $settings;
-    }
 
     /**
      * Get all course categories (course_category terms)
@@ -156,11 +134,12 @@ class AppController extends RestController {
                 'community' => array(
                     'is_enable' => 1,
                 ),
-            );    
+            );
             return $integrations;
         }
 
         $integrations = get_option( 'ohmylms_integrations', array() );
+        unset( $integrations['ai_model'], $integrations['question_bank'] );
         if( $is_community_active ) {
             $integrations['community']['is_enable'] = 1;
         } else {

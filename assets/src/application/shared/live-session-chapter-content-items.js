@@ -472,10 +472,10 @@ const Xl = function (e) {
     v = e.activeIndex,
     b = (e.showEdit, e.setShowEdit, e.handleSaveName),
     w = (0, f.g)().id,
-    S = Ze(),
+    S = false,
     R = (0, y.useDispatch)("ohmylms/store"),
     x = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISuggestedCourses();
+      return e(T.default).getCourse();
     }, []),
     C = $l((0, g.useState)(n.name || n.title), 2),
     P = (C[0], C[1]),
@@ -844,7 +844,7 @@ const lc = function (e) {
     n = e.setActiveIndex,
     r = e.onExpand,
     a = e.activeChapters,
-    o = Ze(),
+    o = false,
     i = function (e, t) {
       return function (e) {
         if (Array.isArray(e)) return e;

@@ -20,13 +20,11 @@ export function createCourseEditor(readRuntime) {
     } = r;
     const { step = 'content' } = r.f.g();
     const navigate = r.f.Zp();
-    const isAi = r.Ze();
     const { totalSteps } = r.JW();
     const editor = useCourseEditor({
       store: r.T.default,
       courseId,
       enableSpin,
-      isAi,
     });
     const dialogs = useCourseIntegrations({
       actions: editor.actions,

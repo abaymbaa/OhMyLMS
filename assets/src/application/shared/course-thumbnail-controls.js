@@ -33,9 +33,6 @@ var Yp = function (e) {
     N = Up((0, g.useState)(!1), 2),
     D = N[0],
     W = N[1],
-    z = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISettings();
-    }, []),
     B = (0, y.useSelect)(function (e) {
       return e(T.default).getAllIntegrations();
     }, []),
@@ -245,31 +242,7 @@ var Yp = function (e) {
       return H("video");
     },
     padding: "0px"
-  }))), React.createElement(I.TooltipWP, {
-    text: (0, b.__)("Generate Image with AI", "ohmylms")
-  }, React.createElement(I.ButtonWP, {
-    variant: "text",
-    icon: React.createElement(wr.A, null),
-    onClick: function () {
-      return function () {
-        var e;
-        return null != B && null !== (e = B.ai_model) && void 0 !== e && e.is_enable ? null != z && z.self || "anthropic" !== (null == z ? void 0 : z.platform) ? null != z && z.self || null != z && z.api_key ? void F(!0) : (i.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (i.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), i.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), i.updateProModalButtonText(null), void W(!0)) : (W(!0), i.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), i.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void i.updateProModalButtonText(null));
-      }();
-    },
-    padding: "0px"
-  })), A && React.createElement(Er.default, {
-    promptBoxRef: k,
-    onPreview: G,
-    onInsert: function (e) {
-      o({
-        id: null == e ? void 0 : e.id,
-        url: null == e ? void 0 : e.source_url
-      }, "image"), v(null), F(!1);
-    },
-    onClose: function () {
-      return F(!1);
-    }
-  }))), D && React.createElement(React.Fragment, null, React.createElement(He.default, {
+  }))), null, A && null)), D && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: D,
     onClose: W
   })), S && React.createElement(Ie, {
@@ -291,9 +264,9 @@ var Zp = function (e) {
     n = e.onContentChange,
     r = e.handleRemoveMedia,
     a = e.handleUploadComplete,
-    o = Ze(),
+    o = false,
     i = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISuggestedCourses();
+      return e(T.default).getCourse();
     }, []),
     l = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();

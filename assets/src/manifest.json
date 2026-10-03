@@ -132,43 +132,50 @@
       "output": "assets/css/elementor-widgets.css",
       "sha256": "1f2cab38fb8531625fa66ab7d7c5098b48e393c2baaec26d2a174d6062d3f47a",
       "bytes": 2794,
-      "source": "static/css/elementor-widgets.css"
+      "source": "static/css/elementor-widgets.css",
+      "factories": []
     },
     {
       "output": "assets/css/global.css",
       "sha256": "4658974db693c1e9616ee268b3d4a2ca342f4884169d407299b70fb061f32b2a",
       "bytes": 604,
-      "source": "static/css/global.css"
+      "source": "static/css/global.css",
+      "factories": []
     },
     {
       "output": "assets/css/shortcode-course-list.css",
       "sha256": "84df3fefa6a6a3f9f5845fee0defa95135aaa5bfa2956df39096c455e5581afb",
       "bytes": 8269,
-      "source": "static/css/shortcode-course-list.css"
+      "source": "static/css/shortcode-course-list.css",
+      "factories": []
     },
     {
       "output": "assets/css/stripe.css",
       "sha256": "66dea75c379a2fd661b91816e2130b33129c5d1d297c144acd0a856915268b40",
       "bytes": 1077,
-      "source": "static/css/stripe.css"
+      "source": "static/css/stripe.css",
+      "factories": []
     },
     {
       "output": "assets/css/style-rtl.css",
       "sha256": "6b818c54859597b687307d0ff59937ae8e87c93c9ff83cfdacb8a80500c7b235",
       "bytes": 508832,
-      "source": "static/css/style-rtl.css"
+      "source": "static/css/style-rtl.css",
+      "factories": []
     },
     {
       "output": "assets/css/style.css",
       "sha256": "8d0d6acd018aba21ecc0e609c62dd52abb7b365693139e4b0f43095438f46cff",
       "bytes": 570171,
-      "source": "static/css/style.css"
+      "source": "static/css/style.css",
+      "factories": []
     },
     {
       "output": "assets/css/tailwind.css",
       "sha256": "a003c79d5e94c05b4e7251016080bbb75f2d66dc9c54058aef6d20421e4a7d16",
       "bytes": 22088,
-      "source": "static/css/tailwind.css"
+      "source": "static/css/tailwind.css",
+      "factories": []
     },
     {
       "output": "assets/dist/admin/ohmylms-rtl.js",
@@ -214,7 +221,7 @@
             "application/shared/assignment-editor-outline.js",
             "application/shared/live-session-recording-editor.js",
             "application/shared/live-session-attachments-and-password.js",
-            "application/shared/live-session-ai-image-modal.js",
+            "application/shared/live-session-editor.js",
             "application/shared/live-session-chapter-content-items.js",
             "application/shared/quiz-editor-question-sidebar.js",
             "application/shared/quiz-editor-media-library.js",
@@ -305,7 +312,7 @@
             "application/shared/course-list-row-actions.js",
             "application/shared/dashboard-overview-cards.js",
             "application/shared/dashboard-income-overview.js",
-            "application/shared/course-create-with-ai-entry.js",
+            "application/shared/course-create-mode.js",
             "application/screens/dashboard/DashboardScreen.js",
             "application/shared/course-report-table-header.js",
             "application/shared/course-report-reminder-email.js",
@@ -431,11 +438,6 @@
             "application/shared/coupon-list.js",
             "application/screens/coupons/CouponsScreen.js",
             "application/screens/coupons/CouponsRoute.js",
-            "application/shared/ai-course-outline-templates.js",
-            "application/shared/ai-course-outline-preview.js",
-            "application/screens/ai-course-outline-gen/AiCourseOutlineGenScreen.js",
-            "application/screens/ai-course-outline-gen/AiCourseOutlineGenRoute.js",
-            "application/shared/ai-course-outline-route-title.js",
             "application/routes.js",
             "application/shared/automation-canvas-runtime.js"
           ]
@@ -591,11 +593,6 @@
           "id": "20131"
         },
         {
-          "marker": "__OHMYLMS_FACTORY_0_20378__",
-          "source": "modules/dist/admin/ohmylms/0-20378.js",
-          "id": "20378"
-        },
-        {
           "marker": "__OHMYLMS_FACTORY_0_20892__",
           "source": "modules/dist/admin/ohmylms/0-20892.js",
           "id": "20892"
@@ -629,11 +626,6 @@
           "marker": "__OHMYLMS_FACTORY_0_22601__",
           "source": "modules/dist/admin/ohmylms/0-22601.js",
           "id": "22601"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_23949__",
-          "source": "modules/dist/admin/ohmylms/0-23949.js",
-          "id": "23949"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_24011__",
@@ -911,11 +903,6 @@
           "id": "51664"
         },
         {
-          "marker": "__OHMYLMS_FACTORY_0_52770__",
-          "source": "modules/dist/admin/ohmylms/0-52770.js",
-          "id": "52770"
-        },
-        {
           "marker": "__OHMYLMS_FACTORY_0_53725__",
           "source": "modules/dist/admin/ohmylms/0-53725.js",
           "id": "53725"
@@ -996,11 +983,6 @@
           "id": "62282"
         },
         {
-          "marker": "__OHMYLMS_FACTORY_0_62489__",
-          "source": "modules/dist/admin/ohmylms/0-62489.js",
-          "id": "62489"
-        },
-        {
           "marker": "__OHMYLMS_FACTORY_0_62768__",
           "source": "modules/dist/admin/ohmylms/0-62768.js",
           "id": "62768"
@@ -1009,11 +991,6 @@
           "marker": "__OHMYLMS_FACTORY_0_63054__",
           "source": "modules/dist/admin/ohmylms/0-63054.js",
           "id": "63054"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_63386__",
-          "source": "modules/dist/admin/ohmylms/0-63386.js",
-          "id": "63386"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_63716__",
@@ -1084,11 +1061,6 @@
           "marker": "__OHMYLMS_FACTORY_0_68203__",
           "source": "modules/dist/admin/ohmylms/0-68203.js",
           "id": "68203"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_68291__",
-          "source": "modules/dist/admin/ohmylms/0-68291.js",
-          "id": "68291"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_68734__",
@@ -1169,11 +1141,6 @@
           "marker": "__OHMYLMS_FACTORY_0_79476__",
           "source": "modules/dist/admin/ohmylms/0-79476.js",
           "id": "79476"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_80224__",
-          "source": "modules/dist/admin/ohmylms/0-80224.js",
-          "id": "80224"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_81076__",
@@ -1276,11 +1243,6 @@
           "id": "88660"
         },
         {
-          "marker": "__OHMYLMS_FACTORY_0_88935__",
-          "source": "modules/dist/admin/ohmylms/0-88935.js",
-          "id": "88935"
-        },
-        {
           "marker": "__OHMYLMS_FACTORY_0_89709__",
           "source": "modules/dist/admin/ohmylms/0-89709.js",
           "id": "89709"
@@ -1314,11 +1276,6 @@
           "marker": "__OHMYLMS_FACTORY_0_93552__",
           "source": "modules/dist/admin/ohmylms/0-93552.js",
           "id": "93552"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_94041__",
-          "source": "modules/dist/admin/ohmylms/0-94041.js",
-          "id": "94041"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_94186__",
@@ -1361,11 +1318,6 @@
           "id": "97092"
         },
         {
-          "marker": "__OHMYLMS_FACTORY_0_97761__",
-          "source": "modules/dist/admin/ohmylms/0-97761.js",
-          "id": "97761"
-        },
-        {
           "marker": "__OHMYLMS_FACTORY_0_98199__",
           "source": "modules/dist/admin/ohmylms/0-98199.js",
           "id": "98199"
@@ -1389,11 +1341,6 @@
           "marker": "__OHMYLMS_FACTORY_0_98845__",
           "source": "modules/dist/admin/ohmylms/0-98845.js",
           "id": "98845"
-        },
-        {
-          "marker": "__OHMYLMS_FACTORY_0_98957__",
-          "source": "modules/dist/admin/ohmylms/0-98957.js",
-          "id": "98957"
         },
         {
           "marker": "__OHMYLMS_FACTORY_0_99055__",
@@ -1736,25 +1683,29 @@
       "output": "assets/dist/css/admin/ohmylms-rtl.css",
       "sha256": "420aeadade679568b0d5e7cd2f038fcee5b6ec072a6a525f004524a88f747712",
       "bytes": 5008,
-      "source": "static/dist/css/admin/ohmylms-rtl.css"
+      "source": "static/dist/css/admin/ohmylms-rtl.css",
+      "factories": []
     },
     {
       "output": "assets/dist/css/admin/ohmylms.css",
       "sha256": "c301c47c5fcd552d5762233f9cdd1f79592495840da1a71196590d5e6ba8adfc",
       "bytes": 1644086,
-      "source": "static/dist/css/admin/ohmylms.css"
+      "source": "static/dist/css/admin/ohmylms.css",
+      "factories": []
     },
     {
       "output": "assets/dist/css/chunks/355.css",
       "sha256": "d95c25fc407f9ff333ba1bdd675ece099871c85d73f98c6cbf8001161f3f71f8",
       "bytes": 167399,
-      "source": "static/dist/css/chunks/355.css"
+      "source": "static/dist/css/chunks/355.css",
+      "factories": []
     },
     {
       "output": "assets/dist/css/vendors.css",
       "sha256": "512a5ee249244e1d9e08564bc340d6cb9bc67ca28d0db6f620c950505c508b60",
       "bytes": 578254,
-      "source": "static/dist/css/vendors.css"
+      "source": "static/dist/css/vendors.css",
+      "factories": []
     },
     {
       "output": "assets/dist/frontend/add-to-cart.js",
@@ -1816,37 +1767,43 @@
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/default-image.35c6a344ce7fb86504b11de0646bf838.png",
       "sha256": "9e7906f348b548cb27c7f00387aa73713bda38cf228ecfaddfe2f5b4bccf945a",
       "bytes": 1907,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/default-image.35c6a344ce7fb86504b11de0646bf838.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/default-image.35c6a344ce7fb86504b11de0646bf838.png",
+      "factories": []
     },
     {
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/facebook.7e872004ef5cffbcbbc852c0ab07e0b0.png",
       "sha256": "9d0ba3874bd849a5bef0b093a7507c3649f6ce8fa975822429659a1cb8a60b21",
       "bytes": 495,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/facebook.7e872004ef5cffbcbbc852c0ab07e0b0.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/facebook.7e872004ef5cffbcbbc852c0ab07e0b0.png",
+      "factories": []
     },
     {
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/instagram.41e9421fc851e468cfcfbebd9aaaaa93.png",
       "sha256": "a3189362c257f079b3db9ac37372b80a418af0fddf87ce769a9a812506180f9a",
       "bytes": 1761,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/instagram.41e9421fc851e468cfcfbebd9aaaaa93.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/instagram.41e9421fc851e468cfcfbebd9aaaaa93.png",
+      "factories": []
     },
     {
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/twitter.6d2ec4b35079d821ca77dbf8552ef5b7.png",
       "sha256": "83247aa86c2eaa6ea81b754915f43c58ef65530b420f42c37bc3dc3a622bb227",
       "bytes": 22315,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/twitter.6d2ec4b35079d821ca77dbf8552ef5b7.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/twitter.6d2ec4b35079d821ca77dbf8552ef5b7.png",
+      "factories": []
     },
     {
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/woocommerce-logo.d07f2af85ef702d1f3858ec5e9cb67e1.png",
       "sha256": "1d4a9bfd014ff383639ad802003f012fdd9c3f12c0aff6432348acecb0130779",
       "bytes": 6119,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/woocommerce-logo.d07f2af85ef702d1f3858ec5e9cb67e1.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/woocommerce-logo.d07f2af85ef702d1f3858ec5e9cb67e1.png",
+      "factories": []
     },
     {
       "output": "assets/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/your-logo.3574ec1fbc984eec932d8ab7f373a888.png",
       "sha256": "cf74a8600716345932658a2cad8c7c05c8ccaca79a6193644e4c12f7d19421e5",
       "bytes": 1813,
-      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/your-logo.3574ec1fbc984eec932d8ab7f373a888.png"
+      "source": "static/dist/packages/automation-canvas/shared/components/Editor/CustomBlocks/your-logo.3574ec1fbc984eec932d8ab7f373a888.png",
+      "factories": []
     },
     {
       "output": "assets/dist/vendors/chartjs.js",
@@ -4779,259 +4736,302 @@
       "output": "assets/blocks/css/blocks-editor.css",
       "source": "static/blocks/css/blocks-editor.css",
       "sha256": "fd6d1538dcd45601500b0f6a44c67bc5a612685aea66e6c6daa9fba11640b4b2",
-      "bytes": 2562
+      "bytes": 2562,
+      "factories": []
     },
     {
       "output": "assets/blocks/css/blocks-frontend.css",
       "source": "static/blocks/css/blocks-frontend.css",
       "sha256": "40be3eda57db4f23509c34823ede713e4a303e3f10abc7231092e16400c45734",
-      "bytes": 2034
+      "bytes": 2034,
+      "factories": []
     },
     {
       "output": "assets/images/bancontact.svg",
       "source": "static/images/bancontact.svg",
       "sha256": "a9a3e859582d92cc0d8a48f997ec4990527e628c94f69f1568d913460c76ae17",
-      "bytes": 703
+      "bytes": 703,
+      "factories": []
     },
     {
       "output": "assets/images/card.svg",
       "source": "static/images/card.svg",
       "sha256": "25ed93fcb576cdd7fc534a0a2f4eb8983bac55c50ae8f0b2c0ae5161a1c78992",
-      "bytes": 454
+      "bytes": 454,
+      "factories": []
     },
     {
       "output": "assets/images/course-placeholder-image.jpg",
       "source": "static/images/course-placeholder-image.jpg",
       "sha256": "9f2e14195576c03a591c02cd99f748f5623e2aa2572c684e76a7eb5ca1a049a0",
-      "bytes": 9971
+      "bytes": 9971,
+      "factories": []
     },
     {
       "output": "assets/images/course-placeholder-image.svg",
       "source": "static/images/course-placeholder-image.svg",
       "sha256": "331081c71e2c92627790c3b74e5a78adf535cfa00d7ded4a6fd1e239d646808c",
-      "bytes": 966
+      "bytes": 966,
+      "factories": []
     },
     {
       "output": "assets/images/ohmylms-logo.svg",
       "source": "static/images/ohmylms-logo.svg",
       "sha256": "77a58e37343b4ec25c7594cf44c8f49b3eaf6d85384a4d538de11d1118f79372",
-      "bytes": 8318
+      "bytes": 8318,
+      "factories": []
     },
     {
       "output": "assets/images/ideal.svg",
       "source": "static/images/ideal.svg",
       "sha256": "acb3184d2d2031051b8ddd00ca3687a478911e6b087ab833883b22c7b9420294",
-      "bytes": 427
+      "bytes": 427,
+      "factories": []
     },
     {
       "output": "assets/images/klarna.svg",
       "source": "static/images/klarna.svg",
       "sha256": "fa50f27310e87c5caf1b9e6306b2e84bac36517fad0bf722937f440cf8df784d",
-      "bytes": 455
+      "bytes": 455,
+      "factories": []
     },
     {
       "output": "assets/images/leaderboard-pos1.webp",
       "source": "static/images/leaderboard-pos1.webp",
       "sha256": "21dd31be1549a71f6e9b0895d38ee260ae06eb06f7996d702ed44fd113a214cd",
-      "bytes": 640
+      "bytes": 640,
+      "factories": []
     },
     {
       "output": "assets/images/leaderboard-pos2.webp",
       "source": "static/images/leaderboard-pos2.webp",
       "sha256": "5e852d1835a14f0bdc7f952d3ef7b4051d140593425361778114b5560730e2a6",
-      "bytes": 606
+      "bytes": 606,
+      "factories": []
     },
     {
       "output": "assets/images/leaderboard-pos3.webp",
       "source": "static/images/leaderboard-pos3.webp",
       "sha256": "ea9cbf5c072042c5968b17e1a77efab63873de9135fbead58e8b47af8a22aab0",
-      "bytes": 514
+      "bytes": 514,
+      "factories": []
     },
     {
       "output": "assets/images/logo/ohmylms.svg",
       "source": "static/images/logo/ohmylms.svg",
       "sha256": "80cbdd4c5d09f20218d7d9878f687051dcadb202ed9139c89d61ee19cc6abe31",
-      "bytes": 1567
+      "bytes": 1567,
+      "factories": []
     },
     {
       "output": "assets/images/payment-method-card.webp",
       "source": "static/images/payment-method-card.webp",
       "sha256": "d87d1c6cefdc17a7ecde371641aa84403c7d1fb065aa20f64e70fafaaff019c4",
-      "bytes": 1556
+      "bytes": 1556,
+      "factories": []
     },
     {
       "output": "assets/images/student-cover-image-placeholder.jpeg",
       "source": "static/images/student-cover-image-placeholder.jpeg",
       "sha256": "bc894979fd2ce2d90c7b22781762e9b5868ba65e6d84c195c835f8ca22985131",
-      "bytes": 24577
+      "bytes": 24577,
+      "factories": []
     },
     {
       "output": "assets/lib/admin/css/select2.css",
       "source": "static/lib/admin/css/select2.css",
       "sha256": "8ad5d68417a36543241db92eed249486ec1890f80dc201d4ae1bb7ea433ad65d",
-      "bytes": 16262
+      "bytes": 16262,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-astra.css",
       "source": "static/theme-support/theme-astra.css",
       "sha256": "4dd91d801be8f67f70cd2f5450c84a2103dd3db5b5051025a6221b3838ed7e8f",
-      "bytes": 3215
+      "bytes": 3215,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-avada.css",
       "source": "static/theme-support/theme-avada.css",
       "sha256": "91c68319be4686903854b03f9b790bcb0d1c6dc5fe6a5999e647f39cd6542257",
-      "bytes": 1441
+      "bytes": 1441,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-betheme.css",
       "source": "static/theme-support/theme-betheme.css",
       "sha256": "b1255c83c57ab0dea3fd60c3afb47a9cf0923d447c1ea3e0ee7716b455c2cc8f",
-      "bytes": 2249
+      "bytes": 2249,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-blocksy.css",
       "source": "static/theme-support/theme-blocksy.css",
       "sha256": "f81718ec715a1f6858f80f5de7ffb60b8bfc54f03bdb1c16f2d00baab2a19419",
-      "bytes": 2106
+      "bytes": 2106,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-bricks.css",
       "source": "static/theme-support/theme-bricks.css",
       "sha256": "851460d922806559adc00c69bc14f60cdff056ba48f458e4ba43cbc1297766d4",
-      "bytes": 1378
+      "bytes": 1378,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-colibriwp.css",
       "source": "static/theme-support/theme-colibriwp.css",
       "sha256": "dbd48c0928256624f6b7a17205002984205a0bcfb1cfa5c4b9e352764e234d71",
-      "bytes": 4195
+      "bytes": 4195,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-divi.css",
       "source": "static/theme-support/theme-divi.css",
       "sha256": "2f96a37d60ce4bef7619f8ff3d6003f87aa909d59816ff9c4a9091e19521c56c",
-      "bytes": 214
+      "bytes": 214,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-flatsome.css",
       "source": "static/theme-support/theme-flatsome.css",
       "sha256": "3f7bcce92ed2be7f2c0da101353423d40c1b171baa5fb615ed7fa97b40978b96",
-      "bytes": 1120
+      "bytes": 1120,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-generatepress.css",
       "source": "static/theme-support/theme-generatepress.css",
       "sha256": "d51c67c2920820a79dc980a57e328e94ee39e7edb07c55529dd96cca7d431815",
-      "bytes": 1570
+      "bytes": 1570,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-hello-elementor.css",
       "source": "static/theme-support/theme-hello-elementor.css",
       "sha256": "556125e1f20928ea698f65c6d1197daa9c0c61482bb5068eccee370ae45625ed",
-      "bytes": 1102
+      "bytes": 1102,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-hestia.css",
       "source": "static/theme-support/theme-hestia.css",
       "sha256": "7f0add6fc3006ab701a5a5a1a3c9ad5f772044e3bd5d689b1124c65e6eb78337",
-      "bytes": 4365
+      "bytes": 4365,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-kadence.css",
       "source": "static/theme-support/theme-kadence.css",
       "sha256": "1abeb80896b1aed4d5966f8c456c14d23c8c7c625d1ad589d769909b29262f3e",
-      "bytes": 1907
+      "bytes": 1907,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-oceanwp.css",
       "source": "static/theme-support/theme-oceanwp.css",
       "sha256": "97980427885c785268b73f701c32063e55d998323f27256ec29b4cb54da5b233",
-      "bytes": 2349
+      "bytes": 2349,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-storefront.css",
       "source": "static/theme-support/theme-storefront.css",
       "sha256": "d96bffd7122c07e41d9811518e8dd199ec49915cd7ac535321717ce59df83036",
-      "bytes": 1428
+      "bytes": 1428,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-the7.css",
       "source": "static/theme-support/theme-the7.css",
       "sha256": "dd33a4ec62e8b0b41226bb641a72de6cf3b30d1a72af383ed172af3a30bf922c",
-      "bytes": 4112
+      "bytes": 4112,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-thrive-theme-builder.css",
       "source": "static/theme-support/theme-thrive-theme-builder.css",
       "sha256": "036059b29da78641646febc41c43d3474ce48428aed9c762ccdb4e12767572e7",
-      "bytes": 3534
+      "bytes": 3534,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-nineteen.css",
       "source": "static/theme-support/theme-twenty-nineteen.css",
       "sha256": "af21a8446c121f135607f1a4edd73fbfcae01964d952c1fe0cd249005dcfad08",
-      "bytes": 1084
+      "bytes": 1084,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-seventeen.css",
       "source": "static/theme-support/theme-twenty-seventeen.css",
       "sha256": "4cccfd245298e524b018fb71b762278f5a3b04de666978ffed63dbd968d385fd",
-      "bytes": 251
+      "bytes": 251,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-sixteen.css",
       "source": "static/theme-support/theme-twenty-sixteen.css",
       "sha256": "771b403cd9546f799e65168e44cb84aab29c0370df18f5b51b8a9cfbdae1bd22",
-      "bytes": 1137
+      "bytes": 1137,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty-five.css",
       "source": "static/theme-support/theme-twenty-twenty-five.css",
       "sha256": "1fff1d145203ad22b52191bed05e1e679782e25cf2b59065905122816ecc849c",
-      "bytes": 3291
+      "bytes": 3291,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty-four.css",
       "source": "static/theme-support/theme-twenty-twenty-four.css",
       "sha256": "84201ce7bbb83e4c28d371b1b8e04a120e85e1499ee8d7843a00496fc61197ae",
-      "bytes": 4326
+      "bytes": 4326,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty-one.css",
       "source": "static/theme-support/theme-twenty-twenty-one.css",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "bytes": 0
+      "bytes": 0,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty-three.css",
       "source": "static/theme-support/theme-twenty-twenty-three.css",
       "sha256": "d7cbab19b89c7b7a6192404ad315e66d3efff6b0134abd3eb799f75eb3e8134d",
-      "bytes": 15929
+      "bytes": 15929,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty-two.css",
       "source": "static/theme-support/theme-twenty-twenty-two.css",
       "sha256": "b04f862f887c5e56d6b89efcc6533a2d1ac87e97ab3f5afd256bb9e7d7896938",
-      "bytes": 1104
+      "bytes": 1104,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-twenty-twenty.css",
       "source": "static/theme-support/theme-twenty-twenty.css",
       "sha256": "b0fcd2ce6239a5ef212ce934738faaae5d755e50d20e4512631052cb1869705a",
-      "bytes": 839
+      "bytes": 839,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-woodmart.css",
       "source": "static/theme-support/theme-woodmart.css",
       "sha256": "c40ccb3930b3d4c0875e50d75653c8d975ebc321142c67772052b48bd82a0d5a",
-      "bytes": 1336
+      "bytes": 1336,
+      "factories": []
     },
     {
       "output": "assets/theme-support/theme-woostify.css",
       "source": "static/theme-support/theme-woostify.css",
       "sha256": "81b4f5dfe7b3f5c7301e1779130a040625ae4657780cd3b10130efce8d610c33",
-      "bytes": 2537
+      "bytes": 2537,
+      "factories": []
     }
   ],
   "modules": [
@@ -5275,13 +5275,6 @@
     },
     {
       "bundle": "dist/admin/ohmylms",
-      "id": "20378",
-      "source": "modules/dist/admin/ohmylms/0-20378.js",
-      "kind": "unclassified",
-      "bytes": 28243
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
       "id": "20892",
       "source": "modules/dist/admin/ohmylms/0-20892.js",
       "kind": "unclassified",
@@ -5328,13 +5321,6 @@
       "source": "modules/dist/admin/ohmylms/0-22601.js",
       "kind": "unclassified",
       "bytes": 956
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "23949",
-      "source": "modules/dist/admin/ohmylms/0-23949.js",
-      "kind": "unclassified",
-      "bytes": 3511
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -5723,13 +5709,6 @@
     },
     {
       "bundle": "dist/admin/ohmylms",
-      "id": "52770",
-      "source": "modules/dist/admin/ohmylms/0-52770.js",
-      "kind": "unclassified",
-      "bytes": 22580
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
       "id": "53725",
       "source": "modules/dist/admin/ohmylms/0-53725.js",
       "kind": "unclassified",
@@ -5842,13 +5821,6 @@
     },
     {
       "bundle": "dist/admin/ohmylms",
-      "id": "62489",
-      "source": "modules/dist/admin/ohmylms/0-62489.js",
-      "kind": "unclassified",
-      "bytes": 5740
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
       "id": "62768",
       "source": "modules/dist/admin/ohmylms/0-62768.js",
       "kind": "unclassified",
@@ -5860,13 +5832,6 @@
       "source": "modules/dist/admin/ohmylms/0-63054.js",
       "kind": "unclassified",
       "bytes": 5926
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "63386",
-      "source": "modules/dist/admin/ohmylms/0-63386.js",
-      "kind": "unclassified",
-      "bytes": 6410
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -5965,13 +5930,6 @@
       "source": "modules/dist/admin/ohmylms/0-68203.js",
       "kind": "unclassified",
       "bytes": 2931
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "68291",
-      "source": "modules/dist/admin/ohmylms/0-68291.js",
-      "kind": "unclassified",
-      "bytes": 1068
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -6084,13 +6042,6 @@
       "source": "modules/dist/admin/ohmylms/0-79476.js",
       "kind": "unclassified",
       "bytes": 722
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "80224",
-      "source": "modules/dist/admin/ohmylms/0-80224.js",
-      "kind": "unclassified",
-      "bytes": 14578
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -6234,13 +6185,6 @@
     },
     {
       "bundle": "dist/admin/ohmylms",
-      "id": "88935",
-      "source": "modules/dist/admin/ohmylms/0-88935.js",
-      "kind": "unclassified",
-      "bytes": 1572
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
       "id": "89709",
       "source": "modules/dist/admin/ohmylms/0-89709.js",
       "kind": "unclassified",
@@ -6287,13 +6231,6 @@
       "source": "modules/dist/admin/ohmylms/0-93552.js",
       "kind": "unclassified",
       "bytes": 3203
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "94041",
-      "source": "modules/dist/admin/ohmylms/0-94041.js",
-      "kind": "unclassified",
-      "bytes": 739
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -6353,13 +6290,6 @@
     },
     {
       "bundle": "dist/admin/ohmylms",
-      "id": "97761",
-      "source": "modules/dist/admin/ohmylms/0-97761.js",
-      "kind": "unclassified",
-      "bytes": 1073
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
       "id": "98199",
       "source": "modules/dist/admin/ohmylms/0-98199.js",
       "kind": "unclassified",
@@ -6392,13 +6322,6 @@
       "source": "modules/dist/admin/ohmylms/0-98845.js",
       "kind": "unclassified",
       "bytes": 12696
-    },
-    {
-      "bundle": "dist/admin/ohmylms",
-      "id": "98957",
-      "source": "modules/dist/admin/ohmylms/0-98957.js",
-      "kind": "unclassified",
-      "bytes": 739
     },
     {
       "bundle": "dist/admin/ohmylms",
@@ -10855,7 +10778,7 @@
   ],
   "application": {
     "factory": "modules/dist/admin/ohmylms/0-1841.js",
-    "fragmentCount": 235,
+    "fragmentCount": 230,
     "routes": [
       {
         "route": "/",
@@ -10968,10 +10891,6 @@
       {
         "route": "/coupons",
         "binding": "qre"
-      },
-      {
-        "route": "/ai-course-outline-gen",
-        "binding": "Qae"
       },
       {
         "route": "/gamification/:tab",

@@ -12,6 +12,7 @@ use function CodeRex\Ecommerce\ecommerce;
 class MembershipHook
 {
     public function register_hooks(){
+        \OhMyLMS\Membership\CourseSelection::init();
         // add_action('ohmylms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );
         add_action('ohmylms_after_order_details', array( __CLASS__, 'display_order_details' ), 10, 1 );
         add_action( 'ohmylms_recurring_subscription_totals', array( __CLASS__, 'get_recurring_subscription_totals' ) );
@@ -234,54 +235,7 @@ class MembershipHook
      * @since 1.0.0
      */
     public function enroll_courses( $products, $membership_id ) {
-        global $wpdb;
-        
-        $enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
-        $membership_table = $wpdb->prefix . 'ohmylms_user_membership';
-    
-        // Get all students associated with the membership
-        $students = $wpdb->get_col(
-            $wpdb->prepare(
-                "SELECT user_id FROM $membership_table WHERE membership_id = %d",
-                $membership_id
-            )
-        );
-    
-        if (empty($students)) {
-            return; // No students found, exit early
-        }
-    
-        if (is_array($products)) {
-            foreach ($products as $product) {
-                $product_id = $product['id'];
-    
-                foreach ($students as $student_id) {
-                    // Check if the student is already enrolled
-                    $existing_enrollment = $wpdb->get_var(
-                        $wpdb->prepare(
-                            "SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
-                            $student_id,
-                            $product_id
-                        )
-                    );
-    
-                    if (!$existing_enrollment) {
-                        // Enroll the student
-                        $wpdb->insert(
-                            $enrollment_table,
-                            [
-                                'user_id'    => $student_id,
-                                'course_id' => $product_id,
-                                'status'    => 'enrolled',
-                                'progress'    => 'running',
-                                'start_date'=> current_time('mysql') // Store enrollment time
-                            ],
-                            ['%d', '%d', '%s', '%s', '%s']
-                        );
-                    }
-                }
-            }
-        }
+        \OhMyLMS\Membership\CourseSelection::sync($membership_id);
     }
 
 

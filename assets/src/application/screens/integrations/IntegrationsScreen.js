@@ -12,8 +12,8 @@ var H7 = {
     "course-engagement": {
       label: (0, b.__)("Engagement", "ohmylms")
     },
-    "ai-model": {
-      label: (0, b.__)("AI Agent", "ohmylms")
+    connections: {
+      label: (0, b.__)("Connections", "ohmylms")
     },
     automation: {
       label: (0, b.__)("Automation", "ohmylms")

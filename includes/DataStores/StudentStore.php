@@ -195,14 +195,14 @@ class StudentStore extends DataStore {
 	public function get_enrolled_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
+		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
 		return $wpdb->get_var( $query );
 	}
 
 	public function get_memebership_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
+		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
 		return $wpdb->get_var( $query );
 	}
 
@@ -215,7 +215,7 @@ class StudentStore extends DataStore {
 	public function get_progress_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE user_id = %d AND status = %s AND progress = %s", $student->get_id(), 'enrolled', 'running' );
+		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s AND progress = %s", $student->get_id(), 'enrolled', 'running' );
 		return $wpdb->get_var( $query );
 	}
 
@@ -225,7 +225,7 @@ class StudentStore extends DataStore {
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
 			"
-			SELECT e.course_id
+			SELECT DISTINCT e.course_id
 			FROM $table_name e
 			JOIN $post_table p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.status = %s AND p.post_type = %s
@@ -334,7 +334,7 @@ public function get_enrolled_courses( $student ) {
 	$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
 			"
-			SELECT e.course_id
+			SELECT DISTINCT e.course_id
 			FROM $table_name e
 			JOIN $post_table p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.status = %s AND p.post_type = %s
@@ -360,7 +360,7 @@ public function get_enrolled_courses( $student ) {
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
 			"
-			SELECT e.course_id
+			SELECT DISTINCT e.course_id
 			FROM $table_name e
 			JOIN $post_table p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.progress = %s AND p.post_type = %s
@@ -385,7 +385,7 @@ public function get_enrolled_courses( $student ) {
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
 			"
-			SELECT e.course_id
+			SELECT DISTINCT e.course_id
 			FROM $table_name e
 			JOIN $post_table p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.progress = %s AND p.post_type = %s

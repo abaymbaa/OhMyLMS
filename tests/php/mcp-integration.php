@@ -67,6 +67,8 @@ function mcp_call( $name, $args, $token ) {
     return mcp_request( array( 'jsonrpc' => '2.0', 'id' => 7, 'method' => 'tools/call', 'params' => array( 'name' => $name, 'arguments' => (object) $args ) ), $token );
 }
 $saved = get_option( Server::OPTION, null );
+$saved_integrations = get_option( 'ohmylms_integrations', null );
+$mcp_was_enabled = Server::enabled();
 $owner = get_user_by( 'login', $config['username'] );
 $token = 'oml_mcp_' . bin2hex( random_bytes( 32 ) );
 $record = array( 'hash' => hash( 'sha256', $token ), 'user_id' => $owner->ID, 'created' => gmdate( 'c' ) );
@@ -78,6 +80,13 @@ $mcp_created_sessions = array();
 $saved_https = $_SERVER['HTTPS'] ?? null;
 $_SERVER['HTTPS'] = 'on';
 try {
+    $enabled_integrations = (array) $saved_integrations;
+    $enabled_integrations['mcp'] = array( 'is_enable' => 1 );
+    update_option( 'ohmylms_integrations', $enabled_integrations );
+    if ( ! $mcp_was_enabled ) {
+        \OhMyLMS\MCP\Abilities::init();
+        Server::boot_adapter();
+    }
     update_option( Server::OPTION, array( 'openai' => $record ), false );
     rest_get_server();
     mcp_check( Server::readiness()['ready'], 'Abilities API/adapter unavailable.' );
@@ -194,5 +203,6 @@ try {
     foreach ( $other_fixtures as $post_id ) wp_delete_post( $post_id, true );
     foreach ( $mcp_created_sessions as $session_id ) \WP\MCP\Transport\Infrastructure\SessionManager::delete_session( (int) $owner->ID, $session_id );
     if ( $saved === null ) delete_option( Server::OPTION ); else update_option( Server::OPTION, $saved, false );
+    if ( $saved_integrations === null ) delete_option( 'ohmylms_integrations' ); else update_option( 'ohmylms_integrations', $saved_integrations );
     if ( $saved_https === null ) unset( $_SERVER['HTTPS'] ); else $_SERVER['HTTPS'] = $saved_https;
 }

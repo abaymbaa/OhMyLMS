@@ -49,7 +49,7 @@ class CommonHook extends HookHandler {
 		add_filter( 'admin_body_class', array( $this, 'add_ohmylms_admin_body_class' ), 10, 1 );
 		// if ( is_ohmylms() ) {
 		// 	add_action( 'the_password_form', array( $this, 'ohmylms_password_protected_form_class' ));
-		// }	
+		// }
 
 		add_filter( 'admin_footer_text', array( $this, 'review_text_in_footer' ), 1 );
 
@@ -66,9 +66,9 @@ class CommonHook extends HookHandler {
 		add_filter( 'preprocess_comment', array( $this, 'block_review_for_unverified_user' ), 5 );
 		add_action( 'template_redirect', array( $this, 'handle_add_to_cart_after_login' ), 9 );
 		add_action( 'template_redirect', array( $this, 'enforce_checkout_login_gate' ), 8 );
-	
-        add_filter('ohmylms_data_stores', array( $this, 'pro_data_stores' ), 10 ); 
-        add_filter('ohmylms_modules', array( $this, 'pro_modules' ), 10 ); 
+
+        add_filter('ohmylms_data_stores', array( $this, 'pro_data_stores' ), 10 );
+        add_filter('ohmylms_modules', array( $this, 'pro_modules' ), 10 );
         add_filter('ohmylms_is_pro', array( $this, 'ohmylms_is_pro' ), 10 );
         add_filter('ohmylms_get_admin_script_data', array( $this, 'ohmylms_get_admin_script_data_for_mm' ), 10, 2 );
         add_action('template_redirect', array( $this, 'restrict_session_access' ), 10 );
@@ -113,9 +113,9 @@ class CommonHook extends HookHandler {
 					)
 				);
 			}
-			
+
 			if ( ohmylms_is_single_course_page() ) {
-				
+
 				// Get the ID of the current course
 				global $post;
 				if ( $post && $post->post_type === 'ohmylms-course' ) {
@@ -760,7 +760,7 @@ class CommonHook extends HookHandler {
 				array( '%d' )                                 // Data type for the condition
 			);
 		}
-		
+
 	}
 
 	/**
@@ -883,7 +883,7 @@ class CommonHook extends HookHandler {
 						$checkout_page_layout_type = $layout_type_from_elementor;
 					}
 				}
-				
+
 				// Then check for Bricks elements
 				$bricks_data = get_post_meta( $post->ID, '_bricks_page_content_2', true );
 				if ( ! empty( $bricks_data ) ) {
@@ -892,13 +892,13 @@ class CommonHook extends HookHandler {
 						$checkout_page_layout_type = $layout_type_from_bricks;
 					}
 				}
-				
+
 				// Then check for Gutenberg blocks
 				if ( $post->post_content && has_blocks( $post->post_content ) ) {
 					$blocks = parse_blocks( $post->post_content );
 					$checkout_page_layout_type = $this->find_layout_type_in_blocks( $blocks, $checkout_page_layout_type );
 				}
-				
+
 				// Finally check for shortcode (for other page builders)
 				if ( $post->post_content && has_shortcode( $post->post_content, 'ohmylms_checkout' ) ) {
 					preg_match( '/\[ohmylms_checkout[^\]]*layout_type=["\']?([^"\'\s\]]+)["\']?[^\]]*\]/', $post->post_content, $matches );
@@ -908,10 +908,10 @@ class CommonHook extends HookHandler {
 				}
 			}
 		}
-		
+
 		if ( is_ohmylms_checkout() && 'canvas' === $checkout_page_layout_type ) {
 			$plugin_template = OHMYLMS_PATH . '/templates/page-template/ohmylms-checkout.php';
-			
+
 			if ( file_exists( $plugin_template ) ) {
 				return $plugin_template;
 			}
@@ -935,7 +935,7 @@ class CommonHook extends HookHandler {
 					return $block['attrs']['layoutType'];
 				}
 			}
-			
+
 			// Recursively check inner blocks
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$found = $this->find_layout_type_in_blocks( $block['innerBlocks'], $default_value );
@@ -944,7 +944,7 @@ class CommonHook extends HookHandler {
 				}
 			}
 		}
-		
+
 		return $default_value;
 	}
 
@@ -962,7 +962,7 @@ class CommonHook extends HookHandler {
 		if ( ! is_array( $data ) ) {
 			return $default_value;
 		}
-		
+
 		return $this->find_layout_type_in_elementor_elements( $data, $default_value );
 	}
 
@@ -981,7 +981,7 @@ class CommonHook extends HookHandler {
 					return $element['settings']['layout_type'];
 				}
 			}
-			
+
 			// Recursively check child elements
 			if ( ! empty( $element['elements'] ) ) {
 				$found = $this->find_layout_type_in_elementor_elements( $element['elements'], $default_value );
@@ -990,7 +990,7 @@ class CommonHook extends HookHandler {
 				}
 			}
 		}
-		
+
 		return $default_value;
 	}
 
@@ -1005,7 +1005,7 @@ class CommonHook extends HookHandler {
 		if ( ! is_array( $bricks_data ) ) {
 			return $default_value;
 		}
-		
+
 		return $this->find_layout_type_in_bricks_elements( $bricks_data, $default_value );
 	}
 
@@ -1024,7 +1024,7 @@ class CommonHook extends HookHandler {
 					return $element['settings']['layout_type'];
 				}
 			}
-			
+
 			// Recursively check child elements
 			if ( ! empty( $element['elements'] ) ) {
 				$found = $this->find_layout_type_in_bricks_elements( $element['elements'], $default_value );
@@ -1033,7 +1033,7 @@ class CommonHook extends HookHandler {
 				}
 			}
 		}
-		
+
 		return $default_value;
 	}
 
@@ -1291,7 +1291,7 @@ class CommonHook extends HookHandler {
 		if( $queryString !== $userQueryString ) {
 			return true;
 		}
-		
+
 		$userAgent         = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		$allowedUserAgents = array(
 			'Mozilla', // Covers Firefox
@@ -1379,7 +1379,7 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Modify comments query to exclude WooCommerce order notes
-	 * 
+	 *
 	 * @param WP_Comment_Query $query The comment query object.
 	 * @return void
 	 */
@@ -1396,7 +1396,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * After delete WP user
 	 * Delete enrollment and membership of the user if exists
-	 * 
+	 *
 	 * @param int $user_id User ID
 	 * @return void
 	 * @since 1.0.0
@@ -1427,7 +1427,7 @@ class CommonHook extends HookHandler {
 		}
 	}
 
-	
+
 	/**
 	 * Add OhMyLMS specific body classes for admin pages
 	 *
@@ -1472,7 +1472,7 @@ class CommonHook extends HookHandler {
 
 	private function is_ohmylms_page() {
 		$screen = get_current_screen();
-		
+
 		if ( ! $screen ) {
 			return false;
 		}
@@ -1505,7 +1505,7 @@ class CommonHook extends HookHandler {
 		if ( $file !== OHMYLMS_PLUGIN_BASENAME ) {
 			return $links;
 		}
-		
+
 		$new_links = array(
 			'<a href="https://wordpress.org/support/plugin/ohmylms/reviews?rate=5#new-post" target="_blank" aria-label="' . esc_attr__( 'Support Us With ★★★★★', 'ohmylms' ) . '">' . esc_html__( 'Support Us With ★★★★★', 'ohmylms' ) . '</a>',
 		);
@@ -1846,11 +1846,11 @@ public function pro_data_stores( $stores ){
 
 public function register_submenu() {
         $slug       = OHMYLMS_SLUG;
-		$capability = 'manage_ohmylms';
+		$capability = 'manage_options';
         add_submenu_page(
 			$slug,
-			__( 'Addons', 'ohmylms' ),
-			__( 'Addons', 'ohmylms' ),
+			__( 'Add-ons', 'ohmylms' ),
+			__( 'Add-ons', 'ohmylms' ),
 			$capability,
 			admin_url( 'admin.php?page=ohmylms#/integrations' ),
 			null
@@ -1869,7 +1869,7 @@ public function pro_modules( $modules ){
 public function restrict_session_access() {
 		if ( is_single() ) {
 			global $post;
-			
+
 			$restrict_post_types = apply_filters(
 				'ohmylms_restricted_content_post_types',
 				['ohmylms-lesson','ohmylms-assignment','ohmylms-quiz','ohmylms-session']
@@ -1886,21 +1886,21 @@ public function restrict_session_access() {
                         // Check drip feed settings
                         if ( is_array($drip_feed) && !empty($drip_feed['enable']) ) {
                             if( 'specific-date' === $drip_feed['type'] ) {
-                               
+
                                 // Get current WordPress date and time in UTC
                                 $current_time = new \DateTime('now', new \DateTimeZone(wp_timezone_string()));
                                 $current_date = $current_time->format('Y-m-d');
                                 $current_time_only = $current_time->format('H:i:s');
-        
+
                                 // Parse drip feed date and time
                                 $drip_date = (new \DateTime($drip_feed['date'], new \DateTimeZone(wp_timezone_string())))->format('Y-m-d');
                                 $drip_time = (new \DateTime($drip_feed['time'], new \DateTimeZone(wp_timezone_string())))->format('H:i:s');
-                                
+
                                 // Compare date
                                 if ($current_date === $drip_date) {
                                     // If date matches, compare time
                                     if ($current_time_only < $drip_time) {
-                                        
+
                                         ob_start();
                                         ?>
                                         <div class="ohmylms-access-denied-modal">
@@ -1996,7 +1996,7 @@ public function restrict_session_access() {
                                     }
                                 } elseif ($current_date < $drip_date) {
                                     // If current date is earlier than the drip feed date
-                                 
+
 
                                     ob_start();
                                         ?>
@@ -2108,7 +2108,7 @@ public function restrict_session_access() {
                                 if ($start_date) {
                                     $start_date_time = new \DateTime($start_date);
                                     $current_date_time = new \DateTime();
-                                    
+
                                     $interval = $start_date_time->diff($current_date_time);
                                     $days_difference = $interval->days;
                                     if( (int)$days > (int)$days_difference ){
@@ -2217,7 +2217,7 @@ public function restrict_session_access() {
                                         // Get the previous content title for better user experience
                                         $prev_content_title = get_the_title($prev_content['id']);
                                         $incomplete_course_link = get_permalink( $prev_content['id'] );
-                                       
+
 
                                         ob_start();
                                         ?>

@@ -101,7 +101,7 @@ export function createMembershipEditor(readRuntime) {
             onRequestClose={close}
             shouldCloseOnEsc
             shouldCloseOnClickOutside
-            className="ohmylms-full-height-modal"
+            className="ohmylms-full-height-modal ohmylms-membership-modal"
             size="fill"
           >
             {isLoading ? (

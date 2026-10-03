@@ -270,7 +270,7 @@ const oz = function (e) {
     d = (0, f.Zp)(),
     m = (0, f.g)().subStep,
     p = (0, y.useDispatch)(T.default),
-    v = Ze(),
+    v = false,
     _ = (0, y.useSelect)(function (e) {
       return e(T.default).getCourse();
     }, []),

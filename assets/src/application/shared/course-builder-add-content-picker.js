@@ -8,7 +8,7 @@ var at = function (e) {
     i = void 0 === o ? function () {} : o,
     l = e.handleAutomation,
     c = e.handleIntegration,
-    u = Ze(),
+    u = false,
     s = ((0, g.useRef)(null), (0, y.useDispatch)(T.default)),
     d = tt((0, g.useState)(null), 2),
     m = d[0],

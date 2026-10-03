@@ -1,6 +1,5 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var r = {};
-
 n.r(r), n.d(r, {
   addLogicalStep: () => ev,
   addStep: () => Xf,
@@ -37,9 +36,7 @@ n.r(r), n.d(r, {
   zoomIn: () => Pv,
   zoomOut: () => Ov
 });
-
 var a = {};
-
 n.r(a), n.d(a, {
   getActivateAutoSave: () => ig,
   getAnalyticsStat: () => zv,
@@ -84,11 +81,9 @@ n.r(a), n.d(a, {
   isInserterSidebarOpened: () => Av,
   isSidebarOpened: () => kv
 });
-
 var o = n(5338),
   i = n(12842),
   l = n.n(i);
-
 function c(e) {
   return c = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -96,7 +91,6 @@ function c(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, c(e);
 }
-
 function u(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -107,7 +101,6 @@ function u(e, t) {
   }
   return n;
 }
-
 function s(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -119,7 +112,6 @@ function s(e) {
   }
   return e;
 }
-
 function d(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -140,15 +132,12 @@ function d(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 l().use(l().createNonceMiddleware(ohmylms_params.nonce)), l().use(l().createRootURLMiddleware("".concat(ohmylms_params.api_url))), l().use(function (e, t) {
   return e.headers = s(s({}, e.headers), {}, {
     "X-WP-Nonce": ohmylms_params.nonce
   }), t(e);
 });
-
 const m = l();
-
 var p = n(91386),
   f = n(47767),
   v = n(84976),
@@ -171,26 +160,14 @@ var p = n(91386),
   M = n.n(A),
   T = n(86169),
   I = n(38093),
-  F = n(20378),
-  N = n(63386),
   D = n(94490),
   W = n(15468),
   z = n(71046),
-  B = n(88935),
   L = n(77558);
-
 n(22563);
-
-var V = n(6425),
-  H = function (e) {
-    return e.showImageGenerator, e.showTextGenerator, e.imageIconLabel, e.textIconLabel, e.aiFor, e.aiContent, e.handleAcceptResponse, e.handlePreview, e.imgIcon, null;
-  };
-
-const G = (0, g.memo)(H);
-
+var V = n(6425);
 var U = n(88660),
   q = n(2214);
-
 function Y(e) {
   return Y = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
     return typeof e;
@@ -198,7 +175,6 @@ function Y(e) {
     return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
   }, Y(e);
 }
-
 function Q() {
   var e,
     t,
@@ -285,7 +261,6 @@ function Q() {
     };
   })();
 }
-
 function Z(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -307,7 +282,6 @@ function Z(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, Z(e, t, n, r);
 }
-
 function $(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -317,7 +291,6 @@ function $(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function K(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -328,7 +301,6 @@ function K(e, t) {
   }
   return n;
 }
-
 function J(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -340,7 +312,6 @@ function J(e) {
   }
   return e;
 }
-
 function X(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -361,7 +332,6 @@ function X(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function ee(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -401,13 +371,11 @@ function ee(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function te(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const ne = function (e) {
   var t = e.content,
     n = void 0 === t ? "" : t,
@@ -449,7 +417,7 @@ const ne = function (e) {
         types: ["heading", "paragraph"]
       }), j.SlashCommand.configure({
         commandsConfig: J({}, l)
-      }), j.Superscript, j.Subscript, j.TaskItem, j.TaskList, j.AiTextNode, j.AiImageNode, j.CustomHTMLNode],
+      }), j.Superscript, j.Subscript, j.TaskItem, j.TaskList, j.CustomHTMLNode],
       onUpdate: function (e) {
         var t,
           n = e.editor;
@@ -620,50 +588,14 @@ const ne = function (e) {
     variant: "tertiary",
     size: "small",
     className: "ohmylms-editor-add-button"
-  })), "assignment" !== f && h().createElement(G, {
-    showImageGenerator: !0,
-    showTextGenerator: !0,
-    aiFor: f,
-    aiContent: "description",
-    handleAcceptResponse: z,
-    handlePreview: function (e) {
-      if (e) {
-        var t = A.current;
-        if (null !== t) T.chain().focus().insertContentAt({
-          from: t,
-          to: t + 1
-        }, {
-          type: "imageBlock",
-          attrs: {
-            src: e,
-            alt: "AI Preview Image"
-          }
-        }).run();else {
-          var n = T.state.doc.content.size;
-          T.chain().focus().insertContentAt(n, {
-            type: "imageBlock",
-            attrs: {
-              src: e,
-              alt: "AI Preview Image"
-            }
-          }).run(), A.current = n;
-        }
-      } else null !== A.current && (T.commands.deleteRange({
-        from: A.current,
-        to: A.current + 1
-      }), A.current = null);
-    }
-  }));
+  })), "assignment" !== f && null);
 };
-
 var re = n(43052);
-
 function ae(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var oe = function (e) {
   var t = e.name,
     n = e.description,
@@ -796,9 +728,7 @@ var oe = function (e) {
     setIsDraggableItem: c
   }))));
 };
-
 const ie = (0, g.memo)(oe);
-
 var le = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -812,9 +742,7 @@ var le = function () {
     d: "M16.957 11.478l-1.397-8.38C15.261 1.303 13.794 0 12.072 0H4.93C2.479 0 1.625 1.991 1.44 3.098l-1.397 8.38c-.146.875.08 1.768.62 2.45A2.767 2.767 0 002.833 15h.709c.39 0 .708-.335.708-.75s-.317-.75-.708-.75h-.708c-.42 0-.816-.196-1.085-.536a1.56 1.56 0 01-.31-1.225l1.396-8.38a2.33 2.33 0 01.252-.734l1.657 9.319C5.059 13.714 6.522 15 8.224 15h5.942c.84 0 1.632-.39 2.17-1.072.54-.681.767-1.575.621-2.45zm-1.705 1.485c-.27.34-.665.536-1.085.536H8.225c-1.02 0-1.899-.77-2.088-1.833L4.344 1.586c.186-.056.383-.085.584-.085h7.144c1.033 0 1.914.781 2.093 1.859l1.397 8.38a1.56 1.56 0 01-.31 1.225v-.002zM7.084 5.25c-.391 0-.709-.336-.709-.75s.317-.75.709-.75h4.958c.391 0 .709.336.709.75s-.318.75-.709.75H7.084zm.517 3c-.39 0-.708-.336-.708-.75s.317-.75.708-.75h4.96c.39 0 .708.336.708.75s-.318.75-.709.75H7.601zm6.212 2.25c0 .414-.317.75-.708.75H8.146c-.39 0-.708-.336-.708-.75 0-.415.317-.75.708-.75h4.959c.391 0 .708.335.708.75z"
   })));
 };
-
 const ce = (0, g.memo)(le);
-
 var ue = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -828,9 +756,7 @@ var ue = function () {
     d: "M8.6 17.25c0 .413-.352.75-.782.75h-4.69C1.398 18 0 16.657 0 15V3c0-1.657 1.4-3 3.127-3h10.946c1.728 0 3.128 1.343 3.128 3v6c0 .412-.352.75-.782.75-.43 0-.782-.338-.782-.75V3c0-.825-.704-1.5-1.564-1.5H3.127c-.86 0-1.563.675-1.563 1.5v12c0 .825.703 1.5 1.563 1.5h4.691c.43 0 .782.337.782.75zM13.268 4.5c0-.412-.352-.75-.782-.75H4.691c-.43 0-.782.338-.782.75s.352.75.782.75h7.795c.43 0 .782-.338.782-.75zm-1.564 3.75c0-.412-.352-.75-.782-.75h-6.23c-.431 0-.783.338-.783.75s.352.75.782.75h6.231c.43 0 .782-.338.782-.75zm-7.013 3c-.43 0-.782.338-.782.75s.352.75.782.75h2.322c.43 0 .782-.338.782-.75s-.352-.75-.782-.75H4.691zm13.065.967a.802.802 0 00-1.103 0l-4.136 3.968-1.79-1.717a.802.802 0 00-1.103 0 .726.726 0 000 1.057l2.346 2.25a.819.819 0 001.11 0l4.691-4.5a.726.726 0 000-1.058h-.015z"
   })));
 };
-
 const se = (0, g.memo)(ue);
-
 var de = n(33829),
   me = function () {
     var e = (0, g.useMemo)(function () {
@@ -855,9 +781,7 @@ var de = n(33829),
       d: "M0 0h18v18H0z"
     })))));
   };
-
 const pe = (0, g.memo)(me);
-
 var fe = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -879,9 +803,7 @@ var fe = function () {
     d: "M0 0h18v18H0z"
   })))));
 };
-
 const ve = (0, g.memo)(fe);
-
 var ge = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -912,5 +834,4 @@ var ge = function () {
     d: "M21.804 10.935s0 0 0 0zm0 0a1.911 1.911 0 00-2.765 0l-4.42 4.574a1.17 1.17 0 00-.31.62l-.242 1.484c-.06.367.057.743.31 1.006a1.093 1.093 0 00.973.321l1.432-.25c.23-.04.438-.152.602-.322l4.42-4.573a2.074 2.074 0 000-2.86zm-5.292 6.446l-1.129.197.191-1.167 3.023-3.128.938.97-3.023 3.128zm4.378-4.53l-.443.458-.938-.971.443-.458a.647.647 0 01.938 0 .704.704 0 010 .97z"
   })));
 };
-
 const he = (0, g.memo)(ge);

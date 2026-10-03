@@ -15,8 +15,9 @@ OhMyLMS only adds authentication, connection settings, and WordPress empty-respo
 
 ## Setup
 
-1. Activate OhMyLMS and open **OhMyLMS → Settings → MCP connections**.
-   The separate **WordPress Settings → OhMyLMS MCP** page is also available.
+1. Open **OhMyLMS → Add-ons**, enable **MCP**, then click **Manage** on its card.
+   MCP is disabled by default. Disabling the add-on stops its server and denies existing tokens;
+   tokens remain available for revocation from Manage.
 2. Generate a separate token for OpenAI, Anthropic, or Gemini. Copy it immediately;
    only its SHA-256 hash is stored. Generating a replacement invalidates the previous token.
 3. Send `Authorization: Bearer YOUR_TOKEN` on every MCP request. Never put the token in a URL.

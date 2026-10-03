@@ -1,5 +1,5 @@
 // Reconstructed Webpack factory 66427; arguments retain original semantics.
-((e, t) => {
+(e, t) => {
   "use strict";
 
   Object.defineProperty(t, "__esModule", {
@@ -103,25 +103,5 @@
         e.chain().focus().insertCustomHTML("").run();
       }
     }]
-  }, {
-    name: "ai",
-    title: "CLMS AI",
-    commands: [{
-      name: "ai-image",
-      label: "Generate image with AI",
-      iconName: "AiImage",
-      description: "Generate image with Ai",
-      action: function (e) {
-        e.chain().focus().setAiImage().run();
-      }
-    }, {
-      name: "ai-writer",
-      label: "Write with AI",
-      iconName: "AiWriter",
-      description: "Write with AI",
-      action: function (e) {
-        e.chain().focus().setAIText().run();
-      }
-    }]
   }], t.default = t.GROUPS;
-});
+};

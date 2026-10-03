@@ -88,10 +88,10 @@ class Install {
 		}
 
 		add_option( 'ohmylms_admin_install_timestamp', time() );
-		
+
 		// Set flag to indicate student pages have been created
 		update_option( 'ohmylms_student_pages_created', '1' );
-		
+
 		flush_rewrite_rules(true);
 
 		/**
@@ -126,14 +126,12 @@ class Install {
 
 
 	/**
-	 * See if we need to set redirect transients for activation or not.
+	 * Record activation without opening the setup wizard.
 	 *
 	 * @since 1.0.0
 	 */
 	public static function maybe_set_activation_transients() {
-		if ( self::is_new_install() ) {
-			set_transient( '_ohmylms_activation_redirect', 1, 30 );
-		}
+		delete_transient( '_ohmylms_activation_redirect' );
 		self::update_ohmylms_version();
 	}
 
@@ -909,7 +907,7 @@ public static function bundled_create_pages() {
 
 		foreach ( $pages as $key => $page ) {
 			$existing_page = get_page_by_path( $page['name'], OBJECT, 'page' );
-	
+
 			if ( $existing_page ) {
                 if (!get_option('ohmylms_' . $key . '_page_id')) update_option('ohmylms_' . $key . '_page_id', $existing_page->ID);
                 continue;
@@ -928,7 +926,7 @@ public static function bundled_create_pages() {
 						)
 					);
 				}
-	
+
 				$page_id = $existing_page->ID;
 			} else {
 				// Create the page if it doesn't exist
@@ -944,12 +942,12 @@ public static function bundled_create_pages() {
 					)
 				);
 			}
-	
+
 			// Update the page template if required
 			if ( ! empty( $page['template'] ) ) {
 				update_post_meta( $page_id, '_wp_page_template', $page['template'] );
 			}
-	
+
 			// Store the page ID in options
 			update_option( 'ohmylms_' . $key . '_page_id', $page_id );
 		}

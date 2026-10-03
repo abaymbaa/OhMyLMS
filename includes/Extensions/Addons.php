@@ -3,19 +3,14 @@ namespace OhMyLMS\Extensions;
 
 /** Bundled modules share the existing Add-ons settings and stay opt-in. */
 final class Addons {
-    const IDS = ['skills', 'question_bank'];
+    const IDS = ['skills'];
 
     public static function definitions() {
         return [
             'skills' => [
                 'label' => __('Skills', 'ohmylms'),
-                'description' => __('Skills module. Feature screens are planned.', 'ohmylms'),
+                'description' => __('Organize learning skills, prerequisites and links to lessons and courses.', 'ohmylms'),
                 'icon' => plugins_url('includes/Integrations/Gamification/Assets/Images/gamification-icon.svg', OHMYLMS_FILE),
-            ],
-            'question_bank' => [
-                'label' => __('Question Bank', 'ohmylms'),
-                'description' => __('Question Bank module. Feature screens are planned.', 'ohmylms'),
-                'icon' => plugins_url('includes/Integrations/ContentProtection/Assets/Images/content-protection-icon.svg', OHMYLMS_FILE),
             ],
         ];
     }
@@ -30,10 +25,11 @@ final class Addons {
     }
 
     public static function manifest($manifest) {
+        unset($manifest['question_bank']);
         foreach (self::definitions() as $id => $definition) {
             $manifest[$id] = array_merge($definition, [
                 'categories' => ['course-enhancements'],
-                'hasSettings' => false,
+                'hasSettings' => $id === 'skills',
                 'class' => '',
                 'is_valid' => true,
                 'is_enable' => self::enabled($id) ? 1 : 0,

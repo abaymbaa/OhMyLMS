@@ -410,8 +410,7 @@ var br = function (e) {
   })));
 };
 const _r = (0, g.memo)(br);
-var wr = n(98243),
-  Er = n(52770);
+var wr = n(98243);
 function Sr(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -514,9 +513,6 @@ var xr = function (e) {
     ce = Sr((0, g.useState)(!1), 2),
     ue = ce[0],
     se = ce[1],
-    de = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISettings();
-    }, []),
     me = (0, y.useSelect)(function (e) {
       return e(T.default).getAllIntegrations();
     }, []);
@@ -772,31 +768,7 @@ var xr = function (e) {
     onClick: function () {
       return fe("image");
     }
-  }, R)), !["audio", "video"].includes(E) && React.createElement(I.TooltipWP, {
-    text: (0, b.__)("Generate Image with AI", "ohmylms")
-  }, React.createElement(I.ButtonWP, {
-    variant: "secondary",
-    icon: React.createElement(wr.A, null),
-    onClick: function () {
-      return function () {
-        var e;
-        return null != me && null !== (e = me.ai_model) && void 0 !== e && e.is_enable ? null != de && de.self || "anthropic" !== (null == de ? void 0 : de.platform) ? null != de && de.self || null != de && de.api_key ? void le(!0) : (O.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (O.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), O.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), O.updateProModalButtonText(null), void se(!0)) : (se(!0), O.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), O.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void O.updateProModalButtonText(null));
-      }();
-    }
-  }, (0, b.__)("Generate AI Photo", "ohmylms"))), ie && React.createElement(Er.default, {
-    promptBoxRef: ae,
-    onPreview: Ee,
-    onInsert: we,
-    onClose: function () {
-      return le(!1);
-    }
-  })), ("image" === d || "both" === d) && !Boolean(j) && "image_video" === E && React.createElement(G, {
-    showImageGenerator: !0,
-    showTextGenerator: !1,
-    handleAcceptResponse: we,
-    handlePreview: Ee,
-    imageIconLabel: (0, b.__)("Make With AI", "ohmylms")
-  }))), ue && React.createElement(React.Fragment, null, React.createElement(He.default, {
+  }, R)), !["audio", "video"].includes(E) && null, ie && null), ("image" === d || "both" === d) && !Boolean(j) && "image_video" === E && null)), ue && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: ue,
     onClose: se
   })));
@@ -888,20 +860,7 @@ const Cr = (0, g.memo)(xr),
         lineHeight: 1.2,
         boxShadow: "none"
       }
-    }), ("assignment" !== k || !["video", "audio"].includes(v)) && h().createElement(G, {
-      showImageGenerator: !1,
-      showTextGenerator: !0,
-      aiFor: k,
-      aiContent: "title",
-      handleAcceptResponse: function (e) {
-        c({
-          target: {
-            name: t,
-            value: e
-          }
-        });
-      }
-    })), h().createElement(ne, {
+    }), ("assignment" !== k || !["video", "audio"].includes(v)) && null), h().createElement(ne, {
       onContentChange: function (e) {
         u(e);
       },

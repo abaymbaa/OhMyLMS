@@ -1,29 +1,21 @@
-# Skills and Question Bank module structure
+# Bundled add-ons and Assessments
 
-Skills and Question Bank are bundled optional modules controlled independently
-in OhMyLMS > Addons. Both default to off. Their cards explicitly state that
-feature screens are planned. This change provides structure and switches only.
+Skills is an optional bundled add-on under OhMyLMS → Add-ons. Manage opens the skill catalogue while enabled. Disabling hides its submenu and blocks skill writes without deleting skills, links or historical question mappings. Existing mapping reads remain available to core assessment screens.
 
-The switches persist in `ohmylms_integrations` using `skills` and `question_bank`
-keys. Switch changes request an admin reload, matching the existing Add-ons
-workflow. Both shipped and source assets use the server-provided manifest.
+MCP is another optional add-on; see [MCP setup](MCP.md).
 
-Each enabled module loads its own entry point during `plugins_loaded`:
+Question Bank is a core feature. Its former add-on card, saved switch and module configuration no longer control availability. Assessment services load through the core bootstrap.
 
-- `modules/skills/module.php` emits `ohmylms_skills_module_loaded`.
-- `modules/question_bank/module.php` emits `ohmylms_question_bank_module_loaded`.
+The admin submenu has one **Assessments** link, opening Quizzes first. Internal navigation contains Quizzes, Question Bank and Assignments. Original list and editor URLs remain usable. Course creation keeps its existing workflow. These features have no Pro subscription requirement; normal WordPress permissions still apply.
 
-Future services should register their hooks from the relevant entry point.
-Neither module currently creates taxonomies, screens, tables, questions or
-mastery records. Turning a switch off simply prevents that entry point from
-loading on the next request; it does not delete data or affect core quizzes.
-Each switch works independently, with no dependency between the modules yet.
+Later integration requirements:
 
-The loader uses a fixed list of bundled IDs. Client-supplied class names never
-load module code. Trusted project modules still use `OHMYLMS_ENABLED_MODULES`
-and `ohmylms_enabled_modules`; bundled IDs follow their saved switches even
-when listed in that configuration.
+- Add reusable bank questions to quizzes.
+- Draw random quiz questions based on skills.
+- Create questions or quizzes inside assignments.
 
-Run `php tests/php/addons-unit.php off` and repeat with `skills`, `bank`, and
-`both` to verify independent loading, manifest state and idempotent loading.
-Future feature requirements remain recorded in DEVELOPMENT.md.
+The current change groups navigation only; the requirements above are future work.
+
+Trusted project modules still use `OHMYLMS_ENABLED_MODULES` and `ohmylms_enabled_modules`. Bundled Skills follows its saved switch even when listed in configuration. The legacy `question_bank` module ID is ignored.
+
+Run `php tests/php/addons-unit.php off`, `skills`, `bank` and `both` to check legacy configurations and the Skills switch. `tests/js/assessments-hub.test.mjs` verifies the default section, all three routes and preservation of the existing screens.

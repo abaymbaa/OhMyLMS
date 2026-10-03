@@ -583,9 +583,6 @@ var _u = function (e) {
     O = yu((0, g.useState)(!1), 2),
     k = O[0],
     j = O[1],
-    A = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISettings();
-    }, []),
     F = (0, y.useSelect)(function (e) {
       return e(T.default).getAllIntegrations();
     }, []),
@@ -723,27 +720,7 @@ var _u = function (e) {
     onClick: function () {
       return N("video");
     }
-  }, (0, b.__)("Add Video", "ohmylms"))), React.createElement(I.TooltipWP, {
-    text: (0, b.__)("Generate Image with AI", "ohmylms")
-  }, React.createElement(I.ButtonWP, {
-    icon: React.createElement(wr.A, null),
-    className: "ohmylms-media-uploader-button",
-    onClick: function () {
-      return function () {
-        var e;
-        return null != F && null !== (e = F.ai_model) && void 0 !== e && e.is_enable ? null != A && A.self || "anthropic" !== (null == A ? void 0 : A.platform) ? null != A && A.self || null != A && A.api_key ? void R(!0) : (v.updateProModalTitle((0, b.__)("Please configure AI Model API Key", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and configure the AI Model API Key to use this feature.", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (v.updateProModalTitle((0, b.__)("Anthropic does not support image generation", "ohmylms")), v.updateProModalContent((0, b.__)("Image generation is not available with Anthropic. Please use a different model (Self hosted or Open AI).", "ohmylms")), v.updateProModalButtonText(null), void j(!0)) : (j(!0), v.updateProModalTitle((0, b.__)("Please enable AI Suite", "ohmylms")), v.updateProModalContent((0, b.__)("Go to addons page and enable the AI Suite to use this feature. You can use self hosted AI model, Open AI, Anthropic or Gemini.", "ohmylms")), void v.updateProModalButtonText(null));
-      }();
-    }
-  }, (0, b.__)("Generate AI Photo", "ohmylms"))), S && React.createElement(Er.default, {
-    promptBoxRef: w,
-    onPreview: D,
-    onInsert: function (e) {
-      l(null == e ? void 0 : e.source_url, null == e ? void 0 : e.id), P(null), R(!1);
-    },
-    onClose: function () {
-      return R(!1);
-    }
-  }))), k && React.createElement(React.Fragment, null, React.createElement(He.default, {
+  }, (0, b.__)("Add Video", "ohmylms"))), null, S && null)), k && React.createElement(React.Fragment, null, React.createElement(He.default, {
     isOpen: k,
     onClose: j
   })));

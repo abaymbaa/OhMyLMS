@@ -17,7 +17,6 @@
       "T",
       "TW",
       "ZD",
-      "Ze",
       "aG",
       "b",
       "cG",
@@ -49,7 +48,6 @@
       "Sc",
       "T",
       "UW",
-      "Ze",
       "b",
       "f",
       "g",
@@ -73,7 +71,6 @@
       "React",
       "T",
       "Xl",
-      "Ze",
       "_",
       "_f",
       "b",
@@ -94,7 +91,17 @@
     "binding": "Zp",
     "name": "CourseInfoHeader",
     "file": "CourseInfoHeader.jsx",
-    "dependencies": ["Ge", "Qp", "React", "T", "Ze", "b", "g", "ne", "re", "y"]
+    "dependencies": [
+      "Ge",
+      "Qp",
+      "React",
+      "T",
+      "b",
+      "g",
+      "ne",
+      "re",
+      "y"
+    ]
   },
   {
     "binding": "Yp",
@@ -102,7 +109,6 @@
     "file": "CourseMedia.jsx",
     "dependencies": [
       "Bp",
-      "Er",
       "Gp",
       "He",
       "I",
@@ -135,7 +141,6 @@
       "React",
       "SH",
       "T",
-      "Ze",
       "b",
       "f",
       "g",
@@ -175,67 +180,152 @@
     "binding": "mz",
     "name": "CoursePricing",
     "file": "CoursePricing.jsx",
-    "dependencies": ["I", "Kt", "NW", "React", "T", "b", "cz", "g", "lo", "sn", "sz", "uz", "y"]
+    "dependencies": [
+      "I",
+      "Kt",
+      "NW",
+      "React",
+      "T",
+      "b",
+      "cz",
+      "g",
+      "lo",
+      "sn",
+      "sz",
+      "uz",
+      "y"
+    ]
   },
   {
     "binding": "fz",
     "name": "CourseCapacity",
     "file": "CourseCapacity.jsx",
-    "dependencies": ["Bt", "I", "React", "b", "pz"]
+    "dependencies": [
+      "Bt",
+      "I",
+      "React",
+      "b",
+      "pz"
+    ]
   },
   {
     "binding": "_z",
     "name": "CourseAccess",
     "file": "CourseAccess.jsx",
-    "dependencies": ["I", "React", "b", "bz", "hz", "ls"]
+    "dependencies": [
+      "I",
+      "React",
+      "b",
+      "bz",
+      "hz",
+      "ls"
+    ]
   },
   {
     "binding": "Cz",
     "name": "CourseAvailability",
     "file": "CourseAvailability.jsx",
-    "dependencies": ["I", "React", "Rz", "T", "b", "xz", "y"]
+    "dependencies": [
+      "I",
+      "React",
+      "Rz",
+      "T",
+      "b",
+      "xz",
+      "y"
+    ]
   },
   {
     "binding": "Oz",
     "name": "CourseLevel",
     "file": "CourseLevel.jsx",
-    "dependencies": ["I", "React", "b"]
+    "dependencies": [
+      "I",
+      "React",
+      "b"
+    ]
   },
   {
     "binding": "Tz",
     "name": "CourseSlug",
     "file": "CourseSlug.jsx",
-    "dependencies": ["I", "Mz", "React", "b", "g"]
+    "dependencies": [
+      "I",
+      "Mz",
+      "React",
+      "b",
+      "g"
+    ]
   },
   {
     "binding": "jz",
     "name": "CourseReviews",
     "file": "CourseReviews.jsx",
-    "dependencies": ["Bt", "I", "React", "b"]
+    "dependencies": [
+      "Bt",
+      "I",
+      "React",
+      "b"
+    ]
   },
   {
     "binding": "_V",
     "name": "CourseResources",
     "file": "CourseResources.jsx",
-    "dependencies": ["Gz", "I", "React", "bV"]
+    "dependencies": [
+      "Gz",
+      "I",
+      "React",
+      "bV"
+    ]
   },
   {
     "binding": "oH",
     "name": "CourseOrganization",
     "file": "CourseOrganization.jsx",
-    "dependencies": ["$V", "I", "React", "T", "XV", "aH", "b", "g", "tH", "y"]
+    "dependencies": [
+      "$V",
+      "I",
+      "React",
+      "T",
+      "XV",
+      "aH",
+      "b",
+      "g",
+      "tH",
+      "y"
+    ]
   },
   {
     "binding": "OH",
     "name": "CourseEngagement",
     "file": "CourseEngagement.jsx",
-    "dependencies": ["CH", "I", "Kt", "PH", "React", "T", "b", "y"]
+    "dependencies": [
+      "CH",
+      "I",
+      "Kt",
+      "PH",
+      "React",
+      "T",
+      "b",
+      "y"
+    ]
   },
   {
     "binding": "SH",
     "name": "CourseCohortSettings",
     "file": "CourseCohortSettings.jsx",
-    "dependencies": ["I", "React", "T", "gH", "pH", "vH", "wH", "y", "yH"]
+    "dependencies": [
+      "I",
+      "React",
+      "T",
+      "gH",
+      "pH",
+      "vH",
+      "wH",
+      "y",
+      "yH"
+    ]
   },
   {
     "binding": "KH",
@@ -290,7 +380,20 @@
     "binding": "Bf",
     "name": "CourseCommunity",
     "file": "CourseCommunity.jsx",
-    "dependencies": ["I", "If", "Kt", "Mf", "Nf", "React", "Wf", "b", "g", "jf", "kf", "l"]
+    "dependencies": [
+      "I",
+      "If",
+      "Kt",
+      "Mf",
+      "Nf",
+      "React",
+      "Wf",
+      "b",
+      "g",
+      "jf",
+      "kf",
+      "l"
+    ]
   },
   {
     "binding": "vY",
@@ -344,13 +447,40 @@
     "binding": "hG",
     "name": "CourseListItem",
     "file": "CourseListItem.jsx",
-    "dependencies": ["Ge", "I", "React", "SB", "b", "f", "g", "gG", "pG", "v", "vG"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "SB",
+      "b",
+      "f",
+      "g",
+      "gG",
+      "pG",
+      "v",
+      "vG"
+    ]
   },
   {
     "binding": "lU",
     "name": "CourseCreateDialog",
     "file": "CourseCreateDialog.jsx",
-    "dependencies": ["I", "JG", "L", "QG", "React", "T", "aU", "b", "f", "g", "nU", "oU", "tU", "y"]
+    "dependencies": [
+      "I",
+      "JG",
+      "L",
+      "QG",
+      "React",
+      "T",
+      "aU",
+      "b",
+      "f",
+      "g",
+      "nU",
+      "oU",
+      "tU",
+      "y"
+    ]
   },
   {
     "binding": "Xl",
@@ -365,7 +495,6 @@
       "React",
       "T",
       "Ul",
-      "Ze",
       "Zl",
       "_",
       "f",

@@ -9,12 +9,12 @@ import {
   mergeSavedCourse,
 } from './model.mjs';
 
-export function useCourseEditor({ store, courseId, enableSpin, isAi }) {
+export function useCourseEditor({ store, courseId, enableSpin }) {
   const state = useSelect(
     (select) => {
       const data = select(store);
       return {
-        course: isAi ? data.getAISuggestedCourses()?.[Number(courseId) - 1] : data.getCourse(),
+        course: data.getCourse(),
         chapters: data.getCourseChapters(),
         validSettings: data.isValidCourseSettings(),
         integrations: data.getAllIntegrations(),
@@ -22,7 +22,7 @@ export function useCourseEditor({ store, courseId, enableSpin, isAi }) {
         noticeStatus: data.getNotificationStatus(),
       };
     },
-    [store, courseId, isAi],
+    [store, courseId],
   );
   const actions = useDispatch(store);
   const [loading, setLoading] = useState(true);
@@ -39,17 +39,7 @@ export function useCourseEditor({ store, courseId, enableSpin, isAi }) {
     setError(null);
     setSaving(false);
     inFlight.current = false;
-    if (isAi) {
-      const cached = localStorage.getItem('aiCourseOutline');
-      if (cached) {
-        try {
-          actions.setAiCourseOutline(JSON.parse(cached));
-        } catch {
-          setError(__('Could not read the saved AI outline.', 'ohmylms'));
-        }
-      }
-      setLoading(false);
-    } else if (courseId && !enableSpin) {
+    if (courseId && !enableSpin) {
       setLoading(true);
       actions.resetCourseState();
       actions.setCourseLoading(true);
@@ -77,11 +67,11 @@ export function useCourseEditor({ store, courseId, enableSpin, isAi }) {
     return () => {
       active = false;
       generation.current++;
-      if (!isAi) actions.resetCourseState();
+      actions.resetCourseState();
     };
-  }, [store, courseId, enableSpin, isAi]);
+  }, [store, courseId, enableSpin]);
   async function save(status, date, section, { silent = false } = {}) {
-    if (inFlight.current || loading || !state.course || isAi) return false;
+    if (inFlight.current || loading || !state.course) return false;
     const current = generation.current;
     inFlight.current = true;
     setSaving(true);

@@ -260,29 +260,16 @@ final class OhMyLMS {
 
 	public function maybe_run_setup_wizard() {
 		if ( get_transient( '_ohmylms_activation_redirect' ) ) {
-			add_action( 'admin_init', array( $this, 'admin_redirects' ) );
+			delete_transient( '_ohmylms_activation_redirect' );
 		}
 	}
 
 
 	/**
-	 * Handle redirects to setup/welcome page after install and updates.
-	 *
-	 * For setup wizard, transient must be present, the user must have access rights, and we must ignore the network/bulk plugin updaters.
+	 * Clear legacy activation redirects without opening onboarding.
 	 */
 	public function admin_redirects() {
-		$do_redirect = true;
-		// On these pages, or during these events, postpone the redirect.
-		if ( wp_doing_ajax() || is_network_admin() || ! current_user_can( 'manage_options' ) ) {
-			$do_redirect = false;
-		}
-
-		if ( $do_redirect ) {
-			delete_transient( '_ohmylms_activation_redirect' );
-			$url = admin_url( 'admin.php?page=ohmylms#/setup-wizard' );
-			wp_safe_redirect( wp_sanitize_redirect( esc_url_raw( $url ) ) );
-			exit;
-		}
+		$this->maybe_run_setup_wizard();
 	}
 
 
@@ -496,7 +483,7 @@ final class OhMyLMS {
 			$this->settings_pages->init_settings_pages();
 			$this->admin_menu = new OhMyLMS\Admin\Menu();
 			$this->admin_ajax = new \OhMyLMS\Admin\Ajax();
-			
+
 			// Initialize promotional banner (customize dates for your promotional period)
 			// Vendor promotions are not part of this distribution.
 		}
@@ -520,7 +507,7 @@ final class OhMyLMS {
 		$this->course_comment 		= new \OhMyLMS\CourseComment();
 		$this->emails 				= new \OhMyLMS\Emails\Emails();
 		$this->drip_content 		= new \OhMyLMS\DripContent();
-		
+
 		// Initialize webhook manager only if webhooks integration is enabled
 		if ( apply_filters( 'ohmylms_should_enable_webhooks', false ) ) {
 			$this->webhook_manager = new \OhMyLMS\WebhookManager();
@@ -850,7 +837,7 @@ final class OhMyLMS {
             $class = 'OhMyLMS\\Hooks\\' . $name;
             (new $class())->register_hooks();
         }
-        foreach (['Cohorts','Zoom','Gamification','Funnel','ContentProtection','AIModel','Webhooks','GoogleMeet','WPFusion'] as $name) {
+        foreach (['Cohorts','Zoom','Gamification','Funnel','ContentProtection','Webhooks','GoogleMeet','WPFusion'] as $name) {
             $class = 'OhMyLMS\\Integrations\\' . $name . '\\' . $name;
             new $class();
         }

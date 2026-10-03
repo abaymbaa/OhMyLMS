@@ -9,7 +9,7 @@ const dG = function (e) {
       c = (0, f.g)(),
       u = c.id,
       s = c.step,
-      d = Ze(),
+      d = false,
       m = cG((0, g.useState)(!0), 2),
       p = m[0],
       v = m[1],
@@ -21,7 +21,7 @@ const dG = function (e) {
         return e(T.default).getNotificationStatus();
       }, []),
       S = (0, y.useSelect)(function (e) {
-        return e(T.default).getAISuggestedCourses();
+        return e(T.default).getCourse();
       }, []),
       R = (0, y.useSelect)(function (e) {
         return e(T.default).getCourse();
@@ -90,12 +90,7 @@ const dG = function (e) {
       }, []),
       xe = (0, f.Zp)(),
       Ce = JW().totalSteps;
-    (0, g.useEffect)(function () {
-      if (d) {
-        var e = JSON.parse(localStorage.getItem("aiCourseOutline"));
-        e && _.setAiCourseOutline(e);
-      }
-    }, [d]), (0, g.useEffect)(function () {
+    undefined, (0, g.useEffect)(function () {
       var e,
         t = !0,
         n = function () {

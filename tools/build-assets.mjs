@@ -23,7 +23,6 @@ import {adaptIntegrations} from './integration-adapters.mjs';
 import {adaptWebhooks} from './webhook-adapters.mjs';
 import {adaptTaxonomies} from './taxonomy-adapters.mjs';
 import {adaptSetup} from './setup-adapters.mjs';
-import {adaptAiCourse} from './ai-course-adapters.mjs';
 import {adaptSlashCommands} from './slash-adapters.mjs';
 const traverse=traverseModule.default||traverseModule;
 const generate=generatorModule.default||generatorModule;
@@ -65,7 +64,6 @@ for(const asset of manifest.assets){
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('Webhook adapters:',adaptWebhooks(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('Taxonomy adapters:',adaptTaxonomies(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('Setup adapters:',adaptSetup(ast));
-    if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('AI course adapters:',adaptAiCourse(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/vendors/vendors.js')console.log('Vendor adapters:',adaptVendors(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('Connection adapter:',adaptConnectionStatus(ast));
     if(process.argv.includes('--extensions')&&asset.output==='assets/dist/admin/ohmylms.js')console.log('Slash command adapter:',adaptSlashCommands(ast));

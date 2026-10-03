@@ -26,11 +26,10 @@ For component conventions, factory contracts and the feature development workflo
 - `assets/src/features/certificates/`: 13 editable certificate list, template, editor, design-control and preview React components integrated by `tools/certificate-adapters.mjs`.
 - `assets/src/features/emails/`: 12 editable notification-template settings, personalization, editor, field and responsive-preview React components integrated by `tools/email-adapters.mjs`.
 - `assets/src/features/settings/`: 19 editable General Settings route, design, account/privacy, permalink, advanced, payment and migration React components integrated by `tools/settings-adapters.mjs`. Email Settings remains in its dedicated feature.
-- `assets/src/features/integrations/`: seven editable Add-ons route, card, configuration and provider settings React components integrated by `tools/integration-adapters.mjs`.
+- `assets/src/features/integrations/`: six editable Add-ons route, card, configuration and provider settings React components integrated by `tools/integration-adapters.mjs`.
 - `assets/src/features/webhooks/`: four editable webhook list, details, field-mapping and editor-modal React components integrated by `tools/webhook-adapters.mjs`.
 - `assets/src/features/taxonomies/`: editable Categories and Tags routes plus their shared taxonomy modal, integrated by `tools/taxonomy-adapters.mjs`.
 - `assets/src/features/setup/`: eleven editable Setup Wizard step, migration/import, controller and route components integrated by `tools/setup-adapters.mjs`.
-- `assets/src/features/ai-course-outline/`: eighteen editable prompt-template, generator, outline-preview and route components integrated by `tools/ai-course-adapters.mjs`.
 - `tools/vendor-adapters.mjs`: makes the two installed ProseMirror state export formats share the editor's existing CommonJS instance. The original duplicated generators caused `Adding different instances of a keyed plugin (plugin$)` in both original and recovered lesson screens. The parity build retains the untouched factories; the adapted build repairs the duplication rather than suppressing its error.
 - `build/`: generated output; never edit it.
 

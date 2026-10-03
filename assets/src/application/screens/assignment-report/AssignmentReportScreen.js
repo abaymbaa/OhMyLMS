@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var $$ = function () {
-  HG("ohmylms", "assignments");
+  HG("ohmylms", "assessments");
   var e = Q$((0, g.useState)(""), 2),
     t = e[0],
     n = e[1],

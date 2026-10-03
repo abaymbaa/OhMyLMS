@@ -85,7 +85,6 @@ function gp() {
     };
   })();
 }
-
 function hp(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -107,7 +106,6 @@ function hp(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, hp(e, t, n, r);
 }
-
 function yp(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -118,7 +116,6 @@ function yp(e, t) {
   }
   return n;
 }
-
 function bp(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = null != arguments[t] ? arguments[t] : {};
@@ -130,7 +127,6 @@ function bp(e) {
   }
   return e;
 }
-
 function _p(e, t, n) {
   return (t = function (e) {
     var t = function (e) {
@@ -151,7 +147,6 @@ function _p(e, t, n) {
     writable: !0
   }) : e[t] = n, e;
 }
-
 function Ep(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -161,7 +156,6 @@ function Ep(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Sp(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -201,13 +195,11 @@ function Sp(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Rp(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 var xp = function (e) {
   var t = e.chapterId,
     n = (0, y.useDispatch)(T.default),
@@ -384,9 +376,7 @@ var xp = function (e) {
     actionBtnText: (0, b.__)("Close", "ohmylms")
   }));
 };
-
 const Cp = (0, g.memo)(xp);
-
 var Pp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     width: "9",
@@ -402,9 +392,7 @@ var Pp = function () {
     d: "M1.8 10.6c.937 0 1.7.745 1.7 1.65 0 .905-.763 1.65-1.7 1.65-.938 0-1.7-.745-1.7-1.65 0-.905.762-1.65 1.7-1.65zm5.4 0c.938 0 1.7.745 1.7 1.65 0 .905-.762 1.65-1.7 1.65-.937 0-1.7-.745-1.7-1.65 0-.905.763-1.65 1.7-1.65zM1.8 5.35c.937 0 1.7.745 1.7 1.65 0 .905-.763 1.65-1.7 1.65C.862 8.65.1 7.905.1 7c0-.905.762-1.65 1.7-1.65zm5.4 0c.938 0 1.7.745 1.7 1.65 0 .905-.762 1.65-1.7 1.65-.937 0-1.7-.745-1.7-1.65 0-.905.763-1.65 1.7-1.65zM1.8.1c.937 0 1.7.745 1.7 1.65 0 .905-.763 1.65-1.7 1.65C.862 3.4.1 2.655.1 1.75.1.845.862.1 1.8.1zm5.4 0c.938 0 1.7.745 1.7 1.65 0 .905-.762 1.65-1.7 1.65-.937 0-1.7-.745-1.7-1.65C5.5.845 6.263.1 7.2.1z"
   })));
 };
-
 const Op = (0, g.memo)(Pp);
-
 function kp() {
   var e,
     t,
@@ -491,7 +479,6 @@ function kp() {
     };
   })();
 }
-
 function jp(e, t, n, r) {
   var a = Object.defineProperty;
   try {
@@ -513,7 +500,6 @@ function jp(e, t, n, r) {
     }) : e[t] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, jp(e, t, n, r);
 }
-
 function Ap(e, t, n, r, a, o, i) {
   try {
     var l = e[o](i),
@@ -523,7 +509,6 @@ function Ap(e, t, n, r, a, o, i) {
   }
   l.done ? t(c) : Promise.resolve(c).then(r, a);
 }
-
 function Mp(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -563,13 +548,11 @@ function Mp(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function Tp(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-
 const Ip = function (e) {
   var t,
     n = e.chapter,
@@ -583,10 +566,10 @@ const Ip = function (e) {
     s = (e.total, e.index),
     d = (e.showEdit, e.setShowEdit),
     m = (e.handleSaveName, (0, f.g)().id),
-    p = Ze(),
+    p = false,
     v = (0, y.useDispatch)("ohmylms/store"),
     _ = (0, y.useSelect)(function (e) {
-      return e(T.default).getAISuggestedCourses();
+      return e(T.default).getCourse();
     }, []),
     w = Mp((0, g.useState)(n.name || n.title), 2),
     S = w[0],
@@ -734,7 +717,6 @@ const Ip = function (e) {
     isDelete: !0
   }));
 };
-
 var Fp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -752,9 +734,7 @@ var Fp = function () {
     d: "M20.25 6.25H9.75c-.825 0-1.5.675-1.5 1.5v10.5c0 .825.675 1.5 1.5 1.5h10.5c.825 0 1.5-.675 1.5-1.5V7.75c0-.825-.675-1.5-1.5-1.5zM9.75 7.375h10.5c.225 0 .375.15.375.375v6.3l-2.25-2.175c-.225-.225-.6-.225-.75 0l-2.7 2.625L12.75 13c-.225-.15-.45-.15-.6 0l-2.7 1.95v-7.2c-.075-.225.075-.375.3-.375zm10.5 11.25H9.75c-.225 0-.375-.15-.375-.375v-1.8l3.075-2.25 2.25 1.425c.225.15.525.15.675-.075L18 13l2.625 2.55v2.7c0 .225-.15.375-.375.375z"
   })));
 };
-
 const Np = (0, g.memo)(Fp);
-
 var Dp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -779,9 +759,7 @@ var Dp = function () {
     "clip-rule": "evenodd"
   })));
 };
-
 const Wp = (0, g.memo)(Dp);
-
 var zp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -799,9 +777,7 @@ var zp = function () {
     d: "M11.25 9.4h6.15l-1.275 1.35.825.825 2.7-2.7-2.625-3-.825.75 1.425 1.725H11.25c-.675 0-1.275.225-1.725.675-1.05 1.125-1.05 3.15-1.05 4.2v.15H9.6v-.225c0-.825 0-2.625.75-3.375.225-.225.525-.375.9-.375zm10.35 3v-.15h-1.125v.225c0 .825 0 2.625-.75 3.375-.225.225-.525.375-.975.375H12.6l1.275-1.275-.825-.825-2.625 2.625 2.625 3 .825-.75-1.425-1.725h6.3c.675 0 1.275-.225 1.725-.675 1.125-1.05 1.125-3.15 1.125-4.2z"
   })));
 };
-
 const Bp = (0, g.memo)(zp);
-
 var Lp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -821,9 +797,7 @@ var Lp = function () {
     clipRule: "evenodd"
   })));
 };
-
 const Vp = (0, g.memo)(Lp);
-
 var Hp = function () {
   return React.createElement(React.Fragment, null, React.createElement("svg", {
     fill: "none",
@@ -836,9 +810,7 @@ var Hp = function () {
     d: "M.528 1.1c0-.154.037-.306.107-.442.23-.44.75-.6 1.163-.354l10.29 6.088c.14.083.255.206.332.355.23.44.08.995-.332 1.239l-10.29 6.088a.8.8 0 01-.415.115c-.472 0-.855-.408-.855-.911V1.1z"
   })));
 };
-
 const Gp = (0, g.memo)(Hp);
-
 function Up(e, t) {
   return function (e) {
     if (Array.isArray(e)) return e;
@@ -878,7 +850,6 @@ function Up(e, t) {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }();
 }
-
 function qp(e, t) {
   (null == t || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];

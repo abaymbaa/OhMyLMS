@@ -61,7 +61,7 @@ export function registerQuestionBankPages(registry) {
     description: __('A shared stem with separately scored parts', 'ohmylms'),
     render: StructuredEditor,
   });
-  registry.registerAdminPage('skills', {
+  if (flags.skills === true) registry.registerAdminPage('skills', {
     label: __('Skills', 'ohmylms'),
     render: SkillsPage,
     priority: 1,

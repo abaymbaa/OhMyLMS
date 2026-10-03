@@ -159,7 +159,8 @@ final class Tokens {
 
     public static function enqueue_admin() {
         if (!self::is_admin_app_screen()) { return; }
-        wp_enqueue_style('ohmylms-admin-ui', plugins_url('assets/css/admin-ui.css', OHMYLMS_FILE), ['ohmylms-main'], OHMYLMS_VERSION);
+        $ui_version = OHMYLMS_VERSION . '.' . substr(hash_file('sha256', OHMYLMS_DIR . '/assets/css/admin-ui.css'), 0, 12);
+        wp_enqueue_style('ohmylms-admin-ui', plugins_url('assets/css/admin-ui.css', OHMYLMS_FILE), ['ohmylms-main'], $ui_version);
         wp_add_inline_style('ohmylms-admin-ui', self::admin_css());
         $url = self::font_url(self::font('ohmylms_admin_font_family'));
         if ($url) { wp_enqueue_style('ohmylms-admin-font', $url, [], null); }

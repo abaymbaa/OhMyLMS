@@ -14,13 +14,11 @@ export function createCourseInfoHeader(readRuntime) {
       re: { A: TitleInput },
       ne: RichText,
       T: { default: store },
-      Ze: useAiMode,
       Ge: decode,
     } = readRuntime();
-    const isAi = useAiMode();
     const course = useSelect(
-      (select) => (isAi ? select(store).getAISuggestedCourses() : select(store).getCourse()),
-      [store, isAi],
+      (select) => select(store).getCourse(),
+      [store],
     );
     const { name, description, video_src: video, image_src: image } = course || {};
     return (
@@ -53,7 +51,7 @@ export function createCourseInfoHeader(readRuntime) {
               }}
               size="large"
               autoComplete="off"
-              autoFocus={!isAi}
+              autoFocus
               variant="borderless"
             />
           </div>

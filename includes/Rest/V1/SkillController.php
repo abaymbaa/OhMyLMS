@@ -40,12 +40,25 @@ class SkillController extends RestController {
         ]);
     }
 
-    public function author_permission() {
+    private function addon_permission($request = null) {
+        // Read existing mappings for question-bank and assessment history even when disabled.
+        if ($request && $request->get_method() === 'GET') { return true; }
+        return \OhMyLMS\Extensions\Addons::enabled('skills') ? true : new WP_Error('ohmylms_skills_disabled', __('Enable the Skills add-on to manage skills.', 'ohmylms'), ['status' => 403]);
+    }
+
+    public function author_permission($request = null) {
+        $enabled = $this->addon_permission($request);
+        if (is_wp_error($enabled)) { return $enabled; }
         if (!Schema::ready()) { return new WP_Error('ohmylms_skills_unavailable', __('Skills are not installed yet.', 'ohmylms'), ['status' => 503]); }
         return AccessPolicy::check(AccessPolicy::can_author());
     }
-    public function admin_permission() { return AccessPolicy::check(current_user_can('manage_options')); }
+    public function admin_permission() {
+        $enabled = $this->addon_permission();
+        return is_wp_error($enabled) ? $enabled : AccessPolicy::check(current_user_can('manage_options'));
+    }
     public function question_permission(WP_REST_Request $request) {
+        $enabled = $this->addon_permission($request);
+        if (is_wp_error($enabled)) { return $enabled; }
         $id = (int) $request['id'];
         if (get_post_type($id) !== OHMYLMS_QUESTION_CPT) { return new WP_Error('ohmylms_rest_invalid_question_id', __('Invalid ID.', 'ohmylms'), ['status' => 404]); }
         return AccessPolicy::check($request->get_method() === 'GET' ? AccessPolicy::can_use_question($id) : AccessPolicy::can_edit_question($id));

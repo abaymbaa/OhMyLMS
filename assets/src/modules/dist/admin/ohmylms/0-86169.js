@@ -21,8 +21,6 @@
   });
   var a = {};
   n.r(a), n.d(a, {
-    getAIInfo: () => qe,
-    getAISettings: () => Ze,
     getAllCategories: () => He,
     getAllCurrencySettings: () => Ge,
     getAllIntegrations: () => Le,
@@ -77,7 +75,6 @@
   n.r(u), n.d(u, {
     addChapterToCourse: () => Mr,
     attachFeatureImage: () => mr,
-    clearAiCourseOutline: () => la,
     clearCourseMap: () => sr,
     createCourse: () => kr,
     deleteCourse: () => Fr,
@@ -110,7 +107,6 @@
     saveCourseChaptersWithoutNotice: () => Ir,
     saveCourseSettings: () => zr,
     saveCourseTag: () => $r,
-    setAiCourseOutline: () => ia,
     setChapterContentTitle: () => Rr,
     setChapterLastIndexContent: () => Er,
     setCourse: () => yr,
@@ -140,7 +136,6 @@
   });
   var s = {};
   n.r(s), n.d(s, {
-    getAISuggestedCourses: () => va,
     getCategories: () => ja,
     getChapterLastIndex: () => ka,
     getCourse: () => Sa,
@@ -460,21 +455,9 @@
     getStudentsPagination: () => kp
   });
   var I = {};
-  n.r(I), n.d(I, {
-    clearAISuggestion: () => Vp,
-    setAISuggestion: () => Bp,
-    setSelectedAISuggestion: () => Lp
-  });
+  n.r(I), n.d(I, {});
   var F = {};
-  n.r(F), n.d(F, {
-    getAllCourseSuggestions: () => Gp,
-    getAllImageSuggestions: () => qp,
-    getAllSuggestions: () => Hp,
-    getAllTextSuggestions: () => Up,
-    getSelectedImageSuggestion: () => Qp,
-    getSelectedSuggestion: () => Zp,
-    getSelectedTextSuggestion: () => Yp
-  });
+  n.r(F), n.d(F, {});
   var N = {};
   n.r(N), n.d(N, {
     deleteIntegration: () => bf,
@@ -976,14 +959,8 @@
     Ge = function (e) {
       return e.app.currency_settings;
     },
-    qe = function (e) {
-      return e.app.ai_settings;
-    },
     Qe = function (e) {
       return e.app.engagement_settings;
-    },
-    Ze = function (e) {
-      return e.app.ai_settings;
     },
     $e = function (e) {
       return e.app.setupWizard;
@@ -1204,8 +1181,6 @@
     an = "SET_TOTAL_COURSES_NUMBER",
     on = "SET_COURSE_DOWNLOAD_RESOURCE",
     ln = "REMOVE_COURSE_DOWNLOAD_RESOURCE",
-    cn = "SET_AI_COURSE_SUGGESTIONS",
-    un = "CLEAR_AI_COURSE_SUGGESTIONS",
     sn = "SET_COURSE_SIDEBAR_OPEN",
     dn = "SET_COURSE_CHAPTER_SIDEBAR_OPEN",
     mn = "SET_COURSE_CHAPTER_CONTENT_SIDEBAR_OPEN",
@@ -1328,7 +1303,6 @@
     },
     isValidSettings: !0,
     totalCoursesNumber: 0,
-    aiSuggestions: [],
     courseSidebarOpen: !0,
     courseChapterSidebarOpen: !0,
     courseChapterContentSidebarOpen: !0,
@@ -1696,14 +1670,6 @@
       case en:
         return yn(yn({}, c), {}, {
           loading: u.payload
-        });
-      case cn:
-        return yn(yn({}, c), {}, {
-          aiSuggestions: [].concat(vn(c.aiSuggestions), [u.payload])
-        });
-      case un:
-        return yn(yn({}, c), {}, {
-          aiSuggestions: []
         });
       case pn:
         return yn(yn({}, c), {}, {
@@ -3353,17 +3319,6 @@
         payload: e
       };
     },
-    ia = function (e) {
-      return {
-        type: cn,
-        payload: e
-      };
-    },
-    la = function () {
-      return {
-        type: un
-      };
-    },
     ca = function (e) {
       return e.course;
     },
@@ -3384,9 +3339,6 @@
     },
     fa = function (e) {
       return ca(e).totalCoursesNumber;
-    },
-    va = function (e) {
-      return ca(e).aiSuggestions;
     },
     ga = function (e) {
       return ca(e).courseSidebarOpen;
@@ -10459,21 +10411,7 @@
     },
     kp = function (e) {
       return e.students.pagination;
-    },
-    jp = {
-      suggestions: {
-        text: [],
-        image: [],
-        course: []
-      },
-      selectedSuggestion: {
-        text: null,
-        image: null
-      }
-    },
-    Ap = "SET_AI_SUGGESTION",
-    Mp = "SET_SELECTED_AI_SUGGESTION",
-    Tp = "CLEAR_AI_SUGGESTION";
+    };
   function Ip(e) {
     return Ip = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {
       return typeof e;
@@ -10527,85 +10465,7 @@
       writable: !0
     }) : e[t] = n, e;
   }
-  const zp = function () {
-    var e,
-      t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : jp,
-      n = arguments.length > 1 ? arguments[1] : void 0;
-    switch (n.type) {
-      case Ap:
-        return Dp(Dp({}, t), {}, {
-          suggestions: Dp(Dp({}, t.suggestions), {}, Wp({}, n.payload.type, [].concat((e = t.suggestions[n.payload.type], function (e) {
-            if (Array.isArray(e)) return Fp(e);
-          }(e) || function (e) {
-            if ("undefined" != typeof Symbol && null != e[Symbol.iterator] || null != e["@@iterator"]) return Array.from(e);
-          }(e) || function (e, t) {
-            if (e) {
-              if ("string" == typeof e) return Fp(e, t);
-              var n = {}.toString.call(e).slice(8, -1);
-              return "Object" === n && e.constructor && (n = e.constructor.name), "Map" === n || "Set" === n ? Array.from(e) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Fp(e, t) : void 0;
-            }
-          }(e) || function () {
-            throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-          }()), [n.payload.data])))
-        });
-      case Mp:
-        return Dp(Dp({}, t), {}, {
-          selectedSuggestion: Dp(Dp({}, t.selectedSuggestion), {}, Wp({}, n.payload.type, n.payload.data))
-        });
-      case Tp:
-        return Dp(Dp({}, t), {}, {
-          suggestions: Dp(Dp({}, t.suggestions), {}, {
-            text: [],
-            image: []
-          }),
-          selectedSuggestion: Dp(Dp({}, t.selectedSuggestion), {}, {
-            text: null,
-            image: null
-          })
-        });
-      default:
-        return t;
-    }
-  };
-  var Bp = function (e) {
-      return {
-        type: Ap,
-        payload: e
-      };
-    },
-    Lp = function (e) {
-      return {
-        type: Mp,
-        payload: e
-      };
-    },
-    Vp = function () {
-      return {
-        type: Tp
-      };
-    },
-    Hp = function (e) {
-      return e.aiSuggestions.suggestions;
-    },
-    Gp = function (e) {
-      return e.aiSuggestions.suggestions.course;
-    },
-    Up = function (e) {
-      return e.aiSuggestions.suggestions.text;
-    },
-    qp = function (e) {
-      return e.aiSuggestions.suggestions.image;
-    },
-    Yp = function (e) {
-      return e.aiSuggestions.selectedSuggestion.text;
-    },
-    Qp = function (e) {
-      return e.aiSuggestions.selectedSuggestion.image;
-    },
-    Zp = function (e) {
-      return e.aiSuggestions.selectedSuggestion;
-    },
-    $p = "GET_INTEGRATIONS_SUCCESS",
+  var $p = "GET_INTEGRATIONS_SUCCESS",
     Kp = "UPDATE_INTEGRATIONS_SUCCESS",
     Jp = "DELETE_INTEGRATION_SUCCESS";
   function Xp(e) {
@@ -13800,7 +13660,6 @@
           emails: em(e.emails, t),
           certificate: Nm(e.certificate, t),
           students: pp(e.students, t),
-          aiSuggestions: zp(e.aiSuggestions, t),
           integrations: af(e.integrations, t),
           subscription: Wh(e.subscription, t),
           sessions: Mf(e.sessions, t),

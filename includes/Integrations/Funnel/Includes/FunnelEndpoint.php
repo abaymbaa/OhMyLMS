@@ -770,7 +770,7 @@ class FunnelEndpoint {
 			do_action('ohmylms_after_enrolled_student', $order->get_id());
 		}
 
-		$membership_details = get_post_meta( $membership_id, '_products', true );
+		$membership_details = ohmylms_get_membership( $membership_id )->get_products();
 		if ( ! empty( $membership_details ) && is_array( $membership_details ) ) {
 			foreach ( $membership_details as $membership_detail ) {
 				$this->process_upsell_enrollment($student_id, $membership_detail['id'], $order);

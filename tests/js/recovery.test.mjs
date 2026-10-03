@@ -21,8 +21,9 @@ const canonical=text=>{
   return value;
  })).digest('hex');
 };
-test('reassembled assets preserve the shipped program AST',()=>{
- for(const asset of manifest.assets.filter(a=>a.output.endsWith('.js'))){
+test('reassembled assets preserve shipped AST outside the authored admin app',()=>{
+ // The shipped admin app now includes the authored SDK adapters, rather than the recovered baseline.
+ for(const asset of manifest.assets.filter(a=>a.output.endsWith('.js') && a.output!=='assets/dist/admin/ohmylms.js')){
   assert.equal(canonical(fs.readFileSync(path.join(root,'build/parity',asset.output),'utf8')),canonical(fs.readFileSync(path.join(root,asset.output),'utf8')),asset.output);
  }
 });

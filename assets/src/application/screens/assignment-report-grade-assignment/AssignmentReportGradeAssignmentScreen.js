@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var fK = function () {
-  HG("ohmylms", "assignments");
+  HG("ohmylms", "assessments");
   var e = (0, y.useDispatch)(T.default),
     t = mK((0, g.useState)([]), 2),
     n = t[0],

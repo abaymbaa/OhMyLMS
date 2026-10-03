@@ -25,9 +25,9 @@ import { integrationComponents } from '../features/integrations';
 import { webhookComponents } from '../features/webhooks';
 import { taxonomyComponents } from '../features/taxonomies';
 import { setupComponents } from '../features/setup';
-import { aiCourseComponents } from '../features/ai-course-outline';
 import { mountRegistration } from '../features/students/mountRegistration';
 import { questionBankComponents, registerQuestionBankPages } from '../features/question-bank';
+import { assessmentsRoutes, assessmentScreen } from '../features/assessment/AssessmentsHub';
 const registry = createRegistry();
 registerQuestionBankPages(registry);
 registerBuiltinSlashCommands(registry);
@@ -53,18 +53,22 @@ const publicApi = {
   webhookComponents,
   taxonomyComponents,
   setupComponents,
-  aiCourseComponents,
   questionBankComponents,
   extendRoutes(routes) {
+    const coreRoutes = routes.map((route) => {
+      const section = { '/quizzes': 'quizzes', '/assignments': 'assignments' }[route.path];
+      return section ? { ...route, element: assessmentScreen(route.element, section) } : route;
+    });
     return [
-      ...routes.map((route) =>
+      ...coreRoutes.map((route) =>
         route.path === '*'
           ? route
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
+      ...assessmentsRoutes(routes, questionBankComponents.QuestionBankPage),
       ...registry
         .list('admin-page')
-        .map((entry) => ({ path: `/extensions/${entry.id}`, element: extensionPage(entry) })),
+        .map((entry) => ({ path: `/extensions/${entry.id}`, element: entry.id === 'question-bank' ? assessmentScreen(extensionPage(entry), 'question-bank') : extensionPage(entry) })),
     ];
   },
   membershipPanels: (props) => createElement(MembershipSettingsPanels, { registry, ...props }),

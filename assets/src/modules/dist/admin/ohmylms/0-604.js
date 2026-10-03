@@ -1,10 +1,10 @@
 // Reconstructed Webpack factory 604; arguments retain original semantics.
-((e, t, n) => {
+(e, t, n) => {
   "use strict";
 
   Object.defineProperty(t, "__esModule", {
     value: !0
-  }), t.CustomHTMLNode = t.AiImageNode = t.AiTextNode = t.CustomBlockquote = t.Column = t.Columns = t.ImageBlock = t.ImageUpload = t.Link = t.QuoteCaption = t.Quote = t.BlockquoteFigure = t.Figcaption = t.Figure = t.FontSize = t.SlashCommand = t.TrailingNode = t.Document = t.CodeBlock = t.Heading = t.HorizontalRule = t.TableRow = t.TableHeader = t.TableCell = t.Table = t.Selection = t.Blockquote = t.TaskList = t.TaskItem = t.OrderedList = t.BulletList = t.Paragraph = t.Superscript = t.Subscript = t.Dropcursor = t.Focus = t.Color = t.Typography = t.FontFamily = t.TextStyle = t.TextAlign = t.Placeholder = t.Underline = t.CharacterCount = t.Highlight = void 0;
+  }), t.CustomHTMLNode = t.CustomBlockquote = t.Column = t.Columns = t.ImageBlock = t.ImageUpload = t.Link = t.QuoteCaption = t.Quote = t.BlockquoteFigure = t.Figcaption = t.Figure = t.FontSize = t.SlashCommand = t.TrailingNode = t.Document = t.CodeBlock = t.Heading = t.HorizontalRule = t.TableRow = t.TableHeader = t.TableCell = t.Table = t.Selection = t.Blockquote = t.TaskList = t.TaskItem = t.OrderedList = t.BulletList = t.Paragraph = t.Superscript = t.Subscript = t.Dropcursor = t.Focus = t.Color = t.Typography = t.FontFamily = t.TextStyle = t.TextAlign = t.Placeholder = t.Underline = t.CharacterCount = t.Highlight = void 0;
   var r = n(35857);
   Object.defineProperty(t, "Highlight", {
     enumerable: !0,
@@ -291,20 +291,6 @@
       return B.CustomBlockquote;
     }
   });
-  var L = n(98957);
-  Object.defineProperty(t, "AiTextNode", {
-    enumerable: !0,
-    get: function () {
-      return L.AiTextNode;
-    }
-  });
-  var V = n(94041);
-  Object.defineProperty(t, "AiImageNode", {
-    enumerable: !0,
-    get: function () {
-      return V.AiImageNode;
-    }
-  });
   var H = n(51664);
   Object.defineProperty(t, "CustomHTMLNode", {
     enumerable: !0,
@@ -312,4 +298,4 @@
       return H.CustomHTMLNode;
     }
   });
-});
+};

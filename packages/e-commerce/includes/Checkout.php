@@ -1212,7 +1212,7 @@ class Checkout {
 		
 		if ( ! empty( $posted_data['membership_id'] ) ) {
 			$item_id = $posted_data['membership_id'];
-			$membership_details = get_post_meta( $posted_data['membership_id'], '_products', true );
+			$membership_details = ohmylms_get_membership( $posted_data['membership_id'] )->get_products();
 			$cart_items         = $membership_details;
 		}
 		
@@ -1303,12 +1303,15 @@ class Checkout {
 							'enrolled'
 						)
 					)
-					: ( $student && $student->maybe_enrolled( $course_id ) );
+					: (bool) $wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM $enrollment_table WHERE user_id=%d AND course_id=%d AND status='enrolled' AND " . (!empty($posted_data['membership_id']) ? 'membership_id=%d' : '(membership_id IS NULL OR membership_id=0)'),
+                        !empty($posted_data['membership_id']) ? [$student_id, $course_id, (int) $posted_data['membership_id']] : [$student_id, $course_id]
+                    ));
 
 				if ( $course_id && ! $already_enrolled ) {
 					$existing_where = $cohort_id
 						? array( 'user_id' => $student_id, 'course_id' => $course_id, 'cohort_id' => $cohort_id )
-						: array( 'user_id' => $student_id, 'course_id' => $course_id );
+						: array( 'user_id' => $student_id, 'course_id' => $course_id, 'order_id' => $order_id );
 
 					$existing_record = $wpdb->get_var(
 						$wpdb->prepare(
@@ -1325,6 +1328,7 @@ class Checkout {
 							$enrollment_table,
 							array(
 								'order_id'   => $order_id,
+								'membership_id' => $enrollment_data['membership_id'],
 								'status'     => $enrollment_status,
 								'progress'   => 'running',
 								'start_date' => current_time( 'mysql' ),
@@ -1457,7 +1461,7 @@ class Checkout {
 	 * @since 1.0.0
 	 */
 	public static function create_membership_order( $posted_data ) {
-		$membership_details = get_post_meta( $posted_data['membership_id'], '_products', true );
+		$membership_details = ohmylms_get_membership( $posted_data['membership_id'] )->get_products();
 		return ecommerce()->order()->create_order( $membership_details, $posted_data );
 	}
 

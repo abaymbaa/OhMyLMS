@@ -107,6 +107,7 @@ class IntegrationsController extends RestController {
 	 */
 	public function get_items( $request ) {
 		$integrations = get_option( 'ohmylms_integrations', array() );
+		unset( $integrations['ai_model'], $integrations['question_bank'] );
 		if( is_array( $integrations ) ) {
 			foreach( $integrations as $key => $value ) {
 				$validity = self::get_integration_validity( $key );
@@ -120,7 +121,7 @@ class IntegrationsController extends RestController {
 		}
 
 		$is_community_active = defined( 'OHMYLMS_COMMUNITY_VERSION' );
-        
+
         if( $is_community_active ) {
             $integrations['community']['is_enable'] = 1;
         } else {
@@ -153,27 +154,29 @@ class IntegrationsController extends RestController {
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
 		$current_integrations = get_option( 'ohmylms_integrations', array() );
+		unset( $current_integrations['ai_model'], $current_integrations['question_bank'] );
 		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
 		$previous_integrations  = get_option( 'ohmylms_integrations', [] );
 		$need_reload = false;
 
 		foreach ( $integrations as $key => $value ) {
+			if ( in_array( $key, array( 'ai_model', 'question_bank' ), true ) ) continue;
 			$sanitized_key   = sanitize_text_field( $key );
 			$is_enable       = isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0;
 			$validity        = self::get_integration_validity( $key );
 			$is_valid        = $validity['is_valid'];
 			$required_plan   = $validity['required_plan'];
 			$class           = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
-			
+
 			// Check if gamification or zoom settings changed
-			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'skills' === $sanitized_key || 'question_bank' === $sanitized_key ) {
+			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'skills' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
 				$previous_enabled = isset( $previous_integrations[$sanitized_key]['is_enable'] ) ? absint( $previous_integrations[$sanitized_key]['is_enable'] ) : 0;
 				if( $previous_enabled !== $is_enable ) {
 					$need_reload = true;
 				}
 			}
-			
+
 			$was_enabled = isset( $current_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $current_integrations[ $sanitized_key ]['is_enable'] ) : 0;
 			$is_being_enabled = ( $is_enable === 1 && $was_enabled === 0 );
 
@@ -191,7 +194,7 @@ class IntegrationsController extends RestController {
 
 			if ( $is_being_enabled ) {
 				do_action( 'ohmylms_integration_' . $sanitized_key . '_after_enable', $sanitized_key );
-				
+
 				// Trigger addon activation tracking
 				do_action( 'ohmylms_addon_activated', $sanitized_key );
 			}

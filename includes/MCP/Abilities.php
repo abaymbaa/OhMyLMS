@@ -40,7 +40,7 @@ final class Abilities {
                 'output_schema' => array( 'type' => 'object', 'properties' => array(
                     'data' => array( 'type' => array( 'array', 'object' ) ), 'total' => array( 'type' => 'integer' ), 'total_pages' => array( 'type' => 'integer' ),
                 ), 'required' => array( 'data' ), 'additionalProperties' => false ),
-                'permission_callback' => array( Server::class, 'can_manage' ),
+                'permission_callback' => static function () { return Server::enabled() && Server::can_manage(); },
                 'execute_callback' => static function ( $input ) use ( $name, $tool ) {
                     return self::execute( $name, $tool, $input );
                 },

@@ -602,9 +602,6 @@ const Ye = function (e) {
   })));
 };
 var Qe = n(84976).useLocation,
-  Ze = function () {
-    return !!Qe().pathname.includes("/ai-suggestion");
-  },
   $e = n(55095);
 function Ke(e) {
   return Ke = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) {

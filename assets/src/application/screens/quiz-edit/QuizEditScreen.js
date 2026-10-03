@@ -1,6 +1,6 @@
 // Reconstructed application fragment. Assembled in manifest order within factory 1841.
 var jZ = function () {
-  HG("ohmylms", "quizzes");
+  HG("ohmylms", "assessments");
   var e = (0, f.g)().id,
     t = (0, y.useDispatch)(T.default).setSelectedQuizId,
     n = function (e, t) {

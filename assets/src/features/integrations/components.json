@@ -3,53 +3,85 @@
     "binding": "D6",
     "name": "IntegrationCard",
     "file": "IntegrationCard.jsx",
-    "dependencies": ["F6", "I", "N6", "React", "T6", "b", "g"]
+    "dependencies": [
+      "F6",
+      "I",
+      "N6",
+      "React",
+      "T6",
+      "b",
+      "g"
+    ]
   },
   {
     "binding": "j7.zoom",
     "name": "ZoomSettings",
     "file": "ZoomSettings.jsx",
-    "dependencies": ["H6", "I", "L6", "Pf", "React", "V6", "Y6", "b", "g", "l", "q6"]
-  },
-  {
-    "binding": "j7.ai_model",
-    "name": "AiModelSettings",
-    "file": "AiModelSettings.jsx",
     "dependencies": [
+      "H6",
       "I",
-      "Kt",
-      "Nm",
+      "L6",
       "Pf",
       "React",
-      "T",
+      "V6",
+      "Y6",
       "b",
-      "c7",
       "g",
       "l",
-      "l7",
-      "m7",
-      "p7",
-      "u7",
-      "y"
+      "q6"
     ]
   },
   {
     "binding": "j7.googlemeet",
     "name": "GoogleMeetSettings",
     "file": "GoogleMeetSettings.jsx",
-    "dependencies": ["I", "J6", "K6", "Pf", "React", "X6", "b", "g", "l", "n7", "r7"]
+    "dependencies": [
+      "I",
+      "J6",
+      "K6",
+      "Pf",
+      "React",
+      "X6",
+      "b",
+      "g",
+      "l",
+      "n7",
+      "r7"
+    ]
   },
   {
     "binding": "j7.google_signin",
     "name": "GoogleSignInSettings",
     "file": "GoogleSignInSettings.jsx",
-    "dependencies": ["E7", "I", "Pf", "React", "S7", "_7", "b", "b7", "g", "g7", "l"]
+    "dependencies": [
+      "E7",
+      "I",
+      "Pf",
+      "React",
+      "S7",
+      "_7",
+      "b",
+      "b7",
+      "g",
+      "g7",
+      "l"
+    ]
   },
   {
     "binding": "A7",
     "name": "IntegrationConfig",
     "file": "IntegrationConfig.jsx",
-    "dependencies": ["I", "Nr", "O7", "P7", "React", "b", "g", "j7", "k7"]
+    "dependencies": [
+      "I",
+      "Nr",
+      "O7",
+      "P7",
+      "React",
+      "b",
+      "g",
+      "j7",
+      "k7"
+    ]
   },
   {
     "binding": "U7",

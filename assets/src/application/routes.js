@@ -86,19 +86,6 @@ const ioe = [{
       enableSpin: !0
     })
   }, {
-    path: "/course-edit/ai-suggestion/:id",
-    element: function () {
-      HG("ohmylms", "courses");
-      var e = (0, f.g)().id;
-      return (0, g.useEffect)(function () {
-        return document.title = "Preview AI Suggested Course || OhMyLMS - Wordpress", function () {
-          document.title = "OhMyLMS - Wordpress";
-        };
-      }, [e]), h().createElement(dG, {
-        courseId: e
-      });
-    }
-  }, {
     path: "/categories",
     element: function () {
       HG("ohmylms", "categories");
@@ -852,7 +839,7 @@ const ioe = [{
   }, {
     path: "/quizzes",
     element: function () {
-      return HG("ohmylms", "quizzes"), React.createElement(React.Fragment, null, React.createElement(EZ, null));
+      return HG("ohmylms", "assessments"), React.createElement(React.Fragment, null, React.createElement(EZ, null));
     }
   }, {
     path: "/sessions",
@@ -925,12 +912,12 @@ const ioe = [{
   }, {
     path: "/assignments",
     element: function () {
-      return HG("ohmylms", "assignments"), React.createElement(React.Fragment, null, React.createElement(Fte, null));
+      return HG("ohmylms", "assessments"), React.createElement(React.Fragment, null, React.createElement(Fte, null));
     }
   }, {
     path: "/assignment-edit/:id",
     element: function () {
-      HG("ohmylms", "assignments");
+      HG("ohmylms", "assessments");
       var e = (0, f.g)().id,
         t = (0, y.useDispatch)(T.default).setSelectedAssignmentId;
       return (0, g.useEffect)(function () {
@@ -945,9 +932,6 @@ const ioe = [{
   }, {
     path: "/coupons",
     element: qre
-  }, {
-    path: "/ai-course-outline-gen",
-    element: Qae
   }, {
     path: "/gamification/:tab",
     element: C5

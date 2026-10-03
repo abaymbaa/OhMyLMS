@@ -10,7 +10,7 @@ const featureRoot='assets/src/features/integrations/';
 const sourceRoot='assets/src/';
 const rows=JSON.parse(fs.readFileSync(featureRoot+'components.json'));
 const expected=[
- 'IntegrationCard','ZoomSettings','AiModelSettings','GoogleMeetSettings',
+ 'IntegrationCard','ZoomSettings','GoogleMeetSettings',
  'GoogleSignInSettings','IntegrationConfig','IntegrationsPage'
 ];
 

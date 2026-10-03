@@ -51,15 +51,13 @@ class Menu {
 			$submenu[ $slug ][] = array( esc_attr__( 'Courses', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/courses' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Categories', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/categories' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Tags', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/tags' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Quizzes', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/quizzes' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			// Question bank, skills and performance pages are SDK admin pages (source assets only).
-			if ( defined( 'OHMYLMS_SOURCE_ASSETS' ) && OHMYLMS_SOURCE_ASSETS && \OhMyLMS\Assessment\Engine::bank_ui() ) {
-				$submenu[ $slug ][] = array( esc_attr__( 'Question Bank', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/question-bank' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				$submenu[ $slug ][] = array( esc_attr__( 'Skills', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/skills' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$submenu[ $slug ][] = array( esc_attr__( 'Assessments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assessments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			// Question bank, skills and performance pages are bundled SDK admin pages.
+			if ( \OhMyLMS\Assessment\Engine::bank_ui() ) {
+				if ( \OhMyLMS\Extensions\Addons::enabled( 'skills' ) ) {
+					$submenu[ $slug ][] = array( esc_attr__( 'Skills', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/skills' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				}
 				$submenu[ $slug ][] = array( esc_attr__( 'Performance', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/performance' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			}
-			if( ohmylms_is_pro() ) {
-				$submenu[ $slug ][] = array( esc_attr__( 'Assignments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assignments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 			$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
@@ -75,12 +73,12 @@ class Menu {
 			if( apply_filters( 'ohmylms_show_gamification_menu', false ) ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
-			
+
 			if ( apply_filters( 'ohmylms_should_enable_webhooks', false ) ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Webhooks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/webhooks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
-		
-		
+
+
 		}
 	}
 
@@ -123,14 +121,14 @@ class Menu {
 			$slug,
 			__( 'Settings', 'ohmylms' ),
 			__( 'Settings', 'ohmylms' ),
-			$capability,
+			'manage_options',
 			admin_url( 'admin.php?page=ohmylms#/settings/general-settings' ),
 			null
 		);
 
 		do_action( 'ohmylms_after_settings_menu_item' );
 
-		
+
 		if( !ohmylms_is_pro() ) {
 			// add_submenu_page(
 			// 	$slug,

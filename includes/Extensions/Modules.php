@@ -7,7 +7,7 @@ final class Modules {
         $enabled = defined('OHMYLMS_ENABLED_MODULES') ? OHMYLMS_ENABLED_MODULES : [];
         $enabled = apply_filters('ohmylms_enabled_modules', $enabled);
         $bundled = Addons::IDS;
-        $enabled = array_diff((array) $enabled, $bundled);
+        $enabled = array_diff((array) $enabled, array_merge($bundled, ['question_bank']));
         foreach ($bundled as $id) {
             if (Addons::enabled($id)) { $enabled[] = $id; }
         }

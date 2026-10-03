@@ -94,7 +94,7 @@ class RegisterSettings {
 		$new_setting = array(
 			'id'      => $setting['id'],
 			'type'    => $setting['type'],
-			'default' => $setting['default'],
+			'default' => $setting['default'] ?? '',
 			'value'   => isset( $setting['value'] ) ? $setting['value'] : '',
 		);
 		if ( isset( $setting['meta_data'] ) ) {

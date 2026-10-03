@@ -1,14 +1,14 @@
 <?php
 namespace OhMyLMS\Extensions;
 
-/** Opt-in asset switch. The shipped build stays active until acceptance passes. */
+/** Source asset overrides and the SDK used by the shipped admin application. */
 final class SourceAssets {
     public static function init() {
+        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue'], 11);
+        add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue'], 11);
         if (!defined('OHMYLMS_SOURCE_ASSETS') || !OHMYLMS_SOURCE_ASSETS) { return; }
         add_filter('script_loader_src', [__CLASS__, 'url'], 20);
         add_filter('style_loader_src', [__CLASS__, 'url'], 20);
-        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue'], 11);
-        add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue'], 11);
     }
     public static function url($url) {
         $base = plugins_url('/', OHMYLMS_FILE);
@@ -23,14 +23,16 @@ final class SourceAssets {
         return $base . 'build/' . $relative . '?ver=' . substr(hash_file('sha256', $file), 0, 12);
     }
     public static function enqueue() {
-        $asset_file = OHMYLMS_DIR . '/build/sdk/extensions.asset.php';
+        $directory = defined('OHMYLMS_SOURCE_ASSETS') && OHMYLMS_SOURCE_ASSETS ? 'build/sdk' : 'assets/dist/admin';
+        $asset_file = OHMYLMS_DIR . '/' . $directory . '/extensions.asset.php';
         if (!is_file($asset_file)) { return; }
         $asset = require $asset_file;
-        wp_enqueue_script('ohmylms-extension-sdk', plugins_url('build/sdk/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
+        wp_enqueue_script('ohmylms-extension-sdk', plugins_url($directory . '/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge(Registry::manifest(), ['settings'=>Settings::manifest()]));
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsAssessment', [
             'versioned' => \OhMyLMS\Assessment\Engine::versioned(),
             'bankUi' => \OhMyLMS\Assessment\Engine::bank_ui(),
+            'skills' => Addons::enabled('skills'),
             'practice' => \OhMyLMS\Assessment\Engine::practice(),
             'isAdmin' => current_user_can('manage_options'),
         ]);

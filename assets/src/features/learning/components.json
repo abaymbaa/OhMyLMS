@@ -27,7 +27,11 @@
     "binding": "Or",
     "name": "LessonContent",
     "file": "LessonContent.jsx",
-    "dependencies": ["Pr", "React", "b"]
+    "dependencies": [
+      "Pr",
+      "React",
+      "b"
+    ]
   },
   {
     "binding": "tr",
@@ -62,15 +66,19 @@
     "binding": "Pr",
     "name": "LearningContentForm",
     "file": "LearningContentForm.jsx",
-    "dependencies": ["Cr", "G", "Ge", "I", "React", "ne"]
+    "dependencies": [
+      "Cr",
+      "Ge",
+      "I",
+      "React",
+      "ne"
+    ]
   },
   {
     "binding": "xr",
     "name": "LearningMediaField",
     "file": "LearningMediaField.jsx",
     "dependencies": [
-      "Er",
-      "G",
       "He",
       "I",
       "L",
@@ -95,19 +103,42 @@
     "binding": "Dr",
     "name": "LearningEditorHeader",
     "file": "LearningEditorHeader.jsx",
-    "dependencies": ["I", "Nr", "React", "f"]
+    "dependencies": [
+      "I",
+      "Nr",
+      "React",
+      "f"
+    ]
   },
   {
     "binding": "ln",
     "name": "PrerequisiteSettings",
     "file": "PrerequisiteSettings.jsx",
-    "dependencies": ["Ge", "I", "Kt", "React", "an", "b", "g", "nn", "on", "tn"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "Kt",
+      "React",
+      "an",
+      "b",
+      "g",
+      "nn",
+      "on",
+      "tn"
+    ]
   },
   {
     "binding": "Cn",
     "name": "DripSettings",
     "file": "DripSettings.jsx",
-    "dependencies": ["I", "Kt", "React", "Rn", "b", "xn"]
+    "dependencies": [
+      "I",
+      "Kt",
+      "React",
+      "Rn",
+      "b",
+      "xn"
+    ]
   },
   {
     "binding": "Nn",
@@ -135,7 +166,17 @@
     "binding": "Hn",
     "name": "DeleteLearningItem",
     "file": "DeleteLearningItem.jsx",
-    "dependencies": ["Bn", "I", "Ie", "Ln", "React", "Vn", "b", "g", "zn"]
+    "dependencies": [
+      "Bn",
+      "I",
+      "Ie",
+      "Ln",
+      "React",
+      "Vn",
+      "b",
+      "g",
+      "zn"
+    ]
   },
   {
     "binding": "Ka",
@@ -168,7 +209,12 @@
     "binding": "ha",
     "name": "AssignmentContent",
     "file": "AssignmentContent.jsx",
-    "dependencies": ["I", "Pr", "React", "b"]
+    "dependencies": [
+      "I",
+      "Pr",
+      "React",
+      "b"
+    ]
   },
   {
     "binding": "Na",
@@ -242,7 +288,17 @@
     "binding": "xte",
     "name": "AssignmentNameCell",
     "file": "AssignmentNameCell.jsx",
-    "dependencies": ["Ge", "I", "React", "UG", "f", "g", "pG", "v", "vG"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "UG",
+      "f",
+      "g",
+      "pG",
+      "v",
+      "vG"
+    ]
   },
   {
     "binding": "wZ",
@@ -286,7 +342,18 @@
     "binding": "uZ",
     "name": "QuizNameCell",
     "file": "QuizNameCell.jsx",
-    "dependencies": ["Ge", "I", "React", "UG", "b", "f", "g", "pG", "v", "vG"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "UG",
+      "b",
+      "f",
+      "g",
+      "pG",
+      "v",
+      "vG"
+    ]
   },
   {
     "binding": "PZ",
@@ -358,7 +425,6 @@
       "b",
       "co",
       "g",
-      "hl",
       "il",
       "jo",
       "si",
@@ -420,18 +486,41 @@
     "binding": "iK",
     "name": "AssignmentResultHeader",
     "file": "AssignmentResultHeader.jsx",
-    "dependencies": ["Ge", "I", "React", "b", "f", "oK", "r$", "sn", "v"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "b",
+      "f",
+      "oK",
+      "r$",
+      "sn",
+      "v"
+    ]
   },
   {
     "binding": "nK",
     "name": "AssignmentSubmission",
     "file": "AssignmentSubmission.jsx",
-    "dependencies": ["Ge", "I", "React", "b", "kn", "tK"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "b",
+      "kn",
+      "tK"
+    ]
   },
   {
     "binding": "J$",
     "name": "AssignmentGradeForm",
     "file": "AssignmentGradeForm.jsx",
-    "dependencies": ["Ge", "I", "React", "W", "b"]
+    "dependencies": [
+      "Ge",
+      "I",
+      "React",
+      "W",
+      "b"
+    ]
   }
 ]
