@@ -15,4 +15,5 @@ add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Schools\Bootstrap::init();
 \OhMyLMS\Assessment\Bootstrap::init();
+\OhMyLMS\Design\Tokens::init();
 add_action('plugins_loaded', ['OhMyLMS\\Extensions\\Modules','load']);

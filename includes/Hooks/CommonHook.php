@@ -1360,33 +1360,8 @@ class CommonHook extends HookHandler {
 	 * @since 1.0.0
 	 */
 	public function ohmylms_add_internal_styles() {
-		if ( is_ohmylms() || is_ohmylms_checkout() ) {
-			$primary_color       = get_option( 'ohmylms_primary_color_scheme' );
-			$primary_hover_color = get_option( 'ohmylms_primary_hover_color_scheme' );
-			$heading_color       = get_option( 'ohmylms_heading_color_scheme' );
-			$body_text_color     = get_option( 'ohmylms_body_text_color_scheme' );
-			$progressbar_color   = get_option( 'ohmylms_body_progress_color_scheme' );
-
-			$primary_color     = isset( $primary_color ) && ! empty( $primary_color ) ? $primary_color : '#6e42d3';
-			$primary_color_rgb = ohmylms_hex_to_rgb( $primary_color );
-
-			?>
-			<style class="ohmylms-internal-styles">
-				:root {
-					--ohmylms-primary-color: <?php echo isset( $primary_color ) && ! empty( $primary_color ) ? esc_html( $primary_color ) : 'var(--ohmylms-primary-color)'; ?>;
-
-					--ohmylms-primary-color-rgb: <?php echo esc_html( $primary_color_rgb );?>;
-
-					--ohmylms-heading-color: <?php echo isset( $heading_color ) && ! empty( $heading_color ) ? esc_html( $heading_color ) : '#000D25'; ?>;
-
-					--ohmylms-body-text-color: <?php echo isset( $body_text_color ) && ! empty( $body_text_color ) ? esc_html( $body_text_color ) : '#52525B'; ?>;
-
-					--ohmylms-progressbar-color: <?php echo $progressbar_color ? esc_html( $progressbar_color ) : '#F85656'; ?>;
-					--ohmylms-outline-color: var(--ohmylms-primary-color);
-				}
-			</style>
-			<?php
-		}
+		// Course pages, lesson checks, practice and the school portal all read these variables.
+		echo '<style class="ohmylms-internal-styles">' . \OhMyLMS\Design\Tokens::frontend_css() . '</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- values are validated hex colors and an allow-listed font.
 	}
 
 	/**

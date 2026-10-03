@@ -20,7 +20,7 @@ final class Views {
             if (!in_array($handle, ['ohmylms-schools', 'jquery'], true)) { wp_dequeue_script($handle); }
         }
         foreach (wp_styles()->queue as $handle) {
-            if ($handle !== 'ohmylms-schools') { wp_dequeue_style($handle); }
+            if (!in_array($handle, ['ohmylms-schools', 'ohmylms-font'], true)) { wp_dequeue_style($handle); }
         }
     }
     public static function assets() {
