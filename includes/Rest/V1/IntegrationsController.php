@@ -167,7 +167,7 @@ class IntegrationsController extends RestController {
 			$class           = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
 			
 			// Check if gamification or zoom settings changed
-			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key ) {
+			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'skills' === $sanitized_key || 'question_bank' === $sanitized_key ) {
 				$previous_enabled = isset( $previous_integrations[$sanitized_key]['is_enable'] ) ? absint( $previous_integrations[$sanitized_key]['is_enable'] ) : 0;
 				if( $previous_enabled !== $is_enable ) {
 					$need_reload = true;
