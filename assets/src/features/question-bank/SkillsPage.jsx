@@ -19,6 +19,7 @@ import {
   searchLinkTargets,
 } from './api.mjs';
 import { createsCycle, flattenTree, skillTree } from './model.mjs';
+import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 
 const EMPTY = {
   id: 0,
@@ -45,58 +46,64 @@ export function SkillsPage() {
   }, []);
   const tree = flattenTree(skillTree(skills || []));
   return (
-    <section className="ohmylms-skills">
-      <h1>{__('Skills', 'ohmylms')}</h1>
-      <p>
-        {__(
-          'Skills are linked to questions (per part), lessons and courses. They power skill practice, performance reports and recommendations.',
-          'ohmylms',
-        )}
-      </p>
+    <AdminPage
+      className="ohmylms-skills"
+      title={__('Skills', 'ohmylms')}
+      description={__(
+        'Skills are linked to questions (per part), lessons and courses. They power skill practice, performance reports and recommendations.',
+        'ohmylms',
+      )}
+      actions={
+        <Button variant="primary" onClick={() => setEditing({ ...EMPTY })}>
+          {__('Add skill', 'ohmylms')}
+        </Button>
+      }
+    >
       {error && (
         <Notice status="error" onRemove={() => setError('')}>
           {error}
         </Notice>
       )}
-      <Button variant="primary" onClick={() => setEditing({ ...EMPTY })}>
-        {__('Add skill', 'ohmylms')}
-      </Button>
       {!skills ? (
         <Spinner />
       ) : (
-        <table className="widefat striped" style={{ marginTop: 12 }}>
-          <thead>
-            <tr>
-              <th>{__('Skill', 'ohmylms')}</th>
-              <th>{__('Code', 'ohmylms')}</th>
-              <th>{__('Prerequisites', 'ohmylms')}</th>
-              <th>{__('Questions', 'ohmylms')}</th>
-              <th>{__('Lessons', 'ohmylms')}</th>
-              <th>{__('Courses', 'ohmylms')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tree.map((skill) => (
-              <tr key={skill.id}>
-                <td style={{ paddingLeft: 8 + skill.depth * 20 }}>
-                  <Button variant="link" onClick={() => setEditing(skill)}>
-                    {skill.name}
-                  </Button>
-                </td>
-                <td>{skill.code}</td>
-                <td>
-                  {skill.prerequisites
-                    .map((id) => skills.find((other) => other.id === id)?.name)
-                    .filter(Boolean)
-                    .join(', ')}
-                </td>
-                <td>{skill.questions}</td>
-                <td>{skill.lessons.length}</td>
-                <td>{(skill.courses || []).length}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <AdminCard>
+          <div className="ohmylms-ext-table-scroll">
+            <table className="widefat striped">
+              <thead>
+                <tr>
+                  <th>{__('Skill', 'ohmylms')}</th>
+                  <th>{__('Code', 'ohmylms')}</th>
+                  <th>{__('Prerequisites', 'ohmylms')}</th>
+                  <th>{__('Questions', 'ohmylms')}</th>
+                  <th>{__('Lessons', 'ohmylms')}</th>
+                  <th>{__('Courses', 'ohmylms')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tree.map((skill) => (
+                  <tr key={skill.id}>
+                    <td style={{ paddingLeft: 8 + skill.depth * 20 }}>
+                      <Button variant="link" onClick={() => setEditing(skill)}>
+                        {skill.name}
+                      </Button>
+                    </td>
+                    <td>{skill.code}</td>
+                    <td>
+                      {skill.prerequisites
+                        .map((id) => skills.find((other) => other.id === id)?.name)
+                        .filter(Boolean)
+                        .join(', ')}
+                    </td>
+                    <td>{skill.questions}</td>
+                    <td>{skill.lessons.length}</td>
+                    <td>{(skill.courses || []).length}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </AdminCard>
       )}
       {editing && (
         <SkillForm
@@ -110,7 +117,7 @@ export function SkillsPage() {
           onError={setError}
         />
       )}
-    </section>
+    </AdminPage>
   );
 }
 
@@ -148,10 +155,7 @@ function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
   }
   const others = flattenTree(skillTree(skills)).filter((other) => other.id !== draft.id);
   return (
-    <div
-      className="ohmylms-skill-form"
-      style={{ border: '1px solid #ddd', padding: 16, marginTop: 16, background: '#fff' }}
-    >
+    <div className="ohmylms-skill-form ohmylms-ext-card">
       <h2>
         {draft.id ? sprintf(__('Edit %s', 'ohmylms'), skill.name) : __('New skill', 'ohmylms')}
       </h2>

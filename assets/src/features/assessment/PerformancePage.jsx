@@ -1,6 +1,7 @@
 import { createElement, Fragment, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, SelectControl, Spinner } from '@wordpress/components';
+import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { loadCourses, loadSkillMatrix, loadStudentSkills, rebuildStudent } from './api.mjs';
 import { levelClass, levelShort } from './model.mjs';
 
@@ -31,108 +32,110 @@ export function PerformancePage() {
     };
   }, [courseId]);
   return (
-    <section className="ohmylms-performance">
-      <h1>{__('Skill performance', 'ohmylms')}</h1>
-      <p>
-        {__(
-          'Skill levels come from question-level evidence (quizzes, practice and lesson checks). Grades and gradebook overrides are not skill evidence.',
-          'ohmylms',
-        )}
-      </p>
+    <AdminPage
+      className="ohmylms-performance"
+      title={__('Skill performance', 'ohmylms')}
+      description={__(
+        'Skill levels come from question-level evidence (quizzes, practice and lesson checks). Grades and gradebook overrides are not skill evidence.',
+        'ohmylms',
+      )}
+    >
       {error && (
         <Notice status="error" onRemove={() => setError('')}>
           {error}
         </Notice>
       )}
-      {!courses ? (
-        <Spinner />
-      ) : (
-        <SelectControl
-          label={__('Course', 'ohmylms')}
-          value={courseId}
-          options={[
-            { value: '', label: __('Choose a course', 'ohmylms') },
-            ...courses.map((course) => ({
-              value: String(course.id),
-              label: course.name || course.title || `#${course.id}`,
-            })),
-          ]}
-          onChange={setCourseId}
-        />
-      )}
-      {matrix === undefined && <Spinner />}
-      {matrix && (
-        <Fragment>
-          <p className="ohmylms-level-legend">
-            {Object.entries(matrix.levels).map(([level, label]) => (
-              <span
-                key={level}
-                className={`ohmylms-skill-level ${levelClass(level)}`}
-                style={{ marginRight: 12 }}
-              >
-                {levelShort(level)} = {label}
-              </span>
-            ))}
-          </p>
-          {matrix.skills.length === 0 ? (
-            <p>{__('No skill evidence for this course yet.', 'ohmylms')}</p>
+      <AdminCard>
+        <div className="ohmylms-ext-toolbar">
+          {!courses ? (
+            <Spinner />
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table className="widefat striped">
-                <thead>
-                  <tr>
-                    <th>{__('Learner', 'ohmylms')}</th>
-                    {matrix.skills.map((skill) => (
-                      <th key={skill.id} title={skill.name}>
-                        {skill.code || skill.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {matrix.students.map((learner) => (
-                    <tr key={learner.id}>
-                      <td>
-                        <Button variant="link" onClick={() => setStudent(learner)}>
-                          {learner.name}
-                        </Button>
-                      </td>
-                      {matrix.skills.map((skill) => {
-                        const cell = learner.skills[skill.id];
-                        return (
-                          <td key={skill.id} className={levelClass(cell?.level)}>
-                            {cell ? (
-                              <span
-                                title={sprintf(
-                                  __(
-                                    '%1$d pieces of evidence, %2$d correct on their own',
-                                    'ohmylms',
-                                  ),
-                                  cell.evidence,
-                                  cell.independent_correct,
-                                )}
-                              >
-                                {levelShort(cell.level)}
-                                {cell.review_due ? ' ↻' : ''}
-                              </span>
-                            ) : (
-                              '·'
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <SelectControl
+              label={__('Course', 'ohmylms')}
+              value={courseId}
+              options={[
+                { value: '', label: __('Choose a course', 'ohmylms') },
+                ...courses.map((course) => ({
+                  value: String(course.id),
+                  label: course.name || course.title || `#${course.id}`,
+                })),
+              ]}
+              onChange={setCourseId}
+            />
           )}
-        </Fragment>
-      )}
+        </div>
+        {matrix === undefined && <Spinner />}
+        {matrix && (
+          <Fragment>
+            <p className="ohmylms-level-legend">
+              {Object.entries(matrix.levels).map(([level, label]) => (
+                <span key={level} className={`ohmylms-skill-level ${levelClass(level)}`}>
+                  {levelShort(level)} = {label}
+                </span>
+              ))}
+            </p>
+            {matrix.skills.length === 0 ? (
+              <p className="ohmylms-ext-muted">
+                {__('No skill evidence for this course yet.', 'ohmylms')}
+              </p>
+            ) : (
+              <div className="ohmylms-ext-table-scroll">
+                <table className="widefat striped">
+                  <thead>
+                    <tr>
+                      <th>{__('Learner', 'ohmylms')}</th>
+                      {matrix.skills.map((skill) => (
+                        <th key={skill.id} title={skill.name}>
+                          {skill.code || skill.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {matrix.students.map((learner) => (
+                      <tr key={learner.id}>
+                        <td>
+                          <Button variant="link" onClick={() => setStudent(learner)}>
+                            {learner.name}
+                          </Button>
+                        </td>
+                        {matrix.skills.map((skill) => {
+                          const cell = learner.skills[skill.id];
+                          return (
+                            <td key={skill.id} className={levelClass(cell?.level)}>
+                              {cell ? (
+                                <span
+                                  title={sprintf(
+                                    __(
+                                      '%1$d pieces of evidence, %2$d correct on their own',
+                                      'ohmylms',
+                                    ),
+                                    cell.evidence,
+                                    cell.independent_correct,
+                                  )}
+                                >
+                                  {levelShort(cell.level)}
+                                  {cell.review_due ? ' ↻' : ''}
+                                </span>
+                              ) : (
+                                '·'
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Fragment>
+        )}
+      </AdminCard>
       {student && (
         <StudentSkills student={student} courseId={courseId} onClose={() => setStudent(null)} />
       )}
-    </section>
+    </AdminPage>
   );
 }
 

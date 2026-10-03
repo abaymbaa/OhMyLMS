@@ -1,0 +1,119 @@
+/*
+ * Shared layout for OhMyLMS admin pages added through the extension SDK (Question bank,
+ * Skills, Performance and others). Mirrors the native screens: 40px side gutter, a 20px
+ * title row, white cards with 7px corners and the grey-header table. Colors, radius and
+ * font come from the design tokens printed by OhMyLMS\Design\Tokens.
+ */
+
+/* Every extension route gets the native page gutter. */
+.ohmylms-dashboard-layout.extensions .ohmylms-content {
+	padding: 26px var(--ohmylms-admin-gutter, 40px) 40px;
+	color: var(--ohmylms-admin-text-color, #000d25);
+}
+
+/* Page header: title and description on the left, actions on the right. */
+.ohmylms-ext-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px 24px;
+	margin: 0 0 20px;
+}
+.ohmylms-ext-header > div:first-child {
+	flex: 1 1 360px;
+	min-width: 0;
+}
+.ohmylms-ext-header h1,
+.ohmylms-dashboard-layout.extensions .ohmylms-content > section > h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: var(--ohmylms-admin-heading-color, #000d25);
+}
+.ohmylms-ext-header p {
+	margin: 4px 0 0;
+	max-width: 760px;
+	font-size: 14px;
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+}
+.ohmylms-ext-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+/* Cards. */
+.ohmylms-ext-card {
+	background: var(--ohmylms-admin-surface, #fff);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	padding: 20px;
+	margin: 0 0 20px;
+}
+.ohmylms-ext-card > h2,
+.ohmylms-ext-card > h3 {
+	margin: 0 0 12px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--ohmylms-admin-heading-color, #000d25);
+}
+.ohmylms-ext-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+	margin: 0 0 16px;
+}
+.ohmylms-ext-toolbar .components-base-control,
+.ohmylms-ext-toolbar .components-base-control__field {
+	margin-bottom: 0;
+}
+.ohmylms-ext-muted {
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+}
+
+/* Tables: the native ohmylms-table look for WordPress tables inside extension pages. */
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat {
+	border: 0;
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	box-shadow: none;
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+	background: var(--ohmylms-admin-surface, #fff);
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat thead th,
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat thead td {
+	background: var(--ohmylms-admin-subtle, #f4f5f7);
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+	font-size: 14px;
+	font-weight: 500;
+	padding: 8px 12px;
+	border: 0;
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat tbody td,
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat tbody th {
+	color: var(--ohmylms-admin-text-color, #000d25);
+	font-size: 14px;
+	padding: 14px 12px;
+	vertical-align: middle;
+	border-top: 1px solid var(--ohmylms-admin-border, #ebedf0);
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat.striped > tbody > :nth-child(odd) {
+	background: transparent;
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content table.widefat tbody tr:hover {
+	background: var(--ohmylms-primary-soft-color, #f6f3fd);
+}
+.ohmylms-ext-table-scroll {
+	overflow-x: auto;
+}
+
+/* Small screens: narrower gutter. */
+@media (max-width: 782px) {
+	.ohmylms-dashboard-layout.extensions .ohmylms-content {
+		padding: 16px 12px 32px;
+	}
+}

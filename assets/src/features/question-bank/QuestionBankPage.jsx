@@ -28,6 +28,7 @@ import {
 import { cleanFilters, versionLabel, DIFFICULTIES, flattenTree, skillTree } from './model.mjs';
 import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
+import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 
 const TYPES = [
   'single-choice',
@@ -46,8 +47,14 @@ const TYPES = [
 /** Question bank management: search, approve, archive, duplicate, metadata and sharing. */
 export function QuestionBankPage() {
   return (
-    <section className="ohmylms-question-bank">
-      <h1>{__('Question bank', 'ohmylms')}</h1>
+    <AdminPage
+      className="ohmylms-question-bank"
+      title={__('Question bank', 'ohmylms')}
+      description={__(
+        'Every saved question lives here with its versions. Approve questions to share them, use them in practice and draw them into random pools.',
+        'ohmylms',
+      )}
+    >
       <TabPanel
         tabs={[
           { name: 'questions', title: __('Questions', 'ohmylms') },
@@ -56,7 +63,7 @@ export function QuestionBankPage() {
       >
         {(tab) => (tab.name === 'questions' ? <QuestionsTab /> : <BanksTab />)}
       </TabPanel>
-    </section>
+    </AdminPage>
   );
 }
 
@@ -124,9 +131,6 @@ function QuestionsTab() {
   const pages = Math.max(1, Math.ceil(result.total / (result.per_page || 20)));
   return (
     <Fragment>
-      <Button variant="primary" onClick={() => setCreating(true)} style={{ margin: '12px 0' }}>
-        {__('New question', 'ohmylms')}
-      </Button>
       {creating && (
         <NewQuestionModal
           onClose={() => setCreating(false)}
@@ -137,170 +141,179 @@ function QuestionsTab() {
           }}
         />
       )}
-      <div
-        className="ohmylms-bank-filters"
-        style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}
-      >
-        <TextControl
-          label={__('Search', 'ohmylms')}
-          value={filters.search}
-          onChange={update('search')}
-        />
-        <SelectControl
-          label={__('Type', 'ohmylms')}
-          value={filters.type}
-          options={[
-            { value: '', label: __('All types', 'ohmylms') },
-            ...TYPES.map((type) => ({ value: type, label: type })),
-          ]}
-          onChange={update('type')}
-        />
-        <SelectControl
-          label={__('Difficulty', 'ohmylms')}
-          value={filters.difficulty}
-          options={[
-            { value: '', label: __('Any', 'ohmylms') },
-            ...DIFFICULTIES.map((value) => ({ value, label: value })),
-          ]}
-          onChange={update('difficulty')}
-        />
-        <SelectControl
-          label={__('Status', 'ohmylms')}
-          value={filters.status}
-          options={[
-            { value: '', label: __('Active', 'ohmylms') },
-            { value: 'draft', label: __('Not approved', 'ohmylms') },
-            { value: 'approved', label: __('Approved', 'ohmylms') },
-            { value: 'archived', label: __('Archived', 'ohmylms') },
-          ]}
-          onChange={update('status')}
-        />
-        <SelectControl
-          label={__('Skill', 'ohmylms')}
-          value={filters.skill}
-          options={[
-            { value: '', label: __('Any skill', 'ohmylms') },
-            ...flattenTree(skillTree(skills)).map((skill) => ({
-              value: String(skill.id),
-              label: `${'— '.repeat(skill.depth)}${skill.name}`,
-            })),
-          ]}
-          onChange={update('skill')}
-        />
-        <SelectControl
-          label={__('Bank', 'ohmylms')}
-          value={filters.bank}
-          options={[
-            { value: '', label: __('All visible', 'ohmylms') },
-            { value: '0', label: __('My questions (no bank)', 'ohmylms') },
-            ...banks.map((bank) => ({ value: String(bank.id), label: bank.name })),
-          ]}
-          onChange={update('bank')}
-        />
-      </div>
-      {error && (
-        <Notice status="error" onRemove={() => setError('')}>
-          {error}
-        </Notice>
-      )}
-      {loading ? (
-        <Spinner />
-      ) : result.items.length === 0 ? (
-        <p>{__('No questions match these filters.', 'ohmylms')}</p>
-      ) : (
-        <table className="widefat striped ohmylms-bank-table">
-          <thead>
-            <tr>
-              <th>{__('Question', 'ohmylms')}</th>
-              <th>{__('Type', 'ohmylms')}</th>
-              <th>{__('Version', 'ohmylms')}</th>
-              <th>{__('Difficulty', 'ohmylms')}</th>
-              <th>{__('Skills', 'ohmylms')}</th>
-              <th>{__('Used in', 'ohmylms')}</th>
-              <th>{__('Actions', 'ohmylms')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.items.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <Button variant="link" onClick={() => setSelected(item.id)}>
-                    {item.name || __('(untitled)', 'ohmylms')}
-                  </Button>
-                  {item.secure && (
-                    <span className="ohmylms-badge">{__('Exam only', 'ohmylms')}</span>
-                  )}
-                </td>
-                <td>{item.type}</td>
-                <td>{versionLabel(item)}</td>
-                <td>{item.difficulty}</td>
-                <td>
-                  {item.skills
-                    .map((id) => skillNames.get(id))
-                    .filter(Boolean)
-                    .join(', ')}
-                </td>
-                <td>
-                  {sprintf(
-                    /* translators: 1: quizzes, 2: learner responses */
-                    __('%1$d quizzes · %2$d responses', 'ohmylms'),
-                    item.usage.quizzes.length,
-                    item.usage.responses,
-                  )}
-                </td>
-                <td style={{ whiteSpace: 'nowrap' }}>
-                  {item.can_approve &&
-                    !item.approved_is_current &&
-                    item.post_status !== 'ohmylms_archived' && (
-                      <Button
-                        variant="secondary"
-                        size="small"
-                        onClick={() => run(() => approveQuestion(item.id))}
-                      >
-                        {__('Approve', 'ohmylms')}
+      <AdminCard className="ohmylms-bank-card">
+        <div className="ohmylms-bank-filters ohmylms-ext-toolbar">
+          <TextControl
+            label={__('Search', 'ohmylms')}
+            value={filters.search}
+            onChange={update('search')}
+          />
+          <SelectControl
+            label={__('Type', 'ohmylms')}
+            value={filters.type}
+            options={[
+              { value: '', label: __('All types', 'ohmylms') },
+              ...TYPES.map((type) => ({ value: type, label: type })),
+            ]}
+            onChange={update('type')}
+          />
+          <SelectControl
+            label={__('Difficulty', 'ohmylms')}
+            value={filters.difficulty}
+            options={[
+              { value: '', label: __('Any', 'ohmylms') },
+              ...DIFFICULTIES.map((value) => ({ value, label: value })),
+            ]}
+            onChange={update('difficulty')}
+          />
+          <SelectControl
+            label={__('Status', 'ohmylms')}
+            value={filters.status}
+            options={[
+              { value: '', label: __('Active', 'ohmylms') },
+              { value: 'draft', label: __('Not approved', 'ohmylms') },
+              { value: 'approved', label: __('Approved', 'ohmylms') },
+              { value: 'archived', label: __('Archived', 'ohmylms') },
+            ]}
+            onChange={update('status')}
+          />
+          <SelectControl
+            label={__('Skill', 'ohmylms')}
+            value={filters.skill}
+            options={[
+              { value: '', label: __('Any skill', 'ohmylms') },
+              ...flattenTree(skillTree(skills)).map((skill) => ({
+                value: String(skill.id),
+                label: `${'— '.repeat(skill.depth)}${skill.name}`,
+              })),
+            ]}
+            onChange={update('skill')}
+          />
+          <SelectControl
+            label={__('Bank', 'ohmylms')}
+            value={filters.bank}
+            options={[
+              { value: '', label: __('All visible', 'ohmylms') },
+              { value: '0', label: __('My questions (no bank)', 'ohmylms') },
+              ...banks.map((bank) => ({ value: String(bank.id), label: bank.name })),
+            ]}
+            onChange={update('bank')}
+          />
+          <div style={{ marginLeft: 'auto' }}>
+            <Button variant="primary" onClick={() => setCreating(true)}>
+              {__('New question', 'ohmylms')}
+            </Button>
+          </div>
+        </div>
+        {error && (
+          <Notice status="error" onRemove={() => setError('')}>
+            {error}
+          </Notice>
+        )}
+        {loading ? (
+          <Spinner />
+        ) : result.items.length === 0 ? (
+          <p>{__('No questions match these filters.', 'ohmylms')}</p>
+        ) : (
+          <div className="ohmylms-ext-table-scroll">
+            <table className="widefat striped ohmylms-bank-table">
+              <thead>
+                <tr>
+                  <th>{__('Question', 'ohmylms')}</th>
+                  <th>{__('Type', 'ohmylms')}</th>
+                  <th>{__('Version', 'ohmylms')}</th>
+                  <th>{__('Difficulty', 'ohmylms')}</th>
+                  <th>{__('Skills', 'ohmylms')}</th>
+                  <th>{__('Used in', 'ohmylms')}</th>
+                  <th>{__('Actions', 'ohmylms')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.items.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <Button variant="link" onClick={() => setSelected(item.id)}>
+                        {item.name || __('(untitled)', 'ohmylms')}
                       </Button>
-                    )}{' '}
-                  <Button
-                    variant="tertiary"
-                    size="small"
-                    onClick={() => run(() => duplicateQuestion(item.id))}
-                  >
-                    {__('Duplicate', 'ohmylms')}
-                  </Button>{' '}
-                  {item.can_edit &&
-                    (item.post_status === 'ohmylms_archived' ? (
+                      {item.secure && (
+                        <span className="ohmylms-badge">{__('Exam only', 'ohmylms')}</span>
+                      )}
+                    </td>
+                    <td>{item.type}</td>
+                    <td>{versionLabel(item)}</td>
+                    <td>{item.difficulty}</td>
+                    <td>
+                      {item.skills
+                        .map((id) => skillNames.get(id))
+                        .filter(Boolean)
+                        .join(', ')}
+                    </td>
+                    <td>
+                      {sprintf(
+                        /* translators: 1: quizzes, 2: learner responses */
+                        __('%1$d quizzes · %2$d responses', 'ohmylms'),
+                        item.usage.quizzes.length,
+                        item.usage.responses,
+                      )}
+                    </td>
+                    <td style={{ whiteSpace: 'nowrap' }}>
+                      {item.can_approve &&
+                        !item.approved_is_current &&
+                        item.post_status !== 'ohmylms_archived' && (
+                          <Button
+                            variant="secondary"
+                            size="small"
+                            onClick={() => run(() => approveQuestion(item.id))}
+                          >
+                            {__('Approve', 'ohmylms')}
+                          </Button>
+                        )}{' '}
                       <Button
                         variant="tertiary"
                         size="small"
-                        onClick={() => run(() => restoreQuestion(item.id))}
+                        onClick={() => run(() => duplicateQuestion(item.id))}
                       >
-                        {__('Restore', 'ohmylms')}
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="tertiary"
-                        size="small"
-                        isDestructive
-                        onClick={() => run(() => archiveQuestion(item.id))}
-                      >
-                        {__('Archive', 'ohmylms')}
-                      </Button>
-                    ))}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      <div className="ohmylms-bank-pagination" style={{ marginTop: 12 }}>
-        <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          {__('Previous', 'ohmylms')}
-        </Button>{' '}
-        <span>{sprintf(__('Page %1$d of %2$d', 'ohmylms'), page, pages)}</span>{' '}
-        <Button variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>
-          {__('Next', 'ohmylms')}
-        </Button>
-      </div>
+                        {__('Duplicate', 'ohmylms')}
+                      </Button>{' '}
+                      {item.can_edit &&
+                        (item.post_status === 'ohmylms_archived' ? (
+                          <Button
+                            variant="tertiary"
+                            size="small"
+                            onClick={() => run(() => restoreQuestion(item.id))}
+                          >
+                            {__('Restore', 'ohmylms')}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="tertiary"
+                            size="small"
+                            isDestructive
+                            onClick={() => run(() => archiveQuestion(item.id))}
+                          >
+                            {__('Archive', 'ohmylms')}
+                          </Button>
+                        ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div
+          className="ohmylms-bank-pagination ohmylms-ext-toolbar"
+          style={{ marginTop: 16, marginBottom: 0 }}
+        >
+          <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            {__('Previous', 'ohmylms')}
+          </Button>{' '}
+          <span>{sprintf(__('Page %1$d of %2$d', 'ohmylms'), page, pages)}</span>{' '}
+          <Button variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>
+            {__('Next', 'ohmylms')}
+          </Button>
+        </div>
+      </AdminCard>
       {selected && (
         <QuestionDetail
           id={selected}
