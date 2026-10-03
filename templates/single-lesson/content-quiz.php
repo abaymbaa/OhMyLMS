@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 $course_id = ohmylms_get_course_by_content_id(get_the_ID());
-// Admins and authors trying a quiz they are not enrolled in: nothing they submit is saved.
+// Admins and the quiz's author are previewing: nothing they submit is saved.
 $is_preview = \OhMyLMS\Quiz\Submission::is_preview(get_the_ID(), get_current_user_id());
 ?>
 
@@ -53,22 +53,22 @@ $is_preview = \OhMyLMS\Quiz\Submission::is_preview(get_the_ID(), get_current_use
         </div>
 		
 		<?php if ( $is_preview ) : ?>
-			<?php $preview_result = \OhMyLMS\Quiz\Submission::preview_result(get_the_ID(), get_current_user_id()); ?>
-			<p class="ohmylms-quiz-notice">
-				<?php esc_html_e('Preview mode: you are not enrolled in this course, so your attempts and results are not saved. You can retake this quiz as often as you like.', 'ohmylms'); ?>
+			<?php $preview_result = \OhMyLMS\Quiz\Submission::take_preview_result(get_the_ID(), get_current_user_id()); ?>
+			<p class="ohmylms-quiz-notice" style="margin:16px 0;padding:12px 16px;border-radius:8px;background:#F4F5F7;color:#4B5563;font-size:14px;line-height:1.5;">
+				<?php esc_html_e('Preview mode: you can edit this quiz, so your attempts and results are not saved. You can retake it as often as you like.', 'ohmylms'); ?>
 			</p>
 			<?php if ( $preview_result ) : ?>
-				<div class="ohmylms-quiz-preview-result">
-					<h3><?php esc_html_e('Last preview result', 'ohmylms'); ?></h3>
-					<p>
+				<div class="ohmylms-quiz-preview-result" style="margin:0 0 24px;padding:16px;border:1px solid #E2E4EA;border-radius:8px;font-size:14px;line-height:1.6;">
+					<h3 style="margin:0 0 8px;font-size:16px;"><?php esc_html_e('Last preview result', 'ohmylms'); ?></h3>
+					<p style="margin:4px 0;">
 						<strong><?php esc_html_e('Score: ', 'ohmylms'); ?></strong>
 						<?php echo esc_html(\OhMyLMS\Assessment\Scoring::display($preview_result['total']) . ' / ' . \OhMyLMS\Assessment\Scoring::display($preview_result['max'])); ?>
 					</p>
-					<p>
+					<p style="margin:4px 0;">
 						<strong><?php esc_html_e('Correct answers: ', 'ohmylms'); ?></strong>
 						<?php echo esc_html($preview_result['correct'] . ' / ' . $preview_result['questions']); ?>
 					</p>
-					<p>
+					<p style="margin:4px 0;">
 						<strong><?php esc_html_e('Result: ', 'ohmylms'); ?></strong>
 						<?php
 						if ( 'in-review' === $preview_result['status'] ) {

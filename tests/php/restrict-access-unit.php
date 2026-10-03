@@ -14,6 +14,9 @@ namespace OhMyLMS\Services {
         public static function is_verified($user_id) { return true; }
     }
 }
+namespace OhMyLMS\Quiz {
+    final class Submission { public static function clear_preview_record($quiz_id, $user_id) { $GLOBALS['cleared'][] = [$quiz_id, $user_id]; } }
+}
 namespace OhMyLMS\Data {
     final class Student {
         public function __construct(private $id) {}
@@ -25,7 +28,7 @@ namespace {
     define('ABSPATH', __DIR__);
     const ADMIN = 1, AUTHOR = 2, STUDENT = 3, ENROLLED = 4, GUEST = 0;
     const COURSE = 50, CONTENT = 60;
-    $current = GUEST; $post = null; $preview_meta = ''; $enrollments = [[ENROLLED, COURSE]];
+    $current = GUEST; $post = null; $preview_meta = ''; $enrollments = [[ENROLLED, COURSE]]; $cleared = [];
 
     function is_single() { return true; }
     function is_user_logged_in() { return $GLOBALS['current'] > 0; }
@@ -64,5 +67,11 @@ namespace {
         check(visit(GUEST, $type) === 'wp_die:403', "Guest can open $type");
     }
     check(visit(STUDENT, 'post') === 'allowed', 'Unrestricted post types must not be gated');
+
+    // Opening a quiz while signed in lets the quiz clear stale preview records first; nothing else does.
+    $cleared = []; visit(ADMIN, 'ohmylms-quiz');
+    check($cleared === [[CONTENT, ADMIN]], 'Opening a quiz did not clear stale preview records for the signed-in user');
+    $cleared = []; visit(GUEST, 'ohmylms-quiz'); visit(ADMIN, 'ohmylms-lesson'); visit(ADMIN, 'ohmylms-assignment');
+    check($cleared === [], 'Stale preview records cleared for a guest or for non-quiz content');
     echo "Content gate: admins and authors bypass enrollment; guests and unenrolled students stay blocked.\n";
 }
