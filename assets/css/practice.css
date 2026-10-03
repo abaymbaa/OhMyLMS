@@ -27,7 +27,7 @@
 }
 .ohmylms-inline-check label:focus-within,
 .ohmylms-practice-option:focus-within {
-	outline: 2px solid #7c3aed;
+	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
 	outline-offset: 1px;
 }
 .ohmylms-inline-check .ohmylms-text-input,
@@ -60,7 +60,7 @@
 	padding: 6px 0;
 }
 .ohmylms-practice-progress {
-	color: #52525b;
+	color: var(--ohmylms-body-text-color, #52525b);
 	font-size: 0.9em;
 }
 .ohmylms-skill-table {
@@ -79,7 +79,7 @@
 	border-radius: 999px;
 	font-size: 0.85em;
 	background: #f4f4f5;
-	color: #3f3f46;
+	color: var(--ohmylms-body-text-color, #3f3f46);
 }
 .ohmylms-skill-developing { background: #fef3c7; color: #92400e; }
 .ohmylms-skill-proficient { background: #dbeafe; color: #1e40af; }
@@ -87,11 +87,11 @@
 .ohmylms-skill-review {
 	margin-left: 6px;
 	font-size: 0.85em;
-	color: #7c3aed;
+	color: var(--ohmylms-primary-color, #6e42d3);
 }
 .ohmylms-autosave-status {
 	font-size: 0.85em;
-	color: #52525b;
+	color: var(--ohmylms-body-text-color, #52525b);
 	margin: 0 12px;
 }
 .ohmylms-quiz-section-title {

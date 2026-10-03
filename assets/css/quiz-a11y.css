@@ -21,6 +21,6 @@
 	border: 0 !important;
 }
 .quiz-checkbox-radio-options input:focus-visible + .option-box {
-	outline: 2px solid #2563eb;
+	outline: 2px solid var(--ohmylms-outline-color, #2563eb);
 	outline-offset: 2px;
 }

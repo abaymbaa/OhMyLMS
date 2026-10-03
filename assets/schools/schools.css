@@ -1,4 +1,4 @@
-.ohmylms-schools{--school-ink:#172b45;--school-muted:#52667f;--school-border:#dce5ef;--school-accent:#3659d9;font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--school-ink);text-align:left}
+.ohmylms-schools{--school-ink:var(--ohmylms-heading-color,#172b45);--school-muted:#52667f;--school-border:#dce5ef;--school-accent:var(--ohmylms-primary-color,#3659d9);font-size:16px;line-height:1.55;font-family:var(--ohmylms-font-family,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif);color:var(--school-ink);text-align:left}
 .ohmylms-schools p,.ohmylms-schools a,.ohmylms-schools h1,.ohmylms-schools h2,.ohmylms-schools h3,.ohmylms-schools h4,.ohmylms-schools label{font-family:inherit}
 .ohmylms-school-shell{max-width:1120px;margin:24px auto;padding:32px;background:#fff;border:1px solid var(--school-border);border-radius:20px;box-shadow:0 12px 36px #172b4508}
 .ohmylms-schools *{box-sizing:border-box}.ohmylms-school-shell header{display:flex;justify-content:space-between;gap:20px;align-items:center;border-bottom:1px solid var(--school-border);padding-bottom:20px;margin-bottom:24px}
@@ -13,7 +13,7 @@
 .ohmylms-people-tabs a{display:block;padding:14px 0;color:#667085;text-decoration:none;font-size:14px;font-weight:500;border-bottom:2px solid transparent;box-shadow:none}
 .ohmylms-people-tabs a[aria-current=page]{color:var(--ohmylms-primary,#573bff);border-bottom-color:currentColor}
 .ohmylms-people-tabs a:focus-visible{outline:2px solid #573bff;outline-offset:4px}
-.ohmylms-schools{--school-ink:#2d3149;--school-muted:#667085;--school-border:#ebedf0;--school-accent:var(--ohmylms-primary,#573bff);font-size:14px}
+.ohmylms-schools{--school-ink:var(--ohmylms-heading-color,#2d3149);--school-muted:#667085;--school-border:#ebedf0;--school-accent:var(--ohmylms-primary-color,#573bff);font-size:14px}
 [data-ohmylms-school-view=admin-management] .ohmylms-school-shell{max-width:none;margin:20px 12px 20px 0;border-radius:8px;padding:24px;box-shadow:none}
 [data-ohmylms-school-view=admin-management] h1{font-size:24px;font-weight:600}
 [data-ohmylms-school-view=admin-management] .ohmylms-eyebrow{display:none}
@@ -21,7 +21,7 @@
 .ohmylms-tabs button{background:#f3f4f6}
 .ohmylms-tabs button[aria-pressed=true]{background:var(--school-accent)}
 
-.ohmylms-schools,.ohmylms-schools h1,.ohmylms-schools h2,.ohmylms-schools h3,.ohmylms-schools h4,.ohmylms-schools a,.ohmylms-schools p,.ohmylms-schools label{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.ohmylms-schools,.ohmylms-schools h1,.ohmylms-schools h2,.ohmylms-schools h3,.ohmylms-schools h4,.ohmylms-schools a,.ohmylms-schools p,.ohmylms-schools label{font-family:var(--ohmylms-font-family,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}
 .ohmylms-schools a{color:var(--school-accent)}
 .ohmylms-schools .ohmylms-people-tabs a{color:var(--school-muted)}
 .ohmylms-schools .ohmylms-people-tabs a[aria-current=page]{color:var(--school-accent)}
