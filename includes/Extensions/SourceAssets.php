@@ -28,6 +28,12 @@ final class SourceAssets {
         $asset = require $asset_file;
         wp_enqueue_script('ohmylms-extension-sdk', plugins_url('build/sdk/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge(Registry::manifest(), ['settings'=>Settings::manifest()]));
+        wp_localize_script('ohmylms-extension-sdk', 'ohmylmsAssessment', [
+            'versioned' => \OhMyLMS\Assessment\Engine::versioned(),
+            'bankUi' => \OhMyLMS\Assessment\Engine::bank_ui(),
+            'practice' => \OhMyLMS\Assessment\Engine::practice(),
+            'isAdmin' => current_user_can('manage_options'),
+        ]);
         $scripts = wp_scripts();
         if (isset($scripts->registered['ohmylms-vendor'])) {
             $scripts->registered['ohmylms-vendor']->deps = array_values(array_unique(array_merge($scripts->registered['ohmylms-vendor']->deps, ['wp-preferences', 'wp-keyboard-shortcuts'])));

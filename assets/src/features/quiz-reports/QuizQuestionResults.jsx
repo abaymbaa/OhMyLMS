@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { MathAnswerResult } from './MathAnswerResult';
 export function createQuizQuestionResults(readRuntime) {
   return function QuizQuestionResults(props) {
     const {
@@ -9,6 +10,7 @@ export function createQuizQuestionResults(readRuntime) {
       M$: MatchingResult,
       React,
       h$: MultipleChoiceResult,
+      p$: QuizQuestionHeader,
       v$: SingleChoiceResult,
     } = readRuntime();
     var data = props.data,
@@ -59,7 +61,21 @@ export function createQuizQuestionResults(readRuntime) {
                   <MatchingResult index={t} data={e} type={o} />
                 </Controls.SpacerWP>
               </Controls.CardWP>
-            ) : null;
+            ) : (
+              // Numerical, structured and extension types (previously not shown at all).
+              <Controls.CardWP key={t} isBorderless={!0}>
+                <Controls.SpacerWP marginBottom={0} padding={5}>
+                  <MathAnswerResult
+                    index={t}
+                    data={e}
+                    setData={setData}
+                    fetchData={fetchData}
+                    Header={QuizQuestionHeader}
+                    Controls={Controls}
+                  />
+                </Controls.SpacerWP>
+              </Controls.CardWP>
+            );
           })}
         </Controls.FlexWP>
       </React.Fragment>

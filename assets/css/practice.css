@@ -1,0 +1,132 @@
+/* Learner-facing practice, inline checks and skill progress. */
+.ohmylms-inline-check,
+.ohmylms-practice-question {
+	border: 1px solid #e4e4e7;
+	border-radius: 8px;
+	padding: 16px;
+	margin: 16px 0;
+	background: #fff;
+}
+.ohmylms-inline-check .the-question,
+.ohmylms-inline-check-question,
+.ohmylms-practice-question .the-question {
+	font-weight: 600;
+	margin: 0 0 12px;
+}
+.ohmylms-inline-check label,
+.ohmylms-practice-option,
+.ohmylms-practice-match {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	margin: 6px 0;
+	border: 1px solid #e4e4e7;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.ohmylms-inline-check label:focus-within,
+.ohmylms-practice-option:focus-within {
+	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
+	outline-offset: 1px;
+}
+.ohmylms-inline-check .ohmylms-text-input,
+.ohmylms-practice-inputs .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	padding: 8px;
+	margin: 4px 0;
+}
+.ohmylms-inline-answer {
+	border-color: #16a34a !important;
+	background: #f0fdf4;
+}
+.ohmylms-inline-correct {
+	color: #15803d;
+	font-weight: 600;
+}
+.ohmylms-inline-incorrect {
+	color: #b91c1c;
+	font-weight: 600;
+}
+.ohmylms-inline-check-feedback,
+.ohmylms-practice-feedback {
+	margin-top: 12px;
+}
+.ohmylms-practice-reorder li {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 6px 0;
+}
+.ohmylms-practice-progress {
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+.ohmylms-skill-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.ohmylms-skill-table th,
+.ohmylms-skill-table td {
+	text-align: left;
+	padding: 8px;
+	border-bottom: 1px solid #e4e4e7;
+}
+.ohmylms-skill-level {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 0.85em;
+	background: #f4f4f5;
+	color: var(--ohmylms-body-text-color, #3f3f46);
+}
+.ohmylms-skill-developing { background: #fef3c7; color: #92400e; }
+.ohmylms-skill-proficient { background: #dbeafe; color: #1e40af; }
+.ohmylms-skill-mastered { background: #dcfce7; color: #166534; }
+.ohmylms-skill-review {
+	margin-left: 6px;
+	font-size: 0.85em;
+	color: var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-autosave-status {
+	font-size: 0.85em;
+	color: var(--ohmylms-body-text-color, #52525b);
+	margin: 0 12px;
+}
+.ohmylms-quiz-section-title {
+	margin: 24px 0 8px;
+	font-size: 1.2em;
+}
+@media (prefers-color-scheme: dark) {
+	.ohmylms-inline-check,
+	.ohmylms-practice-question {
+		background: transparent;
+		border-color: #3f3f46;
+	}
+	.ohmylms-inline-check label,
+	.ohmylms-practice-option,
+	.ohmylms-practice-match {
+		border-color: #3f3f46;
+	}
+	.ohmylms-inline-answer {
+		background: rgba(22, 163, 74, 0.15);
+	}
+}
+.ohmylms-structured-question .ohmylms-structured-part {
+	display: block;
+	margin: 12px 0;
+}
+.ohmylms-structured-question .ohmylms-structured-part label {
+	display: block;
+	margin-bottom: 6px;
+}
+.ohmylms-structured-question .ohmylms-structured-part .ohmylms-text-input,
+.ohmylms-numerical-answer .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	box-sizing: border-box;
+}
+.ohmylms-numerical-unit {
+	margin-left: 6px;
+}

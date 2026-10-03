@@ -31,7 +31,7 @@ else:
     git('add', '.')
     git('-c', 'user.name=Codex', '-c', 'user.email=codex@localhost', 'commit', '-m', 'Installed OhMyLMS source-recovery baseline')
 baseline = git('rev-parse', 'HEAD').strip()
-for plugin in ('ohmylms', 'creatorlms-qpay', 'creatorlms-custom-question'):
+for plugin in ('ohmylms', 'ohmylms-qpay', 'ohmylms-custom-question'):
     target=destination/plugin
     if os.name=='nt': target=Path('\\\\?\\'+str(target))
     shutil.copytree(root.parent/plugin, target, dirs_exist_ok=True,

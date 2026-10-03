@@ -48,9 +48,11 @@ GET/PUT `/ohmylms/v1/extension-settings/<type>/<id>` accepts `{settings:{...}}`,
 
 ## Question/lesson lifecycle
 
-`ohmylms_register_question_type` requires label, render, validate and grade callbacks. Optional `editor.schema` validates saved settings. JS editor IDs must match server manifest IDs. Updates go through the existing question store/save API.
+`ohmylms_register_question_type` requires label, render, validate and grade callbacks. Optional `editor.schema` validates saved settings; optional `validate_settings($settings)` returns `true` or an error message for checks a schema cannot express. JS editor IDs must match server manifest IDs. Updates go through the existing question store/save API.
 
-`validate($answer,$question)` returns bool and should accept empty answer shape for timeouts; required-answer enforcement is separate. `grade` returns `correct`, finite `fraction` (clamped 0..1), and `manual`. The server checks enrollment, ownership, timer, question membership and repeated submissions. Scores are server-derived; current storage awards whole points.
+Versioned assessments grade frozen question versions. A type joins them by declaring `'snapshot' => true`, promising that `grade()` and `validate()` read only the question object they receive (`get_settings()`, `get_questions()`), which may be an `OhMyLMS\Assessment\QuestionSnapshot`. Quizzes containing a type without the flag cannot be published (`quiz_type_unversioned`) instead of silently grading current data. Types whose answers are option IDs should declare `'answers' => 'options'` (versioned deliveries send opaque per-attempt option tokens). Learner-facing settings must be listed in `'public_settings'`; all other settings are withheld from delivery markup. `grade()` may return `parts => [part_id => fraction|null]` for multi-part questions.
+
+`validate($answer,$question)` returns bool and should accept empty answer shape for timeouts; required-answer enforcement is separate. `grade` returns `correct`, finite `fraction` (clamped 0..1), and `manual`. The server checks enrollment, ownership, timer, question membership and repeated submissions. Scores are server-derived: attempts started before the decimal migration award whole points; later attempts award marks × fraction to four decimal places.
 
 `ohmylms_register_lesson_type` requires label/render. Its matching JS editor uses supplied authoring callbacks. The example persists normal WordPress content. Existing `ohmylms_register_layout` and `ohmylms_register_activity` remain; layouts accept course/chapter/lesson/quiz contexts. Avoid recursively invoking a layout hook from its renderer.
 

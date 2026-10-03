@@ -979,7 +979,7 @@ if ( ! function_exists( 'ohmylms_single_course_header' ) ) {
 if ( ! function_exists( 'ohmylms_has_header_course_meta' ) ) {
 
 	function ohmylms_has_header_course_meta() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1023,7 +1023,7 @@ if ( ! function_exists( 'ohmylms_has_sidebar_widget_course_meta' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_has_sidebar_widget_course_meta() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1063,7 +1063,7 @@ if ( ! function_exists( 'ohmylms_has_sidebar_widget_course_meta' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_level' ) ) {
 	function ohmylms_single_course_level() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1080,7 +1080,7 @@ if ( ! function_exists( 'ohmylms_single_course_level' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_review' ) ) {
 	function ohmylms_single_course_review() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1097,7 +1097,7 @@ if ( ! function_exists( 'ohmylms_single_course_review' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_student_count' ) ) {
 	function ohmylms_single_course_student_count() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1114,7 +1114,7 @@ if ( ! function_exists( 'ohmylms_single_course_student_count' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_capacity' ) ) {
 	function ohmylms_single_course_capacity() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1131,7 +1131,7 @@ if ( ! function_exists( 'ohmylms_single_course_capacity' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_duration' ) ) {
 	function ohmylms_single_course_duration() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1148,7 +1148,7 @@ if ( ! function_exists( 'ohmylms_single_course_duration' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_lesson_count' ) ) {
 	function ohmylms_single_course_lesson_count() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1165,7 +1165,7 @@ if ( ! function_exists( 'ohmylms_single_course_lesson_count' ) ) {
 
 if ( ! function_exists( 'ohmylms_single_course_additional_resource' ) ) {
 	function ohmylms_single_course_additional_resource() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1223,7 +1223,7 @@ if ( ! function_exists( 'ohmylms_widget_course_membership' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_widget_course_membership() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1245,7 +1245,7 @@ if ( ! function_exists( 'ohmylms_widget_certificate' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_widget_certificate() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		if ( is_array($page_features) && in_array( 'certificate_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/certificate.php' );
@@ -1260,7 +1260,7 @@ if ( ! function_exists( 'ohmylms_widget_course_progress' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_widget_course_progress() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		if ( is_array($page_features) && in_array( 'progress_bar_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/progressbar.php' );
@@ -1279,7 +1279,7 @@ if ( ! function_exists( 'ohmylms_widget_course_leaderboard' ) ) {
 			return;
 		}
 
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		if ( is_array($page_features) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/leaderboard.php' );
@@ -1294,7 +1294,7 @@ if ( ! function_exists( 'ohmylms_course_author' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_course_author() {
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -1317,7 +1317,7 @@ if ( ! function_exists( 'ohmylms_widget_course_author' ) ) {
 	 */
 	function ohmylms_widget_course_author() {
 		$single_course_layout = get_option( 'ohmylms_single_course_page_layout', 'layout_1' );
-		$page_features        = get_option( 'ohmylms_single_course_page_features' );
+		$page_features        = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		global $course;
 		$current_student_id = get_current_user_id();
@@ -2738,7 +2738,7 @@ if ( ! function_exists( 'ohmylms_widget_course_leaderboard_layout3' ) ) {
 		if( ! ohmylms_is_pro() ) {
 			return; // Exit if OhMyLMS is not active.
 		}
-		$page_features = get_option( 'ohmylms_single_course_page_features' );
+		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 		if ( is_array($page_features) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/leaderboard-layout3.php' );

@@ -13,7 +13,7 @@ if archive.exists():
     raise SystemExit('Refusing to overwrite the original baseline')
 manifest = {}
 with zipfile.ZipFile(archive, 'x', zipfile.ZIP_DEFLATED) as out:
-    for name in ('ohmylms', 'creatorlms-qpay', 'creatorlms-custom-question'):
+    for name in ('ohmylms', 'ohmylms-qpay', 'ohmylms-custom-question'):
         for path in (root.parent / name).rglob('*'):
             if not path.is_file() or any(part in ('node_modules', '.git', 'build') for part in path.parts):
                 continue

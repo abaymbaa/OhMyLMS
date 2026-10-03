@@ -26,7 +26,9 @@ import { taxonomyComponents } from '../features/taxonomies';
 import { setupComponents } from '../features/setup';
 import { aiCourseComponents } from '../features/ai-course-outline';
 import { mountRegistration } from '../features/students/mountRegistration';
+import { questionBankComponents, registerQuestionBankPages } from '../features/question-bank';
 const registry = createRegistry();
+registerQuestionBankPages(registry);
 const roots = new WeakMap();
 const publicApi = {
   ...registry,
@@ -50,6 +52,7 @@ const publicApi = {
   taxonomyComponents,
   setupComponents,
   aiCourseComponents,
+  questionBankComponents,
   extendRoutes(routes) {
     return [
       ...routes.map((route) =>

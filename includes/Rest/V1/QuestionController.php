@@ -5,6 +5,9 @@ use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Data\Question;
 use OhMyLMS\DataException;
 use OhMyLMS\Question\QuestionHelper;
+use OhMyLMS\QuestionBank\AccessPolicy;
+use OhMyLMS\QuestionBank\DraftWriter;
+use OhMyLMS\QuestionBank\Usage;
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -30,7 +33,25 @@ class QuestionController extends RestController {
 	protected $base = 'question';
 
 	public function check_question_permission() {
-		return current_user_can( 'edit_posts' );
+		return AccessPolicy::check( AccessPolicy::can_author() );
+	}
+
+	/**
+	 * Object-level permission for single-question routes.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return true|WP_Error
+	 */
+	public function check_item_permission( $request ) {
+		$id = (int) $request['id'];
+		if ( get_post_type( $id ) !== OHMYLMS_QUESTION_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_question_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		if ( 'DELETE' === $request->get_method() ) {
+			$quiz_id = (int) $request['quiz_id'];
+			return AccessPolicy::check( $quiz_id ? AccessPolicy::can_edit_quiz( $quiz_id ) : AccessPolicy::can_delete_question( $id ) );
+		}
+		return AccessPolicy::check( AccessPolicy::can_edit_question( $id ) );
 	}
 
 	/**
@@ -70,18 +91,18 @@ class QuestionController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'check_question_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 					'args'                => $this->get_collection_params(),
 				),
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'check_question_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					'permission_callback' => array( $this, 'check_question_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 					'args'                => $this->get_collection_params(),
 				),
 			)
@@ -112,7 +133,7 @@ class QuestionController extends RestController {
 			'post_parent__in'     => isset( $request['parent'] ) ? array_map( 'intval', (array) $request['parent'] ) : array(),
 			'post_parent__not_in' => isset( $request['parent_exclude'] ) ? array_map( 'intval', (array) $request['parent_exclude'] ) : array(),
 			's'                   => isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
-			'post_type'           => OHMYLMS_QUIZ_CPT,
+			'post_type'           => OHMYLMS_QUESTION_CPT,
 			'post_status'         => isset( $request['post_status'] ) ? sanitize_text_field( $request['post_status'] ) : 'any',
 		);
 
@@ -138,7 +159,7 @@ class QuestionController extends RestController {
 		$posts = array();
 
 		foreach ( $query_result as $post ) {
-			if ( ! current_user_can( 'read_post', $post->ID ) ) {
+			if ( ! AccessPolicy::can_edit_question( $post->ID ) && ! AccessPolicy::can_use_question( $post->ID ) ) {
 				continue;
 			}
 			$data    = $this->prepare_item_for_response( $post, $request );
@@ -198,32 +219,29 @@ class QuestionController extends RestController {
 			// Translators: %s is replaced with object name.
 			return new WP_Error( 'ohmylms_rest_question_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Question' ), array( 'status' => 400 ) );
 		}
-		try {
-			$question_id = $this->save_question( $request );
-
-			$post = get_post( $question_id );
-			/**
-			 * Fires after a Question is inserted via the REST API.
-			 *
-			 * @param \WP_Post         $post    The post object for the question.
-			 * @param \WP_REST_Request $request The request object.
-			 * @param bool             $creating Whether the question is being created (true) or updated (false).
-			 *
-			 * @since 1.0.0
-			 */
-			do_action( 'ohmylms_rest_insert_question', $post, $request, true );
-
-			// $request->set_param( 'context', 'edit' );
-			$response = $this->prepare_item_for_response( $post, $request );
-			$response = rest_ensure_response( $response );
-			do_action( 'ohmylms_rest_question_created', $post, $request );
-			if ( ! is_wp_error( $response ) ) {
-				$response->set_status( 201 );
-			}
-			return $response;
-		} catch ( DataException $e ) {
-			return new WP_Error( 400, $e->getMessage(), array( 'status' => $e->getCode() ) );
+		$saved = DraftWriter::save( $request, (int) $request['quiz_id'] );
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
 		}
+		$post = get_post( $saved['id'] );
+		/**
+		 * Fires after a Question is inserted via the REST API.
+		 *
+		 * @param \WP_Post         $post    The post object for the question.
+		 * @param \WP_REST_Request $request The request object.
+		 * @param bool             $creating Whether the question is being created (true) or updated (false).
+		 *
+		 * @since 1.0.0
+		 */
+		do_action( 'ohmylms_rest_insert_question', $post, $request, true );
+
+		$response = $this->prepare_item_for_response( $post, $request );
+		$response = rest_ensure_response( $response );
+		do_action( 'ohmylms_rest_question_created', $post, $request );
+		if ( ! is_wp_error( $response ) ) {
+			$response->set_status( 201 );
+		}
+		return $response;
 	}
 
 
@@ -242,22 +260,18 @@ class QuestionController extends RestController {
 			return new WP_Error( 'ohmylms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		try {
-			$question_id = $this->save_question( $request );
-			$post        = get_post( $question_id );
-			$this->update_additional_fields_for_object( $post, $request );
-			$this->update_post_meta_fields( $post, $request );
-			// $request->set_param( 'context', 'edit' );
-
-			do_action( 'ohmylms_rest_question_updated', $post, $request );
-
-			$response = $this->prepare_item_for_response( $post, $request );
-
-			return rest_ensure_response( $response );
-
-		} catch ( DataException $e ) {
-			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		$saved = DraftWriter::save( $request, (int) $request['quiz_id'] );
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
 		}
+		$post = get_post( $saved['id'] );
+		if ( $request instanceof WP_REST_Request ) {
+			$this->update_additional_fields_for_object( $post, $request );
+		}
+
+		do_action( 'ohmylms_rest_question_updated', $post, $request );
+
+		return rest_ensure_response( $this->prepare_item_for_response( $post, $request ) );
 	}
 
 
@@ -300,30 +314,40 @@ class QuestionController extends RestController {
 		if ( ! $question_id ) {
 			return new WP_Error( 'ohmylms_rest_question_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
-
-		$question = ohmylms_get_question( $question_id );
-
-		if ( ! ( $question instanceof Question ) ) {
+		if ( get_post_type( $question_id ) !== OHMYLMS_QUESTION_CPT ) {
 			return new WP_Error( 'ohmylms_rest_question_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$question->delete();
+		// With quiz context this removes the question from that quiz only; it is never deleted.
+		$quiz_id = (int) $request['quiz_id'];
+		$result  = $quiz_id ? Usage::remove_from_quiz( $quiz_id, $question_id ) : Usage::delete_or_archive( $question_id );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
 
 		/**
 		 * Executes the 'ohmylms_rest_delete_question' action hook.
-		 * This hook is triggered when a question is being deleted via the REST API.
+		 * Triggered when a question is removed from a quiz, archived or deleted via the REST API.
 		 *
 		 * @param array $request The request array.
+		 * @param array $result  The operation performed: removed, archived or deleted.
 		 * @since 1.0.0
 		 */
-		do_action( 'ohmylms_rest_delete_question', $request );
+		do_action( 'ohmylms_rest_delete_question', $request, $result );
 
-		$response = array(
-			'id'      => $question_id,
-			'status'  => 'success',
-			'message' => __( 'Question has been deleted successfully.', 'ohmylms' ),
+		$messages = array(
+			'removed'  => __( 'Question has been removed from the quiz.', 'ohmylms' ),
+			'archived' => __( 'Question has learner history, so it was archived instead of deleted.', 'ohmylms' ),
+			'deleted'  => __( 'Question has been deleted successfully.', 'ohmylms' ),
 		);
-		return rest_ensure_response( $response );
+		return rest_ensure_response(
+			array(
+				'id'      => $question_id,
+				'status'  => 'success',
+				'action'  => $result['action'],
+				'message' => $messages[ $result['action'] ],
+			)
+		);
 	}
 
 
@@ -335,8 +359,12 @@ class QuestionController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function save_question( $request ) {
-		$question = $this->prepare_item_for_database( $request );
-		return $question->save();
+		$saved = DraftWriter::save( $request, (int) ( $request['quiz_id'] ?? 0 ) );
+		if ( is_wp_error( $saved ) ) {
+			$data = (array) $saved->get_error_data();
+			throw new DataException( $saved->get_error_code(), $saved->get_error_message(), (int) ( $data['status'] ?? 400 ) );
+		}
+		return $saved['id'];
 	}
 
 
@@ -431,6 +459,8 @@ class QuestionController extends RestController {
 			'image_src'    => wp_get_attachment_image_src( $question->get_thumbnail_id(), 'large' ) ? wp_get_attachment_image_src( $question->get_thumbnail_id(), 'large' )[0] : '',
 			'video_id'     => $question->get_video_id(),
 			'video_src'    => wp_get_attachment_url( $question->get_video_id() ),
+			'modified'     => get_post_field( 'post_modified_gmt', $question->get_id() ),
+			'usage'        => Usage::summary( $question->get_id() ),
 		);
 
 		return $data;

@@ -9,6 +9,12 @@ final class Authoring {
     public static function validate_question($question) {
         $settings = $question->get_settings();
         $definition = Registry::get('question', $settings['type'] ?? '');
+        if (!empty($definition['validate_settings']) && is_callable($definition['validate_settings'])) {
+            $result = call_user_func($definition['validate_settings'], $settings);
+            if ($result !== true) {
+                throw new \OhMyLMS\DataException('ohmylms_invalid_question_settings', is_string($result) ? $result : __('Invalid question settings.', 'ohmylms'), 400);
+            }
+        }
         $schema = $definition['editor']['schema'] ?? null;
         if (!$schema) { return; }
         $valid = rest_validate_value_from_schema($settings, $schema, 'settings');

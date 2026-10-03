@@ -244,6 +244,8 @@ class QuizStore extends DataStore {
 			)
 		);
 		$filtered_questions = array();
+		$pins               = get_post_meta( $quiz_id, '_ohmylms_version_pins', true );
+		$bank_ready         = \OhMyLMS\Assessment\Schema::ready();
 		if ( $questions ) {
 			foreach ( $questions as $question ) {
 				$question_obj = ohmylms_get_question( $question->question_id );
@@ -267,7 +269,20 @@ class QuizStore extends DataStore {
 					'image_src'    => $question_obj->get_image_url(),
 					'settings'     => $question_settings,
 					'questions'    => $question_obj->get_questions(),
+					'modified'     => get_post_field( 'post_modified_gmt', $question_obj->get_id() ),
 				);
+				if ( $bank_ready && \OhMyLMS\QuestionBank\AccessPolicy::can_edit_quiz( $quiz_id ) ) {
+					// Authoring context: identity, version and whether this user may edit the question.
+					$identity = \OhMyLMS\QuestionBank\VersionPublisher::identity( $question_obj->get_id(), false );
+					$filtered_questions[ count( $filtered_questions ) - 1 ] += array(
+						'uuid'              => $identity ? $identity['uuid'] : '',
+						'version'           => $identity ? (int) $identity['latest_version_no'] : 0,
+						'approved_version'  => $identity ? (int) $identity['approved_version_id'] : 0,
+						'pinned_version_id' => is_array( $pins ) ? (int) ( $pins[ $question_obj->get_id() ] ?? 0 ) : 0,
+						'readonly'          => ! \OhMyLMS\QuestionBank\AccessPolicy::can_edit_question( $question_obj->get_id() ),
+						'usage_count'       => count( \OhMyLMS\QuestionBank\Usage::quizzes( $question_obj->get_id() ) ),
+					);
+				}
 			}
 		}
 		return $filtered_questions;
@@ -350,7 +365,7 @@ class QuizStore extends DataStore {
 				),
 				array(
 					'%d',
-					'%d',
+					'%f',
 					'%s',
 					'%s',
 				),
@@ -373,7 +388,7 @@ class QuizStore extends DataStore {
 					'%d',
 					'%d',
 					'%d',
-					'%d',
+					'%f',
 					'%s',
 					'%s',
 				)
@@ -397,7 +412,7 @@ class QuizStore extends DataStore {
 			),
 			array(
 				'%d',
-				'%d',
+				'%f',
 				'%s',
 				'%s',
 			),
@@ -451,7 +466,22 @@ class QuizStore extends DataStore {
 			ARRAY_A
 		);
 
-		return $attempts;
+		return array_map( array( $this, 'numeric_scores' ), (array) $attempts );
+	}
+
+	/**
+	 * Decimal score columns come back as strings ("5.0000"); expose numbers to callers and JSON.
+	 *
+	 * @param array $row Aggregate attempt row.
+	 * @return array
+	 */
+	public function numeric_scores( $row ) {
+		foreach ( array( 'total_marks', 'total_achieved_marks', 'total_minus_marks' ) as $key ) {
+			if ( is_array( $row ) && isset( $row[ $key ] ) && is_numeric( $row[ $key ] ) ) {
+				$row[ $key ] = (float) $row[ $key ];
+			}
+		}
+		return $row;
 	}
 
 	public function get_all_quiz_attempts_by_attempt_id( $quiz, $student_id, $course_id, $attempt_id ) {
@@ -493,7 +523,7 @@ class QuizStore extends DataStore {
 			ARRAY_A
 		);
 
-		return $attempts;
+		return $attempts ? $this->numeric_scores( $attempts ) : $attempts;
 	}
 
 
@@ -535,7 +565,7 @@ class QuizStore extends DataStore {
 			),
 			ARRAY_A
 		);
-		return $report;
+		return array_map( array( $this, 'numeric_scores' ), (array) $report );
 	}
 
 	/**
@@ -548,6 +578,10 @@ class QuizStore extends DataStore {
 	 */
 	public function get_attempt_report( $quiz, $attempt_id ) {
 		global $wpdb;
+		// Versioned attempts report exactly what the learner saw.
+		if ( \OhMyLMS\Assessment\Schema::ready() && \OhMyLMS\Assessment\AttemptItems::is_versioned( $attempt_id ) ) {
+			return \OhMyLMS\Assessment\AttemptReport::versioned( $quiz->get_id(), (int) $attempt_id );
+		}
 		$report = array();
 		$quiz_result = array();
 		$result = $wpdb->get_results(
@@ -560,6 +594,24 @@ class QuizStore extends DataStore {
 			$quiz_result[ $value->question_id ] = (array) $value;
 		}
 		$questions 					= $this->get_questions( $quiz );
+		// Legacy attempts: also show answered questions that were later removed from the quiz.
+		$linked = array_map( 'intval', array_column( $questions, 'id' ) );
+		foreach ( array_diff( array_map( 'intval', array_keys( $quiz_result ) ), $linked ) as $removed_id ) {
+			$removed = ohmylms_get_question( $removed_id );
+			if ( ! $removed || ! $removed->get_id() ) {
+				continue;
+			}
+			$questions[] = array(
+				'id'           => $removed_id,
+				'quiz_id'      => $quiz->get_id(),
+				'name'         => $removed->get_name(),
+				'description'  => $removed->get_description(),
+				'order_number' => PHP_INT_MAX,
+				'settings'     => $removed->get_settings(),
+				'questions'    => $removed->get_questions(),
+				'removed'      => true,
+			);
+		}
 		$total_marks				= 0;
 		// Grade-report status is supplied by the registered question type.
 		
@@ -573,7 +625,7 @@ class QuizStore extends DataStore {
 			$questions[ $key ]['status']                   	= !empty($quiz_result[$question_id]['is_manually_reviewed']) || (isset($quiz_result[$question_id]) && !empty($definition) && empty($definition['manual'])) ? 'graded' : 'in-review';
 			$questions[ $key ]['image']                    	= $obj->get_image_url();
 			$questions[ $key ]['video']                    	= $obj->get_video_url();
-			$questions[ $key ]['achive_mark']              	= $quiz_result[ $question_id ]['achive_mark'] ?? 0;
+			$questions[ $key ]['achive_mark']              	= (float) ( $quiz_result[ $question_id ]['achive_mark'] ?? 0 );
 			$questions[ $key ]['quiz_attempts_answers_id'] 	= isset( $quiz_attempts_answers_id[ $key ] ) ? $quiz_attempts_answers_id[ $key ] : null;
 
 			$total_marks = $total_marks + $questions[ $key ]['achive_mark'];
@@ -585,6 +637,8 @@ class QuizStore extends DataStore {
 			$attempt_id, $quiz->get_id()
 		));
 		$report['total_achieved_marks'] = $total_marks;
+		// Recorded before versioning: question content shown is the current content, which may differ from what was seen.
+		$report['engine'] = 'legacy';
 		return $report;
 	}
 

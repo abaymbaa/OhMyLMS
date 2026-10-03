@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { removeQuestionFromQuiz } from './api.mjs';
 export function createQuestionCanvas(readRuntime) {
   return function QuestionCanvas(props) {
     const {
@@ -268,33 +269,29 @@ export function createQuestionCanvas(readRuntime) {
           return e.apply(this, arguments);
         };
       })(),
-      F = (function () {
-        var e = Tu(
-          Pu().m(function e() {
-            return Pu().w(function (e) {
-              for (;;)
-                switch (e.n) {
-                  case 0:
-                    if (null == m || !m.temp) {
-                      e.n = 1;
-                      break;
-                    }
-                    (s.deleteTempQuestion(null == m ? void 0 : m.id), (e.n = 2));
-                    break;
-                  case 1:
-                    return ((e.n = 2), s.deleteQuestion(null == m ? void 0 : m.id));
-                  case 2:
-                    _(!1);
-                  case 3:
-                    return e.a(2);
-                }
-            }, e);
-          }),
-        );
-        return function () {
-          return e.apply(this, arguments);
-        };
-      })();
+      F = async function () {
+        // Deleting from the quiz editor removes the question from this quiz only;
+        // the question and its learner history stay in the question bank.
+        if (null != m && !m.temp) {
+          if (!quizId) {
+            await s.deleteQuestion(m.id);
+            _(!1);
+            return;
+          }
+          try {
+            await removeQuestionFromQuiz(quizId, m.id);
+          } catch (cause) {
+            s.showNotification?.(
+              (cause && cause.message) || (0, I18n.__)('Could not remove the question.', 'ohmylms'),
+              'error',
+            );
+            _(!1);
+            return;
+          }
+        }
+        s.deleteTempQuestion(null == m ? void 0 : m.id);
+        _(!1);
+      };
     return (
       <React.Fragment>
         <div className={'ohmylms-quiz-editor-wrapper'}>

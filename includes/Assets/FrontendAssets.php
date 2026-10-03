@@ -80,9 +80,17 @@ class FrontendAssets extends Assets {
 		$styles = apply_filters(
 			'ohmylms_enqueue_styles',
 			array(
+				// Keeps quiz answer inputs keyboard- and screen-reader-accessible.
+				'ohmylms-quiz-a11y' => array(
+					'src'     => self::get_asset_url( 'assets/css/quiz-a11y.css' ),
+					'deps'    => array(),
+					'version' => OHMYLMS_VERSION,
+					'media'   => 'all',
+					'has_rtl' => false,
+				),
 				'ohmylms-frontend' => array(
 					'src'     => self::get_asset_url( 'assets/css/style.css' ),
-					'deps'    => '',
+					'deps'    => array( 'ohmylms-quiz-a11y' ),
 					'version' => OHMYLMS_VERSION,
 					'media'   => 'all',
 					'has_rtl' => true,

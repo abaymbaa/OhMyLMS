@@ -280,6 +280,9 @@ export function createQuizGrading(readRuntime) {
                                             null == e || null === (t = e.settings) || void 0 === t
                                               ? void 0
                                               : t.type;
+                                        // Versioned reports carry the server's grading verdict.
+                                        if ('boolean' == typeof (null == e ? void 0 : e.correct))
+                                          return e.correct ? 'correct' : 'incorrect';
                                         if (
                                           'true-false' === a ||
                                           'short-text' === a ||

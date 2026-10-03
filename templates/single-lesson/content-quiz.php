@@ -64,6 +64,11 @@ $course_id = ohmylms_get_course_by_content_id(get_the_ID());
 
 			if(!empty($quiz_attempts)){
 				foreach ($quiz_attempts as $attempt){
+					// Judge each attempt by the marks and passing grade it was taken under.
+					$basis = \OhMyLMS\Assessment\AttemptReport::basis($attempt['quiz_attempt_id'], $quiz);
+					$earned = (float) ($attempt['total_achieved_marks'] ?? 0);
+					// Exams may hold back marks until results are released.
+					$feedback = \OhMyLMS\Assessment\Schema::ready() ? \OhMyLMS\Assessment\AssessmentSettings::feedback_visible($attempt['quiz_attempt_id']) : true;
 					?>
 					<div class="ohmylms-tr">
 						<div class="ohmylms-td-handle" role="button">
@@ -78,23 +83,27 @@ $course_id = ohmylms_get_course_by_content_id(get_the_ID());
 							<?php echo $attempt['total_answers_count'] ?>
 						</div>
 						<div class="ohmylms-td total-marks">
-							<?php echo $quiz->get_total_marks(); ?>
+							<?php echo esc_html(\OhMyLMS\Assessment\Scoring::display($basis['max'])); ?>
 						</div>
 
 						<div class="ohmylms-td earned-marks">
-							<?php echo  !empty($attempt['total_achieved_marks']) ? $attempt['total_achieved_marks'] : 0; ?>
+							<?php echo $feedback ? esc_html(\OhMyLMS\Assessment\Scoring::display($earned)) : '—'; ?>
 						</div>
 
 						<div class="ohmylms-td status">
 							<?php
-							if($attempt['status'] === 'in-review'){
+							if(!$feedback && $attempt['status'] !== 'in-progress'){
+								echo '<span class="pending">' . esc_html__('Submitted — results not released yet', 'ohmylms') . '</span>';
+							}elseif($attempt['status'] === 'in-review'){
 								echo '<span class="pending">Review</span>';
 							}else{
-								if($attempt['total_achieved_marks'] === $quiz->get_total_marks()){
+								if($attempt['status'] === 'in-progress'){
+									echo '<span class="pending">' . esc_html__('In progress', 'ohmylms') . '</span>';
+								}elseif ($earned >= $basis['max'] && $basis['max'] > 0){
 									echo '<span class="passed">Pass</span>';
-								}elseif ($attempt['total_achieved_marks'] >= $quiz->get_passing_grade()) {
+								}elseif ($earned >= $basis['passing']) {
 									echo '<span class="passed">Pass</span>';
-								}elseif ($attempt['total_achieved_marks'] < $quiz->get_passing_grade()) {
+								}elseif ($earned < $basis['passing']) {
 									echo '<span class="failed">Fail</span>';
 								}elseif (empty($attempt['end_date']) && $attempt['end_date']  !== '0000-00-00 00:00:00') {
 									echo '<span class="pending">Pending</span>';
@@ -109,11 +118,11 @@ $course_id = ohmylms_get_course_by_content_id(get_the_ID());
 							</div>
 
 							<div class="ohmylms-td total-marks" data-title="Total Marks">
-								<?php echo $quiz->get_total_marks(); ?>
+								<?php echo esc_html(\OhMyLMS\Assessment\Scoring::display($basis['max'])); ?>
 							</div>
 
 							<div class="ohmylms-td earned-marks" data-title="Earned Marks">
-								<?php echo  $attempt['total_achieved_marks']; ?>
+								<?php echo $feedback ? esc_html(\OhMyLMS\Assessment\Scoring::display($earned)) : '—'; ?>
 							</div>
 						</div>
 					</div>

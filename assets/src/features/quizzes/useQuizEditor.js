@@ -1,8 +1,16 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { prepareQuizPayload, canLeaveQuestion } from './model.mjs';
+import {
+  prepareQuizPayload,
+  canLeaveQuestion,
+  mergeSavedQuiz,
+  mergeSavedQuestions,
+  failedQuestion,
+} from './model.mjs';
 import { loadQuiz, saveQuiz } from './api.mjs';
-import { __ } from '@wordpress/i18n';
+import { publishRevision } from '../question-bank/api.mjs';
+import { appendLinkedQuestions } from '../question-bank/model.mjs';
+import { __, sprintf } from '@wordpress/i18n';
 
 export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
   const state = useSelect(
@@ -25,22 +33,30 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [savedNotice, setSavedNotice] = useState('');
+  // A new generation starts on every load; late responses from older generations are ignored.
+  const generation = useRef(0);
+  const inFlight = useRef(false);
+  const latest = useRef(state);
+  latest.current = state;
   useEffect(() => {
+    const current = ++generation.current;
     let active = true;
+    inFlight.current = false;
+    setSaving(false);
     if (!state.types.length) registerTypes();
     if (state.quizId) {
       setLoading(true);
       setError(null);
       loadQuiz(state.quizId)
         .then((loaded) => {
-          if (!active) return;
+          if (!active || generation.current !== current) return;
           actions.setQuiz(loaded);
           actions.setAllQuestions(loaded.content || []);
           actions.setSelectedQuestionId(loaded?.content?.[0]?.id);
           actions.setQuestion(loaded?.content?.[0]);
         })
         .catch((cause) => {
-          if (active) setError(cause.message || 'Could not load quiz.');
+          if (active) setError(cause.message || __('Could not load quiz.', 'ohmylms'));
         })
         .finally(() => {
           if (active) setLoading(false);
@@ -48,6 +64,7 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
     } else setLoading(false);
     return () => {
       active = false;
+      generation.current++;
     };
   }, [state.quizId, store]);
   useEffect(
@@ -62,31 +79,98 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
     actions.setQuizError(true);
     return false;
   }
+  function selectQuestion(question) {
+    actions.setSelectedQuestionId(question?.id);
+    actions.setQuestion(question);
+  }
+  /** Save the quiz; resolves true only when the server accepted every change. */
   async function save() {
-    if (saving || !validateCurrentQuestion()) return;
+    if (inFlight.current || chapterId || !validateCurrentQuestion()) return false;
+    const current = generation.current;
+    const submittedQuiz = state.quiz;
+    const submittedQuestions = state.questions;
+    const selectedId = state.question?.id;
+    inFlight.current = true;
     setSaving(true);
     setError(null);
     setSavedNotice('');
     try {
-      if (!chapterId) {
-        const saved = await saveQuiz(
-          state.quiz.id,
-          prepareQuizPayload(state.quiz, state.questions),
-        );
-        actions.setQuiz(saved);
-        actions.setAllQuestions(saved.content || []);
-        const selected =
-          saved.content?.find((question) => question.id === state.question?.id) ||
-          saved.content?.[0];
-        actions.setSelectedQuestionId(selected?.id);
-        actions.setQuestion(selected);
-        setSavedNotice(__('Saved Successfully', 'ohmylms'));
-      }
+      const saved = await saveQuiz(
+        submittedQuiz.id,
+        prepareQuizPayload(submittedQuiz, submittedQuestions),
+      );
+      if (current !== generation.current) return false;
+      const now = latest.current;
+      const questions = mergeSavedQuestions(
+        saved.content || [],
+        submittedQuestions,
+        now.questions,
+        saved.saved_ids || [],
+      );
+      actions.setQuiz(mergeSavedQuiz(saved, submittedQuiz, now.quiz));
+      actions.setAllQuestions(questions);
+      const index = submittedQuestions.findIndex((question) => question.id === selectedId);
+      const selectedNow = now.question?.id;
+      const target =
+        questions.find((question) => question.id === selectedNow) ||
+        (index >= 0 && saved.saved_ids?.[index] != null
+          ? questions.find((question) => Number(question.id) === Number(saved.saved_ids[index]))
+          : null) ||
+        questions[0];
+      selectQuestion(target);
+      setSavedNotice(__('Saved Successfully', 'ohmylms'));
+      return true;
     } catch (cause) {
-      setError(cause.message || 'Could not save quiz.');
+      if (current !== generation.current) return false;
+      const failed = failedQuestion(cause, submittedQuestions);
+      if (failed)
+        selectQuestion(latest.current.questions.find((q) => q.id === failed.id) || failed);
+      setError(
+        cause?.code === 'ohmylms_quiz_conflict' || cause?.code === 'ohmylms_question_conflict'
+          ? __(
+              'Someone else changed this quiz. Reload it before saving; your edits were not saved.',
+              'ohmylms',
+            )
+          : cause?.message || __('Could not save quiz.', 'ohmylms'),
+      );
+      return false;
     } finally {
-      setSaving(false);
+      if (current === generation.current) {
+        inFlight.current = false;
+        setSaving(false);
+      }
     }
+  }
+  /** Save, then publish the quiz content as an immutable revision for new attempts. */
+  async function publish() {
+    if (!(await save())) return;
+    try {
+      const { revision } = await publishRevision(latest.current.quiz.id);
+      setSavedNotice(
+        sprintf(__('Published revision %d. New attempts use it.', 'ohmylms'), revision.revision_no),
+      );
+    } catch (cause) {
+      setError(cause?.message || __('Could not publish the quiz.', 'ohmylms'));
+    }
+  }
+  /** Questions placed from the bank are appended without touching unsaved local edits. */
+  function appendQuestions(content, addedIds) {
+    actions.setAllQuestions(appendLinkedQuestions(latest.current.questions, content, addedIds));
+  }
+  function replaceQuestion(oldId, replacement) {
+    const questions = latest.current.questions.map((question) =>
+      question.id === oldId ? replacement : question,
+    );
+    actions.setAllQuestions(questions);
+    selectQuestion(replacement);
+  }
+  function patchQuestion(id, fields) {
+    const questions = latest.current.questions.map((question) =>
+      question.id === id ? { ...question, ...fields } : question,
+    );
+    actions.setAllQuestions(questions);
+    if (latest.current.question?.id === id)
+      actions.setQuestion({ ...latest.current.question, ...fields });
   }
   return {
     ...state,
@@ -96,6 +180,10 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
     saving,
     error,
     save,
+    publish,
+    appendQuestions,
+    replaceQuestion,
+    patchQuestion,
     validateCurrentQuestion,
     updateField: (field, value) => actions.setQuiz({ [field]: value }),
   };

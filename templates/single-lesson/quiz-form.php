@@ -19,11 +19,23 @@ $quiz_start = isset($_GET['quiz']) && $_GET['quiz'] == 'start' ? true : false;
 $quiz 		= ohmylms_get_quiz(get_the_ID());
 $questions = array_values(array_filter($quiz->get_questions(), static function($q){return \OhMyLMS\Extensions\Registry::get('question',$q['settings']['type'] ?? '');}));
 $attempt 	= $quiz->get_quiz_attempt(get_current_user_id());
-$timer = $quiz->get_timer();
-if ($timer > 0 && !empty($attempt['start_date'])) $timer = max(0, ($timer * 60 - (current_time('timestamp') - strtotime($attempt['start_date']))) / 60);
-$is_timer 	= $quiz->get_timer() > 0 ? true : false;
-
 $settings = $quiz->get_settings();
+// Versioned attempts render the frozen items issued at start, in their stored order.
+$attempt_context = !empty($attempt['id']) && \OhMyLMS\Assessment\Schema::ready() ? \OhMyLMS\Assessment\AttemptItems::context($attempt['id']) : null;
+if ($attempt_context) {
+    $questions = \OhMyLMS\Assessment\AttemptItems::delivery($attempt['id']);
+    $revision = \OhMyLMS\Assessment\RevisionPublisher::revision($attempt_context['revision_id']);
+    $settings = array_merge(is_array($settings) ? $settings : [], $revision ? $revision['settings'] : []);
+    $remaining_seconds = \OhMyLMS\Assessment\Deadlines::remaining($attempt_context);
+    \OhMyLMS\Assessment\Delivery::require_script();
+    $is_timer = $remaining_seconds !== null;
+    $timer = $is_timer ? $remaining_seconds / 60 : 0;
+} else {
+    $timer = $quiz->get_timer();
+    if ($timer > 0 && !empty($attempt['start_date'])) $timer = max(0, ($timer * 60 - (current_time('timestamp') - strtotime($attempt['start_date']))) / 60);
+    $is_timer 	= $quiz->get_timer() > 0 ? true : false;
+}
+
 $quiz_layout = is_array($settings) && isset($settings['layout']) ? $settings['layout'] : 'one_question_per_page';
 $layout_class = '';
 $questions_per_group = '';
@@ -37,19 +49,40 @@ foreach ($questions as $index => $question){
     }
 }
 
+// Frozen exam papers may carry page breaks (sections that start a new page). With all
+// questions on one page they split the paper into pages; with grouped pages they also
+// start a new group. One question per page already breaks everywhere.
+$page_starts = [];
+$has_page_breaks = false;
+foreach ($questions as $question) { if (!empty($question['page']) && $question['page'] > 1) { $has_page_breaks = true; } }
+if ($has_page_breaks && 'all_questions_in_one_page' === $quiz_layout) {
+    $quiz_layout = 'number_of_questions_per_page';
+    $settings['question_in_one_page'] = PHP_INT_MAX;
+}
+
 if('all_questions_in_one_page' === $quiz_layout){
     $layout_class = 'ohmylms-all-questions';
 
 }else if ('number_of_questions_per_page' === $quiz_layout){
     $layout_class = 'ohmylms-grouped-questions';
     $questions_per_group = max(1, (int)($settings['question_in_one_page'] ?? 1)); // Get the number of questions per group
-    $totalGroups = ceil($supported_question_count / $questions_per_group); // Calculate the total number of groups
+    $ordinal = 0; $group_start = 0; $previous_page = null;
+    foreach ($questions as $question) {
+        if (!in_array($question['settings']['type'], apply_filters('ohmylms_supported_question_types', array_keys(\OhMyLMS\Extensions\Registry::all('question'))), true)) { continue; }
+        $page = (int) ($question['page'] ?? 0);
+        if ($ordinal === 0 || $ordinal - $group_start >= $questions_per_group || ($previous_page !== null && $page !== $previous_page)) {
+            $page_starts[$ordinal] = count($page_starts) + 1;
+            $group_start = $ordinal;
+        }
+        $previous_page = $page; $ordinal++;
+    }
+    $totalGroups = count($page_starts); // Calculate the total number of groups
 
 }else {
     $layout_class = 'ohmylms-one-question-per-page';
 }
 
-if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
+if( ! $attempt_context && isset( $settings['randomize_questions'] ) && $settings['randomize_questions'] && is_array( $questions ) ) {
     shuffle($questions);
 }
 
@@ -59,7 +92,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 <input type="hidden" class="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
 <input type="hidden" class="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
 
-<section class="ohmylms-quiz <?php echo $layout_class; ?>">
+<section class="ohmylms-quiz <?php echo $layout_class; ?>"<?php if ($attempt_context) { ?> data-attempt-engine="versioned" data-autosave="<?php echo esc_url(rest_url('ohmylms/v1/attempts/' . (int) $attempt['id'] . '/responses')); ?>" data-deadline="<?php echo esc_attr($attempt_context['deadline_at'] ? gmdate('c', strtotime($attempt_context['deadline_at'] . ' UTC')) : ''); ?>"<?php } ?>>
     <div class="ohmylms-quiz-header">
         <div class="ohmylms-container">
             <div class="quiz-header-wrapper">
@@ -177,7 +210,9 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 					<?php
 					$count = 0;
 					foreach ($questions as $index => $question){
-                        $get_question = ohmylms_get_question($question['id']);
+                        $get_question = empty($question['frozen']) ? ohmylms_get_question($question['id']) : null;
+                        $question_image = $get_question ? $get_question->get_image_url() : ($question['image_src'] ?? '');
+                        $question_video = $get_question ? wp_get_attachment_url( $get_question->get_video_id() ) : ($question['video_src'] ?? '');
                         $supported_question_types = array_keys(\OhMyLMS\Extensions\Registry::all('question'));
                         $supported_question_types = apply_filters('ohmylms_supported_question_types', $supported_question_types);
 
@@ -188,17 +223,20 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                         $count++;
 
                         // Check if layout grouped question and we're at the start of a new group
-                        if ('number_of_questions_per_page' === $quiz_layout && $index % $questions_per_group === 0) {
+                        if ('number_of_questions_per_page' === $quiz_layout && isset($page_starts[$count - 1])) {
                             // Close the previous group div if it's not the first group
-                            if ($index > 0) {
+                            if ($count > 1) {
                                 echo "</div>";
                             }
                             // Start a new group div
-                            $groupNumber = floor($index / $questions_per_group) + 1;
+                            $groupNumber = $page_starts[$count - 1];
                             echo "<div class='ohmylms-question-group question-group-{$groupNumber} " . ($groupNumber == 1 ? 'active' : '') . "'>";
                         }
 						?>
 
+                        <?php if (!empty($question['section']) && ($question['section'] !== ($previous_section ?? null))) { $previous_section = $question['section']; ?>
+                            <h2 class="ohmylms-quiz-section-title"><?php echo esc_html($question['section']); ?></h2>
+                        <?php } ?>
                         <div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ('one_question_per_page' === $quiz_layout && $count == 1) ? 'active' : ''; ?>">
 							<div class="quiz-box-header">
 								<span class="question-number">
@@ -217,23 +255,23 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
                                     <input type="hidden" class="is-required" value= "<?php echo !empty($question['settings']['required']) ? $question['settings']['required'] : '' ?>" question-type="<?php echo $question['settings']['type']; ?>" />
 								</p>
 
-								<?php if(!empty($get_question->get_image_url())){?>
-									<img src="<?php echo $get_question->get_image_url() ?>" alt="question image" class="question-image">
+								<?php if(!empty($question_image)){?>
+									<img src="<?php echo esc_url($question_image) ?>" alt="question image" class="question-image">
 								<?php } ?>
 
 								<?php
-								$video = wp_get_attachment_url( $get_question->get_video_id() );
+								$video = $question_video;
 								if($video){
                                     ?>
                                     <video class="question-video" controls controlsList="nodownload nopictureinpicture">
-                                        <source src="<?php echo $video; ?>" type="video/mp4">
+                                        <source src="<?php echo esc_url($video); ?>" type="video/mp4">
                                     </video>
 								<?php } ?>
  							</div>
 
 							<?php
 
-                            if( isset( $question['settings']['randomize']) && $question['settings']['randomize'] && is_array( $question['questions'] ) ){
+                            if( empty( $question['frozen'] ) && isset( $question['settings']['randomize']) && $question['settings']['randomize'] && is_array( $question['questions'] ) ){
                                 shuffle($question['questions']);
                             }
 
@@ -246,7 +284,7 @@ if( isset( $settings['randomize_questions'] ) && $settings['randomize_questions'
 
                         <?php
                         // Checked if layout grouped question and close the last group div after the last question
-                        if ('number_of_questions_per_page' === $quiz_layout &&$index === $supported_question_count - 1) {
+                        if ('number_of_questions_per_page' === $quiz_layout && $count === $supported_question_count) {
                             echo "</div>";
                         }
                     }

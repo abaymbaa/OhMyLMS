@@ -11,6 +11,11 @@ use WP_REST_Response;
 use WP_REST_Server;
 use WP_Error;
 use OhMyLMS\DataException;
+use OhMyLMS\QuestionBank\AccessPolicy;
+use OhMyLMS\QuestionBank\DraftWriter;
+use OhMyLMS\QuestionBank\Usage;
+use OhMyLMS\Quiz\Review;
+use OhMyLMS\Utility\Transaction;
 /**
  * Controller for handling quiz REST API endpoints.
  *
@@ -30,7 +35,71 @@ class QuizController extends RestController {
 	protected $base = 'quiz';
 
 	public function check_quiz_permission() {
-		return current_user_can( 'edit_posts' );
+		return AccessPolicy::check( AccessPolicy::can_author() );
+	}
+
+	/**
+	 * Object-level permission for single-quiz routes: GET/PUT edit, DELETE delete.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return true|WP_Error
+	 */
+	public function check_item_permission( $request ) {
+		$id = (int) $request['id'];
+		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		return AccessPolicy::check( 'DELETE' === $request->get_method() ? AccessPolicy::can_delete_quiz( $id ) : AccessPolicy::can_edit_quiz( $id ) );
+	}
+
+	/**
+	 * Reports and grading are limited to people who may edit that quiz.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return true|WP_Error
+	 */
+	public function check_grading_permission( $request ) {
+		$id = (int) $request['id'];
+		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		if ( ! empty( $request['attempt_id'] ) && ! $this->attempt_belongs_to_quiz( (int) $request['attempt_id'], $id ) ) {
+			return new WP_Error( 'ohmylms_rest_invalid_attempt_id', __( 'Attempt not found for this quiz.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		return AccessPolicy::check( AccessPolicy::can_grade_quiz( $id ), __( 'You cannot view or grade this quiz.', 'ohmylms' ) );
+	}
+
+	/**
+	 * Removing a question from a quiz edits the quiz; it never deletes the question.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return true|WP_Error
+	 */
+	public function check_item_permission_for_edit( $request ) {
+		$id = (int) $request['id'];
+		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT ) {
+			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		return AccessPolicy::check( AccessPolicy::can_edit_quiz( $id ) );
+	}
+
+	/**
+	 * Remove one question from this quiz. The question stays in the bank.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function remove_question( $request ) {
+		$result = Usage::remove_from_quiz( (int) $request['id'], (int) $request['question_id'] );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		return rest_ensure_response( $result + array( 'status' => 'success' ) );
+	}
+
+	private function attempt_belongs_to_quiz( $attempt_id, $quiz_id ) {
+		global $wpdb;
+		return (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d AND quiz_id=%d", $attempt_id, $quiz_id ) );
 	}
 
 	/**
@@ -101,18 +170,18 @@ class QuizController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 					'args'                => $this->get_collection_params(),
 				),
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 					'args'                => $this->get_collection_params(),
 				),
 			)
@@ -131,12 +200,12 @@ class QuizController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_questions' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_questions' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_item_permission' ),
 				),
 			)
 		);
@@ -153,7 +222,7 @@ class QuizController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_report' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_grading_permission' ),
 				),
 			)
 		);
@@ -170,12 +239,12 @@ class QuizController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_attempt_report' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_grading_permission' ),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'review_attempt_report' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_grading_permission' ),
 				),
 			)
 		);
@@ -193,7 +262,19 @@ class QuizController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'update_attempt_report_manually' ),
-					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'permission_callback' => array( $this, 'check_grading_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/questions/(?P<question_id>[\d]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'remove_question' ),
+					'permission_callback' => array( $this, 'check_item_permission_for_edit' ),
 				),
 			)
 		);
@@ -254,7 +335,7 @@ class QuizController extends RestController {
 		$posts        = array();
 
 		foreach ( $query_result as $post ) {
-			if ( ! current_user_can( 'read_post', $post->ID ) ) {
+			if ( ! AccessPolicy::can_edit_quiz( $post->ID ) ) {
 				continue;
 			}
 			$data    = $this->prepare_item_for_response( $post, $request );
@@ -394,7 +475,7 @@ class QuizController extends RestController {
 		$posts        = array();
 
 		foreach ( $query_result as $post ) {
-			if ( ! current_user_can( 'read_post', $post->ID ) ) {
+			if ( ! AccessPolicy::can_edit_quiz( $post->ID ) ) {
 				continue;
 			}
 			$data    = $this->prepare_item_for_response( $post, $request );
@@ -538,6 +619,11 @@ class QuizController extends RestController {
 				if ( get_post_type( $quiz_id ) !== 'ohmylms-quiz' ) {
 					return new \WP_REST_Response( array( 'message' => 'Invalid quiz ID.' ), 400 );
 				}
+				if ( ! AccessPolicy::can_delete_quiz( $quiz_id ) ) {
+					return AccessPolicy::denied( __( 'You are not allowed to delete one of these quizzes.', 'ohmylms' ) );
+				}
+			}
+			foreach ( $quiz_ids as $quiz_id ) {
 				wp_trash_post( $quiz_id );
 				do_action( 'ohmylms_rest_delete_quiz', $quiz_id );
 			}
@@ -561,37 +647,68 @@ class QuizController extends RestController {
 		if ( empty( $post_id ) || get_post_type( $post_id ) !== OHMYLMS_QUIZ_CPT ) {
 			return new WP_Error( 'ohmylms_rest_quiz_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
-
-		try {
-			$quiz_id = $this->save_quiz( $request );
-			$post    = get_post( $quiz_id );
-			$this->update_additional_fields_for_object( $post, $request );
-			$this->update_post_meta_fields( $post, $request );
-			$this->save_question( $post, $request );
-			$request->set_param( 'context', 'edit' );
-			$data                  = $this->prepare_item_for_response( $post, $request );
-			$question              = ohmylms_get_quiz( $post->ID )->get_questions();
-			$data_array            = rest_get_server()->response_to_data( $data, false );
-			$data_array['content'] = $question;
-			$response              = rest_ensure_response( $data_array );
-			return rest_ensure_response( $response );
-
-		} catch ( DataException $e ) {
-			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
-		}
-	}
-
-	public function save_question( $post, $request ) {
-		$questions = $request['content'] ?? array();
-
-		foreach ( $questions as $question_data ) {
-			$get = new QuestionController();
-			if ( isset( $question_data['id'] ) ) {
-				$get->update_item( $question_data );
-			} else {
-				$get->create_item( $question_data );
+		if ( ! empty( $request['base_modified'] ) ) {
+			$current = get_post_field( 'post_modified_gmt', $post_id );
+			if ( $current && strtotime( $current . ' UTC' ) > strtotime( (string) $request['base_modified'] . ' UTC' ) ) {
+				return new WP_Error( 'ohmylms_quiz_conflict', __( 'This quiz was changed by someone else. Reload it before saving.', 'ohmylms' ), array( 'status' => 409, 'modified' => $current ) );
 			}
 		}
+		$content = $request['content'] ?? null;
+		if ( null !== $content && ! is_array( $content ) ) {
+			return new WP_Error( 'ohmylms_quiz_content_invalid', __( 'Quiz content must be a list of questions.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+		// Validate and authorize every question before anything is written.
+		if ( $content ) {
+			$plans = DraftWriter::prepare_many( $content, $post_id );
+			if ( is_wp_error( $plans ) ) {
+				return $plans;
+			}
+		}
+
+		$saved_ids = array();
+		try {
+			$post = Transaction::run(
+				function () use ( $request, $content, $post_id, &$saved_ids ) {
+					$quiz_id = $this->save_quiz( $request );
+					$post    = get_post( $quiz_id );
+					$this->update_additional_fields_for_object( $post, $request );
+					$this->update_post_meta_fields( $post, $request );
+					if ( $content ) {
+						$saved = DraftWriter::save_many( $content, $post_id );
+						if ( is_wp_error( $saved ) ) {
+							throw new DataException( $saved->get_error_code(), $saved->get_error_message(), (int) ( $saved->get_error_data()['status'] ?? 400 ), (array) $saved->get_error_data() );
+						}
+						$saved_ids = array_column( $saved, 'id' );
+					}
+					return $post;
+				}
+			);
+		} catch ( DataException $e ) {
+			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		} catch ( \Throwable $e ) {
+			return new WP_Error( 'ohmylms_quiz_storage', __( 'The quiz could not be saved. Nothing was changed.', 'ohmylms' ), array( 'status' => 500 ) );
+		}
+
+		$request->set_param( 'context', 'edit' );
+		$data                  = $this->prepare_item_for_response( $post, $request );
+		$data_array            = rest_get_server()->response_to_data( $data, false );
+		$data_array['content'] = ohmylms_get_quiz( $post->ID )->get_questions();
+		// Server IDs for each submitted question, in submitted order, so editors can map temporary IDs.
+		$data_array['saved_ids'] = $saved_ids;
+		return rest_ensure_response( $data_array );
+	}
+
+	/**
+	 * Save nested quiz questions through the authorized batch writer.
+	 *
+	 * @return array|WP_Error Saved IDs, or an error listing every failing question.
+	 */
+	public function save_question( $post, $request ) {
+		$questions = $request['content'] ?? array();
+		if ( ! $questions ) {
+			return array();
+		}
+		return DraftWriter::save_many( (array) $questions, $post->ID );
 	}
 
 	/**
@@ -751,88 +868,44 @@ class QuizController extends RestController {
 	public function review_attempt_report( $request ) {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['attempt_id'];
+		$data       = $request->get_params();
 
-		$data = $request->get_params( 'data' );
-
-		if ( empty( $id ) ) {
-			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
-		}
 		$quiz = ohmylms_get_quiz( $id );
-
 		if ( empty( $quiz ) ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
-		if ( isset( $data['report']['questions'] ) ) {
-			$questions = $data['report']['questions'];
-			foreach ( $questions as $question ) {
-				$quiz->review_question( $question['id'], $attempt_id, $question );
+		// Only marks that actually change, or that are awaiting manual review, are submitted.
+		global $wpdb;
+		$stored = $wpdb->get_results( $wpdb->prepare( "SELECT question_id, achive_mark, is_manually_reviewed FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id=%d", $attempt_id ), OBJECT_K );
+		$marks  = array();
+		foreach ( (array) ( $data['report']['questions'] ?? array() ) as $question ) {
+			if ( ! is_array( $question ) || ! isset( $question['id'], $question['achive_mark'] ) || ! isset( $stored[ $question['id'] ] ) ) {
+				continue;
+			}
+			$row     = $stored[ $question['id'] ];
+			$pending = 'in-review' === ( $question['status'] ?? '' ) && empty( $row->is_manually_reviewed );
+			if ( $pending || (float) $row->achive_mark !== (float) $question['achive_mark'] ) {
+				$marks[ (int) $question['id'] ] = $question['achive_mark'];
+			}
+			// Structured questions may be marked part by part.
+			if ( isset( $question['part_marks'] ) && is_array( $question['part_marks'] ) && $question['part_marks'] ) {
+				$marks[ (int) $question['id'] ] = array_map( 'floatval', $question['part_marks'] );
 			}
 		}
 
-		$attempt = ohmylms_get_attempt( $attempt_id );
-		$score = $attempt->get_total_score();
-		
-		global $wpdb;
+		$report = Review::save( $id, $attempt_id, $marks );
+		if ( is_wp_error( $report ) ) {
+			return $report;
+		}
 
-		$wpdb->update(
-			"{$wpdb->prefix}ohmylms_quiz_attempts",
+		return rest_ensure_response(
 			array(
-				'status' => 'completed',
-				'total'	 => $score,
-			),
-			array(
-				'id' => $attempt_id,
-			),
-			array(
-				'%s',
-			),
-			array(
-				'%d',
+				'status'  => 'success',
+				'message' => __( 'Quiz has been reviewed successfully.', 'ohmylms' ),
+				'data'    => $report,
 			)
 		);
-		$student_id   = $wpdb->get_var( $wpdb->prepare( "SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d", $attempt_id ) );
-		$course_id    = ohmylms_get_course_by_content_id( $quiz->get_id() );
-		$get_attempts = $quiz->get_attempt_report( $attempt_id );
-		do_action('ohmylms_attempt_graded', ['quiz_id'=>$id, 'attempt_id'=>$attempt_id, 'course_id'=>(int)$course_id, 'student_id'=>(int)$student_id, 'total'=>(float)$score, 'status'=>'completed', 'reason'=>'manual-review']);
-		$previous_completion_rate = 0;
-		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
-			$student = new Student( $student_id );
-			$previous_completion_rate = $student->get_over_all_completion_rate( $course_id );
-			$student->complete_lesson( $quiz->get_id(), $course_id );
-		}
-
-		do_action(
-			'ohmylms_rest_review_quiz_attempt',
-			$quiz->get_id(),
-			$course_id,
-			$student_id,
-			$score
-		);
-
-		
-		$student = new \OhMyLMS\Data\Student( $student_id );
-		$maybe_course_completion = $student && $student->is_course_completed( $course_id ) ? 'yes' : 'no';
-
-		if( $maybe_course_completion === 'yes' ){
-			do_action( 'ohmylms_student_completed_course_after_reviewing_quiz', $student_id, $course_id );
-			$completion_rate = $student->get_over_all_completion_rate( $course_id );
-			if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 ) {
-				global $wpdb;
-				$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-				$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
-				if ( isset( $enroll_data['order_id'] ) ) {
-					do_action( 'ohmylms_course_completed', $student_id, $course_id, $enroll_data['order_id'] );
-				}
-			}
-		}
-
-		$data = array(
-			'status'  => 'success',
-			'message' => __( 'Quiz has been reviewed successfully.', 'ohmylms' ),
-			'data'    => $quiz->get_attempt_report( $attempt_id ),
-		);
-		return rest_ensure_response( $data );
 	}
 
 
@@ -845,32 +918,26 @@ class QuizController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function update_attempt_report_manually( $request ) {
-		$id                     = (int) $request['id'];
-		$quiz_attempt_answer_id = (int) $request['quiz_attempt_answer_id'];
-		$attempt_id             = (int) $request['attempt_id'];
-		$post                   = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+		$id          = (int) $request['id'];
+		$attempt_id  = (int) $request['attempt_id'];
+		$question_id = (int) $request['quiz_attempt_answer_id'];
+		$quiz        = ohmylms_get_quiz( $id );
+		if ( empty( $quiz ) ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz = ohmylms_get_quiz( $post->ID );
-		$quiz->update_attempt_report_manually( $quiz_attempt_answer_id, $request );
-		$report       = $quiz->get_attempt_report( $attempt_id );
-		$data         = array(
-			'report'               => $report,
-			'question_total_marks' => $quiz->get_total_marks(),
-			'total_question'       => $quiz->get_total_question(),
-			'passing_mark'         => $quiz->get_passing_grade(),
-		);
-		$student_id   = get_current_user_id();
-		$course_id    = ohmylms_get_course_by_content_id( $quiz->get_id() );
-		$get_attempts = $quiz->get_all_quiz_attempts_by_attempt_id( $student_id, $course_id, $attempt_id );
-		if ( $get_attempts['total_achieved_marks'] >= $quiz->get_passing_grade() ) {
-			$student = new Student( $student_id );
-			$student->complete_lesson( $quiz->get_id(), $course_id );
+		// Historical route name: the last segment is the question ID within the attempt.
+		$report = Review::save( $id, $attempt_id, array( $question_id => $request['marks'] ) );
+		if ( is_wp_error( $report ) ) {
+			return $report;
 		}
-
-		$response = rest_ensure_response( $data );
-
+		$response = rest_ensure_response(
+			array(
+				'report'               => $report,
+				'question_total_marks' => $quiz->get_total_marks(),
+				'total_question'       => $quiz->get_total_question(),
+				'passing_mark'         => $quiz->get_passing_grade(),
+			)
+		);
 		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
 		return $response;
 	}
@@ -983,6 +1050,7 @@ class QuizController extends RestController {
 			'courses'               => $courses,
 			'number_of_submissions' => $number_of_submissions,
 			'date_created'          => $quiz->get_date_created(),
+			'modified'              => get_post_field( 'post_modified_gmt', $quiz->get_id() ),
 		);
 		return $data;
 	}
@@ -1235,29 +1303,28 @@ class QuizController extends RestController {
 		if ( ! ( $quiz instanceof Quiz ) ) {
 			return new WP_Error( 'ohmylms_rest_chapter_empty_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
-		$all_data       = $request->get_json_params();
-		$quiz_data      = $all_data['quiz'];
-		$questions_data = $all_data['questions'];
-		$this->save_quiz( $quiz_data );
-		foreach ( $questions_data as $question ) {
-			if ( isset( $question['id'] ) ) {
-				$quiz_obj = ohmylms_get_question( $question['id'] );
-			} else {
-				$quiz_obj = new Question();
-			}
-			// $quiz_obj = ohmylms_get_question( $question['id'] );
-			$quiz_obj->set_id( $question['id'] );
-			$quiz_obj->set_name( $question['name'] );
-			$quiz_obj->set_description( $question['description'] );
-			$quiz_obj->set_settings( $question['settings'] );
-			if ( isset( $question['thumbnail_id'] ) ) {
-				$quiz_obj->set_thumbnail_id( $question['thumbnail_id'] );
-			}
-			if ( isset( $question['video_id'] ) ) {
-				$quiz_obj->set_video_id( $question['video_id'] );
-			}
-			$quiz_obj->save_quiz_answer( $question, $question['id'] );
-			$quiz_obj->save();
+		$all_data       = (array) $request->get_json_params();
+		$questions_data = isset( $all_data['questions'] ) && is_array( $all_data['questions'] ) ? $all_data['questions'] : array();
+		$plans          = DraftWriter::prepare_many( $questions_data, $quiz_id );
+		if ( is_wp_error( $plans ) ) {
+			return $plans;
+		}
+		try {
+			Transaction::run(
+				function () use ( $all_data, $questions_data, $quiz_id ) {
+					if ( isset( $all_data['quiz'] ) && is_array( $all_data['quiz'] ) ) {
+						$this->save_quiz( array( 'id' => $quiz_id ) + $all_data['quiz'] );
+					}
+					$saved = DraftWriter::save_many( $questions_data, $quiz_id );
+					if ( is_wp_error( $saved ) ) {
+						throw new DataException( $saved->get_error_code(), $saved->get_error_message(), (int) ( $saved->get_error_data()['status'] ?? 400 ), (array) $saved->get_error_data() );
+					}
+				}
+			);
+		} catch ( DataException $e ) {
+			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		} catch ( \Throwable $e ) {
+			return new WP_Error( 'ohmylms_quiz_storage', __( 'The quiz could not be saved. Nothing was changed.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
 		$response = array(
 			'status'  => 'success',

@@ -96,14 +96,16 @@ try {
     $result=\OhMyLMS\Quiz\Submission::submit($content_ids['quiz'],$attempt,$student_id,[999999=>['42']]);
     verify_extension(is_wp_error($result)&&$result->get_error_code()==='quiz_question','Foreign quiz question accepted');
     $result=\OhMyLMS\Quiz\Submission::submit($content_ids['quiz'],$attempt,$student_id,[$content_ids['question']=>['42']]);
-    verify_extension(!is_wp_error($result)&&$result['total']===1&&$result['status']==='completed','Custom answer submission failed');
+    verify_extension(!is_wp_error($result)&&(float)$result['total']===1.0&&$result['status']==='completed','Custom answer submission failed');
     verify_extension(is_wp_error(\OhMyLMS\Quiz\Submission::submit($content_ids['quiz'],$attempt,$student_id,[$content_ids['question']=>['42']])),'Duplicate submission accepted');
     verify_extension((int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_progress WHERE enrollment_id=%d AND content_id=%d",$enrollment_id,$content_ids['quiz']))===1,'Quiz completion did not update progress');
     $timeout_attempt=\OhMyLMS\Quiz\Submission::start($content_ids['quiz'],$student_id);
     verify_extension(!is_wp_error($timeout_attempt),'Second attempt failed');
     $wpdb->update($wpdb->prefix.'ohmylms_quiz_attempts',['start_date'=>date('Y-m-d H:i:s',current_time('timestamp')-120)],['id'=>$timeout_attempt]);
+    // Versioned attempts keep their UTC deadline in the attempt context.
+    $wpdb->update($wpdb->prefix.'ohmylms_attempt_context',['started_at'=>gmdate('Y-m-d H:i:s',time()-120),'deadline_at'=>gmdate('Y-m-d H:i:s',time()-60)],['attempt_id'=>$timeout_attempt]);
     $result=\OhMyLMS\Quiz\Submission::submit($content_ids['quiz'],$timeout_attempt,$student_id,[],'timeout');
-    verify_extension(!is_wp_error($result)&&$result['total']===0,'Expired unanswered attempt failed');
+    verify_extension(!is_wp_error($result)&&(float)$result['total']===0.0,'Expired unanswered attempt failed');
     wp_set_current_user($admin->ID);
     $cart=new \CodeRex\Ecommerce\Cart();
     verify_extension((bool)$cart->add_to_cart($ids[0]),'Membership cart fixture failed');

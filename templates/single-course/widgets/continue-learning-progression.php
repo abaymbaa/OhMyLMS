@@ -26,7 +26,7 @@ if( !$maybe_enrolled ){
 }
 $students = $course->get_students();
 
-$page_features = get_option( 'ohmylms_single_course_page_features' );
+$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 ?>
 

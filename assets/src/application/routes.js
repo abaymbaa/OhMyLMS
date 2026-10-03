@@ -905,16 +905,6 @@ const ioe = [{
     path: "/accounthub",
     element: s9
   }, {
-    path: "/students",
-    element: function () {
-      // Old Students URL: keep bookmarks working by forwarding to Account Hub.
-      React.useEffect(function () {
-        var query = window.location.hash.split("?")[1];
-        window.location.replace("#/accounthub" + (query ? "?" + query : ""));
-      }, []);
-      return null;
-    }
-  }, {
     path: "/communities",
     element: q9
   }, {

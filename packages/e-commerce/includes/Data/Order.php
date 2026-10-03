@@ -347,7 +347,9 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_currency() {
-		return get_ohmylms_currency();
+		// The order keeps the currency it was priced in; the store setting is only a fallback.
+		$currency = $this->get_prop( 'currency' );
+		return $currency ? $currency : get_ohmylms_currency();
 	}
 
 	/**
@@ -986,7 +988,7 @@ class Order extends Data {
 	 */
 	public function set_status( $new_status, $note = '', $manual_update = false ) {
 		$old_status = $this->get_status();
-		$new_status = 'ohmylms-' === substr( $new_status, 0, 6 ) ? substr( $new_status, 6 ) : $new_status;
+		$new_status = 0 === strpos( $new_status, 'ohmylms-' ) ? substr( $new_status, strlen( 'ohmylms-' ) ) : $new_status;
 		$this->set_prop( 'status', $new_status );
 		$this->status_transition = array(
 			'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,

@@ -1,6 +1,10 @@
 import { createElement, Fragment, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useQuizEditor } from './useQuizEditor';
+import { loadQuiz } from './api.mjs';
+import { BankPicker } from '../question-bank/BankPicker';
+import { QuestionVersionBar } from '../question-bank/QuestionVersionBar';
+import { PracticeFeedbackFields } from '../question-bank/MathEditors';
 
 /** Named React editor; the bridge retains existing controls, routes and store. */
 export function createQuizEditor(readRuntime) {
@@ -31,6 +35,7 @@ export function createQuizEditor(readRuntime) {
     const navigate = runtime.f.Zp();
     const { contextHolder, openNotificationWithIcon } = runtime.z.A();
     const [hovered, setHovered] = useState(false);
+    const [pickerOpen, setPickerOpen] = useState(false);
     const editor = useQuizEditor({
       store: runtime.T.default,
       chapterId,
@@ -44,6 +49,14 @@ export function createQuizEditor(readRuntime) {
     function openSettings() {
       if (editor.validateCurrentQuestion()) setIsSettingsOpen(true);
     }
+    async function handleDuplicated(copy, originalId) {
+      const fresh = await loadQuiz(editor.quiz.id);
+      const entry = (fresh.content || []).find(
+        (question) => Number(question.id) === Number(copy.id),
+      );
+      if (entry) editor.replaceQuestion(originalId, entry);
+    }
+    const readonly = !!editor.question?.readonly;
     return (
       <Fragment>
         {!chapterId && contextHolder}
@@ -70,8 +83,18 @@ export function createQuizEditor(readRuntime) {
                 >
                   {__('Preview', 'ohmylms')}
                 </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setPickerOpen(true)}
+                  disabled={!editor.quiz?.id}
+                >
+                  {__('Add from bank', 'ohmylms')}
+                </Button>
                 <Button variant="primary" onClick={editor.save} isBusy={editor.saving}>
                   {__('Save', 'ohmylms')}
+                </Button>
+                <Button variant="secondary" onClick={editor.publish} disabled={editor.saving}>
+                  {__('Publish', 'ohmylms')}
                 </Button>
                 <Button
                   variant="tertiary"
@@ -117,7 +140,28 @@ export function createQuizEditor(readRuntime) {
                       <QuestionList />
                     </Controls.FlexItemWP>
                     <Controls.FlexItemWP flex={2}>
-                      <QuestionCanvas chapterId={chapterId} setHovered={setHovered} />
+                      {!chapterId && (
+                        <QuestionVersionBar
+                          question={editor.question}
+                          quizId={editor.quiz?.id}
+                          onDuplicated={handleDuplicated}
+                          onPinned={(versionId) =>
+                            editor.patchQuestion(editor.question.id, {
+                              pinned_version_id: versionId,
+                            })
+                          }
+                        />
+                      )}
+                      {/* Shared questions are placed by reference; their content is read-only here. */}
+                      <fieldset disabled={readonly} className="ohmylms-question-fieldset">
+                        <QuestionCanvas chapterId={chapterId} setHovered={setHovered} />
+                        {!chapterId && (
+                          <PracticeFeedbackFields
+                            question={editor.question}
+                            onChange={(fields) => editor.patchQuestion(editor.question.id, fields)}
+                          />
+                        )}
+                      </fieldset>
                     </Controls.FlexItemWP>
                     <Controls.FlexItemWP
                       flex={1}
@@ -131,6 +175,14 @@ export function createQuizEditor(readRuntime) {
               </Controls.CardWP>
             </Controls.SpacerWP>
           </Controls.CardWP>
+        )}
+        {pickerOpen && (
+          <BankPicker
+            quizId={editor.quiz.id}
+            existingIds={editor.questions.map((question) => question.id)}
+            onAdded={editor.appendQuestions}
+            onClose={() => setPickerOpen(false)}
+          />
         )}
       </Fragment>
     );

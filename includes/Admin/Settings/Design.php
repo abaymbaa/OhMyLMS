@@ -171,6 +171,37 @@ class Design extends Settings {
 				'default' => '#35BD4C',
 				'value'   => '#35BD4C',
 			),
+			// Fonts and admin colors (see OhMyLMS\Design\Tokens).
+			array(
+				'id'      => 'ohmylms_font_family',
+				'type'    => 'text',
+				'default' => 'inherit',
+				'value'   => 'inherit',
+			),
+			array(
+				'id'      => 'ohmylms_admin_primary_color',
+				'type'    => 'color',
+				'default' => '#6E42D3',
+				'value'   => '#6E42D3',
+			),
+			array(
+				'id'      => 'ohmylms_admin_heading_color',
+				'type'    => 'color',
+				'default' => '#000D25',
+				'value'   => '#000D25',
+			),
+			array(
+				'id'      => 'ohmylms_admin_muted_color',
+				'type'    => 'color',
+				'default' => '#7A8B9A',
+				'value'   => '#7A8B9A',
+			),
+			array(
+				'id'      => 'ohmylms_admin_font_family',
+				'type'    => 'text',
+				'default' => 'system',
+				'value'   => 'system',
+			),
 			// Checkout page layout type
 			array(
 				'id'      => 'ohmylms_checkout_page_layout_type',

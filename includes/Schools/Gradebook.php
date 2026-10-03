@@ -100,11 +100,22 @@ final class Gradebook {
         foreach ($rows as $item) {
             $item['id'] = (int) $item['id'];
             if (isset($items[$item['id']])) { continue; }
-            $item['max'] = $item['type'] === OHMYLMS_QUIZ_CPT ? (float) ohmylms_get_quiz($item['id'])->get_total_marks() : (float) get_post_meta($item['id'], '_total_points', true);
+            $item['max'] = $item['type'] === OHMYLMS_QUIZ_CPT ? self::quiz_max($item['id']) : (float) get_post_meta($item['id'], '_total_points', true);
             $item['type'] = $item['type'] === OHMYLMS_QUIZ_CPT ? 'quiz' : 'assignment';
             $items[$item['id']] = $item;
         }
         return array_values($items);
+    }
+    /**
+     * Maximum for a quiz nobody has attempted yet: the published revision's total when the
+     * versioned engine delivers it (what a new attempt is marked out of), else the live total.
+     */
+    private static function quiz_max($quiz_id) {
+        if (class_exists(\OhMyLMS\Assessment\Engine::class) && \OhMyLMS\Assessment\Schema::ready() && \OhMyLMS\Assessment\Engine::versioned()) {
+            $revision = \OhMyLMS\Assessment\RevisionPublisher::latest($quiz_id);
+            if ($revision) { return (float) $revision['total_marks']; }
+        }
+        return (float) ohmylms_get_quiz($quiz_id)->get_total_marks();
     }
     public static function read($course) {
         global $wpdb;
