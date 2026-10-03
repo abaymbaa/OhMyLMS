@@ -403,37 +403,6 @@ export function createBrandingSettings(readRuntime) {
           >
             <Controls.SpacerWP padding={4} marginTop={0} marginBottom={0}>
               <Controls.CardWP isBorderless={!0}>
-                <Controls.SpacerWP
-                  paddingTop={2}
-                  paddingBottom={6}
-                  paddingX={2}
-                  marginTop={0}
-                  marginBottom={4}
-                >
-                  <Nm
-                    title={(0, I18n.__)('Color Preset', 'ohmylms')}
-                    description={(0, I18n.__)(
-                      'Pick a preset to get started. You can change colors later whenever you like.',
-                      'ohmylms',
-                    )}
-                    placeholder={(0, I18n.__)('Select Color Preset', 'ohmylms')}
-                    staticSearch={!0}
-                    isSearchable={!1}
-                    isMulti={!1}
-                    data={P}
-                    value={C}
-                    onChange={O}
-                    selectorWeight={'400px'}
-                  />
-                  <Controls.SpacerWP marginBottom={0} marginX={4}>
-                    {React.createElement(zK, {
-                      colorsConfig: j,
-                      showDivider: !1,
-                    })}
-                  </Controls.SpacerWP>
-                </Controls.SpacerWP>
-              </Controls.CardWP>
-              <Controls.CardWP isBorderless={!0}>
                 <Controls.SpacerWP padding={6} marginBottom={4}>
                   <h3
                     style={{

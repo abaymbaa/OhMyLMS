@@ -1,10 +1,12 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { createThemeSettings } from './ThemeSettings';
 export function createDesignSettings(readRuntime) {
   return function DesignSettings(props) {
     const {
       B0,
       D0,
+      GK,
       I: Controls,
       JJ,
       React,
@@ -18,6 +20,7 @@ export function createDesignSettings(readRuntime) {
       k0,
       l,
       y: WordPressData,
+      zK,
     } = readRuntime();
     var t = props.activeTab,
       n = props.handleSave,
@@ -30,6 +33,14 @@ export function createDesignSettings(readRuntime) {
       s = c.subTab,
       d = c.subPanel,
       m = (0, Router.Zp)(),
+      ThemeSettings = (0, ReactHooks.useMemo)(function () {
+        return createThemeSettings({
+          store: StoreModule.default,
+          presets: GK,
+          ColorCards: zK,
+          Controls: Controls,
+        });
+      }, []),
       p = (0, ReactHooks.useMemo)(function () {
         return [
           {
@@ -46,6 +57,11 @@ export function createDesignSettings(readRuntime) {
             label: (0, I18n.__)('Checkout Page', 'ohmylms'),
             key: 'checkout-page',
             children: <D0 />,
+          },
+          {
+            label: (0, I18n.__)('Colors & fonts', 'ohmylms'),
+            key: 'colors-fonts',
+            children: <ThemeSettings />,
           },
         ];
       }, []);
