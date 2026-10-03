@@ -32,6 +32,55 @@ final class Submission {
         if (apply_filters('ohmylms_is_lesson_sequentially_locked',false,$quiz_id,$course_id,$student_id) || apply_filters('ohmylms_is_lesson_locked',false,$quiz_id,$course_id,$student_id)) return new \WP_Error('quiz_locked','This quiz is locked.',['status'=>403]);
         return $course_id;
     }
+    /**
+     * A user who can edit the quiz but is not enrolled in its course is previewing it: access()
+     * admits them only because of the edit capability. Their attempts are disposable, so they must
+     * not use up attempt limits, record grades or evidence, complete the lesson, or fire the events
+     * that email instructors, call webhooks and award achievements. Enrolled users, including
+     * admins who enrolled themselves, are real learners and are recorded as usual.
+     */
+    public static function is_preview($quiz_id,$student_id) {
+        $quiz_id=(int)$quiz_id; $student_id=(int)$student_id;
+        if (!$quiz_id || !$student_id || get_post_type($quiz_id)!=='ohmylms-quiz') return false;
+        $course_id=(int)ohmylms_get_course_by_content_id($quiz_id);
+        return $course_id>0 && !(new Student($student_id))->maybe_enrolled($course_id) && user_can($student_id,'edit_post',$quiz_id);
+    }
+    private static function preview_key($quiz_id,$student_id) {
+        return 'ohmylms_quiz_preview_'.(int)$student_id.'_'.(int)$quiz_id;
+    }
+    /** The last preview's score, kept briefly so the quiz page can show it after the attempt is erased. */
+    public static function preview_result($quiz_id,$student_id) {
+        $result=get_transient(self::preview_key($quiz_id,$student_id));
+        return is_array($result)?$result:null;
+    }
+    /** Remember the outcome for the quiz page, then erase the attempt so a preview leaves no record. */
+    private static function finish_preview(array $attempt,array $graded,array $event) {
+        $quiz_id=(int)$attempt['quiz_id']; $student_id=(int)$attempt['student_id'];
+        if ($graded['reason']==='exit') {
+            delete_transient(self::preview_key($quiz_id,$student_id));
+        } else {
+            $max=0.0; $correct=0;
+            foreach ($graded['rows'] as $row) { $max+=(float)$row['question_marks']; $correct+=!empty($row['is_correct'])?1:0; }
+            set_transient(self::preview_key($quiz_id,$student_id),['total'=>(float)$graded['total'],'max'=>$max,'passing'=>(float)$graded['passing'],'status'=>$graded['status'],'questions'=>count($graded['rows']),'correct'=>$correct],HOUR_IN_SECONDS);
+        }
+        self::erase_attempt((int)$attempt['id']);
+        return $event;
+    }
+    private static function erase_attempt($attempt_id) {
+        global $wpdb;
+        $children=[$wpdb->prefix.'ohmylms_quiz_attempts_answers'=>'quiz_attempt_id'];
+        if (\OhMyLMS\Assessment\Schema::ready()) {
+            foreach (['attempt_context','attempt_items','response_drafts','response_events'] as $name) $children[\OhMyLMS\Assessment\Schema::table($name)]='attempt_id';
+        }
+        try {
+            Transaction::run(static function() use ($wpdb,$children,$attempt_id) {
+                foreach ($children as $table=>$column) if ($wpdb->delete($table,[$column=>$attempt_id])===false) throw new \RuntimeException('Preview cleanup failed');
+                if ($wpdb->delete($wpdb->prefix.'ohmylms_quiz_attempts',['id'=>$attempt_id])===false) throw new \RuntimeException('Preview cleanup failed');
+            });
+        } catch (\Throwable $error) {
+            // Best effort: a leftover preview attempt is hidden from the previewer and is harmless.
+        }
+    }
     private static function lock($quiz_id,$student_id) {
         global $wpdb;
         $key='ohmylms-quiz-'.md5($wpdb->prefix.':'.$quiz_id.':'.$student_id);
@@ -47,6 +96,7 @@ final class Submission {
         if (is_wp_error($course_id)) return $course_id;
         $key=self::lock($quiz_id,$student_id);
         if (!$key) return new \WP_Error('quiz_busy','Please retry.',['status'=>409]);
+        $preview=self::is_preview($quiz_id,$student_id);
         try {
             $quiz=ohmylms_get_quiz($quiz_id);
             $existing=$quiz->get_quiz_attempt($student_id);
@@ -64,7 +114,7 @@ final class Submission {
                 $open=\OhMyLMS\Assessment\AssessmentSettings::availability($quiz_id);
                 if (is_wp_error($open)) return $open;
             }
-            if ($quiz->count_total_attempt($student_id,$course_id)>=$quiz->get_take_attempts()) return new \WP_Error('quiz_attempt_limit','No attempts remaining.',['status'=>403]);
+            if (!$preview && $quiz->count_total_attempt($student_id,$course_id)>=$quiz->get_take_attempts()) return new \WP_Error('quiz_attempt_limit','No attempts remaining.',['status'=>403]);
             foreach($quiz->get_questions() as $q) if(!Registry::get('question',$q['settings']['type'] ?? '')) return new \WP_Error('quiz_type_missing','A required question extension is unavailable.');
             $row=['quiz_id'=>$quiz_id,'student_id'=>$student_id,'course_id'=>$course_id,'total'=>0,'status'=>'in-progress','start_date'=>current_time('mysql')];
             $revision_id=0;
@@ -86,7 +136,7 @@ final class Submission {
                     return new \WP_Error('quiz_storage','Could not start attempt.',['status'=>500]);
                 }
             }
-            do_action('ohmylms_attempt_started',['quiz_id'=>(int)$quiz_id,'attempt_id'=>$id,'student_id'=>(int)$student_id,'course_id'=>$course_id,'revision_id'=>$revision_id]);
+            if (!$preview) do_action('ohmylms_attempt_started',['quiz_id'=>(int)$quiz_id,'attempt_id'=>$id,'student_id'=>(int)$student_id,'course_id'=>$course_id,'revision_id'=>$revision_id]);
             return $id;
         } finally { if ($key) self::unlock($key); }
     }
@@ -186,15 +236,17 @@ final class Submission {
         // Legacy-int attempts keep an integer total, exactly like the original engine.
         $total=$policy===Scoring::DECIMAL?Scoring::total([$total]):(int)round($total);
         $status=$manual?'in-review':'completed';
+        $preview=self::is_preview($quiz_id,$student_id);
         try {
-            Transaction::run(static function() use ($wpdb,$rows,$updates,$total,$status,$attempt_id,$student_id,$reason,$late) {
+            Transaction::run(static function() use ($wpdb,$rows,$updates,$total,$status,$attempt_id,$student_id,$reason,$late,$preview) {
                 foreach ($rows as $row) if ($wpdb->insert($wpdb->prefix.'ohmylms_quiz_attempts_answers',$row)===false) throw new \RuntimeException('Answer write failed');
                 $now=current_time('mysql',true);
                 foreach ($updates as $update) {
                     $item=$update['item'];
                     $status_item=$update['pending']?'needs-review':($update['present']?'graded':'unanswered');
                     $wpdb->update(\OhMyLMS\Assessment\Schema::table('attempt_items'),['response'=>wp_json_encode($update['answer']),'status'=>$status_item,'fraction'=>$update['fraction'],'awarded'=>$update['awarded'],'correct'=>$update['correct'],'graded_at'=>$update['pending']?null:$now],['id'=>(int)$item['id']]);
-                    if ($reason==='exit') continue;
+                    // Previews are graded for the score shown to the previewer but record no evidence.
+                    if ($reason==='exit' || $preview) continue;
                     if ($update['parts']!==null && $update['present']) {
                         // One event per part: evidence is attributed to each part's own skill.
                         $weights=\OhMyLMS\Assessment\Structured::weights($update['version_settings']);
@@ -223,6 +275,7 @@ final class Submission {
         $quiz_id=(int)$attempt['quiz_id']; $attempt_id=(int)$attempt['id']; $student_id=(int)$attempt['student_id'];
         $total=$graded['total']; $manual=$graded['manual']; $status=$graded['status']; $reason=$graded['reason'];
         $event=['quiz_id'=>$quiz_id,'attempt_id'=>$attempt_id,'student_id'=>$student_id,'course_id'=>$course_id,'total'=>$total,'status'=>$status,'reason'=>$reason,'revision_id'=>$graded['revision_id']];
+        if (self::is_preview($quiz_id,$student_id)) return self::finish_preview($attempt,$graded,$event);
         foreach ($graded['rows'] as $row) do_action('ohmylms_answer_graded',$row+['status'=>$status]);
         if (!$manual && $reason!=='exit' && $total >= $graded['passing']) {
             $student=new Student($student_id);

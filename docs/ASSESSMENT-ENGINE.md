@@ -115,6 +115,18 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
 Existing question/quiz routes are unchanged in shape; `quiz/{id}` updates now also return
 `saved_ids`, and questions include `modified`, `uuid`, `version`, `readonly`.
 
+### Previewing a quiz on the site
+
+Opening a quiz from the editor's Preview button runs the real quiz page. A user who can edit
+the quiz but is not enrolled in its course (`Submission::is_preview()`) is previewing: attempts
+have no limit and leave no record. The in-progress attempt exists only while the quiz is open;
+on submit, exit or timeout it is graded, summarised for the quiz page (a one-hour transient,
+shown as "Last preview result"), and erased. No grade or evidence events are written, the lesson
+is not completed, and none of the `ohmylms_*` attempt/quiz events fire, so instructors get no
+email and webhooks, achievements and automations are not triggered. Enrolled users, including an
+admin who enrols themselves to test the learner experience, are recorded as normal.
+Checked by `php tests/php/quiz-preview-unit.php`.
+
 ## Release switches
 
 All default on; define in `wp-config.php` to turn off:

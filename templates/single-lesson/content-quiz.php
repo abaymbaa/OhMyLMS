@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 $course_id = ohmylms_get_course_by_content_id(get_the_ID());
+// Admins and authors trying a quiz they are not enrolled in: nothing they submit is saved.
+$is_preview = \OhMyLMS\Quiz\Submission::is_preview(get_the_ID(), get_current_user_id());
 ?>
 
 <?php while ( have_posts() ) : ?>
@@ -50,6 +52,37 @@ $course_id = ohmylms_get_course_by_content_id(get_the_ID());
             ?>
         </div>
 		
+		<?php if ( $is_preview ) : ?>
+			<?php $preview_result = \OhMyLMS\Quiz\Submission::preview_result(get_the_ID(), get_current_user_id()); ?>
+			<p class="ohmylms-quiz-notice">
+				<?php esc_html_e('Preview mode: you are not enrolled in this course, so your attempts and results are not saved. You can retake this quiz as often as you like.', 'ohmylms'); ?>
+			</p>
+			<?php if ( $preview_result ) : ?>
+				<div class="ohmylms-quiz-preview-result">
+					<h3><?php esc_html_e('Last preview result', 'ohmylms'); ?></h3>
+					<p>
+						<strong><?php esc_html_e('Score: ', 'ohmylms'); ?></strong>
+						<?php echo esc_html(\OhMyLMS\Assessment\Scoring::display($preview_result['total']) . ' / ' . \OhMyLMS\Assessment\Scoring::display($preview_result['max'])); ?>
+					</p>
+					<p>
+						<strong><?php esc_html_e('Correct answers: ', 'ohmylms'); ?></strong>
+						<?php echo esc_html($preview_result['correct'] . ' / ' . $preview_result['questions']); ?>
+					</p>
+					<p>
+						<strong><?php esc_html_e('Result: ', 'ohmylms'); ?></strong>
+						<?php
+						if ( 'in-review' === $preview_result['status'] ) {
+							echo '<span class="pending">' . esc_html__('Needs manual grading (not available in preview)', 'ohmylms') . '</span>';
+						} elseif ( $preview_result['total'] >= $preview_result['passing'] ) {
+							echo '<span class="passed">' . esc_html__('Pass', 'ohmylms') . '</span>';
+						} else {
+							echo '<span class="failed">' . esc_html__('Fail', 'ohmylms') . '</span>';
+						}
+						?>
+					</p>
+				</div>
+			<?php endif; ?>
+		<?php else : ?>
 		<div class="ohmylms-table ohmylms-quiz-table">
 			<div class="ohmylms-tr ohmylms-head">
 				<div class="ohmylms-th date">Date</div>
@@ -143,5 +176,6 @@ $course_id = ohmylms_get_course_by_content_id(get_the_ID());
 
 
 		</div>
+		<?php endif; ?>
 	</div>
 <?php endwhile; // end of the loop. ?>
