@@ -74,6 +74,27 @@ Five Communities admin components now build from assets/src/features/communities
 
 Eighteen components now build from assets/src/features/analytics through tools/analytics-adapters.mjs. They cover the dashboard, course analytics, earnings reports and supporting controls; the existing course-row source is reused. See the feature README for compatibility boundaries and verification.
 
+## Design tokens and admin page layout
+
+Colors and fonts are chosen under Settings → Design → Colors & fonts and turned into CSS custom
+properties by `includes/Design/Tokens.php`. Stylesheets read the variables instead of hard-coding
+brand colors or fonts.
+
+- Learner pages: `--ohmylms-primary-color` (`-rgb`, `-hover-color`, `-soft-color`),
+  `--ohmylms-heading-color`, `--ohmylms-body-text-color`, `--ohmylms-progressbar-color`,
+  `--ohmylms-outline-color` and `--ohmylms-font-family`. The font variable is left undefined for
+  "Theme font", so write `var(--ohmylms-font-family, <fallback>)`.
+- Admin app: the same brand variables plus `--wp-admin-theme-color*`, `--wp-components-color-*`, the
+  Arco `--primary-1…9` scale and `--ohmylms-admin-*` (heading, text, muted, surface, subtle, border,
+  radius, gutter, font). The Design screen previews admin colors live; saved values print on reload.
+- Fonts: system, the theme font (learner pages) or one of the Cyrillic-capable Google Fonts in
+  `Tokens::FONTS`. Values are validated; invalid colors and fonts fall back to the defaults.
+
+SDK admin pages wrap their content in `AdminPage` and `AdminCard` from
+`assets/src/extensions/AdminPage.jsx`, styled by `assets/css/admin-ui.css`: the native 40px gutter,
+20px title row with actions, white 7px cards and the grey-header table look for `table.widefat`.
+Every extension route gets the gutter even without the component.
+
 ## Known issues
 
 - Source-built vendor bundles break the lesson editor. `tools/vendor-adapters.mjs` redirects the ESM copy of prosemirror-state to the CJS copy, but prosemirror-model and prosemirror-transform stay duplicated (ESM 58903/38262 vs CJS 77712/36553). In the browser, Enter and the `/` block menu throw `Can not convert <paragraph> to a Fragment (looks like multiple versions of prosemirror-model were loaded)`. Removing the state adapter is worse (`Adding different instances of a keyed plugin`). `SourceAssets::url()` therefore keeps `assets/dist/vendors/*` on the shipped files while the app and SDK use the source build. A proper fix must unify all three ProseMirror packages onto one copy, mapping the minified ESM export names; then remove that exception.

@@ -176,3 +176,34 @@ ok(status_of(call('POST', 'question', ['name' => 'Bad numerical', 'settings' => 
 as_user(make_user('subscriber'));
 ok(status_of(call('POST', 'question', ['name' => 'Learner question', 'settings' => ['type' => 'long-text'], 'questions' => []])) === 403, 'A learner created a bank question');
 as_user($admin);
+
+// ---- Design tokens: settings become CSS variables; bad values fall back ----
+use OhMyLMS\Design\Tokens;
+$saved_design = [];
+foreach (array_keys(Tokens::DEFAULTS) as $key) { $saved_design[$key] = get_option($key, null); }
+try {
+    ok(Tokens::mix('#6e42d3', '#000000', 0) === '#6e42d3' && Tokens::mix('#000000', '#ffffff', 0.5) === '#808080' && Tokens::rgb('#2563eb') === '37, 99, 235', 'Color math');
+    update_option('ohmylms_admin_primary_color', '#2563EB');
+    update_option('ohmylms_admin_font_family', 'Noto Sans');
+    $admin_css = Tokens::admin_css();
+    ok(strpos($admin_css, '--wp-admin-theme-color:#2563eb;') !== false && strpos($admin_css, '--primary-6:37, 99, 235;') !== false && strpos($admin_css, '"Noto Sans"') !== false && strpos($admin_css, ':not(.dashicons)') !== false, 'Admin tokens not built from settings');
+    ok(Tokens::font_url('Noto Sans') === 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap' && Tokens::font_url('system') === '', 'Font URL');
+    update_option('ohmylms_admin_primary_color', 'red;}body{display:none');
+    update_option('ohmylms_admin_font_family', 'Comic"; x');
+    $admin_css = Tokens::admin_css();
+    ok(strpos($admin_css, '--wp-admin-theme-color:#6e42d3;') !== false && strpos($admin_css, 'display:none') === false && strpos($admin_css, 'Comic') === false, 'Invalid design values were not rejected');
+    update_option('ohmylms_primary_color_scheme', '#F80');
+    update_option('ohmylms_font_family', 'inherit');
+    $front = Tokens::frontend_css();
+    ok(strpos($front, '--ohmylms-primary-color:#ff8800;') !== false && strpos($front, '--ohmylms-font-family') === false && strpos($front, 'font-family:var') === false, 'Theme font should leave the variable undefined');
+    update_option('ohmylms_font_family', 'Montserrat');
+    ok(strpos(Tokens::frontend_css(), '--ohmylms-font-family:"Montserrat"') !== false, 'Learner font not applied');
+    // The Design settings group saves the new keys.
+    $request = new WP_REST_Request('POST', '/ohmylms/v1/settings/design');
+    $request->set_header('Content-Type', 'application/json');
+    $request->set_body(wp_json_encode(['ohmylms_admin_muted_color' => '#123456', 'ohmylms_font_family' => 'Inter']));
+    $response = rest_do_request($request);
+    ok($response->get_status() === 200 && get_option('ohmylms_admin_muted_color') === '#123456' && get_option('ohmylms_font_family') === 'Inter', 'Design settings did not save the new keys: ' . wp_json_encode($response->get_data()));
+} finally {
+    foreach ($saved_design as $key => $value) { $value === null ? delete_option($key) : update_option($key, $value); }
+}
