@@ -48,6 +48,20 @@
   function renderInputs(container, view) {
     var type = view.settings && view.settings.type;
     var name = 'q' + view.item_id;
+    if (type === 'fill-in-the-blank' && view.inline_blanks) {
+      var blanks = [];
+      view.inline_blanks.forEach(function (part) {
+        if (Object.prototype.hasOwnProperty.call(part, 'text')) {
+          container.appendChild(el('span', { html: part.text }));
+        } else {
+          var input = el('input', { type: 'text', class: 'ohmylms-text-input', size: part.length, 'aria-label': 'Blank ' + (blanks.length + 1) });
+          input.style.cssText = 'display:inline-block;min-width:0;max-width:100%;box-sizing:border-box;font:inherit;letter-spacing:inherit;padding:0.2em 0.5em;width:calc(' + part.length + 'ch + 1.2em)';
+          blanks.push(input);
+          container.appendChild(input);
+        }
+      });
+      return function () { return blanks.map(function (input) { return input.value; }); };
+    }
     if (type === 'single-choice' || type === 'true-false' || type === 'multiple-choice') {
       var kind = type === 'multiple-choice' ? 'checkbox' : 'radio';
       view.questions.forEach(function (option) {
@@ -140,7 +154,7 @@
     var view = state.current;
     var progress = el('p', { class: 'ohmylms-practice-progress', text: format(i18n.progress, state.answered + 1, state.item_limit) });
     var form = el('form', { class: 'ohmylms-practice-question' });
-    form.appendChild(el('p', { class: 'the-question', html: view.name }));
+    if (!view.inline_blanks) form.appendChild(el('p', { class: 'the-question', html: view.name }));
     if (view.description) form.appendChild(el('div', { html: view.description }));
     if (view.image_src) form.appendChild(el('img', { src: view.image_src, alt: '' }));
     var inputs = el('div', { class: 'ohmylms-practice-inputs' });

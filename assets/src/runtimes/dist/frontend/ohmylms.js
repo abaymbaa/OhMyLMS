@@ -1359,7 +1359,7 @@
               $('.ohmylms-quiz-box.question-' + currentQuestion + ' .required-question').hide();
             }
           } else if ('short-text' == questionType || 'statement' == questionType || 'fill-in-the-blank' == questionType) {
-            if ($('.ohmylms-quiz-box.question-' + currentQuestion + ' input.ohmylms-text-input').val() == '') {
+            if ($('.ohmylms-quiz-box.question-' + currentQuestion + ' input.ohmylms-text-input').filter(function () { return this.value.trim() === ''; }).length > 0) {
               isQuestionAnswered = false;
               $('.ohmylms-quiz-box.question-' + currentQuestion + ' .required-question').show();
             } else {
@@ -1484,7 +1484,7 @@
                 $(this).find('.required-question').hide();
               }
             } else if ('short-text' == questionType || 'statement' == questionType || 'fill-in-the-blank' == questionType) {
-              if ($(this).find('input.ohmylms-text-input').val() == '') {
+              if ($(this).find('input.ohmylms-text-input').filter(function () { return this.value.trim() === ''; }).length > 0) {
                 isAnsweredRequiredQuestion = false;
                 $(this).find('.required-question').show();
               } else {
@@ -1605,7 +1605,7 @@
                 $(this).find('.required-question').hide();
               }
             } else if ('short-text' == questionType || 'statement' == questionType || 'fill-in-the-blank' == questionType) {
-              if ($(this).find('input.ohmylms-text-input').val() == '') {
+              if ($(this).find('input.ohmylms-text-input').filter(function () { return this.value.trim() === ''; }).length > 0) {
                 isAnsweredRequiredQuestion = false;
                 $(this).find('.required-question').show();
               } else {

@@ -257,7 +257,7 @@ ob_start();
 
 							<div class="question-box">
 								<p class="the-question question-type-<?php echo $question['settings']['type']; ?>">
-									<?php echo $question['name'] ?>
+									<?php echo \OhMyLMS\Assessment\InlineBlanks::render($question, $attempt); ?>
 
 									<?php if( !empty($question['settings']['required']) && $question['settings']['required']){ ?>
 										<span class="required">*</span>

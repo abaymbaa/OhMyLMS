@@ -96,7 +96,7 @@ class QuestionSnapshot {
         $public = array_merge(['type', 'required', 'score', 'randomize'], (array) ($definition['public_settings'] ?? []));
         $settings = array_intersect_key($this->get_settings(), array_flip($public));
         if ($type === 'structured') { $settings['parts'] = Structured::public_parts($this->get_settings()); }
-        return [
+        return InlineBlanks::public_view([
             'id' => $this->get_id(),
             'uuid' => $this->get_uuid(),
             'version_id' => $this->get_version_id(),
@@ -108,7 +108,7 @@ class QuestionSnapshot {
             'image_src' => $this->get_image_url(),
             'video_src' => $this->get_video_url(),
             'frozen' => true,
-        ];
+        ]);
     }
 
     private function safe_option(array $option, array $tokens, $type) {

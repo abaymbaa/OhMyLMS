@@ -12,6 +12,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+$question = \OhMyLMS\Assessment\InlineBlanks::public_view($question);
+if (!empty($question['inline_blanks'])) { return; }
 ?>
 
 <?php foreach ($question['questions'] as $option){ ?>

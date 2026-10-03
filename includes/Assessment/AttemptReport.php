@@ -60,6 +60,12 @@ final class AttemptReport {
             foreach ($snapshot->get_questions() as $option) { $by_id[(int) $option['id']] = $option + ['question_id' => $snapshot->get_id()]; }
             foreach ($item['option_order'] ?: array_keys($by_id) as $option_id) { if (isset($by_id[(int) $option_id])) { $options[] = $by_id[(int) $option_id]; } }
             $settings = $snapshot->get_settings();
+            if ($snapshot->get_type() === 'fill-in-the-blank') {
+                $inline = InlineBlanks::parse($snapshot->get_name());
+                if ($inline['answers']) {
+                    $options = array_map(static function ($answer) { return ['answer' => $answer, 'is_correct' => '1']; }, $inline['answers']);
+                }
+            }
             $settings['score'] = ['enabled' => true, 'value' => (float) $item['marks']];
             $identity = VersionPublisher::identity($snapshot->get_id(), false);
             $status = $item['status'] === 'needs-review' && empty($row['is_manually_reviewed']) ? 'in-review' : ($row ? 'graded' : 'in-review');

@@ -67,7 +67,7 @@ final class Inline {
         ?>
         <form class="ohmylms-inline-check" data-token="<?php echo esc_attr($token); ?>" data-question="<?php echo esc_attr($view['id']); ?>" data-uuid="<?php echo esc_attr($uuid); ?>" novalidate>
             <?php if ($preview) { ?><p class="ohmylms-inline-check-preview"><?php esc_html_e('Preview — this version is not approved, so answers are not recorded for learners.', 'ohmylms'); ?></p><?php } ?>
-            <p class="ohmylms-inline-check-question"><?php echo wp_kses_post($view['name']); ?></p>
+            <p class="ohmylms-inline-check-question"><?php echo \OhMyLMS\Assessment\InlineBlanks::render($view, ['id' => 0]); ?></p>
             <?php if ($view['description'] !== '') { ?><div class="ohmylms-inline-check-body"><?php echo wp_kses_post(wpautop($view['description'])); ?></div><?php } ?>
             <?php if ($view['image_src']) { ?><img class="question-image" src="<?php echo esc_url($view['image_src']); ?>" alt=""><?php } ?>
             <?php QuestionTypes::render($view, ['id' => 0]); ?>

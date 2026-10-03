@@ -30,8 +30,46 @@ export function createFillInTheBlankEditor(readRuntime) {
       i = (0, WordPressData.useDispatch)(StoreModule.default),
       addContentToQuestion = i.addContentToQuestion,
       setIsProModalOpen = i.setIsProModalOpen;
+    const selected = WordPressData.useSelect(
+      (select) => select(StoreModule.default).selectQuestion(),
+      [],
+    );
+    const blanks = [...(selected?.name || '').matchAll(/\{([^{}<>]+)\}/gu)].filter((match) =>
+      match[1].trim(),
+    );
+    const help = I18n.__(
+      'Write answers in braces in the question above: The capital is {Paris}. Each brace pair becomes an inline blank, sized to its answer.',
+      'ohmylms',
+    );
+    const caseSensitive = ![false, 0, '0'].includes(selected?.settings?.case_sensitive);
+    const caseSetting = (
+      <label style={{ display: 'block', marginBottom: 16 }}>
+        <input
+          type="checkbox"
+          checked={caseSensitive}
+          onChange={(event) =>
+            i.updateQuestionData(questionId, {
+              settings: { ...selected.settings, case_sensitive: event.target.checked },
+            })
+          }
+        />{' '}
+        {I18n.__('Case-sensitive answers', 'ohmylms')}
+        <small style={{ display: 'block', marginTop: 4 }}>
+          {I18n.__('When off, Paris and paris are both accepted.', 'ohmylms')}
+        </small>
+      </label>
+    );
+    if (blanks.length)
+      return (
+        <React.Fragment>
+          <p>{help}</p>
+          {caseSetting}
+        </React.Fragment>
+      );
     return (
       <React.Fragment>
+        <p>{help}</p>
+        {caseSetting}
         <div className={'ohmylms-options-list ohmylms-options-list-statement'}>
           <Controls.InputWP
             placeholder={(0, I18n.__)(

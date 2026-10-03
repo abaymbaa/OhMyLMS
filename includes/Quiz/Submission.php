@@ -124,6 +124,7 @@ final class Submission {
             $answer=Grader::sanitize($answers[$data['id']] ?? []);
             if (!call_user_func($definition['validate'],$answer,$question)) return new \WP_Error('quiz_answer','Invalid answer format.',['status'=>400]);
             $present=Grader::present($answer);
+            if ($reason==='submit' && !empty($settings['required']) && ($settings['type'] ?? '')==='fill-in-the-blank' && !\OhMyLMS\Assessment\InlineBlanks::complete($question,$answer)) return new \WP_Error('quiz_required','Every blank in a required question must be answered.',['status'=>400]);
             if ($reason==='submit' && !empty($settings['required']) && !$present) return new \WP_Error('quiz_required','A required question is unanswered.',['status'=>400]);
             $grade=call_user_func($definition['grade'],$answer,$question);
             if (is_wp_error($grade)) return $grade;
@@ -172,6 +173,7 @@ final class Submission {
             else $answer=$saved[$question_id] ?? [];
             $grade=Grader::grade($snapshot,$answer);
             if (is_wp_error($grade)) return $grade;
+            if ($reason==='submit' && !empty($item['display']['required']) && $snapshot->get_type()==='fill-in-the-blank' && !\OhMyLMS\Assessment\InlineBlanks::complete($snapshot,$answer)) return new \WP_Error('quiz_required','Every blank in a required question must be answered.',['status'=>400]);
             if ($reason==='submit' && !empty($item['display']['required']) && !$grade['present']) return new \WP_Error('quiz_required','A required question is unanswered.',['status'=>400]);
             $marks=(float)$item['marks'];
             $pending=$reason!=='exit' && $grade['pending'];

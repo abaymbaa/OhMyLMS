@@ -96941,6 +96941,12 @@
           null !== (n = e.name) && void 0 !== n && n.trim() || (l = !1, c.name = !0), function (e) {
             return !isNaN(e) && !isNaN(parseFloat(e));
           }(null == e || null === (r = e.settings) || void 0 === r || null === (r = r.score) || void 0 === r ? void 0 : r.value) || (l = !1, c.score = !0);
+          if (e.settings.type === 'fill-in-the-blank' && /\{([^{}<>]*\S[^{}<>]*)\}/u.test(e.name || '')) {
+            return {
+              isValid: l,
+              errors: c
+            };
+          }
           var u = (null == e ? void 0 : e.questions) || [];
           if (["multiple-choice", "single-choice", "true-false", "fill-in-the-blank"].includes(null == e || null === (a = e.settings) || void 0 === a ? void 0 : a.type)) {
             u.some(function (e) {

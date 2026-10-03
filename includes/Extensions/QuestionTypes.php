@@ -56,6 +56,19 @@ final class QuestionTypes {
         if ($definition) call_user_func($definition['render'],$question,$attempt);
     }
     public static function grade_builtin($type,array $answer,$question) {
+        if ($type === 'fill-in-the-blank' && method_exists($question, 'get_name')) {
+            $parsed = \OhMyLMS\Assessment\InlineBlanks::parse($question->get_name());
+            if ($parsed['answers']) {
+                $values = array_values($answer); $parts = []; $hits = 0;
+                foreach ($parsed['answers'] as $i => $expected) {
+                    $correct = isset($values[$i]) && \OhMyLMS\Assessment\InlineBlanks::matches($values[$i], $expected, $question);
+                    $hits += $correct ? 1 : 0;
+                    $parts[] = ['correct' => $correct, 'fraction' => $correct ? 1 : 0];
+                }
+                if (count($values) > count($parts)) { $hits = 0; }
+                return ['correct' => $hits === count($parts), 'fraction' => $hits / count($parts), 'manual' => false, 'blanks' => $parts];
+            }
+        }
         if (in_array($type,['short-text','long-text'],true)) return ['correct'=>false,'fraction'=>0,'manual'=>true];
         $options=$question->get_questions();
         $answer=array_map('strval',$answer);
@@ -74,6 +87,12 @@ final class QuestionTypes {
             $answer=array_values($answer);
             if ($type==='multiple-choice') { sort($expected); sort($answer); }
             $correct=count($expected)>0 && $answer===$expected;
+            if ($type === 'fill-in-the-blank' && count($expected)>0 && count($answer)===count($expected)) {
+                $correct = true;
+                foreach ($expected as $i => $value) {
+                    $correct = $correct && \OhMyLMS\Assessment\InlineBlanks::matches($answer[$i], $value, $question);
+                }
+            }
         }
         return ['correct'=>$correct,'fraction'=>$correct?1:0,'manual'=>false];
     }
