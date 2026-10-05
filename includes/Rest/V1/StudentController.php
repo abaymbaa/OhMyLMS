@@ -81,6 +81,27 @@ class StudentController extends RestController {
 
 
 	/**
+	 * SQL condition limiting the list to real students: users with an enrollment
+	 * record, or users holding the student role / created by the Schools Add flow
+	 * who have not been enrolled in anything yet.
+	 *
+	 * @return string
+	 */
+	protected function student_scope_clause() {
+		global $wpdb;
+
+		$role = function_exists( 'ohmylms_get_student_role' ) ? ohmylms_get_student_role() : 'ohmylms_student';
+
+		return $wpdb->prepare(
+			" AND ( e.user_id IS NOT NULL
+				OR EXISTS ( SELECT 1 FROM {$wpdb->usermeta} um WHERE um.user_id = u.ID AND um.meta_key = %s AND um.meta_value LIKE %s )
+				OR EXISTS ( SELECT 1 FROM {$wpdb->usermeta} ms WHERE ms.user_id = u.ID AND ms.meta_key = '_ohmylms_managed_school' ) ) ",
+			$wpdb->prefix . 'capabilities',
+			'%' . $wpdb->esc_like( '"' . $role . '"' ) . '%'
+		);
+	}
+
+	/**
 	 * Retrieves all students with their enrollment data.
 	 *
 	 * @since 1.0.0
@@ -143,7 +164,7 @@ class StudentController extends RestController {
 			u.display_name AS student_name,
 			u.user_email AS student_email,
 			COUNT(e.course_id) AS courses_enrolled,
-			MIN(e.start_date) AS registration_date';
+			COALESCE(MIN(e.start_date), u.user_registered) AS registration_date';
 
 		// Add membership count only if pro is active
 		if ( ohmylms_is_pro() ) {
@@ -157,7 +178,7 @@ class StudentController extends RestController {
 		$query .= "
             FROM
                 {$wpdb->users} u
-            INNER JOIN
+            LEFT JOIN
                 {$wpdb->prefix}ohmylms_user_enrollment e
                 ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -172,7 +193,7 @@ class StudentController extends RestController {
 		$query .= '
             WHERE
                 1=1
-        ';
+        ' . $this->student_scope_clause();
 
 		// Base query with optional search filter
 		// $query = "
@@ -234,7 +255,7 @@ class StudentController extends RestController {
 				COUNT(DISTINCT u.ID)
 			FROM
 				{$wpdb->users} u
-			INNER JOIN
+			LEFT JOIN
 				{$wpdb->prefix}ohmylms_user_enrollment e
 				ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -248,7 +269,7 @@ class StudentController extends RestController {
 
 		$count_query .= '
 			WHERE
-				1=1';
+				1=1' . $this->student_scope_clause();
 
 		// Add course ID filter if provided
 		if ( ! empty( $course_id ) ) {
