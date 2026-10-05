@@ -1,6 +1,11 @@
 <?php
 /**
- * The template for displaying single course sidebar's course texonomy
+ * The template for displaying single course sidebar's course taxonomy.
+ *
+ * Course categories and tags were replaced by the curriculum and Learning Tracks. The page-feature
+ * keys ('category', 'tag', and their '_with_enroll' variants) are unchanged, so existing settings keep
+ * working: the "category" options show where the course sits in the curriculum and the "tag" options
+ * show the published Learning Tracks it belongs to.
  *
  * This template can be overridden by copying it to yourtheme/single-course/widgets/course-taxonomy.php.
  *
@@ -15,97 +20,60 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $page_features = (array) get_option('ohmylms_single_course_page_features', array());
-$is_enabeled_category = in_array('category', $page_features);
-$is_enabeled_enrolled_category = in_array('category_with_enroll', $page_features);
-
-$is_enabeled_tag = in_array('tag', $page_features);
-$is_enabeled_enrolled_tag = in_array('tag_with_enroll', $page_features);
 
 $current_student_id = get_current_user_id();
 $student = new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
 
+$show_curriculum = in_array( $maybe_enrolled ? 'category_with_enroll' : 'category', $page_features, true );
+$show_tracks     = in_array( $maybe_enrolled ? 'tag_with_enroll' : 'tag', $page_features, true );
 
-// $categories = get_the_term_list( $course->get_id(), 'course_category', '<ul class="category-lists"><li>', ',</li><li>', '</li></ul>' );
+// Where the course sits in the curriculum, e.g. "Programming > Python".
+$curriculum = array();
+if ( $show_curriculum ) {
+	foreach ( \OhMyLMS\Curriculum\Placement::items( $course->get_id() ) as $entry ) {
+		$curriculum[] = implode( ' › ', array_merge( (array) $entry['path'], array( $entry['name'] ) ) );
+	}
+}
 
-// $tags = get_the_term_list( $course->get_id(), 'course_tag', '<ul class="tag-lists"><li>', '</li><li>', '</li></ul>');
+// Learners only see published tracks.
+$tracks = array();
+if ( $show_tracks ) {
+	foreach ( \OhMyLMS\Curriculum\Placement::tracks( $course->get_id() ) as $entry ) {
+		if ( 'published' === $entry['status'] ) {
+			$tracks[] = $entry['title'];
+		}
+	}
+}
 
-$categories = get_the_terms($course->get_id(), 'course_category');
-$tags = get_the_terms($course->get_id(), 'course_tag');
+if ( $curriculum || $tracks ) {
+	?>
+	<!-- course meta widget -->
+	<div class="ohmylms-sidebar-widget ohmylms-widget-course-taxonomy">
+		<?php
+		if ( $curriculum ) {
+			echo '<div class="single-taxonomy ohmylms-category">';
+				echo '<h3 class="sidebar-widget-title">' . esc_html__( 'Curriculum', 'ohmylms' ) . '</h3>';
+				echo '<ul class="category-lists">';
+					foreach ( $curriculum as $path ) {
+						echo '<li><a href="javascript:void(0)">' . esc_html( $path ) . '</a></li>';
+					}
+				echo '</ul>';
+			echo '</div>';
+		}
 
-if( $maybe_enrolled ){
-	if( ($is_enabeled_enrolled_category && $categories) || ($is_enabeled_enrolled_tag && $tags) ){
+		if ( $tracks ) {
+			echo '<div class="single-taxonomy ohmylms-tag">';
+				echo '<h3 class="sidebar-widget-title">' . esc_html__( 'Learning tracks', 'ohmylms' ) . '</h3>';
+				echo '<ul class="tag-lists">';
+					foreach ( $tracks as $title ) {
+						echo '<li><a href="javascript:void(0)">' . esc_html( $title ) . '</a></li>';
+					}
+				echo '</ul>';
+			echo '</div>';
+		}
 		?>
-		<!-- course meta widget -->
-		<div class="ohmylms-sidebar-widget ohmylms-widget-course-taxonomy">
-			<?php
-			if ( $is_enabeled_enrolled_category && $categories ) {
-				echo '<div class="single-taxonomy ohmylms-category">';
-					echo '<h3 class="sidebar-widget-title">' . __( 'Categories', 'ohmylms' ) . '</h3>';
-					echo '<ul class="category-lists">';
-						$total = count($categories);
-						foreach ($categories as $index => $category) {
-							echo '<li><a href="javascript:void(0)">' . esc_html($category->name);
-							if ($index < $total - 1) {
-								echo ',';
-							}
-							echo '</a></li>';
-						}
-					echo '</ul>';
-				echo '</div>';
-			}
-			
-			if ( $is_enabeled_enrolled_tag && $tags ) {
-				echo '<div class="single-taxonomy ohmylms-tag">';
-					echo '<h3 class="sidebar-widget-title">' . __( 'Tags', 'ohmylms' ) . '</h3>';
-					echo '<ul class="tag-lists">';
-						foreach ($tags as $tag) {
-							echo '<li><a href="javascript:void(0)">' . esc_html($tag->name) . '</a></li>';
-						}
-					echo '</ul>';
-				echo '</div>';
-			}
-			?>
-		</div>
-		<!-- /.sidebar single widget -->
-		<?php 
-	} 
-}else {
-	if( ($is_enabeled_category && $categories) || ($is_enabeled_tag && $tags) ){
-		?>
-		<!-- course meta widget -->
-		<div class="ohmylms-sidebar-widget ohmylms-widget-course-taxonomy">
-			<?php
-			if ( $is_enabeled_category && $categories ) {
-				echo '<div class="single-taxonomy ohmylms-category">';
-					echo '<h3 class="sidebar-widget-title">' . __( 'Categories', 'ohmylms' ) . '</h3>';
-					echo '<ul class="category-lists">';
-						$total = count($categories);
-						foreach ($categories as $index => $category) {
-							echo '<li><a href="javascript:void(0)">' . esc_html($category->name);
-							if ($index < $total - 1) {
-								echo ',';
-							}
-							echo '</a></li>';
-						}
-					echo '</ul>';
-				echo '</div>';
-			}
-			
-			if ( $is_enabeled_tag && $tags ) {
-				echo '<div class="single-taxonomy ohmylms-tag">';
-					echo '<h3 class="sidebar-widget-title">' . __( 'Tags', 'ohmylms' ) . '</h3>';
-					echo '<ul class="tag-lists">';
-						foreach ($tags as $tag) {
-							echo '<li><a href="javascript:void(0)">' . esc_html($tag->name) . '</a></li>';
-						}
-					echo '</ul>';
-				echo '</div>';
-			}
-			?>
-		</div>
-		<!-- /.sidebar single widget -->
-		<?php 
-	} 
-} 
-?>
+	</div>
+	<!-- /.sidebar single widget -->
+	<?php
+}

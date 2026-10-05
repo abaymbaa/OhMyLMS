@@ -96,27 +96,18 @@ class AppController extends RestController {
 
 
     /**
-     * Get all course categories (course_category terms)
+     * The curriculum, shaped like the course categories the admin app was built around. Course categories
+     * were replaced by curriculum items: the app's course-list filter still reads categories, so each
+     * item appears with its ID, name, parent and a filter slug.
      */
     private function get_categories() {
-        $args = array(
-            'taxonomy'   => 'course_category',
-            'hide_empty' => false,
-            'orderby'    => 'parent',
-            'order'      => 'ASC',
-        );
-        $terms = get_terms( $args );
-        if ( is_wp_error( $terms ) ) {
-            return array();
-        }
-        // Return only id, name, slug, parent for each term
         $categories = array();
-        foreach ( $terms as $term ) {
+        foreach ( \OhMyLMS\Curriculum\Items::all() as $row ) {
             $categories[] = array(
-                'id'     => $term->term_id,
-                'name'   => $term->name,
-                'slug'   => $term->slug,
-                'parent' => $term->parent,
+                'id'     => (int) $row['id'],
+                'name'   => $row['name'],
+                'slug'   => \OhMyLMS\Curriculum\Placement::item_slug( (int) $row['id'] ),
+                'parent' => (int) $row['parent_id'],
             );
         }
         return $categories;

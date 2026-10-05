@@ -545,15 +545,13 @@ class CourseController extends RestController {
 			}
 		}
 
-		// Filter by category ID
-		if ( isset( $request['category_id'] ) && is_numeric( $request['category_id'] ) ) {
-			$args['tax_query'] = array(
-				array(
-					'taxonomy' => 'course_category', // ← your actual taxonomy here
-					'field'    => 'term_id',
-					'terms'    => intval( $request['category_id'] ),
-				),
-			);
+		// Filter by curriculum item (courses linked beneath it count too) and by learning track.
+		// category_id and tag_id are the former category and tag parameters: they now mean a curriculum
+		// item ID and a learning track ID, so existing list filters keep working.
+		$item_filter  = array_filter( array( $request['curriculum_id'] ?? null, $request['category_id'] ?? null ), 'is_numeric' );
+		$track_filter = array_filter( array( $request['track_id'] ?? null, $request['tag_id'] ?? null ), 'is_numeric' );
+		if ( $item_filter || $track_filter ) {
+			$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, array_map( 'intval', $item_filter ), array_map( 'intval', $track_filter ) );
 		}
 
 		$args       = apply_filters( 'ohmylms_rest_ohmylms_course_query', $args, $request );
@@ -2098,6 +2096,8 @@ class CourseController extends RestController {
 			'video_src'             => wp_get_attachment_url( $course->get_video_id() ),
 			'categories'            => $this->get_taxonomy_terms( $course ),
 			'tags'                  => $this->get_taxonomy_terms( $course, 'tag' ),
+			'curriculum'            => \OhMyLMS\Curriculum\Placement::items( $course->get_id() ),
+			'learning_tracks'      => \OhMyLMS\Curriculum\Placement::tracks( $course->get_id() ),
 			'course_url'            => get_permalink( $course->get_id() ),
 			'content'               => array(
 				'chapters' => count( $course->get_chapters() ),
@@ -2340,6 +2340,9 @@ class CourseController extends RestController {
 		if ( empty( $course_id ) || empty( $taxonomy ) || empty( $terms ) ) {
 			return new WP_Error( 'missing_params', 'Missing parameters', array( 'status' => 400 ) );
 		}
+		if ( in_array( $taxonomy, array( 'course_category', 'course_tag' ), true ) ) {
+			return new WP_Error( 'ohmylms_taxonomy_replaced', __( 'Course categories and tags were replaced by curriculum items and learning tracks. Use /courses/{id}/organization.', 'ohmylms' ), array( 'status' => 410 ) );
+		}
 		$result = wp_set_object_terms( $course_id, $terms, $taxonomy );
 
 		if ( is_wp_error( $result ) ) {
@@ -2365,11 +2368,23 @@ class CourseController extends RestController {
 	 */
 	protected function get_taxonomy_terms( $course, $taxonomy = 'category' ) {
 		$terms = array();
-		foreach ( ohmylms_get_object_terms( $course->get_id(), 'course_' . $taxonomy ) as $term ) {
+		// Course categories and tags were replaced by curriculum items and learning tracks. The admin app still
+		// reads categories and tags from the course, so these keys now carry the replacements.
+		if ( 'tag' === $taxonomy ) {
+			foreach ( \OhMyLMS\Curriculum\Placement::tracks( $course->get_id() ) as $track ) {
+				$terms[] = array(
+					'id'   => $track['id'],
+					'name' => $track['title'],
+					'slug' => $track['slug'],
+				);
+			}
+			return $terms;
+		}
+		foreach ( \OhMyLMS\Curriculum\Placement::items( $course->get_id() ) as $item ) {
 			$terms[] = array(
-				'id'   => $term->term_id,
-				'name' => $term->name,
-				'slug' => $term->slug,
+				'id'   => $item['id'],
+				'name' => $item['name'],
+				'slug' => $item['slug'],
 			);
 		}
 		return $terms;
@@ -2389,6 +2404,10 @@ class CourseController extends RestController {
 	protected function handle_terms( $post_id, $request ) {
 		$taxonomies = wp_list_filter( get_object_taxonomies( OHMYLMS_COURSE_CPT, 'objects' ), array( 'show_in_rest' => true ) );
 		foreach ( $taxonomies as $taxonomy ) {
+			// Categories and tags are replaced by curriculum and learning tracks (see CourseOrganizationController).
+			if ( in_array( $taxonomy->name, array( 'course_category', 'course_tag' ), true ) ) {
+				continue;
+			}
 			$base = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
 			if ( 'course_category' === $base ) {
 				$base = 'categories';

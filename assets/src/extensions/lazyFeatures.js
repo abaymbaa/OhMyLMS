@@ -103,6 +103,17 @@ export const setupComponents = lazyFactories(
   'setupComponents',
 );
 
+export const curriculumComponents = lazyComponents(
+  ['CurriculumPage'],
+  () => import(/* webpackChunkName: "curriculum" */ '../features/curriculum'),
+  'curriculumComponents',
+);
+export const trackComponents = lazyComponents(
+  ['TracksPage'],
+  () => import(/* webpackChunkName: "tracks" */ '../features/tracks'),
+  'trackComponents',
+);
+
 export const questionBankComponents = lazyComponents(
   [
     'QuestionBankPage',

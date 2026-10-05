@@ -66700,16 +66700,11 @@
           };
         }
         var oH = window.ohmylms.extensions.courseComponents.CourseOrganization(() => ({
-          $V,
           I,
-          React,
-          T,
-          XV,
-          aH,
           b,
+          f,
           g,
-          tH,
-          y
+          l
         }));
         const iH = (0, g.memo)(oH);
         function lH(e, t) {

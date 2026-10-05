@@ -1,6 +1,6 @@
 <?php
 /**
- * Template for displaying course categories.
+ * Template for displaying the curriculum as course filter buttons.
  *
  * @package OhMyLMS\Templates
  * @version  1.0.0
@@ -11,17 +11,8 @@ if( !isset($is_enable_category) || 'yes' !== $is_enable_category ){
     return;
 }
 
-$items = [];
-if (taxonomy_exists('course_category')) {
-    $terms = get_terms([
-        'taxonomy'   => 'course_category',
-        'hide_empty' => false, // Set to true to exclude empty terms
-    ]);
-
-    if (!empty($terms) && !is_wp_error($terms)) {
-        $items = $terms;
-    }
-}
+// Curriculum items that have published courses; selecting one includes everything below it.
+$items = \OhMyLMS\Curriculum\Placement::public_items();
 ?>
 <div class="ohmylms-category-type-button">
     <ul>
@@ -31,9 +22,9 @@ if (taxonomy_exists('course_category')) {
             </a>
         </li>
         <?php foreach($items as $item): ?>
-            <li class="ohmylms-category-filter" data-slug="<?php echo $item->slug; ?>">
-                <a href="#" data-slug="<?php echo $item->slug; ?>">
-                    <?php echo esc_html__( $item->name, 'ohmylms' ); ?>
+            <li class="ohmylms-category-filter" data-slug="<?php echo esc_attr( $item['slug'] ); ?>">
+                <a href="#" data-slug="<?php echo esc_attr( $item['slug'] ); ?>">
+                    <?php echo esc_html( $item['name'] ); ?>
                 </a>
             </li>
         <?php endforeach; ?>

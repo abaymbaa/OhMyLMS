@@ -537,22 +537,15 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * The wizard's "category" names become top-level curriculum items (course categories were replaced
+	 * by the curriculum). Names that already exist are left alone.
+	 */
 	private function save_terms( $request ) {
 		if ( isset( $request['category'] ) && is_array( $request['category'] ) ) {
-			$terms_data['course_category'] = $request['category'];
-			foreach ( $terms_data as $taxonomy => $term_names ) {
-				// Ensure taxonomy exists, if not create it
-				$this->create_taxonomy_if_not_exists( $taxonomy );
-				foreach ( $term_names as $term_name ) {
-					$term = term_exists( $term_name, $taxonomy );
-					if ( ! $term ) {
-						wp_insert_term( $term_name, $taxonomy );
-					}
-				}
-			}
+			\OhMyLMS\Curriculum\Placement::ensure_items( array_map( 'sanitize_text_field', array_map( 'strval', $request['category'] ) ) );
 		}
 	}
-
 
 	private function save_payment_data( $request ) {
 		if ( isset( $request['payment'] ) && is_array( $request['payment'] ) ) {
@@ -587,27 +580,6 @@ class SetupWizardController extends RestController {
 		}
 	}
 
-
-	private function create_taxonomy_if_not_exists( $taxonomy, $post_type = 'ohmylms-course' ) {
-		global $wp_taxonomies;
-
-		if ( ! taxonomy_exists( $taxonomy ) ) {
-			register_taxonomy(
-				$taxonomy,
-				$post_type,
-				array(
-					'label'             => ucfirst( $taxonomy ),
-					'public'            => true,
-					'hierarchical'      => ( $taxonomy === 'course_category' ), // Categories are hierarchical
-					'show_ui'           => true,
-					'show_admin_column' => true,
-					'query_var'         => true,
-					'rewrite'           => array( 'slug' => $taxonomy ),
-				)
-			);
-			$wp_taxonomies[ $taxonomy ] = get_taxonomy( $taxonomy ); // Register dynamically
-		}
-	}
 
 	private function create_contact( $request ) {
 		if ( isset( $request['contact'] ) ) {

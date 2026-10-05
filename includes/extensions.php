@@ -21,6 +21,7 @@ add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Assessment\Bootstrap::init();
 \OhMyLMS\Learning\Bootstrap::init();
+\OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();
 \OhMyLMS\Schools\Bootstrap::init();
 add_action('plugins_loaded', ['OhMyLMS\\Extensions\\Modules','load']);

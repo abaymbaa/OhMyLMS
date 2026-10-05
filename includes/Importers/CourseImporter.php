@@ -135,8 +135,30 @@ class CourseImporter {
             }
         }
        
+        // Course categories and tags were replaced by the curriculum and Learning Tracks. Files exported
+        // before that carry them as terms, so they are imported as curriculum items and tracks instead.
+        $curriculum_paths = [];
+        $track_titles     = [];
+        foreach ((array) ($data['curriculum'] ?? []) as $path) {
+            $curriculum_paths[] = (array) $path;
+        }
+        foreach ((array) ($data['learning_tracks'] ?? []) as $title) {
+            $track_titles[] = (string) $title;
+        }
+
         if (!empty($data['terms'])) {
             foreach ($data['terms'] as $term_data) {
+                if (isset($term_data['taxonomy'], $term_data['term'])) {
+                    if ('course_category' === $term_data['taxonomy']) {
+                        $curriculum_paths[] = [$term_data['term']];
+                        continue;
+                    }
+                    if ('course_tag' === $term_data['taxonomy']) {
+                        $track_titles[] = $term_data['term'];
+                        continue;
+                    }
+                }
+
                 // Ensure taxonomy exists, if not, create it
                 if (!taxonomy_exists($term_data['taxonomy'])) {
                     // Register the taxonomy if it doesn't exist
@@ -192,6 +214,9 @@ class CourseImporter {
                 }
             }
         }
+
+        \OhMyLMS\Curriculum\Placement::import_categories($course_id, $curriculum_paths);
+        \OhMyLMS\Curriculum\Placement::import_tags($course_id, $track_titles);
 
         if( isset($data['thumbnail']) ){
             $thumbnail_id = $this->import_thumbnail($data['thumbnail']);

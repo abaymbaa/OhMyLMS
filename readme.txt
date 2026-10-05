@@ -77,7 +77,7 @@ OhMyLMS offers more in its free version than most paid WordPress LMS plugins. No
 - ✅ Gutenberg, Elementor, and Bricks Builder support
 - ✅ Multiple lesson types (video, audio, text, downloads)
 - ✅ Student progress tracking and analytics
-- ✅ Course categories, tags, and prerequisites
+- ✅ Curriculum structure, learning tracks, and prerequisites
 - ✅ Custom video player (removes YouTube/Vimeo branding)
 - ✅ Student dashboard and profile management
 
@@ -500,6 +500,17 @@ Community feature enhancements and improved OhMyLMS compatibility. Update recomm
 New Gutenberg blocks for Student Dashboard, My Courses, and Student Profile pages. Includes page restore functionality.
 
 == Changelog ==
+= Unreleased =
+🚀 New Features
+
+- Added: Curriculum — build exam-board, national-curriculum, test, grade, subject and syllabus structures of any depth in one accordion editor, with inline editing, reordering, moving, search and safe deletion, and place courses, skills, question banks and exams in them. Learning mode stays a course setting.
+- Added: Learning Tracks — group selected courses and syllabuses from any curricula, publish them, and let learners add them to (or remove them from) their dashboard. Following a track never enrolls anyone or changes access.
+- Added: Shared-skill mappings — link curriculum-specific skills to a shared skill without merging them by name, and show learners combined skill views with each answer counted once. Shared evidence never completes another course.
+- Added: Learner dashboard section showing per-course and per-syllabus progress, skill strengths, gaps, "Not assessed" skills and next practice.
+- Changed: Curriculum replaces course categories and Learning Tracks replace course tags. Courses are placed under curriculum items (and in tracks by an administrator) from the course editor's Organize tab; the course list, public filters and tabs, the single course sidebar, the course list shortcode, block and Elementor, Bricks and WPBakery widgets (new `curriculum` and `track` attributes), membership plans, duplicate, export and import, LearnDash, LearnPress, Tutor LMS and MasterStudy imports and the setup wizard all use them.
+- Changed: Existing category and tag terms are not converted or deleted, and old category and tag archive addresses keep working. Membership plans that still have a category or tag rule keep granting access through it; those rules can be removed but not added to.
+- Changed: The old categories and tags REST endpoints now list curriculum items and tracks and refuse writes (HTTP 410). The `category` attribute of the course list shortcode and block is ignored.
+
 = 1.2.19 (2026-09-15) =
 🚀 New Features
 

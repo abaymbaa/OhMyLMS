@@ -641,9 +641,9 @@ class MembershipController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function set_membership_meta( $membership, $request ) {
-        $error = $this->validate_course_selection($request);
+        $error = $this->validate_course_selection($request, $membership);
         if (is_wp_error($error)) throw new DataException($error->get_error_code(), $error->get_error_message(), 400);
-        foreach (['course_categories', 'course_tags', 'excluded_courses'] as $field) {
+        foreach (['course_categories', 'course_tags', 'course_curriculum', 'course_tracks', 'excluded_courses'] as $field) {
             if (isset($request[$field])) $membership->{'set_' . $field}($request[$field]);
         }
 		if ( isset( $request['regular_price'] ) ) {
@@ -730,6 +730,9 @@ class MembershipController extends RestController {
 			'products'              => $membership->get_products('edit'),
             'course_categories' => $membership->get_course_categories(),
             'course_tags' => $membership->get_course_tags(),
+            'course_curriculum' => $membership->get_course_curriculum(),
+            'course_tracks' => $membership->get_course_tracks(),
+            'legacy_rules' => $this->legacy_rules($membership),
             'excluded_courses' => $membership->get_excluded_courses(),
 			'courses'               => count( $membership->get_products() ),
 			'members'               => $membership->count_membership_members(),
@@ -740,13 +743,36 @@ class MembershipController extends RestController {
 		return $data;
 	}
 
-    private function validate_course_selection($request) {
-        foreach (['course_categories' => 'course_category', 'course_tags' => 'course_tag', 'excluded_courses' => null] as $field => $taxonomy) {
+    /**
+     * Course rules. Curriculum items and learning tracks are the rules to choose from. Legacy category and
+     * tag rules, saved before those were replaced, can only be kept or removed, never extended: members keep
+     * the access they were granted until an administrator removes the rule, yet nothing new is organized by
+     * categories or tags.
+     */
+    private function validate_course_selection($request, $membership = null) {
+        $rules = [
+            'course_categories' => 'course_category',
+            'course_tags' => 'course_tag',
+            'course_curriculum' => 'curriculum',
+            'course_tracks' => 'tracks',
+            'excluded_courses' => null,
+        ];
+        foreach ($rules as $field => $kind) {
             if (!isset($request[$field])) continue;
             if (!is_array($request[$field])) return new WP_Error('membership_selection_invalid', __('Course selections must be lists.', 'ohmylms'), ['status' => 400]);
             foreach ($request[$field] as $id) {
-                if (!is_numeric($id) || (int) $id <= 0 || (string) (int) $id !== (string) $id || ($taxonomy ? !term_exists((int) $id, $taxonomy) : get_post_type((int) $id) !== 'ohmylms-course')) {
-                    return new WP_Error('membership_selection_invalid', __('A selected course category, tag or exclusion no longer exists.', 'ohmylms'), ['status' => 400]);
+                if (!is_numeric($id) || (int) $id <= 0 || (string) (int) $id !== (string) $id) return new WP_Error('membership_selection_invalid', __('A selected course rule or exclusion no longer exists.', 'ohmylms'), ['status' => 400]);
+                $id = (int) $id;
+                if ($kind === 'curriculum') $exists = \OhMyLMS\Curriculum\Items::get($id) !== null;
+                elseif ($kind === 'tracks') $exists = \OhMyLMS\Tracks\Tracks::get($id) !== null;
+                elseif ($kind) $exists = (bool) term_exists($id, $kind);
+                else $exists = get_post_type($id) === 'ohmylms-course';
+                if (!$exists) return new WP_Error('membership_selection_invalid', __('A selected course rule or exclusion no longer exists.', 'ohmylms'), ['status' => 400]);
+            }
+            if ($membership && in_array($kind, ['course_category', 'course_tag'], true)) {
+                $saved = $kind === 'course_category' ? $membership->get_course_categories('edit') : $membership->get_course_tags('edit');
+                if (array_diff(array_map('intval', $request[$field]), array_map('intval', (array) $saved))) {
+                    return new WP_Error('membership_legacy_rules', __('Category and tag rules were replaced by curriculum items and learning tracks. Existing rules can only be removed.', 'ohmylms'), ['status' => 400]);
                 }
             }
         }
@@ -759,16 +785,43 @@ class MembershipController extends RestController {
         return true;
     }
 
+    /** Legacy category and tag rules still saved on a plan, with their names, so they can be shown and removed. */
+    private function legacy_rules($membership) {
+        $named = static function ($ids, $taxonomy) {
+            $rows = [];
+            foreach ((array) $ids as $id) {
+                $term = taxonomy_exists($taxonomy) ? get_term((int) $id, $taxonomy) : null;
+                $rows[] = ['id' => (int) $id, 'name' => $term && !is_wp_error($term) ? $term->name : '#' . (int) $id];
+            }
+            return $rows;
+        };
+        return ['categories' => $named($membership->get_course_categories(), 'course_category'), 'tags' => $named($membership->get_course_tags(), 'course_tag')];
+    }
+
     public function course_preview($request) {
         $valid = $this->validate_course_selection($request);
         if (is_wp_error($valid)) return $valid;
-        $courses = \OhMyLMS\Membership\CourseSelection::resolve($request['products'] ?? [], $request['course_categories'] ?? [], $request['course_tags'] ?? [], $request['excluded_courses'] ?? []);
+        $curriculum = $request['course_curriculum'] ?? [];
+        $tracks = $request['course_tracks'] ?? [];
+        $courses = \OhMyLMS\Membership\CourseSelection::resolve($request['products'] ?? [], $request['course_categories'] ?? [], $request['course_tags'] ?? [], $request['excluded_courses'] ?? [], $curriculum, $tracks);
         $direct = array_column($request['products'] ?? [], 'id');
         $categories = $request['course_categories'] ?? [];
         $category_ids = $categories;
         foreach ($categories as $category) {
             $children = get_term_children($category, 'course_category');
             if (!is_wp_error($children)) $category_ids = array_merge($category_ids, $children);
+        }
+        // Curriculum rules include everything beneath a selected item; a track includes its courses and the courses under its curriculum members.
+        $item_scope = [];
+        if ($curriculum) {
+            $parents = \OhMyLMS\Curriculum\Items::parents();
+            $item_scope = array_map('intval', $curriculum);
+            foreach ($item_scope as $item) $item_scope = array_merge($item_scope, \OhMyLMS\Curriculum\Tree::descendants($parents, $item));
+        }
+        $track_courses = [];
+        foreach ($tracks as $track_id) {
+            $track = \OhMyLMS\Tracks\Tracks::get((int) $track_id);
+            if ($track) $track_courses[] = ['title' => $track['title'], 'courses' => \OhMyLMS\Curriculum\Placement::course_ids_for_tracks([(int) $track_id])];
         }
         foreach ($courses as &$course) {
             $course['reasons'] = [];
@@ -778,11 +831,12 @@ class MembershipController extends RestController {
                 if (is_wp_error($terms)) continue;
                 foreach ($terms as $term) if (in_array($term->term_id, $ids)) $course['reasons'][] = $term->name;
             }
+            if ($item_scope) foreach (\OhMyLMS\Curriculum\Placement::items($course['id']) as $item) if (in_array($item['id'], $item_scope, true)) $course['reasons'][] = $item['name'];
+            foreach ($track_courses as $track) if (in_array((int) $course['id'], $track['courses'], true)) $course['reasons'][] = $track['title'];
         }
         unset($course);
         return rest_ensure_response(['courses' => $courses, 'total' => count($courses)]);
     }
-
 
 	/**
 	 * Prepare links for the request.

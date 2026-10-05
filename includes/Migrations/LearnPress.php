@@ -232,16 +232,20 @@ class LearnPress {
 	 * @param int $new_course_id The ID of the newly created course in OhMyLMS.
 	 */
 	private function migrate_terms_and_taxonomies( $new_course_id ) {
-		// Get course categories
-		$categories = wp_get_post_terms( $this->lp_course_id, 'course_category', array( 'fields' => 'ids' ) );
+		// LearnPress categories become curriculum items (keeping their parent chain) and its tags
+		// become Learning Tracks.
+		$categories = wp_get_post_terms( $this->lp_course_id, 'course_category' );
 		if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
-			wp_set_post_terms( $new_course_id, $categories, 'ohmylms-course-category' );
+			$paths = array();
+			foreach ( $categories as $category ) {
+				$paths[] = \OhMyLMS\Curriculum\Placement::term_path( $category );
+			}
+			\OhMyLMS\Curriculum\Placement::import_categories( $new_course_id, $paths );
 		}
 
-		// Get course tags
-		$tags = wp_get_post_terms( $this->lp_course_id, 'course_tag', array( 'fields' => 'ids' ) );
+		$tags = wp_get_post_terms( $this->lp_course_id, 'course_tag', array( 'fields' => 'names' ) );
 		if ( ! is_wp_error( $tags ) && ! empty( $tags ) ) {
-			wp_set_post_terms( $new_course_id, $tags, 'ohmylms-course-tag' );
+			\OhMyLMS\Curriculum\Placement::import_tags( $new_course_id, $tags );
 		}
 	}
 

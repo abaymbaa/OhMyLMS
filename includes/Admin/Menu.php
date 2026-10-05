@@ -49,8 +49,9 @@ class Menu {
 		if ( current_user_can( $capability ) ) {
 			$submenu[ $slug ][] = array( esc_attr__( 'Dashboard', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/dashboard' );
 			$submenu[ $slug ][] = array( esc_attr__( 'Courses', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/courses' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Categories', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/categories' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Tags', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/tags' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				// Curriculum replaces course categories and Learning Tracks replace course tags; both are bundled SDK admin pages.
+				$submenu[ $slug ][] = array( esc_attr__( 'Curriculum', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/curriculum' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$submenu[ $slug ][] = array( esc_attr__( 'Learning Tracks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/tracks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Assessments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assessments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			// Question bank, skills and performance pages are bundled SDK admin pages.
 			if ( \OhMyLMS\Assessment\Engine::bank_ui() ) {

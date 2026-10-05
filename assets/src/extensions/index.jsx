@@ -1,6 +1,7 @@
 import { createElement, createRoot, render } from '@wordpress/element';
 import { createRegistry } from './registry.mjs';
 import { registerBuiltinSlashCommands, slashGroups } from './slashCommands.mjs';
+import { registerCurriculumLabels } from './curriculumLabels';
 import { ExtensionSlot } from './ExtensionSlot';
 import * as api from './api.mjs';
 import { MembershipSettingsPanels } from './MembershipSettingsPanels';
@@ -27,11 +28,16 @@ import {
   taxonomyComponents,
   setupComponents,
   questionBankComponents,
+  curriculumComponents,
+  trackComponents,
 } from './lazyFeatures';
 import { registerQuestionBankPages } from '../features/question-bank/registerPages';
+import { registerCurriculumPages } from '../features/curriculum/registerPages';
 import { assessmentsRoutes, assessmentScreen } from '../features/assessment/AssessmentsHub';
 const registry = createRegistry();
 registerQuestionBankPages(registry, questionBankComponents);
+registerCurriculumPages(registry, { ...curriculumComponents, ...trackComponents });
+registerCurriculumLabels();
 registerBuiltinSlashCommands(registry);
 const roots = new WeakMap();
 const publicApi = {
@@ -56,8 +62,16 @@ const publicApi = {
   taxonomyComponents,
   setupComponents,
   questionBankComponents,
+  curriculumComponents,
+  trackComponents,
   extendRoutes(routes) {
+    // Course categories and tags were replaced by the curriculum and Learning Tracks. Their old screens
+    // could only report errors, so old links to them open the replacements.
+    const replacedBy = { '/categories': 'curriculum', '/tags': 'tracks' };
     const coreRoutes = routes.map((route) => {
+      const replacement =
+        replacedBy[route.path] && registry.get('admin-page', replacedBy[route.path]);
+      if (replacement) return { ...route, element: extensionPage(replacement) };
       const section = { '/quizzes': 'quizzes', '/assignments': 'assignments' }[route.path];
       return section ? { ...route, element: assessmentScreen(route.element, section) } : route;
     });

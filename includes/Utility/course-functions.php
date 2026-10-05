@@ -140,6 +140,32 @@ function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
 }
 
 /**
+ * Course IDs that a course-list group slug refers to.
+ *
+ * Course categories and tags were replaced by the curriculum and Learning Tracks, so the group slug is
+ * `c<id>` for a curriculum item (including everything below it) or `t<id>` for a Learning Track.
+ * Course lists pass the first selected filter value here.
+ *
+ * @param string|null $slug Group slug, or 'all'/empty for no grouping.
+ *
+ * @return int[]|null Null when no group applies; an empty array when the group has no courses.
+ */
+function ohmylms_course_ids_for_group( $slug ) {
+	if ( ! is_string( $slug ) || '' === $slug || 'all' === $slug ) {
+		return null;
+	}
+
+	return array_values(
+		array_unique(
+			array_merge(
+				\OhMyLMS\Curriculum\Placement::course_ids_for_slugs( array( $slug ), 'item' ),
+				\OhMyLMS\Curriculum\Placement::course_ids_for_slugs( array( $slug ), 'track' )
+			)
+		)
+	);
+}
+
+/**
  * Retrieves the best selling courses.
  *
  * This function fetches the courses that have the highest number of sales.
@@ -148,22 +174,16 @@ function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
  */
 function get_best_selling_course_ids( $category = null ) {
 	global $wpdb;
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch best-selling courses
 	$query = "
         SELECT p.ID
         FROM {$wpdb->posts} p
         INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON p.ID = m.meta_value
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Add conditions for post type, status, and course ID meta key
 	$query .= '
@@ -172,9 +192,9 @@ function get_best_selling_course_ids( $category = null ) {
           AND m.meta_key = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
 	// Group by course ID and order by sales count in descending order
@@ -183,12 +203,7 @@ function get_best_selling_course_ids( $category = null ) {
         ORDER BY COUNT(m.meta_value) DESC
     ';
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
@@ -205,22 +220,16 @@ function get_best_selling_course_ids( $category = null ) {
  */
 function get_top_rated_course_ids( $category = null ) {
 	global $wpdb;
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch courses with average rating
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Adding conditions for post type, status, and average rating meta key
 	$query .= '
@@ -229,9 +238,9 @@ function get_top_rated_course_ids( $category = null ) {
           AND pm.meta_key = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
 	// Order by average rating in descending order
@@ -239,12 +248,7 @@ function get_top_rated_course_ids( $category = null ) {
         ORDER BY CAST(pm.meta_value AS DECIMAL(10,2)) DESC
     ';
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
@@ -261,22 +265,16 @@ function get_top_rated_course_ids( $category = null ) {
  */
 function get_top_reviewed_course_ids( $category = null ) {
 	global $wpdb;
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch courses with average rating
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Adding conditions for post type, status, and review count
 	$query .= '
@@ -285,9 +283,9 @@ function get_top_reviewed_course_ids( $category = null ) {
           AND pm.meta_key = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
 	// Order by review count (assuming _review_count stores numeric values)
@@ -295,12 +293,7 @@ function get_top_reviewed_course_ids( $category = null ) {
         ORDER BY CAST(pm.meta_value AS DECIMAL(10,2)) DESC
     ';
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
@@ -315,22 +308,16 @@ function get_top_reviewed_course_ids( $category = null ) {
  */
 function get_free_course_ids( $category = null ) {
 	global $wpdb;
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch free courses
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Adding conditions for post type, status, and free price type
 	$query .= '
@@ -340,17 +327,12 @@ function get_free_course_ids( $category = null ) {
           AND pm.meta_value = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
@@ -365,22 +347,16 @@ function get_free_course_ids( $category = null ) {
  */
 function get_paid_course_ids( $category = null ) {
 	global $wpdb;
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch paid courses
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Adding conditions for post type, status, and paid price type
 	$query .= '
@@ -390,17 +366,12 @@ function get_paid_course_ids( $category = null ) {
           AND pm.meta_value = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
@@ -417,21 +388,15 @@ function get_paid_course_ids( $category = null ) {
 function get_recent_course_ids( $category = null ) {
 	global $wpdb;
 
-	$category = 'all' === $category ? null : $category;
+	$group = ohmylms_course_ids_for_group( $category );
+	if ( array() === $group ) {
+		return array();
+	}
 	// Base query to fetch recent courses
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
     ";
-
-	// If category is provided, join term relationships and taxonomy tables
-	if ( $category ) {
-		$query .= "
-            INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        ";
-	}
 
 	// Adding conditions for post type and post status
 	$query .= '
@@ -439,20 +404,15 @@ function get_recent_course_ids( $category = null ) {
           AND p.post_status = %s
     ';
 
-	// Add category condition if category is provided
-	if ( $category ) {
-		$query .= ' AND t.slug = %s ';
+	// Limit to the courses of the selected curriculum item or Learning Track.
+	if ( null !== $group ) {
+		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
 	// Order by post_date to get the most recent courses
 	$query .= ' ORDER BY p.post_date DESC ';
 
-	// Prepare the query with or without category
-	if ( $category ) {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', $category );
-	} else {
-		$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish' );
-	}
+	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish' );
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs

@@ -806,14 +806,9 @@ class DashboardController extends RestController {
 			return $terms;
 		}
 
-		foreach ( ohmylms_get_object_terms( $course->get_id(), 'course_' . $taxonomy ) as $term ) {
-			$terms[] = array(
-				'id'   => $term->term_id,
-				'name' => $term->name,
-				'slug' => $term->slug,
-			);
-		}
-		return $terms;
+		// Course categories and tags were replaced by the curriculum and Learning Tracks; the response
+		// keys are unchanged.
+		return \OhMyLMS\Curriculum\Placement::card_terms( $course->get_id(), 'tag' === $taxonomy );
 	}
 
 

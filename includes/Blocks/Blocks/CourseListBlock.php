@@ -37,7 +37,8 @@ class CourseListBlock {
 			'postsPerPage' => array( 'type' => 'number', 'default' => 10 ),
 			'orderby' => array( 'type' => 'string', 'default' => 'date' ),
 			'order' => array( 'type' => 'string', 'default' => 'DESC' ),
-			'category' => array( 'type' => 'string', 'default' => '' ),
+			'curriculum' => array( 'type' => 'string', 'default' => '' ),
+			'track' => array( 'type' => 'string', 'default' => '' ),
 
 			// Layout settings
 			'layout' => array( 'type' => 'string', 'default' => 'grid' ),
@@ -204,7 +205,8 @@ class CourseListBlock {
 			'postsPerPage' => 'posts_per_page',
 			'orderby' => 'orderby',
 			'order' => 'order',
-			'category' => 'category',
+			'curriculum' => 'curriculum',
+			'track' => 'track',
 			'layout' => 'layout',
 			'layoutStyle' => 'layout_style',
 			'showFilter' => 'show_filter',

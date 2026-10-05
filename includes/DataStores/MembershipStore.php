@@ -154,6 +154,8 @@ class MembershipStore extends DataStore {
 			'_products'              => 'products',
             '_course_categories' => 'course_categories',
             '_course_tags' => 'course_tags',
+            '_course_curriculum' => 'course_curriculum',
+            '_course_tracks' => 'course_tracks',
             '_excluded_courses' => 'excluded_courses',
 		);
 
@@ -240,6 +242,8 @@ class MembershipStore extends DataStore {
 			'_products'              => 'products',
             '_course_categories' => 'course_categories',
             '_course_tags' => 'course_tags',
+            '_course_curriculum' => 'course_curriculum',
+            '_course_tracks' => 'course_tracks',
             '_excluded_courses' => 'excluded_courses',
 		);
 

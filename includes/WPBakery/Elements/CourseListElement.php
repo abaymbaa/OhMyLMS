@@ -50,6 +50,23 @@ class CourseListElement {
 
 
 	/**
+	 * Dropdown values for WPBakery: label => value, with an "All" entry first. Equal labels (the same
+	 * item name under different parents) get their value appended so none is lost.
+	 *
+	 * @param array<string,string> $options Slug => label.
+	 *
+	 * @return array<string,string>
+	 */
+	private static function dropdown_values( array $options ) {
+		$values = array( __( 'All', 'ohmylms' ) => '' );
+		foreach ( $options as $slug => $label ) {
+			$key            = isset( $values[ $label ] ) ? $label . ' (' . $slug . ')' : $label;
+			$values[ $key ] = $slug;
+		}
+		return $values;
+	}
+
+	/**
 	 * Decode course_rows param_group data from WPBakery
 	 *
 	 * @param array $out The output array of shortcode attributes.
@@ -208,17 +225,31 @@ class CourseListElement {
 			       ),
 				       array(
 					       'type'        => 'checkbox',
-					       'heading'     => __( 'Show Category', 'ohmylms' ),
+					       'heading'     => __( 'Show Curriculum Tabs', 'ohmylms' ),
 					       'param_name'  => 'is_enable_category',
 					       'value'       => array(__( 'Enable', 'ohmylms' ) => 'yes' ),
 					       'std'         => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ),
-					       'description' => __( 'Show course category (Layout 3/4, Grid only, Pro)', 'ohmylms' ),
+					       'description' => __( 'Show curriculum tabs (Layout 3/4, Grid only, Pro)', 'ohmylms' ),
 					       'dependency'  => array(
 						       'element' => 'layout_style',
 						       'value'   => array('grid-style3','grid-style4'),
 					       ),
 				       ),
-				       // Row Settings (Pro)
+				       array(
+	'type'        => 'dropdown',
+	'heading'     => __( 'Curriculum', 'ohmylms' ),
+	'param_name'  => 'curriculum',
+	'value'       => self::dropdown_values( \OhMyLMS\Curriculum\Placement::item_options() ),
+	'description' => __( 'Only show courses placed under this curriculum item and everything below it.', 'ohmylms' ),
+),
+array(
+	'type'        => 'dropdown',
+	'heading'     => __( 'Learning track', 'ohmylms' ),
+	'param_name'  => 'track',
+	'value'       => self::dropdown_values( \OhMyLMS\Curriculum\Placement::track_options() ),
+	'description' => __( 'Only show courses in this Learning Track.', 'ohmylms' ),
+),
+// Row Settings (Pro)
                        
 
 				       array(

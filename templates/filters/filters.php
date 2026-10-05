@@ -38,31 +38,25 @@ $items = [
         if (!empty($filter_data)) { 
             foreach ($filter_data as $filter) { 
                 $filter_title = '';
+                // The "category" and "tag" filters keep their stored keys but now list the curriculum and
+                // Learning Tracks. Only entries with published courses are shown; slugs are c<id> / t<id>.
                 if('category' == $filter) {
-                    $filter_title = __('Category', 'ohmylms');
-                    if (taxonomy_exists('course_category')) {
-                        $terms = get_terms([
-                            'taxonomy'   => 'course_category',
-                            'hide_empty' => false, // Set to true to exclude empty terms
-                        ]);
-
-                        if (!empty($terms) && !is_wp_error($terms)) {
-                            $items['category'] = $terms;
-                        }
+                    $filter_title = __('Curriculum', 'ohmylms');
+                    foreach (\OhMyLMS\Curriculum\Placement::public_items() as $entry) {
+                        $items['category'][] = [
+                            'name'  => str_repeat('— ', (int) $entry['depth']) . $entry['name'],
+                            'slug'  => $entry['slug'],
+                        ];
                     }
                 }
 
                 if('tag' == $filter) {
-                    $filter_title = __('Tag', 'ohmylms');
-                    if (taxonomy_exists('course_tag')) {
-                        $terms = get_terms([
-                            'taxonomy'   => 'course_tag',
-                            'hide_empty' => false, // Set to true to exclude empty terms
-                        ]);
-
-                        if (!empty($terms) && !is_wp_error($terms)) {
-                            $items['tag'] = $terms;
-                        }
+                    $filter_title = __('Learning track', 'ohmylms');
+                    foreach (\OhMyLMS\Curriculum\Placement::public_tracks() as $entry) {
+                        $items['tag'][] = [
+                            'name'  => $entry['title'],
+                            'slug'  => $entry['slug'],
+                        ];
                     }
                 }
 
@@ -119,19 +113,13 @@ $items = [
                             foreach( $items[$filter] as $index => $item ) : ?>
                                 
                                 <label for="<?php echo $filter.$index; ?>" class="ohmylms-checkbox" >
-                                    <input type="checkbox" name="ohmylms-filter-checkbox" value="" data-type="<?php echo $filter; ?>" data-slug="<?php echo 'category' === $filter || 'tag' === $filter ?  $item->slug : $item['slug']; ?>" id="<?php echo $filter.$index; ?>" aria-required="true" aria-labelledby="ohmylms-<?php echo $filter.$index; ?>-filter-label">
+                                    <input type="checkbox" name="ohmylms-filter-checkbox" value="" data-type="<?php echo $filter; ?>" data-slug="<?php echo esc_attr($item['slug']); ?>" id="<?php echo $filter.$index; ?>" aria-required="true" aria-labelledby="ohmylms-<?php echo $filter.$index; ?>-filter-label">
 
                                     <span class="ohmylms-checkbox-text">
                                         <span class="checkedbox" aria-hidden="false" id="ohmylms-<?php echo $filter.$index; ?>-filter-label" tabindex="0" data-target="<?php echo $filter.$index; ?>">
                                             <svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
                                         </span>
-                                    <?php  
-                                        if( 'category' === $filter || 'tag' === $filter ) {
-                                            echo $item->name;
-                                        }else{
-                                            echo $item['name'];
-                                        }
-                                        ?>
+                                    <?php echo esc_html($item['name']); ?>
                                     </span>
                                 </label>
                                 

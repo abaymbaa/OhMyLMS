@@ -99,6 +99,10 @@ class CourseExporter {
         // Get terms associated with the course.
         $taxonomies = get_object_taxonomies(OHMYLMS_COURSE_CPT, 'objects');
         foreach ($taxonomies as $taxonomy) {
+            // Course categories and tags were replaced by the curriculum and Learning Tracks (exported below).
+            if (in_array($taxonomy->name, ['course_category', 'course_tag'], true)) {
+                continue;
+            }
             $terms = wp_get_post_terms($course_id, $taxonomy->name, ['fields' => 'all']);
             if (!is_wp_error($terms) && !empty($terms)) {
                 foreach ($terms as $term) {
@@ -128,8 +132,26 @@ class CourseExporter {
             'date_modified'=> $course_post->post_modified,
             'meta'         => $course_meta,
             'terms'        => $course_terms,
+            'curriculum'   => $this->get_curriculum_paths($course_id),
+            'learning_tracks' => array_values(array_map(static function ($track) {
+                return $track['title'];
+            }, \OhMyLMS\Curriculum\Placement::tracks($course_id))),
             'contents'     => $contents, // Include all chapters and their associated contents.
         ];
+    }
+
+    /**
+     * The curriculum items a course is linked to, each as the names from the top level down.
+     *
+     * @param int $course_id The course ID.
+     * @return array[] For example [['Science', 'Physics']].
+     */
+    private function get_curriculum_paths($course_id) {
+        $paths = [];
+        foreach (\OhMyLMS\Curriculum\Placement::items($course_id) as $item) {
+            $paths[] = array_merge((array) $item['path'], [$item['name']]);
+        }
+        return $paths;
     }
 
     /**

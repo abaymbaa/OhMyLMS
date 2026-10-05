@@ -204,15 +204,17 @@ class MasterStudy {
 	 * @param int $new_course_id Course id.
 	 */
 	private function migrate_terms_and_taxonomies( $new_course_id ) {
+		// Category taxonomies become curriculum items (keeping their parent chain) and tags become
+		// Learning Tracks. Existing items and tracks with the same name are reused.
 		$taxonomy_map = array(
-			'stm_lms_course_taxonomy' => 'course_category',
-			'stm_course_category'     => 'course_category',
-			'stm-courses-category'    => 'course_category',
-			'post_tag'                => 'course_tag',
+			'stm_lms_course_taxonomy' => 'curriculum',
+			'stm_course_category'     => 'curriculum',
+			'stm-courses-category'    => 'curriculum',
+			'post_tag'                => 'track',
 		);
 
-		foreach ( $taxonomy_map as $source_taxonomy => $target_taxonomy ) {
-			if ( ! taxonomy_exists( $source_taxonomy ) || ! taxonomy_exists( $target_taxonomy ) ) {
+		foreach ( $taxonomy_map as $source_taxonomy => $target ) {
+			if ( ! taxonomy_exists( $source_taxonomy ) ) {
 				continue;
 			}
 
@@ -221,33 +223,18 @@ class MasterStudy {
 				continue;
 			}
 
-			$term_ids = array();
+			if ( 'track' === $target ) {
+				\OhMyLMS\Curriculum\Placement::import_tags( $new_course_id, wp_list_pluck( $terms, 'name' ) );
+				continue;
+			}
+
+			$paths = array();
 			foreach ( $terms as $term ) {
-				$existing = get_term_by( 'slug', $term->slug, $target_taxonomy );
-				if ( $existing && ! is_wp_error( $existing ) ) {
-					$term_ids[] = intval( $existing->term_id );
-					continue;
-				}
-
-				$new_term = wp_insert_term(
-					$term->name,
-					$target_taxonomy,
-					array(
-						'slug' => $term->slug,
-					)
-				);
-
-				if ( ! is_wp_error( $new_term ) && ! empty( $new_term['term_id'] ) ) {
-					$term_ids[] = intval( $new_term['term_id'] );
-				}
+				$paths[] = \OhMyLMS\Curriculum\Placement::term_path( $term );
 			}
-
-			if ( ! empty( $term_ids ) ) {
-				wp_set_post_terms( $new_course_id, $term_ids, $target_taxonomy, false );
-			}
+			\OhMyLMS\Curriculum\Placement::import_categories( $new_course_id, $paths );
 		}
 	}
-
 	/**
 	 * Migrate course curriculum data.
 	 *

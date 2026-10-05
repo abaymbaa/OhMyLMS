@@ -68,7 +68,11 @@
       type: 'string',
       default: 'DESC'
     },
-    category: {
+    curriculum: {
+      type: 'string',
+      default: ''
+    },
+    track: {
       type: 'string',
       default: ''
     },
@@ -881,7 +885,7 @@
       }),
       // Show Enable Category only for layout 3 or 4
       (attributes.layoutStyle === 'grid-style3' || attributes.layoutStyle === 'grid-style4') && createElement(ToggleControl, {
-        label: __('Enable Category', 'ohmylms'),
+        label: __('Show curriculum tabs', 'ohmylms'),
         checked: attributes.isEnableCategory === 'yes',
         onChange: function (value) {
           safeSetAttributes({

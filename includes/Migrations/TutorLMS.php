@@ -494,19 +494,14 @@ class TutorLMS {
 			}
 		}
 		
-		// Assign categories
-		if ( ! empty( $course_categories ) ) {
-			foreach ( $course_categories as $category ) {
-				wp_set_object_terms( $new_course_id, $category->name, 'course_category', true );
-			}
+		// Tutor categories become curriculum items (keeping their parent chain) and its tags become
+		// Learning Tracks. Existing items and tracks with the same name are reused.
+		$paths = array();
+		foreach ( $course_categories as $category ) {
+			$paths[] = \OhMyLMS\Curriculum\Placement::term_path( $category );
 		}
-
-		// Assign tags
-		if ( ! empty( $course_tags ) ) {
-			foreach ( $course_tags as $tag ) {
-				wp_set_object_terms( $new_course_id, $tag->name, 'course_tag', true );
-			}
-		}
+		\OhMyLMS\Curriculum\Placement::import_categories( $new_course_id, $paths );
+		\OhMyLMS\Curriculum\Placement::import_tags( $new_course_id, wp_list_pluck( $course_tags, 'name' ) );
 	}
 
 

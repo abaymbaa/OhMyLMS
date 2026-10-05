@@ -472,6 +472,9 @@ class Ajax {
 				'posts_per_page' => $posts_per_page,
 				'post_status'    => 'publish',
 			);
+			// The category and tag filters now filter by curriculum item and learning track.
+			$item_ids  = array();
+			$track_ids = array();
 
 			// Check for filter parameters
 			if ( !empty( $_POST['filter_type'] ) ) {
@@ -479,13 +482,7 @@ class Ajax {
 
 				if ( isset( $_POST['category_slug'] ) && is_array( $_POST['category_slug'] ) ) {
 					$category_slugs = array_map( 'sanitize_text_field', $_POST['category_slug'] );
-					$args['tax_query'][] = array(
-						'taxonomy'         => 'course_category',
-						'field'            => 'slug',
-						'terms'            => $category_slugs,
-						'operator'         => 'IN',
-						'include_children' => false,
-					);
+					$item_ids        = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $category_slugs, 'item' );
 				}
 				if ( isset( $_POST['price_slug'] ) && is_array( $_POST['price_slug'] ) ) {
 					$price_slugs = array_map( 'sanitize_text_field', $_POST['price_slug'] );
@@ -506,12 +503,7 @@ class Ajax {
 				}
 				if ( isset( $_POST['tag_slug'] ) && is_array( $_POST['tag_slug'] ) ) {
 					$tag_slugs = array_map( 'sanitize_text_field', $_POST['tag_slug'] );
-					$args['tax_query'][] = array(
-						'taxonomy' => 'course_tag',
-						'field'    => 'slug',
-						'terms'    => $tag_slugs,
-						'operator' => 'IN',
-					);
+					$track_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'track' );
 				}
 				if ( !empty( $_POST['search_term'] ) ) {
 					$args['s'] = sanitize_text_field( $_POST['search_term'] );
@@ -541,6 +533,7 @@ class Ajax {
 				}
 			}
 			
+			$args  = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $track_ids );
 			$query = new \WP_Query( $args );
 
 			if ( $query->have_posts() ) :
@@ -637,25 +630,10 @@ class Ajax {
 			);
 		}
 
-		// Add taxonomy queries for filters
-		if ( ! empty( $category_slugs ) ) {
-			$tax_query[] = array(
-				'taxonomy'         => 'course_category',
-				'field'            => 'slug',
-				'terms'            => $category_slugs,
-				'operator'         => 'IN',
-				'include_children' => false,
-			);
-		}
-
-		if ( ! empty( $tag_slugs ) ) {
-			$tax_query[] = array(
-				'taxonomy' => 'course_tag',
-				'field'    => 'slug',
-				'terms'    => $tag_slugs,
-				'operator' => 'IN',
-			);
-		}
+		// Category and tag filters are curriculum item and learning track filters; they are applied
+		// below, once the remaining query arguments are built.
+		$item_ids  = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $category_slugs, 'item' );
+		$track_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'track' );
 
 		// Set relations for multiple queries
 		if ( count( $meta_query ) > 1 ) {
@@ -696,6 +674,8 @@ class Ajax {
 			$args['orderby'] = 'date';
 			$args['order']   = 'DESC';
 		}
+
+		$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $track_ids );
 
 		// Handle different filter types
 		if ( 'category' === $filter_type ) {

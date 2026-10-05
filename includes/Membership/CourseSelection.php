@@ -11,7 +11,13 @@ final class CourseSelection {
         return array_values(array_unique(array_filter(array_map('absint', (array) $values))));
     }
 
-    public static function resolve($products, $categories, $tags, $excluded) {
+    /**
+     * Courses a membership plan includes. Curriculum items (with everything beneath them) and
+     * Learning Tracks are the rules to choose from. Legacy category and tag rules, saved before they
+     * were replaced, still resolve so existing members keep the access they were granted until an
+     * administrator removes those rules.
+     */
+    public static function resolve($products, $categories, $tags, $excluded, $curriculum = [], $tracks = []) {
         $ids = self::ids(array_column((array) $products, 'id'));
         $tax = ['relation' => 'OR'];
         foreach (['course_category' => $categories, 'course_tag' => $tags] as $taxonomy => $terms) {
@@ -21,6 +27,10 @@ final class CourseSelection {
         if (count($tax) > 1) {
             $ids = array_merge($ids, get_posts(['post_type' => 'ohmylms-course', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'tax_query' => $tax]));
         }
+        $curriculum = self::ids($curriculum);
+        if ($curriculum) $ids = array_merge($ids, \OhMyLMS\Curriculum\Placement::course_ids_for_items($curriculum));
+        $tracks = self::ids($tracks);
+        if ($tracks) $ids = array_merge($ids, \OhMyLMS\Curriculum\Placement::course_ids_for_tracks($tracks));
         $ids = array_diff(self::ids($ids), self::ids($excluded));
         $result = [];
         foreach ($ids as $id) {
@@ -34,7 +44,7 @@ final class CourseSelection {
         add_action('save_post', [__CLASS__, 'post_changed'], 20, 2);
         add_action('before_delete_post', [__CLASS__, 'post_changed'], 20, 2);
         add_action('set_object_terms', [__CLASS__, 'terms_changed'], 20, 4);
-        foreach (['created_course_category', 'edited_course_category', 'delete_course_category', 'delete_course_tag', 'ohmylms_after_enrolled_student', 'ohmylms_after_enrollment_processed', 'ohmylms_membership_status_updated'] as $hook) add_action($hook, [__CLASS__, 'queue']);
+        foreach (['created_course_category', 'edited_course_category', 'delete_course_category', 'delete_course_tag', 'ohmylms_curriculum_changed', 'ohmylms_curriculum_items_deleted', 'ohmylms_after_enrolled_student', 'ohmylms_after_enrollment_processed', 'ohmylms_membership_status_updated'] as $hook) add_action($hook, [__CLASS__, 'queue']);
         add_action('shutdown', [__CLASS__, 'flush']);
     }
     public static function queue() { self::$queued = true; }

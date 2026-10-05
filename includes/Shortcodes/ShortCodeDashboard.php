@@ -124,6 +124,13 @@ class ShortCodeDashboard {
 			)
 		);
 		
+		/**
+		 * Add-ons such as Learning Tracks render their own learner sections below the standard content.
+		 *
+		 * @since NEXT
+		 */
+		do_action( 'ohmylms_lms_student_dashboard_sections' );
+
 		echo '</div>';
 		echo '</section>';
 		

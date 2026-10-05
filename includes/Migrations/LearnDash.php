@@ -201,95 +201,23 @@ class LearnDash {
 			return;
 		}
 
-		// Prepare taxonomy assignment
-		$course_categories = array();
-		$course_tags       = array();
+		// LearnDash categories become curriculum items (keeping their parent chain) and LearnDash tags
+		// become Learning Tracks. Items and tracks with the same name are reused, so migrating many
+		// courses does not duplicate structure.
+		$curriculum_paths = array();
+		$track_titles     = array();
 
 		foreach ( $terms as $term ) {
 			if ( 'ld_course_category' === $term->taxonomy ) {
-				$course_categories[] = $term;
+				$curriculum_paths[] = \OhMyLMS\Curriculum\Placement::term_path( $term );
 			} elseif ( 'ld_course_tag' === $term->taxonomy ) {
-				$course_tags[] = $term;
+				$track_titles[] = $term->name;
 			}
 		}
 
-		// Assign categories with parent-child relationship
-		if ( ! empty( $course_categories ) ) {
-			foreach ( $course_categories as $category ) {
-				$parent_id = 0;
-				if ( $category->parent ) {
-					// Get parent term object from LearnDash
-					$parent_term = get_term( $category->parent, 'ld_course_category' );
-					if ( $parent_term && ! is_wp_error( $parent_term ) ) {
-						// Check if parent already exists in OhMyLMS
-						$existing_parent = get_term_by( 'slug', $parent_term->slug, 'course_category' );
-						if ( $existing_parent ) {
-							$parent_id = $existing_parent->term_id;
-						} else {
-							// Create parent if not exists
-							$parent_term_result = wp_insert_term(
-								$parent_term->name,
-								'course_category',
-								array(
-									'slug' => $parent_term->slug,
-								)
-							);
-							if ( ! is_wp_error( $parent_term_result ) ) {
-								$parent_id = $parent_term_result['term_id'];
-							}
-						}
-					}
-				}
-
-				// Check if category already exists in OhMyLMS
-				$existing_category = get_term_by( 'slug', $category->slug, 'course_category' );
-				if ( $existing_category ) {
-					$term_id = $existing_category->term_id;
-					// Optionally update parent if needed
-					if ( $parent_id && $existing_category->parent != $parent_id ) {
-						wp_update_term( $term_id, 'course_category', array( 'parent' => $parent_id ) );
-					}
-				} else {
-					// Double-check: try to find by name and parent as well (handles rare edge cases)
-					$terms = get_terms( array(
-						'taxonomy'   => 'course_category',
-						'slug'       => $category->slug,
-						'hide_empty' => false,
-						'parent'     => $parent_id,
-						'fields'     => 'ids',
-					) );
-					if ( ! empty( $terms ) ) {
-						$term_id = $terms[0];
-					} else {
-						// Create the category in OhMyLMS with parent
-						$term_result = wp_insert_term(
-							$category->name,
-							'course_category',
-							array(
-								'slug'   => $category->slug,
-								'parent' => $parent_id,
-							)
-						);
-						if ( is_wp_error( $term_result ) ) {
-							continue;
-						}
-						$term_id = $term_result['term_id'];
-					}
-				}
-
-				// Assign the category to the course
-				wp_set_object_terms( $new_course_id, intval( $term_id ), 'course_category', true );
-			}
-		}
-
-		// Assign tags (no parent-child logic needed)
-		if ( ! empty( $course_tags ) ) {
-			foreach ( $course_tags as $tag ) {
-				wp_set_object_terms( $new_course_id, $tag->slug, 'course_tag', true );
-			}
-		}
+		\OhMyLMS\Curriculum\Placement::import_categories( $new_course_id, $curriculum_paths );
+		\OhMyLMS\Curriculum\Placement::import_tags( $new_course_id, $track_titles );
 	}
-
 	/**
 	 * Migrates chapters (topics) from learnDash LMS to OhMyLMS for a given course.
 	 *

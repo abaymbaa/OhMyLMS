@@ -191,6 +191,31 @@ class CourseListWidget extends Widget_Base {
 				'max'     => 100,
 			)
 		);
+
+		$this->add_control(
+			'curriculum',
+			array(
+				'label'       => esc_html__( 'Curriculum', 'ohmylms' ),
+				'description' => esc_html__( 'Only show courses placed under these curriculum items. Leave empty to show all.', 'ohmylms' ),
+				'type'        => Controls_Manager::SELECT2,
+				'multiple'    => true,
+				'label_block' => true,
+				'options'     => \OhMyLMS\Curriculum\Placement::item_options(),
+			)
+		);
+
+		$this->add_control(
+			'track',
+			array(
+				'label'       => esc_html__( 'Learning tracks', 'ohmylms' ),
+				'description' => esc_html__( 'Only show courses in these Learning Tracks. Leave empty to show all.', 'ohmylms' ),
+				'type'        => Controls_Manager::SELECT2,
+				'multiple'    => true,
+				'label_block' => true,
+				'options'     => \OhMyLMS\Curriculum\Placement::track_options(),
+			)
+		);
+
         
 		// Feature Toggles Section
 		$this->add_control(
@@ -256,7 +281,7 @@ class CourseListWidget extends Widget_Base {
 		$this->add_control(
 			'is_enable_category',
 			array(
-				'label'        => esc_html__( 'Show Category', 'ohmylms' ),
+				'label'        => esc_html__( 'Show Curriculum Tabs', 'ohmylms' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Show', 'ohmylms' ),
 				'label_off'    => esc_html__( 'Hide', 'ohmylms' ),
@@ -1263,8 +1288,11 @@ class CourseListWidget extends Widget_Base {
 			$attrs['order'] = $settings['order'];
 		}
 
-		if ( isset( $settings['category'] ) && $settings['category'] !== '' ) {
-			$attrs['category'] = $settings['category'];
+		// Curriculum items and Learning Tracks the list is limited to (comma-separated slugs).
+		foreach ( array( 'curriculum', 'track' ) as $group ) {
+			if ( ! empty( $settings[ $group ] ) ) {
+				$attrs[ $group ] = implode( ',', array_map( 'sanitize_key', (array) $settings[ $group ] ) );
+			}
 		}
 
 		if ( isset( $settings['layout'] ) && $settings['layout'] !== '' ) {
@@ -1313,29 +1341,6 @@ class CourseListWidget extends Widget_Base {
 		// No need to convert them to shortcode attributes since they directly target the DOM
 
 		return $attrs;
-	}
-
-	/**
-	 * Get course categories for dropdown options
-	 *
-	 * @return array
-	 */
-	private function get_course_categories() {
-		$categories = get_terms(
-			array(
-				'taxonomy'   => 'course_category',
-				'hide_empty' => false,
-			)
-		);
-
-		$options = array();
-		if ( ! is_wp_error( $categories ) ) {
-			foreach ( $categories as $category ) {
-				$options[ $category->term_id ] = $category->name;
-			}
-		}
-
-		return $options;
 	}
 
 	/**

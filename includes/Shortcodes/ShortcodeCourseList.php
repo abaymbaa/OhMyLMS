@@ -58,7 +58,9 @@ class ShortcodeCourseList {
 			'posts_per_page' => get_option( 'ohmylms_courses_per_page', 10 ),
 			'orderby' => 'date',
 			'order' => 'DESC',
-			'category' => '',
+			// Curriculum item and Learning Track IDs, comma-separated (e.g. curriculum="12,14" track="3").
+			'curriculum' => '',
+			'track' => '',
 			
 			// Layout settings
 			'layout' => get_option( 'ohmylms_archive_page_layout', 'grid' ),
@@ -239,17 +241,12 @@ class ShortcodeCourseList {
 			'order'          => sanitize_text_field( $atts['order'] ),
 		);
 
-		// Add taxonomy query if category is provided
-		if ( ! empty( $atts['category'] ) ) {
-			$args['tax_query'] = array(
-				array(
-					'taxonomy'         => 'course_category',
-					'field'            => 'slug',
-					'terms'            => sanitize_text_field( $atts['category'] ),
-					'include_children' => true,
-				)
-			);
-		}
+		// Limit to curriculum items (and everything below them) and Learning Tracks when given.
+		$args = \OhMyLMS\Curriculum\Placement::narrow_query(
+			$args,
+			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['curriculum'], 'item' ),
+			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['track'], 'track' )
+		);
 
 		// Set up global query for template
 		global $wp_query;
@@ -696,7 +693,8 @@ class ShortcodeCourseList {
 			'postsPerPage' => 'posts_per_page',
 			'orderby' => 'orderby',
 			'order' => 'order',
-			'category' => 'category',
+			'curriculum' => 'curriculum',
+			'track' => 'track',
 			'layout' => 'layout',
 			'layoutStyle' => 'layout_style',
 			'showFilter' => 'show_filter',

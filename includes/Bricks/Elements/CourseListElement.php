@@ -149,6 +149,26 @@ class CourseListElement extends \Bricks\Element {
 			'default'     => get_option( 'ohmylms_courses_per_page', 10 ),
 		);
 
+		$this->controls['curriculum'] = array(
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Curriculum', 'ohmylms' ),
+			'type'        => 'select',
+			'multiple'    => true,
+			'searchable'  => true,
+			'options'     => \OhMyLMS\Curriculum\Placement::item_options(),
+			'description' => esc_html__( 'Only show courses placed under these curriculum items. Leave empty to show all.', 'ohmylms' ),
+		);
+
+		$this->controls['track'] = array(
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Learning tracks', 'ohmylms' ),
+			'type'        => 'select',
+			'multiple'    => true,
+			'searchable'  => true,
+			'options'     => \OhMyLMS\Curriculum\Placement::track_options(),
+			'description' => esc_html__( 'Only show courses in these Learning Tracks. Leave empty to show all.', 'ohmylms' ),
+		);
+
 		// Feature Toggles Group
 		$this->controls['features_heading'] = array(
 			'tab'      => 'content',
@@ -192,7 +212,7 @@ class CourseListElement extends \Bricks\Element {
 
 		$this->controls['is_enable_category'] = array(
 			'tab'      => 'content',
-			'label'    => esc_html__( 'Show Category', 'ohmylms' ),
+			'label'    => esc_html__( 'Show Curriculum Tabs', 'ohmylms' ),
 			'type'     => 'checkbox',
 			'default'  => get_option( 'ohmylms_archive_page_category_is_enabled', 'no' ) === 'yes',
 			'required' => array(
@@ -476,6 +496,13 @@ class CourseListElement extends \Bricks\Element {
 		$attrs['show_search'] = isset( $settings['show_search'] ) && $settings['show_search'] ? 'yes' : 'no';
 		$attrs['show_sort'] = isset( $settings['show_sort'] ) && $settings['show_sort'] ? 'yes' : 'no';
 		$attrs['is_enable_category'] = isset( $settings['is_enable_category'] ) && $settings['is_enable_category'] ? 'yes' : 'no';
+
+		// Curriculum items and Learning Tracks the list is limited to (comma-separated slugs).
+		foreach ( array( 'curriculum', 'track' ) as $group ) {
+			if ( ! empty( $settings[ $group ] ) ) {
+				$attrs[ $group ] = implode( ',', array_map( 'sanitize_key', (array) $settings[ $group ] ) );
+			}
+		}
 
 		if ( isset( $settings['layout_style'] ) && $settings['layout_style'] !== '' && in_array( $settings['layout_style'], array( 'grid-style3', 'grid-style4' ), true ) ) {
 			$attrs['show_filter'] = 'no';
@@ -830,29 +857,6 @@ class CourseListElement extends \Bricks\Element {
 		}
 
 		return $attrs;
-	}
-
-	/**
-	 * Get course categories for dropdown options
-	 *
-	 * @return array
-	 */
-	private function get_course_categories() {
-		$categories = get_terms(
-			array(
-				'taxonomy'   => 'course_category',
-				'hide_empty' => false,
-			)
-		);
-
-		$options = array();
-		if ( ! is_wp_error( $categories ) ) {
-			foreach ( $categories as $category ) {
-				$options[ $category->term_id ] = $category->name;
-			}
-		}
-
-		return $options;
 	}
 
 	/**
