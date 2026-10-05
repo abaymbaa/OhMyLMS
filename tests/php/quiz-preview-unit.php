@@ -13,6 +13,9 @@ namespace OhMyLMS\Data {
         public function get_over_all_completion_rate($course_id) { return $GLOBALS['course_rate']; }
     }
 }
+namespace OhMyLMS\Learning {
+    final class CourseProgram { public static function managed($student_id, $course_id) { return false; } }
+}
 namespace OhMyLMS\Assessment {
     final class Engine { public static function versioned() { return false; } }
     final class Schema {
