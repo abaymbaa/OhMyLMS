@@ -21,7 +21,7 @@ final class Selector {
 
     /** @return array{question_id:int,version_id:int,difficulty:string,family_id:string}|null */
     public static function next(array $session, array $issued, $band) {
-        $pool = self::pool((int) $session['term_id']);
+        $pool = \OhMyLMS\Learning\PracticeAccessPolicy::pool(self::pool((int) $session['term_id']), ['student_id' => (int) $session['student_id']], (int) $session['term_id'], (int) $session['course_id']);
         $used_questions = array_map('intval', array_column($issued, 'question_id'));
         $used_families = array_filter(array_column($issued, 'family_id'));
         $available = array_values(array_filter($pool, static function ($row) use ($used_questions) { return !in_array((int) $row['question_id'], $used_questions, true); }));
@@ -46,7 +46,7 @@ final class Selector {
         $placeholders = implode(',', array_fill(0, count($terms), '%d'));
         $manual = array_keys(array_filter(\OhMyLMS\Extensions\Registry::all('question'), static function ($definition) { return !empty($definition['manual']) || empty($definition['snapshot']); }));
         $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT DISTINCT q.question_id, q.approved_version_id AS version_id, q.difficulty, q.family_id, v.type, v.settings
+            "SELECT DISTINCT q.question_id, q.approved_version_id AS version_id, q.difficulty, q.family_id, q.bank_id, q.author_id, s.term_id AS primary_term_id, v.type, v.settings
              FROM " . Schema::table('qb_questions') . " q
              JOIN " . Schema::table('qb_version_skills') . " s ON s.version_id=q.approved_version_id AND s.role='primary'
              JOIN " . Schema::table('qb_question_versions') . " v ON v.id=q.approved_version_id

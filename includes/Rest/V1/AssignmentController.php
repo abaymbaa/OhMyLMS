@@ -770,7 +770,7 @@ class AssignmentController extends RestController {
 		}
 
 		$completion_rate = $student->get_over_all_completion_rate( $course_id );
-		if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 ) {
+		if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 && ! \OhMyLMS\Learning\CourseProgram::managed( $attempt_id, $course_id ) ) {
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 			$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $attempt_id, $course_id ), ARRAY_A );

@@ -30,6 +30,7 @@ const EMPTY = {
   prerequisites: [],
   lessons: [],
   courses: [],
+  public_practice: false,
 };
 
 /** Skill catalogue: hierarchy, prerequisites (acyclic) and linked lessons and courses. */
@@ -169,6 +170,14 @@ function SkillForm({ skill, skills, onCancel, onSaved, onError }) {
         label={__('Description', 'ohmylms')}
         value={draft.description}
         onChange={set('description')}
+      />
+      <CheckboxControl
+        label={__(
+          'Allow public catalog practice from approved personal and site-bank questions',
+          'ohmylms',
+        )}
+        checked={Boolean(draft.public_practice)}
+        onChange={set('public_practice')}
       />
       <SelectControl
         label={__('Parent (strand or domain)', 'ohmylms')}

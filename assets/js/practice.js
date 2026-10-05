@@ -12,12 +12,22 @@
   var stage = root.querySelector('.ohmylms-practice-stage');
   var session = null;
   var token = null;
+  var storageKey = 'ohmylms-practice-' + (config.studentId || 'guest') + '-' + root.dataset.course + '-' + root.dataset.skill;
+  function remembered(value) {
+    try {
+      if (arguments.length) {
+        if (value) sessionStorage.setItem(storageKey, value);
+        else sessionStorage.removeItem(storageKey);
+      }
+      return sessionStorage.getItem(storageKey);
+    } catch (error) { return null; }
+  }
 
-  function request(path, body) {
+  function request(path, body, method) {
     var headers = { 'Content-Type': 'application/json' };
     if (config.nonce) headers['X-WP-Nonce'] = config.nonce;
     if (token) headers['X-OhMyLMS-Guest'] = token;
-    return fetch(config.root + path, { method: 'POST', credentials: 'same-origin', headers: headers, body: JSON.stringify(body || {}) }).then(function (response) {
+    return fetch(config.root + path, { method: method || 'POST', credentials: 'same-origin', headers: headers, body: method === 'GET' ? undefined : JSON.stringify(body || {}) }).then(function (response) {
       return response.json().then(function (data) {
         if (!response.ok) throw new Error((data && data.message) || i18n.error);
         return data;
@@ -233,6 +243,7 @@
 
   function show(state) {
     session = state;
+    remembered(state.status === 'active' ? state.uuid : null);
     if (state.status === 'active' && state.current) renderQuestion(state);
     else renderSummary(state);
   }
@@ -243,7 +254,7 @@
     ready
       .then(function (guest) {
         token = guest;
-        return request('practice/sessions', { term_id: Number(root.dataset.skill), item_limit: Number(root.dataset.items) || 10 });
+        return request('practice/sessions', { term_id: Number(root.dataset.skill), item_limit: Number(root.dataset.items) || 10, course_id: Number(root.dataset.course) || 0 });
       })
       .then(show)
       .catch(function (error) {
@@ -254,4 +265,20 @@
   var button = el('button', { type: 'button', class: 'ohmylms-button', text: i18n.start });
   button.addEventListener('click', start);
   stage.appendChild(button);
+  if (remembered()) {
+    var resume = el('button', { type: 'button', class: 'ohmylms-button outline', text: i18n.resume });
+    resume.addEventListener('click', function () {
+      resume.disabled = true;
+      var ready = window.ohmylmsGuestToken ? window.ohmylmsGuestToken() : Promise.resolve(null);
+      ready.then(function (guest) {
+        token = guest;
+        return request('practice/sessions/' + remembered(), null, 'GET');
+      }).then(show).catch(function (error) {
+        remembered(null);
+        resume.remove();
+        stage.appendChild(el('p', { role: 'alert', text: error.message }));
+      });
+    });
+    stage.appendChild(resume);
+  }
 })();

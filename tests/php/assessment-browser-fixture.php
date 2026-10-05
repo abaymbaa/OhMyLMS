@@ -34,8 +34,9 @@ $call = static function ($method, $path, $data = []) {
 
 if ($action === 'setup') {
     $tag = strtolower(wp_generate_password(10, false, false));
-    $state = ['tag' => $tag, 'posts' => [], 'users' => [], 'terms' => []];
+    $state = ['tag' => $tag, 'posts' => [], 'users' => [], 'terms' => [], 'previous_integrations' => get_option('ohmylms_integrations', [])];
     try {
+        update_option('ohmylms_integrations', array_merge((array) $state['previous_integrations'], ['skills' => ['is_enable' => 1]]));
         // Learner, guardian and teacher accounts with throwaway passwords.
         foreach (['learner', 'guardian', 'teacher'] as $role) {
             $login = "ab-$role-$tag";
@@ -66,7 +67,7 @@ if ($action === 'setup') {
         ]]);
         $wpdb->insert($wpdb->prefix . 'ohmylms_user_enrollment', ['user_id' => $state['users']['learner']['id'], 'course_id' => $course, 'status' => 'enrolled', 'progress' => 'running', 'start_date' => current_time('mysql')]);
         // A skill with two approved practice questions; the first is also an inline check.
-        $skill = $call('POST', 'skills', ['name' => "Бутархай $tag"])['id'];
+        $skill = $call('POST', 'skills', ['name' => "Бутархай $tag", 'public_practice' => true])['id'];
         $state['terms'][] = $skill;
         $practice = [];
         foreach (['Which is ½ of 8?' => ['4', '2'], 'Which is ¼ of 8?' => ['2', '4']] as $name => [$right, $wrong]) {
@@ -158,6 +159,7 @@ if ($action === 'cleanup') {
         wp_delete_post($post, true);
     }
     foreach ($state['terms'] as $term) { wp_delete_term($term, \OhMyLMS\Skills\Taxonomy::NAME); }
+    if (isset($state['previous_integrations'])) { update_option('ohmylms_integrations', $state['previous_integrations']); }
     @unlink($state_file($tag));
     echo "Assessment browser fixture cleaned.\n";
     exit;

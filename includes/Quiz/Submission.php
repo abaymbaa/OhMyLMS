@@ -231,7 +231,7 @@ final class Submission {
             $was_complete=$student->is_course_completed($course_id);
             $student->complete_lesson($quiz_id,$course_id);
             do_action('ohmylms_lesson_completed',$quiz_id,$course_id,$student_id);
-            if (!$was_complete && (int)$student->get_over_all_completion_rate($course_id)===100) {
+            if (!\OhMyLMS\Learning\CourseProgram::managed($student_id,$course_id) && !$was_complete && (int)$student->get_over_all_completion_rate($course_id)===100) {
                 $order=(int)$wpdb->get_var($wpdb->prepare("SELECT order_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d",$student_id,$course_id));
                 do_action('ohmylms_course_completed',$student_id,$course_id,$order);
             }

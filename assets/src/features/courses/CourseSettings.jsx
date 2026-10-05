@@ -1,6 +1,7 @@
 import { createElement } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { CourseLearning } from './CourseLearning';
 
 export function createCourseSettings(readRuntime) {
   return function CourseSettings() {
@@ -19,6 +20,11 @@ export function createCourseSettings(readRuntime) {
     const course = useSelect((select) => select(store).getCourse(), [store]);
     const tabs = [
       { label: __('Basics', 'ohmylms'), key: 'basics', children: <Basics /> },
+      {
+        label: __('Learning', 'ohmylms'),
+        key: 'learning',
+        children: <CourseLearning courseId={id} />,
+      },
       ...(course?.type === 'cohort-based'
         ? [{ label: __('Cohort Settings', 'ohmylms'), key: 'cohort', children: <Cohort /> }]
         : []),

@@ -88,7 +88,7 @@ final class Frontend {
 
     public static function practice($attributes) {
         if (!self::enabled()) { return ''; }
-        $attributes = shortcode_atts(['skill' => 0, 'items' => 10], (array) $attributes, 'ohmylms_practice');
+        $attributes = shortcode_atts(['skill' => 0, 'items' => 10, 'course' => 0], (array) $attributes, 'ohmylms_practice');
         $term = get_term((int) $attributes['skill'], \OhMyLMS\Skills\Taxonomy::NAME);
         if (!$term || is_wp_error($term)) { return ''; }
         // The inline-check script provides the shared guest credential and local history.
@@ -99,8 +99,9 @@ final class Frontend {
         wp_enqueue_script('ohmylms-practice', plugins_url('assets/js/practice.js', OHMYLMS_FILE), ['ohmylms-inline-check'], OHMYLMS_VERSION, true);
         wp_enqueue_style('ohmylms-quiz-a11y', plugins_url('assets/css/quiz-a11y.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
         wp_enqueue_style('ohmylms-practice', plugins_url('assets/css/practice.css', OHMYLMS_FILE), [], OHMYLMS_VERSION);
-        wp_localize_script('ohmylms-practice', 'ohmylmsPractice', Inline::client_config() + ['practiceI18n' => [
+        wp_localize_script('ohmylms-practice', 'ohmylmsPractice', Inline::client_config() + ['studentId' => get_current_user_id(), 'practiceI18n' => [
             'start' => __('Start practice', 'ohmylms'),
+            'resume' => __('Resume practice', 'ohmylms'),
             'check' => __('Check answer', 'ohmylms'),
             'next' => __('Next question', 'ohmylms'),
             'hint' => __('Show a hint', 'ohmylms'),
@@ -113,7 +114,7 @@ final class Frontend {
         ]]);
         ob_start();
         ?>
-        <section class="ohmylms-practice" data-skill="<?php echo esc_attr($term->term_id); ?>" data-items="<?php echo esc_attr((int) $attributes['items']); ?>">
+        <section class="ohmylms-practice" data-skill="<?php echo esc_attr($term->term_id); ?>" data-course="<?php echo esc_attr((int) $attributes['course']); ?>" data-items="<?php echo esc_attr((int) $attributes['items']); ?>">
             <h2><?php echo esc_html(sprintf(__('Practice: %s', 'ohmylms'), $term->name)); ?></h2>
             <?php if (!is_user_logged_in()) { ?><p class="ohmylms-practice-guest"><?php esc_html_e('You are practising as a guest. Your answers are kept on this device until you log in.', 'ohmylms'); ?></p><?php } ?>
             <div class="ohmylms-practice-stage" aria-live="polite"></div>
@@ -126,8 +127,10 @@ final class Frontend {
     public static function practice_page() {
         $skill = (int) get_query_var('ohmylms_practice');
         if (!$skill || !self::enabled()) { return; }
-        $html = self::practice(['skill' => $skill]);
+        $course = isset($_GET['learning_course']) ? absint($_GET['learning_course']) : 0;
+        $html = self::practice(['skill' => $skill, 'course' => $course]);
         if ($html === '') { return; }
+        if ($course) { $html = '<p><a href="' . esc_url(\OhMyLMS\Learning\Frontend::url($course)) . '">' . esc_html__('Back to learning path', 'ohmylms') . '</a></p>' . $html; }
         status_header(200);
         get_header();
         echo '<main class="ohmylms-container" style="max-width:780px;margin:40px auto;padding:0 16px">' . $html . '</main>';

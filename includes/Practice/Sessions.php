@@ -28,8 +28,10 @@ final class Sessions {
     public static function start(array $owner, $term_id, array $options = []) {
         global $wpdb;
         $term_id = (int) $term_id;
+        $access = \OhMyLMS\Learning\PracticeAccessPolicy::check($owner, $term_id, (int) ($options['course_id'] ?? 0));
+        if (is_wp_error($access)) { return $access; }
         if (!$term_id || !term_exists($term_id, Taxonomy::NAME)) { return new \WP_Error('ohmylms_skill_missing', __('Skill not found.', 'ohmylms'), ['status' => 404]); }
-        if (!Selector::pool($term_id)) {
+        if (!\OhMyLMS\Learning\PracticeAccessPolicy::pool(Selector::pool($term_id), $owner, $term_id, (int) ($options['course_id'] ?? 0))) {
             return new \WP_Error('ohmylms_practice_empty', __('There are no approved practice questions for this skill yet.', 'ohmylms'), ['status' => 409]);
         }
         $limit = max(3, min(30, (int) ($options['item_limit'] ?? 10)));
@@ -158,6 +160,8 @@ final class Sessions {
      */
     public static function answer(array $session, $item_id, $response) {
         global $wpdb;
+        $access = \OhMyLMS\Learning\PracticeAccessPolicy::session($session);
+        if (is_wp_error($access)) { return $access; }
         if ($session['status'] !== 'active') { return new \WP_Error('ohmylms_practice_closed', __('This practice session has ended.', 'ohmylms'), ['status' => 409]); }
         $item = null;
         foreach (self::items($session['id']) as $candidate) { if ((int) $candidate['id'] === (int) $item_id) { $item = $candidate; } }
@@ -228,6 +232,8 @@ final class Sessions {
     /** Reveal the hint; the item no longer counts as independent evidence. */
     public static function hint(array $session, $item_id) {
         global $wpdb;
+        $access = \OhMyLMS\Learning\PracticeAccessPolicy::session($session);
+        if (is_wp_error($access)) { return $access; }
         foreach (self::items($session['id']) as $item) {
             if ((int) $item['id'] !== (int) $item_id) { continue; }
             if ($item['answered_at'] !== null) { return new \WP_Error('ohmylms_practice_answered', __('This question was already answered.', 'ohmylms'), ['status' => 409]); }
@@ -236,6 +242,15 @@ final class Sessions {
             $lessons = [];
             foreach (\OhMyLMS\QuestionBank\SkillMap::for_version((int) $item['version_id']) as $mapping) {
                 foreach (Taxonomy::linked_posts((int) $mapping['term_id'], OHMYLMS_LESSON_CPT) as $lesson) { $lessons[$lesson] = ['id' => $lesson, 'title' => get_the_title($lesson), 'url' => get_permalink($lesson)]; }
+            }
+            if ((int) $session['course_id']) {
+                $program = \OhMyLMS\Learning\CourseProgram::for_enrollment(\OhMyLMS\Learning\CourseProgram::enrollment($session['student_id'], $session['course_id']));
+                $scoped = [];
+                foreach ($program['items'] as $placement) {
+                    if ($placement['type'] !== 'lesson' || !isset($lessons[$placement['content_id']]) || get_post_status($placement['content_id']) !== 'publish') { continue; }
+                    $scoped[] = ['id' => $placement['content_id'], 'title' => get_the_title($placement['content_id']), 'url' => add_query_arg('learning_item', $placement['id'], \OhMyLMS\Learning\Frontend::url($session['course_id']))];
+                }
+                $lessons = $scoped;
             }
             return ['hint' => wp_kses_post((string) ($snapshot->get_settings()['hint'] ?? '')), 'lessons' => array_values(array_slice($lessons, 0, 3))];
         }

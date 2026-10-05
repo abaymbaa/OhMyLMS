@@ -93,7 +93,7 @@ $questions = array_values(array_filter($questions, static function ($question) u
     return in_array($question['settings']['type'], $supported_question_types, true);
 }));
 $supported_question_count = count($questions);
-if ($quiz_layout === 'number_of_questions_per_page') $totalGroups = (int) ceil($supported_question_count / $questions_per_group);
+if ($quiz_layout === 'number_of_questions_per_page') $totalGroups = count($page_starts);
 ob_start();
 
 

@@ -78,6 +78,8 @@ class PracticeController extends RestController {
         if (!$session || $session['mode'] !== 'skill' || !Sessions::owns($session, $this->owner($request))) {
             return new WP_Error('ohmylms_practice_missing', __('Practice session not found.', 'ohmylms'), ['status' => 404]);
         }
+        $access = \OhMyLMS\Learning\PracticeAccessPolicy::session($session);
+        if (is_wp_error($access)) { return $access; }
         return $session;
     }
 

@@ -103,6 +103,7 @@ final class Taxonomy {
             'description' => $term->description,
             'parent' => (int) $term->parent,
             'prerequisites' => self::prerequisites($term->term_id),
+            'public_practice' => (bool) get_term_meta($term->term_id, '_ohmylms_public_practice', true),
             'lessons' => self::linked_posts($term->term_id, OHMYLMS_LESSON_CPT),
             'courses' => self::linked_posts($term->term_id, OHMYLMS_COURSE_CPT),
         ];

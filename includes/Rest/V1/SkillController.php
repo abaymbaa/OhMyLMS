@@ -117,6 +117,10 @@ class SkillController extends RestController {
     }
 
     private function apply_meta($id, WP_REST_Request $request) {
+        if (isset($request['public_practice']) && (bool) get_term_meta($id, '_ohmylms_public_practice', true) !== rest_sanitize_boolean($request['public_practice'])) {
+            if (!current_user_can('manage_options')) { return AccessPolicy::denied(__('Only an administrator can make a practice pool public.', 'ohmylms')); }
+            update_term_meta($id, '_ohmylms_public_practice', rest_sanitize_boolean($request['public_practice']));
+        }
         if (isset($request['code'])) { update_term_meta($id, '_ohmylms_skill_code', mb_substr(sanitize_text_field((string) $request['code']), 0, 40)); }
         if (isset($request['prerequisites'])) {
             $result = Taxonomy::set_prerequisites($id, (array) $request['prerequisites']);
@@ -129,6 +133,9 @@ class SkillController extends RestController {
     public function delete(WP_REST_Request $request) {
         global $wpdb;
         $id = (int) $request['id'];
+        if (\OhMyLMS\Learning\Schema::ready() && $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . \OhMyLMS\Learning\Schema::table('outcomes') . ' WHERE term_id=%d LIMIT 1', $id))) {
+            return new WP_Error('ohmylms_skill_required', __('Published learning programs reference this skill. Keep it for learner history.', 'ohmylms'), ['status' => 409]);
+        }
         $evidence = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . Schema::table('skill_evidence') . " WHERE term_id=%d", $id));
         $mapped = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . Schema::table('qb_version_skills') . " WHERE term_id=%d", $id));
         if (($evidence || $mapped) && !rest_sanitize_boolean($request['force'])) {

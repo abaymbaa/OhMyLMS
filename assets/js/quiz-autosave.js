@@ -117,14 +117,15 @@
     });
   }
 
+  // Capture before question widgets stop propagation of their input events.
   form.addEventListener('change', function (event) {
     var match = event.target.name && event.target.name.match(/\[quiz_question\]\[(\d+)\]/);
     if (match) schedule(match[1]);
-  });
+  }, true);
   form.addEventListener('input', function (event) {
     var match = event.target.name && event.target.name.match(/\[quiz_question\]\[(\d+)\]/);
     if (match) schedule(match[1]);
-  });
+  }, true);
   // Drag-and-drop questions (matching, reorder) update hidden fields without input events.
   ['drop', 'dragend', 'touchend'].forEach(function (type) {
     root.addEventListener(type, function () {

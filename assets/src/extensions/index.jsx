@@ -8,28 +8,30 @@ import { QuestionEditor } from './QuestionEditor';
 import { LessonEditor } from './LessonEditor';
 import { wrapScreen, extensionPage } from './ScreenExtensions';
 import { validateMembership } from '../features/memberships/validateMembership.mjs';
-import { quizComponents } from '../features/quizzes';
-import { courseComponents } from '../features/courses';
-import { studentComponents } from '../features/students';
-import { gamificationComponents } from '../features/gamification';
-import { quizReportComponents } from '../features/quiz-reports';
-import { learningComponents } from '../features/learning';
-import { membershipComponents } from '../features/memberships';
-import { communityComponents } from '../features/communities';
-import { analyticsComponents } from '../features/analytics';
-import { commerceComponents } from '../features/commerce';
-import { certificateComponents } from '../features/certificates';
-import { emailComponents } from '../features/emails';
-import { settingsComponents } from '../features/settings';
-import { integrationComponents } from '../features/integrations';
-import { webhookComponents } from '../features/webhooks';
-import { taxonomyComponents } from '../features/taxonomies';
-import { setupComponents } from '../features/setup';
-import { mountRegistration } from '../features/students/mountRegistration';
-import { questionBankComponents, registerQuestionBankPages } from '../features/question-bank';
+import {
+  quizComponents,
+  courseComponents,
+  studentComponents,
+  gamificationComponents,
+  quizReportComponents,
+  learningComponents,
+  membershipComponents,
+  communityComponents,
+  analyticsComponents,
+  commerceComponents,
+  certificateComponents,
+  emailComponents,
+  settingsComponents,
+  integrationComponents,
+  webhookComponents,
+  taxonomyComponents,
+  setupComponents,
+  questionBankComponents,
+} from './lazyFeatures';
+import { registerQuestionBankPages } from '../features/question-bank/registerPages';
 import { assessmentsRoutes, assessmentScreen } from '../features/assessment/AssessmentsHub';
 const registry = createRegistry();
-registerQuestionBankPages(registry);
+registerQuestionBankPages(registry, questionBankComponents);
 registerBuiltinSlashCommands(registry);
 const roots = new WeakMap();
 const publicApi = {
@@ -66,9 +68,13 @@ const publicApi = {
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
       ...assessmentsRoutes(routes, questionBankComponents.QuestionBankPage),
-      ...registry
-        .list('admin-page')
-        .map((entry) => ({ path: `/extensions/${entry.id}`, element: entry.id === 'question-bank' ? assessmentScreen(extensionPage(entry), 'question-bank') : extensionPage(entry) })),
+      ...registry.list('admin-page').map((entry) => ({
+        path: `/extensions/${entry.id}`,
+        element:
+          entry.id === 'question-bank'
+            ? assessmentScreen(extensionPage(entry), 'question-bank')
+            : extensionPage(entry),
+      })),
     ];
   },
   membershipPanels: (props) => createElement(MembershipSettingsPanels, { registry, ...props }),
@@ -133,7 +139,17 @@ const publicApi = {
 window.ohmylms = { ...(window.ohmylms || {}), extensions: Object.freeze(publicApi) };
 window.dispatchEvent(new CustomEvent('ohmylms:extensions-ready', { detail: publicApi }));
 function mountSlots() {
-  mountRegistration();
+  if (document.querySelector('[data-ohmylms-registration-fields]')) {
+    import(/* webpackChunkName: "registration" */ '../features/students/mountRegistration')
+      .then(({ mountRegistration }) => mountRegistration())
+      .catch((error) =>
+        window.dispatchEvent(
+          new CustomEvent('ohmylms:extension-error', {
+            detail: { id: 'registration', message: error.message },
+          }),
+        ),
+      );
+  }
   document.querySelectorAll('[data-ohmylms-slot]').forEach((element) => {
     let context = {};
     try {

@@ -69,8 +69,10 @@ function choice_question($quiz_id, $name = 'Choice', $score = 2) {
 
 $admin = get_user_by('login', $config['username'])->ID;
 $phases = array_slice($argv, 1) ?: ['authoring'];
+$previous_integrations = get_option('ohmylms_integrations', []);
 
 try {
+    update_option('ohmylms_integrations', array_merge((array) $previous_integrations, ['skills' => ['is_enable' => 1]]));
     if (in_array('authoring', $phases, true)) {
         // ---- A02: object-level authorization and option ownership ----
         $author_a = make_user('author');
@@ -238,4 +240,5 @@ try {
         do_action('ohmylms_test_cleanup_post', $post);
         wp_delete_post($post, true);
     }
+    update_option('ohmylms_integrations', $previous_integrations);
 }

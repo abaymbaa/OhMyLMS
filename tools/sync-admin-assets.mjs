@@ -12,4 +12,6 @@ for (const [source, target] of [
 ]) {
   fs.copyFileSync(path.join(root, source), path.join(root, target));
 }
+// Async imports resolve relative to extensions.js in both shipped and opt-in builds.
+fs.cpSync(path.join(root, 'build/sdk/chunks'), path.join(root, 'assets/dist/admin/chunks'), { recursive: true });
 console.log('Updated shipped admin app and extension SDK.');

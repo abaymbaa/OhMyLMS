@@ -7,6 +7,11 @@ use OhMyLMS\Abstracts\DataStore;
 use OhMyLMS\Data\Student;
 
 class StudentStore extends DataStore {
+	public static function clear_learning_cache( $student_id, $course_id ) {
+		$key = $student_id . '_' . $course_id;
+		unset( self::$course_completed_cache[$key], self::$course_in_progress_cache[$key], self::$completed_content_count_cache[$key] );
+		self::$maybe_completed_cache = array();
+	}
 
 	/**
 	 * Cache for enrollment checks to prevent duplicate queries.
@@ -752,6 +757,11 @@ public function get_enrolled_courses( $student ) {
 					'start_date'    => current_time( 'mysql' ),
 				)
 			);
+			self::clear_learning_cache( $student->get_id(), $course_id );
+			if ( \OhMyLMS\Learning\CourseProgram::managed( $student->get_id(), $course_id ) ) {
+				do_action( 'ohmylms_learning_activity_completed', $student->get_id(), $course_id );
+				return $progress_id;
+			}
 			$percentage = $student->get_course_progress_percentage( $course_id );
 			if( $percentage >= 100  ){
 				do_action( 'ohmylms_lesson_already_completed', $student->get_id(), $course_id, $lesson_id );
@@ -880,6 +890,10 @@ public function get_enrolled_courses( $student ) {
 	 * @throws \Exception
 	 */
 	public function get_over_all_completion_rate( $student, $course_id ) {
+		if ( \OhMyLMS\Learning\CourseProgram::managed( $student->get_id(), $course_id ) ) {
+			$state = \OhMyLMS\Learning\CompletionPolicy::award( $student->get_id(), $course_id );
+			return is_wp_error( $state ) ? 0 : \OhMyLMS\Learning\CompletionPolicy::percentage( $state );
+		}
 		$course                  = ohmylms_get_course( $course_id );
 		$completed_content_count = $this->get_completed_content_count( $student, $course_id );
 		if ( ! $course ) {

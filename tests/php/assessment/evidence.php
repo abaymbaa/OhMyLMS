@@ -18,7 +18,7 @@ $skill = static function ($name, $extra = []) use (&$fixture) {
     return (int) $created['id'];
 };
 $basics = $skill('Basics');
-$solve = $skill('Solving', ['prerequisites' => [$basics]]);
+$solve = $skill('Solving', ['prerequisites' => [$basics], 'public_practice' => true]);
 $support = $skill('Reading');
 $lesson = remember_post(wp_insert_post(['post_type' => OHMYLMS_LESSON_CPT, 'post_title' => 'Solving lesson', 'post_status' => 'publish', 'post_content' => 'x']));
 call('PUT', 'skills/' . $solve . '/lessons', ['lesson_ids' => [$lesson]]);

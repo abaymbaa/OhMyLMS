@@ -154,6 +154,10 @@ class IntegrationsController extends RestController {
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
 		$current_integrations = get_option( 'ohmylms_integrations', array() );
+		if ( isset($integrations['skills']) && !empty($current_integrations['skills']['is_enable']) && empty($integrations['skills']['is_enable']) ) {
+			$dependent = \OhMyLMS\Learning\Bootstrap::dependent_courses();
+			if ($dependent) { return new WP_Error('ohmylms_skills_required', __('Pause or convert the dependent courses before disabling Skills.', 'ohmylms'), ['status' => 409, 'course_ids' => $dependent]); }
+		}
 		unset( $current_integrations['ai_model'], $current_integrations['question_bank'] );
 		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
