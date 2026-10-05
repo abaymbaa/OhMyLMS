@@ -10,6 +10,13 @@ const root = path.resolve(import.meta.dirname, '../..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'assets/src/manifest.json')));
 const admin = manifest.assets.find(asset => asset.output === 'assets/dist/admin/ohmylms.js');
 
+test('MCP icon has the same intrinsic size as other add-on icons', () => {
+  const svg = fs.readFileSync(path.join(root, 'assets/images/mcp-icon.svg'), 'utf8');
+  const openingTag = svg.match(/<svg\b[^>]*>/)?.[0];
+  assert.match(openingTag, /\bwidth="44"/);
+  assert.match(openingTag, /\bheight="44"/);
+});
+
 test('retired AI endpoints and cards are absent from shipped admin and SDK', () => {
   for (const file of ['assets/dist/admin/ohmylms.js', 'assets/dist/admin/extensions.js']) {
     const code = fs.readFileSync(path.join(root, file), 'utf8');
