@@ -1,13 +1,14 @@
 <?php
 namespace OhMyLMS\Extensions;
 
-/** Bundled modules use Add-ons switches; project modules use trusted configuration. */
+/** Core modules always load, bundled modules use Add-ons switches; project modules use trusted configuration. */
 final class Modules {
     public static function load() {
         $enabled = defined('OHMYLMS_ENABLED_MODULES') ? OHMYLMS_ENABLED_MODULES : [];
         $enabled = apply_filters('ohmylms_enabled_modules', $enabled);
         $bundled = Addons::IDS;
-        $enabled = array_diff((array) $enabled, array_merge($bundled, ['question_bank']));
+        $enabled = array_diff((array) $enabled, array_merge($bundled, Addons::CORE, ['question_bank']));
+        foreach (Addons::CORE as $id) { $enabled[] = $id; }
         foreach ($bundled as $id) {
             if (Addons::enabled($id)) { $enabled[] = $id; }
         }

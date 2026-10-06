@@ -1,7 +1,6 @@
 <?php
 namespace OhMyLMS\Learning;
 
-use OhMyLMS\Extensions\Addons;
 use OhMyLMS\Skills\Taxonomy;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Practice\Selector;
@@ -45,7 +44,7 @@ final class CourseProgram {
     public static function editor($course_id) {
         $current = self::current($course_id);
         $draft = get_post_meta($course_id, self::DRAFT, true);
-        return ['draft' => is_array($draft) ? $draft : ($current ?: self::defaults($course_id)), 'published' => $current, 'skills_enabled' => Addons::enabled('skills'), 'url' => Frontend::url($course_id)];
+        return ['draft' => is_array($draft) ? $draft : ($current ?: self::defaults($course_id)), 'published' => $current, 'url' => Frontend::url($course_id)];
     }
 
     public static function enrollment($student_id, $course_id) {
@@ -87,15 +86,20 @@ final class CourseProgram {
         }
         $program['bank_ids'] = array_values(array_unique($program['bank_ids']));
         $skills = [];
+        $chapters = array_map('intval', $wpdb->get_col($wpdb->prepare("SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", $course_id)));
         foreach ($data['outcomes'] as $outcome) {
             if (!is_array($outcome)) { return self::error(__('Invalid outcome.', 'ohmylms')); }
             $id = (int) ($outcome['term_id'] ?? 0);
             if (!$id || !term_exists($id, Taxonomy::NAME) || isset($skills[$id]) || !in_array($outcome['target'] ?? '', ['proficient', 'mastered'], true)) { return self::error(__('Outcomes need distinct existing skills and a valid target.', 'ohmylms')); }
             $skills[$id] = true;
-            $program['outcomes'][] = ['term_id' => $id, 'target' => $outcome['target'], 'required' => !empty($outcome['required'])];
+            $entry = ['term_id' => $id, 'target' => $outcome['target'], 'required' => !empty($outcome['required'])];
+            // The chapter (unit) a skill sits in, like a strand in a skill catalogue. Order is array order.
+            $chapter = (int) ($outcome['chapter_id'] ?? 0);
+            if ($chapter && !in_array($chapter, $chapters, true)) { return self::error(__('The unit does not belong to this course.', 'ohmylms')); }
+            if ($chapter) { $entry['chapter_id'] = $chapter; }
+            $program['outcomes'][] = $entry;
         }
         $ids = []; $resources = [];
-        $chapters = array_map('intval', $wpdb->get_col($wpdb->prepare("SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", $course_id)));
         foreach ($data['items'] as $item) {
             if (!is_array($item) || !in_array($item['type'] ?? '', ['lesson', 'practice', 'quiz', 'assignment'], true)) { return self::error(__('Choose a valid curriculum item.', 'ohmylms')); }
             $uuid = $item['id'] ?? wp_generate_uuid4();
@@ -105,6 +109,10 @@ final class CourseProgram {
             if ($chapter && !in_array($chapter, $chapters, true)) { return self::error(__('The unit does not belong to this course.', 'ohmylms')); }
             $content = (int) ($item['content_id'] ?? 0);
             $entry = ['id' => $uuid, 'type' => $item['type'], 'chapter_id' => $chapter, 'content_id' => $content, 'required' => !empty($item['required'])];
+            // Content attaches to a whole chapter (no skills) or to chosen skills of this program.
+            $scope = array_values(array_unique(array_map('intval', (array) ($item['skill_ids'] ?? []))));
+            if ($scope && array_diff($scope, array_keys($skills))) { return self::error(__('Content can only be attached to skills selected for this course.', 'ohmylms')); }
+            if ($scope && $item['type'] !== 'practice') { $entry['skill_ids'] = $scope; }
             if ($item['type'] === 'practice') {
                 if (!isset($skills[$content])) { return self::error(__('A practice item must reference a selected course outcome.', 'ohmylms')); }
                 // Practice completion is measured by its outcome, never by session length.
@@ -112,7 +120,6 @@ final class CourseProgram {
             } else {
                 $post_type = ['lesson' => OHMYLMS_LESSON_CPT, 'quiz' => OHMYLMS_QUIZ_CPT, 'assignment' => 'ohmylms-assignment'][$item['type']];
                 if (!$content || get_post_type($content) !== $post_type || !current_user_can('edit_post', $content)) { return AccessPolicy::denied(__('You cannot place this content in the course.', 'ohmylms')); }
-                if ($item['type'] !== 'lesson' && (int) ohmylms_get_course_by_content_id($content) !== (int) $course_id) { return self::error(__('Assessments must already belong to this course curriculum.', 'ohmylms')); }
                 if (isset($resources[$content])) { return self::error(__('Place each learning resource only once in a course.', 'ohmylms')); }
                 $resources[$content] = true;
                 if ($item['type'] === 'quiz') {
@@ -123,7 +130,6 @@ final class CourseProgram {
             }
             $program['items'][] = $entry;
         }
-        if (self::needs_skills($program) && !Addons::enabled('skills')) { return self::error(__('Enable the Skills add-on before configuring skill learning.', 'ohmylms'), 409); }
         return $program;
     }
 
@@ -181,13 +187,15 @@ final class CourseProgram {
                 if (!$wpdb->insert($programs, ['course_id' => $course_id, 'version' => $version, 'mode' => $program['mode'], 'program' => wp_json_encode($program), 'created_by' => get_current_user_id(), 'created_at' => current_time('mysql', true)])) { throw new \RuntimeException('Program write failed'); }
                 $id = (int) $wpdb->insert_id;
                 foreach ($program['outcomes'] as $outcome) {
-                    if (!$wpdb->insert(Schema::table('outcomes'), ['program_id' => $id] + $outcome)) { throw new \RuntimeException('Outcome write failed'); }
+                    // The chapter placement lives in the program JSON; the table keeps only what completion reads.
+                    if (!$wpdb->insert(Schema::table('outcomes'), ['program_id' => $id, 'term_id' => $outcome['term_id'], 'target' => $outcome['target'], 'required' => (int) !empty($outcome['required'])])) { throw new \RuntimeException('Outcome write failed'); }
                 }
                 if ($apply_existing && $wpdb->query($wpdb->prepare("UPDATE $bindings b JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON e.id=b.enrollment_id SET b.program_id=%d,b.bound_at=%s WHERE e.course_id=%d AND e.status='enrolled' AND e.progress<>'completed'", $id, current_time('mysql', true), $course_id)) === false) { throw new \RuntimeException('Upgrade failed'); }
                 if (!update_post_meta($course_id, self::CURRENT, $id)) { throw new \RuntimeException('Publish failed'); }
                 return $id;
             });
             update_post_meta($course_id, self::DRAFT, $program);
+            Placements::flush();
             return self::editor($course_id) + ['readiness' => [], 'published_id' => $id];
         } catch (\Throwable $error) {
             wp_cache_delete($course_id, 'post_meta');

@@ -29,9 +29,6 @@ export function SkillMappings({ item, detail, onChange }) {
           'ohmylms',
         )}
       </p>
-      {!c.skillsEnabled && (
-        <p role="note">{__('Turn on the Skills add-on to change mappings.', 'ohmylms')}</p>
-      )}
       {skills.map((skill) => (
         <MappingRow
           key={skill.id}
@@ -138,20 +135,18 @@ function MappingRow({ skill, mappings, onChange }) {
             relationLabel(mapping.relation),
           )}
           {mapping.note && <em> {sprintf(__('Differences: %s', 'ohmylms'), mapping.note)}</em>}{' '}
-          {c.skillsEnabled && (
-            <Button
-              variant="link"
-              isDestructive
-              aria-label={sprintf(
-                __('Remove mapping of %1$s to %2$s', 'ohmylms'),
-                skill.title,
-                mapping.shared?.name || mapping.shared_id,
-              )}
-              onClick={() => remove(mapping)}
-            >
-              {__('Remove', 'ohmylms')}
-            </Button>
-          )}
+          <Button
+            variant="link"
+            isDestructive
+            aria-label={sprintf(
+              __('Remove mapping of %1$s to %2$s', 'ohmylms'),
+              skill.title,
+              mapping.shared?.name || mapping.shared_id,
+            )}
+            onClick={() => remove(mapping)}
+          >
+            {__('Remove', 'ohmylms')}
+          </Button>
         </p>
       ))}
       {mappings.mapped_from.length > 0 && (
@@ -164,7 +159,7 @@ function MappingRow({ skill, mappings, onChange }) {
           )}
         </p>
       )}
-      {c.skillsEnabled && mappings.mapped_from.length === 0 && (
+      {mappings.mapped_from.length === 0 && (
         <div className="ohmylms-cur-mapping-form">
           <TextControl
             label={sprintf(__('Find a shared skill for %s', 'ohmylms'), skill.title)}
@@ -219,7 +214,6 @@ function MappingRow({ skill, mappings, onChange }) {
           </Button>
         </div>
       )}
-      {error && !c.skillsEnabled && <p role="alert">{error}</p>}
     </details>
   );
 }

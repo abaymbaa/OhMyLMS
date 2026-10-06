@@ -48,17 +48,13 @@ class Menu {
 		$badge_html    = $pending_count > 0 ? " <span class='update-plugins count-$pending_count'><span class='plugin-count'>$pending_count</span></span>" : '';
 		if ( current_user_can( $capability ) ) {
 			$submenu[ $slug ][] = array( esc_attr__( 'Dashboard', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/dashboard' );
-			$submenu[ $slug ][] = array( esc_attr__( 'Courses', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/courses' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			// Courses, lessons and skills are managed together in the Content Hub; the old #/courses and
+			// #/extensions/skills addresses open its Courses and Skills tabs.
+			$submenu[ $slug ][] = array( esc_attr__( 'Content Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/content-hub' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				// Curriculum replaces course categories and Learning Tracks replace course tags; both are bundled SDK admin pages.
 				$submenu[ $slug ][] = array( esc_attr__( 'Curriculum', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/curriculum' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				$submenu[ $slug ][] = array( esc_attr__( 'Learning Tracks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/tracks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Assessments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assessments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			// Question bank and skills pages are bundled SDK admin pages.
-			if ( \OhMyLMS\Assessment\Engine::bank_ui() ) {
-				if ( \OhMyLMS\Extensions\Addons::enabled( 'skills' ) ) {
-					$submenu[ $slug ][] = array( esc_attr__( 'Skills', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/skills' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				}
-			}
 			$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 			 if ( apply_filters( 'ohmylms_show_sessions_menu', false ) ) {

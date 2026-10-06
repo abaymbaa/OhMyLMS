@@ -102,6 +102,14 @@ Verification on the isolated site: 266 assessment integration checks, 49 assessm
 
 Not done: classroom pilot, math-site enablement, translations of new strings, and the items listed under "Limitations" in ASSESSMENT-ENGINE.md.
 
+## Content Hub increment (2026-10-06)
+
+Courses and Skills are combined into the **Content Hub** (Catalog, Courses, Lessons, Skills tabs; see [CONTENT-HUB.md](CONTENT-HUB.md)), and Skills became a core feature. The Courses and Skills submenus are removed; their old addresses open the hub tabs. A grade, exam or subject is a course whose learning-program draft is arranged as chapters, skills and scoped attachments, published explicitly. Lessons form a reusable library, and quizzes and assignments can be placed in several courses with shared attempts.
+
+Verified in a session with no WordPress or database: `npm run lint`, the JavaScript suite (including new hub routing, catalog model, autosave and component-render tests), `php tests/php/learning-model-unit.php`, `php tests/php/addons-unit.php` in all four modes, PHP syntax checks of every changed file, and a production build.
+
+**Not verified:** the REST controllers and the SQL in `Catalog`/`Placements` against a database, the shared-attempt and course-resolution changes in real quiz delivery, upgrade behaviour on a site that had the Skills switch off, and every browser flow (the updated menu and design specs were edited but not run). The existing PHP integration and Playwright suites must be run on the isolated site before release.
+
 ## Remaining release gates
 
 - The standalone License and Free vs Pro admin modules are intentionally retired. Adapted builds remove both routes and their component implementations; the recovered snapshot retains them only as immutable provenance for parity verification.

@@ -32,7 +32,7 @@ final class SourceAssets {
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsAssessment', [
             'versioned' => \OhMyLMS\Assessment\Engine::versioned(),
             'bankUi' => \OhMyLMS\Assessment\Engine::bank_ui(),
-            'skills' => Addons::enabled('skills'),
+            'skills' => true,
             'practice' => \OhMyLMS\Assessment\Engine::practice(),
             'isAdmin' => current_user_can('manage_options'),
         ]);

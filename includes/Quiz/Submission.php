@@ -25,7 +25,7 @@ use OhMyLMS\Utility\Transaction;
 final class Submission {
     public static function access($quiz_id, $student_id) {
         if (!$student_id || get_post_type($quiz_id)!=='ohmylms-quiz') return new \WP_Error('quiz_access','Quiz access denied.',['status'=>403]);
-        $course_id=(int)ohmylms_get_course_by_content_id($quiz_id);
+        $course_id=(int)ohmylms_get_course_by_content_id($quiz_id,$student_id);
         if (!$course_id || (!(new Student($student_id))->maybe_enrolled($course_id) && !current_user_can('edit_post',$quiz_id))) {
             return new \WP_Error('quiz_access','Course enrollment is required.',['status'=>403]);
         }

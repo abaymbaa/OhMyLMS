@@ -52,7 +52,6 @@ function publish($course, $program, $apply = false) {
 
 try {
     wp_set_current_user($admin);
-    update_option('ohmylms_integrations', array_merge($previous, ['skills' => ['is_enable' => 1]]));
     Schema::install(); ok(Schema::ready(), 'Learning tables unavailable');
     $skill = (int) wp_insert_term('Learning fractions ' . wp_generate_password(6, false, false), Taxonomy::NAME)['term_id']; $terms[] = $skill;
     $empty = (int) wp_insert_term('Learning empty ' . wp_generate_password(6, false, false), Taxonomy::NAME)['term_id']; $terms[] = $empty;
@@ -124,8 +123,9 @@ try {
     publish($course, $program, true);
     ok(CourseProgram::for_enrollment(CourseProgram::enrollment($old_student, $course))['version'] === 3, 'Explicit adoption did not upgrade unfinished enrollment');
     ok(CourseProgram::for_enrollment(CourseProgram::enrollment($student, $course))['version'] === 1, 'Explicit upgrade changed historical award');
-    $disabled = api('PUT', 'integrations', ['skills' => ['is_enable' => 0]]);
-    ok($disabled->get_status() === 409 && !empty(get_option('ohmylms_integrations')['skills']['is_enable']), 'Dependent add-on disable accepted');
+    // Skills are core: a stale client cannot switch them off, and no setting is stored for them.
+    api('PUT', 'integrations', ['skills' => ['is_enable' => 0]]);
+    ok(\OhMyLMS\Extensions\Addons::enabled('skills') && !isset(get_option('ohmylms_integrations')['skills']), 'Skills must stay on and unstored');
     ok(api('DELETE', 'skills/' . $skill, ['force' => true])->get_status() === 409, 'Published outcome skill deleted');
     $bad = $program; $bad['outcomes'][0]['term_id'] = $empty; $bad['items'] = [item('practice', $empty, false)];
     ok(api('POST', 'courses/' . $course . '/learning/publish', $bad)->get_status() === 409, 'Empty pool policy published');

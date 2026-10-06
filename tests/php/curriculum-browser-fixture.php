@@ -32,7 +32,6 @@ $call = static function ($method, $path, $data = []) {
 if ($action === 'setup') {
     C::install();
     $state = ['tag' => $tag, 'posts' => [], 'terms' => [], 'items' => [], 'tracks' => [], 'previous_integrations' => get_option('ohmylms_integrations')];
-    update_option('ohmylms_integrations', array_merge((array) $state['previous_integrations'], ['skills' => ['is_enable' => 1]]));
     $create = static function ($path, $data) use ($call, &$state) { $id = (int) $call('POST', $path, $data)['id']; $state['posts'][] = $id; return $id; };
     $item = static function ($name, $parent, $type, $extra = []) use ($call, &$state) { $id = (int) $call('POST', 'curriculum/items', array_merge(['name' => $name, 'parent_id' => $parent, 'item_type' => $type], $extra))['item']['id']; $state['items'][] = $id; return $id; };
     // Courses: one the learner is enrolled in with partial progress, one they are not.

@@ -33,7 +33,10 @@ function ohmylms_get_course_id_by_content_id( $content_id ) {
 		$content_id
 	);
 	$course_id = $wpdb->get_var( $query );
-	if ( $course_id === null ) {
+
+	// A course whose published learning program places this content counts too (see Placements).
+	$course_id = \OhMyLMS\Learning\Placements::resolve( $content_id, $course_id, 0 );
+	if ( $course_id === null || ! $course_id ) {
 		return false;
 	}
 

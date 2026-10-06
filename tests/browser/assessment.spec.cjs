@@ -236,8 +236,8 @@ test('author writes a new question directly in the bank', async ({ page }) => {
 test('admin links the skill to a course and finds the questions in the bank', async ({ page }) => {
   const errors = trackErrors(page);
   await login(page, admin().username, admin().password);
-  await page.goto('/wp-admin/admin.php?page=ohmylms');
-  await page.getByRole('link', { name: 'Skills', exact: true }).click();
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub');
+  await page.getByRole('navigation', { name: 'Content Hub sections' }).getByRole('link', { name: 'Skills', exact: true }).click();
   await page.getByRole('button', { name: new RegExp(state.tag) }).first().click();
   await page.getByLabel('Find courses').fill(state.tag);
   await page.getByRole('checkbox', { name: new RegExp(`Browser exam course ${state.tag}`) }).check();

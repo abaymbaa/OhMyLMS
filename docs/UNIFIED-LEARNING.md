@@ -2,7 +2,7 @@
 
 ## Set Up a Course
 
-1. Enable **Skills** in OhMyLMS > Add-ons for skill-based or blended courses. Traditional programs work without it.
+1. Skills are always available. Build a grade, exam or subject from chapters and skills in the [Content Hub](CONTENT-HUB.md) catalog, or use the course's Learning tab as described here; both edit the same program draft.
 2. Create skills and approve practice questions in the Question Bank. Assign each question its primary skill and a question family. Secure exam questions and questions needing manual marking are not practice questions.
 3. Open a course > Settings > **Learning**.
 4. Choose Traditional, Skill-based, or Blended. Select required skill outcomes and their Proficient or Mastered targets. Add practice steps, reusable lessons, and checkpoints to the path.
@@ -34,7 +34,7 @@ By default, a course recognizes existing skill evidence from other courses. Turn
 
 Select allowed question banks to narrow course practice. With no explicit selection, the publishing author's personal questions and banks they can use form the pool. Learners cannot choose an arbitrary course ID to unlock questions. Catalog practice exposes only explicitly public pools or questions the learner is entitled to use. Only an administrator can enable a skill's public catalog practice setting. Practice resume is available in the same browser tab and revalidates access on the server.
 
-Quizzes and assignments still belong to one course in this release. Reuse their questions through the Question Bank rather than placing the same assessment in another course. Create assessments in the existing Content editor, then select/configure them in Learning.
+Quizzes and assignments can be placed in several courses; a learner's attempts and a checkpoint's pass status are shared across them (see [CONTENT-HUB.md](CONTENT-HUB.md)). You can still reuse their questions through the Question Bank. Create assessments in the existing Content editor or from the Content Hub, then select/configure them in Learning.
 
 ## Publication and Existing Learners
 

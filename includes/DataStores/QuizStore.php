@@ -642,15 +642,18 @@ class QuizStore extends DataStore {
 		return $report;
 	}
 
+	/**
+	 * Attempts are shared by every course that places the quiz: a learner has one attempt allowance and
+	 * one history per quiz. `$course_id` stays in the signature for compatibility.
+	 */
 	public function count_total_attempt( $quiz, $student_id, $course_id ) {
 		global $wpdb;
 
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND course_id = %d",
+				"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d",
 				$quiz->get_id(),
-				$student_id,
-				$course_id
+				$student_id
 			)
 		);
 

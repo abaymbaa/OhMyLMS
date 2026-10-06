@@ -124,6 +124,370 @@
 	}
 }
 
+/* Content Hub: title and Add menu, the section tabs, then the active tab's body. Uses the same
+ * gutter as the assessment routes, and drops it when opened through a legacy extension URL. */
+.ohmylms-content-hub {
+	--ohmylms-hub-gutter: var(--ohmylms-admin-gutter, 40px);
+}
+.ohmylms-content-hub-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px 24px;
+	margin: 24px var(--ohmylms-hub-gutter) 12px;
+}
+.ohmylms-content-hub-header > div:first-child {
+	flex: 1 1 360px;
+	min-width: 0;
+}
+.ohmylms-content-hub-header h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: var(--ohmylms-admin-heading-color, #000d25);
+}
+.ohmylms-content-hub-header p {
+	margin: 4px 0 0;
+	max-width: 760px;
+	font-size: 14px;
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+}
+.ohmylms-content-hub-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	margin: 0 var(--ohmylms-hub-gutter) 24px;
+	border-bottom: 1px solid var(--ohmylms-admin-border, #dcdcde);
+}
+.ohmylms-content-hub-nav a {
+	padding: 12px 0;
+	text-decoration: none;
+	font-weight: 400;
+	color: inherit;
+	border-bottom: 3px solid transparent;
+}
+.ohmylms-content-hub-nav a.is-active {
+	font-weight: 600;
+	border-bottom-color: var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-content-hub-nav a:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+	outline-offset: 2px;
+}
+.ohmylms-content-hub > .ohmylms-ext-page {
+	padding: 0 var(--ohmylms-hub-gutter) 40px;
+	min-width: 0;
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content-hub-header,
+.ohmylms-dashboard-layout.extensions .ohmylms-content-hub-nav {
+	margin-inline: 0;
+}
+.ohmylms-dashboard-layout.extensions .ohmylms-content-hub > .ohmylms-ext-page {
+	padding: 0;
+}
+.ohmylms-ext-header h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: var(--ohmylms-admin-heading-color, #000d25);
+}
+.ohmylms-content-hub-dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 20px;
+}
+.ohmylms-content-hub-dialog .components-base-control + .components-base-control {
+	margin-top: 16px;
+}
+@media (max-width: 782px) {
+	.ohmylms-content-hub {
+		--ohmylms-hub-gutter: 12px;
+	}
+}
+
+/* Content Hub catalog: a skill catalog in the style of grade pages on skill-practice sites. Chapters are
+ * cards in a responsive grid; each lists its skills as rows with a code, a name and what is required, and
+ * the lessons, quizzes and assignments attached to the chapter or to those skills. */
+.ohmylms-catalog-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 16px 32px;
+	margin: 0 0 20px;
+}
+.ohmylms-catalog-bar > .components-base-control {
+	min-width: 240px;
+	max-width: 380px;
+}
+.ohmylms-catalog-add-chapter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 8px;
+}
+.ohmylms-catalog-status {
+	align-self: center;
+	font-size: 13px;
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+}
+.ohmylms-catalog-status.is-error {
+	color: #b32d2e;
+}
+.ohmylms-catalog-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+	gap: 20px;
+	align-items: start;
+}
+.ohmylms-catalog-chapter {
+	min-width: 0;
+	background: var(--ohmylms-admin-surface, #fff);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	border-block-start: 3px solid var(--ohmylms-primary-color, #6e42d3);
+	padding: 16px 18px 14px;
+}
+.ohmylms-catalog-chapter-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 12px;
+	margin: 0 0 12px;
+}
+.ohmylms-catalog-chapter-head h3 {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: var(--ohmylms-admin-heading-color, #000d25);
+	overflow-wrap: anywhere;
+}
+.ohmylms-catalog-rename {
+	flex: 1 1 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 8px;
+}
+.ohmylms-catalog-skills,
+.ohmylms-catalog-items {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.ohmylms-catalog-skill {
+	margin: 0;
+	padding: 8px 0;
+	border-block-start: 1px solid var(--ohmylms-admin-border, #ebedf0);
+}
+.ohmylms-catalog-skill-row {
+	display: grid;
+	grid-template-columns: 3.25rem minmax(0, 1fr) auto auto auto;
+	align-items: center;
+	gap: 4px 10px;
+}
+.ohmylms-catalog-skill-row .components-base-control,
+.ohmylms-catalog-item-controls .components-base-control,
+.ohmylms-catalog-skill-row .components-base-control__field {
+	margin-bottom: 0;
+}
+.ohmylms-catalog-skill-row .components-select-control__input {
+	min-height: 30px;
+	font-size: 13px;
+}
+.ohmylms-catalog-code {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-catalog-skill-name {
+	min-width: 0;
+	font-size: 14px;
+	overflow-wrap: anywhere;
+	color: var(--ohmylms-admin-text-color, #000d25);
+}
+.ohmylms-catalog-skill-meta {
+	grid-column: 2;
+	font-size: 12px;
+	color: var(--ohmylms-admin-muted-color, #7a8b9a);
+}
+.ohmylms-catalog-skill.is-missing .ohmylms-catalog-skill-name {
+	text-decoration: line-through;
+}
+.ohmylms-catalog-items {
+	margin-block: 6px 0;
+	margin-inline-start: 3.25rem;
+}
+.ohmylms-catalog-items.is-chapter {
+	margin: 0 0 8px;
+}
+.ohmylms-catalog-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px 8px;
+	padding: 4px 0;
+	font-size: 13px;
+}
+.ohmylms-catalog-item-title {
+	min-width: 0;
+	overflow-wrap: anywhere;
+	font-weight: 500;
+}
+.ohmylms-catalog-item-controls {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 12px;
+	margin-inline-start: auto;
+}
+.ohmylms-catalog-item-controls .components-text-control__input {
+	width: 4.5rem;
+	min-height: 28px;
+}
+.ohmylms-catalog-type {
+	padding: 1px 8px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	background: #e7f1ff;
+	color: #1d4ed8;
+}
+.ohmylms-catalog-type.is-quiz {
+	background: #fff4e0;
+	color: #b45309;
+}
+.ohmylms-catalog-type.is-assignment {
+	background: #e6f6ec;
+	color: #15803d;
+}
+.ohmylms-catalog-flag {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	background: var(--ohmylms-admin-subtle, #f4f5f7);
+	color: var(--ohmylms-admin-muted-color, #5b6b7b);
+}
+.ohmylms-catalog-flag.is-ok {
+	background: #e6f6ec;
+	color: #15803d;
+}
+.ohmylms-catalog-flag.is-warning {
+	background: #fff4e0;
+	color: #b45309;
+}
+.ohmylms-catalog-empty {
+	margin: 8px 0;
+}
+.ohmylms-catalog-chapter-foot {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-block-start: 12px;
+	padding-block-start: 12px;
+	border-block-start: 1px solid var(--ohmylms-admin-border, #ebedf0);
+}
+.ohmylms-catalog-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.ohmylms-catalog-card {
+	margin: 0;
+	padding: 16px 18px;
+	background: var(--ohmylms-admin-surface, #fff);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	border-block-start: 3px solid var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-catalog-card h3 {
+	margin: 0 0 8px;
+	font-size: 16px;
+	line-height: 1.4;
+	overflow-wrap: anywhere;
+}
+.ohmylms-catalog-card p {
+	margin: 0 0 8px;
+}
+.ohmylms-catalog-card-flags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.ohmylms-hub-chips,
+.ohmylms-hub-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 6px;
+	margin: 0 0 4px;
+	padding: 0;
+	list-style: none;
+}
+.ohmylms-hub-chips li {
+	margin: 0;
+	padding: 1px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	background: var(--ohmylms-primary-soft-color, #f6f3fd);
+	color: var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-hub-links li {
+	margin: 0;
+}
+.ohmylms-hub-pager {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-block-start: 16px;
+}
+.ohmylms-skill-picker-list {
+	max-height: 260px;
+	overflow: auto;
+	margin: 12px 0;
+	padding: 8px 12px;
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: 4px;
+}
+.ohmylms-skill-picker-list .components-base-control {
+	margin: 6px 0;
+}
+.ohmylms-skill-picker-create {
+	margin: 0 0 12px;
+}
+.ohmylms-skill-picker-create summary {
+	cursor: pointer;
+	font-weight: 500;
+}
+.ohmylms-attach-dialog .components-modal__content,
+.ohmylms-skill-picker .components-modal__content {
+	min-width: min(92vw, 520px);
+}
+@media (max-width: 600px) {
+	.ohmylms-catalog-skill-row {
+		grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+	}
+	.ohmylms-catalog-skill-row .components-select-control,
+	.ohmylms-catalog-skill-row .components-checkbox-control {
+		grid-column: 2;
+	}
+	.ohmylms-catalog-item-controls {
+		margin-inline-start: 0;
+	}
+}
+
 .ohmylms-ext-header {
 	display: flex;
 	flex-wrap: wrap;

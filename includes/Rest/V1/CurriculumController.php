@@ -52,7 +52,6 @@ class CurriculumController extends RestController {
             'types' => Items::types(),
             'link_types' => Links::TYPES,
             'limits' => ['max_depth' => Items::MAX_DEPTH, 'max_items' => Items::MAX_ITEMS],
-            'skills_enabled' => \OhMyLMS\Extensions\Addons::enabled('skills'),
         ]);
     }
 

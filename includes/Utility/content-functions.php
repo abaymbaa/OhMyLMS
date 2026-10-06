@@ -146,19 +146,20 @@ function ohmylms_get_content_type_id_by_content_id( $content_id ) {
  *
  * @since 1.0.0
  */
-function ohmylms_get_course_by_content_id( $content_id ) {
-	global $wpdb;
+function ohmylms_get_course_by_content_id( $content_id, $student_id = 0 ) {
+	$home       = null;
 	$chapter_id = ohmylms_get_chapter_id_by_content_id( $content_id );
-	if ( ! $chapter_id ) {
-		return null;
+	if ( $chapter_id ) {
+		$course_id = ohmylms_get_course_id_by_chapter_id( $chapter_id );
+		if ( $course_id ) {
+			$home = $course_id;
+		}
 	}
 
-	$course_id = ohmylms_get_course_id_by_chapter_id( $chapter_id );
-
-	if ( ! $course_id ) {
-		return null;
-	}
-	return $course_id;
+	// Content placed in learning programs (quizzes and assignments included) can belong to several
+	// courses. Content with no program placement keeps its chapter-based course exactly as before.
+	$course_id = \OhMyLMS\Learning\Placements::resolve( $content_id, $home, $student_id );
+	return $course_id ? $course_id : null;
 }
 
 function ohmylms_format_file_size( $size ) {

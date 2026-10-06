@@ -2,7 +2,6 @@
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
-use OhMyLMS\Extensions\Addons;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Skills\Taxonomy;
 use OhMyLMS\Utility\Transaction;
@@ -47,7 +46,7 @@ final class CompletionPolicy {
         $assessments = [];
         foreach ($program['items'] as $item) {
             if ($item['type'] !== 'quiz') { continue; }
-            $attempt = $wpdb->get_row($wpdb->prepare("SELECT a.*,r.total_marks,c.finalize_reason FROM {$wpdb->prefix}ohmylms_quiz_attempts a LEFT JOIN " . AssessmentSchema::table('attempt_context') . ' c ON c.attempt_id=a.id LEFT JOIN ' . AssessmentSchema::table('quiz_revisions') . " r ON r.id=c.revision_id WHERE a.student_id=%d AND a.course_id=%d AND a.quiz_id=%d AND a.status IN ('completed','passed','failed','in-review') ORDER BY a.id DESC LIMIT 1", $student_id, $course_id, $item['content_id']), ARRAY_A);
+            $attempt = $wpdb->get_row($wpdb->prepare("SELECT a.*,r.total_marks,c.finalize_reason FROM {$wpdb->prefix}ohmylms_quiz_attempts a LEFT JOIN " . AssessmentSchema::table('attempt_context') . ' c ON c.attempt_id=a.id LEFT JOIN ' . AssessmentSchema::table('quiz_revisions') . " r ON r.id=c.revision_id WHERE a.student_id=%d AND a.quiz_id=%d AND a.status IN ('completed','passed','failed','in-review') ORDER BY a.id DESC LIMIT 1", $student_id, $item['content_id']), ARRAY_A);
             $maximum = $attempt && $attempt['total_marks'] !== null ? (float) $attempt['total_marks'] : (float) ohmylms_get_quiz($item['content_id'])->get_total_marks();
             $score = $attempt && $maximum > 0 ? min(100, 100 * (float) $attempt['total'] / $maximum) : null;
             $assessments[$item['content_id']] = ['score' => $score === null ? null : round($score, 2), 'pass_percent' => $item['pass_percent'], 'passed' => get_post_status($item['content_id']) === 'publish' && $attempt && in_array($attempt['status'], ['completed', 'passed', 'failed'], true) && $attempt['finalize_reason'] !== 'exit' && $score !== null && $score + 0.0001 >= $item['pass_percent'], 'status' => $attempt['status'] ?? 'not-started', 'attempt_id' => (int) ($attempt['id'] ?? 0)];
@@ -64,9 +63,12 @@ final class CompletionPolicy {
                 $where = ''; $args = [$student_id];
                 if ($program['evidence_days']) { $where .= ' AND e.evidence_at>=%s'; $args[] = gmdate('Y-m-d H:i:s', time() - $program['evidence_days'] * DAY_IN_SECONDS); }
                 if (!$program['recognize_prior']) {
-                    $where .= " AND e.evidence_at>=%s AND ((e.source_type IN ('practice','inline') AND p.course_id=%d) OR (e.source_type='quiz' AND a.course_id=%d))";
+                    // Quizzes can be placed in several courses and their attempts are shared, so quiz evidence
+                    // counts when the quiz is one of this program's own checkpoints.
+                    $quizzes = array_map('intval', array_column(array_filter($program['items'], static function ($item) { return $item['type'] === 'quiz'; }), 'content_id'));
+                    $where .= " AND e.evidence_at>=%s AND ((e.source_type IN ('practice','inline') AND p.course_id=%d) OR (e.source_type='quiz' AND a.quiz_id IN (" . implode(',', $quizzes ?: [0]) . ')))';
                     $bound = $wpdb->get_var($wpdb->prepare('SELECT bound_at FROM ' . Schema::table('enrollments') . ' WHERE enrollment_id=%d', $enrollment['id']));
-                    array_push($args, $bound, $course_id, $course_id);
+                    array_push($args, $bound, $course_id);
                 }
                 $rows = $wpdb->get_results($wpdb->prepare('SELECT e.* FROM ' . AssessmentSchema::table('skill_evidence') . ' e LEFT JOIN ' . AssessmentSchema::table('practice_sessions') . " p ON p.id=e.source_id AND e.source_type IN ('practice','inline') LEFT JOIN {$wpdb->prefix}ohmylms_quiz_attempts a ON a.id=e.source_id AND e.source_type='quiz' WHERE e.student_id=%d AND e.term_id IN ($ids) AND e.role='primary' AND e.superseded=0 $where ORDER BY e.evidence_at,e.id", $args), ARRAY_A);
                 $grouped = [];
@@ -75,7 +77,7 @@ final class CompletionPolicy {
             }
             $pending = (bool) $wpdb->get_var($wpdb->prepare('SELECT o.id FROM ' . AssessmentSchema::table('evidence_outbox') . ' o JOIN ' . AssessmentSchema::table('grade_events') . ' g ON g.id=o.grade_event_id JOIN ' . AssessmentSchema::table('qb_version_skills') . " s ON s.version_id=g.version_id WHERE g.student_id=%d AND s.term_id IN ($ids) AND o.status IN ('pending','failed') LIMIT 1", $student_id));
         }
-        $blocked = get_post_status($course_id) !== 'publish' || (CourseProgram::needs_skills($program) && !Addons::enabled('skills'));
+        $blocked = get_post_status($course_id) !== 'publish';
         $result = self::evaluate($program, $activities, $skills, $assessments, $pending || $blocked);
         $award = $wpdb->get_row($wpdb->prepare('SELECT program_id,awarded_at FROM ' . Schema::table('awards') . ' WHERE enrollment_id=%d', $enrollment['id']), ARRAY_A);
         foreach ($program['items'] as &$item) {

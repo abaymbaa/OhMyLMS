@@ -1,7 +1,6 @@
 <?php
 namespace OhMyLMS\Learning;
 
-use OhMyLMS\Extensions\Addons;
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
 use OhMyLMS\QuestionBank\Banks;
 
@@ -11,7 +10,6 @@ final class PracticeAccessPolicy {
     public static function check(array $owner, $skill, $course_id = 0) {
         if (!$course_id) { return true; }
         if (get_post_type($course_id) !== OHMYLMS_COURSE_CPT || get_post_status($course_id) !== 'publish') { return CourseProgram::error(__('This course is not available.', 'ohmylms'), 403); }
-        if (!Addons::enabled('skills')) { return CourseProgram::error(__('The Skills add-on is disabled.', 'ohmylms'), 409); }
         $enrollment = CourseProgram::enrollment((int) ($owner['student_id'] ?? 0), $course_id);
         if (!$enrollment) { return CourseProgram::error(__('You cannot practise in this course.', 'ohmylms'), 403); }
         $program = CourseProgram::for_enrollment($enrollment);

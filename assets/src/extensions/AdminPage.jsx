@@ -5,12 +5,20 @@ import { createElement } from '@wordpress/element';
  * description and actions, then content. Styles live in assets/css/admin-ui.css and read the
  * design tokens, so pages follow the colors and font chosen under Settings → Design.
  */
-export function AdminPage({ title, description, actions, className = '', children }) {
+export function AdminPage({
+  title,
+  description,
+  actions,
+  className = '',
+  headingLevel = 1,
+  children,
+}) {
+  const Heading = `h${headingLevel}`;
   return (
     <section className={`ohmylms-ext-page ${className}`.trim()}>
       <header className="ohmylms-ext-header">
         <div>
-          <h1>{title}</h1>
+          <Heading>{title}</Heading>
           {description && <p>{description}</p>}
         </div>
         {actions && <div className="ohmylms-ext-actions">{actions}</div>}

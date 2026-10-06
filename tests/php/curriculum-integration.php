@@ -93,7 +93,6 @@ function member($view, $type, $id) { foreach ($view['members'] as $member) { if 
 
 try {
     wp_set_current_user($admin);
-    update_option('ohmylms_integrations', array_merge($previous_integrations, ['skills' => ['is_enable' => 1]]));
     Schema::install(); ok(Schema::ready(), 'Curriculum tables unavailable');
     AssessmentSchema::install(); LearningSchema::install();
     global $wpdb;
@@ -424,12 +423,7 @@ try {
     // ---- Skill mappings: explicit, directional, never by name ----
     $same_a = skill('Fractions'); $same_b = skill('Fractions');
     $shared = skill('Solving linear equations (shared)'); $other_shared = skill('Other shared skill'); $related = skill('Related skill');
-    // Like the skill catalogue, mapping changes need the Skills add-on; reading history stays available.
-    update_option('ohmylms_integrations', array_merge($previous_integrations, ['skills' => ['is_enable' => 0]]));
-    $mappings_before = count(SkillMappings::all());
-    $off = api('PUT', 'skill-mappings', ['specific_id' => $skill_a, 'shared_id' => $shared]);
-    ok($off->get_status() === 403 && code($off) === 'ohmylms_skills_disabled' && api('DELETE', 'skill-mappings', ['specific_id' => $skill_a, 'shared_id' => $shared])->get_status() === 403 && api('GET', 'skill-mappings')->get_status() === 200 && count(SkillMappings::all()) === $mappings_before, 'Mapping changes should need the Skills add-on and change nothing without it');
-    update_option('ohmylms_integrations', array_merge($previous_integrations, ['skills' => ['is_enable' => 1]]));
+    // Skills are core, so mapping needs no add-on switch; it stays an administrator-only action.
     $mapped = api('PUT', 'skill-mappings', ['specific_id' => $skill_a, 'shared_id' => $shared, 'relation' => 'equivalent', 'note' => 'Syllabus A is non-calculator.']);
     ok($mapped->get_status() === 200 && $mapped->get_data()['mapping']['note'] === 'Syllabus A is non-calculator.', 'Mapping failed: ' . wp_json_encode($mapped->get_data()));
     ok(api('PUT', 'skill-mappings', ['specific_id' => $skill_b, 'shared_id' => $shared, 'relation' => 'equivalent', 'note' => 'Syllabus B allows a calculator.'])->get_status() === 200, 'Second mapping failed');

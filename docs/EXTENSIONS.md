@@ -1,6 +1,6 @@
 # Extension API version 1
 
-Skills is a bundled add-on under **OhMyLMS → Add-ons**. Enable its switch, then choose **Manage** to edit the skill catalogue, prerequisites and lesson/course links. The Skills submenu appears while enabled. Disabling the add-on blocks skill edits and hides its page without deleting existing skills or question mappings; historical assessment reads remain available.
+Skills is a core feature with no Add-ons switch. The skill library (catalogue, prerequisites and lesson/course links) is the Skills tab of the Content Hub (`#/content-hub/skills`; the old `#/extensions/skills` address opens it). See [CONTENT-HUB.md](CONTENT-HUB.md).
 
 Feature code can live in `modules/<id>/` or a separate plugin. Internal modules load only via `OHMYLMS_ENABLED_MODULES` or `ohmylms_enabled_modules`. The examples module is disabled by default.
 

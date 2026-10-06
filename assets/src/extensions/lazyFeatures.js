@@ -114,6 +114,12 @@ export const trackComponents = lazyComponents(
   'trackComponents',
 );
 
+export const contentHubComponents = lazyComponents(
+  ['CatalogPage', 'LessonsPage'],
+  () => import(/* webpackChunkName: "content-hub" */ '../features/content-hub'),
+  'contentHubComponents',
+);
+
 export const questionBankComponents = lazyComponents(
   [
     'QuestionBankPage',

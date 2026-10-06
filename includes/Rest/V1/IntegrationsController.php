@@ -154,18 +154,14 @@ class IntegrationsController extends RestController {
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
 		$current_integrations = get_option( 'ohmylms_integrations', array() );
-		if ( isset($integrations['skills']) && !empty($current_integrations['skills']['is_enable']) && empty($integrations['skills']['is_enable']) ) {
-			$dependent = \OhMyLMS\Learning\Bootstrap::dependent_courses();
-			if ($dependent) { return new WP_Error('ohmylms_skills_required', __('Pause or convert the dependent courses before disabling Skills.', 'ohmylms'), ['status' => 409, 'course_ids' => $dependent]); }
-		}
-		unset( $current_integrations['ai_model'], $current_integrations['question_bank'] );
+		unset( $current_integrations['ai_model'], $current_integrations['question_bank'], $current_integrations['skills'] );
 		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
 		$previous_integrations  = get_option( 'ohmylms_integrations', [] );
 		$need_reload = false;
 
 		foreach ( $integrations as $key => $value ) {
-			if ( in_array( $key, array( 'ai_model', 'question_bank' ), true ) ) continue;
+			if ( in_array( $key, array( 'ai_model', 'question_bank', 'skills' ), true ) ) continue;
 			$sanitized_key   = sanitize_text_field( $key );
 			$is_enable       = isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0;
 			$validity        = self::get_integration_validity( $key );
@@ -174,7 +170,7 @@ class IntegrationsController extends RestController {
 			$class           = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
 
 			// Check if gamification or zoom settings changed
-			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'skills' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
+			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
 				$previous_enabled = isset( $previous_integrations[$sanitized_key]['is_enable'] ) ? absint( $previous_integrations[$sanitized_key]['is_enable'] ) : 0;
 				if( $previous_enabled !== $is_enable ) {
 					$need_reload = true;

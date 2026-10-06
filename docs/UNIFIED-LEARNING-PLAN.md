@@ -122,7 +122,7 @@ required lesson in a Traditional or Blended course.
 8. Publish a versioned course policy after readiness validation.
 
 Course editor tabs: Overview, Curriculum, Outcomes, Completion, Access, Reports.
-Outcome and skill-practice controls appear when the Skills add-on is enabled.
+Outcome and skill-practice controls are always available; Skills is a core feature.
 The existing assessment editor remains the home for detailed quiz/exam settings.
 
 Readiness checks must identify required skills with empty/inadequate pools,

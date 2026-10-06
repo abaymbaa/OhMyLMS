@@ -30,10 +30,13 @@ import {
   questionBankComponents,
   curriculumComponents,
   trackComponents,
+  contentHubComponents,
 } from './lazyFeatures';
 import { registerQuestionBankPages } from '../features/question-bank/registerPages';
 import { registerCurriculumPages } from '../features/curriculum/registerPages';
 import { assessmentsRoutes, assessmentScreen } from '../features/assessment/AssessmentsHub';
+import { contentHubScreen, withContentHubMenu } from '../features/content-hub/ContentHub';
+import { contentHubRoutes, HUB_MENU_ROUTES } from '../features/content-hub/hubRoutes.mjs';
 const registry = createRegistry();
 registerQuestionBankPages(registry, questionBankComponents);
 registerCurriculumPages(registry, { ...curriculumComponents, ...trackComponents });
@@ -64,6 +67,7 @@ const publicApi = {
   questionBankComponents,
   curriculumComponents,
   trackComponents,
+  contentHubComponents,
   extendRoutes(routes) {
     // Course categories and tags were replaced by the curriculum and Learning Tracks. Their old screens
     // could only report errors, so old links to them open the replacements.
@@ -72,9 +76,20 @@ const publicApi = {
       const replacement =
         replacedBy[route.path] && registry.get('admin-page', replacedBy[route.path]);
       if (replacement) return { ...route, element: extensionPage(replacement) };
+      // Courses is a tab of the Content Hub, and the screens opened from it keep its menu entry highlighted.
+      if (route.path === '/courses')
+        return { ...route, element: contentHubScreen(route.element, 'courses') };
+      if (HUB_MENU_ROUTES.includes(route.path))
+        return { ...route, element: withContentHubMenu(route.element) };
       const section = { '/quizzes': 'quizzes', '/assignments': 'assignments' }[route.path];
       return section ? { ...route, element: assessmentScreen(route.element, section) } : route;
     });
+    const skillsEntry = registry.get('admin-page', 'skills');
+    const hubPages = {
+      ...contentHubComponents,
+      SkillsPage: skillsEntry ? extensionPage(skillsEntry) : questionBankComponents.SkillsPage,
+    };
+    const hubCourses = routes.find((route) => route.path === '/courses');
     return [
       ...coreRoutes.map((route) =>
         route.path === '*'
@@ -82,12 +97,25 @@ const publicApi = {
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
       ...assessmentsRoutes(routes, questionBankComponents.QuestionBankPage),
+      ...contentHubRoutes(
+        hubCourses
+          ? routes.map((route) =>
+              route === hubCourses
+                ? { ...route, element: wrapScreen(route.element, route.path, registry) }
+                : route,
+            )
+          : routes,
+        hubPages,
+        contentHubScreen,
+      ),
       ...registry.list('admin-page').map((entry) => ({
         path: `/extensions/${entry.id}`,
         element:
           entry.id === 'question-bank'
             ? assessmentScreen(extensionPage(entry), 'question-bank')
-            : extensionPage(entry),
+            : entry.id === 'skills'
+              ? contentHubScreen(extensionPage(entry), 'skills')
+              : extensionPage(entry),
       })),
     ];
   },

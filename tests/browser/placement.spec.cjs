@@ -39,15 +39,18 @@ const app = (hash) => `/wp-admin/admin.php?page=ohmylms#${hash}`;
 // wp.apiFetch sends PUT as POST with an override header, so any write to the route counts.
 const saved = (page, route) => page.waitForResponse((response) => decodeURIComponent(response.url()).includes(route) && ['POST', 'PUT'].includes(response.request().method()) && response.ok());
 
-test('the admin menu lists Curriculum and Learning Tracks, and the old category and tag screens open them', async ({ page }) => {
+test('the admin menu lists Content Hub, Curriculum and Learning Tracks, and the old category and tag screens open them', async ({ page }) => {
   const problems = watch(page);
   await login(page, admin().username, admin().password);
   await page.goto(app('/courses'));
   // The first submenu entry repeats the top-level link and is hidden, so only visible entries count.
   const submenu = page.locator('#adminmenu li.wp-has-current-submenu .wp-submenu a:visible');
-  await expect(submenu.filter({ hasText: /^Courses$/ })).toBeVisible({ timeout: 30000 });
+  // The old #/courses address opens the hub's Courses tab, and the hub entry stays highlighted.
+  await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible({ timeout: 30000 });
   const labels = (await submenu.allTextContents()).map((text) => text.trim());
-  expect(labels.slice(0, 3)).toEqual(['Courses', 'Curriculum', 'Learning Tracks']);
+  expect(labels.slice(0, 3)).toEqual(['Content Hub', 'Curriculum', 'Learning Tracks']);
+  expect(labels).not.toContain('Courses');
+  expect(labels).not.toContain('Skills');
   expect(labels).not.toContain('Categories');
   expect(labels).not.toContain('Tags');
   await page.goto(app('/categories'));

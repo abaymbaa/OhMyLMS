@@ -43,10 +43,9 @@ export function registerQuestionBankPages(registry, components) {
     description: __('A shared stem with separately scored parts', 'ohmylms'),
     render: StructuredEditor,
   });
-  if (enabled(flags.skills, false))
-    registry.registerAdminPage('skills', {
-      label: __('Skills', 'ohmylms'),
-      render: SkillsPage,
-      priority: 1,
-    });
+  registry.registerAdminPage('skills', {
+    label: __('Skills', 'ohmylms'),
+    render: SkillsPage,
+    priority: 1,
+  });
 }

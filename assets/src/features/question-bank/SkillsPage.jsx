@@ -1,4 +1,4 @@
-import { createElement, Fragment, useEffect, useState } from '@wordpress/element';
+import { createElement, Fragment, useContext, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
   Button,
@@ -20,6 +20,8 @@ import {
 } from './api.mjs';
 import { createsCycle, flattenTree, skillTree } from './model.mjs';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
+import { HubContext } from '../content-hub/context';
+import { hashQuery } from '../content-hub/hubRoutes.mjs';
 
 const EMPTY = {
   id: 0,
@@ -45,11 +47,28 @@ export function SkillsPage() {
   useEffect(() => {
     load();
   }, []);
+  // The hub's Add menu opens the form through `?add=` on the Skills tab address.
+  useEffect(() => {
+    const openForm = () => {
+      if (!hashQuery(window.location.hash).get('add')) return;
+      setEditing({ ...EMPTY });
+      window.history.replaceState(
+        null,
+        '',
+        `${window.location.pathname}${window.location.search}#/content-hub/skills`,
+      );
+    };
+    openForm();
+    window.addEventListener('hashchange', openForm);
+    return () => window.removeEventListener('hashchange', openForm);
+  }, []);
+  const hub = useContext(HubContext);
   const tree = flattenTree(skillTree(skills || []));
   return (
     <AdminPage
       className="ohmylms-skills"
-      title={__('Skills', 'ohmylms')}
+      headingLevel={hub ? 2 : 1}
+      title={hub ? __('Skill library', 'ohmylms') : __('Skills', 'ohmylms')}
       description={__(
         'Skills are linked to questions (per part), lessons and courses. They power skill practice and recommendations.',
         'ohmylms',

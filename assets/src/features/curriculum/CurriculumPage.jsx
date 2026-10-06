@@ -69,7 +69,6 @@ export function CurriculumPage() {
           items: response.items || [],
           types: response.types || [],
           maxDepth: response.limits?.max_depth || DEFAULT_MAX_DEPTH,
-          skillsEnabled: Boolean(response.skills_enabled),
         });
         setView((previous) => pruneState(previous, response.items || []));
       })
@@ -240,7 +239,6 @@ export function CurriculumPage() {
     items,
     types: data?.types || [],
     maxDepth: data?.maxDepth || DEFAULT_MAX_DEPTH,
-    skillsEnabled: Boolean(data?.skillsEnabled),
     view,
     search,
     openId,

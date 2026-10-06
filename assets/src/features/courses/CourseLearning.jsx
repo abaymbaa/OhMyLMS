@@ -54,15 +54,13 @@ export function CourseLearning({ courseId }) {
         if (!live) return;
         setLoaded(data);
         setProgram(data.draft);
-        if (data.skills_enabled) {
-          const [catalog, availableBanks] = await Promise.all([
-            window.wp.apiFetch({ path: '/ohmylms/v1/skills' }),
-            window.wp.apiFetch({ path: '/ohmylms/v1/question-banks' }),
-          ]);
-          if (live) {
-            setSkills(catalog.skills || []);
-            setBanks(availableBanks.banks || availableBanks || []);
-          }
+        const [catalog, availableBanks] = await Promise.all([
+          window.wp.apiFetch({ path: '/ohmylms/v1/skills' }),
+          window.wp.apiFetch({ path: '/ohmylms/v1/question-banks' }),
+        ]);
+        if (live) {
+          setSkills(catalog.skills || []);
+          setBanks(availableBanks.banks || availableBanks || []);
         }
       })
       .catch((cause) => live && setError(cause.message));
@@ -193,12 +191,8 @@ export function CourseLearning({ courseId }) {
           selected={program.mode}
           options={[
             { label: __('Traditional', 'ohmylms'), value: 'traditional' },
-            ...(loaded.skills_enabled
-              ? [
-                  { label: __('Skill-based', 'ohmylms'), value: 'skill-based' },
-                  { label: __('Blended', 'ohmylms'), value: 'blended' },
-                ]
-              : []),
+            { label: __('Skill-based', 'ohmylms'), value: 'skill-based' },
+            { label: __('Blended', 'ohmylms'), value: 'blended' },
           ]}
           onChange={(mode) => update({ mode })}
         />
@@ -211,146 +205,144 @@ export function CourseLearning({ courseId }) {
           onChange={setApplyExisting}
         />
       </section>
-      {loaded.skills_enabled && (
-        <section>
-          <h3>{__('Skill outcomes', 'ohmylms')}</h3>
-          <div className="ohmylms-learning-editor-add">
-            <SelectControl
-              label={__('Select skill', 'ohmylms')}
-              value={skillId}
-              onChange={setSkillId}
-              options={[
-                { label: __('Choose a skill', 'ohmylms'), value: '' },
-                ...skills
-                  .filter(
-                    (skill) =>
-                      !program.outcomes.some((item) => Number(item.term_id) === Number(skill.id)),
-                  )
-                  .map((skill) => ({
-                    label: `${skill.code ? `${skill.code} · ` : ''}${skill.name}`,
-                    value: String(skill.id),
-                  })),
-              ]}
-            />
-            <Button
-              variant="secondary"
-              disabled={!skillId || busy}
-              onClick={() => {
-                update({
-                  outcomes: [
-                    ...program.outcomes,
-                    {
-                      term_id: Number(skillId),
-                      target: 'proficient',
-                      required: program.mode !== 'traditional',
-                    },
-                  ],
-                });
-                setSkillId('');
-              }}
-            >
-              {__('Add outcome', 'ohmylms')}
-            </Button>
-          </div>
-          <div className="ohmylms-learning-table-scroll">
-            <table className="widefat">
-              <thead>
-                <tr>
-                  <th>{__('Skill', 'ohmylms')}</th>
-                  <th>{__('Target', 'ohmylms')}</th>
-                  <th>{__('Requirement', 'ohmylms')}</th>
-                  <th>{__('Actions', 'ohmylms')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {program.outcomes.map((item, index) => (
-                  <tr key={item.term_id}>
-                    <td>
-                      {skills.find((skill) => Number(skill.id) === Number(item.term_id))?.name ||
-                        `#${item.term_id}`}
-                    </td>
-                    <td>
-                      <SelectControl
-                        label={__('Target', 'ohmylms')}
-                        hideLabelFromVision
-                        value={item.target}
-                        options={targets}
-                        onChange={(target) => outcome(index, { target })}
-                      />
-                    </td>
-                    <td>
-                      <CheckboxControl
-                        label={__('Required', 'ohmylms')}
-                        checked={item.required}
-                        onChange={(required) => outcome(index, { required })}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        variant="secondary"
-                        disabled={program.items.some(
-                          (row) => row.type === 'practice' && row.content_id === item.term_id,
-                        )}
-                        onClick={() =>
-                          update({
-                            items: [
-                              ...program.items,
-                              {
-                                id: identity(),
-                                type: 'practice',
-                                content_id: item.term_id,
-                                chapter_id: 0,
-                                required: false,
-                                name: skills.find(
-                                  (skill) => Number(skill.id) === Number(item.term_id),
-                                )?.name,
-                              },
-                            ],
-                          })
-                        }
-                      >
-                        {__('Add practice step', 'ohmylms')}
-                      </Button>{' '}
-                      <Button
-                        icon="trash"
-                        label={__('Remove outcome', 'ohmylms')}
-                        onClick={() =>
-                          update({
-                            outcomes: program.outcomes.filter((_, i) => i !== index),
-                            items: program.items.filter(
-                              (row) => row.type !== 'practice' || row.content_id !== item.term_id,
-                            ),
-                          })
-                        }
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <CheckboxControl
-            label={__('Recognize existing skill evidence from other courses', 'ohmylms')}
-            checked={program.recognize_prior}
-            onChange={(recognize_prior) => update({ recognize_prior })}
-          />
-          <TextControl
-            label={__('Evidence age limit in days', 'ohmylms')}
-            type="number"
-            min={0}
-            max={3650}
-            value={program.evidence_days}
-            onChange={(value) => update({ evidence_days: Number(value) })}
-          />
+      <section>
+        <h3>{__('Skill outcomes', 'ohmylms')}</h3>
+        <div className="ohmylms-learning-editor-add">
           <SelectControl
-            multiple
-            label={__('Allowed question banks', 'ohmylms')}
-            value={program.bank_ids.map(String)}
-            onChange={(values) => update({ bank_ids: values.map(Number) })}
-            options={banks.map((bank) => ({ label: bank.name, value: String(bank.id) }))}
+            label={__('Select skill', 'ohmylms')}
+            value={skillId}
+            onChange={setSkillId}
+            options={[
+              { label: __('Choose a skill', 'ohmylms'), value: '' },
+              ...skills
+                .filter(
+                  (skill) =>
+                    !program.outcomes.some((item) => Number(item.term_id) === Number(skill.id)),
+                )
+                .map((skill) => ({
+                  label: `${skill.code ? `${skill.code} · ` : ''}${skill.name}`,
+                  value: String(skill.id),
+                })),
+            ]}
           />
-        </section>
-      )}
+          <Button
+            variant="secondary"
+            disabled={!skillId || busy}
+            onClick={() => {
+              update({
+                outcomes: [
+                  ...program.outcomes,
+                  {
+                    term_id: Number(skillId),
+                    target: 'proficient',
+                    required: program.mode !== 'traditional',
+                  },
+                ],
+              });
+              setSkillId('');
+            }}
+          >
+            {__('Add outcome', 'ohmylms')}
+          </Button>
+        </div>
+        <div className="ohmylms-learning-table-scroll">
+          <table className="widefat">
+            <thead>
+              <tr>
+                <th>{__('Skill', 'ohmylms')}</th>
+                <th>{__('Target', 'ohmylms')}</th>
+                <th>{__('Requirement', 'ohmylms')}</th>
+                <th>{__('Actions', 'ohmylms')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {program.outcomes.map((item, index) => (
+                <tr key={item.term_id}>
+                  <td>
+                    {skills.find((skill) => Number(skill.id) === Number(item.term_id))?.name ||
+                      `#${item.term_id}`}
+                  </td>
+                  <td>
+                    <SelectControl
+                      label={__('Target', 'ohmylms')}
+                      hideLabelFromVision
+                      value={item.target}
+                      options={targets}
+                      onChange={(target) => outcome(index, { target })}
+                    />
+                  </td>
+                  <td>
+                    <CheckboxControl
+                      label={__('Required', 'ohmylms')}
+                      checked={item.required}
+                      onChange={(required) => outcome(index, { required })}
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      variant="secondary"
+                      disabled={program.items.some(
+                        (row) => row.type === 'practice' && row.content_id === item.term_id,
+                      )}
+                      onClick={() =>
+                        update({
+                          items: [
+                            ...program.items,
+                            {
+                              id: identity(),
+                              type: 'practice',
+                              content_id: item.term_id,
+                              chapter_id: 0,
+                              required: false,
+                              name: skills.find(
+                                (skill) => Number(skill.id) === Number(item.term_id),
+                              )?.name,
+                            },
+                          ],
+                        })
+                      }
+                    >
+                      {__('Add practice step', 'ohmylms')}
+                    </Button>{' '}
+                    <Button
+                      icon="trash"
+                      label={__('Remove outcome', 'ohmylms')}
+                      onClick={() =>
+                        update({
+                          outcomes: program.outcomes.filter((_, i) => i !== index),
+                          items: program.items.filter(
+                            (row) => row.type !== 'practice' || row.content_id !== item.term_id,
+                          ),
+                        })
+                      }
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <CheckboxControl
+          label={__('Recognize existing skill evidence from other courses', 'ohmylms')}
+          checked={program.recognize_prior}
+          onChange={(recognize_prior) => update({ recognize_prior })}
+        />
+        <TextControl
+          label={__('Evidence age limit in days', 'ohmylms')}
+          type="number"
+          min={0}
+          max={3650}
+          value={program.evidence_days}
+          onChange={(value) => update({ evidence_days: Number(value) })}
+        />
+        <SelectControl
+          multiple
+          label={__('Allowed question banks', 'ohmylms')}
+          value={program.bank_ids.map(String)}
+          onChange={(values) => update({ bank_ids: values.map(Number) })}
+          options={banks.map((bank) => ({ label: bank.name, value: String(bank.id) }))}
+        />
+      </section>
       <section>
         <h3>{__('Learning path', 'ohmylms')}</h3>
         <div className="ohmylms-learning-table-scroll">

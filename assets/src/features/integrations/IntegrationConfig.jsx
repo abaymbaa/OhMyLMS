@@ -1,7 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { MCPSettings } from '../settings/MCPSettings';
-import { SkillsAddonSettings } from '../question-bank/SkillsAddonSettings';
 export function createIntegrationConfig(readRuntime) {
   return function IntegrationConfig(props) {
     const {
@@ -106,7 +105,9 @@ export function createIntegrationConfig(readRuntime) {
         <Controls.TextWP size={14} variant={'muted'}>
           {t.description}
         </Controls.TextWP>
-        {t.key === 'mcp' ? <MCPSettings /> : t.key === 'skills' ? <SkillsAddonSettings enabled={Number(t.is_enable) === 1} /> : l ? (
+        {t.key === 'mcp' ? (
+          <MCPSettings />
+        ) : l ? (
           React.createElement(l, {
             settings: o,
             onChange: function (e, t) {

@@ -80,7 +80,6 @@ class LearningController extends RestController {
         $items = [];
         foreach ($query->posts as $post) {
             if (!current_user_can('edit_post', $post->ID)) { continue; }
-            if ($type === OHMYLMS_QUIZ_CPT && (int) ohmylms_get_course_by_content_id($post->ID) !== (int) $request['id']) { continue; }
             $items[] = ['id' => $post->ID, 'name' => $post->post_title, 'status' => $post->post_status];
         }
         return rest_ensure_response(['items' => $items, 'pages' => (int) $query->max_num_pages]);

@@ -35,6 +35,7 @@ class Api {
 			\OhMyLMS\Rest\V1\PluginController::class,
 			\OhMyLMS\Rest\V1\CourseController::class,
 			\OhMyLMS\Rest\V1\LearningController::class,
+			\OhMyLMS\Rest\V1\ContentHubController::class,
 			\OhMyLMS\Rest\V1\SetupWizardController::class,
 			\OhMyLMS\Rest\V1\StudentController::class,
 			\OhMyLMS\Rest\V1\UserController::class,

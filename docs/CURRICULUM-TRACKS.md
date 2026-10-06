@@ -75,7 +75,7 @@ Six additive InnoDB tables created by `OhMyLMS\Curriculum\Schema` (option `ohmyl
 
 | Who | Access |
 | --- | --- |
-| Administrators (`manage_options`, filter `ohmylms_can_manage_curriculum`) | Every `curriculum/*`, `skill-mappings` and `tracks*` route. Skill mapping writes also need the Skills add-on, like the skill catalogue. |
+| Administrators (`manage_options`, filter `ohmylms_can_manage_curriculum`) | Every `curriculum/*`, `skill-mappings` and `tracks*` route. Skill mapping is an administrator-only action; Skills are a core feature, so no add-on switch is involved. |
 | Signed-in learners | `me/tracks`, `me/tracks/{id}` and `tracks/{id}/follow`, always for the current user, never a user parameter. Published tracks only. |
 | Guests | Nothing (401). Authors and teachers without `manage_options` get 403 on administration routes. |
 

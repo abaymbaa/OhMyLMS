@@ -1,6 +1,6 @@
 # Bundled add-ons and Assessments
 
-Skills is an optional bundled add-on under OhMyLMS → Add-ons. Manage opens the skill catalogue while enabled. Disabling hides its submenu and blocks skill writes without deleting skills, links or historical question mappings. Existing mapping reads remain available to core assessment screens.
+Skills is a core feature, like the Question Bank: it has no Add-ons card or switch, always loads, and cannot be turned off. The skill library is the Skills tab of the [Content Hub](CONTENT-HUB.md). A saved Skills switch from an older version is ignored.
 
 MCP is another optional add-on; see [MCP setup](MCP.md).
 
@@ -16,6 +16,6 @@ Later integration requirements:
 
 The current change groups navigation only; the requirements above are future work.
 
-Trusted project modules still use `OHMYLMS_ENABLED_MODULES` and `ohmylms_enabled_modules`. Bundled Skills follows its saved switch even when listed in configuration. The legacy `question_bank` module ID is ignored.
+Trusted project modules still use `OHMYLMS_ENABLED_MODULES` and `ohmylms_enabled_modules`. The core Skills module always loads, whatever is listed. The legacy `question_bank` module ID is ignored.
 
-Run `php tests/php/addons-unit.php off`, `skills`, `bank` and `both` to check legacy configurations and the Skills switch. `tests/js/assessments-hub.test.mjs` verifies the default section, all three routes and preservation of the existing screens.
+Run `php tests/php/addons-unit.php off`, `skills`, `bank` and `both` to check that legacy saved switches change nothing. `tests/js/assessments-hub.test.mjs` verifies the default section, all three routes and preservation of the existing screens.
