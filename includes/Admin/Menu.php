@@ -65,10 +65,8 @@ class Menu {
 			 	$submenu[ $slug ][] = array( esc_attr__( 'Sessions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/sessions' );
 			 }
 
-			$submenu[ $slug ][] = array( esc_attr__( 'Membership', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/memberships' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Coupon', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/coupons' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Orders', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/orders' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Subscriptions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/subscriptions' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			// Plans, coupons, orders and subscriptions share the Membership screen; old links remain available.
+			$submenu[ $slug ][] = array( esc_attr__( 'Membership', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/memberships' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Account Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/accounthub' );
 			if ( $gamification_enabled ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited

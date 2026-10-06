@@ -9,6 +9,8 @@ import { QuestionEditor } from './QuestionEditor';
 import { LessonEditor } from './LessonEditor';
 import { wrapScreen, extensionPage } from './ScreenExtensions';
 import { validateMembership } from '../features/memberships/validateMembership.mjs';
+import { membershipScreen } from '../features/memberships/MembershipFrame';
+import { MEMBERSHIP_SCREENS, membershipRoutes } from '../features/memberships/membershipRoutes.mjs';
 import {
   quizComponents,
   courseComponents,
@@ -103,6 +105,11 @@ const publicApi = {
         ),
       });
     const coreRoutes = routes.map((route) => {
+      if (MEMBERSHIP_SCREENS[route.path])
+        return {
+          ...route,
+          element: membershipScreen(route.element, MEMBERSHIP_SCREENS[route.path]),
+        };
       if (certificatesMoved && route.path === '/certificates')
         return { ...route, element: CertificatesMoved };
       if (certificatesMoved && route.path === '/certificate-edit/:id')
@@ -148,6 +155,13 @@ const publicApi = {
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
       ...contentHubRoutes(hubScreens, hubPages, contentHubScreen),
+      ...membershipRoutes(
+        routes.map((route) => ({
+          ...route,
+          element: wrapScreen(route.element, route.path, registry),
+        })),
+        membershipScreen,
+      ),
       ...registry.list('admin-page').map((entry) => ({
         path: `/extensions/${entry.id}`,
         element: HUB_EXTENSION_TABS[entry.id]
