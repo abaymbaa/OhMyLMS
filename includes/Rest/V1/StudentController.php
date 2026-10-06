@@ -143,7 +143,7 @@ class StudentController extends RestController {
 			u.display_name AS student_name,
 			u.user_email AS student_email,
 			COUNT(e.course_id) AS courses_enrolled,
-			MIN(e.start_date) AS registration_date';
+			COALESCE( MIN(e.start_date), u.user_registered ) AS registration_date';
 
 		// Add membership count only if pro is active
 		if ( ohmylms_is_pro() ) {
@@ -157,7 +157,7 @@ class StudentController extends RestController {
 		$query .= "
             FROM
                 {$wpdb->users} u
-            INNER JOIN
+            LEFT JOIN
                 {$wpdb->prefix}ohmylms_user_enrollment e
                 ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -173,6 +173,7 @@ class StudentController extends RestController {
             WHERE
                 1=1
         ';
+		$query .= $this->get_student_scope_query();
 
 		// Base query with optional search filter
 		// $query = "
@@ -234,7 +235,7 @@ class StudentController extends RestController {
 				COUNT(DISTINCT u.ID)
 			FROM
 				{$wpdb->users} u
-			INNER JOIN
+			LEFT JOIN
 				{$wpdb->prefix}ohmylms_user_enrollment e
 				ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -249,6 +250,7 @@ class StudentController extends RestController {
 		$count_query .= '
 			WHERE
 				1=1';
+		$count_query .= $this->get_student_scope_query();
 
 		// Add course ID filter if provided
 		if ( ! empty( $course_id ) ) {
@@ -343,9 +345,33 @@ class StudentController extends RestController {
 			return $query;
 		}
 		$end_date = $end_date . ' 23:59:59'; // Append time to the end date
-		$query   .= $wpdb->prepare( ' AND e.start_date BETWEEN %s AND %s', $start_date, $end_date );
+		// Students without an enrollment yet are dated by their account registration.
+		$query   .= $wpdb->prepare( ' AND COALESCE( e.start_date, u.user_registered ) BETWEEN %s AND %s', $start_date, $end_date );
 
 		return $query;
+	}
+
+	/**
+	 * SQL condition (to append to a WHERE clause) limiting the list to students.
+	 *
+	 * A student is anyone with an enrollment, plus anyone holding the student
+	 * role. The role check is what lets a freshly created student appear before
+	 * they enroll in a course. The query must alias the tables as `u` (users)
+	 * and `e` (enrollment, LEFT JOINed).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	private function get_student_scope_query() {
+		global $wpdb;
+
+		// Same match WP_User_Query uses for a role: the serialized capabilities contain "role".
+		return $wpdb->prepare(
+			" AND ( e.user_id IS NOT NULL OR u.ID IN ( SELECT um.user_id FROM {$wpdb->usermeta} um WHERE um.meta_key = %s AND um.meta_value LIKE %s ) ) ",
+			$wpdb->get_blog_prefix() . 'capabilities',
+			'%' . $wpdb->esc_like( '"' . ohmylms_get_student_role() . '"' ) . '%'
+		);
 	}
 
 
