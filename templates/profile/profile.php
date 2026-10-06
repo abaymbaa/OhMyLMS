@@ -13,7 +13,8 @@ defined( 'ABSPATH' ) || exit();
 $integrations = get_option( 'ohmylms_integrations', array() );
 $current_level = '';
 $next_level_name = '';
-if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] ) {
+$engagement_visible = !empty($integrations['gamification']['is_enable']) || \OhMyLMS\Engagement\StreakSettings::enabled();
+if( $engagement_visible ) {
 	$current_point = \OhMyLMS\Engagement\Point::get_total_points( get_current_user_id() );
 	$current_level_data = \OhMyLMS\Engagement\Level::get_current_level_of_a_user();
 	$next_level_data = \OhMyLMS\Engagement\Level::get_next_level_of_a_user();
@@ -22,10 +23,11 @@ if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $in
 	$next_level_point = isset( $next_level_data['points_needed'], $next_level_data['current_points'] ) ? (int)$next_level_data['points_needed'] + (int)$current_point : 0 ;
 	$current_level_color = isset( $current_level_data['level_color'] ) ? $current_level_data['level_color'] : '#e3d8fc';
 	$current_level_text_color = isset( $current_level_data['level_text_color'] ) ? $current_level_data['level_text_color'] : '#000000';
-	$progress_percent = $next_level_point > 0 ? ($current_point / $next_level_point) * 100 : 100;
+	$progress_percent = $next_level_data['progress_percentage'] ?? 0;
 	$point_needed = $next_level_point - $current_point;
-	$badges = \OhMyLMS\Engagement\Badge::get_badges();
+	$badges = \OhMyLMS\Engagement\Badge::maybe_enable() ? \OhMyLMS\Engagement\Badge::get_badges() : (\OhMyLMS\Engagement\StreakSettings::enabled() ? \OhMyLMS\Engagement\StreakSettings::badges() : []);
 	$earned_badges   = \OhMyLMS\Engagement\Badge::get_all_badges_of_a_user( get_current_user_id() );
+	$earned_badges = array_filter($earned_badges, static function ($badge) use ($badges) { return in_array($badge['slug'], array_column($badges, 'slug'), true); });
 }
 
 ?>
@@ -159,9 +161,14 @@ if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $in
 		<?php if( $next_level_name ) : ?>
 			<div class="ohmylms-progress-section">
 				<div class="ohmylms-progress-header">
-					<span class="ohmylms-progress-label">Progress to <?php echo esc_html( $next_level_name ); ?></span>
-					<span class="ohmylms-progress-numbers"><?php echo esc_html( $current_point ); ?>/<?php echo esc_html( $next_level_point ); ?> <?php echo __('bonus points','ohmylms');?></span>
+					<span class="ohmylms-progress-label"><?php echo esc_html(sprintf(__('Progress to %s', 'ohmylms'), $next_level_name)); ?></span>
 				</div>
+				<ul class="ohmylms-level-conditions">
+					<?php foreach ($next_level_data['rules'] ?? [] as $rule) {
+						$labels = ['points' => __('Bonus points', 'ohmylms'), 'completed_lesson' => __('Completed lessons', 'ohmylms'), 'completed_courses' => __('Completed courses', 'ohmylms')]; ?>
+						<li><?php echo esc_html(sprintf(__('%1$s: %2$s · requirement %3$s %4$s', 'ohmylms'), $labels[$rule['type']] ?? '', $rule['current'], $rule['operator'], $rule['required'])); ?></li>
+					<?php } ?>
+				</ul>
 				<div class="ohmylms-progress-bar">
 					<div class="ohmylms-progress-fill" style="--fill-width: <?php echo esc_html( $progress_percent ); ?>%"></div>
 				</div>
@@ -171,7 +178,7 @@ if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $in
 			</div>
 		<?php endif; ?>
 
-		<?php if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] ) :
+		<?php if( $engagement_visible ) :
 			$earned_slugs = [];
 			foreach ( $earned_badges as $badge ) {
 				$earned_slugs[] = $badge['slug'];

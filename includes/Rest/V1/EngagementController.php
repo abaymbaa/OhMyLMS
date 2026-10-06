@@ -14,6 +14,48 @@ use WP_Error;
  * @since 1.0.0
  */
 class EngagementController extends RestController {
+    private function valid_group($group) {
+        return in_array($group, apply_filters('ohmylms_engagement_setting_groups', ['point', 'badge', 'level', 'reward', 'leaderboard', 'streak']), true);
+    }
+
+    private function validate_settings($group, $settings) {
+        if ($group === 'streak') {
+            $validated = \OhMyLMS\Engagement\StreakSettings::validate($settings);
+            if (is_wp_error($validated)) { return $validated; }
+            $badges = array_column(\OhMyLMS\Engagement\Badge::get_badges(true), 'slug');
+            foreach ($validated['milestones'] as $reward) {
+                if ($reward['badge'] && !in_array($reward['badge'], $badges, true)) { return new WP_Error('streak_badge', __('Choose an existing milestone badge.', 'ohmylms'), ['status' => 400]); }
+            }
+            return $validated;
+        }
+        $error = new WP_Error('engagement_settings', __('Invalid gamification settings.', 'ohmylms'), ['status' => 400]);
+        if (!is_array($settings)) { return $error; }
+        foreach (['enable', 'feature_enabled'] as $key) {
+            if (isset($settings[$key])) {
+                if (!in_array($settings[$key], [true, false, 0, 1, '0', '1'], true)) { return $error; }
+                $settings[$key] = in_array($settings[$key], [true, 1, '1'], true);
+            }
+        }
+        if (in_array($group, ['point', 'reward'], true)) {
+            if (isset($settings['rules']) && !is_array($settings['rules'])) { return $error; }
+            foreach ($settings['rules'] ?? [] as $rule) {
+                if (!is_array($rule) || empty($rule['slug']) || !isset($rule['value']) || !in_array($rule['value'], [true, false, 0, 1, '0', '1'], true)) { return $error; }
+                foreach (['point', 'threshold'] as $field) {
+                    if (isset($rule[$field]) && (!is_numeric($rule[$field]) || !is_finite((float) $rule[$field]) || $rule[$field] < 0 || $rule[$field] > 1000000)) { return $error; }
+                }
+            }
+        }
+        if ($group === 'level' && isset($settings['levels'])) {
+            if (!is_array($settings['levels'])) { return $error; }
+            foreach ($settings['levels'] as $level) { if (!\OhMyLMS\Engagement\Rules::valid($level['rules'] ?? [])) { return $error; } }
+        }
+        if ($group === 'leaderboard') {
+            if (isset($settings['rules']) && !in_array($settings['rules'], ['completion_rate', 'highest_quiz', 'fastest_time'], true)) { return $error; }
+            if (isset($settings['threshold']) && $settings['threshold'] !== '' && (!is_numeric($settings['threshold']) || $settings['threshold'] < 0 || $settings['threshold'] > 100)) { return $error; }
+            if (isset($settings['students_number']) && $settings['students_number'] !== '' && (!is_numeric($settings['students_number']) || $settings['students_number'] < 1 || $settings['students_number'] > 100)) { return $error; }
+        }
+        return $settings;
+    }
     /**
      * The base route for the controller.
      *
@@ -106,6 +148,8 @@ class EngagementController extends RestController {
             );
         }
         $group_id = $request['group_id'];
+        if (!$this->valid_group($group_id)) { return new WP_Error('rest_invalid_group_id', __('Invalid group ID.', 'ohmylms'), ['status' => 400]); }
+        if ($group_id === 'streak') { return rest_ensure_response(\OhMyLMS\Engagement\StreakSettings::get()); }
         $function_name = 'get_'.$group_id.'_default_settings';
         $settings = get_option( 'ohmylms_'.$group_id.'_settings' ); 
         return rest_ensure_response( $settings );
@@ -130,6 +174,12 @@ class EngagementController extends RestController {
 
         $settings = $request->get_json_params();
         $group_id = $request['group_id'];
+        if (!$this->valid_group($group_id)) { return new WP_Error('rest_invalid_group_id', __('Invalid group ID.', 'ohmylms'), ['status' => 400]); }
+        $settings = $this->validate_settings($group_id, $settings);
+        if (is_wp_error($settings)) { return $settings; }
+        if ($group_id === 'streak' && $settings['enable'] && !\OhMyLMS\Engagement\StreakSchema::install()) {
+            return new WP_Error('streak_schema', __('Could not install streak storage.', 'ohmylms'), ['status' => 500]);
+        }
         update_option( 'ohmylms_'.$group_id.'_settings', $settings );
         if( 'level' === $group_id ) {
             $levels = isset( $settings['levels'] ) ? $settings['levels'] : array();
@@ -157,7 +207,7 @@ class EngagementController extends RestController {
      * @since 1.0.0
      */
     public function get_badges( WP_REST_Request $request ) {
-        $badges = get_option( 'ohmylms_badges', array() );
+        $badges = $request->get_param('include_streak') ? \OhMyLMS\Engagement\Badge::get_badges(true) : get_option('ohmylms_badges', []);
         return rest_ensure_response( $badges );
     }
 
@@ -179,10 +229,16 @@ class EngagementController extends RestController {
                 array( 'status' => 400 )
             );
         }
+        $streak_badge = ($new_badge['award_source'] ?? '') === 'streak';
+        if ($streak_badge) {
+            $new_badge['rules'] = [];
+        } elseif (!\OhMyLMS\Engagement\Rules::valid($new_badge['rules'] ?? [])) {
+            return new WP_Error('badge_rules', __('Define valid badge conditions.', 'ohmylms'), ['status' => 400]);
+        }
         $existing_badges = get_option( 'ohmylms_badges', array() );
         $is_exist = false;
         foreach( $existing_badges as $key=>$badge ) {
-            if( isset($badge['slug']) && ($new_badge['slug'] === $badge['slug']) ) {
+            if( isset($badge['slug'], $new_badge['slug']) && ($new_badge['slug'] === $badge['slug']) ) {
                 $existing_badges[$key] = $new_badge;
                 $is_exist = true;
             }
@@ -201,6 +257,7 @@ class EngagementController extends RestController {
             array(
                 'success' => true,
                 'message' => __( 'Badges saved successfully.', 'ohmylms' ),
+                'badge' => $new_badge,
             )
         );
     }
@@ -280,6 +337,7 @@ class EngagementController extends RestController {
      */
     public function save_levels( WP_REST_Request $request ) {
         $new_level = $request->get_json_params();
+        if (!\OhMyLMS\Engagement\Rules::valid($new_level['rules'] ?? [])) { return new WP_Error('level_rules', __('Define valid level conditions.', 'ohmylms'), ['status' => 400]); }
         if ( ! is_array( $new_level ) || empty( $new_level ) ) {
             return new WP_Error(
                 'rest_invalid_levels',
@@ -360,9 +418,7 @@ class EngagementController extends RestController {
     private function get_leaderboard_default_settings() {
         return array(
             'enable'          => false,
-            'rules'           => array(
-                array( 'based_on' => 'most_courses' ),
-            ),
+            'rules'           => 'completion_rate',
             'students_number' => 10,
         );
     }

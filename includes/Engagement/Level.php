@@ -39,7 +39,7 @@ class Level {
      * @since 1.0.0
      */
     public static function maybe_enable() {
-        return true;
+        return Rules::enabled('level');
     }
 
     /**
@@ -49,9 +49,9 @@ class Level {
      * @return array|false
      * @since 1.0.0
      */
-    public static function maybe_met_rules() {
-        $user_id = get_current_user_id();
-        if ( ! $user_id ) {
+    public static function maybe_met_rules( $user_id = null ) {
+        $user_id = $user_id === null ? get_current_user_id() : (int) $user_id;
+        if ( ! $user_id || !self::maybe_enable() ) {
             return false;
         }
         
@@ -64,7 +64,7 @@ class Level {
         $sorted_levels = self::sort_levels_by_progression( $levels );
         
         // Get current level data
-        $current_level_data = self::get_current_level_of_a_user();
+        $current_level_data = self::get_current_level_of_a_user($user_id);
         $current_level_slug = $current_level_data ? $current_level_data['level_id'] : null;
         
         $levels_to_assign = array();
@@ -127,6 +127,7 @@ class Level {
      * @since 1.0.0
      */
     public static function add_level( $user_id, $type, $level_id, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
+        if (!$user_id || !get_userdata($user_id) || !is_string($level_id) || $level_id === '' || strlen($level_id) > 45) { return false; }
         if( ! self::maybe_enable() ) {
             return false; // level system is not enabled
         }
@@ -147,7 +148,7 @@ class Level {
             do_action( 'ohmylms_after_level_added', $user_id, $level_id, $type );
         }
 
-        return true;
+        return $response;
     }
 
     /**
@@ -156,14 +157,14 @@ class Level {
      * @return int
      * @since 1.0.0 
      */
-    public static function get_current_level_of_a_user() {
+    public static function get_current_level_of_a_user( $user_id = null ) {
         global $wpdb;
         
         if ( ! self::maybe_enable() ) {
             return false; // Level system is not enabled
         }
         
-        $user_id = get_current_user_id();
+        $user_id = $user_id === null ? get_current_user_id() : (int) $user_id;
         if ( ! $user_id ) {
             return false; // No user logged in
         }
@@ -242,7 +243,7 @@ class Level {
         }
         
         if ( ! $user_id ) {
-            $user_id = get_current_user_id();
+            $user_id = $user_id === null ? get_current_user_id() : (int) $user_id;
         }
         
         if ( ! $user_id ) {
@@ -250,7 +251,7 @@ class Level {
         }
         
         // Get current level data
-        $current_level_data = self::get_current_level_of_a_user();
+        $current_level_data = self::get_current_level_of_a_user($user_id);
         
         // Get all levels and sort them by minimum points requirement
         $levels = get_option( 'ohmylms_levels', array() );
@@ -348,42 +349,7 @@ class Level {
      * @since 1.0.0
      */
     private static function user_qualifies_for_level( $user_id, $level ) {
-        if ( ! isset( $level['rules'] ) || ! is_array( $level['rules'] ) ) {
-            return false;
-        }
-        
-        
-        foreach ( $level['rules'] as $rule_index => $rule ) {
-            if ( isset( $rule['dataValue'], $rule['compareData'], $rule['compareSign'] ) ) {
-                $current_value = 0;
-                
-                switch ( $rule['dataValue'] ) {
-                    case 'points':
-                        $current_value = Point::get_total_points( $user_id );
-                        break;
-                        
-                    case 'completed_courses':
-                        $student = new \OhMyLMS\Data\Student( $user_id );
-                        if ( $student ) {
-                            $current_value = $student->get_completed_course_count();
-                        }
-                        break;
-                        
-                    case 'completed_lesson':
-                        // Implement lesson completion tracking if needed
-                        $current_value = 0;
-                        break;
-                }
-                
-                $rule_met = self::compare_with_sign( $current_value, $rule['compareSign'], $rule['compareData'] );
-                
-                if ( ! $rule_met ) {
-                    return false; // User doesn't meet this rule
-                }
-            }
-        }
-        
-        return true; // User meets all rules for this level
+        return Rules::met($level['rules'] ?? [], $user_id);
     }
     
     /**
@@ -399,7 +365,7 @@ class Level {
         $points_needed = 0;
         $rules_summary = array();
         
-        if ( isset( $next_level['rules'] ) && is_array( $next_level['rules'] ) ) {
+        if ( Rules::valid($next_level['rules'] ?? []) ) {
             foreach ( $next_level['rules'] as $rule ) {
                 if ( isset( $rule['dataValue'], $rule['compareData'], $rule['compareSign'] ) ) {
                     $rule_summary = array(
@@ -433,7 +399,7 @@ class Level {
                             break;
                             
                         case 'completed_lesson':
-                            $rule_summary['current'] = 0; // Placeholder
+                            $rule_summary['current'] = Rules::value('completed_lesson', $user_id);
                             break;
                     }
                     
@@ -455,8 +421,18 @@ class Level {
             'points_needed' => max( 0, $points_needed ),
             'current_points' => $current_points,
             'rules' => $rules_summary,
-            'progress_percentage' => $points_needed > 0 ? min( 100, ( $current_points / ( $current_points + $points_needed ) ) * 100 ) : 100
+            'progress_percentage' => self::rule_progress($rules_summary)
         );
+    }
+
+    private static function rule_progress($rules) {
+        if (!$rules) { return 0; }
+        $progress = [];
+        foreach ($rules as $rule) {
+            $required = (float) $rule['required'] + ($rule['operator'] === '>' ? 1 : 0);
+            $progress[] = $rule['met'] ? 100 : (in_array($rule['operator'], ['>', '>=', '=', '=='], true) && $required > 0 ? min(99, 100 * $rule['current'] / $required) : 0);
+        }
+        return min($progress);
     }
 
     /**

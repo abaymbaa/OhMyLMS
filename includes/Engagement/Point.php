@@ -11,6 +11,17 @@ namespace OhMyLMS\Engagement;
 use OhMyLMS\Engagement\Achievements;
 
 class Point {
+    /** Restore a failed point order once, even if point earning has since been disabled. */
+    public static function refund_purchase($user_id, $order_id) {
+        return Achievements::locked($user_id, static function () use ($user_id, $order_id) {
+            global $wpdb;
+            $spent = $wpdb->get_var($wpdb->prepare("SELECT points FROM {$wpdb->prefix}ohmylms_user_achievement WHERE user_id=%d AND type='point' AND reason='purchase_course' AND content_id=%d AND status='active' AND points < 0", $user_id, $order_id));
+            if (!$spent) { return false; }
+            $result = Achievements::insert_achievement(['user_id' => $user_id, 'type' => 'point', 'points' => -(int) $spent, 'reason' => 'purchase_course_refund', 'content_id' => $order_id, 'date_created' => current_time('mysql')]);
+            if ($result) { do_action('ohmylms_after_point_refunded', $user_id, -(int) $spent, $order_id); }
+            return $result;
+        });
+    }
     
     /**
      * Get the point settings.
@@ -29,7 +40,7 @@ class Point {
      * @since 1.0.0
      */
     public static function maybe_enable() {
-        return true;
+        return Rules::enabled('point');
     }
 
     /**
@@ -39,6 +50,7 @@ class Point {
      * @since 1.0.0
      */
     public static function maybe_met_rules( $event, $threshold = 0 ) {
+        if (!self::maybe_enable()) { return false; }
         $settings = self::get_rules();
         
         if ( !empty($settings['rules']) && is_array($settings['rules']) ) {
@@ -63,7 +75,7 @@ class Point {
      * @since 1.0.0
      */
     public static function add_points( $user_id, $type, $points, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
-        if( ! self::maybe_enable() ) {
+        if( ! self::maybe_enable() || !is_numeric($points) || $points <= 0 || !$user_id ) {
             return false; // Point system is not enabled
         }
 
@@ -120,7 +132,7 @@ class Point {
      * @since 1.0.0
      */
     public static function deduct_points( $user_id, $type, $points, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
-        if( ! self::maybe_enable() ) {
+        if( ! Reward::maybe_enable() || !is_numeric($points) || $points <= 0 || !$user_id ) {
             return false; // Point system is not enabled
         }
 
@@ -134,7 +146,10 @@ class Point {
             'content_id'    => $content_id,
             'date_created'  => current_time( 'mysql' ),
         );
-        $response = Achievements::insert_achievement( $data );
+        $response = Achievements::locked($user_id, static function () use ($data, $user_id, $points) {
+            if (self::get_total_points($user_id) < $points) { return false; }
+            return Achievements::insert_achievement($data);
+        });
         if( $response ) {
             do_action( 'ohmylms_after_point_deduct', $user_id, $points, $type );
         }

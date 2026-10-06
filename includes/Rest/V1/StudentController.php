@@ -91,6 +91,17 @@ class StudentController extends RestController {
 	public function get_items( $request ) {
 		global $wpdb;
 
+		// New student accounts belong in the directory before their first enrollment.
+		$student_roles = array( 'subscriber', 'ohmylms_student', ohmylms_get_student_role() );
+		$role_filters  = array();
+		foreach ( array_unique( $student_roles ) as $role ) {
+			$role_filters[] = $wpdb->prepare( 'student_role.meta_value LIKE %s', '%' . $wpdb->esc_like( '"' . $role . '";b:1;' ) . '%' );
+		}
+		$student_filter = $wpdb->prepare(
+			' AND (e.user_id IS NOT NULL OR EXISTS (SELECT 1 FROM ' . $wpdb->usermeta . ' student_role WHERE student_role.user_id = u.ID AND student_role.meta_key = %s AND (' . implode( ' OR ', $role_filters ) . ')))',
+			$wpdb->get_blog_prefix() . 'capabilities'
+		);
+
 		// Pagination parameters
 		$page     = $request->get_param( 'page' ) ? (int) $request->get_param( 'page' ) : 1;
 		$per_page = $request->get_param( 'per_page' ) ? (int) $request->get_param( 'per_page' ) : 10;
@@ -142,8 +153,8 @@ class StudentController extends RestController {
 			u.ID AS user_id,
 			u.display_name AS student_name,
 			u.user_email AS student_email,
-			COUNT(e.course_id) AS courses_enrolled,
-			MIN(e.start_date) AS registration_date';
+			COUNT(DISTINCT e.course_id) AS courses_enrolled,
+			COALESCE(MIN(e.start_date), u.user_registered) AS registration_date';
 
 		// Add membership count only if pro is active
 		if ( ohmylms_is_pro() ) {
@@ -157,7 +168,7 @@ class StudentController extends RestController {
 		$query .= "
             FROM
                 {$wpdb->users} u
-            INNER JOIN
+            LEFT JOIN
                 {$wpdb->prefix}ohmylms_user_enrollment e
                 ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -173,6 +184,7 @@ class StudentController extends RestController {
             WHERE
                 1=1
         ';
+		$query .= $student_filter;
 
 		// Base query with optional search filter
 		// $query = "
@@ -234,7 +246,7 @@ class StudentController extends RestController {
 				COUNT(DISTINCT u.ID)
 			FROM
 				{$wpdb->users} u
-			INNER JOIN
+			LEFT JOIN
 				{$wpdb->prefix}ohmylms_user_enrollment e
 				ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
@@ -249,6 +261,7 @@ class StudentController extends RestController {
 		$count_query .= '
 			WHERE
 				1=1';
+		$count_query .= $student_filter;
 
 		// Add course ID filter if provided
 		if ( ! empty( $course_id ) ) {
@@ -343,7 +356,7 @@ class StudentController extends RestController {
 			return $query;
 		}
 		$end_date = $end_date . ' 23:59:59'; // Append time to the end date
-		$query   .= $wpdb->prepare( ' AND e.start_date BETWEEN %s AND %s', $start_date, $end_date );
+		$query   .= $wpdb->prepare( ' AND COALESCE(e.start_date, u.user_registered) BETWEEN %s AND %s', $start_date, $end_date );
 
 		return $query;
 	}

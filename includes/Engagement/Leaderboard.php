@@ -27,7 +27,7 @@ class Leaderboard {
      * @since 1.0.0
      */
     public static function maybe_enable() {
-        return true;
+        return Rules::enabled('leaderboard');
     }
 
 

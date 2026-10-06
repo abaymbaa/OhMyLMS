@@ -9,6 +9,10 @@ ohmylms_enqueue_interactivity_module('ohmylms/gamification');
 ?>
 
 <style>
+  @media (prefers-reduced-motion: reduce) {
+    .ohmylms-celebration-popup { animation: none !important; right: 20px; }
+    #ohmylms-confetti-canvas { display: none; }
+  }
   .ohmylms-body-wrapper {
     pointer-events: none;
   }

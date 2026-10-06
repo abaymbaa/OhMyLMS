@@ -18,7 +18,9 @@ final class Frontend {
     public static function init() {
         add_shortcode('ohmylms_skills', [__CLASS__, 'skills']);
         add_shortcode('ohmylms_practice', [__CLASS__, 'practice']);
-        add_action('ohmylms_lms_student_profile_after_dashboard_content', static function () { echo self::skills(); });
+        add_action('ohmylms_lms_student_profile_after_dashboard_content', static function () {
+            if (!Dashboard::$rendered) { echo self::skills(); }
+        });
         add_filter('query_vars', static function ($vars) { $vars[] = 'ohmylms_practice'; return $vars; });
         add_action('template_redirect', [__CLASS__, 'practice_page']);
         add_action('wp_enqueue_scripts', [__CLASS__, 'claim_assets']);

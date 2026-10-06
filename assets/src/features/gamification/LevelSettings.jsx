@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { FeatureSwitch } from './FeatureSwitch';
 export function createLevelSettings(readRuntime) {
   return function LevelSettings() {
     const {
@@ -178,6 +179,16 @@ export function createLevelSettings(readRuntime) {
       ) : (
         <React.Fragment>
           {contextHolder}
+          <FeatureSwitch
+            settings={r}
+            setSettings={a}
+            title={I18n.__('Learner levels', 'ohmylms')}
+            description={I18n.__(
+              'Recognize learner progress with levels and achievement rules.',
+              'ohmylms',
+            )}
+            label={I18n.__('Enable learner levels', 'ohmylms')}
+          />
 
           <Controls.CardWP isBorderless={!0} variant={'secondary'}>
             <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>

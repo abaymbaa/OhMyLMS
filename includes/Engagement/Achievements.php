@@ -9,6 +9,14 @@
 namespace OhMyLMS\Engagement;
 
 class Achievements {
+    /** Serialize an award or spend for a learner, including the balance check. */
+    public static function locked($user_id, callable $work) {
+        global $wpdb;
+        $key = 'ohmylms-award-' . md5($wpdb->prefix . ':' . (int) $user_id);
+        if ((int) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)', $key)) !== 1) { return false; }
+        try { return $work(); }
+        finally { $wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $key)); }
+    }
     
    /**
     * Insert a new achievement.
@@ -18,6 +26,13 @@ class Achievements {
     * @since 1.0.0
     */
     public static function insert_achievement( $data ) {
+        if (!is_array($data) || empty($data['user_id']) || empty($data['type'])) { return false; }
+        return self::locked($data['user_id'], static function () use ($data) {
+            return self::persist($data);
+        });
+    }
+
+    private static function persist($data) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ohmylms_user_achievement';
         if( !is_array($data) || empty($data) ) {

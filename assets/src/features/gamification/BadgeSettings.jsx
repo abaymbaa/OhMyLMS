@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { FeatureSwitch } from './FeatureSwitch';
 export function createBadgeSettings(readRuntime) {
   return function BadgeSettings() {
     const {
@@ -192,6 +193,16 @@ export function createBadgeSettings(readRuntime) {
       ) : (
         <React.Fragment>
           {contextHolder}
+          <FeatureSwitch
+            settings={r}
+            setSettings={a}
+            title={I18n.__('Achievement badges', 'ohmylms')}
+            description={I18n.__(
+              'Celebrate learning achievements with badges and earning rules.',
+              'ohmylms',
+            )}
+            label={I18n.__('Enable achievement badges', 'ohmylms')}
+          />
 
           <Controls.CardWP isBorderless={!0} variant={'secondary'}>
             <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>

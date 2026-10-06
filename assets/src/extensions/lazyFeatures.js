@@ -122,7 +122,6 @@ export const questionBankComponents = lazyComponents(
     'SkillMapEditor',
     'QuestionVersionBar',
     'AssessmentSettingsPanel',
-    'PerformancePage',
     'InlineCheckPanel',
     'NumericalEditor',
     'StructuredEditor',

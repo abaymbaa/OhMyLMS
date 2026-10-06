@@ -1,5 +1,6 @@
 import { createElement, Fragment } from '@wordpress/element';
 import { activeGamificationTab, gamificationTabs } from './model.mjs';
+import { StreakSettings } from './StreakSettings';
 
 export function createGamificationSettings(readRuntime) {
   return function GamificationSettings() {
@@ -12,12 +13,19 @@ export function createGamificationSettings(readRuntime) {
     const items = gamificationTabs.map(([key, label, binding]) => ({
       key,
       label: I18n.__(label, 'ohmylms'),
-      children: createElement(runtime[binding]),
+      children:
+        key === 'streak-settings'
+          ? createElement(StreakSettings, { BadgeEditor: runtime.o3 })
+          : createElement(runtime[binding]),
     }));
     return (
       <Fragment>
         {contextHolder}
-        <Controls.CardWP isBorderless variant="secondary" className="ohmylms-full-screen-height">
+        <Controls.CardWP
+          isBorderless
+          variant="secondary"
+          className="ohmylms-full-screen-height ohmylms-gamification-settings"
+        >
           <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
             <Controls.TabsWP
               key={activeTab}

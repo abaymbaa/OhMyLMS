@@ -20,6 +20,8 @@ add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
 \OhMyLMS\Extensions\Slots::init();
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Assessment\Bootstrap::init();
+\OhMyLMS\Engagement\StreakHooks::init();
+\OhMyLMS\Practice\Dashboard::init();
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();

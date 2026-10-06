@@ -4,6 +4,7 @@ export const gamificationTabs = [
   ['level-settings', 'Learner Levels', 'c5'],
   ['reward-settings', 'Reward', 'w5'],
   ['leaderboard-settings', 'Leaderboard', 'S2'],
+  ['streak-settings', 'Streaks', null],
 ];
 export function activeGamificationTab(params) {
   const candidate = params.subTab || params.tab;

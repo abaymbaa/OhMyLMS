@@ -13,8 +13,9 @@ use OhMyLMS\Engagement\Achievements;
 class Badge {
 
 
-    public static function get_badges() {
-        return get_option( 'ohmylms_badges', array() );
+    public static function get_badges($include_streak = null) {
+        $include_streak = $include_streak === null ? StreakSettings::enabled() : $include_streak;
+        return array_merge((array) get_option('ohmylms_badges', []), $include_streak ? StreakSettings::badges() : []);
     }
     
     /**
@@ -34,7 +35,7 @@ class Badge {
      * @since 1.0.0
      */
     public static function maybe_enable() {
-        return true;
+        return Rules::enabled('badge');
     }
 
     /**
@@ -59,48 +60,14 @@ class Badge {
      * @return bool
      * @since 1.0.0
      */
-    public static function maybe_met_rules() {
-        $badges = self::get_badges();
-        $met_badge_slugs = array();
-        if( !empty( $badges ) && is_array($badges) ) {
-            foreach ( $badges as $badge ) {
-                $all_rules_met = true;
-                if( isset( $badge['rules'] ) && is_array( $badge['rules'] )) {
-                    foreach( $badge['rules'] as $settings ) {
-                        if( isset( $settings['dataValue'], $settings['compareData'], $settings['compareSign'] ) && 'points' === $settings['dataValue'] ) {
-                            $points = Point::get_total_points( get_current_user_id() );
-                            if( !self::compare_with_sign($points, $settings['compareSign'], $settings['compareData']) ) {
-                                $all_rules_met = false;
-                                break;
-                            }
-                        }
-                        if( isset( $settings['dataValue'], $settings['compareData'], $settings['compareSign'] ) && 'completed_lesson' === $settings['dataValue'] ) {
-                            $points = Point::get_total_points( get_current_user_id() );
-                            if( !self::compare_with_sign($points, $settings['compareSign'], $settings['compareData']) ) {
-                                $all_rules_met = false;
-                                break;
-                            }
-                        }
-                        if( isset( $settings['dataValue'], $settings['compareData'], $settings['compareSign'] ) && 'completed_courses' === $settings['dataValue'] ) {
-                            $student = new \OhMyLMS\Data\Student( get_current_user_id() );
-                            if( ! $student ) {
-                                $all_rules_met = false;
-                                break;
-                            }
-                            $completed_course = $student->get_completed_course_count();
-                            if( !self::compare_with_sign($completed_course, $settings['compareSign'], $settings['compareData']) ) {
-                                $all_rules_met = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if ($all_rules_met && isset($badge['slug'])) {
-                    $met_badge_slugs[] = $badge['slug'];
-                }
-            }
+    public static function maybe_met_rules( $user_id = null ) {
+        $user_id = $user_id === null ? get_current_user_id() : (int) $user_id;
+        if (!self::maybe_enable() || !$user_id) { return []; }
+        $earned = [];
+        foreach ((array) self::get_badges() as $badge) {
+            if (isset($badge['slug']) && Rules::met($badge['rules'] ?? [], $user_id)) { $earned[] = $badge['slug']; }
         }
-        return $met_badge_slugs;
+        return $earned;
     }
 
 
@@ -113,8 +80,9 @@ class Badge {
      * @return bool
      * @since 1.0.0
      */
-    public static function add_badge( $user_id, $type, $badge_id, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
-        if( ! self::maybe_enable() ) {
+    public static function add_badge( $user_id, $type, $badge_id, $reason = '', $course_id = null, $membership_id = null, $content_id = null, $streak = false ) {
+        if (!$user_id || !get_userdata($user_id) || !is_string($badge_id) || $badge_id === '' || strlen($badge_id) > 45) { return false; }
+        if( ! self::maybe_enable() && !($streak && StreakSettings::enabled()) ) {
             return false; // Point system is not enabled
         }
 
@@ -135,7 +103,7 @@ class Badge {
             set_transient( 'badge_added_for_user_' . $user_id, true, 60 );
             do_action( 'ohmylms_after_badge_added', $user_id, $badge_id, $type );
         }
-        return true;
+        return $response;
     }
     
 
@@ -180,7 +148,7 @@ class Badge {
         }
 
         // Get all available badges once
-        $all_badges = self::get_badges();
+        $all_badges = self::get_badges(true);
         if ( empty( $all_badges ) || ! is_array( $all_badges ) ) {
             return array();
         }

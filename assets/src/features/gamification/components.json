@@ -9,7 +9,7 @@
     "binding": "S5",
     "name": "GamificationSettings",
     "file": "GamificationSettings.jsx",
-    "dependencies": ["E3", "E5", "I", "N2", "React", "S2", "b", "c5", "f", "g", "w5", "z"]
+    "dependencies": ["E3", "E5", "I", "N2", "React", "S2", "b", "c5", "f", "g", "o3", "w5", "z"]
   },
   {
     "binding": "E2",
@@ -117,7 +117,6 @@
     "name": "LevelEditor",
     "file": "LevelEditor.jsx",
     "dependencies": [
-      "C3",
       "D3",
       "F3",
       "FK",
@@ -134,7 +133,9 @@
       "k3",
       "l",
       "y",
-      "z"
+      "z",
+      "We",
+      "lf"
     ]
   },
   {

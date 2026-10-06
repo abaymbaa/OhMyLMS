@@ -11,6 +11,17 @@ namespace OhMyLMS\Engagement;
 use OhMyLMS\Engagement\Achievements;
 
 class Reward {
+    /** Point checkout cannot waive payment for cash items, memberships or disabled courses. */
+    public static function valid_point_cart($cart, $membership_id = 0) {
+        if ($membership_id || !is_array($cart) || !$cart || !self::maybe_met_rules('purchase_course')) { return false; }
+        foreach ($cart as $item) {
+            $id = (int) ($item['course_id'] ?? $item['id'] ?? 0);
+            if (($item['purchase_by'] ?? '') !== 'point' || get_post_type($id) !== OHMYLMS_COURSE_CPT) { return false; }
+            $course = ohmylms_get_course($id);
+            if (!$course || $course->get_reward_disabled() === 'yes' || $course->get_purchase_point() <= 0) { return false; }
+        }
+        return true;
+    }
     
     /**
      * Get the point settings.
@@ -29,7 +40,7 @@ class Reward {
      * @since 1.0.0
      */
     public static function maybe_enable() {
-        return true;
+        return Rules::enabled('reward');
     }
 
     /**
@@ -39,6 +50,7 @@ class Reward {
      * @since 1.0.0
      */
     public static function maybe_met_rules( $event, $threshold = 0 ) {
+        if (!self::maybe_enable()) { return false; }
         $settings = self::get_rules();
         if ( !empty($settings['rules']) && is_array($settings['rules']) ) {
             foreach ( $settings['rules'] as $rule ) {

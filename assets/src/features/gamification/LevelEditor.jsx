@@ -1,9 +1,12 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { createAchievementRules } from './AchievementRules';
 export function createLevelEditor(readRuntime) {
+  const AchievementRules = createAchievementRules(readRuntime);
   return function LevelEditor(props) {
     const {
-      C3,
+      We,
+      lf,
       D3,
       F3,
       FK,
@@ -355,7 +358,7 @@ export function createLevelEditor(readRuntime) {
                   defaultColor={'#ffffff'}
                 />
               </Controls.SpacerWP>
-              <C3
+              <AchievementRules
                 rules={null == u ? void 0 : u.rules}
                 setRules={function (e) {
                   return S('rules', e);

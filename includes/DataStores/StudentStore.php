@@ -758,6 +758,9 @@ public function get_enrolled_courses( $student ) {
 				)
 			);
 			self::clear_learning_cache( $student->get_id(), $course_id );
+			if ($progress_id) {
+				do_action('ohmylms_verified_lesson_completed', (int) $wpdb->insert_id, $lesson_id, $course_id, $student->get_id());
+			}
 			if ( \OhMyLMS\Learning\CourseProgram::managed( $student->get_id(), $course_id ) ) {
 				do_action( 'ohmylms_learning_activity_completed', $student->get_id(), $course_id );
 				return $progress_id;

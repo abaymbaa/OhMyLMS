@@ -108,7 +108,8 @@ final class Sessions {
     private static function complete(array $session, $reason) {
         global $wpdb;
         $policy = is_array($session['policy']) ? $session['policy'] : (json_decode($session['policy'], true) ?: []);
-        $wpdb->update(Schema::table('practice_sessions'), ['status' => 'complete', 'completed_at' => current_time('mysql', true), 'policy' => wp_json_encode(['ended' => $reason] + $policy)], ['id' => (int) $session['id']]);
+        $completed = $wpdb->update(Schema::table('practice_sessions'), ['status' => 'complete', 'completed_at' => current_time('mysql', true), 'policy' => wp_json_encode(['ended' => $reason] + $policy)], ['id' => (int) $session['id'], 'status' => 'active']);
+        if ($completed === 1) { do_action('ohmylms_practice_completed', $session['uuid']); }
         return null;
     }
 

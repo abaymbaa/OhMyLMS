@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { FeatureSwitch } from './FeatureSwitch';
 export function createBonusPointSettings(readRuntime) {
   return function BonusPointSettings() {
     const {
@@ -819,6 +820,16 @@ export function createBonusPointSettings(readRuntime) {
     ) : (
       <React.Fragment>
         {contextHolder}
+        <FeatureSwitch
+          settings={s}
+          setSettings={d}
+          title={I18n.__('Bonus points', 'ohmylms')}
+          description={I18n.__(
+            'Reward learner activity with points using the rules below.',
+            'ohmylms',
+          )}
+          label={I18n.__('Enable bonus points', 'ohmylms')}
+        />
 
         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
           <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>

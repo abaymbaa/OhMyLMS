@@ -4,23 +4,28 @@ import { newAchievementRule, removeAchievementRule, updateAchievementRule } from
 export function createAchievementRules(readRuntime) {
   return function AchievementRules({ rules = [], setRules }) {
     const { I: Controls, b: I18n, We: DeleteIcon, lf: AddButton } = readRuntime();
-    const fields = [{ label: 'Points', value: 'points' }];
+    const fields = [
+      { label: I18n.__('Points', 'ohmylms'), value: 'points' },
+      { label: I18n.__('Completed lessons', 'ohmylms'), value: 'completed_lesson' },
+      { label: I18n.__('Completed courses', 'ohmylms'), value: 'completed_courses' },
+    ];
     const comparisons = [
       { label: 'Greater than', value: '>' },
       { label: 'Greater than or equal', value: '>=' },
       { label: 'Equal', value: '==' },
       { label: 'Less than', value: '<' },
       { label: 'Less than or equal', value: '<=' },
-    ];
+      { label: 'Not equal', value: '!=' },
+    ].map((option) => ({ ...option, label: I18n.__(option.label, 'ohmylms') }));
     const updateRule = (index, field, value) =>
       setRules(updateAchievementRule(rules, index, field, value));
     return (
       <Controls.CardWP isBorderless padding="20px" fullWidth>
         <Controls.HeadingWP level="4">
-          {I18n.__('Define Badge Earning Rules', 'ohmylms')}
+          {I18n.__('Achievement earning rules', 'ohmylms')}
         </Controls.HeadingWP>
         <Controls.TextWP>
-          {I18n.__('Define the conditions learners must meet to earn this badge.', 'ohmylms')}
+          {I18n.__('Define the conditions learners must meet to earn this achievement.', 'ohmylms')}
         </Controls.TextWP>
         <Controls.SpacerWP marginBottom={2} />
         {rules.map((rule, index) => (

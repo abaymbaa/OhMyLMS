@@ -23,6 +23,7 @@ export function createBadgeEditor(readRuntime) {
       y: WordPressData,
       z: Notifications,
     } = readRuntime();
+    const streakBadge = props.awardSource === 'streak' || props.data?.award_source === 'streak';
     var data = props.data,
       isOpen = props.isOpen,
       onClose = props.onClose,
@@ -36,16 +37,19 @@ export function createBadgeEditor(readRuntime) {
           description: '',
           image: null,
           color: '#6e42d3',
-          rules: [
-            {
-              dataLabel: 'Points',
-              dataValue: 'points',
-              dataFieldType: 'select',
-              compareSign: '>=',
-              compareData: 0,
-              compareDataFieldType: 'input',
-            },
-          ],
+          ...(streakBadge ? { award_source: 'streak' } : {}),
+          rules: streakBadge
+            ? []
+            : [
+                {
+                  dataLabel: 'Points',
+                  dataValue: 'points',
+                  dataFieldType: 'select',
+                  compareSign: '>=',
+                  compareData: 0,
+                  compareDataFieldType: 'input',
+                },
+              ],
         }),
       c = n3((0, ReactHooks.useState)(e3({}, i)), 2),
       u = c[0],
@@ -94,7 +98,8 @@ export function createBadgeEditor(readRuntime) {
                       );
                     case 1:
                       (e.v.success &&
-                        (openNotificationWithIcon(
+                        (props.onCreated?.(e.v.badge),
+                        openNotificationWithIcon(
                           'success',
                           (0, I18n.__)('Badge updated successfully!', 'ohmylms'),
                         ),
@@ -146,7 +151,8 @@ export function createBadgeEditor(readRuntime) {
                       );
                     case 1:
                       (e.v.success &&
-                        (openNotificationWithIcon(
+                        (props.onCreated?.(e.v.badge),
+                        openNotificationWithIcon(
                           'success',
                           (0, I18n.__)('Badge created successfully!', 'ohmylms'),
                         ),
@@ -369,12 +375,21 @@ export function createBadgeEditor(readRuntime) {
                   defaultColor={'#6e42d3'}
                 />
               </Controls.SpacerWP>
-              <AchievementRules
-                rules={null == u ? void 0 : u.rules}
-                setRules={function (e) {
-                  return S('rules', e);
-                }}
-              />
+              {streakBadge ? (
+                <p>
+                  {I18n.__(
+                    'This badge is awarded at the streak milestone selected in Streaks settings.',
+                    'ohmylms',
+                  )}
+                </p>
+              ) : (
+                <AchievementRules
+                  rules={null == u ? void 0 : u.rules}
+                  setRules={function (e) {
+                    return S('rules', e);
+                  }}
+                />
+              )}
             </Controls.SpacerWP>
           </Controls.CardWP>
           <Controls.SpacerWP paddingTop={4}>

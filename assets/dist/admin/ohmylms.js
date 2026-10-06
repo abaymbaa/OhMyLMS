@@ -83349,7 +83349,6 @@
         }
         // Reconstructed application fragment. Assembled in manifest order within factory 1841.
         var B3 = window.ohmylms.extensions.gamificationComponents.LevelEditor(() => ({
-          C3,
           D3,
           F3,
           FK,
@@ -83366,7 +83365,9 @@
           k3,
           l,
           y,
-          z
+          z,
+          We,
+          lf
         }));
         const L3 = (0, g.memo)(B3);
         function V3() {
@@ -84074,6 +84075,7 @@
           c5,
           f,
           g,
+          o3,
           w5,
           z
         }));

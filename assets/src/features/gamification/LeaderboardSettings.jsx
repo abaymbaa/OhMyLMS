@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { FeatureSwitch } from './FeatureSwitch';
 export function createLeaderboardSettings(readRuntime) {
   return function LeaderboardSettings() {
     const {
@@ -238,6 +239,16 @@ export function createLeaderboardSettings(readRuntime) {
     return (
       <React.Fragment>
         {contextHolder}
+        <FeatureSwitch
+          settings={r}
+          setSettings={a}
+          title={I18n.__('Leaderboard', 'ohmylms')}
+          description={I18n.__(
+            'Highlight learner achievements using the ranking settings below.',
+            'ohmylms',
+          )}
+          label={I18n.__('Enable leaderboard', 'ohmylms')}
+        />
 
         <Controls.CardWP isBorderless={!0} variant={'secondary'}>
           <Controls.SpacerWP padding={0} marginTop={2.5} marginBottom={0}>

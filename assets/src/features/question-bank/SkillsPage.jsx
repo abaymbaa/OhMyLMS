@@ -51,7 +51,7 @@ export function SkillsPage() {
       className="ohmylms-skills"
       title={__('Skills', 'ohmylms')}
       description={__(
-        'Skills are linked to questions (per part), lessons and courses. They power skill practice, performance reports and recommendations.',
+        'Skills are linked to questions (per part), lessons and courses. They power skill practice and recommendations.',
         'ohmylms',
       )}
       actions={

@@ -5,6 +5,80 @@
  * font come from the design tokens printed by OhMyLMS\Design\Tokens.
  */
 
+/* Feature switches sit alongside the setting title rather than above its content. */
+.ohmylms-feature-settings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	margin: 24px 24px 0;
+	padding: 24px;
+	background: var(--ohmylms-admin-card-bg, #fff);
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+}
+.ohmylms-feature-settings-header__description { flex: 1; min-width: 0; }
+.ohmylms-feature-settings-header h2 { margin: 0 0 6px; font-size: 18px; line-height: 1.4; color: var(--ohmylms-admin-heading-color, #000d25); }
+.ohmylms-feature-settings-header p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ohmylms-admin-muted-color, #64748b); }
+.ohmylms-feature-settings-header > .components-toggle-control { flex-shrink: 0; margin-bottom: 0; }
+.ohmylms-feature-settings-header .components-base-control__field { margin-bottom: 0; }
+@media (max-width: 782px) {
+	.ohmylms-feature-settings-header { align-items: flex-start; flex-direction: column; margin: 20px 4px 0; padding: 18px; gap: 16px; }
+}
+
+/* Streak settings share the native Gamification card spacing and tokens. */
+.ohmylms-streak-settings {
+	max-width: 1120px;
+	padding: 20px 24px 32px;
+	color: var(--ohmylms-admin-text-color, #000d25);
+}
+.ohmylms-streak-settings__header { margin-bottom: 24px; }
+.ohmylms-streak-settings h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.4; }
+.ohmylms-streak-settings h3 { margin: 0 0 12px; font-size: 16px; line-height: 1.5; }
+.ohmylms-streak-settings p { margin: 8px 0 16px; color: var(--ohmylms-admin-muted-color, #64748b); font-size: 13px; line-height: 1.65; }
+.ohmylms-streak-settings__fields { margin: 0; padding: 0; border: 0; min-width: 0; }
+.ohmylms-streak-settings__card {
+	margin-bottom: 20px;
+	padding: 24px;
+	background: var(--ohmylms-admin-card-bg, #fff);
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	min-width: 0;
+}
+.ohmylms-streak-settings__card > :last-child { margin-bottom: 0; }
+.ohmylms-streak-settings__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.ohmylms-streak-settings .components-base-control { margin-bottom: 20px; }
+.ohmylms-streak-settings .components-base-control__label,
+.ohmylms-streak-settings .components-input-control__label { text-transform: none; font-size: 13px; font-weight: 500; line-height: 1.5; margin-bottom: 8px; }
+.ohmylms-streak-settings .components-toggle-control .components-base-control__field { margin-bottom: 0; }
+.ohmylms-streak-settings .components-text-control__input,
+.ohmylms-streak-settings .components-select-control__input { border-radius: 4px; min-height: 40px; width: 100%; }
+.ohmylms-streak-settings__freeze-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.ohmylms-streak-settings__freeze-fields > :last-child { grid-column: 1 / -1; }
+.ohmylms-streak-settings__details summary { cursor: pointer; font-weight: 500; line-height: 1.6; }
+.ohmylms-streak-settings__details summary:focus-visible { outline: 2px solid var(--wp-admin-theme-color, #2271b1); outline-offset: 4px; }
+.ohmylms-streak-settings__milestone { min-width: 0; margin: 16px 0; padding: 16px; border: 1px solid var(--ohmylms-admin-border, #dcdcde); border-radius: 6px; }
+.ohmylms-streak-settings__milestone legend { padding: 0 8px; font-weight: 600; }
+.ohmylms-streak-settings__milestone-fields { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(160px, 2fr) minmax(90px, 1fr) auto; align-items: start; gap: 16px; }
+.ohmylms-streak-settings__milestone-fields .components-base-control { margin-bottom: 0; min-width: 0; }
+.ohmylms-streak-settings__milestone-fields > .components-button { min-height: 40px; margin-top: 28px; }
+.ohmylms-streak-settings__badge-field { min-width: 0; }
+.ohmylms-streak-settings__badge-field > .components-button { margin-top: 8px; }
+.ohmylms-streak-settings__footer { display: flex; justify-content: flex-end; padding-top: 4px; }
+.ohmylms-streak-settings > .components-notice { margin: 0 0 20px; }
+@media (max-width: 1100px) {
+	.ohmylms-streak-settings__milestone-fields { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); }
+	.ohmylms-streak-settings__milestone-fields > .components-button { grid-column: 1 / -1; justify-self: start; margin-top: 0; }
+}
+@media (max-width: 782px) {
+	.ohmylms-gamification-settings .components-tab-panel__tabs { flex-wrap: wrap; padding-top: 32px; }
+	.ohmylms-streak-settings { padding: 16px 4px 24px; }
+	.ohmylms-streak-settings__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+	.ohmylms-streak-settings__card { padding: 18px; }
+	.ohmylms-streak-settings__milestone-fields { grid-template-columns: minmax(0, 1fr); }
+	.ohmylms-streak-settings__footer .components-button { width: 100%; justify-content: center; }
+}
+
 /* Every extension route gets the native page gutter. */
 .ohmylms-dashboard-layout.extensions .ohmylms-content {
 	padding: 26px var(--ohmylms-admin-gutter, 40px) 40px;

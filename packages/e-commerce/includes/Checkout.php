@@ -383,14 +383,22 @@ class Checkout {
             }
 
             $maybe_by_point = $this->maybe_purchase_by_point( $cart_data );
+            if ($maybe_by_point) {
+                // Cash items and memberships cannot be made free by one point-priced cart item.
+                $valid_point_cart = \OhMyLMS\Engagement\Reward::valid_point_cart($cart_data, $posted_data['membership_id'] ?? 0);
+                if (!$valid_point_cart) {
+                    ohmylmse_add_notice(__('Point checkout requires only eligible point-priced courses. Purchase other items separately.', 'ohmylms'), 'error', array());
+                    $this->send_ajax_failure_response();
+                }
+            }
 
             $this->validate_checkout( $posted_data, $errors, $maybe_by_point );
 
             $student_id = $this->process_student( $posted_data );
+            $points = $this->get_total_points($cart_data);
 
             $integrations = get_option( 'ohmylms_integrations', array() );
             if ( ohmylms_is_pro() && isset( $integrations[ 'gamification' ][ 'is_enable' ] ) && $integrations[ 'gamification' ][ 'is_enable' ] ) {
-                $points = $this->get_total_points( $cart_data );
                 $user_available_point = \OhMyLMS\Engagement\Point::get_total_points( $student_id );
 
                 if ( $maybe_by_point && $points > $user_available_point ) {
@@ -413,6 +421,23 @@ class Checkout {
                 if ( ! $order_id ) {
                     $message = __( 'Failed to create order.', 'ohmylms' );
                     ohmylmse_add_notice( $message, 'error', array() );
+                    $this->send_ajax_failure_response();
+                }
+
+                if ( $maybe_by_point ) {
+                    // The spend and balance check are serialized, with one debit per order.
+                    if (!\OhMyLMS\Engagement\Reward::maybe_met_rules('purchase_course') || !\OhMyLMS\Engagement\Point::deduct_points($student_id, 'point', $points, 'purchase_course', null, null, $order_id)) {
+                        wp_trash_post($order_id);
+                        ohmylmse_add_notice(__('Could not redeem points. Please check your balance and retry.', 'ohmylms'), 'error', array());
+                        $this->send_ajax_failure_response();
+                    }
+                    $point_debited = true;
+                    $point_payment_complete = false;
+                    $order->add_order_note( sprintf( __( 'Purchased by bonus point(%1$d PTS)', 'ohmylms' ), $points ) );
+                    update_post_meta( $order_id, '_purchased_by', 'point' );
+                    update_post_meta( $order_id, '_purchased_point', $points );
+                    $order->set_total( 0 );
+                    $order->save();
                 }
 
                 if ( ! $maybe_by_point && $order->needs_payment() ) {
@@ -420,6 +445,7 @@ class Checkout {
                     $order = ecommerce_get_order( $order_id );
                 } else {
                     $result = $this->process_order_without_payment( $order );
+                    if ($maybe_by_point) { $point_payment_complete = true; }
                 }
 
                 // Handle WP_Error result
@@ -509,15 +535,6 @@ class Checkout {
                 }
                 $this->set_student_to_order( $order, $student_id );
                 $this->process_enrollment( $order_id, $posted_data );
-
-                if ( ohmylms_is_pro() && $maybe_by_point ) {
-                    $order->add_order_note( sprintf( __( 'Purchased by bonus point(%1$d PTS)', 'ohmylms' ), $points ) );
-                    \OhMyLMS\Engagement\Point::deduct_points( $student_id, 'point', $points, 'purchase_course' );
-                    update_post_meta( $order_id, '_purchased_by', 'point' );
-                    update_post_meta( $order_id, '_purchased_point', $points );
-                    $order->set_total( 0 );
-                    $order->save();
-                }
                 if ( ! $payment_pending ) {
                     do_action( 'ohmylms_after_checkout_process', $order );
                 }
@@ -563,6 +580,7 @@ class Checkout {
 				$this->send_ajax_failure_response();
 			}
 		} catch ( \Exception $e ) {
+            if (!empty($point_debited) && empty($point_payment_complete)) { \OhMyLMS\Engagement\Point::refund_purchase($student_id, $order_id); }
 			ohmylmse_add_notice( $e->getMessage(), 'error' );
 			$this->send_ajax_failure_response();
 		}

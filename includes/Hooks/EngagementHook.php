@@ -161,19 +161,19 @@ class EngagementHook
      * 
      */
     public function after_point_added( $user_id, $points ) {
-        if( $this->maybe_gamification_enable() && !empty( Badge::maybe_met_rules() ) ) {
-            $earned_badge = Badge::maybe_met_rules();
+        if( $this->maybe_gamification_enable() && !empty( Badge::maybe_met_rules($user_id) ) ) {
+            $earned_badge = Badge::maybe_met_rules($user_id);
             if( is_array( $earned_badge ) ) {
                 foreach( $earned_badge as $badge ) {
                     Badge::add_badge( $user_id, 'badge', $badge , 'Point added', null, null, null );
                 }
             }
         }   
-        if( $this->maybe_gamification_enable() && !empty( Level::maybe_met_rules() ) ) {
-            $earned_levels = Level::maybe_met_rules();
+        if( $this->maybe_gamification_enable() && !empty( Level::maybe_met_rules($user_id) ) ) {
+            $earned_levels = Level::maybe_met_rules($user_id);
             if( is_array( $earned_levels ) && !empty($earned_levels)) {
                 foreach( $earned_levels as $earned_level ) {
-                    Level::add_level( $user_id, 'level', $earned_level , 'Point added', null, null, null, null,  );
+                    Level::add_level( $user_id, 'level', $earned_level , 'Point added', null, null, null );
                 }
             }
         }   
@@ -205,7 +205,7 @@ class EngagementHook
                     if( Point::maybe_enable_email_for_a_slug( 'comment_on_course' ) ) {
                             $email_settings = Point::get_email_settings_for_slug( 'comment_on_course' );
                             if( !empty( $email_settings ) && isset( $email_settings['body'], $email_settings['subject'] ) ) {
-                                $user = get_user_by( 'ID', $student_id );
+                                $user = get_user_by( 'ID', $user_id );
                                 if ( $user && isset( $user->user_email ) ) {
                                     $user_email = $user->user_email;
                                     Point::send_email( $email_settings['body'], $user_email, $email_settings['subject'] );

@@ -6,7 +6,6 @@ export function registerQuestionBankPages(registry, components) {
     QuestionBankPage,
     SkillsPage,
     AssessmentSettingsPanel,
-    PerformancePage,
     InlineCheckPanel,
     NumericalEditor,
     StructuredEditor,
@@ -24,11 +23,6 @@ export function registerQuestionBankPages(registry, components) {
     label: __('Assessment settings', 'ohmylms'),
     slot: '/quiz-edit/:id',
     render: AssessmentSettingsPanel,
-    priority: 1,
-  });
-  registry.registerAdminPage('performance', {
-    label: __('Skill performance', 'ohmylms'),
-    render: PerformancePage,
     priority: 1,
   });
   if (enabled(flags.practice)) {
