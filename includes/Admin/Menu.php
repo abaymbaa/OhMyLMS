@@ -48,14 +48,18 @@ class Menu {
 		$badge_html    = $pending_count > 0 ? " <span class='update-plugins count-$pending_count'><span class='plugin-count'>$pending_count</span></span>" : '';
 		if ( current_user_can( $capability ) ) {
 			$submenu[ $slug ][] = array( esc_attr__( 'Dashboard', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/dashboard' );
-			// Courses, lessons and skills are managed together in the Content Hub; the old #/courses and
-			// #/extensions/skills addresses open its Courses and Skills tabs.
+			// Courses, lessons, quizzes, the question bank, assignments, skills, the curriculum and Learning
+			// Tracks are managed together in the Content Hub; the old #/courses, #/quizzes, #/assignments,
+			// #/assessments, #/extensions/skills, #/extensions/question-bank, #/extensions/curriculum,
+			// #/extensions/tracks, #/categories and #/tags addresses open the matching tabs. Curriculum
+			// replaces course categories and Learning Tracks replace course tags.
 			$submenu[ $slug ][] = array( esc_attr__( 'Content Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/content-hub' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				// Curriculum replaces course categories and Learning Tracks replace course tags; both are bundled SDK admin pages.
-				$submenu[ $slug ][] = array( esc_attr__( 'Curriculum', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/curriculum' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				$submenu[ $slug ][] = array( esc_attr__( 'Learning Tracks', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/extensions/tracks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Assessments', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/assessments' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			// With Gamification on, Certificates is a tab of the Gamification screen (#/gamification/certificates)
+				// and #/certificates opens it; without Gamification it keeps its own entry.
+				$gamification_enabled = apply_filters( 'ohmylms_show_gamification_menu', false );
+				if ( ! $gamification_enabled ) {
+					$submenu[ $slug ][] = array( esc_attr__( 'Certificates', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/certificates' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				}
 
 			 if ( apply_filters( 'ohmylms_show_sessions_menu', false ) ) {
 			 	$submenu[ $slug ][] = array( esc_attr__( 'Sessions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/sessions' );
@@ -66,7 +70,7 @@ class Menu {
 			$submenu[ $slug ][] = array( esc_attr__( 'Orders', 'ohmylms' ) . $badge_html, $capability, 'admin.php?page=' . $slug . '#/orders' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Subscriptions', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/subscriptions' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu[ $slug ][] = array( esc_attr__( 'Account Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/accounthub' );
-			if( apply_filters( 'ohmylms_show_gamification_menu', false ) ) {
+			if ( $gamification_enabled ) {
 				$submenu[ $slug ][] = array( esc_attr__( 'Gamification', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/gamification/point-settings' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 

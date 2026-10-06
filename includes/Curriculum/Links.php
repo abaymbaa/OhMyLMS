@@ -77,7 +77,7 @@ final class Links {
             } elseif ($type === 'skill') {
                 $term = get_term($id, Taxonomy::NAME);
                 $valid = $term && !is_wp_error($term);
-                $labels[$id] = ['title' => $valid ? $term->name : '', 'status' => $valid ? 'active' : 'missing', 'code' => $valid ? (string) get_term_meta($id, '_ohmylms_skill_code', true) : ''];
+                $labels[$id] = ['title' => $valid ? Taxonomy::plain($term->name) : '', 'status' => $valid ? 'active' : 'missing', 'code' => $valid ? (string) get_term_meta($id, '_ohmylms_skill_code', true) : ''];
             } elseif ($type === 'bank') {
                 $bank = AssessmentSchema::ready() ? Banks::get($id) : null;
                 $labels[$id] = ['title' => $bank ? $bank['name'] : '', 'status' => $bank ? $bank['visibility'] : 'missing'];
@@ -113,7 +113,7 @@ final class Links {
         } elseif ($type === 'skill') {
             $args = ['taxonomy' => Taxonomy::NAME, 'hide_empty' => false, 'number' => $include ? count($include) : 20, 'orderby' => 'name'];
             if ($include) { $args['include'] = $include; } else { $args['search'] = sanitize_text_field((string) $search); }
-            foreach (get_terms($args) as $term) { $rows[] = ['id' => (int) $term->term_id, 'title' => $term->name, 'status' => 'active', 'code' => (string) get_term_meta($term->term_id, '_ohmylms_skill_code', true)]; }
+            foreach (get_terms($args) as $term) { $rows[] = ['id' => (int) $term->term_id, 'title' => Taxonomy::plain($term->name), 'status' => 'active', 'code' => (string) get_term_meta($term->term_id, '_ohmylms_skill_code', true)]; }
         } elseif ($type === 'bank' && AssessmentSchema::ready()) {
             $table = AssessmentSchema::table('qb_banks');
             if ($include) {
@@ -131,6 +131,8 @@ final class Links {
     public static function memberships($type, $object_id) {
         global $wpdb;
         $ids = array_map('intval', $wpdb->get_col($wpdb->prepare('SELECT item_id FROM ' . self::table() . ' WHERE object_type=%s AND object_id=%d ORDER BY item_id', $type, (int) $object_id)));
+        // A skill placed in a syllabus's skill group belongs to the item that group sits under.
+        if ($type === 'skill') { $ids = array_values(array_unique(array_merge($ids, Syllabus::item_ids_for_skill($object_id)))); sort($ids); }
         $result = [];
         foreach ($ids as $id) {
             $item = Items::get($id);
@@ -145,7 +147,10 @@ final class Links {
         $item_ids = array_values(array_filter(array_map('intval', $item_ids)));
         if (!$item_ids || !self::valid_type($type)) { return []; }
         $placeholders = implode(',', array_fill(0, count($item_ids), '%d'));
-        return array_map('intval', $wpdb->get_col($wpdb->prepare('SELECT DISTINCT object_id FROM ' . self::table() . " WHERE object_type=%s AND item_id IN ($placeholders) ORDER BY object_id", array_merge([$type], $item_ids))));
+        $ids = array_map('intval', $wpdb->get_col($wpdb->prepare('SELECT DISTINCT object_id FROM ' . self::table() . " WHERE object_type=%s AND item_id IN ($placeholders) ORDER BY object_id", array_merge([$type], $item_ids))));
+        // Skills placed in the skill groups of a syllabus count as that syllabus's skills too.
+        if ($type === 'skill') { $ids = array_values(array_unique(array_merge($ids, Syllabus::skill_ids($item_ids)))); sort($ids); }
+        return $ids;
     }
 
     /** Drop every link to content that no longer exists. */

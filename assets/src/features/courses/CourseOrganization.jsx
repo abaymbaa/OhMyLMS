@@ -91,7 +91,8 @@ export function createCourseOrganization(readRuntime) {
       }
     }
 
-    const adminHref = (page) => window.location.href.split('#')[0] + '#/extensions/' + page;
+    // Curriculum and Learning Tracks are tabs of the Content Hub.
+    const adminHref = (page) => window.location.href.split('#')[0] + '#/content-hub/' + page;
     const visibleItems = filterItems(items, search);
 
     if (!courseId) {

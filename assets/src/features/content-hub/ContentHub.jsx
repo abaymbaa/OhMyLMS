@@ -1,5 +1,6 @@
-import { createElement, useEffect } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMenuHighlight } from '../menuHighlight';
 import { AddMenu } from './AddMenu';
 import { HubContext } from './context';
 import { HUB_TABS } from './hubRoutes.mjs';
@@ -8,37 +9,17 @@ const tabLabels = () => ({
   catalog: __('Catalog', 'ohmylms'),
   courses: __('Courses', 'ohmylms'),
   lessons: __('Lessons', 'ohmylms'),
+  quizzes: __('Quizzes', 'ohmylms'),
+  'question-bank': __('Question Bank', 'ohmylms'),
+  assignments: __('Assignments', 'ohmylms'),
   skills: __('Skills', 'ohmylms'),
+  curriculum: __('Curriculum', 'ohmylms'),
+  tracks: __('Learning Tracks', 'ohmylms'),
 });
 
-function menuLink() {
-  return document.querySelector('#toplevel_page_ohmylms a[href$="#/content-hub"]')?.parentElement;
-}
-
-/**
- * Keep the Content Hub submenu entry highlighted. The recovered application clears the highlight
- * on every render of its own screens, so a mutation observer puts it back instead of a one-off effect.
- */
+/** Keep the Content Hub submenu entry highlighted while a hub screen or an editor opened from it is shown. */
 export function useContentHubMenu() {
-  useEffect(() => {
-    const apply = () => {
-      const item = menuLink();
-      if (!item) return;
-      item
-        .closest('.wp-submenu')
-        ?.querySelectorAll('li.current')
-        .forEach((current) => current.classList.remove('current'));
-      item.classList.add('current');
-    };
-    apply();
-    const menu = document.querySelector('#adminmenu');
-    if (!menu || !window.MutationObserver) return undefined;
-    const observer = new window.MutationObserver(() => {
-      if (!menuLink()?.classList.contains('current')) apply();
-    });
-    observer.observe(menu, { subtree: true, attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
+  useMenuHighlight('a[href$="#/content-hub"]');
 }
 
 /** Frame shared by every hub tab: title, the Add menu and the section tabs. */

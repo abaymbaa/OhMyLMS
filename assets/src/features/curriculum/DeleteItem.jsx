@@ -18,10 +18,13 @@ export function DeleteItem({ item, dependents }) {
     own_links: 0,
     tracks: 0,
     own_tracks: 0,
+    groups: 0,
+    own_groups: 0,
   };
   const branch = info.children > 0 && strategy === 'delete';
   const links = branch ? info.links : info.own_links;
   const tracks = branch ? info.tracks : info.own_tracks;
+  const groups = (branch ? info.groups : info.own_groups) || 0;
 
   async function remove() {
     const ok = await c.actions.remove(item, {
@@ -104,6 +107,19 @@ export function DeleteItem({ item, dependents }) {
               )
             : __('No content is linked here.', 'ohmylms')}
         </li>
+        {groups > 0 && (
+          <li>
+            {sprintf(
+              _n(
+                '%d skill group will be deleted. The skills in it stay in the skill library.',
+                '%d skill groups will be deleted. The skills in them stay in the skill library.',
+                groups,
+                'ohmylms',
+              ),
+              groups,
+            )}
+          </li>
+        )}
         {tracks > 0 && (
           <li>
             {sprintf(

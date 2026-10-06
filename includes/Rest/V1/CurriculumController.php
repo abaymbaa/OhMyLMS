@@ -80,7 +80,7 @@ class CurriculumController extends RestController {
 
     public function update(WP_REST_Request $request) {
         $params = $request->get_params();
-        $item = Items::update((int) $request['id'], array_intersect_key($params, array_flip(['name', 'item_type', 'description', 'code', 'version'])), $params['expected_updated_at'] ?? null);
+        $item = Items::update((int) $request['id'], array_intersect_key($params, array_flip(['name', 'item_type', 'description', 'code', 'version', 'is_syllabus'])), $params['expected_updated_at'] ?? null);
         return is_wp_error($item) ? $item : $this->payload(['item' => Items::describe($item)]);
     }
 

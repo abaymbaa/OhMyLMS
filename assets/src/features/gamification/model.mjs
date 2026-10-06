@@ -6,9 +6,23 @@ export const gamificationTabs = [
   ['leaderboard-settings', 'Leaderboard', 'S2'],
   ['streak-settings', 'Streaks', null],
 ];
-export function activeGamificationTab(params) {
+/**
+ * The Gamification screen also exists as Settings → Gamification, which has only the tabs above.
+ * Tabs that other screens move into Gamification (Certificates) belong to the standalone screen.
+ */
+export function isStandaloneGamification(params) {
+  return params.tab !== 'gamification-settings';
+}
+/** `extraKeys` are the keys of the tabs added to the standalone screen; they are not tabs elsewhere. */
+export function activeGamificationTab(params, extraKeys = []) {
   const candidate = params.subTab || params.tab;
-  return gamificationTabs.some(([key]) => key === candidate) ? candidate : 'point-settings';
+  const keys = [...gamificationTabs.map(([key]) => key), ...extraKeys];
+  return keys.includes(candidate) ? candidate : 'point-settings';
+}
+/** Certificates are a Gamification tab when Gamification is on; otherwise they keep their own menu entry. */
+export const CERTIFICATES_TAB = 'certificates';
+export function certificatesInGamification(appParams) {
+  return Boolean(appParams?.is_gamification_enabled);
 }
 export function updateAchievementRule(rules, index, field, value) {
   return rules.map((rule, position) => (position === index ? { ...rule, [field]: value } : rule));

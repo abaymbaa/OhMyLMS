@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {activeGamificationTab, gamificationTabs, newAchievementRule, updateAchievementRule, removeAchievementRule} from '../../assets/src/features/gamification/model.mjs';
+import fs from 'node:fs';
+import {activeGamificationTab, certificatesInGamification, CERTIFICATES_TAB, gamificationTabs, isStandaloneGamification, newAchievementRule, updateAchievementRule, removeAchievementRule} from '../../assets/src/features/gamification/model.mjs';
+import {gamificationExtraTabs, registerGamificationTab} from '../../assets/src/features/gamification/extraTabs.mjs';
 
 test('all gamification tabs resolve through both supported route families', () => {
   for (const [key] of gamificationTabs) {
@@ -8,6 +10,40 @@ test('all gamification tabs resolve through both supported route families', () =
     assert.equal(activeGamificationTab({tab: 'gamification-settings', subTab: key}), key);
   }
   assert.equal(activeGamificationTab({tab: 'unknown'}), 'point-settings');
+});
+
+test('Certificates is a tab of the standalone Gamification screen only, and only while Gamification is on', () => {
+  assert.equal(CERTIFICATES_TAB, 'certificates');
+  assert.equal(certificatesInGamification({is_gamification_enabled: true}), true);
+  assert.equal(certificatesInGamification({is_gamification_enabled: false}), false);
+  assert.equal(certificatesInGamification(undefined), false);
+  // The address resolves to the tab when it was registered, and falls back to the first tab otherwise.
+  assert.equal(activeGamificationTab({tab: 'certificates'}, ['certificates']), 'certificates');
+  assert.equal(activeGamificationTab({tab: 'certificates'}), 'point-settings');
+  // Settings → Gamification keeps its six tabs.
+  assert.equal(isStandaloneGamification({tab: 'point-settings'}), true);
+  assert.equal(isStandaloneGamification({tab: 'gamification-settings', subTab: 'level-settings'}), false);
+  assert.ok(!gamificationTabs.some(([key]) => key === 'certificates'), 'the settings tabs do not include it');
+  // Registering twice keeps one tab.
+  const Component = () => null;
+  registerGamificationTab({key: 'certificates', label: 'Certificates', Component});
+  registerGamificationTab({key: 'certificates', label: 'Certificates', Component});
+  assert.deepEqual(gamificationExtraTabs().map((tab) => tab.key), ['certificates']);
+});
+
+test('the Certificates screen moves into Gamification, with the old address, menu and fallback kept', () => {
+  const entry = fs.readFileSync('assets/src/extensions/index.jsx', 'utf8');
+  assert.match(entry, /certificatesInGamification\(window\.ohmylms_params\)/);
+  assert.match(entry, /registerGamificationTab\(\{\s*key: CERTIFICATES_TAB,\s*label: 'Certificates'/);
+  // `#/certificates` opens the tab and the template editor keeps the Gamification entry highlighted.
+  assert.match(entry, /route\.path === '\/certificates'\)\s*return \{ \.\.\.route, element: CertificatesMoved \}/);
+  assert.match(entry, /route\.path === '\/certificate-edit\/:id'\)\s*return \{ \.\.\.route, element: withGamificationMenu\(route\.element\) \}/);
+  const settings = fs.readFileSync('assets/src/features/gamification/GamificationSettings.jsx', 'utf8');
+  assert.match(settings, /isStandaloneGamification\(params\) \? gamificationExtraTabs\(\) : \[\]/);
+  // The menu offers Certificates only when Gamification is off.
+  const menu = fs.readFileSync('includes/Admin/Menu.php', 'utf8');
+  assert.match(menu, /\$gamification_enabled = apply_filters\( 'ohmylms_show_gamification_menu', false \);\s*if \( ! \$gamification_enabled \) \{\s*\$submenu\[ \$slug \]\[\] = array\( esc_attr__\( 'Certificates'/);
+  assert.match(menu, /if \( \$gamification_enabled \) \{\s*\$submenu\[ \$slug \]\[\] = array\( esc_attr__\( 'Gamification'/);
 });
 
 test('rule edits and deletion preserve previous React state and retain one condition', () => {

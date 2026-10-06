@@ -95,6 +95,12 @@ final class Items {
             if (!preg_match('/^[a-z][a-z0-9_-]{0,39}$/', $type)) { return Access::error('ohmylms_curriculum_invalid', __('An item type must start with a letter and use only lowercase letters, numbers, hyphens or underscores.', 'ohmylms')); }
             $fields['item_type'] = $type;
         }
+        // Any item can be a syllabus. Typing the item "syllabus" turns the flag on unless it is given explicitly.
+        if (array_key_exists('is_syllabus', $data)) {
+            $fields['is_syllabus'] = rest_sanitize_boolean($data['is_syllabus']) ? 1 : 0;
+        } elseif (($fields['item_type'] ?? '') === 'syllabus') {
+            $fields['is_syllabus'] = 1;
+        }
         if (!$partial || array_key_exists('description', $data)) {
             $description = sanitize_textarea_field((string) ($data['description'] ?? ''));
             if (mb_strlen($description) > 2000) { return Access::error('ohmylms_curriculum_invalid', __('Descriptions can have at most 2000 characters.', 'ohmylms')); }
@@ -143,19 +149,30 @@ final class Items {
         if (is_wp_error($fields)) { return $fields; }
         $parent_id = (int) ($data['parent_id'] ?? 0);
         $position = array_key_exists('position', $data) && $data['position'] !== null && $data['position'] !== '' ? (int) $data['position'] : null;
-        $result = self::exclusive(static function () use ($wpdb, $fields, $parent_id, $position) {
-            $parents = self::parents();
-            if (count($parents) >= self::MAX_ITEMS) { return Access::error('ohmylms_curriculum_limit', sprintf(__('A curriculum can have at most %d items.', 'ohmylms'), self::MAX_ITEMS), 409); }
-            if ($parent_id && !isset($parents[$parent_id])) { return Access::error('ohmylms_curriculum_invalid', __('The parent item does not exist.', 'ohmylms')); }
-            if ($parent_id && Tree::depth($parents, $parent_id) + 1 > self::MAX_DEPTH) { return Access::error('ohmylms_curriculum_depth', sprintf(__('Curriculum items can be nested at most %d levels deep.', 'ohmylms'), self::MAX_DEPTH)); }
-            $now = current_time('mysql', true);
-            $row = $fields + ['uuid' => wp_generate_uuid4(), 'parent_id' => $parent_id, 'position' => 0, 'created_by' => get_current_user_id(), 'created_at' => $now, 'updated_at' => $now];
-            if (!$wpdb->insert(self::table(), $row)) { throw new \RuntimeException('Insert failed'); }
-            $id = (int) $wpdb->insert_id;
-            self::renumber($parent_id, Tree::insert_at(self::child_ids_except($parent_id, $id), $id, $position));
-            return $id;
+        $result = self::exclusive(static function () use ($fields, $parent_id, $position) {
+            return self::insert_locked($fields, $parent_id, $position);
         });
         return is_wp_error($result) ? $result : self::get($result);
+    }
+
+    /**
+     * Insert one item and place it among its siblings. The caller already holds the curriculum lock
+     * and a transaction (create() does, and so does a syllabus import that adds many items at once).
+     * @return int|\WP_Error The new item ID.
+     */
+    public static function insert_locked(array $fields, $parent_id, $position = null) {
+        global $wpdb;
+        $parent_id = (int) $parent_id;
+        $parents = self::parents();
+        if (count($parents) >= self::MAX_ITEMS) { return Access::error('ohmylms_curriculum_limit', sprintf(__('A curriculum can have at most %d items.', 'ohmylms'), self::MAX_ITEMS), 409); }
+        if ($parent_id && !isset($parents[$parent_id])) { return Access::error('ohmylms_curriculum_invalid', __('The parent item does not exist.', 'ohmylms')); }
+        if ($parent_id && Tree::depth($parents, $parent_id) + 1 > self::MAX_DEPTH) { return Access::error('ohmylms_curriculum_depth', sprintf(__('Curriculum items can be nested at most %d levels deep.', 'ohmylms'), self::MAX_DEPTH)); }
+        $now = current_time('mysql', true);
+        $row = $fields + ['uuid' => wp_generate_uuid4(), 'parent_id' => $parent_id, 'position' => 0, 'created_by' => get_current_user_id(), 'created_at' => $now, 'updated_at' => $now];
+        if (!$wpdb->insert(self::table(), $row)) { throw new \RuntimeException('Insert failed'); }
+        $id = (int) $wpdb->insert_id;
+        self::renumber($parent_id, Tree::insert_at(self::child_ids_except($parent_id, $id), $id, $position));
+        return $id;
     }
 
     /** Child IDs of a parent, leaving one item out (used while placing it). */
@@ -173,6 +190,10 @@ final class Items {
             if (!$item) { return self::missing(); }
             if ($expected_updated_at !== null && $expected_updated_at !== '' && (string) $expected_updated_at !== $item['updated_at']) {
                 return Access::error('ohmylms_curriculum_stale', __('Someone else changed this item. Reload the curriculum and try again.', 'ohmylms'), 409);
+            }
+            // A syllabus that still has skill groups cannot quietly stop being one: its groups would be hidden.
+            if (array_key_exists('is_syllabus', $fields) && !$fields['is_syllabus'] && !empty($item['is_syllabus']) && Syllabus::group_count(self::with_descendants($id)) > 0) {
+                return Access::error('ohmylms_syllabus_has_groups', __('This syllabus still has skill groups. Remove them before turning it back into an ordinary item.', 'ohmylms'), 409);
             }
             if ($fields) {
                 $fields['updated_at'] = current_time('mysql', true);
@@ -225,6 +246,9 @@ final class Items {
             'own_links' => (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . Schema::table('curriculum_links') . ' WHERE item_id=%d', (int) $id)),
             'tracks' => $tracks($ids),
             'own_tracks' => $tracks([(int) $id]),
+            // Skill groups go with the item they sit under; the skills in them stay in the skill library.
+            'groups' => Syllabus::group_count($ids),
+            'own_groups' => Syllabus::group_count([(int) $id]),
         ];
     }
 
@@ -247,8 +271,9 @@ final class Items {
         $branch = $strategy === 'delete';
         $affected_links = $branch ? $dependents['links'] : $dependents['own_links'];
         $affected_tracks = $branch ? $dependents['tracks'] : $dependents['own_tracks'];
-        if (!$confirm && ($dependents['children'] || $affected_links || $affected_tracks)) {
-            return Access::error('ohmylms_curriculum_needs_confirmation', __('Deleting this item removes its structure links. Confirm to continue; linked courses, skills, banks and exams are not deleted.', 'ohmylms'), 409, ['dependents' => $dependents]);
+        $affected_groups = $branch ? $dependents['groups'] : $dependents['own_groups'];
+        if (!$confirm && ($dependents['children'] || $affected_links || $affected_tracks || $affected_groups)) {
+            return Access::error('ohmylms_curriculum_needs_confirmation', __('Deleting this item removes its structure links and skill groups. Confirm to continue; linked courses, skills, banks and exams, and the skills inside skill groups, are not deleted.', 'ohmylms'), 409, ['dependents' => $dependents]);
         }
         return self::exclusive(static function () use ($wpdb, $id, $item, $strategy, $branch) {
             $parents = self::parents();
@@ -280,9 +305,10 @@ final class Items {
         $placeholders = implode(',', array_fill(0, count($ids), '%d'));
         $links = $wpdb->query($wpdb->prepare('DELETE FROM ' . Schema::table('curriculum_links') . " WHERE item_id IN ($placeholders)", $ids));
         $members = $wpdb->query($wpdb->prepare('DELETE FROM ' . Schema::table('track_items') . " WHERE item_type='curriculum' AND item_id IN ($placeholders)", $ids));
-        if ($links === false || $members === false || $wpdb->query($wpdb->prepare('DELETE FROM ' . self::table() . " WHERE id IN ($placeholders)", $ids)) === false) { throw new \RuntimeException('Delete failed'); }
+        $groups = Syllabus::delete_for_items($ids);
+        if ($links === false || $members === false || $groups === false || $wpdb->query($wpdb->prepare('DELETE FROM ' . self::table() . " WHERE id IN ($placeholders)", $ids)) === false) { throw new \RuntimeException('Delete failed'); }
         do_action('ohmylms_curriculum_items_deleted', $ids);
-        return ['links_removed' => (int) $links, 'tracks_updated' => (int) $members];
+        return ['links_removed' => (int) $links, 'tracks_updated' => (int) $members, 'groups_removed' => (int) $groups];
     }
 
     /** Public, JSON-safe description of one item. */
@@ -297,6 +323,7 @@ final class Items {
             'description' => (string) $row['description'],
             'code' => $row['code'],
             'version' => $row['version'],
+            'is_syllabus' => !empty($row['is_syllabus']),
             'created_at' => $row['created_at'],
             'updated_at' => $row['updated_at'],
         ] + $counts;
@@ -312,13 +339,17 @@ final class Items {
         $rows = self::all();
         $children = [];
         foreach ($rows as $row) { $children[(int) $row['parent_id']] = ($children[(int) $row['parent_id']] ?? 0) + 1; }
-        return array_map(static function ($row) use ($links, $tracks, $children) {
+        $syllabuses = Syllabus::totals($rows);
+        return array_map(static function ($row) use ($links, $tracks, $children, $syllabuses) {
             $id = (int) $row['id'];
-            return self::describe($row, [
+            $counts = [
                 'child_count' => $children[$id] ?? 0,
                 'links' => ($links[$id] ?? []) + array_fill_keys(Links::TYPES, 0),
                 'track_count' => $tracks[$id] ?? 0,
-            ]);
+            ];
+            // Skill groups and skills inside a syllabus, counting everything under it.
+            if (isset($syllabuses[$id])) { $counts['syllabus'] = $syllabuses[$id]; }
+            return self::describe($row, $counts);
         }, $rows);
     }
 }

@@ -1,4 +1,4 @@
-import { createElement, Fragment, useEffect, useState } from '@wordpress/element';
+import { createElement, Fragment, useContext, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
   Button,
@@ -29,6 +29,7 @@ import { cleanFilters, versionLabel, DIFFICULTIES, flattenTree, skillTree } from
 import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
+import { HubContext } from '../content-hub/context';
 
 const TYPES = [
   'single-choice',
@@ -46,9 +47,11 @@ const TYPES = [
 
 /** Question bank management: search, approve, archive, duplicate, metadata and sharing. */
 export function QuestionBankPage() {
+  const hub = useContext(HubContext);
   return (
     <AdminPage
       className="ohmylms-question-bank"
+      headingLevel={hub ? 2 : 1}
       title={__('Question bank', 'ohmylms')}
       description={__(
         'Every saved question lives here with its versions. Approve questions to share them, use them in practice and draw them into random pools.',

@@ -153,15 +153,19 @@ class IntegrationsController extends RestController {
 	 */
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
+		// Managed elsewhere (or core): never saved or returned from this endpoint.
+		$skipped_keys = array( 'ai_model', 'question_bank', 'skills' );
 		$current_integrations = get_option( 'ohmylms_integrations', array() );
-		unset( $current_integrations['ai_model'], $current_integrations['question_bank'], $current_integrations['skills'] );
+		foreach ( $skipped_keys as $skipped_key ) {
+			unset( $current_integrations[ $skipped_key ] );
+		}
 		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
 		$previous_integrations  = get_option( 'ohmylms_integrations', [] );
 		$need_reload = false;
 
 		foreach ( $integrations as $key => $value ) {
-			if ( in_array( $key, array( 'ai_model', 'question_bank', 'skills' ), true ) ) continue;
+			if ( in_array( $key, $skipped_keys, true ) ) continue;
 			$sanitized_key   = sanitize_text_field( $key );
 			$is_enable       = isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0;
 			$validity        = self::get_integration_validity( $key );
@@ -206,6 +210,10 @@ class IntegrationsController extends RestController {
 			$integrations[ $sanitized_key ][ 'class' ]     = $class;
 			$integrations[ $sanitized_key ][ 'is_valid' ]     = $is_valid;
 			$integrations[ $sanitized_key ][ 'required_plan' ]     = $required_plan;
+		}
+
+		foreach ( $skipped_keys as $skipped_key ) {
+			unset( $integrations[ $skipped_key ] );
 		}
 
 		update_option( 'ohmylms_integrations', $integrations );

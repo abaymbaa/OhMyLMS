@@ -35,5 +35,6 @@ final class Bootstrap {
         if ($taxonomy !== Taxonomy::NAME || !Schema::ready()) { return; }
         Links::remove_object('skill', $term_id);
         SkillMappings::remove_skill($term_id);
+        Syllabus::remove_term($term_id);
     }
 }

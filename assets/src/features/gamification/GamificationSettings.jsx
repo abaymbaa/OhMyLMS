@@ -1,5 +1,6 @@
 import { createElement, Fragment } from '@wordpress/element';
-import { activeGamificationTab, gamificationTabs } from './model.mjs';
+import { gamificationExtraTabs } from './extraTabs.mjs';
+import { activeGamificationTab, gamificationTabs, isStandaloneGamification } from './model.mjs';
 import { StreakSettings } from './StreakSettings';
 
 export function createGamificationSettings(readRuntime) {
@@ -9,15 +10,28 @@ export function createGamificationSettings(readRuntime) {
     const { contextHolder } = Notifications.A();
     const params = Router.g();
     const navigate = Router.Zp();
-    const activeTab = activeGamificationTab(params);
-    const items = gamificationTabs.map(([key, label, binding]) => ({
-      key,
-      label: I18n.__(label, 'ohmylms'),
-      children:
-        key === 'streak-settings'
-          ? createElement(StreakSettings, { BadgeEditor: runtime.o3 })
-          : createElement(runtime[binding]),
-    }));
+    // Settings → Gamification has the six settings tabs; the standalone screen adds the tabs that
+    // other screens moved here (Certificates).
+    const extraTabs = isStandaloneGamification(params) ? gamificationExtraTabs() : [];
+    const activeTab = activeGamificationTab(
+      params,
+      extraTabs.map((tab) => tab.key),
+    );
+    const items = [
+      ...gamificationTabs.map(([key, label, binding]) => ({
+        key,
+        label: I18n.__(label, 'ohmylms'),
+        children:
+          key === 'streak-settings'
+            ? createElement(StreakSettings, { BadgeEditor: runtime.o3 })
+            : createElement(runtime[binding]),
+      })),
+      ...extraTabs.map(({ key, label, Component }) => ({
+        key,
+        label: I18n.__(label, 'ohmylms'),
+        children: createElement(Component),
+      })),
+    ];
     return (
       <Fragment>
         {contextHolder}

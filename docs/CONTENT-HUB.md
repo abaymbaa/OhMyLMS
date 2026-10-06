@@ -1,6 +1,6 @@
 # Content Hub
 
-One place to build learning content: **OhMyLMS → Content Hub** (`#/content-hub`) replaces the separate Courses and Skills submenus. Skills are a core part of OhMyLMS, not an add-on.
+One place to build learning content: **OhMyLMS → Content Hub** (`#/content-hub`) replaces the separate Courses, Assessments, Skills, Curriculum and Learning Tracks submenus. Skills are a core part of OhMyLMS, not an add-on.
 
 A **grade, exam or subject** (for example Grade 2 Math, MATH0580 or Digital SAT) is an ordinary course. It has chapters, skills inside those chapters, and lessons, quizzes and assessments attached to a chapter or to chosen skills. There is no fixed chapter-then-lesson order: a skill-based course is finished when its required skills reach their targets.
 
@@ -11,11 +11,18 @@ A **grade, exam or subject** (for example Grade 2 Math, MATH0580 or Digital SAT)
 | **Catalog** | Cards for every grade, exam and subject. Opening one shows its catalog (below). |
 | **Courses** | The existing course list, unchanged (create, filter, edit, reports, bulk actions). |
 | **Lessons** | The lesson library: search, status filter, skills, where each lesson is used, edit, duplicate, trash. |
+| **Quizzes** | The existing quiz list, unchanged (create, filter, edit, reports, bulk actions). |
+| **Question Bank** | The question bank: search, approve, archive, duplicate, metadata, banks and sharing. Unchanged. |
+| **Assignments** | The existing assignment list, unchanged. |
 | **Skills** | The shared skill library: hierarchy, codes, prerequisites, linked lessons and courses. |
+| **Curriculum** | The curriculum structure (exam boards, national curricula, grades, subjects, syllabuses) that courses, skills, question banks and exams are placed in. Any item can be a syllabus with its own skill groups and skills, loaded from CSV; see [SYLLABUS.md](SYLLABUS.md) and [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
+| **Learning Tracks** | Learning Tracks: curated groupings of courses and syllabuses that learners can follow. Unchanged; see [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
 
-The **Add** button in the hub header creates a **Course** (a draft in skill-based mode, opened in its Catalog), a standalone **Lesson** (opened in the lesson editor) or a **Skill**.
+The **Add** button in the hub header creates a **Course** (a draft in skill-based mode, opened in its Catalog), a standalone **Lesson** (opened in the lesson editor) or a **Skill**. Curriculum items and tracks are added from their own tabs.
 
-The old addresses keep working: `#/courses` opens the Courses tab and `#/extensions/skills` opens the Skills tab, and the Content Hub menu entry stays highlighted while you edit a course or a lesson from the hub.
+The old addresses keep working: `#/courses` opens the Courses tab; `#/quizzes` and `#/assessments` the Quizzes tab; `#/assessments/question-bank` and `#/extensions/question-bank` the Question Bank tab; `#/assignments` and `#/assessments/assignments` the Assignments tab; `#/extensions/skills` the Skills tab; `#/extensions/curriculum` and `#/categories` the Curriculum tab; and `#/extensions/tracks` and `#/tags` the Learning Tracks tab. The Content Hub menu entry stays highlighted on every tab and while you edit or report on a course, lesson, quiz or assignment from the hub.
+
+The Quizzes and Assignments tabs are the application's own screens, so they keep their own "All Quizzes" and "All Assignments" headings below the hub title, as the Courses tab does. The Question Bank, Curriculum and Learning Tracks pages lower their own title one level so the hub title is the only page heading. The tabs wrap onto a second line on narrow screens. The Curriculum and Learning Tracks tabs are the same pages that used to have their own menu entries, with their own title shown one level down so the hub title is the only page heading.
 
 ## The catalog of one course
 
@@ -68,7 +75,7 @@ Program JSON additions (additive, no table changes): an outcome may carry `chapt
 ## Source
 
 - PHP: `includes/Learning/Catalog.php` (catalog, chapters, draft, lists), `includes/Learning/Placements.php` (placement index and course resolution), `includes/Rest/V1/ContentHubController.php`; program rules in `CourseProgram::normalize()`.
-- Admin UI: `assets/src/features/content-hub/` (`hubRoutes.mjs`, `ContentHub.jsx`, `AddMenu.jsx`, `CatalogPage.jsx`, `CatalogEditor.jsx`, `ChapterBlock.jsx`, `AttachDialog.jsx`, `PublishDialog.jsx`, `SkillPicker.jsx`, `LessonsPage.jsx`, `catalogModel.mjs`, `autosave.mjs`, `useCatalog.js`). The hub frame and routes are wired in `assets/src/extensions/index.jsx`; pages load lazily from the `content-hub` chunk. Styles are in `assets/css/admin-ui.css`.
+- Admin UI: `assets/src/features/content-hub/` (`hubRoutes.mjs`, `ContentHub.jsx`, `AddMenu.jsx`, `CatalogPage.jsx`, `CatalogEditor.jsx`, `ChapterBlock.jsx`, `AttachDialog.jsx`, `PublishDialog.jsx`, `SkillPicker.jsx`, `LessonsPage.jsx`, `catalogModel.mjs`, `autosave.mjs`, `useCatalog.js`). The hub frame and routes are wired in `assets/src/extensions/index.jsx`; pages load lazily from the `content-hub` chunk. The Skills, Question Bank, Curriculum and Learning Tracks tabs are SDK admin pages (`HUB_EXTENSION_TABS` in `hubRoutes.mjs`) shown inside the hub frame; they read `HubContext` to lower their heading level. The Courses, Quizzes and Assignments tabs are the application's own list screens (`HUB_APP_ROUTES`), and `HUB_ALIASES` maps the retired `#/assessments*` addresses onto their tabs. The quiz, assignment, course and lesson editors and reports are listed in `HUB_MENU_ROUTES` so the menu entry stays highlighted. Styles are in `assets/css/admin-ui.css`.
 
 ## Validation
 

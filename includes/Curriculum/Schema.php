@@ -10,7 +10,8 @@ defined('ABSPATH') || exit;
  * these tables only reference them by ID. Installing is safe to repeat.
  */
 final class Schema {
-    const VERSION = '1';
+    // 2: items can be syllabuses (is_syllabus, skill_root_id) and syllabuses hold skill groups of skills.
+    const VERSION = '2';
     const OPTION = 'ohmylms_curriculum_schema';
 
     public static function table($name) {
@@ -22,7 +23,12 @@ final class Schema {
     public static function definitions() {
         return [
             // Any depth: a row points at its parent (0 = root) and carries its order among siblings.
-            'curriculum_items' => "uuid char(36) NOT NULL, parent_id bigint unsigned NOT NULL DEFAULT 0, position int unsigned NOT NULL DEFAULT 0, item_type varchar(40) NOT NULL DEFAULT 'custom', name varchar(190) NOT NULL, description text NULL, code varchar(60) NOT NULL DEFAULT '', version varchar(60) NOT NULL DEFAULT '', created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY parent_position (parent_id,position), KEY item_type (item_type)",
+            // is_syllabus marks any item as a syllabus; skill_root_id is the library skill that parents the skills created for it.
+            'curriculum_items' => "uuid char(36) NOT NULL, parent_id bigint unsigned NOT NULL DEFAULT 0, position int unsigned NOT NULL DEFAULT 0, item_type varchar(40) NOT NULL DEFAULT 'custom', name varchar(190) NOT NULL, description text NULL, code varchar(60) NOT NULL DEFAULT '', version varchar(60) NOT NULL DEFAULT '', is_syllabus tinyint(1) NOT NULL DEFAULT 0, skill_root_id bigint unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY parent_position (parent_id,position), KEY item_type (item_type), KEY is_syllabus (is_syllabus)",
+            // Skill groups of a syllabus. A group sits under the syllabus item or one of the content items beneath it.
+            'syllabus_groups' => "uuid char(36) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, code varchar(60) NOT NULL DEFAULT '', name varchar(190) NOT NULL, description text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY item_position (item_id,position)",
+            // The library skills placed in a group, in order. A placement is a reference: removing it never deletes the skill.
+            'syllabus_group_skills' => "group_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, UNIQUE KEY member (group_id,term_id), KEY group_position (group_id,position), KEY term (term_id)",
             // Curriculum membership of courses, skills, question banks and quizzes/exams (many to many).
             'curriculum_links' => "item_id bigint unsigned NOT NULL, object_type varchar(20) NOT NULL, object_id bigint unsigned NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY link (item_id,object_type,object_id), KEY object (object_type,object_id)",
             // Explicit, directional links from a curriculum-specific skill to a shared skill.
@@ -49,6 +55,8 @@ final class Schema {
             dbDelta("CREATE TABLE $table (\n id bigint unsigned NOT NULL AUTO_INCREMENT,\n $columns,\n PRIMARY KEY  (id)\n) ENGINE=InnoDB " . $wpdb->get_charset_collate() . ';');
             if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))) !== $table) { return false; }
         }
+        // Items typed "syllabus" before the flag existed are syllabuses. Safe to repeat: it only sets the flag.
+        $wpdb->query('UPDATE ' . self::table('curriculum_items') . " SET is_syllabus=1 WHERE item_type='syllabus' AND is_syllabus=0");
         update_option(self::OPTION, self::VERSION, false);
         do_action('ohmylms_curriculum_schema_installed', self::VERSION);
         return true;

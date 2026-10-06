@@ -1,9 +1,17 @@
-import { createElement, useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import {
+  createElement,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Notice, Spinner, TextControl } from '@wordpress/components';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { AddItemRow } from './AddItemRow';
 import { CurriculumContext } from './context';
+import { HubContext } from '../content-hub/context';
 import { TreeNode } from './TreeNode';
 import * as api from './api.mjs';
 import {
@@ -55,6 +63,7 @@ export function CurriculumPage() {
   const [pending, setPending] = useState(false);
   const busy = useRef(false);
   const focusAfter = useRef(null);
+  const hub = useContext(HubContext);
 
   const items = data?.items || [];
   const search = useMemo(() => searchItems(items, query), [items, query]);
@@ -136,6 +145,8 @@ export function CurriculumPage() {
   const actions = {
     run,
     say,
+    // For changes made outside run() (a CSV import) that still return the fresh tree.
+    applyItems,
     toggle: (id) => setView((previous) => toggleOpen(previous, search, id)),
     toggleEditor: (id) => setOpenId((current) => (current === id ? 0 : id)),
     startAdd(parentId) {
@@ -250,6 +261,7 @@ export function CurriculumPage() {
   return (
     <AdminPage
       className="ohmylms-curriculum"
+      headingLevel={hub ? 2 : 1}
       title={__('Curriculum', 'ohmylms')}
       description={__(
         'Organize exam boards, national curricula, tests, grades, subjects and syllabuses into any structure, then place courses, skills, question banks and exams in it. Learning mode stays a course setting.',

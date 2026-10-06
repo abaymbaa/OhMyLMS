@@ -253,3 +253,49 @@ test('admin links the skill to a course and finds the questions in the bank', as
   await expect(page.getByText('Which is ½ of 8?')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('Quizzes, Question Bank and Assignments are Content Hub tabs, and the old Assessments addresses open them', async ({ page }) => {
+  const errors = trackErrors(page);
+  await login(page, admin().username, admin().password);
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub');
+  const tabs = page.getByRole('navigation', { name: 'Content Hub sections' });
+  await expect(tabs.getByRole('link')).toHaveText(['Catalog', 'Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks'], { timeout: 30000 });
+  // There is no Assessments entry (or one for any of its sections) in the admin menu any more.
+  const submenu = page.locator('#adminmenu li.wp-has-current-submenu .wp-submenu a:visible');
+  const labels = (await submenu.allTextContents()).map((text) => text.trim());
+  expect(labels[0]).toBe('Content Hub');
+  for (const retired of ['Assessments', 'Quizzes', 'Question Bank', 'Assignments']) expect(labels).not.toContain(retired);
+  const highlighted = page.locator('#toplevel_page_ohmylms .wp-submenu li.current');
+  const open = async (hash, tab, heading) => {
+    await page.goto(`/wp-admin/admin.php?page=ohmylms#${hash}`);
+    await expect(tabs.locator('a[aria-current="page"]')).toHaveText(tab, { timeout: 30000 });
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible({ timeout: 30000 });
+    await expect(highlighted).toHaveText('Content Hub');
+  };
+  await open('/content-hub/quizzes', 'Quizzes', 'All Quizzes');
+  await open('/content-hub/question-bank', 'Question Bank', 'Question bank');
+  await open('/content-hub/assignments', 'Assignments', 'All Assignments');
+  // Every older address keeps working and lands on the same tab.
+  await open('/quizzes', 'Quizzes', 'All Quizzes');
+  await open('/assignments', 'Assignments', 'All Assignments');
+  await open('/assessments', 'Quizzes', 'All Quizzes');
+  await open('/assessments/question-bank', 'Question Bank', 'Question bank');
+  await open('/assessments/assignments', 'Assignments', 'All Assignments');
+  await open('/extensions/question-bank', 'Question Bank', 'Question bank');
+  // The bank page is the hub's only title, and the tabs link to each other.
+  await open('/content-hub/question-bank', 'Question Bank', 'Question bank');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await tabs.getByRole('link', { name: 'Assignments', exact: true }).click();
+  await expect(page).toHaveURL(/#\/content-hub\/assignments$/);
+  // The quiz editor, opened from the Quizzes tab, keeps the hub highlighted.
+  await page.goto(`/wp-admin/admin.php?page=ohmylms#/quiz-edit/${state.quiz}`);
+  await expect(highlighted).toHaveText('Content Hub', { timeout: 30000 });
+  // Nine tabs still fit a phone: they wrap instead of running off the screen.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub/question-bank');
+  await expect(tabs.getByRole('link', { name: 'Learning Tracks', exact: true })).toBeVisible({ timeout: 30000 });
+  const box = await tabs.boundingBox();
+  expect(box.x + box.width).toBeLessThanOrEqual(390);
+  for (const link of await tabs.getByRole('link').all()) expect((await link.boundingBox()).x + (await link.boundingBox()).width).toBeLessThanOrEqual(390);
+  expect(errors).toEqual([]);
+});

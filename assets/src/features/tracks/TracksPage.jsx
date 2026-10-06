@@ -1,7 +1,8 @@
-import { createElement, useEffect, useState } from '@wordpress/element';
+import { createElement, useContext, useEffect, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Notice, Spinner, TextControl, TextareaControl } from '@wordpress/components';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
+import { HubContext } from '../content-hub/context';
 import { TrackEditor } from './TrackEditor';
 import * as api from './api.mjs';
 import { validateTrack } from './model.mjs';
@@ -21,6 +22,7 @@ export function TracksPage() {
   const [touched, setTouched] = useState(false);
   const [pending, setPending] = useState(false);
   const errors = validateTrack({ title, description });
+  const hub = useContext(HubContext);
 
   const reload = () => {
     setLoadError('');
@@ -78,6 +80,7 @@ export function TracksPage() {
   return (
     <AdminPage
       className="ohmylms-tracks-admin"
+      headingLevel={hub ? 2 : 1}
       title={__('Learning Tracks', 'ohmylms')}
       description={__(
         'A Learning Track groups selected courses and syllabuses, from any curricula, into one path learners can add to their dashboard. Following a track never enrols anyone or changes access.',

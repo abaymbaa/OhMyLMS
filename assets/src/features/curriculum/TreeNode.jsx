@@ -14,6 +14,12 @@ function counts(item) {
   if (bank) parts.push(sprintf(_n('%d question bank', '%d question banks', bank, 'ohmylms'), bank));
   if (quiz)
     parts.push(sprintf(_n('%d quiz or exam', '%d quizzes or exams', quiz, 'ohmylms'), quiz));
+  // A syllabus also counts its skill groups and the skills in them.
+  const { groups = 0, skills: placed = 0 } = item.syllabus || {};
+  if (groups)
+    parts.push(sprintf(_n('%d skill group', '%d skill groups', groups, 'ohmylms'), groups));
+  if (placed)
+    parts.push(sprintf(_n('%d skill in groups', '%d skills in groups', placed, 'ohmylms'), placed));
   return parts.join(' · ');
 }
 
@@ -56,6 +62,11 @@ export function TreeNode({ node }) {
           {sprintf(__('Level %d', 'ohmylms'), node.depth + 1)}
         </span>
         <span className="ohmylms-cur-type">{typeLabel(item.item_type)}</span>
+        {item.is_syllabus && (
+          <span className="ohmylms-cur-badge ohmylms-cur-syllabus-badge">
+            {__('Syllabus', 'ohmylms')}
+          </span>
+        )}
         <span className="ohmylms-cur-name">{item.name}</span>
         {(item.code || item.version) && (
           <span className="ohmylms-cur-meta">
@@ -77,14 +88,17 @@ export function TreeNode({ node }) {
           >
             {editing ? __('Close', 'ohmylms') : __('Edit', 'ohmylms')}
           </Button>
-          <Button
-            variant="secondary"
-            size="small"
-            aria-label={sprintf(__('Add child to %s', 'ohmylms'), item.name)}
-            onClick={() => c.actions.startAdd(item.id)}
-          >
-            {__('Add child', 'ohmylms')}
-          </Button>
+          {/* A syllabus holds skill groups and skills; its contents are added in its Syllabus content section. */}
+          {!item.is_syllabus && (
+            <Button
+              variant="secondary"
+              size="small"
+              aria-label={sprintf(__('Add child to %s', 'ohmylms'), item.name)}
+              onClick={() => c.actions.startAdd(item.id)}
+            >
+              {__('Add child', 'ohmylms')}
+            </Button>
+          )}
           <Button
             id={`ohmylms-cur-up-${item.id}`}
             variant="secondary"

@@ -2,11 +2,12 @@
 
 Administrators describe the structures their content belongs to (exam boards, national curricula, tests, grades, subjects, syllabuses), place courses, skills, question banks and exams in them, and group selected courses and syllabuses into **Learning Tracks** that learners add to their own dashboard. Examples in the UI and tests are illustrative names, not verified syllabus definitions; nothing is pre-seeded.
 
-Admin pages: **OhMyLMS → Curriculum** and **OhMyLMS → Learning Tracks** (SDK pages `#/extensions/curriculum` and `#/extensions/tracks`). Learner section: the student dashboard (`[ohmylms_dashboard]`) or `[ohmylms_tracks]` on any page.
+Admin pages: the **Curriculum** and **Learning Tracks** tabs of **OhMyLMS → Content Hub** (`#/content-hub/curriculum` and `#/content-hub/tracks`; see [CONTENT-HUB.md](CONTENT-HUB.md)). They are SDK pages, so `#/extensions/curriculum` and `#/extensions/tracks` still open the same tabs. Learner section: the student dashboard (`[ohmylms_dashboard]`) or `[ohmylms_tracks]` on any page.
 
 ## Concepts and rules
 
 - **Curriculum item**: stable numeric ID and UUID, name, parent (0 = top level), item type, sibling order, optional description, syllabus code and version. Any depth up to 10 levels and 5,000 items. The type is a free lowercase slug (suggestions: framework, qualification, level, grade, section, subject, syllabus, strand, topic, unit; extend with the `ohmylms_curriculum_item_types` filter or just type your own such as `ib-programme`). Items with the same name stay separate records.
+- **Syllabus**: any curriculum item can be switched on as a syllabus (whatever its type). A syllabus has **skill groups** and **skills** of its own, its topics and chapters are the items beneath it, and it can be loaded from a CSV file. See [SYLLABUS.md](SYLLABUS.md).
 - **Learning mode** (traditional, skill-based, blended) stays a course setting in its learning program. Curriculum membership is only a link and never stores, implies or changes a mode.
 - **Links** place existing content under an item: `course`, `skill`, `bank` (question bank) and `quiz` (a quiz or an exam). Many-to-many; a link copies nothing, grants nothing and is removed when the content is deleted.
 - **Structure safety** (all enforced on the server, under one named lock and a transaction): a parent must exist; an item can never move under itself or a descendant; depth is capped; deleting an item with children needs a choice (`promote` them one level up, or delete the branch); anything with links, children or track memberships needs explicit confirmation. Deleting only ever removes associations, never linked content.
@@ -23,7 +24,7 @@ Course categories no longer exist as a way to organize courses: **the curriculum
 | Course editor, Organize tab | Category and tag pickers | Curriculum item list (searchable, indented by depth) and Learning Track list. Each change is saved immediately through `courses/{id}/organization`; the editor's Save button covers only the course itself. |
 | Who may change it | Anyone who could edit the course | Anyone who may edit the course can change its curriculum placement. Learning Tracks are what learners see and follow, so only administrators can change which tracks a course is in; everyone else sees them read-only. |
 | Course list filter (admin) | Category dropdown | Curriculum dropdown. A parent item includes everything below it. |
-| Admin menu | Categories, Tags | Curriculum, Learning Tracks (the old `#/categories` and `#/tags` screens open these) |
+| Admin menu | Categories, Tags | Curriculum and Learning Tracks tabs of Content Hub (the old `#/categories` and `#/tags` screens open these) |
 | Public filters and tabs | Category and tag checkboxes, category tabs | Curriculum items (indented, only those with published courses) and published Learning Tracks. Filter values are `c<id>` for an item and `t<id>` for a track. |
 | Shortcode `[ohmylms_course_list]`, block, Elementor, Bricks, WPBakery | `category` | `curriculum` and `track` (IDs, or `c12` / `t3` style slugs, comma-separated). A value that names nothing valid shows no courses rather than all of them. The old `category` attribute is ignored. |
 | Single course sidebar | Category and tag lists | Where the course sits (for example *Science › Physics*) and its **published** tracks. The existing page-feature toggles (`category`, `tag`, and their `_with_enroll` variants) keep their keys. |
@@ -69,7 +70,7 @@ Everything is read-only. Pooled evidence is computed on request from existing sk
 
 ## Storage
 
-Six additive InnoDB tables created by `OhMyLMS\Curriculum\Schema` (option `ohmylms_curriculum_schema`, installed on `init`, safe to repeat): `ohmylms_curriculum_items`, `ohmylms_curriculum_links`, `ohmylms_skill_mappings`, `ohmylms_tracks`, `ohmylms_track_items`, `ohmylms_track_follows`. No existing table is altered; courses, enrollments, learning programs and progress are only referenced by ID. Deleting a course, quiz, skill or user removes the matching links, mappings, track slots or follows.
+Six additive InnoDB tables created by `OhMyLMS\Curriculum\Schema` (option `ohmylms_curriculum_schema`, installed on `init`, safe to repeat): `ohmylms_curriculum_items`, `ohmylms_curriculum_links`, `ohmylms_skill_mappings`, `ohmylms_tracks`, `ohmylms_track_items`, `ohmylms_track_follows`. No existing table is altered; courses, enrollments, learning programs and progress are only referenced by ID. Deleting a course, quiz, skill or user removes the matching links, mappings, track slots or follows. Schema version 2 adds the syllabus flag (two columns on `ohmylms_curriculum_items`) and two more tables, `ohmylms_syllabus_groups` and `ohmylms_syllabus_group_skills`; see [SYLLABUS.md](SYLLABUS.md).
 
 ## Authorization
 
@@ -103,6 +104,8 @@ Hook: `do_action('ohmylms_lms_student_dashboard_sections')` fires at the end of 
 - Learner UI: server-rendered by `Tracks\Frontend`, with `assets/js/learning-tracks.js` and `assets/css/learning-tracks.css`.
 
 ## Validation
+
+Syllabuses (skill groups, skills and CSV import) have their own checks, listed in [SYLLABUS.md](SYLLABUS.md).
 
 ```sh
 node --test tests/js/curriculum.test.mjs tests/js/tracks.test.mjs tests/js/course-organization.test.mjs tests/js/membership-selection.test.mjs tests/js/labels.test.mjs

@@ -316,6 +316,7 @@ export function needsConfirmation(dependents, strategy) {
   return Boolean(
     dependents.children ||
     (branch ? dependents.links : dependents.own_links) ||
-    (branch ? dependents.tracks : dependents.own_tracks),
+    (branch ? dependents.tracks : dependents.own_tracks) ||
+    (branch ? dependents.groups : dependents.own_groups),
   );
 }

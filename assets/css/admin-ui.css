@@ -86,46 +86,9 @@
 }
 
 /* Page header: title and description on the left, actions on the right. */
-/* Assessment routes contain both native screens and SDK pages. Give the SDK page
- * its own gutter, since the /assessments route has no extension-route padding. */
-.ohmylms-assessments {
-	--ohmylms-assessments-gutter: var(--ohmylms-admin-gutter, 40px);
-}
-.ohmylms-assessments-heading {
-	margin: 24px var(--ohmylms-assessments-gutter) 12px;
-}
-.ohmylms-assessments-nav {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 24px;
-	margin: 0 var(--ohmylms-assessments-gutter) 24px;
-	border-bottom: 1px solid var(--ohmylms-admin-border, #dcdcde);
-}
-.ohmylms-assessments > .ohmylms-ext-page {
-	padding: 0 var(--ohmylms-assessments-gutter) 40px;
-	min-width: 0;
-}
-/* Legacy extension URLs already supply the outer gutter. */
-.ohmylms-dashboard-layout.extensions .ohmylms-assessments-heading {
-	margin: 0 0 12px;
-}
-.ohmylms-dashboard-layout.extensions .ohmylms-assessments-nav {
-	margin-inline: 0;
-}
-.ohmylms-dashboard-layout.extensions .ohmylms-assessments > .ohmylms-ext-page {
-	padding: 0;
-}
-.ohmylms-assessments .ohmylms-question-bank > .components-tab-panel > .components-tab-panel__tabs {
-	margin-bottom: 16px;
-}
-@media (max-width: 782px) {
-	.ohmylms-assessments {
-		--ohmylms-assessments-gutter: 12px;
-	}
-}
 
-/* Content Hub: title and Add menu, the section tabs, then the active tab's body. Uses the same
- * gutter as the assessment routes, and drops it when opened through a legacy extension URL. */
+/* Content Hub: title and Add menu, the section tabs, then the active tab's body. It supplies its own
+ * gutter, and drops it when opened through a legacy extension URL, which already has one. */
 .ohmylms-content-hub {
 	--ohmylms-hub-gutter: var(--ohmylms-admin-gutter, 40px);
 }
@@ -187,6 +150,9 @@
 }
 .ohmylms-dashboard-layout.extensions .ohmylms-content-hub > .ohmylms-ext-page {
 	padding: 0;
+}
+.ohmylms-content-hub .ohmylms-question-bank > .components-tab-panel > .components-tab-panel__tabs {
+	margin-bottom: 16px;
 }
 .ohmylms-ext-header h2 {
 	margin: 0;
@@ -1072,4 +1038,260 @@
 }
 .ohmylms-cur-row .ohmylms-cur-actions .components-button.is-secondary.is-small:disabled {
 	opacity: 0.45;
+}
+
+/* Syllabus: any curriculum item can be one. Its outline lists the content items beneath it, the skill groups
+ * under each, and the skills in each group, with an import dialog for CSV files. */
+.ohmylms-cur-syllabus-toggle {
+	margin: 0 0 14px;
+	padding: 10px 12px;
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	background: var(--ohmylms-admin-surface, #fff);
+}
+.ohmylms-cur-syllabus-badge {
+	background: var(--ohmylms-primary-soft-color, #f6f3fd);
+	border-color: var(--ohmylms-primary-color, #6e42d3);
+	font-weight: 600;
+}
+.ohmylms-syl {
+	margin: 20px 0 8px;
+	padding: 14px;
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	background: var(--ohmylms-admin-surface, #fff);
+}
+.ohmylms-cur-panel .ohmylms-syl h3 {
+	margin: 0 0 2px;
+}
+.ohmylms-syl-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px 16px;
+	margin-bottom: 8px;
+}
+.ohmylms-syl-head p {
+	margin: 0;
+}
+.ohmylms-syl-tools {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.ohmylms-syl-expand {
+	margin: 4px 0 8px;
+}
+.ohmylms-syl-content {
+	margin-top: 14px;
+	margin-inline-start: calc(var(--ohmylms-syl-depth, 0) * 18px);
+}
+.ohmylms-syl-content-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px 12px;
+	padding: 6px 0;
+	border-bottom: 2px solid var(--ohmylms-admin-border, #dcdcde);
+}
+.ohmylms-syl-content-head h4 {
+	margin: 0;
+	font-size: 14px;
+	overflow-wrap: anywhere;
+}
+.ohmylms-syl-code {
+	display: inline-block;
+	min-width: 3.4em;
+	margin-inline-end: 8px;
+	padding: 0 6px;
+	border-radius: 4px;
+	background: var(--ohmylms-admin-subtle, #f0f0f1);
+	color: color-mix(in srgb, var(--ohmylms-admin-text-color, #000d25) 75%, #fff);
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.7;
+	text-align: center;
+}
+.ohmylms-syl-code.is-empty {
+	background: transparent;
+}
+.ohmylms-syl-groups,
+.ohmylms-syl-skills {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.ohmylms-syl-group {
+	margin: 8px 0 0;
+	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
+	border-radius: 6px;
+}
+.ohmylms-syl-group-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+	padding: 8px;
+	background: var(--ohmylms-admin-subtle, #f4f5f7);
+	border-radius: 6px 6px 0 0;
+}
+.ohmylms-syl-group-head.is-editing {
+	box-shadow: inset 3px 0 0 var(--ohmylms-primary-color, #6e42d3);
+}
+.ohmylms-syl-group-name {
+	flex: 1 1 200px;
+	min-width: 0;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+.ohmylms-syl-skills {
+	padding: 0 10px 6px;
+}
+.ohmylms-syl-skills > li {
+	border-top: 1px solid var(--ohmylms-admin-border, #ebedf0);
+}
+.ohmylms-syl-skills > li:first-child {
+	border-top: 0;
+}
+.ohmylms-syl-skill {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 4px 10px;
+	padding: 8px 0;
+}
+.ohmylms-syl-skill-text {
+	display: flex;
+	flex: 1 1 220px;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.ohmylms-syl-skill-notes {
+	font-size: 12px;
+	white-space: pre-line;
+}
+.ohmylms-syl-none {
+	margin: 0;
+	padding: 8px 12px 10px;
+}
+.ohmylms-syl-form {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 12px 16px;
+	margin: 8px;
+	padding: 12px;
+	border: 1px dashed var(--ohmylms-admin-border, #8c8f94);
+	border-radius: var(--ohmylms-admin-radius, 7px);
+	background: var(--ohmylms-admin-surface, #fff);
+}
+.ohmylms-syl-form .components-textarea-control,
+.ohmylms-syl-form-actions {
+	grid-column: 1 / -1;
+}
+.ohmylms-syl-form-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.ohmylms-syl-existing {
+	margin: 0 8px 8px;
+}
+.ohmylms-syl-existing summary {
+	cursor: pointer;
+}
+.ohmylms-syl-delete {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 8px;
+	padding: 8px 12px;
+	border: 1px solid #cc1818;
+	border-radius: 4px;
+	background: var(--ohmylms-admin-surface, #fff);
+}
+.ohmylms-syl-delete p {
+	flex: 1 1 100%;
+	margin: 0;
+}
+.ohmylms-syl-group-head .ohmylms-cur-actions .components-button.is-secondary.is-small,
+.ohmylms-syl-skill .ohmylms-cur-actions .components-button.is-secondary.is-small,
+.ohmylms-syl-content-head .components-button.is-secondary.is-small {
+	min-height: 32px;
+	padding: 0 10px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+.ohmylms-syl-group-head .ohmylms-cur-actions .components-button.is-secondary.is-small:disabled,
+.ohmylms-syl-skill .ohmylms-cur-actions .components-button.is-secondary.is-small:disabled {
+	opacity: 0.45;
+}
+.ohmylms-syl-import {
+	width: min(920px, calc(100vw - 32px));
+}
+.ohmylms-syl-options {
+	display: grid;
+	gap: 8px;
+	margin: 8px 0 12px;
+}
+.ohmylms-syl-map th {
+	min-width: 160px;
+	vertical-align: top;
+	font-weight: 400;
+}
+.ohmylms-syl-map td {
+	max-width: 260px;
+	overflow-wrap: anywhere;
+}
+.ohmylms-syl-map td.is-ignored {
+	opacity: 0.45;
+}
+.ohmylms-syl-report {
+	margin: 8px 0;
+}
+.ohmylms-syl-report th,
+.ohmylms-syl-report td {
+	text-align: start;
+}
+.ohmylms-syl-problems ul {
+	margin: 0 0 0 18px;
+	list-style: disc;
+}
+@media (max-width: 782px) {
+	.ohmylms-syl-content {
+		margin-inline-start: 0;
+	}
+	.ohmylms-syl-tools .components-button {
+		flex: 1 1 auto;
+		justify-content: center;
+	}
+}
+
+.ohmylms-syl-form-extra {
+	grid-column: 1 / -1;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding-top: 10px;
+	border-top: 1px solid var(--ohmylms-admin-border, #ebedf0);
+}
+.ohmylms-syl-form-extra .components-button.is-secondary.is-small {
+	min-height: 32px;
+	padding: 0 10px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+/* The name or objective is the long field: give it the whole row. */
+.ohmylms-syl-form > .components-base-control:first-child {
+	grid-column: 1 / -1;
+}
+.ohmylms-syl-form-extra .components-button > span[aria-hidden='true'] {
+	margin-inline-end: 4px;
+}
+.ohmylms-syl-frame:focus {
+	outline: none;
 }

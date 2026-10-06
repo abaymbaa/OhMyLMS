@@ -90,6 +90,15 @@ final class Taxonomy {
         return false;
     }
 
+    /**
+     * WordPress stores a term's name and notes with HTML entities ("a < 0" is saved as "a &lt; 0"). The JSON
+     * API and the editors want the text itself, which the page escapes when it draws it, so objectives full
+     * of < and > (as maths syllabuses are) read correctly instead of showing "&lt;".
+     */
+    public static function plain($value) {
+        return html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
     /** Public, JSON-safe description of a skill. */
     public static function describe($term) {
         $term = $term instanceof \WP_Term ? $term : get_term((int) $term, self::NAME);
@@ -97,10 +106,10 @@ final class Taxonomy {
         return [
             'id' => (int) $term->term_id,
             'uuid' => self::uuid($term->term_id),
-            'name' => $term->name,
+            'name' => self::plain($term->name),
             'slug' => $term->slug,
             'code' => (string) get_term_meta($term->term_id, '_ohmylms_skill_code', true),
-            'description' => $term->description,
+            'description' => self::plain($term->description),
             'parent' => (int) $term->parent,
             'prerequisites' => self::prerequisites($term->term_id),
             'public_practice' => (bool) get_term_meta($term->term_id, '_ohmylms_public_practice', true),

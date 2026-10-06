@@ -2,6 +2,7 @@ import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
   Button,
+  CheckboxControl,
   SelectControl,
   Spinner,
   TextControl,
@@ -11,6 +12,7 @@ import { useCurriculum } from './context';
 import { DeleteItem } from './DeleteItem';
 import { LinkedContent } from './LinkedContent';
 import { SkillMappings } from './SkillMappings';
+import { SyllabusPanel } from './SyllabusPanel';
 import * as api from './api.mjs';
 import {
   draftFrom,
@@ -40,6 +42,16 @@ export function ItemPanel({ id, item }) {
   const [detailError, setDetailError] = useState('');
   const errors = validateDraft(draft);
   const dirty = isDirty(draft, item);
+  // The syllabus switch saves at once. It shows the new state while the save runs, then follows the
+  // saved item again (which also puts it back if the server refused, e.g. the syllabus still has groups).
+  const [syllabusFlag, setSyllabusFlag] = useState(null);
+  const [revealSyllabus, setRevealSyllabus] = useState(false);
+  async function toggleSyllabus(value) {
+    setSyllabusFlag(value);
+    const saved = await c.actions.update(item, { is_syllabus: value });
+    setSyllabusFlag(null);
+    if (saved && value) setRevealSyllabus(true);
+  }
 
   useEffect(() => {
     document.getElementById(`ohmylms-cur-name-${item.id}`)?.focus();
@@ -89,6 +101,19 @@ export function ItemPanel({ id, item }) {
         {path.length ? `${path.join(' › ')} › ` : ''}
         <strong>{item.name}</strong>
       </p>
+      <div className="ohmylms-cur-syllabus-toggle">
+        <CheckboxControl
+          label={__('This item is a syllabus', 'ohmylms')}
+          checked={syllabusFlag ?? Boolean(item.is_syllabus)}
+          disabled={c.pending}
+          onChange={toggleSyllabus}
+          help={__(
+            'Any item can be a syllabus, whatever its type. A syllabus has skill groups and skills of its own; its topics and chapters are the items beneath it. This saves at once.',
+            'ohmylms',
+          )}
+          __nextHasNoMarginBottom
+        />
+      </div>
       <form onSubmit={save} noValidate className="ohmylms-cur-details">
         <TextControl
           id={`ohmylms-cur-name-${item.id}`}
@@ -182,6 +207,8 @@ export function ItemPanel({ id, item }) {
           {__('Move', 'ohmylms')}
         </Button>
       </div>
+
+      {item.is_syllabus && <SyllabusPanel item={item} reveal={revealSyllabus} />}
 
       {!detail && !detailError && <Spinner />}
       {detailError && <p role="alert">{detailError}</p>}

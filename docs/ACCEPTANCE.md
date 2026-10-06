@@ -110,6 +110,14 @@ Verified in a session with no WordPress or database: `npm run lint`, the JavaScr
 
 **Not verified:** the REST controllers and the SQL in `Catalog`/`Placements` against a database, the shared-attempt and course-resolution changes in real quiz delivery, upgrade behaviour on a site that had the Skills switch off, and every browser flow (the updated menu and design specs were edited but not run). The existing PHP integration and Playwright suites must be run on the isolated site before release.
 
+## Syllabus increment (2026-10-06)
+
+Any curriculum item can be a **syllabus** with skill groups and skills of its own, edited in the Curriculum tab or imported from CSV (column mapping, dry-run review, repeatable import that never deletes; see [SYLLABUS.md](SYLLABUS.md)). The design follows two reference documents, a Cambridge IGCSE syllabus (topic, coded section, objectives) and a Mongolian grade 11 skill list (chapter, skill group, atomic skill). Skills are real library skills under one root skill per syllabus; names may repeat, codes are unique per syllabus. Curriculum schema moves to version 2 (two columns, two tables) on the next page load. The skill API and the curriculum skill pickers now return skill names as plain text rather than as the HTML entities WordPress stores, so objectives containing `<` and `>` read correctly.
+
+Verified on the isolated site with a production build: the JavaScript suite, `php tests/php/syllabus-unit.php`, `php tests/php/syllabus-integration.php` (flag and guard, group and skill editing, maths and Cyrillic text, long names that begin alike, dry run, apply, repeat, edit, refusal, rollback of a failed import, Tracks integration, deletion, permissions), the existing curriculum and placement integration suites, `tests/browser/syllabus.spec.cjs`, and a 259-skill, 83-group, 13-chapter import of a file made from the Mongolian reference through the real dialog (3.7 s on the server).
+
+**Not verified:** the live site has not been opened (its curriculum tables upgrade on its next page load); PDF files are not read by the app (they are converted to CSV first); browsers other than Chromium; a screen reader pass over the import dialog (focus moves into the dialog on every step, and the keyboard flow is covered by the browser spec).
+
 ## Remaining release gates
 
 - The standalone License and Free vs Pro admin modules are intentionally retired. Adapted builds remove both routes and their component implementations; the recovered snapshot retains them only as immutable provenance for parity verification.

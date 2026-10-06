@@ -34,9 +34,20 @@ import {
 } from './lazyFeatures';
 import { registerQuestionBankPages } from '../features/question-bank/registerPages';
 import { registerCurriculumPages } from '../features/curriculum/registerPages';
-import { assessmentsRoutes, assessmentScreen } from '../features/assessment/AssessmentsHub';
 import { contentHubScreen, withContentHubMenu } from '../features/content-hub/ContentHub';
-import { contentHubRoutes, HUB_MENU_ROUTES } from '../features/content-hub/hubRoutes.mjs';
+import {
+  contentHubRoutes,
+  HUB_APP_ROUTES,
+  HUB_EXTENSION_TABS,
+  HUB_MENU_ROUTES,
+} from '../features/content-hub/hubRoutes.mjs';
+import { registerGamificationTab } from '../features/gamification/extraTabs.mjs';
+import {
+  CertificatesMoved,
+  certificatesTab,
+  withGamificationMenu,
+} from '../features/gamification/CertificatesTab';
+import { CERTIFICATES_TAB, certificatesInGamification } from '../features/gamification/model.mjs';
 const registry = createRegistry();
 registerQuestionBankPages(registry, questionBankComponents);
 registerCurriculumPages(registry, { ...curriculumComponents, ...trackComponents });
@@ -70,52 +81,78 @@ const publicApi = {
   contentHubComponents,
   extendRoutes(routes) {
     // Course categories and tags were replaced by the curriculum and Learning Tracks. Their old screens
-    // could only report errors, so old links to them open the replacements.
+    // could only report errors, so old links to them open the replacements, which are Content Hub tabs.
     const replacedBy = { '/categories': 'curriculum', '/tags': 'tracks' };
+    // With Gamification on, Certificates is one of its tabs (`#/gamification/certificates`); the old
+    // `#/certificates` address opens it and the template editor keeps the Gamification entry highlighted.
+    // With Gamification off there is no such screen, so Certificates keeps its own screen and menu entry.
+    const certificates = routes.find((route) => route.path === '/certificates');
+    const certificatesMoved =
+      Boolean(certificates) && certificatesInGamification(window.ohmylms_params);
+    if (certificatesMoved)
+      registerGamificationTab({
+        key: CERTIFICATES_TAB,
+        label: 'Certificates',
+        Component: certificatesTab(certificates.element, () =>
+          createElement(ExtensionSlot, {
+            registry,
+            kind: 'editor-panel',
+            name: '/certificates',
+            context: { route: '/certificates', hash: window.location.hash },
+          }),
+        ),
+      });
     const coreRoutes = routes.map((route) => {
+      if (certificatesMoved && route.path === '/certificates')
+        return { ...route, element: CertificatesMoved };
+      if (certificatesMoved && route.path === '/certificate-edit/:id')
+        return { ...route, element: withGamificationMenu(route.element) };
       const replacement =
         replacedBy[route.path] && registry.get('admin-page', replacedBy[route.path]);
-      if (replacement) return { ...route, element: extensionPage(replacement) };
-      // Courses is a tab of the Content Hub, and the screens opened from it keep its menu entry highlighted.
-      if (route.path === '/courses')
-        return { ...route, element: contentHubScreen(route.element, 'courses') };
+      if (replacement)
+        return {
+          ...route,
+          element: contentHubScreen(extensionPage(replacement), HUB_EXTENSION_TABS[replacement.id]),
+        };
+      // Courses, Quizzes and Assignments are tabs of the Content Hub, and the screens opened from them
+      // keep its menu entry highlighted.
+      if (HUB_APP_ROUTES[route.path])
+        return { ...route, element: contentHubScreen(route.element, HUB_APP_ROUTES[route.path]) };
       if (HUB_MENU_ROUTES.includes(route.path))
         return { ...route, element: withContentHubMenu(route.element) };
-      const section = { '/quizzes': 'quizzes', '/assignments': 'assignments' }[route.path];
-      return section ? { ...route, element: assessmentScreen(route.element, section) } : route;
+      return route;
     });
-    const skillsEntry = registry.get('admin-page', 'skills');
+    // Skills, Question Bank, Curriculum and Learning Tracks are SDK admin pages that the hub also shows
+    // as tabs. Without the registered page the tab falls back to the component itself.
+    const hubPage = (id, fallback) => {
+      const entry = registry.get('admin-page', id);
+      return entry ? extensionPage(entry) : fallback;
+    };
     const hubPages = {
       ...contentHubComponents,
-      SkillsPage: skillsEntry ? extensionPage(skillsEntry) : questionBankComponents.SkillsPage,
+      SkillsPage: hubPage('skills', questionBankComponents.SkillsPage),
+      QuestionBankPage: hubPage('question-bank', questionBankComponents.QuestionBankPage),
+      CurriculumPage: hubPage('curriculum', curriculumComponents.CurriculumPage),
+      TracksPage: hubPage('tracks', trackComponents.TracksPage),
     };
-    const hubCourses = routes.find((route) => route.path === '/courses');
+    // The application's own list screens keep their extension slots when shown as hub tabs.
+    const hubScreens = routes.map((route) =>
+      HUB_APP_ROUTES[route.path]
+        ? { ...route, element: wrapScreen(route.element, route.path, registry) }
+        : route,
+    );
     return [
       ...coreRoutes.map((route) =>
         route.path === '*'
           ? route
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
-      ...assessmentsRoutes(routes, questionBankComponents.QuestionBankPage),
-      ...contentHubRoutes(
-        hubCourses
-          ? routes.map((route) =>
-              route === hubCourses
-                ? { ...route, element: wrapScreen(route.element, route.path, registry) }
-                : route,
-            )
-          : routes,
-        hubPages,
-        contentHubScreen,
-      ),
+      ...contentHubRoutes(hubScreens, hubPages, contentHubScreen),
       ...registry.list('admin-page').map((entry) => ({
         path: `/extensions/${entry.id}`,
-        element:
-          entry.id === 'question-bank'
-            ? assessmentScreen(extensionPage(entry), 'question-bank')
-            : entry.id === 'skills'
-              ? contentHubScreen(extensionPage(entry), 'skills')
-              : extensionPage(entry),
+        element: HUB_EXTENSION_TABS[entry.id]
+          ? contentHubScreen(extensionPage(entry), HUB_EXTENSION_TABS[entry.id])
+          : extensionPage(entry),
       })),
     ];
   },

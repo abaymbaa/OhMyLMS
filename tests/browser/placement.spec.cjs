@@ -39,7 +39,7 @@ const app = (hash) => `/wp-admin/admin.php?page=ohmylms#${hash}`;
 // wp.apiFetch sends PUT as POST with an override header, so any write to the route counts.
 const saved = (page, route) => page.waitForResponse((response) => decodeURIComponent(response.url()).includes(route) && ['POST', 'PUT'].includes(response.request().method()) && response.ok());
 
-test('the admin menu lists Content Hub, Curriculum and Learning Tracks, and the old category and tag screens open them', async ({ page }) => {
+test('Curriculum and Learning Tracks are Content Hub tabs, and the old category, tag and extension addresses open them', async ({ page }) => {
   const problems = watch(page);
   await login(page, admin().username, admin().password);
   await page.goto(app('/courses'));
@@ -48,15 +48,29 @@ test('the admin menu lists Content Hub, Curriculum and Learning Tracks, and the 
   // The old #/courses address opens the hub's Courses tab, and the hub entry stays highlighted.
   await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible({ timeout: 30000 });
   const labels = (await submenu.allTextContents()).map((text) => text.trim());
-  expect(labels.slice(0, 3)).toEqual(['Content Hub', 'Curriculum', 'Learning Tracks']);
-  expect(labels).not.toContain('Courses');
-  expect(labels).not.toContain('Skills');
-  expect(labels).not.toContain('Categories');
-  expect(labels).not.toContain('Tags');
-  await page.goto(app('/categories'));
-  await expect(page.getByRole('heading', { name: 'Curriculum', exact: true })).toBeVisible({ timeout: 30000 });
-  await page.goto(app('/tags'));
-  await expect(page.getByRole('heading', { name: 'Learning Tracks', exact: true })).toBeVisible({ timeout: 30000 });
+  // Content Hub holds Courses, Lessons, Assessments, Skills, Curriculum and Learning Tracks, so none has its own entry.
+  expect(labels.slice(0, 2)).toEqual(['Content Hub', 'Certificates']);
+  for (const retired of ['Courses', 'Assessments', 'Skills', 'Curriculum', 'Learning Tracks', 'Categories', 'Tags']) expect(labels).not.toContain(retired);
+  const tabs = page.getByRole('navigation', { name: 'Content Hub sections' });
+  await expect(tabs.getByRole('link')).toHaveText(['Catalog', 'Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks']);
+  const tabAt = async (hash, tab, heading) => {
+    await page.goto(app(hash));
+    await expect(tabs.locator('a[aria-current="page"]')).toHaveText(tab, { timeout: 30000 });
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible({ timeout: 30000 });
+    // The hub owns the page title, so the tab body has no second level-one heading.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible();
+  };
+  await tabAt('/content-hub/curriculum', 'Curriculum', 'Curriculum');
+  await tabAt('/content-hub/tracks', 'Learning Tracks', 'Learning Tracks');
+  // Every older address keeps working and lands on the same tab.
+  await tabAt('/extensions/curriculum', 'Curriculum', 'Curriculum');
+  await tabAt('/extensions/tracks', 'Learning Tracks', 'Learning Tracks');
+  await tabAt('/categories', 'Curriculum', 'Curriculum');
+  await tabAt('/tags', 'Learning Tracks', 'Learning Tracks');
+  // The tabs link to each other from inside the hub.
+  await tabs.getByRole('link', { name: 'Curriculum', exact: true }).click();
+  await expect(page).toHaveURL(/#\/content-hub\/curriculum$/);
   expect(problems).toEqual([]);
 });
 
