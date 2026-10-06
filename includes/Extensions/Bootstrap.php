@@ -3,6 +3,7 @@ namespace OhMyLMS\Extensions;
 
 final class Bootstrap {
     public static function init() {
+        add_action('rest_api_init', [TabPreferences::class, 'register_routes']);
         QuestionTypes::register_defaults();
 QuestionTypes::register_math();
 Activities::register_defaults();

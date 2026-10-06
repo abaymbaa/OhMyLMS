@@ -28,6 +28,7 @@ final class SourceAssets {
         if (!is_file($asset_file)) { return; }
         $asset = require $asset_file;
         wp_enqueue_script('ohmylms-extension-sdk', plugins_url($directory . '/extensions.js', OHMYLMS_FILE), $asset['dependencies'], $asset['version'], true);
+        wp_localize_script('ohmylms-extension-sdk', 'ohmylmsTabPreferences', TabPreferences::read());
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge(Registry::manifest(), ['settings'=>Settings::manifest()]));
         wp_localize_script('ohmylms-extension-sdk', 'ohmylmsAssessment', [
             'versioned' => \OhMyLMS\Assessment\Engine::versioned(),

@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { MovableTabPanel } from '../navigation/MovableTabPanel';
 export function createSettingsPage(readRuntime) {
   return function SettingsPage() {
     const {
@@ -435,7 +436,8 @@ export function createSettingsPage(readRuntime) {
                   />
                 </React.Fragment>
               )}
-              <ep.A
+              <MovableTabPanel
+                scope="settings"
                 items={W}
                 onChange={function (e) {
                   return (function (e) {

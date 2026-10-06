@@ -4,6 +4,7 @@ import { useMenuHighlight } from '../menuHighlight';
 import { AddMenu } from './AddMenu';
 import { HubContext } from './context';
 import { HUB_TABS } from './hubRoutes.mjs';
+import { MovableTabs } from '../navigation/MovableTabs';
 
 const tabLabels = () => ({
   catalog: __('Catalog', 'ohmylms'),
@@ -40,18 +41,13 @@ export function ContentHubFrame({ active, children }) {
         </div>
         <AddMenu />
       </header>
-      <nav className="ohmylms-content-hub-nav" aria-label={__('Content Hub sections', 'ohmylms')}>
-        {HUB_TABS.map((tab) => (
-          <a
-            key={tab.id}
-            href={`#${tab.path}`}
-            aria-current={active === tab.id ? 'page' : undefined}
-            className={active === tab.id ? 'is-active' : undefined}
-          >
-            {labels[tab.id]}
-          </a>
-        ))}
-      </nav>
+      <MovableTabs
+        scope="content-hub"
+        tabs={HUB_TABS}
+        labels={labels}
+        active={active}
+        label={__('Content Hub sections', 'ohmylms')}
+      />
       <HubContext.Provider value={{ active }}>{children}</HubContext.Provider>
     </section>
   );

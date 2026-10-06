@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { MovableTabPanel } from '../navigation/MovableTabPanel';
 export function createEmailTemplateList(readRuntime) {
   return function EmailTemplateList() {
     const {
@@ -210,7 +211,8 @@ export function createEmailTemplateList(readRuntime) {
         />
       ) : (
         <React.Fragment>
-          <Controls.TabsWP
+          <MovableTabPanel
+            scope="emails"
             items={h}
             className={'ohmylms-emails-tabs'}
             onChange={function (e) {

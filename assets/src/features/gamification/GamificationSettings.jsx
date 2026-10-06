@@ -2,6 +2,7 @@ import { createElement, Fragment } from '@wordpress/element';
 import { gamificationExtraTabs } from './extraTabs.mjs';
 import { activeGamificationTab, gamificationTabs, isStandaloneGamification } from './model.mjs';
 import { StreakSettings } from './StreakSettings';
+import { MovableTabPanel } from '../navigation/MovableTabPanel';
 
 export function createGamificationSettings(readRuntime) {
   return function GamificationSettings() {
@@ -41,7 +42,8 @@ export function createGamificationSettings(readRuntime) {
           className="ohmylms-full-screen-height ohmylms-gamification-settings"
         >
           <Controls.SpacerWP padding={4} paddingTop={1} marginTop={4} marginBottom={0}>
-            <Controls.TabsWP
+            <MovableTabPanel
+              scope={isStandaloneGamification(params) ? 'gamification' : 'gamification-settings'}
               key={activeTab}
               items={items}
               activekey={activeTab}

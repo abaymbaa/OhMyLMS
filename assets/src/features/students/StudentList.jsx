@@ -333,6 +333,7 @@ export function createStudentList(readRuntime) {
         )}
         {viewRole && <ViewAsModal role={viewRole} onClose={() => setViewRole('')} />}
         <PeopleTabs
+          movable
           active={tab}
           onChange={(next) => {
             window.history.pushState(

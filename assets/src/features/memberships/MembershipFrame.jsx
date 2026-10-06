@@ -2,6 +2,7 @@ import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMenuHighlight } from '../menuHighlight';
 import { MEMBERSHIP_TABS } from './membershipRoutes.mjs';
+import { MovableTabs } from '../navigation/MovableTabs';
 
 /** Share Membership navigation across plans, commerce lists and their detail screens. */
 export function membershipScreen(Screen, active) {
@@ -18,18 +19,13 @@ export function membershipScreen(Screen, active) {
         <header className="ohmylms-content-hub-header">
           <h1>{__('Membership', 'ohmylms')}</h1>
         </header>
-        <nav className="ohmylms-content-hub-nav" aria-label={__('Membership sections', 'ohmylms')}>
-          {MEMBERSHIP_TABS.map((tab) => (
-            <a
-              key={tab.id}
-              href={`#${tab.path}`}
-              aria-current={active === tab.id ? 'page' : undefined}
-              className={active === tab.id ? 'is-active' : undefined}
-            >
-              {labels[tab.id]}
-            </a>
-          ))}
-        </nav>
+        <MovableTabs
+          scope="memberships"
+          tabs={MEMBERSHIP_TABS}
+          labels={labels}
+          active={active}
+          label={__('Membership sections', 'ohmylms')}
+        />
         <Screen {...props} />
       </section>
     );

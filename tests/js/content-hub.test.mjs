@@ -38,11 +38,12 @@ const load = (file, names, scope) => {
 };
 
 const AddMenu = () => null;
+const MovableTabs = () => null;
 const HubContext = { Provider: 'HubContext.Provider' };
 const { ContentHubFrame, contentHubScreen } = load(
   'assets/src/features/content-hub/ContentHub.jsx',
   ['ContentHubFrame', 'contentHubScreen'],
-  { createElement, __: (text) => text, useMenuHighlight: () => {}, AddMenu, HubContext, HUB_TABS },
+  { createElement, __: (text) => text, useMenuHighlight: () => {}, AddMenu, MovableTabs, HubContext, HUB_TABS },
 );
 
 test('The hub has Catalog, Courses, Lessons, the three assessment tabs, Skills, Curriculum and Learning Tracks under one base path', () => {
@@ -191,15 +192,11 @@ test('The frame links every tab, marks the active one and offers the Add menu', 
     assert.equal(header.type, 'header');
     assert.equal(header.children[0].children[0].children[0], 'Content Hub');
     assert.equal(header.children[1].type, AddMenu);
-    const links = nav.children[0];
-    assert.deepEqual(
-      links.map((link) => link.props.href),
-      HUB_TABS.map((tab) => `#${tab.path}`),
-    );
-    assert.deepEqual(
-      links.filter((link) => link.props['aria-current'] === 'page').map((link) => link.props.href),
-      [`#${active.path}`],
-    );
+    assert.equal(nav.type, MovableTabs);
+    assert.equal(nav.props.scope, 'content-hub');
+    assert.deepEqual(nav.props.tabs, HUB_TABS);
+    assert.equal(nav.props.active, active.id);
+    assert.equal(nav.props.labels[active.id], HUB_TABS.find((tab) => tab.id === active.id).label);
     assert.equal(provider.type, HubContext.Provider);
     assert.deepEqual(provider.props.value, { active: active.id });
     assert.equal(provider.children[0], 'body');
