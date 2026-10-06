@@ -87,7 +87,7 @@
 
 /* Page header: title and description on the left, actions on the right. */
 
-/* Content Hub: title and Add menu, the section tabs, then the active tab's body. It supplies its own
+/* Content Hub: title, the section tabs, then the active tab's body. It supplies its own
  * gutter, and drops it when opened through a legacy extension URL, which already has one. */
 .ohmylms-content-hub,
 .ohmylms-membership {

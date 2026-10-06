@@ -18,7 +18,7 @@ A **grade, exam or subject** (for example Grade 2 Math, MATH0580 or Digital SAT)
 | **Curriculum** | The curriculum structure (exam boards, national curricula, grades, subjects, syllabuses) that courses, skills, question banks and exams are placed in. Any item can be a syllabus with its own skill groups and skills, loaded from CSV; see [SYLLABUS.md](SYLLABUS.md) and [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
 | **Learning Tracks** | Learning Tracks: curated groupings of courses and syllabuses that learners can follow. Unchanged; see [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
 
-The **Add** button in the hub header creates a **Course** (a draft in skill-based mode, opened in its Catalog), a standalone **Lesson** (opened in the lesson editor) or a **Skill**. Curriculum items and tracks are added from their own tabs.
+The hub header shows the title followed by the section tabs. Content is added from the individual tabs.
 
 The old addresses keep working: `#/courses` opens the Courses tab; `#/quizzes` and `#/assessments` the Quizzes tab; `#/assessments/question-bank` and `#/extensions/question-bank` the Question Bank tab; `#/assignments` and `#/assessments/assignments` the Assignments tab; `#/extensions/skills` the Skills tab; `#/extensions/curriculum` and `#/categories` the Curriculum tab; and `#/extensions/tracks` and `#/tags` the Learning Tracks tab. The Content Hub menu entry stays highlighted on every tab and while you edit or report on a course, lesson, quiz or assignment from the hub.
 

@@ -185,13 +185,14 @@ test('Without the application list screens the hub still serves its own tabs', (
   });
 });
 
-test('The frame links every tab, marks the active one and offers the Add menu', () => {
+test('The frame links every tab and marks the active one below the title', () => {
   HUB_TABS.forEach((active) => {
     const frame = ContentHubFrame({ active: active.id, children: 'body' });
     const [header, nav, provider] = frame.children;
     assert.equal(header.type, 'header');
-    assert.equal(header.children[0].children[0].children[0], 'Content Hub');
-    assert.equal(header.children[1].type, AddMenu);
+    assert.equal(header.children[0].type, 'h1');
+    assert.equal(header.children[0].children[0], 'Content Hub');
+    assert.equal(header.children.length, 1);
     assert.equal(nav.type, MovableTabs);
     assert.equal(nav.props.scope, 'content-hub');
     assert.deepEqual(nav.props.tabs, HUB_TABS);

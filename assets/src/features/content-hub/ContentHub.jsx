@@ -1,7 +1,6 @@
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMenuHighlight } from '../menuHighlight';
-import { AddMenu } from './AddMenu';
 import { HubContext } from './context';
 import { HUB_TABS } from './hubRoutes.mjs';
 import { MovableTabs } from '../navigation/MovableTabs';
@@ -23,23 +22,14 @@ export function useContentHubMenu() {
   useMenuHighlight('a[href$="#/content-hub"]');
 }
 
-/** Frame shared by every hub tab: title, the Add menu and the section tabs. */
+/** Frame shared by every hub tab: title and section tabs. */
 export function ContentHubFrame({ active, children }) {
   useContentHubMenu();
   const labels = tabLabels();
   return (
     <section className="ohmylms-content-hub">
       <header className="ohmylms-content-hub-header">
-        <div>
-          <h1>{__('Content Hub', 'ohmylms')}</h1>
-          <p>
-            {__(
-              'Build grades, exams and subjects from chapters and skills, then attach lessons, quizzes and assessments.',
-              'ohmylms',
-            )}
-          </p>
-        </div>
-        <AddMenu />
+        <h1>{__('Content Hub', 'ohmylms')}</h1>
       </header>
       <MovableTabs
         scope="content-hub"
