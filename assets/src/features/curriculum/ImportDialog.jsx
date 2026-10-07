@@ -36,6 +36,7 @@ const ROLE_LABELS = () =>
         skill_code: __('Skill code', 'ohmylms'),
         skill: __('Skill', 'ohmylms'),
         description: __('Notes', 'ohmylms'),
+        category: __('Skill category', 'ohmylms'),
       }[role.id],
     ]),
   );

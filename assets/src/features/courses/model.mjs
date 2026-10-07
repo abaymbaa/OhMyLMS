@@ -1,3 +1,11 @@
+/** Syllabus courses share the curriculum workspace; ordinary courses use the course builder. */
+export function courseEditPath(course) {
+  const syllabusId = Number(course?.syllabus_id);
+  return Number.isInteger(syllabusId) && syllabusId > 0
+    ? `/content-hub/curriculum/syllabus/${syllabusId}`
+    : `/course-edit/${course?.id}`;
+}
+
 /** Preserve extension fields and relationships without mutating store state. */
 export function prepareCoursePayload(course, { status, date } = {}) {
   return {

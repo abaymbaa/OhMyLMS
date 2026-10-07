@@ -47,7 +47,7 @@ class LearningController extends RestController {
         }
         unset($item);
         $data['chapters'] = array_map(static function ($chapter) { return ['id' => (int) $chapter['id'], 'name' => get_the_title($chapter['id'])]; }, (array) ohmylms_get_course($request['id'])->get_chapters());
-        $data['readiness'] = CourseProgram::readiness($data['draft']);
+        $data['readiness'] = CourseProgram::readiness($data['draft'], (int) $request['id']);
         return rest_ensure_response($data);
     }
 
@@ -70,7 +70,7 @@ class LearningController extends RestController {
             'new_learner' => CompletionPolicy::evaluate($program, [], [], []),
             'prior_skills' => CompletionPolicy::evaluate($program, [], $program['recognize_prior'] ? $skills : [], []),
             'all_requirements_met' => CompletionPolicy::evaluate($program, $activities, $skills, $assessments),
-            'readiness' => CourseProgram::readiness($program),
+            'readiness' => CourseProgram::readiness($program, (int) $request['id']),
         ]);
     }
 

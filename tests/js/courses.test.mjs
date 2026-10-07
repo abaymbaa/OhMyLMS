@@ -2,6 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {prepareCoursePayload,orderedChapters,completedCourseSteps,mergeSavedCourse} from '../../assets/src/features/courses/model.mjs';
 import {saveCourseWithChapters} from '../../assets/src/features/courses/api.mjs';
+import {courseEditPath} from '../../assets/src/features/courses/model.mjs';
+test('course editing uses the syllabus workspace only for a linked syllabus',()=>{
+ assert.equal(courseEditPath({id:5,syllabus_id:12}),'/content-hub/curriculum/syllabus/12');
+ assert.equal(courseEditPath({id:5,syllabus_id:'12'}),'/content-hub/curriculum/syllabus/12');
+ for(const syllabus_id of [undefined,null,0,-1,'invalid',1.5])
+  assert.equal(courseEditPath({id:5,syllabus_id}),'/course-edit/5');
+});
 test('course payload preserves extension fields and does not mutate publication state',()=>{
  const course=Object.freeze({id:5,status:'draft',description:'',settings:{extension:'keep'}});
  const payload=prepareCoursePayload(course,{status:'future',date:{date:'2030-01-02 10:00:00'}});

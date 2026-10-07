@@ -24,6 +24,7 @@ final class Syllabus {
     const MAX_GROUPS = SyllabusPlan::MAX_GROUPS;
     const MAX_SKILLS = SyllabusPlan::MAX_SKILLS;
     const CODE_META = '_ohmylms_skill_code';
+    const CATEGORY_META = '_ohmylms_skill_category';
     const ROOT_META = '_ohmylms_syllabus_item';
 
     public static function groups_table() { return Schema::table('syllabus_groups'); }
@@ -142,6 +143,7 @@ final class Syllabus {
                 'term_id' => (int) $term->term_id,
                 'name' => self::text($term->name),
                 'code' => (string) get_term_meta($term->term_id, self::CODE_META, true),
+                'category' => (string) get_term_meta($term->term_id, self::CATEGORY_META, true),
                 'description' => self::text($term->description),
             ];
         }
@@ -380,6 +382,11 @@ final class Syllabus {
 
     private static function clean_skill(array $data, $partial) {
         $fields = [];
+        if (array_key_exists('category', $data)) {
+            $category = SyllabusRows::line($data['category']);
+            if (mb_strlen($category) > 60) { return Access::error('ohmylms_syllabus_invalid', __('A skill category can have at most 60 characters.', 'ohmylms')); }
+            $fields['category'] = sanitize_text_field($category);
+        }
         if (!$partial || array_key_exists('name', $data)) {
             $name = SyllabusRows::line($data['name'] ?? '');
             if ($name === '') { return Access::error('ohmylms_syllabus_invalid', __('A skill needs a name.', 'ohmylms')); }
@@ -412,12 +419,13 @@ final class Syllabus {
      * Create a library skill under the syllabus's root skill. Equal names are allowed (see slug()).
      * @return array|\WP_Error ['term_id' => int, 'name' => string]
      */
-    private static function create_term($root, $name, $code, $description) {
+    private static function create_term($root, $name, $code, $description, $category = '') {
         $term = wp_insert_term(wp_slash(mb_substr($name, 0, 199)), Taxonomy::NAME, ['description' => wp_slash(sanitize_textarea_field($description)), 'parent' => (int) $root, 'slug' => self::slug()]);
         if (is_wp_error($term)) { return $term; }
         $id = (int) $term['term_id'];
         Taxonomy::uuid($id);
         if ($code !== '') { update_term_meta($id, self::CODE_META, mb_substr($code, 0, SyllabusRows::SKILL_CODE_LIMIT)); }
+        if ($category !== '') { update_term_meta($id, self::CATEGORY_META, sanitize_text_field($category)); }
         return ['term_id' => $id, 'name' => $name];
     }
 
@@ -442,7 +450,7 @@ final class Syllabus {
             if (self::code_taken($syllabus_id, $fields['code'])) { return Access::error('ohmylms_syllabus_code_taken', sprintf(__('Another skill in this syllabus already uses the code “%s”.', 'ohmylms'), $fields['code']), 409); }
             $root = self::root_skill($syllabus_id);
             if (is_wp_error($root)) { return $root; }
-            $created = self::create_term($root, $fields['name'], $fields['code'], $fields['description']);
+            $created = self::create_term($root, $fields['name'], $fields['code'], $fields['description'], $fields['category'] ?? '');
             if (is_wp_error($created)) { return $created; }
             self::place_skill((int) $group['id'], $created['term_id'], $position);
             return $created;
@@ -487,6 +495,7 @@ final class Syllabus {
             if (is_wp_error($result)) { return $result; }
         }
         if (isset($fields['code'])) { update_term_meta($term_id, self::CODE_META, mb_substr($fields['code'], 0, SyllabusRows::SKILL_CODE_LIMIT)); }
+        if (isset($fields['category'])) { update_term_meta($term_id, self::CATEGORY_META, $fields['category']); }
         return true;
     }
 
@@ -601,7 +610,7 @@ final class Syllabus {
                         $root = self::root_skill($syllabus_id);
                         if (is_wp_error($root)) { return $root; }
                     }
-                    $created = self::create_term($root, $op['name'], $op['code'], $op['description']);
+                    $created = self::create_term($root, $op['name'], $op['code'], $op['description'], $op['category'] ?? '');
                     if (is_wp_error($created)) { return Access::error($created->get_error_code(), sprintf(__('The skill “%1$s” could not be created: %2$s', 'ohmylms'), $op['name'], $created->get_error_message()), 500); }
                     $created_terms[] = $created['term_id'];
                     self::place_skill($resolve($op['group']), $created['term_id']);

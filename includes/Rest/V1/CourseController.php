@@ -2211,6 +2211,7 @@ class CourseController extends RestController {
 
 		$course      = ohmylms_get_course( $post );
 		$data        = $this->get_course_data( $course );
+		$data['syllabus_id'] = \OhMyLMS\Curriculum\SyllabusCourse::owner( $course->get_id() );
 		$chapters    = $course->get_chapters();
 		$certificate = $course->get_certificate();
 		if ( $certificate ) {

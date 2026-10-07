@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { courseEditPath } from './hubRoutes.mjs';
 import { editPath } from './api.mjs';
+import { withEditorReturn } from './editorNavigation.mjs';
 
 const typeLabel = (type) =>
   ({
@@ -12,14 +13,17 @@ const typeLabel = (type) =>
   })[type] || type;
 
 /** One attached lesson, quiz or assignment: where it is edited, whether it counts, and where else it is used. */
-export function AttachmentItem({ item, skills, actions }) {
+export function AttachmentItem({ item, skills, actions, returnTo }) {
   const covered = item.skill_ids
     .map((id) => skills.find((skill) => skill.term_id === id)?.name)
     .filter(Boolean);
   return (
     <li className="ohmylms-catalog-item">
       <span className={`ohmylms-catalog-type is-${item.type}`}>{typeLabel(item.type)}</span>
-      <a className="ohmylms-catalog-item-title" href={`#${editPath(item.type, item.content_id)}`}>
+      <a
+        className="ohmylms-catalog-item-title"
+        href={`#${withEditorReturn(editPath(item.type, item.content_id), returnTo)}`}
+      >
         {item.title}
       </a>
       {item.status !== 'publish' && (

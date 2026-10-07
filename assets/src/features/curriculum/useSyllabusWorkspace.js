@@ -9,6 +9,7 @@ const pick = (response) => ({
   totals: response.totals,
   root_skill: response.root_skill,
   course: response.course ?? null,
+  settings: response.settings ?? {},
 });
 
 /**

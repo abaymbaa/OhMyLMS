@@ -3,11 +3,12 @@
  * column mapping before anything is sent), turned into rows, and the server then validates and plans
  * every row again. Pure functions, no DOM, so they can be tested on their own.
  *
- * A syllabus row has up to seven parts:
+ * A syllabus row has up to eight parts:
  *   content_code, content      a topic or chapter (a path such as "Paper 1 > Number" nests)
  *   group_code, group          a skill group (a section, a skill family)
  *   skill_code, skill          one skill (a learning objective)
  *   description                notes or examples for the skill
+ *   category                   Core, Extended, Advanced, or a custom skill category
  */
 
 export const ROLES = [
@@ -18,6 +19,7 @@ export const ROLES = [
   { id: 'skill_code', label: 'Skill code', hint: 'e.g. C1.1.1' },
   { id: 'skill', label: 'Skill', hint: 'the learning objective' },
   { id: 'description', label: 'Notes', hint: 'notes or examples' },
+  { id: 'category', label: 'Category', hint: 'Core, Extended, Advanced, or a custom category' },
 ];
 export const ROLE_IDS = ROLES.map((role) => role.id);
 export const CSV_HEADER = ROLE_IDS;
@@ -101,6 +103,7 @@ const ALIASES = {
     'name',
     'title',
   ],
+  category: ['category', 'skill category', 'level', 'tier', 'ангилал'],
   description: [
     'description',
     'notes',
@@ -227,6 +230,7 @@ export function guessRoles(headers) {
     'content',
     'group',
     'description',
+    'category',
     'skill',
   ]) {
     for (const alias of ALIASES[role]) take(role, normalized.indexOf(alias));
@@ -346,9 +350,19 @@ export function templateCsv() {
       'C1.1.1',
       'Identify and use natural numbers',
       'e.g. convert between numbers and words',
+      'Core',
     ],
-    ['1', 'Number', 'C1.1', 'Types of number', 'C1.1.2', 'Identify and use prime numbers', ''],
-    ['1', 'Number', 'C1.2', 'Sets', 'C1.2.1', 'Use set language and Venn diagrams', ''],
+    [
+      '1',
+      'Number',
+      'C1.1',
+      'Types of number',
+      'C1.1.2',
+      'Identify and use prime numbers',
+      '',
+      'Core',
+    ],
+    ['1', 'Number', 'C1.2', 'Sets', 'C1.2.1', 'Use set language and Venn diagrams', '', 'Core'],
     [
       '2',
       'Algebra and graphs',
@@ -357,6 +371,7 @@ export function templateCsv() {
       'C2.1.1',
       'Simplify expressions',
       '',
+      'Core',
     ],
   ]);
 }
@@ -382,9 +397,9 @@ export function outlineCsv(outline) {
     const path = content.id === rootId ? '' : pathOf(content);
     const code = content.id === rootId ? '' : content.code;
     if (!content.groups.length && content.id !== rootId)
-      records.push([code, path, '', '', '', '', '']);
+      records.push([code, path, '', '', '', '', '', '']);
     for (const group of content.groups) {
-      if (!group.skills.length) records.push([code, path, group.code, group.name, '', '', '']);
+      if (!group.skills.length) records.push([code, path, group.code, group.name, '', '', '', '']);
       for (const skill of group.skills)
         records.push([
           code,
@@ -394,6 +409,7 @@ export function outlineCsv(outline) {
           skill.code,
           skill.name,
           skill.description,
+          skill.category || '',
         ]);
     }
   }

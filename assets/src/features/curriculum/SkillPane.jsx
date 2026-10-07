@@ -1,8 +1,9 @@
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { CheckboxControl, SelectControl } from '@wordpress/components';
+import { SelectControl } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
+import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { allGroups, groupLabel, validateSkill } from './syllabus.mjs';
 import { Breadcrumb, MESSAGES, RowMenu, SaveField } from './WorkspaceParts';
 import { pathTo, stepAmongSiblings, topicLabel } from './workspace.mjs';
@@ -127,6 +128,29 @@ export function SkillPane({ node }) {
           validate={(text) => check(text, 'description')}
           onSave={(text) => w.actions.saveSkill(skill, { description: text })}
         />
+        <SaveField
+          id={`ohmylms-ws-skill-category-${skill.term_id}`}
+          label={__('Skill category', 'ohmylms')}
+          value={skill.category || ''}
+          suggestions={[
+            ...new Set([
+              ...(w.outline.settings.categories || ['Core', 'Extended', 'Advanced']),
+              ...w.outline.contents.flatMap((content) =>
+                content.groups.flatMap((group) =>
+                  group.skills.map((entry) => entry.category).filter(Boolean),
+                ),
+              ),
+            ]),
+          ]}
+          placeholder={__('Choose or type a category', 'ohmylms')}
+          help={__(
+            'Core, Extended, Advanced, or your own category. Clear the field to remove it.',
+            'ohmylms',
+          )}
+          disabled={w.pending}
+          validate={(text) => (text.trim().length > 60 ? MESSAGES['too-long']() : '')}
+          onSave={(text) => w.actions.saveSkill(skill, { category: text.trim() })}
+        />
         <p className="ohmylms-ext-muted">
           {sprintf(
             __(
@@ -138,32 +162,21 @@ export function SkillPane({ node }) {
         </p>
       </header>
 
-      <section
-        className="ohmylms-ws-incourse"
-        aria-label={__('This skill in the course', 'ohmylms')}
-      >
-        <h3>{__('In the course', 'ohmylms')}</h3>
-        {!catalog && <p className="ohmylms-ext-muted">{__('Loading the course…', 'ohmylms')}</p>}
+      <section className="ohmylms-ws-incourse" aria-label={__('Skill practice target', 'ohmylms')}>
+        <h3>{__('Practice target', 'ohmylms')}</h3>
+        {!catalog && (
+          <p className="ohmylms-ext-muted">{__('Loading skill practice settings…', 'ohmylms')}</p>
+        )}
         {catalog && !inCourse && (
           <p className="ohmylms-ext-muted">
             {__(
-              'This skill is not in the course yet. Use “Update course from syllabus” on the syllabus page.',
+              'Refresh the skill collection from the syllabus actions to enable practice settings.',
               'ohmylms',
             )}
           </p>
         )}
         {shown && (
           <div className="ohmylms-ws-meta">
-            <CheckboxControl
-              label={__('Learners must reach this skill to finish the course', 'ohmylms')}
-              help={__(
-                'A course can be published once a skill is required, and a required skill needs approved questions.',
-                'ohmylms',
-              )}
-              checked={shown.required}
-              onChange={(required) => setInCourse({ required })}
-              __nextHasNoMarginBottom
-            />
             <SelectControl
               label={__('Target', 'ohmylms')}
               value={shown.target}
@@ -178,7 +191,12 @@ export function SkillPane({ node }) {
         )}
       </section>
 
-      <SkillResources key={skill.term_id} skill={skill} syllabus={w.outline.syllabus} />
+      <SkillResources
+        key={skill.term_id}
+        skill={skill}
+        syllabus={w.outline.syllabus}
+        returnTo={syllabusReturnPath(w.syllabusId, node.key)}
+      />
     </div>
   );
 }

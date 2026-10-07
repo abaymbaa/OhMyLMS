@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { courseEditPath } from './model.mjs';
 export function createCourseListItem(readRuntime) {
   return function CourseListItem(props) {
     const {
@@ -20,9 +21,9 @@ export function createCourseListItem(readRuntime) {
       r = (props.isHover, (0, Router.Zp)()),
       a = (0, ReactHooks.useCallback)(
         function () {
-          r('/course-edit/'.concat(null == course ? void 0 : course.id));
+          r(courseEditPath(course));
         },
-        [null == course ? void 0 : course.id, r],
+        [course?.id, course?.syllabus_id, r],
       ),
       o = (0, ReactHooks.useCallback)(
         function () {
@@ -33,10 +34,7 @@ export function createCourseListItem(readRuntime) {
     return (
       <React.Fragment>
         <Controls.FlexWP align={'start'} justify={'start'} gap={4}>
-          <v.Link
-            to={'/course-edit/'.concat(null == course ? void 0 : course.id)}
-            className={'ohmylms-td-thumbnail'}
-          >
+          <v.Link to={courseEditPath(course)} className={'ohmylms-td-thumbnail'}>
             {null != course && course.image_src ? (
               <gG.A shape={'square'} src={course.image_src} size={100} />
             ) : null != course && course.video_src ? (
@@ -49,7 +47,7 @@ export function createCourseListItem(readRuntime) {
           </v.Link>
           <Controls.FlexWP direction={'column'} className={'ohmylms-td-thumbnail-title'}>
             <v.Link
-              to={'/course-edit/'.concat(null == course ? void 0 : course.id)}
+              to={courseEditPath(course)}
               title={null == course ? void 0 : course.name}
               style={{
                 textDecoration: 'none',
@@ -88,6 +86,14 @@ export function createCourseListItem(readRuntime) {
               >
                 <pG.A />
               </Controls.ButtonWP>
+              {course?.syllabus_id > 0 && (
+                <Controls.ButtonWP
+                  variant="text"
+                  onClick={() => r(`${courseEditPath(course)}?view=settings`)}
+                >
+                  {I18n.__('Syllabus Settings', 'ohmylms')}
+                </Controls.ButtonWP>
+              )}
               <Controls.ButtonWP
                 onClick={o}
                 icon={React.createElement(vG, null)}

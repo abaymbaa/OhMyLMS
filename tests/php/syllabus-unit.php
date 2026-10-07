@@ -193,4 +193,14 @@ check($required[1]['target'] === 'proficient' && $required[1]['required'] === tr
 check($required[3]['target'] === 'mastered' && $required[3]['required'] === true, 'an unknown target is ignored');
 check(SyllabusCourse::plan_requirements($next, []) === $next && SyllabusCourse::plan_requirements($next, [['term_id' => 1, 'required' => false]])[1]['required'] === false, 'no change changes nothing, and a skill can be made optional again');
 
+$categorized = SyllabusRows::normalize([['group' => 'Core', 'skill' => 'Natural numbers', 'skill_code' => 'C1.1', 'category' => 'Core']]);
+$category_plan = SyllabusPlan::build(['root' => 1], $categorized['rows']);
+$category_skills = array_values(array_filter($category_plan['ops'], static function ($op) { return $op['op'] === 'skill'; }));
+check($category_skills[0]['category'] === 'Core', 'skill category survives cleaning and import planning');
+$category_existing = ['root' => 1, 'groups' => [['id' => 2, 'item_id' => 1, 'name' => 'Core', 'code' => '', 'skills' => [['term_id' => 3, 'name' => 'Natural numbers', 'code' => 'C1.1', 'description' => '', 'category' => 'Core']]]]];
+check(SyllabusPlan::build($category_existing, $categorized['rows'])['ops'] === [], 'reimporting the same skill category changes nothing');
+$categorized['rows'][0]['category'] = 'Advanced';
+$category_change = SyllabusPlan::build($category_existing, $categorized['rows']);
+check($category_change['ops'][0]['fields']['category'] === 'Advanced', 'category can change without moving or duplicating a skill');
+check(count(SyllabusRows::normalize([['skill' => 'Skill', 'category' => str_repeat('x', 61)]])['errors']) === 1, 'overlong categories fail import validation');
 echo "syllabus unit checks passed: $checks\n";

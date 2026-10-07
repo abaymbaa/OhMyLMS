@@ -29,6 +29,8 @@ import {
 } from './workspace.mjs';
 import { useCourseCatalog } from './useCourseCatalog';
 import { useSyllabusWorkspace } from './useSyllabusWorkspace';
+import { SyllabusSettings } from './SyllabusSettings';
+import { hashQuery } from '../content-hub/hubRoutes.mjs';
 
 function countsLine(totals) {
   const { contents, groups, skills } = totalsParts(totals);
@@ -47,6 +49,15 @@ function countsLine(totals) {
  */
 export function SyllabusWorkspace({ syllabusId }) {
   const ws = useSyllabusWorkspace(syllabusId);
+  const [settingsOpen, setSettingsOpen] = useState(
+    () => hashQuery(window.location.hash).get('view') === 'settings',
+  );
+  useEffect(() => {
+    const update = () =>
+      setSettingsOpen(hashQuery(window.location.hash).get('view') === 'settings');
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
   const { outline, tree } = ws;
   const course = outline?.course ?? null;
   const courseCatalog = useCourseCatalog(course?.id || 0, ws.revision);
@@ -62,7 +73,7 @@ export function SyllabusWorkspace({ syllabusId }) {
   useEffect(() => {
     if (!tree.root || started.current) return;
     started.current = true;
-    setSelected(defaultKey(tree));
+    setSelected(resolveKey(tree, hashQuery(window.location.hash).get('node') || defaultKey(tree)));
   }, [tree]);
 
   const active = tree.root ? resolveKey(tree, selected, remembered.current) : '';
@@ -84,7 +95,14 @@ export function SyllabusWorkspace({ syllabusId }) {
       setOpen((previous) => (previous.has(active) ? previous : new Set([...previous, active])));
   }, [active]);
 
-  const select = useCallback((key) => setSelected(key), []);
+  const select = useCallback(
+    (key) => {
+      setSelected(key);
+      if (hashQuery(window.location.hash).get('view') === 'settings')
+        window.location.hash = `/content-hub/curriculum/syllabus/${syllabusId}`;
+    },
+    [syllabusId],
+  );
   const toggle = useCallback(
     (key) =>
       setOpen((previous) => {
@@ -135,9 +153,17 @@ export function SyllabusWorkspace({ syllabusId }) {
     selected: active,
     select,
     pending: ws.pending,
+    notice: ws.notice,
     actions,
     course,
     courseCatalog,
+    saveSettings: (data) =>
+      ws.run(
+        () => api.saveSyllabusSettings(syllabusId, data),
+        __('Syllabus settings saved.', 'ohmylms'),
+      ),
+    publishSyllabus: () =>
+      ws.run(() => api.publishSyllabus(syllabusId), __('Syllabus published.', 'ohmylms')),
     updateCourse: () =>
       ws.run(
         () => api.ensureCourse(syllabusId),
@@ -157,10 +183,24 @@ export function SyllabusWorkspace({ syllabusId }) {
             <p>
               {__('Syllabus', 'ohmylms')} · {countsLine(outline.totals)}
               {course &&
-                ` · ${course.status === 'publish' ? __('Course published', 'ohmylms') : __('Course draft', 'ohmylms')}`}
+                ` · ${course.status === 'publish' ? __('Syllabus published', 'ohmylms') : __('Syllabus draft', 'ohmylms')}`}
             </p>
           </div>
           <div className="ohmylms-ws-header-actions">
+            <Button
+              variant={settingsOpen ? 'secondary' : 'primary'}
+              href={`#/content-hub/curriculum/syllabus/${syllabusId}`}
+              aria-current={!settingsOpen ? 'page' : undefined}
+            >
+              {__('Skills', 'ohmylms')}
+            </Button>
+            <Button
+              variant={settingsOpen ? 'primary' : 'secondary'}
+              href={`#/content-hub/curriculum/syllabus/${syllabusId}?view=settings`}
+              aria-current={settingsOpen ? 'page' : undefined}
+            >
+              {__('Syllabus Settings', 'ohmylms')}
+            </Button>
             <Button variant="secondary" disabled={ws.pending} onClick={() => setImporting(true)}>
               {__('Import CSV', 'ohmylms')}
             </Button>
@@ -177,7 +217,7 @@ export function SyllabusWorkspace({ syllabusId }) {
                   onClick: () => download(templateCsv(), fileName(name, 'template')),
                 },
                 {
-                  title: __('Update course from syllabus', 'ohmylms'),
+                  title: __('Refresh skill collection', 'ohmylms'),
                   isDisabled: ws.pending,
                   onClick: value.updateCourse,
                 },
@@ -218,9 +258,15 @@ export function SyllabusWorkspace({ syllabusId }) {
                 </Notice>
               )}
             </div>
-            {node.kind === 'content' && <TopicPane key={node.key} node={node} />}
-            {node.kind === 'group' && <ChapterPane key={node.key} node={node} />}
-            {node.kind === 'skill' && <SkillPane key={node.key} node={node} />}
+            {settingsOpen ? (
+              <SyllabusSettings />
+            ) : (
+              <>
+                {node.kind === 'content' && <TopicPane key={node.key} node={node} />}
+                {node.kind === 'group' && <ChapterPane key={node.key} node={node} />}
+                {node.kind === 'skill' && <SkillPane key={node.key} node={node} />}
+              </>
+            )}
           </main>
         </div>
         {importing && (

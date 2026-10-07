@@ -143,6 +143,7 @@ test('rows carry the mapped columns, the sheet row number and empty strings for 
     content: '',
     group: '',
     description: '',
+    category: '',
   });
   assert.equal(rows[1].line, 3);
   assert.equal(
@@ -218,10 +219,12 @@ test('the template parses back to the layout the importer reads', () => {
     'skill_code',
     'skill',
     'description',
+    'category',
   ]);
   const rows = buildRows(parsed.records, guessRoles(parsed.records[0]));
   assert.equal(rows.length, 4);
   assert.equal(rows[0].group_code, 'C1.1');
+  assert.equal(rows[0].category, 'Core');
 });
 
 const outline = {
@@ -261,6 +264,7 @@ const outline = {
               code: 'C1.1.1',
               name: 'Identify "natural" numbers',
               description: 'e.g. six, billion\nand more',
+              category: 'Advanced',
             },
             { term_id: 101, code: '', name: 'Use a > 0 and D < 0', description: '' },
           ],
@@ -283,6 +287,7 @@ test('an export writes content paths, codes and notes, and importing it reads th
     'skill_code',
     'skill',
     'description',
+    'category',
   ]);
   const rows = buildRows(parsed.records, guessRoles(parsed.records[0]), { fillDown: false });
   const skill = rows.find((row) => row.skill_code === 'C1.1.1');
@@ -290,6 +295,7 @@ test('an export writes content paths, codes and notes, and importing it reads th
   assert.equal(skill.content_code, 'N');
   assert.equal(skill.skill, 'Identify "natural" numbers');
   assert.equal(skill.description, 'e.g. six, billion\nand more');
+  assert.equal(skill.category, 'Advanced');
   assert.equal(rows.find((row) => row.skill === 'Use a > 0 and D < 0').group, 'Types of number');
   assert.ok(
     rows.some((row) => row.group_code === 'C1.2' && row.skill === ''),

@@ -1,6 +1,7 @@
 import { createElement, Fragment, useEffect } from '@wordpress/element';
 import { useCourseEditor } from './useCourseEditor';
 import { useCourseIntegrations } from './useCourseIntegrations';
+import { courseEditPath } from './model.mjs';
 
 /** Course orchestration with the existing controls, routes and data store. */
 export function createCourseEditor(readRuntime) {
@@ -32,6 +33,13 @@ export function createCourseEditor(readRuntime) {
     });
     const { contextHolder, openNotificationWithIcon } = r.z.A();
     const course = editor.course;
+    const syllabusContent = !editor.loading && course?.syllabus_id > 0;
+    useEffect(() => {
+      if (syllabusContent)
+        navigate(`${courseEditPath(course)}${step === 'content' ? '' : '?view=settings'}`, {
+          replace: true,
+        });
+    }, [syllabusContent, course?.id, course?.syllabus_id, step, navigate]);
     useEffect(() => {
       const previous = document.body.style.background;
       document.body.style.background = '#FFFFFF';
@@ -86,7 +94,7 @@ export function createCourseEditor(readRuntime) {
             className="ohmylms-course-builder-content"
             aria-busy={editor.loading || editor.saving}
           >
-            {editor.loading ? (
+            {editor.loading || syllabusContent ? (
               <Controls.SkeletonWP active rows={10} />
             ) : course ? (
               <Fragment>

@@ -2,6 +2,7 @@ import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner, TextControl } from '@wordpress/components';
 import { createContent } from '../content-hub/api.mjs';
+import { withEditorReturn } from '../content-hub/editorNavigation.mjs';
 import * as api from './api.mjs';
 import { editPath } from './workspace.mjs';
 import { KindIcon, Tag } from './WorkspaceParts';
@@ -126,7 +127,7 @@ function LessonPicker({ skill, tagged, onChoose, onClose }) {
  * both follow the skill into every syllabus and course that uses it. Games (soon) will add a section here
  * through the `syllabus.skill.resources` slot.
  */
-export function SkillResources({ skill, syllabus }) {
+export function SkillResources({ skill, syllabus, returnTo }) {
   const [lessons, setLessons] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [error, setError] = useState('');
@@ -220,7 +221,9 @@ export function SkillResources({ skill, syllabus }) {
             {lessons.rows.map((row) => (
               <li key={row.id}>
                 <KindIcon kind="lesson" />
-                <a href={`#${editPath('lesson', row.id)}`}>{row.title}</a>
+                <a href={`#${withEditorReturn(editPath('lesson', row.id), returnTo)}`}>
+                  {row.title}
+                </a>
                 <Button
                   variant="link"
                   isDestructive

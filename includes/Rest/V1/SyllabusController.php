@@ -6,6 +6,7 @@ use OhMyLMS\Curriculum\Access;
 use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Syllabus;
 use OhMyLMS\Curriculum\SyllabusCourse;
+use OhMyLMS\Curriculum\SyllabusSettings;
 use WP_REST_Request;
 use WP_REST_Server;
 
@@ -25,6 +26,12 @@ class SyllabusController extends RestController {
         ]);
         register_rest_route($this->namespace, $base . '/import', [
             ['methods' => WP_REST_Server::CREATABLE, 'callback' => [$this, 'import'], 'permission_callback' => $admin],
+        ]);
+        register_rest_route($this->namespace, $base . '/settings', [
+            ['methods' => 'PUT,PATCH', 'callback' => [$this, 'settings'], 'permission_callback' => $admin],
+        ]);
+        register_rest_route($this->namespace, $base . '/publish', [
+            ['methods' => WP_REST_Server::CREATABLE, 'callback' => [$this, 'publish'], 'permission_callback' => $admin],
         ]);
         register_rest_route($this->namespace, $base . '/course', [
             ['methods' => WP_REST_Server::CREATABLE, 'callback' => [$this, 'course'], 'permission_callback' => $admin],
@@ -65,14 +72,24 @@ class SyllabusController extends RestController {
         $synced = SyllabusCourse::sync_quietly($syllabus_id);
         $outline = Syllabus::outline($syllabus_id);
         if (is_wp_error($outline)) { return $outline; }
-        $extra += ['course' => SyllabusCourse::summary($syllabus_id)];
+        $extra += ['course' => SyllabusCourse::summary($syllabus_id), 'settings' => SyllabusSettings::get($syllabus_id)];
         if (is_wp_error($synced)) { $extra['course_error'] = $synced->get_error_message(); }
         return rest_ensure_response($extra + SyllabusCourse::decorate($outline, $syllabus_id) + ['items' => Items::tree()]);
     }
 
     public function show(WP_REST_Request $request) {
         $outline = Syllabus::outline((int) $request['id']);
-        return is_wp_error($outline) ? $outline : rest_ensure_response(SyllabusCourse::decorate($outline, (int) $request['id']) + ['course' => SyllabusCourse::summary((int) $request['id'])]);
+        return is_wp_error($outline) ? $outline : rest_ensure_response(SyllabusCourse::decorate($outline, (int) $request['id']) + ['course' => SyllabusCourse::summary((int) $request['id']), 'settings' => SyllabusSettings::get((int) $request['id'])]);
+    }
+
+    public function settings(WP_REST_Request $request) {
+        $result = SyllabusSettings::save((int) $request['id'], (array) $request->get_json_params());
+        return is_wp_error($result) ? $result : $this->outline((int) $request['id']);
+    }
+
+    public function publish(WP_REST_Request $request) {
+        $result = SyllabusSettings::publish((int) $request['id']);
+        return is_wp_error($result) ? $result : $this->outline((int) $request['id']);
     }
 
     /** Give the syllabus its course if it has none, and make the course match the syllabus. */

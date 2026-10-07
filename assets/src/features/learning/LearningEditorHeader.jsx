@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { editorBackPath } from '../content-hub/editorNavigation.mjs';
 export function createLearningEditorHeader(readRuntime) {
   return function LearningEditorHeader(props) {
     const { I: Controls, Nr, React, f: Router } = readRuntime();
@@ -18,7 +19,7 @@ export function createLearningEditorHeader(readRuntime) {
             <Controls.FlexWP align={'center'} gap={2} justify={'flex-start'}>
               <Nr
                 onClick={function () {
-                  a(null != redirection ? redirection : '/');
+                  a(editorBackPath(window.location.hash, redirection ?? '/'));
                 }}
               />
               <Controls.HeadingWP level={4} title={title}>

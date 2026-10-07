@@ -85,6 +85,7 @@ final class SyllabusRows {
             $skill = self::line($row['skill'] ?? '');
             $skill_code = self::line($row['skill_code'] ?? '');
             $description = self::notes($row['description'] ?? '');
+            $category = self::line($row['category'] ?? '');
 
             // A code with no name is allowed for contents and groups (the code is then the name).
             if (!$path && $content_code !== '') { $path = [$content_code]; $content_code = ''; }
@@ -96,6 +97,7 @@ final class SyllabusRows {
                 continue;
             }
             $problems = [];
+            if (self::length($category) > 60) { $problems[] = __('A skill category can have at most 60 characters.', 'ohmylms'); }
             if ($skill === '' && $skill_code !== '') { $problems[] = sprintf(__('Skill code “%s” has no skill name.', 'ohmylms'), $skill_code); }
             if (count($path) > self::MAX_DEPTH) { $problems[] = sprintf(__('A content path can have at most %d levels.', 'ohmylms'), self::MAX_DEPTH); }
             foreach ($path as $name) {
@@ -124,6 +126,7 @@ final class SyllabusRows {
                 'skill' => $skill,
                 'skill_code' => $skill_code,
                 'description' => $description,
+                'category' => $category,
             ];
         }
         return ['rows' => $clean, 'errors' => $errors, 'warnings' => $warnings, 'skipped' => $skipped];

@@ -26,6 +26,7 @@ export function SaveField({
   placeholder = '',
   help = '',
   disabled = false,
+  suggestions = [],
 }) {
   const [draft, setDraft] = useState(value ?? '');
   const [problem, setProblem] = useState('');
@@ -74,6 +75,7 @@ export function SaveField({
         placeholder={placeholder}
         rows={multiline ? 3 : undefined}
         disabled={disabled}
+        list={!multiline && suggestions.length ? `${id}-suggestions` : undefined}
         aria-invalid={Boolean(note)}
         aria-describedby={note || help ? `${id}-note` : undefined}
         onFocus={() => {
@@ -91,6 +93,13 @@ export function SaveField({
           }
         }}
       />
+      {!multiline && suggestions.length > 0 && (
+        <datalist id={`${id}-suggestions`}>
+          {suggestions.map((text) => (
+            <option key={text} value={text} />
+          ))}
+        </datalist>
+      )}
       <span id={`${id}-note`} className={`ohmylms-ws-note${note ? ' is-error' : ''}`} role="status">
         {note ||
           (state === 'saving' && __('Saving…', 'ohmylms')) ||

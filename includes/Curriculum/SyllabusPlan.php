@@ -82,7 +82,7 @@ final class SyllabusPlan {
             $this->groups[$id] = ['id' => $id, 'item' => (int) $group['item_id'], 'name' => (string) $group['name'], 'code' => (string) ($group['code'] ?? '')];
             foreach ($group['skills'] ?? [] as $skill) {
                 $term = (int) $skill['term_id'];
-                $this->skills[$term] = ['id' => $term, 'group' => $id, 'name' => (string) $skill['name'], 'code' => (string) ($skill['code'] ?? ''), 'description' => (string) ($skill['description'] ?? ''), 'touched' => false];
+                $this->skills[$term] = ['id' => $term, 'group' => $id, 'name' => (string) $skill['name'], 'code' => (string) ($skill['code'] ?? ''), 'description' => (string) ($skill['description'] ?? ''), 'category' => (string) ($skill['category'] ?? ''), 'touched' => false];
                 $this->in_group[$id][] = $term;
                 if (($skill['code'] ?? '') !== '' && !isset($this->by_code[self::key($skill['code'])])) { $this->by_code[self::key($skill['code'])] = $term; }
             }
@@ -162,13 +162,14 @@ final class SyllabusPlan {
         $name = $row['skill'];
         $code = $row['skill_code'];
         $description = $row['description'];
+        $category = $row['category'] ?? '';
         $found = $this->find_skill($group, $name, $code);
         if ($found === null) {
             $ref = $this->ref('s');
-            $this->skills[$ref] = ['id' => $ref, 'group' => $group, 'name' => $name, 'code' => $code, 'description' => $description, 'touched' => true];
+            $this->skills[$ref] = ['id' => $ref, 'group' => $group, 'name' => $name, 'code' => $code, 'description' => $description, 'category' => $category, 'touched' => true];
             $this->in_group[$group][] = $ref;
             if ($code !== '') { $this->by_code[self::key($code)] = $ref; }
-            $this->push(['op' => 'skill', 'ref' => $ref, 'group' => $group, 'name' => $name, 'code' => $code, 'description' => $description]);
+            $this->push(['op' => 'skill', 'ref' => $ref, 'group' => $group, 'name' => $name, 'code' => $code, 'description' => $description, 'category' => $category]);
             $this->created['skill']++;
             return;
         }
@@ -194,6 +195,7 @@ final class SyllabusPlan {
         if ($name !== $skill['name']) { $fields['name'] = $name; }
         if ($code !== '' && $code !== $skill['code']) { $fields['code'] = $code; if (isset($this->by_code[self::key($code)]) === false) { $this->by_code[self::key($code)] = $found; } }
         if ($description !== '' && $description !== $skill['description']) { $fields['description'] = $description; }
+        if ($category !== '' && $category !== ($skill['category'] ?? '')) { $fields['category'] = $category; }
         $this->set('skill', $found, $fields);
     }
 

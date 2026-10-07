@@ -166,12 +166,20 @@ final class CourseProgram {
         }));
     }
 
-    public static function readiness(array $program) {
-        $errors = []; $rules = Mastery::rules();
+    public static function completion_readiness(array $program, $syllabus = false) {
+        $errors = [];
         $required = array_filter($program['items'], static function ($item) { return !empty($item['required']); });
         $required_outcomes = array_filter($program['outcomes'], static function ($outcome) { return !empty($outcome['required']); });
-        if (!$required && !$required_outcomes) { $errors[] = __('Select at least one completion requirement.', 'ohmylms'); }
-        if ($program['mode'] !== 'traditional' && !$required_outcomes) { $errors[] = __('Skill-based and blended courses need a required skill outcome.', 'ohmylms'); }
+        if ($syllabus && !$program['outcomes']) { $errors[] = __('Add at least one skill before publishing the syllabus.', 'ohmylms'); }
+        if (!$syllabus && !$required && !$required_outcomes) { $errors[] = __('Select at least one completion requirement.', 'ohmylms'); }
+        if (!$syllabus && $program['mode'] !== 'traditional' && !$required_outcomes) { $errors[] = __('Skill-based and blended courses need a required skill outcome.', 'ohmylms'); }
+        return $errors;
+    }
+
+    public static function readiness(array $program, $course_id = 0) {
+        $syllabus = $course_id > 0 && \OhMyLMS\Curriculum\SyllabusCourse::owner($course_id) > 0;
+        $errors = self::completion_readiness($program, $syllabus); $rules = Mastery::rules();
+        $required_outcomes = $syllabus ? [] : array_filter($program['outcomes'], static function ($outcome) { return !empty($outcome['required']); });
         foreach ($program['items'] as $item) {
             if ($item['type'] !== 'practice' && get_post_status($item['content_id']) !== 'publish') { $errors[] = sprintf(__('Publish the learning resource %s first.', 'ohmylms'), get_the_title($item['content_id'])); }
         }
@@ -194,7 +202,7 @@ final class CourseProgram {
         $program = self::normalize($course_id, $data);
         if (is_wp_error($program)) { return $program; }
         $program['author_id'] = get_current_user_id();
-        $errors = self::readiness($program);
+        $errors = self::readiness($program, $course_id);
         if ($publish && $errors) { return new \WP_Error('ohmylms_learning_not_ready', __('The learning program is not ready to publish.', 'ohmylms'), ['status' => 409, 'errors' => $errors]); }
         if (!$publish) { update_post_meta($course_id, self::DRAFT, $program); return self::editor($course_id) + ['readiness' => $errors]; }
         $key = 'ohmylms_program_' . (int) $course_id;

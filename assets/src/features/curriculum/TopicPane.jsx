@@ -1,7 +1,7 @@
 import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { AddContentMenu } from './AddContentMenu';
-import { CoursePanel } from './CoursePanel';
+import { SyllabusOverview } from './SyllabusOverview';
 import { useWorkspace } from './context';
 import { siblingInfo } from './model.mjs';
 import { groupLabel } from './syllabus.mjs';
@@ -167,12 +167,7 @@ export function TopicPane({ node }) {
       </header>
 
       {root && w.course && (
-        <CoursePanel
-          course={w.course}
-          courseCatalog={w.courseCatalog}
-          pending={w.pending}
-          onUpdate={w.updateCourse}
-        />
+        <SyllabusOverview />
       )}
 
       <section className="ohmylms-ws-content" aria-label={__('Content', 'ohmylms')}>

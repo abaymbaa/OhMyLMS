@@ -3,6 +3,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { AttachDialog } from '../content-hub/AttachDialog';
 import { AttachmentItem } from '../content-hub/AttachmentItem';
+import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { attachmentsFor } from '../content-hub/catalogModel.mjs';
 import { AddContentMenu } from './AddContentMenu';
 import { useWorkspace } from './context';
@@ -43,7 +44,7 @@ export function ChapterPane({ node }) {
     ready ? attachmentsFor(catalog.attachments, { skillId: skill.term_id }).length : 0;
   // What the course requires of each skill (the syllabus decides the chapters and skills; the course, this).
   const entries = new Map((catalog?.skills || []).map((entry) => [entry.term_id, entry]));
-  const requiredCount = skills.filter((child) => entries.get(child.id)?.required).length;
+
   const openAttach = () => setAttaching(true);
   const noCourse = !ready;
 
@@ -149,44 +150,6 @@ export function ChapterPane({ node }) {
         <div className="ohmylms-ws-content-head">
           <h3>{__('Skills', 'ohmylms')}</h3>
           <div className="ohmylms-ws-content-tools">
-            {catalog && skills.length > 0 && (
-              <>
-                <span className="ohmylms-ws-counts">
-                  {sprintf(
-                    __('%1$d of %2$d required for the course', 'ohmylms'),
-                    requiredCount,
-                    skills.length,
-                  )}
-                </span>
-                <RowMenu
-                  icon="yes-alt"
-                  label={__('Skills the course requires in this chapter', 'ohmylms')}
-                  disabled={w.pending}
-                  controls={[
-                    {
-                      title: __('Require every skill in this chapter', 'ohmylms'),
-                      isDisabled: requiredCount === skills.length,
-                      onClick: () =>
-                        w.actions.setRequirements(
-                          skills.map((child) => child.id),
-                          { required: true },
-                          __('Every skill in this chapter is required for the course.', 'ohmylms'),
-                        ),
-                    },
-                    {
-                      title: __('Make every skill in this chapter optional', 'ohmylms'),
-                      isDisabled: requiredCount === 0,
-                      onClick: () =>
-                        w.actions.setRequirements(
-                          skills.map((child) => child.id),
-                          { required: false },
-                          __('No skill in this chapter is required for the course.', 'ohmylms'),
-                        ),
-                    },
-                  ]}
-                />
-              </>
-            )}
             <AddContentMenu
               label={__('Add to this chapter', 'ohmylms')}
               disabled={w.pending}
@@ -253,9 +216,12 @@ export function ChapterPane({ node }) {
                   tag={child.skill.code || undefined}
                   tagTone="code"
                   status={
-                    entries.get(child.id)?.required ? (
-                      <Tag tone="ok">{__('Required', 'ohmylms')}</Tag>
-                    ) : undefined
+                    <>
+                      {child.skill.category && <Tag>{child.skill.category}</Tag>}
+                      {entries.get(child.id)?.required && (
+                        <Tag tone="ok">{__('Required', 'ohmylms')}</Tag>
+                      )}
+                    </>
                   }
                   meta={
                     owned
@@ -319,6 +285,7 @@ export function ChapterPane({ node }) {
               <AttachmentItem
                 key={item.id}
                 item={item}
+                returnTo={syllabusReturnPath(w.syllabusId, node.key)}
                 skills={catalog.skills}
                 actions={{
                   updateAttachment: courseCatalog.updateAttachment,

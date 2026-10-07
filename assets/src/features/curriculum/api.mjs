@@ -50,6 +50,16 @@ export const searchTargets = (type, search, fetch = request) =>
 /** A syllabus's skill groups and skills. Every write answers with the syllabus's fresh outline and the item tree. */
 const syllabus = (id) => `${base}/curriculum/items/${id}/syllabus`;
 export const loadSyllabus = (id, fetch = request) => fetch({ path: syllabus(id) });
+export const saveSyllabusSettings = (id, data, fetch = request) =>
+  fetch({ path: `${syllabus(id)}/settings`, method: 'PUT', data });
+export async function publishSyllabus(id, fetch = request) {
+  try {
+    return await fetch({ path: `${syllabus(id)}/publish`, method: 'POST' });
+  } catch (cause) {
+    if (Array.isArray(cause?.data?.errors)) cause.message = cause.data.errors.join(' ');
+    throw cause;
+  }
+}
 export const addGroup = (id, data, fetch = request) =>
   fetch({ path: `${syllabus(id)}/groups`, method: 'POST', data });
 export const updateGroup = (id, group, data, fetch = request) =>
