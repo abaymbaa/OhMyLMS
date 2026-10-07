@@ -69,6 +69,12 @@ export const HUB_MENU_ROUTES = [
   '/assignment-report/:id/grade-assignment/:assignmentId',
 ];
 
+/**
+ * The syllabus workspace, a full-page editor opened from the Curriculum tab (a syllabus is also a course).
+ * It has no hub tabs of its own, like the course editor, and keeps the Content Hub menu entry highlighted.
+ */
+export const SYLLABUS_ROUTE = '/content-hub/curriculum/syllabus/:id';
+
 export const catalogPath = (courseId) =>
   courseId ? `${HUB_PATH}/catalog/${Number(courseId)}` : HUB_PATH;
 

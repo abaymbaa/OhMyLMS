@@ -192,9 +192,10 @@ try {
     // ---- Links: shared across modules, many-to-many, references only ----
     foreach ([['course', $igcse_english], ['skill', $skill_a], ['bank', (int) $bank['id']], ['quiz', $exam]] as [$type, $id]) {
         $response = api('POST', "curriculum/items/$syllabus/links", ['object_type' => $type, 'object_id' => $id]);
-        ok($response->get_status() === 200 && count($response->get_data()['links'][$type]) === 1, "Link of type $type failed: " . wp_json_encode($response->get_data()));
+        // A syllabus is also a course, so this item is already linked to its own course.
+        ok($response->get_status() === 200 && count($response->get_data()['links'][$type]) === ($type === 'course' ? 2 : 1), "Link of type $type failed: " . wp_json_encode($response->get_data()));
     }
-    ok(api('POST', "curriculum/items/$syllabus/links", ['object_type' => 'course', 'object_id' => $igcse_english])->get_status() === 200 && count(Links::for_item($syllabus)['course']) === 1, 'Duplicate links should be idempotent');
+    ok(api('POST', "curriculum/items/$syllabus/links", ['object_type' => 'course', 'object_id' => $igcse_english])->get_status() === 200 && count(Links::for_item($syllabus)['course']) === 2, 'Duplicate links should be idempotent');
     api('POST', "curriculum/items/$words/links", ['object_type' => 'course', 'object_id' => $igcse_english]);
     ok(count(Links::memberships('course', $igcse_english)) === 2, 'One course should be linkable under several curriculum items');
     ok(api('POST', "curriculum/items/$syllabus/links", ['object_type' => 'lesson', 'object_id' => 1])->get_status() === 400, 'Unknown link type accepted');
@@ -202,7 +203,8 @@ try {
     ok(api('POST', "curriculum/items/$syllabus/links", ['object_type' => 'skill', 'object_id' => 999999])->get_status() === 404, 'A missing skill was accepted');
     ok(api('POST', 'curriculum/items/999999/links', ['object_type' => 'course', 'object_id' => $igcse_english])->get_status() === 404, 'A link on a missing item was accepted');
     $shown = api('GET', "curriculum/items/$syllabus")->get_data();
-    ok($shown['links']['course'][0]['title'] === get_the_title($igcse_english) && $shown['links']['bank'][0]['title'] === 'Curriculum bank ' . $tag && $shown['links']['skill'][0]['available'] === true, 'Linked content titles missing');
+    $english_link = current(array_filter($shown['links']['course'], static function ($entry) use ($igcse_english) { return $entry['id'] === $igcse_english; }));
+    ok($english_link['title'] === get_the_title($igcse_english) && $shown['links']['bank'][0]['title'] === 'Curriculum bank ' . $tag && $shown['links']['skill'][0]['available'] === true, 'Linked content titles missing');
     ok(get_post_status($igcse_english) === 'publish' && !metadata_exists('post', $igcse_english, '_ohmylms_learning_program'), 'Linking changed the course');
     $targets = api('GET', 'curriculum/link-targets', [], ['type' => 'course', 'search' => 'English'])->get_data();
     ok(count(array_filter($targets, static function ($row) use ($other_english) { return $row['id'] === $other_english; })) === 1, 'Link search missed a course');
@@ -292,7 +294,7 @@ try {
     ok($edited->get_status() === 200 && $edited->get_data()['track']['description'] === 'Edited description', 'Track edit failed');
     $second_track = (int) api('POST', 'tracks', ['title' => 'Second track ' . $tag])->get_data()['track']['id']; $track_ids[] = $second_track;
     ok(api('PUT', "tracks/$second_track/items", ['items' => [['type' => 'course', 'id' => $igcse_english], ['type' => 'curriculum', 'id' => $syllabus]]])->get_status() === 200 && Tracks::members($english) !== [] && count(Tracks::members($english)) === 3, 'A course or syllabus could not appear in more than one track');
-    ok(get_post_status($igcse_english) === 'publish' && count(Links::for_item($syllabus)['course']) === 1, 'Track membership duplicated or changed content');
+    ok(get_post_status($igcse_english) === 'publish' && count(Links::for_item($syllabus)['course']) === 2, 'Track membership duplicated or changed content');
     ok(api('POST', "tracks/$english/publish")->get_data()['track']['status'] === 'published' && Tracks::get($english)['published_at'] !== null, 'Publishing failed');
     ok(api('PUT', "tracks/$english/items", ['items' => []])->get_status() === 409, 'A published track was emptied');
     $listed = array_column(api('GET', 'tracks')->get_data()['tracks'], null, 'id');
@@ -559,6 +561,14 @@ try {
 } finally {
     wp_set_current_user($admin);
     foreach ($track_ids as $id) { if (Tracks::get($id)) { Tracks::delete($id, true); } }
+    // A syllabus is also a course: remove the courses (and chapters) that syllabus items were given.
+    foreach ($item_ids as $id) {
+        $made = Items::get($id)['course_id'] ?? 0;
+        if ($made && get_post_type((int) $made) === OHMYLMS_COURSE_CPT) {
+            foreach (\OhMyLMS\Learning\Catalog::chapters((int) $made) as $chapter) { wp_delete_post($chapter['id'], true); }
+            wp_delete_post((int) $made, true);
+        }
+    }
     foreach (array_reverse($item_ids) as $id) { if (Items::get($id)) { Items::delete($id, 'delete', true); } }
     foreach (SkillMappings::all() as $mapping) { if (in_array((int) $mapping['specific_term_id'], $terms, true) || in_array((int) $mapping['shared_term_id'], $terms, true)) { SkillMappings::remove((int) $mapping['specific_term_id'], (int) $mapping['shared_term_id']); } }
     foreach ($users as $user_id) {

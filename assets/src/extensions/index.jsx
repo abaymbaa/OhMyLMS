@@ -42,6 +42,7 @@ import {
   HUB_APP_ROUTES,
   HUB_EXTENSION_TABS,
   HUB_MENU_ROUTES,
+  SYLLABUS_ROUTE,
 } from '../features/content-hub/hubRoutes.mjs';
 import { registerGamificationTab } from '../features/gamification/extraTabs.mjs';
 import {
@@ -155,6 +156,13 @@ const publicApi = {
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
       ...contentHubRoutes(hubScreens, hubPages, contentHubScreen),
+      // The syllabus editor is a full page opened from the Curriculum tab, like the course editor.
+      {
+        path: SYLLABUS_ROUTE,
+        element: withContentHubMenu(
+          extensionPage({ id: 'syllabus', render: curriculumComponents.SyllabusPage }),
+        ),
+      },
       ...membershipRoutes(
         routes.map((route) => ({
           ...route,

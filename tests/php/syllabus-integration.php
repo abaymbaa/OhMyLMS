@@ -17,11 +17,14 @@ use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Links;
 use OhMyLMS\Curriculum\Schema;
 use OhMyLMS\Curriculum\Syllabus;
+use OhMyLMS\Curriculum\SyllabusCourse;
+use OhMyLMS\Learning\Catalog;
+use OhMyLMS\Learning\CourseProgram;
 use OhMyLMS\Learning\Schema as LearningSchema;
 use OhMyLMS\Skills\Taxonomy;
 use OhMyLMS\Tracks\Progress;
 
-$checks = 0; $users = []; $item_ids = []; $stray_terms = [];
+$checks = 0; $users = []; $item_ids = []; $stray_terms = []; $course_ids = []; $posts = [];
 $admin = get_user_by('login', $config['username'])->ID;
 $tag = wp_generate_password(5, false, false);
 function ok($condition, $message) { global $checks; if (!$condition) { throw new RuntimeException($message); } $checks++; }
@@ -55,7 +58,7 @@ try {
     Schema::install(); ok(Schema::ready(), 'Curriculum tables unavailable');
     AssessmentSchema::install(); LearningSchema::install();
     foreach (array_keys(Schema::definitions()) as $name) { ok($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', Schema::table($name))) === Schema::table($name), "Table $name missing"); }
-    foreach (['is_syllabus', 'skill_root_id'] as $column) { ok((bool) $wpdb->get_var($wpdb->prepare('SHOW COLUMNS FROM ' . Items::table() . ' LIKE %s', $column)), "Column $column missing"); }
+    foreach (['is_syllabus', 'skill_root_id', 'course_id'] as $column) { ok((bool) $wpdb->get_var($wpdb->prepare('SHOW COLUMNS FROM ' . Items::table() . ' LIKE %s', $column)), "Column $column missing"); }
     $start = snapshot_counts();
 
     // ---- Any item can become a syllabus ----
@@ -246,16 +249,122 @@ try {
     ok((int) Items::get($other)['skill_root_id'] === 0, 'deleting the root skill forgets it');
     ok(api('POST', "curriculum/items/$other/syllabus/groups/$og/skills", ['name' => 'Again', 'code' => 'A1'])->get_status() === 201 && outline($other)['root_skill'] > 0, 'a new root skill is created when needed');
 
+    // ---- A syllabus is also a course: skill groups are its chapters, skills are its outcomes ----
+    $learn = item('Course syllabus ' . $tag, $igcse, 'subject');
+    ok((int) $row($learn)['course_id'] === 0, 'an item that is not a syllabus has no course');
+    api('PUT', "curriculum/items/$learn", ['is_syllabus' => true]);
+    $course = (int) $row($learn)['course_id']; $course_ids[] = $course;
+    ok($course > 0 && get_post_type($course) === OHMYLMS_COURSE_CPT && get_post_status($course) === 'draft', 'making an item a syllabus gives it a draft course');
+    ok(get_the_title($course) === 'Course syllabus ' . $tag && SyllabusCourse::owner($course) === $learn && SyllabusCourse::course_id($learn) === $course, 'the course is named after the syllabus and knows it');
+    ok(in_array($course, array_column(Links::for_item($learn)['course'], 'id'), true), 'the course is placed under its syllabus in the curriculum');
+    ok(Catalog::chapters($course) === [] && CourseProgram::editor($course)['draft']['mode'] === 'skill-based', 'a syllabus course starts with no chapters, in skill-based mode');
+    ok(outline($learn)['course']['id'] === $course, 'the outline reports the course');
+    $again = api('POST', "curriculum/items/$learn/syllabus/course");
+    ok($again->get_status() === 200 && $again->get_data()['course']['id'] === $course && count(get_posts(['post_type' => OHMYLMS_COURSE_CPT, 'post_status' => 'any', 'numberposts' => -1, 'meta_key' => SyllabusCourse::ITEM_META, 'meta_value' => $learn, 'fields' => 'ids'])) === 1, 'asking for the course again keeps the one it has');
+    $typed_course = item('Typed course syllabus ' . $tag, $igcse, 'syllabus');
+    ok((int) $row($typed_course)['course_id'] > 0, 'an item typed "syllabus" gets its course as it is created');
+
+    $unit = item('1 Number', $learn, 'topic');
+    $group = static function ($name, $code, $item) use ($learn) { return (int) api('POST', "curriculum/items/$learn/syllabus/groups", ['name' => $name, 'code' => $code, 'item_id' => $item])->get_data()['group_id']; };
+    $skill = static function ($group_id, $name, $code) use ($learn) { $made = api('POST', "curriculum/items/$learn/syllabus/groups/$group_id/skills", ['name' => $name, 'code' => $code]); ok($made->get_status() === 201, 'skill add failed: ' . wp_json_encode($made->get_data())); return (int) $made->get_data()['skill']['term_id']; };
+    $ga = $group('Types of number', 'C1.1', $unit); $gb = $group('Sets', 'C1.2', $unit);
+    $prime = $skill($ga, 'Identify prime numbers', 'C1.1.1'); $square = $skill($ga, 'Identify square numbers', 'C1.1.2'); $notation = $skill($gb, 'Use set notation', 'C1.2.1');
+    $catalog = static function () use ($course) { return Catalog::payload($course); };
+    $chapter_named = static function ($title) use ($catalog) { foreach ($catalog()['chapters'] as $chapter) { if ($chapter['name'] === $title) { return (int) $chapter['id']; } } return 0; };
+    $codes_in = static function ($chapter_id) use ($catalog) { return array_column(array_filter($catalog()['skills'], static function ($entry) use ($chapter_id) { return $entry['chapter_id'] === $chapter_id; }), 'code'); };
+    ok(array_column($catalog()['chapters'], 'name') === ['C1.1 · Types of number', 'C1.2 · Sets'], 'every skill group is a chapter of the course, in group order');
+    $chapter_a = $chapter_named('C1.1 · Types of number'); $chapter_b = $chapter_named('C1.2 · Sets');
+    ok($codes_in($chapter_a) === ['C1.1.1', 'C1.1.2'] && $codes_in($chapter_b) === ['C1.2.1'], 'every skill is an outcome in its group\'s chapter, in order');
+    $first = $catalog()['skills'][0];
+    ok($first['target'] === 'proficient' && $first['required'] === false, 'a mirrored skill starts at Proficient and not required');
+    ok(get_post_meta($chapter_a, SyllabusCourse::GROUP_META, true) === group_in(outline($learn), 'C1.1')['uuid'], 'a mirrored chapter carries its group\'s uuid');
+    ok(group_in(outline($learn), 'C1.1')['chapter_id'] === $chapter_a && group_in(outline($learn), 'C1.2')['chapter_id'] === $chapter_b, 'the outline tells each group which chapter it became');
+
+    // What the catalog adds by hand survives every change to the syllabus.
+    $lesson = wp_insert_post(['post_type' => OHMYLMS_LESSON_CPT, 'post_title' => 'Primes lesson ' . $tag, 'post_status' => 'publish']); $posts[] = $lesson;
+    $hand_skill = wp_insert_term('Library skill ' . $tag . ' by hand', Taxonomy::NAME); $hand_term = (int) $hand_skill['term_id'];
+    $hand_chapter = Catalog::add_chapter($course, 'Revision')['id'];
+    $outcomes = array_map(static function ($entry) { return ['term_id' => $entry['term_id'], 'target' => $entry['target'], 'required' => $entry['required'], 'chapter_id' => $entry['chapter_id']]; }, $catalog()['skills']);
+    foreach ($outcomes as &$outcome) { if ($outcome['term_id'] === $prime) { $outcome['target'] = 'mastered'; $outcome['required'] = true; } }
+    unset($outcome);
+    $outcomes[] = ['term_id' => $hand_term, 'target' => 'proficient', 'required' => false, 'chapter_id' => $hand_chapter];
+    $saved = Catalog::save_draft($course, ['outcomes' => $outcomes, 'attachments' => [['type' => 'lesson', 'content_id' => $lesson, 'chapter_id' => $chapter_a, 'skill_ids' => [$prime], 'required' => false]]]);
+    ok($saved === true, 'the catalog can edit the mirrored course: ' . (is_wp_error($saved) ? $saved->get_error_message() : ''));
+    api('PUT', "curriculum/items/$learn/syllabus/groups/$ga", ['name' => 'Number types']);
+    ok($chapter_named('C1.1 · Number types') === $chapter_a, 'renaming a group renames its chapter and keeps it');
+    $after = $catalog();
+    $prime_row = current(array_filter($after['skills'], static function ($entry) use ($prime) { return $entry['term_id'] === $prime; }));
+    ok($prime_row['target'] === 'mastered' && $prime_row['required'] === true, 'a target or required flag set in the catalog survives a syllabus change');
+    ok(in_array($hand_term, array_column($after['skills'], 'term_id'), true) && $chapter_named('Revision') === $hand_chapter, 'a chapter and a skill added by hand are left alone');
+    ok(count($after['attachments']) === 1 && $after['attachments'][0]['content_id'] === $lesson && $after['attachments'][0]['skill_ids'] === [$prime], 'a lesson attached to a skill stays attached');
+
+    // Which skills the course requires is decided from the editor, a few at a time, and nothing else about them changes.
+    $row_of = static function ($term) use ($catalog) { return current(array_filter($catalog()['skills'], static function ($entry) use ($term) { return $entry['term_id'] === $term; })); };
+    $require = api('PUT', "curriculum/items/$learn/syllabus/course/skills", ['skills' => [['term_id' => $square, 'required' => true, 'target' => 'mastered'], ['term_id' => $hand_term, 'required' => true], ['term_id' => 999999, 'required' => true]]]);
+    ok($require->get_status() === 200 && $row_of($square)['required'] === true && $row_of($square)['target'] === 'mastered' && $row_of($square)['chapter_id'] === $chapter_a, 'a skill of the syllabus can be required, with a target, from the editor');
+    ok($row_of($hand_term)['required'] === false && $row_of($notation)['required'] === false, 'only the skills asked for change, and a skill that is not in the syllabus is left alone');
+    ok(api('PUT', "curriculum/items/$learn/syllabus/course/skills", ['skills' => 'all'])->get_status() === 400, 'the skills to change must be a list');
+    $not_ready = Catalog::publish($course);
+    ok(is_wp_error($not_ready) && strpos(implode(' ', (array) ($not_ready->get_error_data()['errors'] ?? [])), 'approved questions') !== false, 'a required skill without approved questions keeps the course from being published');
+
+    // Order follows the groups; a skill moved between groups changes chapter.
+    api('POST', "curriculum/items/$learn/syllabus/groups/$gb/move", ['item_id' => $unit, 'position' => 0]);
+    ok(array_column($catalog()['chapters'], 'name') === ['C1.2 · Sets', 'C1.1 · Number types', 'Revision'], 'moving a group moves its chapter, and a chapter added by hand stays last');
+    api('POST', "curriculum/items/$learn/syllabus/groups/$ga/skills/$square/move", ['group_id' => $gb, 'position' => 0]);
+    ok($codes_in($chapter_b) === ['C1.1.2', 'C1.2.1'] && $codes_in($chapter_a) === ['C1.1.1'], 'a skill moved to another group moves to that group\'s chapter');
+    api('DELETE', "curriculum/items/$learn/syllabus/groups/$ga/skills/$prime");
+    ok(!in_array($prime, array_column($catalog()['skills'], 'term_id'), true), 'a skill taken out of the syllabus leaves the course');
+    $dropped = api('DELETE', "curriculum/items/$learn/syllabus/groups/$gb", ['confirm' => true]);
+    ok($dropped->get_status() === 200 && $chapter_named('C1.2 · Sets') === 0 && !array_intersect([$square, $notation], array_column($catalog()['skills'], 'term_id')), 'deleting a group removes its chapter and its skills from the course');
+    ok($chapter_named('Revision') === $hand_chapter && in_array($hand_term, array_column($catalog()['skills'], 'term_id'), true), 'deleting a group leaves what was added by hand');
+    ok(array_column($catalog()['chapters'], 'name') === ['C1.1 · Number types', 'Revision'], 'the course keeps one chapter per group plus the one made by hand');
+
+    // Renaming the syllabus renames the course; an import brings its chapters and skills along.
+    api('PUT', "curriculum/items/$learn", ['name' => 'Renamed syllabus ' . $tag]);
+    ok(get_the_title($course) === 'Renamed syllabus ' . $tag, 'renaming a syllabus renames its course');
+    $imported = import_rows($learn, [['line' => 2, 'content' => '2 Algebra', 'group_code' => 'C2.1', 'group' => 'Equations', 'skill_code' => 'C2.1.1', 'skill' => 'Solve linear equations'], ['line' => 3, 'content' => '2 Algebra', 'group_code' => 'C2.1', 'group' => 'Equations', 'skill_code' => 'C2.1.2', 'skill' => 'Rearrange formulae']]);
+    ok($imported->get_status() === 200 && $imported->get_data()['report']['applied'] === true, 'a CSV import applies');
+    $equations = $chapter_named('C2.1 · Equations');
+    ok($equations > 0 && $codes_in($equations) === ['C2.1.1', 'C2.1.2'] && $imported->get_data()['course']['id'] === $course, 'an import adds its groups as chapters and its skills as outcomes');
+    $summary = outline($learn)['course'];
+    ok($summary['chapters'] === 3 && $summary['skills'] === 3 && $summary['published'] === false && $summary['catalog'] === "#/content-hub/catalog/$course", 'the outline summarises the course');
+
+    // A syllabus course may hold every skill of its syllabus, an ordinary course only 200.
+    $many = []; for ($n = 1; $n <= 205; $n++) { $many[] = ['line' => 10 + $n, 'content' => '3 Many', 'group_code' => 'M1', 'group' => 'Many skills', 'skill_code' => 'M1.' . $n, 'skill' => "Many skill $n $tag"]; }
+    $big = import_rows($learn, $many);
+    ok($big->get_status() === 200 && empty($big->get_data()['course_error']) && count($catalog()['skills']) === 208, 'a syllabus course holds more than 200 skills: ' . ($big->get_data()['course_error'] ?? ''));
+    $plain_course = wp_insert_post(['post_type' => OHMYLMS_COURSE_CPT, 'post_title' => 'Ordinary course ' . $tag, 'post_status' => 'draft']); $course_ids[] = $plain_course;
+    ok(CourseProgram::too_many_outcomes($plain_course, 201) === true && CourseProgram::too_many_outcomes($course, 201) === false && CourseProgram::too_many_outcomes($course, Syllabus::MAX_SKILLS + 1) === true && CourseProgram::too_many_outcomes($plain_course, 200) === false, 'only a syllabus course may list more than 200 skills');
+
+    // A deleted course is made again, and a deleted syllabus leaves its course in place.
+    wp_delete_post($course, true);
+    ok(outline($learn)['course'] === null && empty(array_column(Links::for_item($learn)['course'], 'id')), 'a deleted course leaves nothing behind in the outline or the curriculum');
+    $made_again = api('POST', "curriculum/items/$learn/syllabus/course");
+    $new_course = (int) $made_again->get_data()['course']['id']; $course_ids[] = $new_course;
+    ok($made_again->get_status() === 200 && $new_course > 0 && $new_course !== $course && get_post_status($new_course) === 'draft', 'asking again makes a new course');
+    ok($made_again->get_data()['course']['chapters'] === 3 && $made_again->get_data()['course']['skills'] === 207, 'the new course is built from the syllabus again');
+    $gone = item('Syllabus to delete ' . $tag, $igcse, 'syllabus'); $gone_course = (int) $row($gone)['course_id']; $course_ids[] = $gone_course;
+    ok($gone_course > 0 && api('DELETE', "curriculum/items/$gone", ['confirm' => true])->get_status() === 200, 'a syllabus is deleted');
+    ok(get_post_status($gone_course) === 'draft' && SyllabusCourse::owner($gone_course) === 0 && empty($wpdb->get_col($wpdb->prepare('SELECT item_id FROM ' . Links::table() . " WHERE object_type='course' AND object_id=%d", $gone_course))), 'deleting a syllabus keeps its course and drops the link');
+
     // ---- Permissions ----
-    $teacher = wp_create_user('syl-t-' . wp_generate_password(8, false, false), wp_generate_password(24), 'syl-t-' . wp_generate_password(8, false, false) . '@example.invalid'); $users[] = $teacher;
+    $teacher =wp_create_user('syl-t-' . wp_generate_password(8, false, false), wp_generate_password(24), 'syl-t-' . wp_generate_password(8, false, false) . '@example.invalid'); $users[] = $teacher;
     (new WP_User($teacher))->set_role('editor');
     wp_set_current_user($teacher);
-    ok(api('GET', "curriculum/items/$syllabus/syllabus")->get_status() === 403 && import_rows($syllabus, $csv, true)->get_status() === 403, 'only administrators can read or import a syllabus');
+    ok(api('GET', "curriculum/items/$syllabus/syllabus")->get_status() === 403 && import_rows($syllabus, $csv, true)->get_status() === 403 && api('POST', "curriculum/items/$syllabus/syllabus/course")->get_status() === 403 && api('PUT', "curriculum/items/$syllabus/syllabus/course/skills", ['skills' => []])->get_status() === 403, 'only administrators can read, import, give a syllabus its course or choose its required skills');
     wp_set_current_user(0);
     ok(api('GET', "curriculum/items/$syllabus/syllabus")->get_status() === 401, 'guests are refused');
     wp_set_current_user($admin);
 } finally {
     wp_set_current_user($admin);
+    // The courses of the syllabuses (and their chapters) and the lessons made for them go before the items do.
+    foreach ($item_ids as $id) { $found = Items::get($id); if ($found && (int) ($found['course_id'] ?? 0)) { $course_ids[] = (int) $found['course_id']; } }
+    foreach (array_unique($course_ids) as $course_id) {
+        if (get_post_type($course_id) !== OHMYLMS_COURSE_CPT) { continue; }
+        foreach (Catalog::chapters($course_id) as $chapter) { wp_delete_post($chapter['id'], true); }
+        wp_delete_post($course_id, true);
+    }
+    foreach ($posts as $post_id) { wp_delete_post($post_id, true); }
     foreach (array_reverse($item_ids) as $id) { if (Items::get($id)) { Items::delete($id, 'delete', true); } }
     // Remove the library skills these syllabuses created: each root skill's children first, then the root.
     $roots = $wpdb->get_col($wpdb->prepare("SELECT m.term_id FROM {$wpdb->termmeta} m WHERE m.meta_key=%s AND m.meta_value IN (" . implode(',', array_fill(0, max(1, count($item_ids)), '%d')) . ')', array_merge([Syllabus::ROOT_META], $item_ids ?: [0])));
@@ -265,6 +374,7 @@ try {
         wp_delete_term((int) $term_id, Taxonomy::NAME);
     }
     foreach (get_terms(['taxonomy' => Taxonomy::NAME, 'hide_empty' => false, 'name__like' => 'Library skill ' . $tag, 'fields' => 'ids']) as $term_id) { wp_delete_term((int) $term_id, Taxonomy::NAME); }
+    foreach (get_terms(['taxonomy' => Taxonomy::NAME, 'hide_empty' => false, 'name__like' => $tag, 'fields' => 'ids']) as $term_id) { wp_delete_term((int) $term_id, Taxonomy::NAME); }
     foreach ($stray_terms as $term_id) { if (term_exists((int) $term_id, Taxonomy::NAME)) { wp_delete_term((int) $term_id, Taxonomy::NAME); } }
     foreach ($users as $user_id) { wp_delete_user($user_id); }
     if (isset($start)) {

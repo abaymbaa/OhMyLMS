@@ -324,6 +324,7 @@ final class Items {
             'code' => $row['code'],
             'version' => $row['version'],
             'is_syllabus' => !empty($row['is_syllabus']),
+            'course_id' => (int) ($row['course_id'] ?? 0),
             'created_at' => $row['created_at'],
             'updated_at' => $row['updated_at'],
         ] + $counts;

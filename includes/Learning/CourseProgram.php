@@ -75,10 +75,32 @@ final class CourseProgram {
         return $program['mode'] !== 'traditional' || !empty($program['outcomes']) || (bool) array_filter($program['items'], static function ($item) { return $item['type'] === 'practice'; });
     }
 
+    const MAX_OUTCOMES = 200;
+
+    /** A program lists at most 200 skills, except the course of a syllabus, which can hold every skill of its syllabus. */
+    public static function too_many_outcomes($course_id, $count) {
+        if ($count <= self::MAX_OUTCOMES) { return false; }
+        return $count > (\OhMyLMS\Curriculum\SyllabusCourse::owner((int) $course_id) ? \OhMyLMS\Curriculum\Syllabus::MAX_SKILLS : self::MAX_OUTCOMES);
+    }
+
+    /** The IDs among these that are skills, as a set. A short list is checked one by one, a long one (a syllabus's course) in one query. */
+    private static function known_skills(array $outcomes) {
+        $ids = [];
+        foreach ($outcomes as $outcome) { if (is_array($outcome)) { $ids[] = (int) ($outcome['term_id'] ?? 0); } }
+        $ids = array_values(array_unique(array_filter($ids)));
+        $known = [];
+        if (count($ids) < 25) {
+            foreach ($ids as $id) { if (term_exists($id, Taxonomy::NAME)) { $known[$id] = true; } }
+            return $known;
+        }
+        $found = get_terms(['taxonomy' => Taxonomy::NAME, 'include' => $ids, 'fields' => 'ids', 'hide_empty' => false, 'number' => 0, 'update_term_meta_cache' => false]);
+        return is_array($found) ? array_flip(array_map('intval', $found)) : [];
+    }
+
     public static function normalize($course_id, array $data) {
         global $wpdb;
         if (!in_array($data['mode'] ?? '', self::MODES, true)) { return self::error(__('Choose a valid learning mode.', 'ohmylms')); }
-        if (!is_array($data['items'] ?? null) || !is_array($data['outcomes'] ?? null) || count($data['items']) > 500 || count($data['outcomes']) > 200) { return self::error(__('Invalid or oversized learning program.', 'ohmylms')); }
+        if (!is_array($data['items'] ?? null) || !is_array($data['outcomes'] ?? null) || count($data['items']) > 500 || self::too_many_outcomes($course_id, count($data['outcomes']))) { return self::error(__('Invalid or oversized learning program.', 'ohmylms')); }
         $program = ['mode' => $data['mode'], 'recognize_prior' => !empty($data['recognize_prior']), 'evidence_days' => max(0, min(3650, (int) ($data['evidence_days'] ?? 0))), 'bank_ids' => [], 'outcomes' => [], 'items' => []];
         foreach ((array) ($data['bank_ids'] ?? []) as $bank) {
             if (!Banks::can((int) $bank, 'use')) { return AccessPolicy::denied(__('You cannot use this question bank.', 'ohmylms')); }
@@ -87,15 +109,17 @@ final class CourseProgram {
         $program['bank_ids'] = array_values(array_unique($program['bank_ids']));
         $skills = [];
         $chapters = array_map('intval', $wpdb->get_col($wpdb->prepare("SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", $course_id)));
+        $chapter_set = array_flip($chapters);
+        $known = self::known_skills($data['outcomes']);
         foreach ($data['outcomes'] as $outcome) {
             if (!is_array($outcome)) { return self::error(__('Invalid outcome.', 'ohmylms')); }
             $id = (int) ($outcome['term_id'] ?? 0);
-            if (!$id || !term_exists($id, Taxonomy::NAME) || isset($skills[$id]) || !in_array($outcome['target'] ?? '', ['proficient', 'mastered'], true)) { return self::error(__('Outcomes need distinct existing skills and a valid target.', 'ohmylms')); }
+            if (!$id || !isset($known[$id]) || isset($skills[$id]) || !in_array($outcome['target'] ?? '', ['proficient', 'mastered'], true)) { return self::error(__('Outcomes need distinct existing skills and a valid target.', 'ohmylms')); }
             $skills[$id] = true;
             $entry = ['term_id' => $id, 'target' => $outcome['target'], 'required' => !empty($outcome['required'])];
             // The chapter (unit) a skill sits in, like a strand in a skill catalogue. Order is array order.
             $chapter = (int) ($outcome['chapter_id'] ?? 0);
-            if ($chapter && !in_array($chapter, $chapters, true)) { return self::error(__('The unit does not belong to this course.', 'ohmylms')); }
+            if ($chapter && !isset($chapter_set[$chapter])) { return self::error(__('The unit does not belong to this course.', 'ohmylms')); }
             if ($chapter) { $entry['chapter_id'] = $chapter; }
             $program['outcomes'][] = $entry;
         }

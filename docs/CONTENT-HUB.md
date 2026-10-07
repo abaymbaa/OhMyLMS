@@ -15,7 +15,7 @@ A **grade, exam or subject** (for example Grade 2 Math, MATH0580 or Digital SAT)
 | **Question Bank** | The question bank: search, approve, archive, duplicate, metadata, banks and sharing. Unchanged. |
 | **Assignments** | The existing assignment list, unchanged. |
 | **Skills** | The shared skill library: hierarchy, codes, prerequisites, linked lessons and courses. |
-| **Curriculum** | The curriculum structure (exam boards, national curricula, grades, subjects, syllabuses) that courses, skills, question banks and exams are placed in. Any item can be a syllabus with its own skill groups and skills, loaded from CSV; see [SYLLABUS.md](SYLLABUS.md) and [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
+| **Curriculum** | The curriculum structure (exam boards, national curricula, grades, subjects, syllabuses) that courses, skills, question banks and exams are placed in. Any item can be a syllabus with its own chapters (skill groups) and skills, loaded from CSV. A syllabus's name opens its own full-page editor (`#/content-hub/curriculum/syllabus/ID`), and **a syllabus is also a course**: its chapters and skills are the course's, so it appears in the Catalog and Courses tabs too; see [SYLLABUS.md](SYLLABUS.md) and [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
 | **Learning Tracks** | Learning Tracks: curated groupings of courses and syllabuses that learners can follow. Unchanged; see [CURRICULUM-TRACKS.md](CURRICULUM-TRACKS.md). |
 
 The hub header shows the title followed by the section tabs. Content is added from the individual tabs.

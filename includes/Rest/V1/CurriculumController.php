@@ -6,6 +6,8 @@ use OhMyLMS\Curriculum\Access;
 use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Links;
 use OhMyLMS\Curriculum\SkillMappings;
+use OhMyLMS\Curriculum\Syllabus;
+use OhMyLMS\Curriculum\SyllabusCourse;
 use WP_REST_Request;
 use WP_REST_Server;
 
@@ -58,9 +60,17 @@ class CurriculumController extends RestController {
     public function create(WP_REST_Request $request) {
         $item = Items::create($request->get_params());
         if (is_wp_error($item)) { return $item; }
-        $response = $this->payload(['item' => Items::describe($item)]);
+        // An item typed "syllabus" is a syllabus from the start, and a syllabus is also a course.
+        if (!empty($item['is_syllabus'])) { $this->make_course((int) $item['id']); }
+        $response = $this->payload(['item' => Items::describe(Items::get((int) $item['id']))]);
         $response->set_status(201);
         return $response;
+    }
+
+    /** Give a syllabus its course and bring it up to date. The change that asked for it stands even if this fails. */
+    private function make_course($syllabus_id) {
+        $course = SyllabusCourse::ensure($syllabus_id);
+        return is_wp_error($course) ? $course : SyllabusCourse::sync_quietly($syllabus_id);
     }
 
     public function show(WP_REST_Request $request) {
@@ -81,18 +91,33 @@ class CurriculumController extends RestController {
     public function update(WP_REST_Request $request) {
         $params = $request->get_params();
         $item = Items::update((int) $request['id'], array_intersect_key($params, array_flip(['name', 'item_type', 'description', 'code', 'version', 'is_syllabus'])), $params['expected_updated_at'] ?? null);
-        return is_wp_error($item) ? $item : $this->payload(['item' => Items::describe($item)]);
+        if (is_wp_error($item)) { return $item; }
+        // Turning an item into a syllabus gives it a course; renaming a syllabus renames its course.
+        if (!empty($item['is_syllabus'])) {
+            if (!empty($params['is_syllabus']) && rest_sanitize_boolean($params['is_syllabus'])) { $this->make_course((int) $item['id']); }
+            else { SyllabusCourse::sync_quietly((int) $item['id']); }
+            $item = Items::get((int) $item['id']);
+        }
+        return $this->payload(['item' => Items::describe($item)]);
     }
 
     public function move(WP_REST_Request $request) {
         $params = $request->get_params();
+        $before = Syllabus::owner((int) $request['id']);
         $item = Items::move((int) $request['id'], (int) ($params['parent_id'] ?? 0), isset($params['position']) && $params['position'] !== '' ? (int) $params['position'] : null);
-        return is_wp_error($item) ? $item : $this->payload(['item' => Items::describe($item)]);
+        if (is_wp_error($item)) { return $item; }
+        // Moving an item can move the skill groups under it between syllabuses, or change the order of the chapters.
+        SyllabusCourse::after_items_changed([$before, Syllabus::owner((int) $item['id'])]);
+        return $this->payload(['item' => Items::describe($item)]);
     }
 
     public function delete(WP_REST_Request $request) {
+        $owner = Syllabus::owner((int) $request['id']);
         $result = Items::delete((int) $request['id'], (string) $request->get_param('children'), rest_sanitize_boolean($request->get_param('confirm')));
-        return is_wp_error($result) ? $result : $this->payload($result);
+        if (is_wp_error($result)) { return $result; }
+        // The skill groups under a deleted item go with it, and so do their chapters in the syllabus's course.
+        if ($owner && !in_array($owner, array_map('intval', (array) ($result['deleted'] ?? [])), true)) { SyllabusCourse::after_items_changed([$owner]); }
+        return $this->payload($result);
     }
 
     public function add_link(WP_REST_Request $request) {

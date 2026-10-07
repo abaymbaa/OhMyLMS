@@ -78,6 +78,28 @@ export const moveSkill = (id, group, term, toGroup, position, fetch = request) =
 /** Check (dryRun) or apply rows read from a CSV. */
 export const importRows = (id, rows, dryRun, fetch = request) =>
   fetch({ path: `${syllabus(id)}/import`, method: 'POST', data: { rows, dry_run: dryRun } });
+/** A syllabus is also a course: give it one if it has none and make the course match. Answers like a write. */
+export const ensureCourse = (id, fetch = request) =>
+  fetch({ path: `${syllabus(id)}/course`, method: 'POST' });
+
+/** Choose which skills the course requires and at what target: `skills` is `[{term_id, required?, target?}]`. Answers like a write. */
+export const setCourseSkills = (id, skills, fetch = request) =>
+  fetch({ path: `${syllabus(id)}/course/skills`, method: 'PUT', data: { skills } });
+
+/** What a skill owns. Lessons are tagged to the skill, questions are mapped to it in the question bank. */
+const skillBase = `${base}/skills`;
+export const loadSkill = (id, fetch = request) => fetch({ path: `${skillBase}/${id}` });
+/** Replace the set of lessons tagged to a skill. */
+export const setSkillLessons = (id, lessonIds, fetch = request) =>
+  fetch({ path: `${skillBase}/${id}/lessons`, method: 'PUT', data: { lesson_ids: lessonIds } });
+/** Lessons by search text, or titles for known IDs: `[{id, title}]`. */
+export const lessonTargets = ({ search = '', include = [] } = {}, fetch = request) =>
+  fetch({
+    path: `${skillBase}/link-targets${query({ type: 'lesson', search, include: include.join(',') })}`,
+  });
+/** The questions mapped to a skill: `{items, total}`. */
+export const skillQuestions = (id, perPage = 8, fetch = request) =>
+  fetch({ path: `${base}/question-bank${query({ skill: id, per_page: perPage })}` });
 
 export const saveMapping = (data, fetch = request) =>
   fetch({ path: `${base}/skill-mappings`, method: 'PUT', data });

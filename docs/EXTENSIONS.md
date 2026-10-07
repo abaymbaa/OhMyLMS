@@ -33,7 +33,7 @@ Read `modules/examples/editor.js` and the small components in `assets/src/extens
 
 ## Slots and settings
 
-Named slots: `admin.screen.before`, `admin.screen.after`, `student.course.before`, `student.course.after`, `checkout.fields.after`, `checkout.summary.after`. Editor-panel slots use actual route paths listed in the recovery manifest. PHP `ohmylms_render_slot($name,$context)` also emits a server-rendering hook. Context must be public, JSON-safe data.
+Named slots: `admin.screen.before`, `admin.screen.after`, `student.course.before`, `student.course.after`, `checkout.fields.after`, `checkout.summary.after`, and `syllabus.skill.resources`, which the syllabus editor renders in a skill's pane under what the skill owns (lessons and questions; context `{skill, syllabus}`), so a module such as practice games can add its own section for a skill. Editor-panel slots use actual route paths listed in the recovery manifest. PHP `ohmylms_render_slot($name,$context)` also emits a server-rendering hook. Context must be public, JSON-safe data.
 
 ```php
 ohmylms_register_extension_settings('my-benefit', [

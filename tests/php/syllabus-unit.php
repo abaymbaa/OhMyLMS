@@ -3,6 +3,7 @@
 define('ABSPATH', __DIR__ . '/');
 function __($text) { return $text; }
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
+use OhMyLMS\Curriculum\SyllabusCourse;
 use OhMyLMS\Curriculum\SyllabusPlan;
 use OhMyLMS\Curriculum\SyllabusRows;
 $checks = 0;
@@ -140,5 +141,56 @@ check(!$limit['report']['valid'] && count($limit['report']['errors']) === 2, 'gr
 $nested = SyllabusPlan::build($empty, SyllabusRows::normalize([$row(['content' => 'Paper 1 > Number', 'group' => 'G', 'skill' => 's']), $row(['content' => 'Paper 1 > Algebra', 'group' => 'G', 'skill' => 's2'])])['rows']);
 $contents = array_values(array_filter($nested['ops'], static function ($op) { return $op['op'] === 'content'; }));
 check(count($contents) === 3 && $contents[1]['parent'] === $contents[0]['ref'] && $contents[2]['parent'] === $contents[0]['ref'], 'nested content shares its parent');
+
+// ---- A syllabus is also a course: how its skill groups and skills are mirrored --------------------------
+check(SyllabusCourse::chapter_title(['name' => 'Types of number', 'code' => 'C1.1']) === 'C1.1 · Types of number', 'a chapter is titled with its group code and name');
+check(SyllabusCourse::chapter_title(['name' => 'М11.1А', 'code' => 'М11.1А']) === 'М11.1А' && SyllabusCourse::chapter_title(['name' => 'Sets', 'code' => '']) === 'Sets', 'a code that is the name, or no code, leaves just the name');
+check(mb_strlen(SyllabusCourse::chapter_title(['name' => str_repeat('Ө', 190), 'code' => str_repeat('К', 40)])) === 200, 'a chapter title is cut at the course chapter limit');
+
+$groups = [
+    ['uuid' => 'g1', 'name' => 'Types of number', 'code' => 'C1.1', 'skills' => [['term_id' => 1], ['term_id' => 5]]],
+    ['uuid' => 'g2', 'name' => 'Sets', 'code' => '', 'skills' => [['term_id' => 4]]],
+    ['uuid' => 'g3', 'name' => 'Powers', 'code' => '', 'skills' => []],
+];
+$chapters = [
+    ['id' => 10, 'name' => 'C1.1 · Types of number', 'group' => 'g1'],
+    ['id' => 11, 'name' => 'Old name', 'group' => 'g2'],
+    ['id' => 12, 'name' => 'Added by hand in the catalog', 'group' => ''],
+    ['id' => 13, 'name' => 'Group since deleted', 'group' => 'gone'],
+];
+$plan = SyllabusCourse::plan_chapters($chapters, $groups);
+check($plan['keep'] === ['g1' => 10, 'g2' => 11] && $plan['rename'] === [11 => 'Sets'] && $plan['create'] === ['g3' => 'Powers'], 'chapters are kept, renamed or created to match the groups');
+check($plan['orphans'] === [13], 'a chapter whose group is gone is an orphan, and a chapter made by hand is never touched');
+check(SyllabusCourse::plan_chapters([], [])['create'] === [] && SyllabusCourse::plan_chapters($chapters, $groups) === $plan, 'planning is repeatable');
+
+$outcomes = [
+    ['term_id' => 1, 'target' => 'mastered', 'required' => true, 'chapter_id' => 10],
+    ['term_id' => 2, 'target' => 'proficient', 'required' => false, 'chapter_id' => 13],
+    ['term_id' => 3, 'target' => 'proficient', 'required' => true, 'chapter_id' => 0],
+    ['term_id' => 4, 'target' => 'mastered', 'required' => false, 'chapter_id' => 0],
+];
+$next = SyllabusCourse::plan_outcomes($outcomes, $groups, ['g1' => 10, 'g2' => 11, 'g3' => 14], [10, 11, 13]);
+check(array_column($next, 'term_id') === [3, 1, 5, 4], 'outcomes the syllabus does not manage stay first, then the skills follow in group order');
+check($next[1] === ['term_id' => 1, 'target' => 'mastered', 'required' => true, 'chapter_id' => 10], 'a skill that is already an outcome keeps its target and required flag');
+check($next[2] === ['term_id' => 5, 'target' => 'proficient', 'required' => false, 'chapter_id' => 10], 'a new skill starts at Proficient and not required, in its group\'s chapter');
+check($next[3] === ['term_id' => 4, 'target' => 'mastered', 'required' => false, 'chapter_id' => 11], 'a skill added to the course by hand is taken over by the group it now sits in');
+check(!in_array(2, array_column($next, 'term_id'), true), 'a skill removed from the syllabus leaves the course');
+check(SyllabusCourse::same_outcomes($next, SyllabusCourse::plan_outcomes($next, $groups, ['g1' => 10, 'g2' => 11, 'g3' => 14], [10, 11])), 'mirroring twice changes nothing');
+check(!SyllabusCourse::same_outcomes($outcomes, $next), 'a difference is noticed');
+check(SyllabusCourse::chapter_order([12, 11, 10, 14], [10, 11, 14]) === [10, 11, 14, 12] && SyllabusCourse::chapter_order([12], []) === [12], 'mirrored chapters follow the groups, then the others in their old order');
+
+// Which skills the course requires: only requirement and target change, in place.
+$required = SyllabusCourse::plan_requirements($next, [
+    ['term_id' => 5, 'required' => true],
+    ['term_id' => 1, 'target' => 'proficient'],
+    ['term_id' => 4, 'target' => 'bogus', 'required' => true],
+    ['term_id' => 999, 'required' => true],
+    'not a change',
+]);
+check(array_column($required, 'term_id') === [3, 1, 5, 4] && array_column($required, 'chapter_id') === array_column($next, 'chapter_id'), 'requirement changes keep the skills, their order and their chapters');
+check($required[2]['required'] === true && $required[2]['target'] === 'proficient', 'a skill can be made required without touching its target');
+check($required[1]['target'] === 'proficient' && $required[1]['required'] === true, 'a target can change without touching the required flag');
+check($required[3]['target'] === 'mastered' && $required[3]['required'] === true, 'an unknown target is ignored');
+check(SyllabusCourse::plan_requirements($next, []) === $next && SyllabusCourse::plan_requirements($next, [['term_id' => 1, 'required' => false]])[1]['required'] === false, 'no change changes nothing, and a skill can be made optional again');
 
 echo "syllabus unit checks passed: $checks\n";

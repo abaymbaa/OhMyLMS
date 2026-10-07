@@ -87,6 +87,12 @@ if ($action === 'setup') {
     foreach (array_reverse($state['items']) as $id) { if (Items::get($id)) { Items::delete($id, 'delete', true); } }
     // Remaining browser-created items (names without the tag) that were created for this run.
     foreach (array_reverse($wpdb->get_col('SELECT id FROM ' . Items::table() . " WHERE name LIKE 'Browser %' ORDER BY id")) as $id) { if (Items::get((int) $id)) { Items::delete((int) $id, 'delete', true); } }
+    // A syllabus is also a course: the courses (and chapters) of syllabuses that are gone go too.
+    foreach (get_posts(['post_type' => OHMYLMS_COURSE_CPT, 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids', 'meta_key' => \OhMyLMS\Curriculum\SyllabusCourse::ITEM_META]) as $course) {
+        if (Items::get((int) get_post_meta($course, \OhMyLMS\Curriculum\SyllabusCourse::ITEM_META, true))) { continue; }
+        foreach (\OhMyLMS\Learning\Catalog::chapters($course) as $chapter) { wp_delete_post($chapter['id'], true); }
+        wp_delete_post($course, true);
+    }
     foreach (['skill_evidence', 'student_skill_state'] as $table) { $wpdb->delete(A::table($table), ['student_id' => $state['student']]); }
     $wpdb->delete(\OhMyLMS\Tracks\Follows::table(), ['user_id' => $state['student']]);
     $wpdb->delete($wpdb->prefix . 'ohmylms_user_progress', ['enrollment_id' => $state['enrollment']]);

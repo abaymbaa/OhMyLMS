@@ -12,7 +12,7 @@ import { useCurriculum } from './context';
 import { DeleteItem } from './DeleteItem';
 import { LinkedContent } from './LinkedContent';
 import { SkillMappings } from './SkillMappings';
-import { SyllabusPanel } from './SyllabusPanel';
+import { SyllabusSummary } from './SyllabusSummary';
 import * as api from './api.mjs';
 import {
   draftFrom,
@@ -45,12 +45,10 @@ export function ItemPanel({ id, item }) {
   // The syllabus switch saves at once. It shows the new state while the save runs, then follows the
   // saved item again (which also puts it back if the server refused, e.g. the syllabus still has groups).
   const [syllabusFlag, setSyllabusFlag] = useState(null);
-  const [revealSyllabus, setRevealSyllabus] = useState(false);
   async function toggleSyllabus(value) {
     setSyllabusFlag(value);
-    const saved = await c.actions.update(item, { is_syllabus: value });
+    await c.actions.update(item, { is_syllabus: value });
     setSyllabusFlag(null);
-    if (saved && value) setRevealSyllabus(true);
   }
 
   useEffect(() => {
@@ -108,7 +106,7 @@ export function ItemPanel({ id, item }) {
           disabled={c.pending}
           onChange={toggleSyllabus}
           help={__(
-            'Any item can be a syllabus, whatever its type. A syllabus has skill groups and skills of its own; its topics and chapters are the items beneath it. This saves at once.',
+            'Any item can be a syllabus, whatever its type. A syllabus is also a course: its chapters are skill groups and its skills are the course’s skills. It is edited in its own editor, opened by its name. This saves at once.',
             'ohmylms',
           )}
           __nextHasNoMarginBottom
@@ -208,7 +206,7 @@ export function ItemPanel({ id, item }) {
         </Button>
       </div>
 
-      {item.is_syllabus && <SyllabusPanel item={item} reveal={revealSyllabus} />}
+      {item.is_syllabus && <SyllabusSummary item={item} />}
 
       {!detail && !detailError && <Spinner />}
       {detailError && <p role="alert">{detailError}</p>}

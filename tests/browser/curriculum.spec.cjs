@@ -183,7 +183,8 @@ test('administrator builds, edits, searches, reorders, moves and deletes curricu
   await page.getByRole('button', { name: `Edit English language syllabus (revised)`, exact: true }).click();
   const linked = page.getByRole('region', { name: 'Editing English language syllabus (revised)' });
   await linked.getByRole('button', { name: 'Delete English language syllabus (revised)…' }).click();
-  await expect(linked.getByText(/1 link to courses, skills, question banks or exams will be removed\. The content itself is not deleted\./)).toBeVisible();
+  // A syllabus is also a course, so it is linked to its own course as well as to the one the test placed.
+  await expect(linked.getByText(/2 links to courses, skills, question banks or exams will be removed\. The content itself is not deleted\./)).toBeVisible();
   await linked.getByRole('button', { name: 'Delete item' }).click();
   await notice(page, 'Deleted “English language syllabus (revised)”');
   const course = await page.evaluate(async (search) => (await wp.apiFetch({ path: `/ohmylms/v1/curriculum/link-targets?type=course&search=${encodeURIComponent(search)}` })).length, `English warm-up ${tag}`);

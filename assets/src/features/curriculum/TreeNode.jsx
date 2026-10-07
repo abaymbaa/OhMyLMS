@@ -5,6 +5,7 @@ import { useCurriculum } from './context';
 import { AddItemRow } from './AddItemRow';
 import { ItemPanel } from './ItemPanel';
 import { isOpen, siblingInfo, typeLabel } from './model.mjs';
+import { workspacePath } from './workspace.mjs';
 
 function counts(item) {
   const parts = [];
@@ -67,7 +68,18 @@ export function TreeNode({ node }) {
             {__('Syllabus', 'ohmylms')}
           </span>
         )}
-        <span className="ohmylms-cur-name">{item.name}</span>
+        {item.is_syllabus ? (
+          // A syllabus is edited in its own full-page workspace; its name opens it.
+          <a
+            className="ohmylms-cur-name ohmylms-cur-name-link"
+            href={`#${workspacePath(item.id)}`}
+            title={__('Open the syllabus editor', 'ohmylms')}
+          >
+            {item.name}
+          </a>
+        ) : (
+          <span className="ohmylms-cur-name">{item.name}</span>
+        )}
         {(item.code || item.version) && (
           <span className="ohmylms-cur-meta">
             {[item.code, item.version].filter(Boolean).join(' · ')}
