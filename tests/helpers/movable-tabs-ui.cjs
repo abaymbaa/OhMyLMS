@@ -7,7 +7,8 @@ async function verifyMovableTabs(page) {
   await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub');
   const original = await page.evaluate(() => window.ohmylmsTabPreferences || {});
   const nav = page.locator('.ohmylms-content-hub > nav');
-  await expect(nav.getByRole('link', {name:'Catalog', exact:true})).toBeVisible();
+  await expect(nav.getByRole('link', {name:'Courses', exact:true})).toBeVisible();
+  await expect(nav.getByRole('link', {name:'Catalog', exact:true})).toHaveCount(0);
   const waitSaved = async () => expect(page.locator('.ohmylms-tab-save-status')).toHaveCount(0);
   try {
     await nav.getByRole('button', {name:'Organize tabs', exact:true}).click();
@@ -31,7 +32,8 @@ async function verifyMovableTabs(page) {
     // Drag into a group, then move that entire block to the front.
     await nav.getByRole('link', {name:'Skills', exact:true}).dragTo(group.getByRole('button', {name:/Study tools/}));
     await expect(group.getByRole('link')).toHaveText(['Courses', 'Quizzes', 'Skills']);
-    await group.getByRole('button', {name:/Study tools/}).dragTo(nav.getByRole('link', {name:'Catalog', exact:true}), {targetPosition:{x:2,y:12}});
+    await expect(nav.locator('a').first()).toHaveText('Lessons');
+    await group.getByRole('button', {name:/Study tools/}).dragTo(nav.getByRole('link', {name:'Lessons', exact:true}), {targetPosition:{x:2,y:12}});
     await expect(nav.locator('a').first()).toHaveText('Courses');
     await waitSaved();
     await nav.screenshot({path:'build/movable-tabs-groups-qa.png'});
@@ -49,7 +51,7 @@ async function verifyMovableTabs(page) {
     await expect(nav.getByRole('link', {name:'Courses', exact:true})).toHaveAttribute('aria-current','page');
     // Failed saves retain the layout and expose a working retry.
     await page.route('**/tab-preferences/content-hub*', (route) => route.fulfill({status:503,json:{message:'Simulated failure'}}));
-    await nav.getByRole('link', {name:'Catalog', exact:true}).focus();
+    await nav.getByRole('link', {name:'Lessons', exact:true}).focus();
     await page.keyboard.press('Alt+ArrowRight');
     await expect(page.getByRole('button', {name:'Retry',exact:true})).toBeVisible();
     await page.unroute('**/tab-preferences/content-hub*');

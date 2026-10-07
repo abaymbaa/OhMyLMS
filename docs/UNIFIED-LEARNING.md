@@ -2,7 +2,7 @@
 
 ## Set Up a Course
 
-1. Skills are always available. Build a grade, exam or subject from chapters and skills in the [Content Hub](CONTENT-HUB.md) catalog, or use the course's Learning tab as described here; both edit the same program draft.
+1. Skills are always available. Build a grade, exam or subject from chapters and skills in a syllabus's editor in the [Content Hub](CONTENT-HUB.md), or use the course's Learning tab as described here; both edit the same program draft.
 2. Create skills and approve practice questions in the Question Bank. Assign each question its primary skill and a question family. Secure exam questions and questions needing manual marking are not practice questions.
 3. Open a course > Settings > **Learning**.
 4. Choose Traditional, Skill-based, or Blended. Select required skill outcomes and their Proficient or Mastered targets. Add practice steps, reusable lessons, and checkpoints to the path.

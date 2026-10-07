@@ -11,7 +11,7 @@ export function PublishDialog({ catalog, errors, busy, onPublish, onClose }) {
   const draftCourse = catalog.course.status !== 'publish';
   return (
     <Modal
-      title={__('Publish this catalog', 'ohmylms')}
+      title={__('Publish this course', 'ohmylms')}
       onRequestClose={onClose}
       className="ohmylms-content-hub-dialog"
     >
@@ -28,7 +28,7 @@ export function PublishDialog({ catalog, errors, busy, onPublish, onClose }) {
       {draftCourse && (
         <Notice status="warning" isDismissible={false}>
           {__(
-            'The course itself is not published yet. Learners only see the catalog once the course is published too.',
+            'The course itself is not published yet. Learners only see these chapters and skills once the course is published too.',
             'ohmylms',
           )}
         </Notice>

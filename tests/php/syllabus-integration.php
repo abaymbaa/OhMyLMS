@@ -327,7 +327,7 @@ try {
     $equations = $chapter_named('C2.1 · Equations');
     ok($equations > 0 && $codes_in($equations) === ['C2.1.1', 'C2.1.2'] && $imported->get_data()['course']['id'] === $course, 'an import adds its groups as chapters and its skills as outcomes');
     $summary = outline($learn)['course'];
-    ok($summary['chapters'] === 3 && $summary['skills'] === 3 && $summary['published'] === false && $summary['catalog'] === "#/content-hub/catalog/$course", 'the outline summarises the course');
+    ok($summary['chapters'] === 3 && $summary['skills'] === 3 && $summary['published'] === false && $summary['edit'] === "#/course-edit/$course/settings" && !isset($summary['catalog']), 'the outline summarises the course and points at its editor, not at a catalog page');
 
     // A syllabus course may hold every skill of its syllabus, an ordinary course only 200.
     $many = []; for ($n = 1; $n <= 205; $n++) { $many[] = ['line' => 10 + $n, 'content' => '3 Many', 'group_code' => 'M1', 'group' => 'Many skills', 'skill_code' => 'M1.' . $n, 'skill' => "Many skill $n $tag"]; }

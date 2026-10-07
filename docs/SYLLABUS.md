@@ -52,7 +52,7 @@ Every change is saved on the server first and the screen follows what the server
 
 ## A syllabus is also a course
 
-Every syllabus has one real course (an ordinary course post), so it is listed in the Content Hub **Catalog** and **Courses** tabs and can be published, priced, enrolled in and put in a Learning Track like any other course. The syllabus owns the structure and the course mirrors it, one way:
+Every syllabus has one real course (an ordinary course post), so it is listed in the Content Hub **Courses** tab and can be published, priced, enrolled in and put in a Learning Track like any other course. The syllabus owns the structure and the course mirrors it, one way:
 
 | Syllabus | Course |
 | --- | --- |
@@ -61,10 +61,10 @@ Every syllabus has one real course (an ordinary course post), so it is listed in
 | A skill in a chapter | A skill (outcome) of the course's learning-program **draft**, in that chapter, in the same order |
 
 - **When the course is made.** When an item is switched on as a syllabus, when an item typed "syllabus" is created, and, for a syllabus that existed before this, the first time its editor is opened. **Update course from syllabus** (the course card, and the header menu) makes it match again. A course is also placed under its syllabus in the curriculum, like any course linked there.
-- **Only the draft is written.** Learners see nothing until the course is **published** (the course card's **Publish course** is the catalog's own publish, with its readiness checks and the choice to move enrolled learners). The course itself must also be published for learners to reach it.
-- **What the course keeps for itself.** A chapter mirrors a chapter of the syllabus when it carries that chapter's uuid, and only such chapters, and the skills in them, are managed. A chapter, a skill, an attachment, the learning mode, a skill's target and its "required" flag set in the catalog are left alone. A skill new to the course starts at **Proficient** and **not required**.
-- **Choosing what the course requires.** The catalog will not publish a skill-based course until at least one skill is **required**, and a required skill needs approved questions (the catalog's own readiness checks, listed in the publish dialog). So the editor lets you decide as skills become ready: a skill's **In the course** block (**Learners must reach this skill to finish the course**, and its **Target**, Proficient or Mastered), and the **✓** menu above a chapter's skills (**Require every skill in this chapter** / **Make every skill in this chapter optional**). Required skills are tagged on the chapter's rows, counted ("3 of 5 required for the course") and totalled on the course card. Only a syllabus skill's requirement and target change; the skills and chapters stay as the syllabus has them.
-- **Lessons, quizzes and assignments** are attached to a chapter from the chapter's pane (or to chosen skills in the catalog). They are the course's attachments, so the catalog and the course editor show the same thing.
+- **Only the draft is written.** Learners see nothing until the course is **published** (the course card's **Publish course** is the course's own publish, with its readiness checks and the choice to move enrolled learners). The course itself must also be published for learners to reach it.
+- **What the course keeps for itself.** A chapter mirrors a chapter of the syllabus when it carries that chapter's uuid, and only such chapters, and the skills in them, are managed. A chapter, a skill, an attachment, the learning mode, a skill's target and its "required" flag set on the course itself are left alone. A skill new to the course starts at **Proficient** and **not required**.
+- **Choosing what the course requires.** A skill-based course will not publish until at least one skill is **required**, and a required skill needs approved questions (the course's own readiness checks, listed in the publish dialog). So the editor lets you decide as skills become ready: a skill's **In the course** block (**Learners must reach this skill to finish the course**, and its **Target**, Proficient or Mastered), and the **✓** menu above a chapter's skills (**Require every skill in this chapter** / **Make every skill in this chapter optional**). Required skills are tagged on the chapter's rows, counted ("3 of 5 required for the course") and totalled on the course card. Only a syllabus skill's requirement and target change; the skills and chapters stay as the syllabus has them.
+- **Lessons, quizzes and assignments** are attached to a chapter from the chapter's pane. They are the course's own attachments, so the course shows the same thing.
 - **A course may hold every skill of its syllabus** (up to 5,000). An ordinary course's learning program still lists at most 200 skills.
 - **Deleting the course** (outside the editor) means the syllabus is given a new one the next time it asks. **Deleting the syllabus** keeps the course and drops the link.
 - If the course cannot follow a change, the change to the syllabus still stands and the editor says so; **Update course from syllabus** tries again.
@@ -127,7 +127,7 @@ So importing the same file twice reports "nothing to import", and a corrected or
 
 - **Learning Tracks.** A syllabus's skills (and those of its topics) count as the skills of that curriculum item on a learner's track dashboard, and a skill shows the topic it belongs to.
 - **Skill library.** Under the syllabus's root skill, with their codes.
-- **The course.** As its chapters and skills, in the Content Hub catalog.
+- **The course.** As its chapters and skills, in the course you open from the Content Hub Courses tab.
 - The Curriculum tree shows each syllabus with its course and its number of skill groups (its chapters) and skills.
 
 ## REST API (`ohmylms/v1`, administrators only)
@@ -148,7 +148,7 @@ All routes are under `curriculum/items/{id}/syllabus` (`{id}` is the syllabus). 
 | `POST …/groups/{group}/skills/{term}/move` | `group_id` and `position` |
 | `POST …/syllabus/import` | `rows` and `dry_run`; answers a `report` (counts, `errors`, `warnings`, `applied`) |
 
-Writes also carry `course` (id, title, status, mode, `published`, counts of chapters, skills and attachments, and the addresses of the course settings and catalog) and, when the course could not follow, `course_error`. Items answer with `course_id`. `PUT curriculum/items/{id}` also accepts `is_syllabus`; turning it on, or creating an item typed "syllabus", makes the course, and renaming a syllabus renames its course. Moving or deleting an item that holds chapters brings the course up to date.
+Writes also carry `course` (id, title, status, mode, `published`, counts of chapters, skills and attachments, and the address of the course settings, `edit`) and, when the course could not follow, `course_error`. Items answer with `course_id`. `PUT curriculum/items/{id}` also accepts `is_syllabus`; turning it on, or creating an item typed "syllabus", makes the course, and renaming a syllabus renames its course. Moving or deleting an item that holds chapters brings the course up to date.
 
 What a skill owns uses the skill API: `GET skills/{id}` (its `lessons`), `PUT skills/{id}/lessons` (`lesson_ids`, replaces the set), `GET skills/link-targets?type=lesson`, and `GET question-bank?skill={id}`. The course's attachments use the catalog API (`GET/PUT content-hub/catalog/{course}`); the editor saves only `attachments`, never the skills, which the syllabus owns. Skill names and notes from the skill API (`skills`) and the curriculum skill pickers are returned as plain text (`a > 0`), not as the HTML entities WordPress stores (`a &gt; 0`).
 
@@ -174,7 +174,7 @@ OHMYLMS_TEST_CREDENTIALS=/path/test-credentials.json php tests/php/syllabus-inte
 OHMYLMS_TEST_CREDENTIALS=... OHMYLMS_CHROMIUM_PATH=... npx playwright test tests/browser/syllabus.spec.cjs --workers=1
 ```
 
-The integration suite refuses any database other than `ohmylms_source_test`. It covers the flag and its guard, group and skill editing, equal names and unique codes, maths and Cyrillic text, long names that begin alike, a dry run that changes nothing, an import applied, repeated and edited, a refused file, an import that fails part-way and rolls back (including the library skills it created), the Tracks and membership integration, deletion, permissions, and the course: it is made, named, linked and rebuilt, chapters and skills follow every change (rename, reorder, move, delete, import), what the catalog added by hand survives, more than 200 skills fit, and deleting a syllabus keeps its course. The browser spec opens the editor from the syllabus's name and builds chapters and skills from the keyboard, attaches a lesson to a chapter, tags lessons to a skill, and runs the CSV import and export.
+The integration suite refuses any database other than `ohmylms_source_test`. It covers the flag and its guard, group and skill editing, equal names and unique codes, maths and Cyrillic text, long names that begin alike, a dry run that changes nothing, an import applied, repeated and edited, a refused file, an import that fails part-way and rolls back (including the library skills it created), the Tracks and membership integration, deletion, permissions, and the course: it is made, named, linked and rebuilt, chapters and skills follow every change (rename, reorder, move, delete, import), what was added to the course by hand survives, more than 200 skills fit, and deleting a syllabus keeps its course. The browser spec opens the editor from the syllabus's name and builds chapters and skills from the keyboard, attaches a lesson to a chapter, tags lessons to a skill, and runs the CSV import and export.
 
 ## Known limitations
 
@@ -182,9 +182,9 @@ The integration suite refuses any database other than `ohmylms_source_test`. It 
 - Chapters are not nested inside each other (topics hold chapters), and a skill is in one chapter per syllabus.
 - Reordering uses the Move up and Move down menu items, not drag and drop.
 - An import never deletes, so removing a skill from a syllabus is done in the editor.
-- The course follows the syllabus one way. Chapters, skills and attachments made by hand in the catalog stay, but a skill removed from the syllabus leaves the course, and a skill added to the course by hand that is later placed in a chapter is taken over by it.
+- The course follows the syllabus one way. Chapters, skills and attachments added to the course by hand stay, but a skill removed from the syllabus leaves the course, and a skill added to the course by hand that is later placed in a chapter is taken over by it.
 - A large syllabus takes a moment longer to save: the course is brought up to date after each change (about 70 ms for a skill added to a 500-skill syllabus, and a second or two for the first sync of a large import).
 - A new syllabus course cannot be published until you require a skill and that skill has approved questions; there is no "require everything" shortcut beyond one chapter at a time.
-- Lessons attach to a whole chapter in the editor; attaching to chosen skills of the course is done in the catalog. Lessons tagged to a skill belong to the skill, and are not attached to the course automatically.
+- Lessons attach to a whole chapter in the editor. Attaching to chosen skills of the course is supported by the API (`skill_ids` on an attachment) but the app has no screen for it since the Content Hub Catalog tab was removed. Lessons tagged to a skill belong to the skill, and are not attached to the course automatically.
 - Games are not built yet; only the slot for them exists.
 - New strings are not yet in `languages/ohmylms.pot`.

@@ -1,4 +1,4 @@
-import { createElement } from '@wordpress/element';
+import { createElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMenuHighlight } from '../menuHighlight';
 import { HubContext } from './context';
@@ -6,7 +6,6 @@ import { HUB_TABS } from './hubRoutes.mjs';
 import { MovableTabs } from '../navigation/MovableTabs';
 
 const tabLabels = () => ({
-  catalog: __('Catalog', 'ohmylms'),
   courses: __('Courses', 'ohmylms'),
   lessons: __('Lessons', 'ohmylms'),
   quizzes: __('Quizzes', 'ohmylms'),
@@ -54,6 +53,21 @@ export function contentHubScreen(Component, active) {
   }
   ContentHubScreen.displayName = `ContentHub(${active})`;
   return ContentHubScreen;
+}
+
+/** A screen that sends an address which no longer has a page on to `resolve(hash)`, replacing it in the history. */
+export function redirectScreen(resolve) {
+  function RedirectScreen() {
+    useEffect(() => {
+      const hash = window.location.hash;
+      window.location.replace(
+        `${window.location.pathname}${window.location.search}#${resolve(hash)}`,
+      );
+    }, []);
+    return null;
+  }
+  RedirectScreen.displayName = 'ContentHubRedirect';
+  return RedirectScreen;
 }
 
 /** Wrap a core screen that is opened from the hub (course editor, lesson editor, reports). */

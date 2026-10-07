@@ -52,7 +52,7 @@ test('Curriculum and Learning Tracks are Content Hub tabs, and the old category,
   expect(labels.slice(0, 2)).toEqual(['Content Hub', 'Certificates']);
   for (const retired of ['Courses', 'Assessments', 'Skills', 'Curriculum', 'Learning Tracks', 'Categories', 'Tags']) expect(labels).not.toContain(retired);
   const tabs = page.getByRole('navigation', { name: 'Content Hub sections' });
-  await expect(tabs.getByRole('link')).toHaveText(['Catalog', 'Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks']);
+  await expect(tabs.getByRole('link')).toHaveText(['Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks']);
   const tabAt = async (hash, tab, heading) => {
     await page.goto(app(hash));
     await expect(tabs.locator('a[aria-current="page"]')).toHaveText(tab, { timeout: 30000 });
@@ -68,7 +68,17 @@ test('Curriculum and Learning Tracks are Content Hub tabs, and the old category,
   await tabAt('/extensions/tracks', 'Learning Tracks', 'Learning Tracks');
   await tabAt('/categories', 'Curriculum', 'Curriculum');
   await tabAt('/tags', 'Learning Tracks', 'Learning Tracks');
+  // The hub address itself shows the Courses tab; there is no Catalog tab, and its old addresses lead on.
+  await page.goto(app('/content-hub'));
+  await expect(tabs.locator('a[aria-current="page"]')).toHaveText('Courses', { timeout: 30000 });
+  await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible();
+  await page.goto(app('/content-hub/catalog'));
+  await expect(page).toHaveURL(/#\/content-hub\/courses$/, { timeout: 30000 });
+  await expect(tabs.locator('a[aria-current="page"]')).toHaveText('Courses');
+  await page.goto(app(`/content-hub/catalog/${state.plain}`));
+  await expect(page).toHaveURL(new RegExp(`#/course-edit/${state.plain}$`), { timeout: 30000 });
   // The tabs link to each other from inside the hub.
+  await page.goto(app('/content-hub'));
   await tabs.getByRole('link', { name: 'Curriculum', exact: true }).click();
   await expect(page).toHaveURL(/#\/content-hub\/curriculum$/);
   expect(problems).toEqual([]);

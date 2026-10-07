@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { duplicateLesson, editPath, listLessons, setLessonSkills, trashLessons } from './api.mjs';
-import { catalogPath } from './hubRoutes.mjs';
+import { courseEditPath } from './hubRoutes.mjs';
 import { SkillPicker } from './SkillPicker';
 
 const statusOptions = () => [
@@ -117,7 +117,7 @@ export function LessonsPage() {
       headingLevel={2}
       title={__('Lesson library', 'ohmylms')}
       description={__(
-        'Lessons are reusable. Link them to skills, then attach them to chapters or skills in any course from its Catalog.',
+        'Lessons are reusable. Link them to skills here, and attach them to the chapters of a syllabus from its editor in the Curriculum tab.',
         'ohmylms',
       )}
     >
@@ -223,7 +223,7 @@ export function LessonsPage() {
                         <ul className="ohmylms-hub-links">
                           {item.courses.map((course) => (
                             <li key={course.id}>
-                              <a href={`#${catalogPath(course.id)}`}>
+                              <a href={`#${courseEditPath(course.id)}`}>
                                 {course.title || `#${course.id}`}
                               </a>
                             </li>

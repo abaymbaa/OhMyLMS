@@ -90,9 +90,6 @@ export function CoursePanel({ course, courseCatalog, pending, onUpdate }) {
         <Button variant="secondary" href={course.edit}>
           {__('Course settings', 'ohmylms')}
         </Button>
-        <Button variant="secondary" href={course.catalog}>
-          {__('Open in the catalog', 'ohmylms')}
-        </Button>
         {catalog?.course?.url && (
           <Button
             variant="secondary"

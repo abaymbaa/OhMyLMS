@@ -2,7 +2,7 @@ import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { AttachDialog } from '../content-hub/AttachDialog';
-import { AttachmentItem } from '../content-hub/ChapterBlock';
+import { AttachmentItem } from '../content-hub/AttachmentItem';
 import { attachmentsFor } from '../content-hub/catalogModel.mjs';
 import { AddContentMenu } from './AddContentMenu';
 import { useWorkspace } from './context';

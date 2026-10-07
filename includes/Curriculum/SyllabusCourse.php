@@ -177,7 +177,7 @@ final class SyllabusCourse {
     public static function summary($syllabus_id) {
         $course_id = self::course_id($syllabus_id);
         if (!$course_id) { return null; }
-        return Catalog::summary($course_id) + ['edit' => '#/course-edit/' . $course_id . '/settings', 'catalog' => '#/content-hub/catalog/' . $course_id];
+        return Catalog::summary($course_id) + ['edit' => '#/course-edit/' . $course_id . '/settings'];
     }
 
     /** The outline with each skill group told which chapter of the course it became (0 when there is no such chapter). */

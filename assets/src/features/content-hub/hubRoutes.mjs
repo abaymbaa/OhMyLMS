@@ -2,17 +2,17 @@
  * Routing data for the Content Hub, kept free of React so it can be tested on its own.
  *
  * The hub replaces the Courses, Skills, Curriculum, Learning Tracks and Assessments submenus. Its tabs
- * are Catalog (a grade or exam built from chapters and skills), Courses, Lessons, Quizzes, Question Bank,
- * Assignments, Skills, Curriculum and Learning Tracks. Every address those screens had keeps working and
- * opens the matching tab (`#/courses`, `#/quizzes`, `#/assignments`, `#/assessments`,
+ * are Courses, Lessons, Quizzes, Question Bank, Assignments, Skills, Curriculum and Learning Tracks, and
+ * the hub itself (`#/content-hub`) opens the first of them. Every address those screens had keeps working
+ * and opens the matching tab (`#/courses`, `#/quizzes`, `#/assignments`, `#/assessments`,
  * `#/assessments/question-bank`, `#/assessments/assignments`, `#/extensions/skills`,
  * `#/extensions/question-bank`, `#/extensions/curriculum`, `#/extensions/tracks`, `#/categories` and
- * `#/tags`), so existing links and bookmarks survive.
+ * `#/tags`), so existing links and bookmarks survive. The retired Catalog addresses
+ * (`#/content-hub/catalog` and `#/content-hub/catalog/ID`) open the Courses tab and the course's editor.
  */
 export const HUB_PATH = '/content-hub';
 
 export const HUB_TABS = [
-  { id: 'catalog', path: '/content-hub', label: 'Catalog' },
   { id: 'courses', path: '/content-hub/courses', label: 'Courses' },
   { id: 'lessons', path: '/content-hub/lessons', label: 'Lessons' },
   { id: 'quizzes', path: '/content-hub/quizzes', label: 'Quizzes' },
@@ -47,7 +47,6 @@ export const HUB_ALIASES = {
 
 /** Hub-provided page for each tab that is not one of the application's own screens. */
 const TAB_PAGES = {
-  catalog: 'CatalogPage',
   lessons: 'LessonsPage',
   'question-bank': 'QuestionBankPage',
   skills: 'SkillsPage',
@@ -75,8 +74,14 @@ export const HUB_MENU_ROUTES = [
  */
 export const SYLLABUS_ROUTE = '/content-hub/curriculum/syllabus/:id';
 
-export const catalogPath = (courseId) =>
-  courseId ? `${HUB_PATH}/catalog/${Number(courseId)}` : HUB_PATH;
+/** Where a course is opened: its own editor, which the Courses tab lists. */
+export const courseEditPath = (courseId) => `/course-edit/${Number(courseId)}`;
+
+/** Where an address of the retired Catalog tab leads: the course's editor, or the Courses tab. */
+export function legacyCatalogTarget(hash) {
+  const match = /#\/content-hub\/catalog\/(\d+)/.exec(String(hash || ''));
+  return match ? courseEditPath(match[1]) : '/content-hub/courses';
+}
 
 /** Query parameters of the current hash route, e.g. `#/content-hub/skills?add=1`. */
 export function hashQuery(hash) {
@@ -89,9 +94,11 @@ export function hashQuery(hash) {
  * Hub routes. `screen(Component, tab)` wraps a page in the hub frame; `pages` are the tab bodies and
  * `routes` the application's own route table (its `/courses`, `/quizzes` and `/assignments` screens
  * become the Courses, Quizzes and Assignments tabs, and are left out when the application lacks them).
- * The old Assessments addresses reuse the screens of the tabs they open.
+ * The old Assessments addresses reuse the screens of the tabs they open, and the hub's own address shows
+ * the first tab. `redirect(resolve)` makes the screen that sends the retired Catalog addresses on to
+ * `resolve(hash)`.
  */
-export function contentHubRoutes(routes, pages, screen) {
+export function contentHubRoutes(routes, pages, screen, redirect) {
   const appRoute = Object.fromEntries(
     Object.entries(HUB_APP_ROUTES).map(([path, tab]) => [tab, path]),
   );
@@ -104,12 +111,16 @@ export function contentHubRoutes(routes, pages, screen) {
     if (appRoute[tab.id] && !Component) continue;
     screens[tab.id] = screen(Component, tab.id);
     hub.push({ path: tab.path, element: screens[tab.id] });
-    if (tab.id === 'catalog') {
-      hub.push({ path: '/content-hub/catalog/:courseId', element: screen(Component, 'catalog') });
-    }
   }
+  const home = screens[HUB_TABS[0].id] || Object.values(screens)[0];
   const aliases = Object.entries(HUB_ALIASES)
     .filter(([, tab]) => screens[tab])
     .map(([path, tab]) => ({ path, element: screens[tab] }));
-  return [...hub, ...aliases];
+  const retired = redirect
+    ? ['/content-hub/catalog', '/content-hub/catalog/:courseId'].map((path) => ({
+        path,
+        element: redirect(legacyCatalogTarget),
+      }))
+    : [];
+  return [...(home ? [{ path: HUB_PATH, element: home }] : []), ...hub, ...aliases, ...retired];
 }

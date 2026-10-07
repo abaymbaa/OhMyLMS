@@ -323,11 +323,12 @@ test('topics hold chapters; the course card shows where the course stands', asyn
     await expect(course.locator('.ohmylms-ws-facts div', { hasText: 'Chapters' })).toContainText(
       '1',
     );
-    await expect(course.getByRole('link', { name: 'Open in the catalog' })).toHaveAttribute(
+    // The course is opened where every course is: its own editor, listed in the Courses tab.
+    await expect(course.getByRole('link', { name: 'Course settings' })).toHaveAttribute(
       'href',
-      /#\/content-hub\/catalog\/\d+$/,
+      /#\/course-edit\/\d+\/settings$/,
     );
-    await expect(course.getByRole('link', { name: 'Course settings' })).toBeVisible();
+    await expect(course.getByRole('link', { name: /catalog/i })).toHaveCount(0);
     await expect(course.getByRole('button', { name: 'Publish course' })).toBeEnabled();
 
     // Deleting the topic asks what happens to what is under it.

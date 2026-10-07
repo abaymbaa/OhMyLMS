@@ -36,7 +36,11 @@ import {
 } from './lazyFeatures';
 import { registerQuestionBankPages } from '../features/question-bank/registerPages';
 import { registerCurriculumPages } from '../features/curriculum/registerPages';
-import { contentHubScreen, withContentHubMenu } from '../features/content-hub/ContentHub';
+import {
+  contentHubScreen,
+  redirectScreen,
+  withContentHubMenu,
+} from '../features/content-hub/ContentHub';
 import {
   contentHubRoutes,
   HUB_APP_ROUTES,
@@ -155,7 +159,7 @@ const publicApi = {
           ? route
           : { ...route, element: wrapScreen(route.element, route.path, registry) },
       ),
-      ...contentHubRoutes(hubScreens, hubPages, contentHubScreen),
+      ...contentHubRoutes(hubScreens, hubPages, contentHubScreen, redirectScreen),
       // The syllabus editor is a full page opened from the Curriculum tab, like the course editor.
       {
         path: SYLLABUS_ROUTE,

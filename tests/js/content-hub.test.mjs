@@ -8,9 +8,10 @@ import {
   HUB_EXTENSION_TABS,
   HUB_MENU_ROUTES,
   HUB_TABS,
-  catalogPath,
   contentHubRoutes,
+  courseEditPath,
   hashQuery,
+  legacyCatalogTarget,
 } from '../../assets/src/features/content-hub/hubRoutes.mjs';
 
 const createElement = (type, props, ...children) => ({ type, props: props || {}, children });
@@ -37,20 +38,27 @@ const load = (file, names, scope) => {
   );
 };
 
-const AddMenu = () => null;
 const MovableTabs = () => null;
 const HubContext = { Provider: 'HubContext.Provider' };
-const { ContentHubFrame, contentHubScreen } = load(
+const effects = [];
+const { ContentHubFrame, contentHubScreen, redirectScreen } = load(
   'assets/src/features/content-hub/ContentHub.jsx',
-  ['ContentHubFrame', 'contentHubScreen'],
-  { createElement, __: (text) => text, useMenuHighlight: () => {}, AddMenu, MovableTabs, HubContext, HUB_TABS },
+  ['ContentHubFrame', 'contentHubScreen', 'redirectScreen'],
+  {
+    createElement,
+    useEffect: (effect) => effects.push(effect),
+    __: (text) => text,
+    useMenuHighlight: () => {},
+    MovableTabs,
+    HubContext,
+    HUB_TABS,
+  },
 );
 
-test('The hub has Catalog, Courses, Lessons, the three assessment tabs, Skills, Curriculum and Learning Tracks under one base path', () => {
+test('The hub has Courses, Lessons, the three assessment tabs, Skills, Curriculum and Learning Tracks under one base path', () => {
   assert.deepEqual(
     HUB_TABS.map((tab) => tab.id),
     [
-      'catalog',
       'courses',
       'lessons',
       'quizzes',
@@ -64,7 +72,6 @@ test('The hub has Catalog, Courses, Lessons, the three assessment tabs, Skills, 
   assert.deepEqual(
     HUB_TABS.map((tab) => tab.label),
     [
-      'Catalog',
       'Courses',
       'Lessons',
       'Quizzes',
@@ -75,13 +82,12 @@ test('The hub has Catalog, Courses, Lessons, the three assessment tabs, Skills, 
       'Learning Tracks',
     ],
   );
-  assert.equal(HUB_TABS[0].path, '/content-hub');
+  assert.equal(HUB_TABS[0].path, '/content-hub/courses', 'the hub address itself shows the first tab');
   for (const tab of HUB_TABS) assert.ok(tab.path.startsWith('/content-hub'), tab.path);
   assert.equal(new Set(HUB_TABS.map((tab) => tab.path)).size, HUB_TABS.length);
 });
 
 const allPages = {
-  CatalogPage: () => null,
   LessonsPage: () => null,
   QuestionBankPage: () => null,
   SkillsPage: () => null,
@@ -112,7 +118,6 @@ test('Hub routes reuse the application list screens and the SDK pages', () => {
     routes.map((route) => route.path),
     [
       '/content-hub',
-      '/content-hub/catalog/:courseId',
       '/content-hub/courses',
       '/content-hub/lessons',
       '/content-hub/quizzes',
@@ -130,7 +135,6 @@ test('Hub routes reuse the application list screens and the SDK pages', () => {
   assert.equal(byTab.courses, Courses, 'the existing course list becomes the Courses tab');
   assert.equal(byTab.quizzes, Quizzes, 'the existing quiz list becomes the Quizzes tab');
   assert.equal(byTab.assignments, Assignments, 'the existing assignment list becomes the Assignments tab');
-  assert.equal(byTab.catalog, allPages.CatalogPage);
   assert.equal(byTab.lessons, allPages.LessonsPage);
   assert.equal(byTab['question-bank'], allPages.QuestionBankPage);
   assert.equal(byTab.skills, allPages.SkillsPage);
@@ -169,7 +173,6 @@ test('Without the application list screens the hub still serves its own tabs', (
     routes.map((route) => route.path),
     [
       '/content-hub',
-      '/content-hub/catalog/:courseId',
       '/content-hub/lessons',
       '/content-hub/question-bank',
       '/content-hub/skills',
@@ -214,10 +217,13 @@ test('A wrapped screen receives its original props', () => {
   assert.equal(rendered.children[0].props.example, 1);
 });
 
-test('Catalog addresses and hash queries', () => {
-  assert.equal(catalogPath(), '/content-hub');
-  assert.equal(catalogPath(42), '/content-hub/catalog/42');
-  assert.equal(catalogPath('7'), '/content-hub/catalog/7');
+test('Course addresses, the retired Catalog addresses and hash queries', () => {
+  assert.equal(courseEditPath(42), '/course-edit/42');
+  assert.equal(courseEditPath('7'), '/course-edit/7');
+  assert.equal(legacyCatalogTarget('#/content-hub/catalog/42'), '/course-edit/42');
+  assert.equal(legacyCatalogTarget('#/content-hub/catalog/42?x=1'), '/course-edit/42');
+  assert.equal(legacyCatalogTarget('#/content-hub/catalog'), '/content-hub/courses');
+  assert.equal(legacyCatalogTarget(undefined), '/content-hub/courses');
   assert.equal(hashQuery('#/content-hub/skills?add=123').get('add'), '123');
   assert.equal(hashQuery('#/content-hub/skills').get('add'), null);
   assert.equal(hashQuery(undefined).get('add'), null);
@@ -303,5 +309,59 @@ test('Question Bank, Curriculum and Learning Tracks drop their own page title le
     const source = fs.readFileSync(file, 'utf8');
     assert.match(source, /const hub = useContext\(HubContext\);/, file);
     assert.match(source, /headingLevel=\{hub \? 2 : 1\}/, file);
+  }
+});
+
+test('The hub address shows the Courses tab, and without course screens the first tab there is', () => {
+  const screen = (Component, tab) => ({ tab, Component });
+  const withCourses = contentHubRoutes([{ path: '/courses', element: 'courses screen' }], allPages, screen);
+  const at = (routes, path) => routes.find((route) => route.path === path).element;
+  assert.equal(at(withCourses, '/content-hub'), at(withCourses, '/content-hub/courses'));
+  const without = contentHubRoutes([], allPages, screen);
+  assert.equal(at(without, '/content-hub'), at(without, '/content-hub/lessons'));
+  assert.equal(without.filter((route) => route.path === '/content-hub').length, 1);
+});
+
+test('The retired Catalog addresses are redirected rather than left without a page', () => {
+  const made = [];
+  const redirect = (resolve) => {
+    const element = { redirectTo: resolve };
+    made.push(element);
+    return element;
+  };
+  const routes = contentHubRoutes([], allPages, (Component, tab) => tab, redirect);
+  const retired = routes.filter((route) => route.path.startsWith('/content-hub/catalog'));
+  assert.deepEqual(
+    retired.map((route) => route.path),
+    ['/content-hub/catalog', '/content-hub/catalog/:courseId'],
+  );
+  for (const route of retired) assert.equal(route.element.redirectTo, legacyCatalogTarget);
+  assert.equal(
+    contentHubRoutes([], allPages, (Component, tab) => tab).some((route) =>
+      route.path.startsWith('/content-hub/catalog'),
+    ),
+    false,
+    'no redirect is made unless one is supplied',
+  );
+});
+
+test('A redirect screen replaces the address with where it leads', () => {
+  const calls = [];
+  globalThis.window = {
+    location: {
+      hash: '#/content-hub/catalog/42',
+      pathname: '/wp-admin/admin.php',
+      search: '?page=ohmylms',
+      replace: (url) => calls.push(url),
+    },
+  };
+  try {
+    effects.length = 0;
+    const Screen = redirectScreen(legacyCatalogTarget);
+    assert.equal(Screen(), null, 'it renders nothing');
+    effects[0]();
+    assert.deepEqual(calls, ['/wp-admin/admin.php?page=ohmylms#/course-edit/42']);
+  } finally {
+    delete globalThis.window;
   }
 });
