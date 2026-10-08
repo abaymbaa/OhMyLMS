@@ -194,8 +194,14 @@ const ICONS = {
   syllabus: 'welcome-learn-more',
 };
 
-export function KindIcon({ kind }) {
-  return <Dashicon icon={ICONS[kind] || 'marker'} className={`ohmylms-ws-kind is-${kind}`} />;
+export function KindIcon({ kind, icon }) {
+  return (
+    <Dashicon
+      icon={icon || ICONS[kind] || 'marker'}
+      className={`ohmylms-ws-kind is-${kind}`}
+      aria-hidden="true"
+    />
+  );
 }
 
 /** The small label that says what a row is: Chapter, Skill, Lesson… */
@@ -223,6 +229,7 @@ export function RowMenu({ label, controls, disabled, icon = 'ellipsis' }) {
  */
 export function Row({
   kind,
+  icon,
   title,
   tag,
   tagTone,
@@ -236,7 +243,7 @@ export function Row({
 }) {
   const body = (
     <>
-      <KindIcon kind={kind} />
+      <KindIcon kind={kind} icon={icon} />
       <span className="ohmylms-ws-row-title">
         {title}
         {notes && <span className="ohmylms-ws-row-notes">{notes}</span>}

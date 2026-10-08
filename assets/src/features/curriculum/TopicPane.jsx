@@ -2,6 +2,8 @@ import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { AddContentMenu } from './AddContentMenu';
 import { SyllabusOverview } from './SyllabusOverview';
+import { SkillCategories } from './SkillCategories';
+import { IconPicker } from './IconPicker';
 import { useWorkspace } from './context';
 import { siblingInfo } from './model.mjs';
 import { groupLabel } from './syllabus.mjs';
@@ -113,6 +115,14 @@ export function TopicPane({ node }) {
       />
       <header className="ohmylms-ws-pane-head">
         <div className="ohmylms-ws-pane-title">
+          {!root && (
+            <IconPicker
+              kind="topic"
+              value={item.icon}
+              disabled={w.pending}
+              onChange={(icon) => w.actions.saveTopic(item, { icon })}
+            />
+          )}
           <SaveField
             id={`ohmylms-ws-name-${node.id}`}
             label={root ? __('Syllabus name', 'ohmylms') : __('Topic name', 'ohmylms')}
@@ -153,6 +163,7 @@ export function TopicPane({ node }) {
             />
           )}
         </div>
+        {root && <SkillCategories />}
         <SaveField
           id={`ohmylms-ws-description-${node.id}`}
           label={__('Description', 'ohmylms')}
@@ -166,9 +177,7 @@ export function TopicPane({ node }) {
         />
       </header>
 
-      {root && w.course && (
-        <SyllabusOverview />
-      )}
+      {root && w.course && <SyllabusOverview />}
 
       <section className="ohmylms-ws-content" aria-label={__('Content', 'ohmylms')}>
         <div className="ohmylms-ws-content-head">
@@ -221,6 +230,7 @@ export function TopicPane({ node }) {
               <Row
                 key={child.key}
                 kind="chapter"
+                icon={child.group.icon}
                 title={groupLabel(child.group)}
                 tag={__('Chapter', 'ohmylms')}
                 meta={sprintf(
@@ -243,6 +253,7 @@ export function TopicPane({ node }) {
                 <Row
                   key={child.key}
                   kind="topic"
+                  icon={child.content.icon}
                   title={topicLabel(child.content)}
                   tag={__('Topic', 'ohmylms')}
                   meta={sprintf(

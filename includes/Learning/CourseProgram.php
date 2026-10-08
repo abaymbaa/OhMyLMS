@@ -223,6 +223,7 @@ final class CourseProgram {
                     if (!$wpdb->insert(Schema::table('outcomes'), ['program_id' => $id, 'term_id' => $outcome['term_id'], 'target' => $outcome['target'], 'required' => (int) !empty($outcome['required'])])) { throw new \RuntimeException('Outcome write failed'); }
                 }
                 if ($apply_existing && $wpdb->query($wpdb->prepare("UPDATE $bindings b JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON e.id=b.enrollment_id SET b.program_id=%d,b.bound_at=%s WHERE e.course_id=%d AND e.status='enrolled' AND e.progress<>'completed'", $id, current_time('mysql', true), $course_id)) === false) { throw new \RuntimeException('Upgrade failed'); }
+                if (!\OhMyLMS\Curriculum\Directory::capture($course_id, $program)) { throw new \RuntimeException('Directory publish failed'); }
                 if (!update_post_meta($course_id, self::CURRENT, $id)) { throw new \RuntimeException('Publish failed'); }
                 return $id;
             });

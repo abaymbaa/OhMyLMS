@@ -12,7 +12,8 @@ defined('ABSPATH') || exit;
 final class Schema {
     // 2: items can be syllabuses (is_syllabus, skill_root_id) and syllabuses hold skill groups of skills.
     // 3: a syllabus is also a course (course_id).
-    const VERSION = '3';
+    // 4: curriculum topics and syllabus chapters have editable icons.
+    const VERSION = '4';
     const OPTION = 'ohmylms_curriculum_schema';
 
     public static function table($name) {
@@ -26,9 +27,9 @@ final class Schema {
             // Any depth: a row points at its parent (0 = root) and carries its order among siblings.
             // is_syllabus marks any item as a syllabus; skill_root_id is the library skill that parents the skills created for it;
             // course_id is the course a syllabus is (a syllabus is also a course; 0 until it is made).
-            'curriculum_items' => "uuid char(36) NOT NULL, parent_id bigint unsigned NOT NULL DEFAULT 0, position int unsigned NOT NULL DEFAULT 0, item_type varchar(40) NOT NULL DEFAULT 'custom', name varchar(190) NOT NULL, description text NULL, code varchar(60) NOT NULL DEFAULT '', version varchar(60) NOT NULL DEFAULT '', is_syllabus tinyint(1) NOT NULL DEFAULT 0, skill_root_id bigint unsigned NOT NULL DEFAULT 0, course_id bigint unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY parent_position (parent_id,position), KEY item_type (item_type), KEY is_syllabus (is_syllabus), KEY course_id (course_id)",
+            'curriculum_items' => "uuid char(36) NOT NULL, parent_id bigint unsigned NOT NULL DEFAULT 0, position int unsigned NOT NULL DEFAULT 0, item_type varchar(40) NOT NULL DEFAULT 'custom', name varchar(190) NOT NULL, icon varchar(40) NOT NULL DEFAULT '', description text NULL, code varchar(60) NOT NULL DEFAULT '', version varchar(60) NOT NULL DEFAULT '', is_syllabus tinyint(1) NOT NULL DEFAULT 0, skill_root_id bigint unsigned NOT NULL DEFAULT 0, course_id bigint unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY parent_position (parent_id,position), KEY item_type (item_type), KEY is_syllabus (is_syllabus), KEY course_id (course_id)",
             // Skill groups of a syllabus. A group sits under the syllabus item or one of the content items beneath it.
-            'syllabus_groups' => "uuid char(36) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, code varchar(60) NOT NULL DEFAULT '', name varchar(190) NOT NULL, description text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY item_position (item_id,position)",
+            'syllabus_groups' => "uuid char(36) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, code varchar(60) NOT NULL DEFAULT '', name varchar(190) NOT NULL, icon varchar(40) NOT NULL DEFAULT '', description text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY item_position (item_id,position)",
             // The library skills placed in a group, in order. A placement is a reference: removing it never deletes the skill.
             'syllabus_group_skills' => "group_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, UNIQUE KEY member (group_id,term_id), KEY group_position (group_id,position), KEY term (term_id)",
             // Curriculum membership of courses, skills, question banks and quizzes/exams (many to many).

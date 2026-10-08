@@ -13,13 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if (\OhMyLMS\Extensions\Layouts::render('quiz', get_the_ID(), ohmylms_get_course_by_content_id(get_the_ID()))) return;
+if (empty($ohmylms_player_preview) && \OhMyLMS\Extensions\Layouts::render('quiz', get_the_ID(), ohmylms_get_course_by_content_id(get_the_ID()))) return;
 
 $quiz_start = isset($_GET['quiz']) && $_GET['quiz'] == 'start' ? true : false;
 $quiz 		= ohmylms_get_quiz(get_the_ID());
 $questions = array_values(array_filter($quiz->get_questions(), static function($q){return \OhMyLMS\Extensions\Registry::get('question',$q['settings']['type'] ?? '');}));
 $attempt 	= $quiz->get_quiz_attempt(get_current_user_id());
 $settings = $quiz->get_settings();
+if (!empty($ohmylms_player_preview)) {
+    $questions = $ohmylms_player_preview['questions'];
+    $settings = $ohmylms_player_preview['settings'];
+    $attempt = ['id' => 0];
+}
 // Versioned attempts render the frozen items issued at start, in their stored order.
 $attempt_context = !empty($attempt['id']) && \OhMyLMS\Assessment\Schema::ready() ? \OhMyLMS\Assessment\AttemptItems::context($attempt['id']) : null;
 if ($attempt_context) {
@@ -110,10 +115,11 @@ ob_start();
                     <p class="header-title">
                         <?php echo sanitize_text_field($quiz->get_name()); ?>
                     </p>
+                    <?php if (!empty($ohmylms_player_preview)) { ?><small><?php esc_html_e('Preview of saved quiz · Responses are not recorded', 'ohmylms'); ?></small><?php } ?>
                 </div>
 
                 <div class="quiz-header-right">
-                    <a href="#" class="quiz-page-close">
+                    <a href="#" class="quiz-page-close" aria-label="<?php esc_attr_e('Close quiz', 'ohmylms'); ?>">
                         <svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1L1 13M1 1l12 12"/></svg>
                     </a>
                 </div>
@@ -145,10 +151,12 @@ ob_start();
                     </button>
 
                     <form action="" method="post">
-                        <input type="hidden" name="action" value="ohmylms-quiz-exit-submission">
+                        <input type="hidden" name="action" value="<?php echo empty($ohmylms_player_preview) ? 'ohmylms-quiz-exit-submission' : 'ohmylms-quiz-preview-exit'; ?>">
                         <input type="hidden" name="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
                         <input type="hidden" name="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
-                        <?php wp_nonce_field( 'save_quiz_exit_submit', 'save-quiz-exit-submit-nonce' ); ?>
+                        <?php if (empty($ohmylms_player_preview)) { wp_nonce_field( 'save_quiz_exit_submit', 'save-quiz-exit-submit-nonce' ); } else { ?>
+                            <input type="hidden" name="preview_session" value="<?php echo esc_attr($ohmylms_player_preview['session']); ?>">
+                        <?php } ?>
 
                         <button type="submit" class="ohmylms-button quiz-alert-ok" tabindex="0">
                             <?php echo __('Exit', 'ohmylms'); ?>
@@ -159,6 +167,18 @@ ob_start();
         </div>
     </div>
 
+    <?php if (!empty($ohmylms_player_preview['result'])) { $preview_result = $ohmylms_player_preview['result']; ?>
+        <div class="ohmylms-container" role="status">
+            <div class="ohmylms-quiz-result">
+                <h2><?php esc_html_e('Preview result', 'ohmylms'); ?></h2>
+                <p><?php echo esc_html(sprintf(__('Score: %1$s / %2$s', 'ohmylms'), $preview_result['earned'], $preview_result['total'])); ?></p>
+                <?php if ($preview_result['pending']) { ?><p><?php esc_html_e('Some answers require manual grading.', 'ohmylms'); ?></p><?php } ?>
+                <?php foreach ($preview_result['errors'] as $error) { ?><p><?php echo esc_html($error); ?></p><?php } ?>
+                <a class="ohmylms-button" href="<?php echo esc_url(\OhMyLMS\Assessment\PreviewPlayer::url(get_the_ID())); ?>"><?php esc_html_e('Try again', 'ohmylms'); ?></a>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if (empty($ohmylms_player_preview['result'])) { ?>
     <?php if ($is_timer){ ?>
         <div class="ohmylms-quiz-timeup-text">
             <?php
@@ -216,6 +236,7 @@ ob_start();
 			<input type="hidden" name="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
             <div class="ohmylms-container">
                 <div class="ohmylms-quiz-form-wrapper">
+                    <?php if (!$questions) { ?><p><?php esc_html_e('This quiz has no supported questions yet.', 'ohmylms'); ?></p><?php } ?>
                     <!-- add "wrong-answered" class with the "ohmylms-quiz-box" class if quiz is failed and then remove this comment -->
 
 					<?php
@@ -266,6 +287,9 @@ ob_start();
                                     <input type="hidden" class="is-required" value= "<?php echo !empty($question['settings']['required']) ? $question['settings']['required'] : '' ?>" question-type="<?php echo $question['settings']['type']; ?>" />
 								</p>
 
+                                <?php if (!empty($question['description']) && ($question['settings']['type'] ?? '') !== 'structured') { ?>
+                                    <div class="ohmylms-question-block-content"><?php echo apply_filters('the_content', $question['description']); ?></div>
+                                <?php } ?>
 								<?php if(!empty($question_image)){?>
 									<img src="<?php echo esc_url($question_image) ?>" alt="question image" class="question-image">
 								<?php } ?>
@@ -309,7 +333,7 @@ ob_start();
             <div class="ohmylms-container">
                 <div class="ohmylms-footer-wrapper">
                     <div class="ohmylms-quiz-footer-left">
-						<?php if(!empty(ohmylms_get_next_content_permalink(get_the_ID()))){ ?>
+						<?php if(empty($ohmylms_player_preview) && !empty(ohmylms_get_next_content_permalink(get_the_ID()))){ ?>
 							<a href="<?php echo ohmylms_get_next_content_permalink(get_the_ID()) ?>" class="skiptop-next">
 								<?php echo __('Skip to Next Lesson', 'ohmylms'); ?>
 							</a>
@@ -317,9 +341,11 @@ ob_start();
                     </div>
 
                     <div class="ohmylms-quiz-footer-right">
-						<input type="hidden" name="action" value="ohmylms-quiz-submission">
+						<input type="hidden" name="action" value="<?php echo empty($ohmylms_player_preview) ? 'ohmylms-quiz-submission' : 'ohmylms-quiz-preview-submit'; ?>">
 						<input type="hidden" name="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
-						<?php wp_nonce_field( 'save_quiz_submit', 'save-quiz-submit-nonce' ); ?>
+						<?php if (empty($ohmylms_player_preview)) { wp_nonce_field( 'save_quiz_submit', 'save-quiz-submit-nonce' ); } else { ?>
+                            <input type="hidden" name="preview_session" value="<?php echo esc_attr($ohmylms_player_preview['session']); ?>">
+                        <?php } ?>
 
                         <?php
                             if('all_questions_in_one_page' === $quiz_layout){
@@ -398,6 +424,7 @@ ob_start();
         </div>
         <?php ohmylms_render_slot('student.quiz.after', ['quizId' => get_the_ID(), 'attemptId' => (int) $attempt['id']]); ?>
     </form>
+    <?php } ?>
 </section>
 <?php
 $duration = max(0, (int) round($timer * 60));
@@ -406,7 +433,8 @@ echo \OhMyLMS\Extensions\Interactivity::quiz(ob_get_clean(), [
     'page' => 1, 'perPage' => max(1, (int) $questions_per_group),
     'totalPages' => max(1, $quiz_layout === 'all_questions_in_one_page' ? 1 : ($quiz_layout === 'number_of_questions_per_page' ? $totalGroups : $supported_question_count)),
     'errors' => (object) [], 'submitting' => false, 'exitOpen' => false, 'error' => '',
-    'timed' => $is_timer, 'duration' => $duration, 'remaining' => $duration,
+    'preview' => !empty($ohmylms_player_preview),
+    'timed' => $is_timer && empty($ohmylms_player_preview['result']), 'duration' => $duration, 'remaining' => $duration,
     'ajaxUrl' => admin_url('admin-ajax.php'), 'expiryNonce' => wp_create_nonce('quiz_exit_submission'),
     'submissionError' => __('Submission failed. Your answers remain on this page. Please press Submit to retry.', 'ohmylms'),
 ]); // phpcs:ignore WordPress.Security.EscapeOutput -- templates escape their own fields.

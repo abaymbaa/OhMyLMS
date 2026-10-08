@@ -4,6 +4,12 @@ export function createQuizSettings(readRuntime) {
   return function QuizSettings(props) {
     const { I: Controls, React, Xm, b: I18n } = readRuntime();
     var setIsSettingsOpen = props.setIsSettingsOpen;
+    if (props.embedded)
+      return (
+        <div className="ohmylms-quiz-inspector-settings">
+          <Xm />
+        </div>
+      );
     return (
       props.chapterId,
       (0, I18n.__)('General', 'ohmylms'),

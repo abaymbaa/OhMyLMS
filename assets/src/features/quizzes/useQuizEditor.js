@@ -6,8 +6,10 @@ import {
   mergeSavedQuiz,
   mergeSavedQuestions,
   failedQuestion,
+  newQuestionCard,
+  moveOption,
 } from './model.mjs';
-import { loadQuiz, saveQuiz } from './api.mjs';
+import { loadQuiz, saveQuiz, removeQuestionFromQuiz } from './api.mjs';
 import { publishRevision } from '../question-bank/api.mjs';
 import { appendLinkedQuestions } from '../question-bank/model.mjs';
 import { __, sprintf } from '@wordpress/i18n';
@@ -172,6 +174,30 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
     if (latest.current.question?.id === id)
       actions.setQuestion({ ...latest.current.question, ...fields });
   }
+  function addQuestion(source) {
+    const question = newQuestionCard(
+      source,
+      Math.max(Date.now(), ...latest.current.questions.map((q) => Number(q.id) + 10)),
+    );
+    question.order_number = latest.current.questions.length + 1;
+    actions.setAllQuestions([...latest.current.questions, question]);
+    selectQuestion(question);
+  }
+  async function removeQuestion(question) {
+    try {
+      if (!question.temp) await removeQuestionFromQuiz(latest.current.quiz.id, question.id);
+      const questions = latest.current.questions
+        .filter((q) => q.id !== question.id)
+        .map((q, index) => ({ ...q, order_number: index + 1 }));
+      actions.setAllQuestions(questions);
+      if (latest.current.question?.id === question.id) selectQuestion(questions[0]);
+    } catch (cause) {
+      setError(cause.message || __('Could not remove question.', 'ohmylms'));
+    }
+  }
+  function moveQuestion(from, to) {
+    actions.setAllQuestions(moveOption(latest.current.questions, from, to));
+  }
   return {
     ...state,
     notice: savedNotice || state.notice,
@@ -184,6 +210,10 @@ export function useQuizEditor({ store, chapterId, validate, registerTypes }) {
     appendQuestions,
     replaceQuestion,
     patchQuestion,
+    selectQuestion,
+    addQuestion,
+    removeQuestion,
+    moveQuestion,
     validateCurrentQuestion,
     updateField: (field, value) => actions.setQuiz({ [field]: value }),
   };

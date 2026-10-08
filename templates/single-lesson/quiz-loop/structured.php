@@ -16,7 +16,7 @@ $parts = isset( $question['settings']['parts'] ) && is_array( $question['setting
 ?>
 <div class="ohmylms-structured-question">
 	<?php if ( ! empty( $question['description'] ) ) { ?>
-		<div class="ohmylms-structured-stem"><?php echo wp_kses_post( wpautop( $question['description'] ) ); ?></div>
+		<div class="ohmylms-structured-stem"><?php echo apply_filters('the_content', $question['description']); ?></div>
 	<?php } ?>
 	<?php foreach ( $parts as $part ) {
 		$part_id  = preg_replace( '/[^a-z0-9_-]/i', '', (string) ( $part['id'] ?? '' ) );

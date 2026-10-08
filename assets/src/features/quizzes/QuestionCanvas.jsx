@@ -1,6 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { removeQuestionFromQuiz } from './api.mjs';
+import { FormWorkspace } from '../quizzes/FormWorkspace';
 export function createQuestionCanvas(readRuntime) {
   return function QuestionCanvas(props) {
     const {
@@ -28,6 +29,10 @@ export function createQuestionCanvas(readRuntime) {
       wu,
       y: WordPressData,
     } = readRuntime();
+    const previewOptions = (0, WordPressData.useSelect)(
+      (select) => select(StoreModule.default).getQuestionContents(),
+      [],
+    );
     var t,
       n,
       r,
@@ -292,81 +297,75 @@ export function createQuestionCanvas(readRuntime) {
         s.deleteTempQuestion(null == m ? void 0 : m.id);
         _(!1);
       };
+    const answerControls = (
+      <React.Fragment>
+        <h3>{(0, I18n.__)('Answers', 'ohmylms')}</h3>
+        {!showDefault && React.createElement(edit, null)}
+        {j && React.createElement(j, null)}
+      </React.Fragment>
+    );
     return (
       <React.Fragment>
-        <div className={'ohmylms-quiz-editor-wrapper'}>
-          <div className={'ohmylms-quiz-editor-body'}>
-            {edit &&
-              (showDefault ? (
-                React.createElement(edit, null)
-              ) : (
-                <React.Fragment>
-                  {React.createElement(
-                    ou,
-                    null,
-                    <Controls.FlexWP align={'center'} justify={'space-between'}>
-                      <Controls.FlexBlockWP>
-                        {React.createElement(lu, {
-                          icon: O,
-                          label: null == k ? void 0 : k.name,
-                          iconColor: 'var(--ohmylms-primary-color)',
-                        })}
-                      </Controls.FlexBlockWP>
-                      <Controls.FlexBlockWP>
-                        {React.createElement(du, {
-                          handleCopy: M,
-                          handleDelete: function () {
-                            return _(!0);
-                          },
-                        })}
-                      </Controls.FlexBlockWP>
-                    </Controls.FlexWP>,
-                    React.createElement(wu, {
-                      placeholder: (0, I18n.__)('Type your question here ...', 'ohmylms'),
-                      question: 'Untitled' === E ? '' : E,
-                      description: description,
-                      onChange: function (e, t) {
-                        s.updateQuestionData(x, Au({}, e, t));
-                      },
-                      onImgUpload: function () {
-                        var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '',
-                          t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : '';
-                        s.updateQuestionData(x, {
-                          image_src: e,
-                          thumbnail_id: t,
-                        });
-                      },
-                      onVideoUpload: function () {
-                        var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : '',
-                          t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : '';
-                        s.updateQuestionData(x, {
-                          video_src: e,
-                          video_id: t,
-                        });
-                      },
-                      videoSrc: videoSrc,
-                      imgSrc: imgSrc,
-                      quizType: quizType,
-                      proQuestionTypes: A,
-                      error: null == Router ? void 0 : Router.name,
-                    }),
-                    React.createElement(edit, null),
-                  )}
-                  {j && React.createElement(j, null)}
-                </React.Fragment>
-              ))}
-          </div>
-        </div>
+        <FormWorkspace
+          key={String(m?.id) + ':' + quizType}
+          document={{
+            id: m?.id,
+            name: E === 'Untitled' ? '' : E,
+            description: description || '',
+          }}
+          label={(0, I18n.__)('Question', 'ohmylms')}
+          titleLabel={(0, I18n.__)('Question title', 'ohmylms')}
+          titlePlaceholder={(0, I18n.__)('Type your question here ...', 'ohmylms')}
+          workspaceLabel={(0, I18n.__)('Question form editor', 'ohmylms')}
+          compact={props.formCard}
+          readOnly={!!m?.readonly}
+          onTitleChange={(name) => !m?.readonly && s.updateQuestionData(x, { name })}
+          onContentChange={(description) =>
+            !m?.readonly && s.updateQuestionData(x, { description })
+          }
+          questionType={quizType}
+          previewQuestion={{ ...m, questions: previewOptions || [] }}
+          toolbarActions={props.toolbarActions}
+          settings={props.settings}
+          outline={props.outline}
+          beforeContent={
+            <React.Fragment>
+              {!props.formCard && (
+                <Controls.FlexWP align="center" justify="space-between">
+                  {React.createElement(lu, {
+                    icon: O,
+                    label: k?.name,
+                    iconColor: 'var(--ohmylms-primary-color)',
+                  })}
+                  {!m?.readonly &&
+                    React.createElement(du, { handleCopy: M, handleDelete: () => _(!0) })}
+                </Controls.FlexWP>
+              )}
+              {Router?.name && (
+                <p role="alert">{(0, I18n.__)('Give this question a title.', 'ohmylms')}</p>
+              )}
+              {imgSrc && (
+                <img
+                  className="ohmylms-question-legacy-media"
+                  src={imgSrc}
+                  alt={(0, I18n.__)('Question image', 'ohmylms')}
+                />
+              )}
+              {videoSrc && (
+                <video className="ohmylms-question-legacy-media" src={videoSrc} controls />
+              )}
+            </React.Fragment>
+          }
+          questionBlockContent={answerControls}
+        />
         {h && (
           <Ie
             title={(0, I18n.__)('Delete Question', 'ohmylms')}
             description={(0, I18n.__)('Are you sure you want to delete this question?', 'ohmylms')}
-            onClose={function () {
-              _(!1);
-            }}
+            onClose={() => _(!1)}
             onDelete={F}
             isOpen={h}
-            wrapClassName={'ohmylms-delete-question-modal'}
+            wrapClassName="ohmylms-delete-question-modal"
             isDelete={!0}
           />
         )}

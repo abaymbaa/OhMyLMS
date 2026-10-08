@@ -1,8 +1,8 @@
 import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner, TextControl } from '@wordpress/components';
-import { createContent } from '../content-hub/api.mjs';
 import { withEditorReturn } from '../content-hub/editorNavigation.mjs';
+import { skillLessonCreator } from './skillLessonCreation.mjs';
 import * as api from './api.mjs';
 import { editPath } from './workspace.mjs';
 import { KindIcon, Tag } from './WorkspaceParts';
@@ -17,12 +17,14 @@ const STATUS = {
 };
 
 /** Find lessons to tag to the skill, or write a new one (a draft) and tag it at once. */
-function LessonPicker({ skill, tagged, onChoose, onClose }) {
+function LessonPicker({ skill, tagged, onChoose, onCreated, onClose }) {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState(null);
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const creator = useRef(null);
   const latest = useRef(0);
 
   useEffect(() => {
@@ -49,11 +51,27 @@ function LessonPicker({ skill, tagged, onChoose, onClose }) {
     setBusy(true);
     setError('');
     try {
-      const made = await createContent('lesson', title.trim());
-      await onChoose({ id: made.id, title: title.trim() });
+      if (!creator.current) creator.current = skillLessonCreator(skill.term_id);
+      const made = await creator.current(title);
       onClose();
+      onCreated(made);
     } catch (cause) {
       setError(cause?.message || __('Could not create the lesson.', 'ohmylms'));
+      setRetrying(true);
+      setBusy(false);
+    }
+  }
+  async function choose(row) {
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      if (!(await onChoose(row))) {
+        setError(__('The lesson could not be linked to this skill. Try again.', 'ohmylms'));
+      }
+    } catch (cause) {
+      setError(cause?.message || __('The lesson could not be linked to this skill.', 'ohmylms'));
+    } finally {
       setBusy(false);
     }
   }
@@ -61,7 +79,7 @@ function LessonPicker({ skill, tagged, onChoose, onClose }) {
   return (
     <Modal
       title={sprintf(__('Add a lesson to “%s”', 'ohmylms'), skill.name)}
-      onRequestClose={onClose}
+      onRequestClose={() => !busy && onClose()}
       className="ohmylms-content-hub-dialog"
     >
       {error && (
@@ -91,7 +109,7 @@ function LessonPicker({ skill, tagged, onChoose, onClose }) {
               size="small"
               disabled={busy}
               aria-label={sprintf(__('Add %s to this skill', 'ohmylms'), row.title)}
-              onClick={() => onChoose(row)}
+              onClick={() => choose(row)}
             >
               {__('Add', 'ohmylms')}
             </Button>
@@ -100,21 +118,20 @@ function LessonPicker({ skill, tagged, onChoose, onClose }) {
       </div>
       <form className="ohmylms-ws-pick-new" onSubmit={create}>
         <TextControl
-          label={__('Or write a new lesson', 'ohmylms')}
-          help={__(
-            'It is made as a draft and tagged to this skill. Open it from the list to write it.',
-            'ohmylms',
-          )}
+          label={__('New lesson title', 'ohmylms')}
+          placeholder={__('Enter a title to create a lesson', 'ohmylms')}
+          help={__('Creates a draft linked to this skill and opens the lesson editor.', 'ohmylms')}
           value={title}
           onChange={setTitle}
+          disabled={busy || retrying}
           __nextHasNoMarginBottom
         />
-        <Button variant="secondary" type="submit" isBusy={busy} disabled={!title.trim() || busy}>
-          {__('Create and add', 'ohmylms')}
+        <Button variant="primary" type="submit" isBusy={busy} disabled={!title.trim() || busy}>
+          {retrying ? __('Retry create and add', 'ohmylms') : __('Create and add', 'ohmylms')}
         </Button>
       </form>
       <div className="ohmylms-content-hub-dialog-actions">
-        <Button variant="tertiary" onClick={onClose}>
+        <Button variant="tertiary" disabled={busy} onClick={onClose}>
           {__('Done', 'ohmylms')}
         </Button>
       </div>
@@ -297,9 +314,11 @@ export function SkillResources({ skill, syllabus, returnTo }) {
           skill={skill}
           tagged={tagged}
           onClose={() => setPicking(false)}
-          onChoose={async (row) => {
-            await setTagged([...new Set([...(lessons?.ids || []), row.id])]);
+          onCreated={(lesson) => {
+            setVersion((value) => value + 1);
+            window.location.hash = withEditorReturn(editPath('lesson', lesson.id), returnTo);
           }}
+          onChoose={(row) => setTagged([...new Set([...(lessons?.ids || []), row.id])])}
         />
       )}
     </section>

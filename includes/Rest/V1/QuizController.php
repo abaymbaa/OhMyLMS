@@ -1042,7 +1042,7 @@ class QuizController extends RestController {
 			'name'                  => $quiz->get_name(),
 			'type'                  => 'quiz',
 			'description'           => $quiz->get_description(),
-			'preview_url'           => $quiz->get_permalink(),
+			'preview_url'           => \OhMyLMS\Assessment\PreviewPlayer::url($quiz->get_id()),
 			'slug'                  => $quiz->get_slug(),
 			'status'                => $quiz->get_status(),
 			'settings'              => $quiz->get_settings(),

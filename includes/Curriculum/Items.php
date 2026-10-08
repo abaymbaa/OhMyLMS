@@ -83,6 +83,11 @@ final class Items {
     /** Validate and clean writable fields. With $partial, only supplied fields are returned. */
     public static function clean(array $data, $partial = false) {
         $fields = [];
+        if (array_key_exists('icon', $data)) {
+            $icon = Icons::clean($data['icon']);
+            if (is_wp_error($icon)) { return $icon; }
+            $fields['icon'] = $icon;
+        }
         if (!$partial || array_key_exists('name', $data)) {
             $name = trim(sanitize_text_field((string) ($data['name'] ?? '')));
             if ($name === '') { return Access::error('ohmylms_curriculum_invalid', __('A name is required.', 'ohmylms')); }
@@ -320,6 +325,7 @@ final class Items {
             'position' => (int) $row['position'],
             'item_type' => $row['item_type'],
             'name' => $row['name'],
+            'icon' => (string) ($row['icon'] ?? ''),
             'description' => (string) $row['description'],
             'code' => $row['code'],
             'version' => $row['version'],

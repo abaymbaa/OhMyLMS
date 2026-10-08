@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { LessonBlockWorkspace } from './LessonBlockWorkspace';
 function createBuiltinLessonContent(readRuntime) {
   return function LessonContent(props) {
     const { Pr: LearningContentForm, React, b: I18n } = readRuntime();
@@ -12,9 +13,16 @@ function createBuiltinLessonContent(readRuntime) {
       chapterId = props.chapterId,
       onExternalUploadComplete = props.onExternalUploadComplete;
     return (
-      <React.Fragment>
-        <div className={'ohmylms-lesson-content-wrapper'}>
+      <LessonBlockWorkspace
+        key={lesson?.id}
+        lesson={lesson || {}}
+        onTitleChange={handleInputChange}
+        onContentChange={handleEditorContentChange}
+        settings={props.settings}
+        customContent={props.customContent}
+        media={
           <LearningContentForm
+            mediaOnly
             titleValue={
               null !== (t = null == lesson ? void 0 : lesson.title) && void 0 !== t
                 ? t
@@ -75,8 +83,8 @@ function createBuiltinLessonContent(readRuntime) {
             autofocus={!1}
             editorFor={'lesson'}
           />
-        </div>
-      </React.Fragment>
+        }
+      />
     );
   };
 }
@@ -84,9 +92,9 @@ function createBuiltinLessonContent(readRuntime) {
 export function createLessonContent(readRuntime) {
   const BuiltinLessonContent = createBuiltinLessonContent(readRuntime);
   return function LessonContent(props) {
-    return window.ohmylms.extensions.lessonEditor(
-      props,
-      createElement(BuiltinLessonContent, props),
-    );
+    return createElement(BuiltinLessonContent, {
+      ...props,
+      customContent: window.ohmylms.extensions.lessonEditor(props, null),
+    });
   };
 }

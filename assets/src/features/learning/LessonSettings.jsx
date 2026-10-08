@@ -232,12 +232,14 @@ export function createLessonSettings(readRuntime) {
       );
     return (
       <React.Fragment>
-        <Controls.SpacerWP paddingX={5} paddingTop={5} paddingBottom={0}>
-          <Controls.FlexWP align={'center'} gap={3} justify={'flex-start'}>
-            <Rt />
-            {(0, I18n.__)('Settings', 'ohmylms')}
-          </Controls.FlexWP>
-        </Controls.SpacerWP>
+        {!props.embedded && (
+          <Controls.SpacerWP paddingX={5} paddingTop={5} paddingBottom={0}>
+            <Controls.FlexWP align={'center'} gap={3} justify={'flex-start'}>
+              <Rt />
+              {(0, I18n.__)('Settings', 'ohmylms')}
+            </Controls.FlexWP>
+          </Controls.SpacerWP>
+        )}
         {React.createElement(zt, {
           visibility: null == lesson ? void 0 : lesson.status,
           onVisibilityChange: function (e) {

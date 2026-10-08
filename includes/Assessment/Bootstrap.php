@@ -9,6 +9,7 @@ defined('ABSPATH') || exit;
 /** Wires the question bank, versioned assessment, skills and practice services. */
 final class Bootstrap {
     public static function init() {
+        PreviewPlayer::init();
         add_action('init', [Taxonomy::class, 'register'], 4);
         add_action('init', [Usage::class, 'register_status'], 4);
         add_action('before_delete_post', [Usage::class, 'on_deleted_post']);

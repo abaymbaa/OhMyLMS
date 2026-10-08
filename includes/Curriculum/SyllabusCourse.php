@@ -177,7 +177,12 @@ final class SyllabusCourse {
     public static function summary($syllabus_id) {
         $course_id = self::course_id($syllabus_id);
         if (!$course_id) { return null; }
-        return Catalog::summary($course_id) + ['edit' => '#/content-hub/curriculum/syllabus/' . (int) $syllabus_id . '?view=settings'];
+        return Catalog::summary($course_id) + [
+            'edit' => '#/content-hub/curriculum/syllabus/' . (int) $syllabus_id . '?view=settings',
+            'directory' => Directory::url($syllabus_id),
+            'preview' => Directory::url($syllabus_id, true),
+            'directory_ready' => is_array(get_post_meta($course_id, Directory::META, true)),
+        ];
     }
 
     /** The outline with each skill group told which chapter of the course it became (0 when there is no such chapter). */

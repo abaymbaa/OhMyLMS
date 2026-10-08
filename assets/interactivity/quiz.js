@@ -63,7 +63,7 @@ const { actions } = store('ohmylms/quiz', {
     submit: withSyncEvent((event) => {
       event.stopPropagation();
       const c = getContext(), root = rootOf();
-      const exit = event.target.querySelector('[name=action]')?.value === 'ohmylms-quiz-exit-submission';
+      const exit = ['ohmylms-quiz-exit-submission', 'ohmylms-quiz-preview-exit'].includes(event.target.querySelector('[name=action]')?.value);
       if (c.submitting || (!exit && !validate(root, c)) || !emit(root, 'quiz-before-submit', { quizId: c.quizId, exit }, true)) {
         event.preventDefault(); return;
       }
@@ -90,6 +90,10 @@ const { actions } = store('ohmylms/quiz', {
       if (c.submitting) return;
       c.submitting = true;
       const form = root.querySelector('.ohmylms-quiz-form').closest('form');
+      if (c.preview) {
+        HTMLFormElement.prototype.submit.call(form);
+        return;
+      }
       const body = new URLSearchParams(new FormData(form));
       body.set('action', 'ohmylms_quiz_exit_submission');
       body.set('content_id', c.quizId); body.set('attempt_id', c.attemptId); body.set('nonce', c.expiryNonce);

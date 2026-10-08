@@ -71,9 +71,11 @@ Every syllabus has one real course (an ordinary course post), so it is listed in
 
 ## Skills own their lessons and questions
 
+The lesson editor is a Gutenberg block workspace with a wide writing canvas. **Add block** inserts headings, paragraphs, lists, images and other lesson content. Its **Lesson** sidebar tab holds visibility, preview access, media, drip settings, resources and inline question checks; **Block** holds the selected block's settings. **Settings** hides the sidebar for more writing room. **Save** persists the blocks and lesson settings together, and **Back** returns to the syllabus skill when opened there.
+
 A skill is a library skill, so what teaches and tests it belongs to the **skill**, not to one syllabus or course. In a skill's pane, **What this skill owns** shows:
 
-- **Lessons**: the lessons tagged to the skill. **Add lesson** finds an existing lesson or writes a new one (a draft) and tags it at once; **Remove** takes it off the skill. Editing a lesson changes it everywhere it is used.
+- **Lessons**: the lessons tagged to the skill. **Add lesson** finds an existing lesson, or enter a **New lesson title** and choose **Create and add** to create a text draft linked directly to this skill and open its lesson editor. **Back** returns to the same syllabus skill. If linking fails, **Retry create and add** reuses the draft. **Remove** takes a lesson off the skill. Editing a lesson changes it everywhere it is used.
 - **Questions**: the questions mapped to the skill in the question bank (written there, not in the editor), with their status.
 - **Games, soon**: the pane renders the extension slot `syllabus.skill.resources` (context: `skill`, `syllabus`). A module that adds practice games registers a slot (`registerSlot`, see [EXTENSIONS.md](EXTENSIONS.md)) and its section appears under the questions, with nothing else to change.
 

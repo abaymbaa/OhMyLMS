@@ -19,6 +19,7 @@ import {
   validateDraft,
 } from './model.mjs';
 import { NumericalEditor, PracticeFeedbackFields, StructuredEditor } from './MathEditors';
+import { FormWorkspace } from '../quizzes/FormWorkspace';
 
 const TYPE_LABELS = () => ({
   'single-choice': __('Single choice', 'ohmylms'),
@@ -75,123 +76,153 @@ export function NewQuestionModal({ onClose, onCreated }) {
   }
 
   return (
-    <Modal title={__('New question', 'ohmylms')} onRequestClose={onClose} size="large">
+    <Modal
+      title={__('New question', 'ohmylms')}
+      onRequestClose={onClose}
+      size="large"
+      className="ohmylms-question-block-modal"
+    >
       <div className="ohmylms-new-question">
         {error && (
           <Notice status="error" onRemove={() => setError('')}>
             {error}
           </Notice>
         )}
-        <SelectControl
-          label={__('Question type', 'ohmylms')}
-          value={draft.type}
-          options={NEW_QUESTION_TYPES.map((type) => ({ value: type, label: labels[type] }))}
-          onChange={(type) => setDraft(changeDraftType(draft, type))}
-          help={__(
-            'Matching, reorder, fill-in-the-blank and statement questions are written inside a quiz; they appear here once saved.',
-            'ohmylms',
-          )}
-        />
-        <TextControl
-          label={__('Title', 'ohmylms')}
-          value={draft.name}
-          onChange={(name) => set({ name })}
-        />
-        <TextareaControl
-          label={__('Question text', 'ohmylms')}
-          help={__('Maths can be written in LaTeX, e.g. \\(\\frac{1}{2}\\).', 'ohmylms')}
-          value={draft.description}
-          onChange={(description) => set({ description })}
-          rows={4}
-        />
-        {draft.type !== 'structured' && (
-          <TextControl
-            label={__('Marks', 'ohmylms')}
-            type="number"
-            min={0}
-            step="0.5"
-            value={String(draft.marks)}
-            onChange={(marks) => set({ marks })}
-          />
-        )}
-        {(choices || draft.type === 'true-false') && (
-          <fieldset className="ohmylms-new-question-options">
-            <legend>
-              {draft.type === 'multiple-choice'
-                ? __('Answers (tick every correct one)', 'ohmylms')
-                : __('Answers (tick the correct one)', 'ohmylms')}
-            </legend>
-            {draft.options.map((option, index) => (
-              <div key={index} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <CheckboxControl
-                  label={sprintf(__('Correct answer %d', 'ohmylms'), index + 1)}
-                  hideLabelFromVision
-                  checked={!!option.correct}
-                  onChange={(correct) => setDraft(setOptionCorrect(draft, index, correct))}
-                />
-                {choices ? (
-                  <TextControl
-                    label={sprintf(__('Answer %d', 'ohmylms'), index + 1)}
-                    hideLabelFromVision
-                    placeholder={sprintf(__('Answer %d', 'ohmylms'), index + 1)}
-                    value={option.answer}
-                    onChange={(answer) => setOption(index, { answer })}
-                  />
-                ) : (
-                  <span>
-                    {option.answer === 'True' ? __('True', 'ohmylms') : __('False', 'ohmylms')}
-                  </span>
-                )}
-                {choices && draft.options.length > 2 && (
-                  <Button
-                    variant="tertiary"
-                    isDestructive
-                    label={sprintf(__('Remove answer %d', 'ohmylms'), index + 1)}
-                    onClick={() =>
-                      set({ options: draft.options.filter((_, position) => position !== index) })
-                    }
-                  >
-                    {__('Remove', 'ohmylms')}
-                  </Button>
-                )}
-              </div>
-            ))}
-            {choices && (
-              <Button
-                variant="secondary"
-                onClick={() => set({ options: [...draft.options, { answer: '', correct: false }] })}
-              >
-                {__('Add answer', 'ohmylms')}
-              </Button>
-            )}
-          </fieldset>
-        )}
-        {draft.type === 'numerical' && (
-          <NumericalEditor
-            value={draft.settings}
-            onChange={(fields) => set({ settings: { ...draft.settings, ...fields } })}
-          />
-        )}
-        {draft.type === 'structured' && (
-          <StructuredEditor
-            value={draft.settings}
-            onChange={(fields) => set({ settings: { ...draft.settings, ...fields } })}
-          />
-        )}
-        {['short-text', 'long-text'].includes(draft.type) && (
-          <p>
-            {__(
-              'Learners type their answer and a teacher marks it in the grading screen.',
-              'ohmylms',
-            )}
-          </p>
-        )}
-        <PracticeFeedbackFields
-          question={{ settings: { ...draft.settings, type: draft.type } }}
-          onChange={({ settings }) => {
-            const { type, ...rest } = settings;
-            set({ settings: rest });
+        <FormWorkspace
+          key={draft.type}
+          document={draft}
+          questionType={draft.type}
+          previewQuestion={{
+            ...draft,
+            questions: draft.options,
+            settings: { ...draft.settings, type: draft.type },
           }}
+          questionTypes={NEW_QUESTION_TYPES}
+          onQuestionTypeChange={(type) => setDraft((value) => changeDraftType(value, type))}
+          toolbarActions={
+            <Button variant="primary" isBusy={saving} disabled={saving} onClick={save}>
+              {__('Save question', 'ohmylms')}
+            </Button>
+          }
+          label={__('Question', 'ohmylms')}
+          titleLabel={__('Title', 'ohmylms')}
+          titlePlaceholder={__('Enter question title', 'ohmylms')}
+          workspaceLabel={__('Question form editor', 'ohmylms')}
+          onTitleChange={(name) => set({ name })}
+          onContentChange={(description) => set({ description })}
+          settings={
+            <Fragment>
+              <SelectControl
+                label={__('Question type', 'ohmylms')}
+                value={draft.type}
+                options={NEW_QUESTION_TYPES.map((type) => ({ value: type, label: labels[type] }))}
+                onChange={(type) => setDraft(changeDraftType(draft, type))}
+                help={__(
+                  'Matching, reorder, fill-in-the-blank and statement questions are written inside a quiz; they appear here once saved.',
+                  'ohmylms',
+                )}
+              />
+              {draft.type !== 'structured' && (
+                <TextControl
+                  label={__('Marks', 'ohmylms')}
+                  type="number"
+                  min={0}
+                  step="0.5"
+                  value={String(draft.marks)}
+                  onChange={(marks) => set({ marks })}
+                />
+              )}
+              <PracticeFeedbackFields
+                question={{ settings: { ...draft.settings, type: draft.type } }}
+                onChange={({ settings }) => {
+                  const { type, ...rest } = settings;
+                  set({ settings: rest });
+                }}
+              />
+            </Fragment>
+          }
+          questionBlockContent={
+            <Fragment>
+              {(choices || draft.type === 'true-false') && (
+                <fieldset className="ohmylms-new-question-options">
+                  <legend>
+                    {draft.type === 'multiple-choice'
+                      ? __('Answers (tick every correct one)', 'ohmylms')
+                      : __('Answers (tick the correct one)', 'ohmylms')}
+                  </legend>
+                  {draft.options.map((option, index) => (
+                    <div key={index} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <CheckboxControl
+                        label={sprintf(__('Correct answer %d', 'ohmylms'), index + 1)}
+                        hideLabelFromVision
+                        checked={!!option.correct}
+                        onChange={(correct) => setDraft(setOptionCorrect(draft, index, correct))}
+                      />
+                      {choices ? (
+                        <TextControl
+                          label={sprintf(__('Answer %d', 'ohmylms'), index + 1)}
+                          hideLabelFromVision
+                          placeholder={sprintf(__('Answer %d', 'ohmylms'), index + 1)}
+                          value={option.answer}
+                          onChange={(answer) => setOption(index, { answer })}
+                        />
+                      ) : (
+                        <span>
+                          {option.answer === 'True'
+                            ? __('True', 'ohmylms')
+                            : __('False', 'ohmylms')}
+                        </span>
+                      )}
+                      {choices && draft.options.length > 2 && (
+                        <Button
+                          variant="tertiary"
+                          isDestructive
+                          label={sprintf(__('Remove answer %d', 'ohmylms'), index + 1)}
+                          onClick={() =>
+                            set({
+                              options: draft.options.filter((_, position) => position !== index),
+                            })
+                          }
+                        >
+                          {__('Remove', 'ohmylms')}
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  {choices && (
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        set({ options: [...draft.options, { answer: '', correct: false }] })
+                      }
+                    >
+                      {__('Add answer', 'ohmylms')}
+                    </Button>
+                  )}
+                </fieldset>
+              )}
+              {draft.type === 'numerical' && (
+                <NumericalEditor
+                  value={draft.settings}
+                  onChange={(fields) => set({ settings: { ...draft.settings, ...fields } })}
+                />
+              )}
+              {draft.type === 'structured' && (
+                <StructuredEditor
+                  value={draft.settings}
+                  onChange={(fields) => set({ settings: { ...draft.settings, ...fields } })}
+                />
+              )}
+              {['short-text', 'long-text'].includes(draft.type) && (
+                <p>
+                  {__(
+                    'Learners type their answer and a teacher marks it in the grading screen.',
+                    'ohmylms',
+                  )}
+                </p>
+              )}
+            </Fragment>
+          }
         />
         {tried && problems.length > 0 && (
           <Notice status="warning" isDismissible={false}>

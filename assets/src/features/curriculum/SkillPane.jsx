@@ -128,28 +128,21 @@ export function SkillPane({ node }) {
           validate={(text) => check(text, 'description')}
           onSave={(text) => w.actions.saveSkill(skill, { description: text })}
         />
-        <SaveField
+        <SelectControl
           id={`ohmylms-ws-skill-category-${skill.term_id}`}
           label={__('Skill category', 'ohmylms')}
           value={skill.category || ''}
-          suggestions={[
-            ...new Set([
-              ...(w.outline.settings.categories || ['Core', 'Extended', 'Advanced']),
-              ...w.outline.contents.flatMap((content) =>
-                content.groups.flatMap((group) =>
-                  group.skills.map((entry) => entry.category).filter(Boolean),
-                ),
-              ),
-            ]),
+          options={[
+            { label: __('No category', 'ohmylms'), value: '' },
+            ...(w.outline.settings.categories || []).map((category) => ({ label: category, value: category })),
+            ...(skill.category && !(w.outline.settings.categories || []).includes(skill.category)
+              ? [{ label: `${skill.category} (${__('not in syllabus categories', 'ohmylms')})`, value: skill.category, disabled: true }]
+              : []),
           ]}
-          placeholder={__('Choose or type a category', 'ohmylms')}
-          help={__(
-            'Core, Extended, Advanced, or your own category. Clear the field to remove it.',
-            'ohmylms',
-          )}
+          help={__('Create and manage categories on the syllabus home.', 'ohmylms')}
           disabled={w.pending}
-          validate={(text) => (text.trim().length > 60 ? MESSAGES['too-long']() : '')}
-          onSave={(text) => w.actions.saveSkill(skill, { category: text.trim() })}
+          onChange={(category) => w.actions.saveSkill(skill, { category })}
+          __nextHasNoMarginBottom
         />
         <p className="ohmylms-ext-muted">
           {sprintf(

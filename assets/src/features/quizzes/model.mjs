@@ -54,6 +54,36 @@ export function moveOption(options, from, to) {
   return reordered.map((option, index) => ({ ...option, order_number: index + 1 }));
 }
 
+/** A new form card is an independent draft, including independent answer rows. */
+export function newQuestionCard(source = {}, id = Date.now()) {
+  return {
+    id,
+    temp: true,
+    name: source.name || '',
+    description: source.description || '',
+    settings: structuredClone(
+      source.settings || {
+        type: 'single-choice',
+        score: { enabled: true, value: 1 },
+        required: false,
+      },
+    ),
+    questions: (
+      source.questions || [
+        { answer: '', is_correct: true },
+        { answer: '', is_correct: false },
+      ]
+    ).map((option, index) => {
+      const copy = structuredClone(option);
+      delete copy.id;
+      delete copy.question_id;
+      return { ...copy, id: id + index + 1, temp: true, order_number: index + 1 };
+    }),
+    ...(source.image_src ? { image_src: source.image_src, thumbnail_id: source.thumbnail_id } : {}),
+    ...(source.video_src ? { video_src: source.video_src } : {}),
+  };
+}
+
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 
 /** Quiz fields edited while a save was pending win over the server response. */

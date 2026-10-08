@@ -90,7 +90,7 @@ class CurriculumController extends RestController {
 
     public function update(WP_REST_Request $request) {
         $params = $request->get_params();
-        $item = Items::update((int) $request['id'], array_intersect_key($params, array_flip(['name', 'item_type', 'description', 'code', 'version', 'is_syllabus'])), $params['expected_updated_at'] ?? null);
+        $item = Items::update((int) $request['id'], array_intersect_key($params, array_flip(['name', 'item_type', 'description', 'code', 'version', 'is_syllabus', 'icon'])), $params['expected_updated_at'] ?? null);
         if (is_wp_error($item)) { return $item; }
         // Turning an item into a syllabus gives it a course; renaming a syllabus renames its course.
         if (!empty($item['is_syllabus'])) {

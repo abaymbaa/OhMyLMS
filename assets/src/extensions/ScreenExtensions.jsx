@@ -9,7 +9,9 @@ export function wrapScreen(Component, route, registry) {
         <ExtensionSlot registry={registry} name="admin.screen.before" context={context} />
         <Component {...props} />
         <ExtensionSlot registry={registry} name="admin.screen.after" context={context} />
-        <ExtensionSlot registry={registry} kind="editor-panel" name={route} context={context} />
+        {!['/lesson-edit/:id', '/quiz-edit/:id'].includes(route) && (
+          <ExtensionSlot registry={registry} kind="editor-panel" name={route} context={context} />
+        )}
         {route === '/integrations' && (
           <ExtensionSlot
             registry={registry}

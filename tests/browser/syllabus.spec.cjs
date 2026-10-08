@@ -433,9 +433,21 @@ test('lessons are attached to a chapter, and a skill owns its lessons', async ({
     });
     // The picker also writes a new lesson (a draft) and tags it at once.
     await owns.getByRole('button', { name: 'Add lesson' }).click();
-    await picker.getByLabel('Or write a new lesson').fill(`Fraction games ${tag}`);
+    await expect(
+      picker.getByRole('button', { name: 'Create and add', exact: true }),
+    ).toBeDisabled();
+    await picker.getByLabel('New lesson title').fill(`Fraction games ${tag}`);
     await picker.getByRole('button', { name: 'Create and add' }).click();
     await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 30000 });
+    await expect(page).toHaveURL(/#\/lesson-edit\/\d+\?returnTo=/);
+    const newLessonId = Number(new URL(page.url()).hash.match(/lesson-edit\/(\d+)/)[1]);
+    created.lessons.push(newLessonId);
+    const draft = await api(page, { path: `${base}/lessons/${newLessonId}` });
+    expect(draft.status).toBe('draft');
+    expect(draft.type).toBe('text');
+    const returnTo = new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('returnTo');
+    await page.goto(`/wp-admin/admin.php?page=ohmylms#${returnTo}`);
+    await expect(title(page)).toHaveValue('Add fractions');
     await expect(owns.getByRole('link', { name: `Fraction games ${tag}` })).toBeVisible({
       timeout: 30000,
     });
@@ -443,7 +455,7 @@ test('lessons are attached to a chapter, and a skill owns its lessons', async ({
     const owned = (await api(page, { path: `${base}/skills/${skill.term_id}` })).lessons;
     expect(owned).toHaveLength(2);
     expect(owned).toContain(lesson.id);
-    created.lessons.push(...owned.filter((id) => id !== lesson.id));
+    expect(owned).toContain(newLessonId);
     await owns.getByRole('button', { name: `Take Adding fractions ${tag} off this skill` }).click();
     await expect(owns.getByRole('link', { name: `Adding fractions ${tag}` })).toHaveCount(0, {
       timeout: 30000,

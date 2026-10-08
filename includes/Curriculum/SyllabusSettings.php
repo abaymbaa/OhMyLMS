@@ -13,6 +13,15 @@ final class SyllabusSettings {
         return ['grade' => '', 'subject' => '', 'language' => '', 'categories' => ['Core', 'Extended', 'Advanced']];
     }
 
+    public static function category_allowed($category, array $categories) {
+        return $category === '' || in_array($category, $categories, true);
+    }
+
+    public static function check_category($syllabus_id, array $fields) {
+        if (!isset($fields['category']) || self::category_allowed($fields['category'], self::get($syllabus_id)['categories'])) { return true; }
+        return Access::error('ohmylms_syllabus_category_unknown', __('Choose a category created on the syllabus home.', 'ohmylms'));
+    }
+
     public static function clean(array $data) {
         $clean = [];
         foreach (['grade', 'subject', 'language'] as $field) {
@@ -47,6 +56,18 @@ final class SyllabusSettings {
         $course = SyllabusCourse::course_id($syllabus_id);
         if (!$course) { return Access::error('ohmylms_syllabus_missing', __('Open the syllabus before saving its settings.', 'ohmylms'), 404); }
         $next = $clean + self::get($syllabus_id);
+        if (isset($clean['categories'])) {
+            $removed = array_diff(self::get($syllabus_id)['categories'], $clean['categories']);
+            if ($removed) {
+                $outline = Syllabus::outline($syllabus_id);
+                if (is_wp_error($outline)) { return $outline; }
+                foreach ($outline['contents'] as $content) { foreach ($content['groups'] as $group) { foreach ($group['skills'] as $skill) {
+                    if (in_array($skill['category'] ?? '', $removed, true)) {
+                        return Access::error('ohmylms_syllabus_category_used', sprintf(__('The category “%s” is used by skills. Change their category before removing it.', 'ohmylms'), $skill['category']), 409);
+                    }
+                } } }
+            }
+        }
         if ($next !== self::get($syllabus_id) && !update_post_meta($course, self::META, $next)) {
             return Access::error('ohmylms_syllabus_settings_failed', __('The syllabus settings could not be saved.', 'ohmylms'), 500);
         }

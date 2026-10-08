@@ -5,6 +5,8 @@ import { loadQuiz } from './api.mjs';
 import { BankPicker } from '../question-bank/BankPicker';
 import { QuestionVersionBar } from '../question-bank/QuestionVersionBar';
 import { PracticeFeedbackFields } from '../question-bank/MathEditors';
+import { FormWorkspace } from '../quizzes/FormWorkspace';
+import { QuizQuestionCards } from './QuizQuestionCards';
 
 /** Named React editor; the bridge retains existing controls, routes and store. */
 export function createQuizEditor(readRuntime) {
@@ -36,6 +38,13 @@ export function createQuizEditor(readRuntime) {
     const { contextHolder, openNotificationWithIcon } = runtime.z.A();
     const [hovered, setHovered] = useState(false);
     const [pickerOpen, setPickerOpen] = useState(false);
+    const [view, setView] = useState('questions');
+    useEffect(() => {
+      if (isSettingsOpen) {
+        setView('quiz');
+        setIsSettingsOpen?.(false);
+      }
+    }, [isSettingsOpen]);
     const editor = useQuizEditor({
       store: runtime.T.default,
       chapterId,
@@ -47,7 +56,7 @@ export function createQuizEditor(readRuntime) {
         openNotificationWithIcon(editor.noticeStatus, editor.notice);
     }, [editor.notice]);
     function openSettings() {
-      if (editor.validateCurrentQuestion()) setIsSettingsOpen(true);
+      setView('quiz');
     }
     async function handleDuplicated(copy, originalId) {
       const fresh = await loadQuiz(editor.quiz.id);
@@ -62,8 +71,8 @@ export function createQuizEditor(readRuntime) {
         {!chapterId && contextHolder}
         {!chapterId && (
           <PageHeader
-            title={__('Quiz Outline', 'ohmylms')}
-            redirection="/quizzes"
+            title={__('Quiz editor', 'ohmylms')}
+            redirection="/content-hub/quizzes"
             className="ohmylms-quiz-header"
             rightContent={
               <Fragment>
@@ -76,9 +85,9 @@ export function createQuizEditor(readRuntime) {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => {
-                    if (editor.quiz?.preview_url) window.open(editor.quiz.preview_url, '_blank');
-                  }}
+                  onClick={() => window.open(editor.quiz.preview_url, '_blank')}
+                  disabled={editor.loading || !editor.quiz?.preview_url}
+                  title={__('Preview saved quiz', 'ohmylms')}
                   icon={<PreviewIcon />}
                 >
                   {__('Preview', 'ohmylms')}
@@ -101,80 +110,101 @@ export function createQuizEditor(readRuntime) {
                   onClick={openSettings}
                   icon={<SettingsIcon />}
                   className="ohmylms-quize-settings-btn"
+                  aria-label={__('Quiz settings', 'ohmylms')}
                 />
               </Fragment>
             }
           />
         )}
         {editor.error && <p role="alert">{editor.error}</p>}
+        <div
+          className="ohmylms-assessment-editor-tabs"
+          role="tablist"
+          aria-label={__('Quiz editor sections', 'ohmylms')}
+        >
+          <Button role="tab" aria-selected={view === 'quiz'} onClick={openSettings}>
+            {__('Quiz introduction', 'ohmylms')}
+          </Button>
+          <Button
+            role="tab"
+            aria-selected={view === 'questions'}
+            onClick={() => setView('questions')}
+          >
+            {__('Questions', 'ohmylms')}
+          </Button>
+        </div>
         {editor.loading ? (
           <Skeleton active paragraph={{ rows: 5 }} />
-        ) : isSettingsOpen ? (
-          <QuizSettings setIsSettingsOpen={setIsSettingsOpen} chapterId={chapterId} />
+        ) : view === 'quiz' ? (
+          <FormWorkspace
+            key={'quiz-' + editor.quiz?.id}
+            document={editor.quiz || {}}
+            label={__('Quiz', 'ohmylms')}
+            titleLabel={__('Quiz title', 'ohmylms')}
+            titlePlaceholder={__('Enter Quiz Title', 'ohmylms')}
+            workspaceLabel={__('Quiz form editor', 'ohmylms')}
+            onTitleChange={(name) => editor.updateField('name', name)}
+            onContentChange={(description) => editor.updateField('description', description)}
+            toolbarActions={
+              <Button variant="primary" isBusy={editor.saving} onClick={editor.save}>
+                {__('Save', 'ohmylms')}
+              </Button>
+            }
+            settings={
+              <Fragment>
+                <QuizSettings
+                  embedded
+                  setIsSettingsOpen={() => setView('questions')}
+                  chapterId={chapterId}
+                />
+                {window.ohmylms.extensions.renderSlot(
+                  '/quiz-edit/:id',
+                  { id: route.id, route: '/quiz-edit/:id', hash: window.location.hash },
+                  'editor-panel',
+                )}
+              </Fragment>
+            }
+          />
         ) : (
-          <Controls.CardWP isBorderless variant="secondary">
-            <Controls.SpacerWP marginBottom={0} padding={6} marginTop={4}>
-              <div className="ohmylms-quiz-editor-header">
-                <Controls.InputWP
-                  value={editor.quiz?.name === 'Untitled' ? '' : decodeTitle(editor.quiz?.name)}
-                  onChange={(value) => editor.updateField('name', value)}
-                  placeholder={__('Enter Quiz Title', 'ohmylms')}
-                  name="chapterName"
-                  className="ohmylms-quiz-name-title"
-                  autoComplete="off"
-                />
-                <Controls.SpacerWP />
-                <RichText
-                  value={editor.quiz?.description || ''}
-                  onChange={(value) => editor.updateField('description', value)}
-                  placeholder={__('Add Quiz description ...', 'ohmylms')}
-                  className="ohmylms-quiz-description"
-                  name="descriptionName"
-                  rows={3}
-                />
-              </div>
-              <Controls.CardWP isBorderless>
-                <Controls.SpacerWP>
-                  <Controls.FlexWP align="stretch" justify="flex-start" gap={0}>
-                    <Controls.FlexItemWP flex={1}>
-                      <QuestionList />
-                    </Controls.FlexItemWP>
-                    <Controls.FlexItemWP flex={2}>
-                      {!chapterId && (
-                        <QuestionVersionBar
-                          question={editor.question}
-                          quizId={editor.quiz?.id}
-                          onDuplicated={handleDuplicated}
-                          onPinned={(versionId) =>
-                            editor.patchQuestion(editor.question.id, {
-                              pinned_version_id: versionId,
-                            })
-                          }
-                        />
-                      )}
-                      {/* Shared questions are placed by reference; their content is read-only here. */}
-                      <fieldset disabled={readonly} className="ohmylms-question-fieldset">
-                        <QuestionCanvas chapterId={chapterId} setHovered={setHovered} />
-                        {!chapterId && (
-                          <PracticeFeedbackFields
-                            question={editor.question}
-                            onChange={(fields) => editor.patchQuestion(editor.question.id, fields)}
-                          />
-                        )}
-                      </fieldset>
-                    </Controls.FlexItemWP>
-                    <Controls.FlexItemWP
-                      flex={1}
-                      className={`ohmylms-editor-sider ohmylms-editor-right ${hovered ? 'ohmylms-editor-right-hovered' : ''}`}
-                      style={{ borderLeft: '1px solid #EBEBEF' }}
-                    >
-                      <QuestionSettings chapterId={chapterId} setHovered={setHovered} />
-                    </Controls.FlexItemWP>
-                  </Controls.FlexWP>
-                </Controls.SpacerWP>
-              </Controls.CardWP>
-            </Controls.SpacerWP>
-          </Controls.CardWP>
+          <QuizQuestionCards editor={editor} onBank={() => setPickerOpen(true)}>
+            {!chapterId && (
+              <QuestionVersionBar
+                question={editor.question}
+                quizId={editor.quiz?.id}
+                onDuplicated={handleDuplicated}
+                onPinned={(versionId) =>
+                  editor.patchQuestion(editor.question.id, { pinned_version_id: versionId })
+                }
+              />
+            )}
+            <QuestionCanvas
+              chapterId={chapterId}
+              formCard
+              setHovered={setHovered}
+              toolbarActions={
+                <Button variant="primary" isBusy={editor.saving} onClick={editor.save}>
+                  {__('Save', 'ohmylms')}
+                </Button>
+              }
+              settings={
+                <fieldset disabled={readonly} className="ohmylms-question-fieldset">
+                  {editor.question?.settings?.type ? (
+                    <QuestionSettings chapterId={chapterId} setHovered={setHovered} />
+                  ) : (
+                    <p>{__('Use Add block to choose a question type.', 'ohmylms')}</p>
+                  )}
+                  {!chapterId && (
+                    <PracticeFeedbackFields
+                      question={editor.question}
+                      onChange={(fields) =>
+                        !readonly && editor.patchQuestion(editor.question.id, fields)
+                      }
+                    />
+                  )}
+                </fieldset>
+              }
+            />
+          </QuizQuestionCards>
         )}
         {pickerOpen && (
           <BankPicker

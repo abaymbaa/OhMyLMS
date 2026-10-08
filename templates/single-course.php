@@ -14,6 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
 
+$syllabus_id = \OhMyLMS\Curriculum\SyllabusCourse::owner(get_queried_object_id());
+if ($syllabus_id && !post_password_required()) {
+    $directory = \OhMyLMS\Curriculum\Directory::render($syllabus_id);
+    if ($directory !== '') {
+        ohmylms_get_header();
+        echo $directory;
+        ohmylms_get_footer();
+        return;
+    }
+}
+
 if( 'layout_2' === $single_course_layout ) {
 	$layout_class = 'ohmylms-single-course-layout-2';
 

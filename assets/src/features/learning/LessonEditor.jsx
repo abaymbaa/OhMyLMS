@@ -171,8 +171,8 @@ export function createLessonEditor(readRuntime) {
           <React.Fragment>
             {!chapterId && (
               <LearningEditorHeader
-                title={(0, I18n.__)('Lesson Outline', 'ohmylms')}
-                redirection={'/lessons'}
+                title={(0, I18n.__)('Lesson editor', 'ohmylms')}
+                redirection={'/content-hub/lessons'}
                 className={'ohmylms-lesson-editor-page-header'}
                 rightContent={
                   <React.Fragment>
@@ -195,146 +195,148 @@ export function createLessonEditor(readRuntime) {
                 }
               />
             )}
-            <Controls.FlexWP
+            <div
               className={Vr()(
                 'ohmylms-lesson-editor-wrapper',
                 !chapterId && 'ohmylms-lesson-editor-page',
               )}
-              justify={'space-between'}
-              gap={5}
             >
-              <Controls.FlexItemWP flex={3}>
-                <Controls.CardWP fullHeight={!0} isBorderless={!0}>
-                  <Controls.SpacerWP padding={5} marginBottom={0}>
-                    <LessonContent
+              <LessonContent
+                lesson={u}
+                settings={
+                  <React.Fragment>
+                    <LessonSettings
+                      embedded
+                      setOpenModal={setOpenModal}
                       lesson={u}
-                      handleInputChange={function (e) {
-                        c.setLesson({
-                          name: e,
-                        });
-                      }}
-                      handleEditorContentChange={function (e) {
-                        C(function (t) {
-                          return Ur(
-                            Ur({}, t),
-                            {},
-                            {
-                              description: e,
-                            },
-                          );
-                        });
-                      }}
-                      handleUploadComplete={function (e, t) {
-                        var n = {};
-                        switch (t) {
-                          case 'video':
-                            (c.setLesson(
-                              Ur(
-                                Ur({}, u),
-                                {},
-                                {
-                                  video_id: e.id,
-                                  video_src: e.url,
-                                  external_url: '',
-                                },
-                              ),
-                            ),
-                              (n = {
-                                video_id: e.id,
-                                video_src: e.url,
-                                external_url: '',
-                              }));
-                            break;
-                          case 'audio':
-                            (c.setLesson(
-                              Ur(
-                                Ur({}, u),
-                                {},
-                                {
-                                  audio_id: e.id,
-                                  audio_src: e.url,
-                                  external_url: '',
-                                },
-                              ),
-                            ),
-                              (n = {
-                                audio_id: e.id,
-                                audio_src: e.url,
-                                external_url: '',
-                              }));
-                            break;
-                          default:
-                            (c.setLesson(
-                              Ur(
-                                Ur({}, u),
-                                {},
-                                {
-                                  image_id: e.id,
-                                  image_src: e.url,
-                                },
-                              ),
-                            ),
-                              (n = {
-                                image_id: e.id,
-                                image_src: e.url,
-                              }));
-                        }
-                        c.updateLessonWithoutNotice(null == u ? void 0 : u.id, Ur(Ur({}, u), n));
-                      }}
-                      handleRemoveMedia={function (e) {
-                        var t = Ur(
+                      chapterId={chapterId}
+                    />
+                    {window.ohmylms.extensions.renderSlot(
+                      '/lesson-edit/:id',
+                      { id: a, route: '/lesson-edit/:id', hash: window.location.hash },
+                      'editor-panel',
+                    )}
+                  </React.Fragment>
+                }
+                handleInputChange={function (e) {
+                  c.setLesson({
+                    name: e,
+                  });
+                }}
+                handleEditorContentChange={function (e) {
+                  C(function (t) {
+                    return Ur(
+                      Ur({}, t),
+                      {},
+                      {
+                        description: e,
+                      },
+                    );
+                  });
+                }}
+                handleUploadComplete={function (e, t) {
+                  var n = {};
+                  switch (t) {
+                    case 'video':
+                      (c.setLesson(
+                        Ur(
                           Ur({}, u),
                           {},
-                          qr(
-                            qr(qr({}, ''.concat(e, '_id'), null), ''.concat(e, '_src'), null),
-                            'external_url',
-                            null,
-                          ),
-                        );
-                        c.setLesson(t);
-                      }}
-                      setOpenModal={setOpenModal}
-                      saveLesson={P}
-                      chapterId={chapterId}
-                      onExternalUploadComplete={function (e, t) {
-                        (c.setLesson(
-                          Ur(
-                            Ur({}, u),
-                            {},
-                            {
-                              external_url: e.url,
-                              video_id: null,
-                              video_src: '',
-                              audio_id: null,
-                              audio_src: '',
-                            },
-                          ),
+                          {
+                            video_id: e.id,
+                            video_src: e.url,
+                            external_url: '',
+                          },
                         ),
-                          c.updateLessonWithoutNotice(
-                            null == u ? void 0 : u.id,
-                            Ur(
-                              Ur({}, u),
-                              {},
-                              {
-                                external_url: e.url,
-                                video_id: null,
-                                video_src: '',
-                                audio_id: null,
-                                audio_src: '',
-                              },
-                            ),
-                          ));
-                      }}
-                    />
-                  </Controls.SpacerWP>
-                </Controls.CardWP>
-              </Controls.FlexItemWP>
-              <Controls.FlexItemWP flex={2}>
-                <Controls.CardWP fullHeight={!0} isBorderless={!0}>
-                  <LessonSettings setOpenModal={setOpenModal} lesson={u} chapterId={chapterId} />
-                </Controls.CardWP>
-              </Controls.FlexItemWP>
-            </Controls.FlexWP>
+                      ),
+                        (n = {
+                          video_id: e.id,
+                          video_src: e.url,
+                          external_url: '',
+                        }));
+                      break;
+                    case 'audio':
+                      (c.setLesson(
+                        Ur(
+                          Ur({}, u),
+                          {},
+                          {
+                            audio_id: e.id,
+                            audio_src: e.url,
+                            external_url: '',
+                          },
+                        ),
+                      ),
+                        (n = {
+                          audio_id: e.id,
+                          audio_src: e.url,
+                          external_url: '',
+                        }));
+                      break;
+                    default:
+                      (c.setLesson(
+                        Ur(
+                          Ur({}, u),
+                          {},
+                          {
+                            image_id: e.id,
+                            image_src: e.url,
+                          },
+                        ),
+                      ),
+                        (n = {
+                          image_id: e.id,
+                          image_src: e.url,
+                        }));
+                  }
+                  c.updateLessonWithoutNotice(null == u ? void 0 : u.id, Ur(Ur({}, u), n));
+                }}
+                handleRemoveMedia={function (e) {
+                  var t = Ur(
+                    Ur({}, u),
+                    {},
+                    qr(
+                      qr(qr({}, ''.concat(e, '_id'), null), ''.concat(e, '_src'), null),
+                      'external_url',
+                      null,
+                    ),
+                  );
+                  c.setLesson(t);
+                }}
+                setOpenModal={setOpenModal}
+                saveLesson={P}
+                chapterId={chapterId}
+                onExternalUploadComplete={function (e, t) {
+                  (c.setLesson(
+                    Ur(
+                      Ur({}, u),
+                      {},
+                      {
+                        external_url: e.url,
+                        video_id: null,
+                        video_src: '',
+                        audio_id: null,
+                        audio_src: '',
+                      },
+                    ),
+                  ),
+                    c.updateLessonWithoutNotice(
+                      null == u ? void 0 : u.id,
+                      Ur(
+                        Ur({}, u),
+                        {},
+                        {
+                          external_url: e.url,
+                          video_id: null,
+                          video_src: '',
+                          audio_id: null,
+                          audio_src: '',
+                        },
+                      ),
+                    ));
+                }}
+              />
+            </div>
           </React.Fragment>
         ) : (
           <Controls.SkeletonWP rows={10} />

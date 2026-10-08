@@ -30,6 +30,8 @@ import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
+import { FormWorkspace } from '../quizzes/FormWorkspace';
+import { BankAnswerFields } from './BankAnswerFields';
 
 const TYPES = [
   'single-choice',
@@ -342,6 +344,10 @@ function QuestionDetail({ id, skills, banks, onClose, onChanged }) {
         if (!active) return;
         setDetail(data);
         setDraft({
+          name: data.name,
+          description: data.description || '',
+          questions: data.options || [],
+          settings: data.settings || {},
           skills: data.skill_map || {},
           bank: {
             difficulty: data.difficulty,
@@ -362,12 +368,21 @@ function QuestionDetail({ id, skills, banks, onClose, onChanged }) {
     setError('');
     try {
       await saveQuestionAttributes(id, {
+        name: draft.name,
+        description: draft.description,
+        questions: draft.questions,
+        settings: draft.settings,
         skills: draft.skills,
         bank: draft.bank,
         base_modified: detail.modified,
       });
       const fresh = await loadBankQuestion(id);
       setDetail(fresh);
+      setDraft((value) => ({
+        ...value,
+        questions: fresh.options || [],
+        settings: fresh.settings || {},
+      }));
       onChanged();
     } catch (cause) {
       setError(cause.message || __('Could not save.', 'ohmylms'));
@@ -377,7 +392,12 @@ function QuestionDetail({ id, skills, banks, onClose, onChanged }) {
   }
   const setBank = (key) => (value) => setDraft({ ...draft, bank: { ...draft.bank, [key]: value } });
   return (
-    <Modal title={detail?.name || __('Question', 'ohmylms')} onRequestClose={onClose} size="large">
+    <Modal
+      title={detail?.name || __('Question', 'ohmylms')}
+      onRequestClose={onClose}
+      size="large"
+      className="ohmylms-question-block-modal"
+    >
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}
@@ -386,116 +406,174 @@ function QuestionDetail({ id, skills, banks, onClose, onChanged }) {
       {!detail || !draft ? (
         <Spinner />
       ) : (
-        <Fragment>
-          <p>
-            <strong>{__('UUID', 'ohmylms')}:</strong> <code>{detail.uuid}</code>
-          </p>
-          <h3>{__('Placement', 'ohmylms')}</h3>
-          <ul>
-            {detail.quizzes.length === 0 && <li>{__('Not used in any quiz.', 'ohmylms')}</li>}
-            {detail.quizzes.map((quiz) => (
-              <li key={quiz.id}>
-                {quiz.can_edit ? <a href={`#/quiz-edit/${quiz.id}`}>{quiz.name}</a> : quiz.name}
-              </li>
-            ))}
-          </ul>
-          <h3>{__('Classification', 'ohmylms')}</h3>
-          <fieldset
-            disabled={!detail.can_edit}
-            style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}
-          >
-            <SelectControl
-              label={__('Difficulty', 'ohmylms')}
-              value={draft.bank.difficulty}
-              options={DIFFICULTIES.map((value) => ({ value, label: value }))}
-              onChange={setBank('difficulty')}
+        <FormWorkspace
+          key={id}
+          questionType={detail.type}
+          previewQuestion={{ ...draft, questions: draft.questions }}
+          questionTypes={[detail.type]}
+          onQuestionTypeChange={() => {}}
+          questionBlockContent={
+            <BankAnswerFields
+              type={detail.type}
+              options={draft.questions}
+              settings={draft.settings}
+              onChange={(patch) => detail.can_edit && setDraft((value) => ({ ...value, ...patch }))}
             />
+          }
+          questionBlockSettings={
             <TextControl
-              label={__('Source', 'ohmylms')}
-              value={draft.bank.source}
-              onChange={setBank('source')}
+              label={__('Marks', 'ohmylms')}
+              type="number"
+              min={0}
+              step="0.5"
+              value={draft.settings.score?.value ?? 1}
+              onChange={(value) =>
+                setDraft((draft) => ({
+                  ...draft,
+                  settings: { ...draft.settings, score: { enabled: true, value: Number(value) } },
+                }))
+              }
             />
-            <TextControl
-              label={__('Family', 'ohmylms')}
-              help={__('Questions in one family count as the same evidence.', 'ohmylms')}
-              value={draft.bank.family_id}
-              onChange={setBank('family_id')}
-            />
-            <SelectControl
-              label={__('Bank', 'ohmylms')}
-              value={String(draft.bank.bank_id || 0)}
-              options={[
-                { value: '0', label: __('No bank (personal)', 'ohmylms') },
-                ...banks.map((bank) => ({ value: String(bank.id), label: bank.name })),
-              ]}
-              onChange={(value) => setBank('bank_id')(Number(value))}
-            />
-            <CheckboxControl
-              label={__('Exam only (never used for practice)', 'ohmylms')}
-              checked={!!draft.bank.secure}
-              onChange={setBank('secure')}
-            />
-          </fieldset>
-          <h3>{__('Skills assessed', 'ohmylms')}</h3>
-          <SkillMapEditor
-            skills={skills}
-            value={draft.skills}
-            parts={(detail.settings?.parts || [{ id: 'p1' }]).map((part) => part.id)}
-            disabled={!detail.can_edit}
-            onChange={(skillsMap) => setDraft({ ...draft, skills: skillsMap })}
-          />
-          {detail.can_edit && (
-            <Button variant="primary" isBusy={saving} onClick={save}>
-              {__('Save (creates a new version if changed)', 'ohmylms')}
-            </Button>
-          )}
-          <h3>{__('Versions', 'ohmylms')}</h3>
-          <table className="widefat striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>{__('Title', 'ohmylms')}</th>
-                <th>{__('Created', 'ohmylms')}</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {detail.versions.map((version) => (
-                <tr key={version.id}>
-                  <td>v{version.version_no}</td>
-                  <td>{version.title}</td>
-                  <td>
-                    {version.created_at} UTC
-                    {Number(version.is_migration_snapshot) === 1 &&
-                      ` · ${__('captured at migration', 'ohmylms')}`}
-                  </td>
-                  <td>
-                    {Number(version.id) === Number(detail.approved_version_id) ? (
-                      <strong>{__('Approved', 'ohmylms')}</strong>
-                    ) : (
-                      detail.can_approve && (
-                        <Button
-                          variant="link"
-                          onClick={async () => {
-                            try {
-                              await approveQuestion(id, version.id);
-                              setDetail(await loadBankQuestion(id));
-                              onChanged();
-                            } catch (cause) {
-                              setError(cause.message);
-                            }
-                          }}
-                        >
-                          {__('Approve this version', 'ohmylms')}
-                        </Button>
-                      )
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Fragment>
+          }
+          toolbarActions={
+            detail.can_edit && (
+              <Button variant="primary" isBusy={saving} disabled={saving} onClick={save}>
+                {__('Save question', 'ohmylms')}
+              </Button>
+            )
+          }
+          document={{ id, name: draft.name, description: draft.description }}
+          label={__('Question', 'ohmylms')}
+          titleLabel={__('Question title', 'ohmylms')}
+          workspaceLabel={__('Question form editor', 'ohmylms')}
+          readOnly={!detail.can_edit}
+          onTitleChange={(name) => setDraft((value) => ({ ...value, name }))}
+          onContentChange={(description) => setDraft((value) => ({ ...value, description }))}
+          readOnlyContent={
+            detail.options?.length > 0 && (
+              <section>
+                <h3>{__('Answers', 'ohmylms')}</h3>
+                <ul>
+                  {detail.options.map((option) => (
+                    <li key={option.id}>{option.answer}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+          settings={
+            <Fragment>
+              <p>
+                <strong>{__('UUID', 'ohmylms')}:</strong> <code>{detail.uuid}</code>
+              </p>
+              <h3>{__('Placement', 'ohmylms')}</h3>
+              <ul>
+                {detail.quizzes.length === 0 && <li>{__('Not used in any quiz.', 'ohmylms')}</li>}
+                {detail.quizzes.map((quiz) => (
+                  <li key={quiz.id}>
+                    {quiz.can_edit ? <a href={`#/quiz-edit/${quiz.id}`}>{quiz.name}</a> : quiz.name}
+                  </li>
+                ))}
+              </ul>
+              <h3>{__('Classification', 'ohmylms')}</h3>
+              <fieldset
+                disabled={!detail.can_edit}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}
+              >
+                <SelectControl
+                  label={__('Difficulty', 'ohmylms')}
+                  value={draft.bank.difficulty}
+                  options={DIFFICULTIES.map((value) => ({ value, label: value }))}
+                  onChange={setBank('difficulty')}
+                />
+                <TextControl
+                  label={__('Source', 'ohmylms')}
+                  value={draft.bank.source}
+                  onChange={setBank('source')}
+                />
+                <TextControl
+                  label={__('Family', 'ohmylms')}
+                  help={__('Questions in one family count as the same evidence.', 'ohmylms')}
+                  value={draft.bank.family_id}
+                  onChange={setBank('family_id')}
+                />
+                <SelectControl
+                  label={__('Bank', 'ohmylms')}
+                  value={String(draft.bank.bank_id || 0)}
+                  options={[
+                    { value: '0', label: __('No bank (personal)', 'ohmylms') },
+                    ...banks.map((bank) => ({ value: String(bank.id), label: bank.name })),
+                  ]}
+                  onChange={(value) => setBank('bank_id')(Number(value))}
+                />
+                <CheckboxControl
+                  label={__('Exam only (never used for practice)', 'ohmylms')}
+                  checked={!!draft.bank.secure}
+                  onChange={setBank('secure')}
+                />
+              </fieldset>
+              <h3>{__('Skills assessed', 'ohmylms')}</h3>
+              <SkillMapEditor
+                skills={skills}
+                value={draft.skills}
+                parts={(detail.settings?.parts || [{ id: 'p1' }]).map((part) => part.id)}
+                disabled={!detail.can_edit}
+                onChange={(skillsMap) => setDraft({ ...draft, skills: skillsMap })}
+              />
+              {detail.can_edit && (
+                <Button variant="primary" isBusy={saving} onClick={save}>
+                  {__('Save (creates a new version if changed)', 'ohmylms')}
+                </Button>
+              )}
+              <h3>{__('Versions', 'ohmylms')}</h3>
+              <table className="widefat striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>{__('Title', 'ohmylms')}</th>
+                    <th>{__('Created', 'ohmylms')}</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {detail.versions.map((version) => (
+                    <tr key={version.id}>
+                      <td>v{version.version_no}</td>
+                      <td>{version.title}</td>
+                      <td>
+                        {version.created_at} UTC
+                        {Number(version.is_migration_snapshot) === 1 &&
+                          ` · ${__('captured at migration', 'ohmylms')}`}
+                      </td>
+                      <td>
+                        {Number(version.id) === Number(detail.approved_version_id) ? (
+                          <strong>{__('Approved', 'ohmylms')}</strong>
+                        ) : (
+                          detail.can_approve && (
+                            <Button
+                              variant="link"
+                              onClick={async () => {
+                                try {
+                                  await approveQuestion(id, version.id);
+                                  setDetail(await loadBankQuestion(id));
+                                  onChanged();
+                                } catch (cause) {
+                                  setError(cause.message);
+                                }
+                              }}
+                            >
+                              {__('Approve this version', 'ohmylms')}
+                            </Button>
+                          )
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Fragment>
+          }
+        />
       )}
     </Modal>
   );

@@ -16,6 +16,7 @@ final class Bootstrap {
         add_action('delete_term', [__CLASS__, 'term_deleted'], 10, 3);
         add_action('deleted_user', [Follows::class, 'remove_user']);
         \OhMyLMS\Tracks\Frontend::init();
+        Directory::init();
     }
 
     /** A deleted course or quiz/exam leaves no curriculum links, and a deleted course leaves no track slot. */

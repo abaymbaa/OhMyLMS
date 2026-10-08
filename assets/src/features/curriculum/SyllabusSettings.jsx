@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SaveField, Tag } from './WorkspaceParts';
+import { SkillCategories } from './SkillCategories';
 
 /** Settings for a grade/subject skill collection, rather than an enrolled commercial course. */
 export function SyllabusSettings() {
@@ -108,32 +109,18 @@ export function SyllabusSettings() {
       </section>
       <section className="ohmylms-syllabus-settings-card">
         <h3>{__('Skill categories', 'ohmylms')}</h3>
-        <SaveField
-          id="syllabus-settings-categories"
-          label={__('Available skill categories', 'ohmylms')}
-          multiline
-          value={(profile.categories || []).join('\n')}
-          help={__(
-            'One category per line, such as Core, Extended, Advanced, or Олимпиад. These appear as suggestions when editing skills. Existing skill assignments are preserved.',
-            'ohmylms',
-          )}
-          disabled={w.pending}
-          onSave={(text) =>
-            w.saveSettings({
-              categories: [
-                ...new Set(
-                  text
-                    .split('\n')
-                    .map((value) => value.trim())
-                    .filter(Boolean),
-                ),
-              ],
-            })
-          }
-        />
+        <SkillCategories />
       </section>
       <section className="ohmylms-syllabus-settings-card">
         <h3>{__('Publishing', 'ohmylms')}</h3>
+        <div className="ohmylms-ws-course-actions">
+          <Button variant="secondary" href={w.course?.preview} target="_blank" rel="noopener noreferrer">
+            {__('Preview skill directory', 'ohmylms')}
+          </Button>
+          {live && w.course?.directory_ready && <Button variant="link" href={w.course?.directory} target="_blank" rel="noopener noreferrer">
+            {__('View published syllabus', 'ohmylms')}
+          </Button>}
+        </div>
         <Tag tone={live ? 'ok' : 'warn'}>
           {live ? __('Syllabus published', 'ohmylms') : __('Syllabus draft', 'ohmylms')}
         </Tag>

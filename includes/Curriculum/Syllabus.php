@@ -156,6 +156,7 @@ final class Syllabus {
                 'position' => (int) $group['position'],
                 'code' => (string) $group['code'],
                 'name' => self::text($group['name']),
+                'icon' => (string) ($group['icon'] ?? ''),
                 'description' => self::text($group['description']),
                 'skills' => $skills_of[(int) $group['id']] ?? [],
             ];
@@ -171,6 +172,7 @@ final class Syllabus {
                 'depth' => $depth,
                 'item_type' => $row['item_type'],
                 'name' => self::text($row['name']),
+                'icon' => (string) ($row['icon'] ?? ''),
                 'code' => (string) $row['code'],
                 'groups' => $entry_groups,
             ];
@@ -251,6 +253,11 @@ final class Syllabus {
 
     private static function clean_group(array $data, $partial) {
         $fields = [];
+        if (array_key_exists('icon', $data)) {
+            $icon = Icons::clean($data['icon']);
+            if (is_wp_error($icon)) { return $icon; }
+            $fields['icon'] = $icon;
+        }
         if (!$partial || array_key_exists('name', $data)) {
             $name = SyllabusRows::line($data['name'] ?? '');
             // A new group may be given only a code; the code then names it.
@@ -446,6 +453,8 @@ final class Syllabus {
         if (is_wp_error($fields)) { return $fields; }
         $position = isset($data['position']) && $data['position'] !== '' && $data['position'] !== null ? (int) $data['position'] : null;
         return Items::exclusive(static function () use ($syllabus_id, $group, $fields, $position) {
+            $category_check = SyllabusSettings::check_category($syllabus_id, $fields);
+            if (is_wp_error($category_check)) { return $category_check; }
             if (self::skill_count($syllabus_id) >= self::MAX_SKILLS) { return Access::error('ohmylms_syllabus_limit', sprintf(__('A syllabus can have at most %d skills.', 'ohmylms'), self::MAX_SKILLS), 409); }
             if (self::code_taken($syllabus_id, $fields['code'])) { return Access::error('ohmylms_syllabus_code_taken', sprintf(__('Another skill in this syllabus already uses the code “%s”.', 'ohmylms'), $fields['code']), 409); }
             $root = self::root_skill($syllabus_id);
@@ -478,6 +487,8 @@ final class Syllabus {
         $fields = self::clean_skill($data, true);
         if (is_wp_error($fields)) { return $fields; }
         return Items::exclusive(static function () use ($syllabus_id, $term_id, $fields) {
+            $category_check = SyllabusSettings::check_category($syllabus_id, $fields);
+            if (is_wp_error($category_check)) { return $category_check; }
             return self::write_skill($syllabus_id, $term_id, $fields);
         });
     }

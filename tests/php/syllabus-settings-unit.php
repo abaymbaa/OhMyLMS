@@ -6,6 +6,7 @@ class WP_Error { public function __construct(...$args) {} }
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 use OhMyLMS\Curriculum\SyllabusSettings;
 use OhMyLMS\Learning\CourseProgram;
+use OhMyLMS\Curriculum\Icons;
 function verify($value, $message) { if (!$value) { throw new RuntimeException($message); } }
 $settings = SyllabusSettings::clean(['grade' => ' Grade 9 ', 'subject' => 'Математик', 'language' => 'Монгол', 'categories' => ['Core', 'Extended', 'Core', ' Олимпиад ', ''], 'price' => 100]);
 verify($settings === ['grade' => 'Grade 9', 'subject' => 'Математик', 'language' => 'Монгол', 'categories' => ['Core', 'Extended', 'Олимпиад']], 'grade profiles retain custom categories and reject unrelated course fields');
@@ -18,4 +19,11 @@ verify(CourseProgram::completion_readiness($program, true) === [], 'grade skill 
 verify(count(CourseProgram::completion_readiness($program, false)) === 2, 'ordinary courses retain completion checks');
 $program['outcomes'] = [];
 verify(count(CourseProgram::completion_readiness($program, true)) === 1, 'an empty syllabus cannot be published');
-echo "syllabus settings unit checks passed: 8\n";
+verify(Icons::clean('calculator') === 'calculator', 'supported topic and chapter icons are accepted');
+verify(Icons::clean('') === '', 'an icon can be reset to the default');
+verify(Icons::clean('invalid-icon') instanceof WP_Error && Icons::clean(['calculator']) instanceof WP_Error, 'unsupported and malformed icons are rejected');
+verify(SyllabusSettings::category_allowed('Core', ['Core', 'Extended']), 'skills can choose an existing syllabus category');
+verify(SyllabusSettings::category_allowed('', ['Core']), 'a skill category can be cleared');
+verify(!SyllabusSettings::category_allowed('New category', ['Core']), 'skills cannot create categories');
+verify(!SyllabusSettings::category_allowed('core', ['Core']), 'category selections match stored labels exactly');
+echo "syllabus settings unit checks passed: 15\n";

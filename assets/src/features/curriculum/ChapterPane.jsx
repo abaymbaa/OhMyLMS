@@ -3,6 +3,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { AttachDialog } from '../content-hub/AttachDialog';
 import { AttachmentItem } from '../content-hub/AttachmentItem';
+import { IconPicker } from './IconPicker';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { attachmentsFor } from '../content-hub/catalogModel.mjs';
 import { AddContentMenu } from './AddContentMenu';
@@ -81,6 +82,12 @@ export function ChapterPane({ node }) {
       />
       <header className="ohmylms-ws-pane-head">
         <div className="ohmylms-ws-pane-title">
+          <IconPicker
+            kind="chapter"
+            value={group.icon}
+            disabled={w.pending}
+            onChange={(icon) => w.actions.saveChapter(group, { icon })}
+          />
           <SaveField
             id={`ohmylms-ws-chapter-name-${group.id}`}
             label={__('Chapter name', 'ohmylms')}

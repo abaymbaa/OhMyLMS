@@ -96,12 +96,14 @@ class QuestionSnapshot {
         $public = array_merge(['type', 'required', 'score', 'randomize'], (array) ($definition['public_settings'] ?? []));
         $settings = array_intersect_key($this->get_settings(), array_flip($public));
         if ($type === 'structured') { $settings['parts'] = Structured::public_parts($this->get_settings()); }
+        $body = $this->get_description();
+        if (function_exists('has_blocks') && has_blocks($body)) { $body = apply_filters('the_content', $body); }
         return InlineBlanks::public_view([
             'id' => $this->get_id(),
             'uuid' => $this->get_uuid(),
             'version_id' => $this->get_version_id(),
             'name' => $this->get_name(),
-            'description' => $this->get_description(),
+            'description' => $body,
             'settings' => $settings,
             'questions' => $ordered,
             'definitions' => $definitions,

@@ -42,7 +42,7 @@ function Branch({ node, selected, open, onSelect, onToggle }) {
           aria-current={selected === node.key ? 'true' : undefined}
           onClick={() => onSelect(node.key)}
         >
-          <KindIcon kind={kind} />
+          <KindIcon kind={kind} icon={node.group?.icon || node.content?.icon} />
           <span className="ohmylms-ws-node-label">{label(node)}</span>
           {node.kind === 'group' && (
             <span
