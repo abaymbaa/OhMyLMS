@@ -9,7 +9,6 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Dashicon, Notice, Spinner } from '@wordpress/components';
 import * as api from './api.mjs';
-import { ChapterPane } from './ChapterPane';
 import { WorkspaceContext } from './context';
 import { ImportDialog } from './ImportDialog';
 import { SkillPane } from './SkillPane';
@@ -24,40 +23,25 @@ import {
   CURRICULUM_PATH,
   ancestorKeys,
   defaultKey,
+  displayCounts,
   resolveKey,
   syllabusIdFromHash,
 } from './workspace.mjs';
 import { useCourseCatalog } from './useCourseCatalog';
 import { useSyllabusWorkspace } from './useSyllabusWorkspace';
-import { SyllabusSettings } from './SyllabusSettings';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
 
 function countsLine(totals) {
-  const { contents, groups, skills } = totalsParts(totals);
+  const { contents, skills } = totalsParts(totals);
   return [
     sprintf(_n('%d topic', '%d topics', contents, 'ohmylms'), contents),
-    sprintf(_n('%d chapter', '%d chapters', groups, 'ohmylms'), groups),
     sprintf(_n('%d skill', '%d skills', skills, 'ohmylms'), skills),
   ].join(' · ');
 }
 
-/**
- * The full-page syllabus editor, laid out like the course builder: the whole syllabus as an outline on the
- * left (topics, the chapters in them, the skills in each chapter) and, on the right, whatever is selected,
- * to read and edit. A syllabus is also a course, so its chapters and skills are the course's, and lessons,
- * quizzes and assignments are attached to its chapters from here.
- */
+/** Full-page syllabus editor with nested topics and skills. */
 export function SyllabusWorkspace({ syllabusId }) {
   const ws = useSyllabusWorkspace(syllabusId);
-  const [settingsOpen, setSettingsOpen] = useState(
-    () => hashQuery(window.location.hash).get('view') === 'settings',
-  );
-  useEffect(() => {
-    const update = () =>
-      setSettingsOpen(hashQuery(window.location.hash).get('view') === 'settings');
-    window.addEventListener('hashchange', update);
-    return () => window.removeEventListener('hashchange', update);
-  }, []);
   const { outline, tree } = ws;
   const course = outline?.course ?? null;
   const courseCatalog = useCourseCatalog(course?.id || 0, ws.revision);
@@ -69,14 +53,16 @@ export function SyllabusWorkspace({ syllabusId }) {
   const started = useRef(false);
   const main = useRef(null);
 
-  // Start on the first chapter, as the course builder does.
+  // Open the syllabus home unless returning to a specific topic or skill.
   useEffect(() => {
     if (!tree.root || started.current) return;
     started.current = true;
     setSelected(resolveKey(tree, hashQuery(window.location.hash).get('node') || defaultKey(tree)));
   }, [tree]);
 
-  const active = tree.root ? resolveKey(tree, selected, remembered.current) : '';
+  const resolved = tree.root ? resolveKey(tree, selected, remembered.current) : '';
+  const resolvedNode = tree.index.get(resolved);
+  const active = resolvedNode?.kind === 'group' ? resolvedNode.parentKey : resolved;
   useEffect(() => {
     // A node that is deleted falls back to the one it sat in.
     remembered.current = tree.index.get(active)?.parentKey || remembered.current;
@@ -95,14 +81,7 @@ export function SyllabusWorkspace({ syllabusId }) {
       setOpen((previous) => (previous.has(active) ? previous : new Set([...previous, active])));
   }, [active]);
 
-  const select = useCallback(
-    (key) => {
-      setSelected(key);
-      if (hashQuery(window.location.hash).get('view') === 'settings')
-        window.location.hash = `/content-hub/curriculum/syllabus/${syllabusId}`;
-    },
-    [syllabusId],
-  );
+  const select = useCallback((key) => setSelected(key), []);
   const toggle = useCallback(
     (key) =>
       setOpen((previous) => {
@@ -145,6 +124,7 @@ export function SyllabusWorkspace({ syllabusId }) {
 
   const node = tree.index.get(active) || tree.root;
   const name = outline.syllabus.name;
+  const shownCounts = displayCounts(tree.root, outline.settings);
   const value = {
     syllabusId,
     outline,
@@ -160,7 +140,7 @@ export function SyllabusWorkspace({ syllabusId }) {
     saveSettings: (data) =>
       ws.run(
         () => api.saveSyllabusSettings(syllabusId, data),
-        __('Syllabus settings saved.', 'ohmylms'),
+        __('Syllabus profile saved.', 'ohmylms'),
       ),
     publishSyllabus: () =>
       ws.run(() => api.publishSyllabus(syllabusId), __('Syllabus published.', 'ohmylms')),
@@ -179,27 +159,33 @@ export function SyllabusWorkspace({ syllabusId }) {
             {__('Back', 'ohmylms')}
           </a>
           <div className="ohmylms-ws-header-title">
-            <h1>{name}</h1>
+            <h1>
+              <a
+                className="ohmylms-ws-home-link"
+                href={`#/content-hub/curriculum/syllabus/${syllabusId}`}
+                onClick={() => select(tree.root.key)}
+                aria-label={sprintf(__('Open %s syllabus home', 'ohmylms'), name)}
+              >
+                {name}
+              </a>
+            </h1>
             <p>
-              {__('Syllabus', 'ohmylms')} · {countsLine(outline.totals)}
+              {__('Syllabus', 'ohmylms')} ·{' '}
+              {countsLine({
+                contents: shownCounts.topics,
+                skills: shownCounts.skills,
+              })}
               {course &&
                 ` · ${course.status === 'publish' ? __('Syllabus published', 'ohmylms') : __('Syllabus draft', 'ohmylms')}`}
             </p>
           </div>
           <div className="ohmylms-ws-header-actions">
             <Button
-              variant={settingsOpen ? 'secondary' : 'primary'}
+              variant="primary"
               href={`#/content-hub/curriculum/syllabus/${syllabusId}`}
-              aria-current={!settingsOpen ? 'page' : undefined}
+              onClick={() => select(tree.root.key)}
             >
               {__('Skills', 'ohmylms')}
-            </Button>
-            <Button
-              variant={settingsOpen ? 'primary' : 'secondary'}
-              href={`#/content-hub/curriculum/syllabus/${syllabusId}?view=settings`}
-              aria-current={settingsOpen ? 'page' : undefined}
-            >
-              {__('Syllabus Settings', 'ohmylms')}
             </Button>
             <Button variant="secondary" disabled={ws.pending} onClick={() => setImporting(true)}>
               {__('Import CSV', 'ohmylms')}
@@ -245,7 +231,10 @@ export function SyllabusWorkspace({ syllabusId }) {
               )
             }
             onCloseAll={() => setOpen(new Set([tree.root.key]))}
-            onAddChapter={(itemId, data) => actions.addChapter(itemId, data)}
+            onAddSkill={actions.addSkillInTopic}
+            onAddTopic={(itemId, data) => actions.addTopic(itemId, data, { open: false })}
+            onReorder={actions.reorderOutline}
+            settings={outline.settings}
             collapsed={collapsed}
             onCollapse={() => setCollapsed((state) => !state)}
             pending={ws.pending}
@@ -258,15 +247,8 @@ export function SyllabusWorkspace({ syllabusId }) {
                 </Notice>
               )}
             </div>
-            {settingsOpen ? (
-              <SyllabusSettings />
-            ) : (
-              <>
-                {node.kind === 'content' && <TopicPane key={node.key} node={node} />}
-                {node.kind === 'group' && <ChapterPane key={node.key} node={node} />}
-                {node.kind === 'skill' && <SkillPane key={node.key} node={node} />}
-              </>
-            )}
+            {node.kind === 'content' && <TopicPane key={node.key} node={node} />}
+            {node.kind === 'skill' && <SkillPane key={node.key} node={node} />}
           </main>
         </div>
         {importing && (

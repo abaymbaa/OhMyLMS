@@ -55,3 +55,14 @@ test('mindmap supports branch collapse, read-only browsing and custom node detai
   assert.equal(collapsed.nodes.some((node) => node.type === 'span' && node.children.includes('Algebra')), false);
   assert.equal(collapsed.nodes.find((node) => node.props['aria-label'] === 'Expand Mathematics').props['aria-expanded'], false);
 });
+
+test('hidden membership nodes preserve selection inheritance and visible descendants', () => {
+  let next;
+  const map = render({ selected: ['algebra'], includeDescendants: true, hideNode: (node) => node.id === 'algebra', onSelectionChange: (ids) => { next = ids; } });
+  assert.equal(map.nodes.some((node) => node.type === 'span' && node.children.includes('Algebra')), false);
+  assert.ok(map.nodes.some((node) => node.type === 'span' && node.children.includes('Linear equations')));
+  const inputs = map.nodes.filter((node) => node.type === 'input');
+  assert.deepEqual(inputs.map((node) => [node.props.checked, node.props.disabled]), [[false, false], [true, true], [false, false]]);
+  inputs[2].props.onChange();
+  assert.deepEqual(next, ['algebra', 'science']);
+});

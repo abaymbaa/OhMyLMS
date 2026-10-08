@@ -29,7 +29,6 @@ export function DeleteTopicDialog({ item, pending, onConfirm, onClose }) {
   }, [item.id]);
 
   const branch = info && info.children > 0 && strategy === 'delete';
-  const chapters = info ? (branch ? info.groups : info.own_groups) || 0 : 0;
   const tracks = info ? (branch ? info.tracks : info.own_tracks) || 0 : 0;
   return (
     <Modal
@@ -83,17 +82,10 @@ export function DeleteTopicDialog({ item, pending, onConfirm, onClose }) {
           )}
           <ul className="ohmylms-cur-delete-effects">
             <li>
-              {chapters > 0
-                ? sprintf(
-                    _n(
-                      '%d chapter will be deleted. Its skills stay in the skill library.',
-                      '%d chapters will be deleted. Their skills stay in the skill library.',
-                      chapters,
-                      'ohmylms',
-                    ),
-                    chapters,
-                  )
-                : __('No chapters are deleted.', 'ohmylms')}
+              {__(
+                'Skills in the deleted topic stay in the skill library, with their lessons and questions.',
+                'ohmylms',
+              )}
             </li>
             {tracks > 0 && (
               <li>

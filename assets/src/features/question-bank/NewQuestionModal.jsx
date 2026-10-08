@@ -18,8 +18,12 @@ import {
   setOptionCorrect,
   validateDraft,
 } from './model.mjs';
-import { NumericalEditor, PracticeFeedbackFields, StructuredEditor } from './MathEditors';
-import { FormWorkspace } from '../quizzes/FormWorkspace';
+import {
+  NumericalEditor,
+  PracticeFeedbackFields,
+  StructuredEditor,
+} from '../question-editor/MathEditors';
+import { FormWorkspace } from '../question-editor/FormWorkspace';
 
 const TYPE_LABELS = () => ({
   'single-choice': __('Single choice', 'ohmylms'),

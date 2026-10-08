@@ -25,6 +25,10 @@ export function syllabusIdFromHash(hash) {
 
 /** "1.1 · Quadratic equations", or just the name when the topic has no code. */
 export function topicLabel(content) {
+  if (content.outlineNumber) {
+    const name = String(content.name || '').replace(/^\d+(?:\.\d+)*(?:\s*[·.)-]\s*|\s+)/u, '');
+    return `${content.outlineNumber} · ${name}`;
+  }
   return content.code ? `${content.code} · ${content.name}` : content.name;
 }
 
@@ -87,7 +91,43 @@ export function buildOutline(outline) {
     node.parentKey = parent.key;
     parent.children.push(node);
   }
+  const numberTopics = (parent, prefix = '') => {
+    parent.children
+      .filter((child) => child.kind === 'content')
+      .forEach((child, position) => {
+        const number = prefix ? `${prefix}.${position + 1}` : String(position + 1);
+        child.content = { ...child.content, outlineNumber: number };
+        numberTopics(child, number);
+      });
+  };
+  numberTopics(root);
   return { root, index };
+}
+
+/** Position after removing the dragged sibling, as expected by the move endpoints. */
+export function outlineDropPosition(tree, sourceKey, targetKey, after = false) {
+  const source = tree.index.get(sourceKey),
+    target = tree.index.get(targetKey);
+  if (!source || !target || source === target || !source.parentKey || source.kind !== target.kind)
+    return null;
+  const sourceParent = tree.index.get(source.parentKey),
+    targetParent = tree.index.get(target.parentKey);
+  if (source.kind === 'skill') {
+    if (sourceParent.parentKey !== targetParent.parentKey) return null;
+    const siblings = targetParent.children.filter((child) => child.key !== sourceKey);
+    const position = siblings.findIndex((child) => child.key === targetKey) + (after ? 1 : 0);
+    return source.parentKey === target.parentKey &&
+      position === sourceParent.children.findIndex((child) => child.key === sourceKey)
+      ? null
+      : position;
+  }
+  if (source.parentKey !== target.parentKey) return null;
+  const siblings = tree.index
+    .get(source.parentKey)
+    .children.filter((child) => child.kind === source.kind);
+  const remaining = siblings.filter((child) => child.key !== sourceKey);
+  const position = remaining.findIndex((child) => child.key === targetKey) + (after ? 1 : 0);
+  return position === siblings.findIndex((child) => child.key === sourceKey) ? null : position;
 }
 
 /** Nodes from the syllabus down to the one with this key (empty when the key is unknown). */
@@ -138,18 +178,21 @@ export const topicsOf = (node) =>
 export const chaptersOf = (node) =>
   (node?.children || []).filter((child) => child.kind === 'group');
 
-/** The chapter to show first: the first chapter of the syllabus, else its first topic, else the syllabus. */
+/** Skill groups stay in storage for existing course links, while topics display one flat list. */
+export const isCategoryGroup = (group, settings) =>
+  ['Skills', 'Core', 'Extended', 'Advanced', ...(settings?.categories || [])].some(
+    (label) =>
+      label.toLowerCase() ===
+      String(group?.name || '')
+        .trim()
+        .toLowerCase(),
+  );
+export const visibleChildren = (node, settings) =>
+  (node?.children || []).flatMap((child) => (child.kind === 'group' ? child.children : [child]));
+
+/** Opening a syllabus starts on its home overview. */
 export function defaultKey(tree) {
-  if (!tree.root) return '';
-  const first = (node) => {
-    if (chaptersOf(node)[0]) return chaptersOf(node)[0].key;
-    for (const topic of topicsOf(node)) {
-      const found = first(topic);
-      if (found) return found;
-    }
-    return '';
-  };
-  return first(tree.root) || topicsOf(tree.root)[0]?.key || tree.root.key;
+  return tree.root?.key || '';
 }
 
 /**
@@ -201,4 +244,17 @@ export function courseState(course) {
   if (course.status === 'publish' && course.published) return 'live';
   if (course.published) return 'published-draft';
   return 'draft';
+}
+
+export function displayCounts(node, settings) {
+  const counts = { topics: 0, chapters: 0, skills: 0 };
+  const walk = (parent) =>
+    visibleChildren(parent, settings).forEach((child) => {
+      counts[
+        child.kind === 'content' ? 'topics' : child.kind === 'group' ? 'chapters' : 'skills'
+      ]++;
+      walk(child);
+    });
+  if (node) walk(node);
+  return counts;
 }

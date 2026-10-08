@@ -3,19 +3,20 @@ import { __, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
+import { SkillCategoryChoices } from './SkillCategoryChoices';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
-import { allGroups, groupLabel, validateSkill } from './syllabus.mjs';
+import { validateSkill } from './syllabus.mjs';
 import { Breadcrumb, MESSAGES, RowMenu, SaveField } from './WorkspaceParts';
 import { pathTo, stepAmongSiblings, topicLabel } from './workspace.mjs';
+import { categoryAppearance } from './categoryAppearance.mjs';
 
-/**
- * One skill: its learning objective, code and notes, which chapter it is in, and what it owns (its lessons
- * and questions). Skills are library skills, so taking one out of a chapter never deletes it.
- */
+/** A shared skill, its parent topic, category and learning resources. */
 export function SkillPane({ node }) {
   const w = useWorkspace();
   const skill = node.skill;
   const groupId = node.groupId;
+  const parent = w.tree.index.get(node.parentKey);
+  const appearance = categoryAppearance(skill, w.outline.settings, parent?.group);
   const first = stepAmongSiblings(w.tree, node, -1) === null;
   const last = stepAmongSiblings(w.tree, node, 1) === null;
   const check = (text, key) => {
@@ -48,15 +49,13 @@ export function SkillPane({ node }) {
   return (
     <div className="ohmylms-ws-pane">
       <Breadcrumb
-        nodes={pathTo(w.tree.index, node.key)}
+        nodes={pathTo(w.tree.index, node.key).filter((entry) => entry.kind !== 'group')}
         labelOf={(entry) =>
           entry.kind === 'skill'
             ? skill.name
-            : entry.kind === 'group'
-              ? groupLabel(entry.group)
-              : entry.depth === 0
-                ? entry.content.name
-                : topicLabel(entry.content)
+            : entry.depth === 0
+              ? entry.content.name
+              : topicLabel(entry.content)
         }
         onSelect={w.select}
       />
@@ -87,7 +86,7 @@ export function SkillPane({ node }) {
                 onClick: () => w.actions.stepSkill(groupId, skill.term_id, 1),
               },
               {
-                title: __('Take out of this chapter', 'ohmylms'),
+                title: __('Take out of this topic', 'ohmylms'),
                 onClick: async () => {
                   const fallback = node.parentKey;
                   if (await w.actions.removeSkill(groupId, skill.term_id)) w.select(fallback);
@@ -106,14 +105,20 @@ export function SkillPane({ node }) {
             onSave={(text) => w.actions.saveSkill(skill, { code: text.trim() })}
           />
           <SelectControl
-            label={__('Chapter', 'ohmylms')}
-            value={String(groupId)}
-            options={allGroups(w.outline).map(({ group }) => ({
-              value: String(group.id),
-              label: groupLabel(group),
-            }))}
+            label={__('Topic', 'ohmylms')}
+            value={parent.parentKey}
+            options={[
+              ...[...w.tree.index.values()]
+                .filter((entry) => entry.kind === 'content' && entry.depth > 0)
+                .map((entry) => ({
+                  value: entry.key,
+                  label: topicLabel(entry.content),
+                })),
+            ]}
             disabled={w.pending}
-            onChange={(value) => w.actions.moveSkillTo(groupId, skill.term_id, Number(value))}
+            onChange={(value) =>
+              w.actions.moveSkillToTopic(groupId, skill.term_id, Number(value.slice(2)))
+            }
             __nextHasNoMarginBottom
           />
         </div>
@@ -128,26 +133,16 @@ export function SkillPane({ node }) {
           validate={(text) => check(text, 'description')}
           onSave={(text) => w.actions.saveSkill(skill, { description: text })}
         />
-        <SelectControl
-          id={`ohmylms-ws-skill-category-${skill.term_id}`}
-          label={__('Skill category', 'ohmylms')}
-          value={skill.category || ''}
-          options={[
-            { label: __('No category', 'ohmylms'), value: '' },
-            ...(w.outline.settings.categories || []).map((category) => ({ label: category, value: category })),
-            ...(skill.category && !(w.outline.settings.categories || []).includes(skill.category)
-              ? [{ label: `${skill.category} (${__('not in syllabus categories', 'ohmylms')})`, value: skill.category, disabled: true }]
-              : []),
-          ]}
-          help={__('Create and manage categories on the syllabus home.', 'ohmylms')}
+        <SkillCategoryChoices
+          settings={w.outline.settings}
+          selected={appearance.category}
           disabled={w.pending}
-          onChange={(category) => w.actions.saveSkill(skill, { category })}
-          __nextHasNoMarginBottom
+          onSelect={(category) => w.actions.saveSkill(skill, { category })}
         />
         <p className="ohmylms-ext-muted">
           {sprintf(
             __(
-              'Skills are shared. Taking “%s” out of this chapter keeps it in the skill library.',
+              'Skills are shared. Taking “%s” out of this topic keeps it in the skill library.',
               'ohmylms',
             ),
             skill.name,

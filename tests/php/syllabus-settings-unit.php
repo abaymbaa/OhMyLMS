@@ -2,6 +2,7 @@
 define('ABSPATH', __DIR__ . '/');
 function __($text) { return $text; }
 function sanitize_text_field($text) { return trim(strip_tags($text)); }
+function is_wp_error($value) { return $value instanceof WP_Error; }
 class WP_Error { public function __construct(...$args) {} }
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 use OhMyLMS\Curriculum\SyllabusSettings;
@@ -26,4 +27,8 @@ verify(SyllabusSettings::category_allowed('Core', ['Core', 'Extended']), 'skills
 verify(SyllabusSettings::category_allowed('', ['Core']), 'a skill category can be cleared');
 verify(!SyllabusSettings::category_allowed('New category', ['Core']), 'skills cannot create categories');
 verify(!SyllabusSettings::category_allowed('core', ['Core']), 'category selections match stored labels exactly');
-echo "syllabus settings unit checks passed: 15\n";
+verify(SyllabusSettings::clean(['category_styles' => ['Core' => ['icon' => 'calculator', 'color' => '#AABBCC']]]) === ['category_styles' => ['Core' => ['icon' => 'calculator', 'color' => '#aabbcc']]], 'category icons and colors are persisted safely');
+verify(SyllabusSettings::clean(['category_styles' => ['Core' => ['icon' => 'invalid-icon', 'color' => '#aabbcc']]]) instanceof WP_Error, 'invalid category icons are refused');
+verify(SyllabusSettings::clean(['category_styles' => ['Core' => ['color' => 'red;display:none']]]) instanceof WP_Error, 'only hex icon colors are accepted');
+verify(SyllabusSettings::clean(['category_styles' => 'Core']) instanceof WP_Error, 'category style collections must be arrays');
+echo "syllabus settings unit checks passed: 19\n";

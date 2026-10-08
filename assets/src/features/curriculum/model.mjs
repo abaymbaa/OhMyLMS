@@ -17,6 +17,26 @@ export function indexItems(items) {
   return new Map((items || []).map((item) => [item.id, item]));
 }
 
+/** Hide topic rows and promote their children to the nearest visible ancestor. */
+export function withoutTopics(items = []) {
+  const index = indexItems(items);
+  const visible = items
+    .filter((item) => item.item_type !== 'topic')
+    .map((item) => {
+      let parent = item.parent_id || 0;
+      const seen = new Set([item.id]);
+      while (index.get(parent)?.item_type === 'topic' && !seen.has(parent)) {
+        seen.add(parent);
+        parent = index.get(parent).parent_id || 0;
+      }
+      return { ...item, parent_id: seen.has(parent) ? 0 : parent, child_count: 0 };
+    });
+  const parents = indexItems(visible);
+  for (const item of visible)
+    if (parents.has(item.parent_id)) parents.get(item.parent_id).child_count++;
+  return visible;
+}
+
 /** Parent ID => children ordered by sibling position. */
 export function childrenOf(items) {
   const map = new Map();

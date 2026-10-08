@@ -27,7 +27,22 @@ import {
   toggleOpen,
   validateDraft,
   validateMove,
+  withoutTopics,
 } from '../../assets/src/features/curriculum/model.mjs';
+
+test('hidden topics promote descendants without changing stored parents or losing sibling branches', () => {
+  const items = [
+    { id: 1, parent_id: 0, item_type: 'syllabus', position: 0 },
+    { id: 2, parent_id: 1, item_type: 'topic', position: 0 },
+    { id: 3, parent_id: 2, item_type: 'topic', position: 0 },
+    { id: 4, parent_id: 3, item_type: 'custom', position: 0 },
+    { id: 5, parent_id: 1, item_type: 'custom', position: 1 },
+  ];
+  const visible = withoutTopics(items);
+  assert.deepEqual(visible.map(({ id, parent_id, child_count }) => [id, parent_id, child_count]), [[1, 0, 2], [4, 1, 0], [5, 1, 0]]);
+  assert.equal(items[3].parent_id, 3);
+  assert.deepEqual(buildTree(visible)[0].children.map((node) => node.item.id), [4, 5]);
+});
 import * as api from '../../assets/src/features/curriculum/api.mjs';
 
 // Names are made up for the tests: they illustrate shapes, not real syllabus definitions.

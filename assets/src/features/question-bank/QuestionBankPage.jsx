@@ -30,8 +30,8 @@ import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
-import { FormWorkspace } from '../quizzes/FormWorkspace';
-import { BankAnswerFields } from './BankAnswerFields';
+import { FormWorkspace } from '../question-editor/FormWorkspace';
+import { BankAnswerFields } from '../question-editor/BankAnswerFields';
 
 const TYPES = [
   'single-choice',

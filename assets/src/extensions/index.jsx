@@ -5,7 +5,7 @@ import { registerCurriculumLabels } from './curriculumLabels';
 import { ExtensionSlot } from './ExtensionSlot';
 import * as api from './api.mjs';
 import { MembershipSettingsPanels } from './MembershipSettingsPanels';
-import { QuestionEditor } from './QuestionEditor';
+import { QuestionEditor } from '../features/question-editor/QuestionEditor';
 import { LessonEditor } from './LessonEditor';
 import { wrapScreen, extensionPage } from './ScreenExtensions';
 import { validateMembership } from '../features/memberships/validateMembership.mjs';
@@ -13,6 +13,8 @@ import { membershipScreen } from '../features/memberships/MembershipFrame';
 import { MEMBERSHIP_SCREENS, membershipRoutes } from '../features/memberships/membershipRoutes.mjs';
 import {
   quizComponents,
+  quizEditorComponents,
+  questionEditorComponents,
   courseComponents,
   studentComponents,
   gamificationComponents,
@@ -67,6 +69,8 @@ const publicApi = {
   validateMembership,
   quizReportComponents,
   quizComponents,
+  quizEditorComponents,
+  questionEditorComponents,
   courseComponents,
   studentComponents,
   gamificationComponents,

@@ -10,6 +10,7 @@ export function CurriculumMindmap({ items, selected, onChange, emptyMessage }) {
       selected={selected}
       onSelectionChange={onChange}
       includeDescendants
+      hideNode={(node) => node.item_type === 'topic'}
       title={__('Curriculum mindmap', 'ohmylms')}
       rootLabel={__('Curriculum', 'ohmylms')}
       description={__(

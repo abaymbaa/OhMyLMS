@@ -33,7 +33,7 @@ for(const [binding,value] of declarations){
  if(id)components.set(id,type.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join('')+'Editor');
 }
 const output=path.join(root,'assets/src/features/quizzes');
-if(fs.existsSync(path.join(output,'components.json'))&&!process.argv.includes('--replace-generated'))throw Error('Already extracted; edit the feature source directly.');
+if(fs.existsSync(path.join(source,'features/quiz-editor/components.json')) || (fs.existsSync(path.join(output,'components.json'))&&!process.argv.includes('--replace-generated')))throw Error('Already extracted; edit quiz-editor and question-editor source directly.');
 fs.mkdirSync(output,{recursive:true});
 const dependencyNames={g:'ReactHooks',y:'WordPressData',b:'I18n',I:'Controls',T:'StoreModule',D:'Buttons',W:'RichText',L:'Entitlements',f:'Router',z:'Notifications',Ec:'QuestionValidation'};
 const rows=[];

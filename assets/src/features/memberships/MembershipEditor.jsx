@@ -77,7 +77,7 @@ export function createMembershipEditor(readRuntime) {
         key: '2',
         label: (
           <Controls.TextWP as="span" size="16" weight="500">
-            {I18n.__('Courses', 'ohmylms')}
+            {I18n.__('Contents', 'ohmylms')}
           </Controls.TextWP>
         ),
         children: (

@@ -1,5 +1,6 @@
 import { lazyFactories, lazyComponents } from './LazyFeature';
-import quizzes from '../features/quizzes/components.json';
+import quizEditors from '../features/quiz-editor/components.json';
+import questionEditors from '../features/question-editor/components.json';
 import courses from '../features/courses/components.json';
 import students from '../features/students/components.json';
 import gamification from '../features/gamification/components.json';
@@ -17,11 +18,18 @@ import webhooks from '../features/webhooks/components.json';
 import taxonomies from '../features/taxonomies/components.json';
 import setup from '../features/setup/components.json';
 
-export const quizComponents = lazyFactories(
-  quizzes,
-  () => import(/* webpackChunkName: "quizzes" */ '../features/quizzes'),
-  'quizComponents',
+export const quizEditorComponents = lazyFactories(
+  quizEditors,
+  () => import(/* webpackChunkName: "quiz-editor" */ '../features/quiz-editor'),
+  'quizEditorComponents',
 );
+export const questionEditorComponents = lazyFactories(
+  questionEditors,
+  () => import(/* webpackChunkName: "question-editor" */ '../features/question-editor'),
+  'questionEditorComponents',
+);
+// Existing runtime adapters retain their public namespace.
+export const quizComponents = { ...quizEditorComponents, ...questionEditorComponents };
 export const courseComponents = lazyFactories(
   courses,
   () => import(/* webpackChunkName: "courses" */ '../features/courses'),

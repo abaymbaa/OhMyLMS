@@ -3,9 +3,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Dashicon, Dropdown } from '@wordpress/components';
 import icons from './icons.json';
 
-export function IconPicker({ kind, value = '', disabled, onChange }) {
-  const fallback = kind === 'topic' ? 'category' : 'book-alt';
-  const label = kind === 'topic' ? __('Topic icon', 'ohmylms') : __('Chapter icon', 'ohmylms');
+export function IconPicker({ kind, value = '', disabled, onChange, color, label: customLabel }) {
+  const fallback = kind === 'skill' ? 'awards' : 'category';
+  const label =
+    customLabel || (kind === 'topic' ? __('Topic icon', 'ohmylms') : __('Chapter icon', 'ohmylms'));
   return (
     <Dropdown
       className="ohmylms-ws-icon-picker"
@@ -18,7 +19,11 @@ export function IconPicker({ kind, value = '', disabled, onChange }) {
           aria-label={label}
           aria-expanded={isOpen}
         >
-          <Dashicon icon={value || fallback} aria-hidden="true" />
+          <Dashicon
+            icon={value || fallback}
+            style={color ? { color } : undefined}
+            aria-hidden="true"
+          />
           {__('Icon', 'ohmylms')}
         </Button>
       )}

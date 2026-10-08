@@ -55,6 +55,11 @@ export function createMembershipCourses(readRuntime) {
       excluded_courses: plan?.excluded_courses || [],
     };
     const selectionKey = JSON.stringify(selection);
+    const hiddenTopicIds = new Set(
+      items.filter((item) => item.item_type === 'topic').map((item) => item.value),
+    );
+    const visibleItems = items.filter((item) => !hiddenTopicIds.has(item.value));
+    const hiddenSelections = selection.course_curriculum.filter((id) => hiddenTopicIds.has(id));
     Hooks.useEffect(() => {
       let active = true;
       request({ path: '/ohmylms/v1/curriculum/outline?courses=1' })
@@ -64,6 +69,7 @@ export function createMembershipCourses(readRuntime) {
               (outline.items || []).map((item) => ({
                 value: Number(item.id),
                 label: Ge(item.name),
+                item_type: item.item_type,
                 parent: Number(item.parent_id || 0),
                 courses: (item.courses || []).map((course) => ({
                   ...course,
@@ -244,13 +250,16 @@ export function createMembershipCourses(readRuntime) {
             )}
             {field(
               I18n.__('Curriculum', 'ohmylms'),
-              selected(selection.course_curriculum, items),
-              items,
+              selected(
+                selection.course_curriculum.filter((id) => !hiddenTopicIds.has(id)),
+                visibleItems,
+              ),
+              visibleItems,
               (rows) =>
-                updateMembershipPlan(
-                  'course_curriculum',
-                  rows.map((item) => item.value),
-                ),
+                updateMembershipPlan('course_curriculum', [
+                  ...hiddenSelections,
+                  ...rows.map((item) => item.value),
+                ]),
             )}
             <CurriculumMindmap
               items={items}

@@ -27,6 +27,7 @@ import {
   searchItems,
   siblingMove,
   toggleOpen,
+  withoutTopics,
 } from './model.mjs';
 
 const STORAGE_KEY = 'ohmylms-curriculum-expanded';
@@ -66,8 +67,9 @@ export function CurriculumPage() {
   const hub = useContext(HubContext);
 
   const items = data?.items || [];
-  const search = useMemo(() => searchItems(items, query), [items, query]);
-  const tree = useMemo(() => filterTree(buildTree(items), search), [items, search]);
+  const visibleItems = useMemo(() => withoutTopics(items), [items]);
+  const search = useMemo(() => searchItems(visibleItems, query), [visibleItems, query]);
+  const tree = useMemo(() => filterTree(buildTree(visibleItems), search), [visibleItems, search]);
 
   const reload = () => {
     setLoadError('');

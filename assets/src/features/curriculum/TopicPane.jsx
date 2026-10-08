@@ -1,42 +1,92 @@
 import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { AddContentMenu } from './AddContentMenu';
+import { categoryAppearance } from './categoryAppearance.mjs';
 import { SyllabusOverview } from './SyllabusOverview';
 import { SkillCategories } from './SkillCategories';
-import { IconPicker } from './IconPicker';
 import { useWorkspace } from './context';
 import { siblingInfo } from './model.mjs';
-import { groupLabel } from './syllabus.mjs';
-import { DeleteChapterDialog, DeleteTopicDialog } from './WorkspaceDialogs';
-import { Breadcrumb, MESSAGES, QuickAdd, Row, RowMenu, SaveField } from './WorkspaceParts';
+import { DeleteTopicDialog } from './WorkspaceDialogs';
 import {
-  chaptersOf,
-  nodeCounts,
+  Breadcrumb,
+  MESSAGES,
+  QuickAdd,
+  Row,
+  RowMenu,
+  SaveField,
+  KindIcon,
+} from './WorkspaceParts';
+import {
+  displayCounts,
+  outlineDropPosition,
   pathTo,
   topicLabel,
   topicsOf,
   validateTopic,
+  visibleChildren,
 } from './workspace.mjs';
 
 const countsLine = (counts) =>
   [
     sprintf(_n('%d topic', '%d topics', counts.topics, 'ohmylms'), counts.topics),
-    sprintf(_n('%d chapter', '%d chapters', counts.chapters, 'ohmylms'), counts.chapters),
     sprintf(_n('%d skill', '%d skills', counts.skills, 'ohmylms'), counts.skills),
   ].join(' · ');
 
-/**
- * The syllabus itself or one of its topics: its name and notes, then the chapters and sub-topics in it.
- * Chapters are skill groups; open one to add skills, lessons and quizzes. The syllabus also shows its course.
- */
+/** The syllabus home or a topic with its skills and nested topics. */
 export function TopicPane({ node }) {
   const w = useWorkspace();
   const root = node.depth === 0;
   const item = w.items.find((entry) => entry.id === node.id) || node.content;
   const [adding, setAdding] = useState('');
   const [confirm, setConfirm] = useState(null);
-  const chapters = chaptersOf(node);
+  const [dragged, setDragged] = useState('');
+  const [dropTarget, setDropTarget] = useState(null);
+  const skills = visibleChildren(node, w.outline.settings).filter(
+    (child) => child.kind === 'skill',
+  );
   const topics = topicsOf(node);
+  const endDrag = () => {
+    setDragged('');
+    setDropTarget(null);
+  };
+  const skillReorder = (child, position) => ({
+    disabled: w.pending,
+    target: dropTarget?.key === child.key,
+    after: dropTarget?.after,
+    onDragStart(event) {
+      if (w.pending) return event.preventDefault();
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', child.key);
+      setDragged(child.key);
+    },
+    onDragEnd: endDrag,
+    onDragOver(event) {
+      const box = event.currentTarget.getBoundingClientRect();
+      const after = event.clientY > box.top + box.height / 2;
+      if (w.pending || outlineDropPosition(w.tree, dragged, child.key, after) === null) {
+        setDropTarget(null);
+        return;
+      }
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      setDropTarget({ key: child.key, after });
+    },
+    onDrop(event) {
+      event.preventDefault();
+      const box = event.currentTarget.getBoundingClientRect();
+      const after = event.clientY > box.top + box.height / 2;
+      if (!w.pending && outlineDropPosition(w.tree, dragged, child.key, after) !== null)
+        w.actions.reorderOutline(dragged, child.key, after, { selectMoved: false });
+      endDrag();
+    },
+    onKeyDown(event) {
+      if (w.pending || !event.altKey || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+      event.preventDefault();
+      const down = event.key === 'ArrowDown';
+      const target = skills[position + (down ? 1 : -1)];
+      if (target) w.actions.reorderOutline(child.key, target.key, down, { selectMoved: false });
+    },
+  });
   const own = siblingInfo(w.items, node.id);
   const check = (key) => (text) => {
     const code = validateTopic({ name: 'x', [key]: text })[key];
@@ -69,24 +119,6 @@ export function TopicPane({ node }) {
       },
     ];
   };
-  const chapterControls = (child, at) => [
-    { title: __('Open', 'ohmylms'), onClick: () => w.select(child.key) },
-    {
-      title: __('Move up', 'ohmylms'),
-      isDisabled: at <= 0,
-      onClick: () => w.actions.stepChapter(child.group, -1),
-    },
-    {
-      title: __('Move down', 'ohmylms'),
-      isDisabled: at >= chapters.length - 1,
-      onClick: () => w.actions.stepChapter(child.group, 1),
-    },
-    {
-      title: __('Delete chapter…', 'ohmylms'),
-      onClick: () => setConfirm({ kind: 'chapter', group: child.group }),
-    },
-  ];
-
   const headerMenu = root
     ? null
     : [
@@ -115,14 +147,7 @@ export function TopicPane({ node }) {
       />
       <header className="ohmylms-ws-pane-head">
         <div className="ohmylms-ws-pane-title">
-          {!root && (
-            <IconPicker
-              kind="topic"
-              value={item.icon}
-              disabled={w.pending}
-              onChange={(icon) => w.actions.saveTopic(item, { icon })}
-            />
-          )}
+          {!root && <KindIcon kind="topic" />}
           <SaveField
             id={`ohmylms-ws-name-${node.id}`}
             label={root ? __('Syllabus name', 'ohmylms') : __('Topic name', 'ohmylms')}
@@ -131,7 +156,7 @@ export function TopicPane({ node }) {
             placeholder={
               root ? __('Enter syllabus name', 'ohmylms') : __('Enter topic name', 'ohmylms')
             }
-            inputClassName="ohmylms-ws-title"
+            inputClassName={root ? 'ohmylms-ws-title is-syllabus-name' : 'ohmylms-ws-title'}
             validate={check('name')}
             onSave={save('name')}
           />
@@ -143,16 +168,9 @@ export function TopicPane({ node }) {
             />
           )}
         </div>
-        <p className="ohmylms-ws-counts">{countsLine(nodeCounts(node))}</p>
-        <div className="ohmylms-ws-meta">
-          <SaveField
-            id={`ohmylms-ws-code-${node.id}`}
-            label={__('Code', 'ohmylms')}
-            value={item.code}
-            validate={check('code')}
-            onSave={save('code')}
-          />
-          {root && (
+        <p className="ohmylms-ws-counts">{countsLine(displayCounts(node, w.outline.settings))}</p>
+        {root && (
+          <div className="ohmylms-ws-meta">
             <SaveField
               id={`ohmylms-ws-version-${node.id}`}
               label={__('Version', 'ohmylms')}
@@ -161,8 +179,8 @@ export function TopicPane({ node }) {
               validate={check('version')}
               onSave={save('version')}
             />
-          )}
-        </div>
+          </div>
+        )}
         {root && <SkillCategories />}
         <SaveField
           id={`ohmylms-ws-description-${node.id}`}
@@ -179,123 +197,114 @@ export function TopicPane({ node }) {
 
       {root && w.course && <SyllabusOverview />}
 
-      <section className="ohmylms-ws-content" aria-label={__('Content', 'ohmylms')}>
-        <div className="ohmylms-ws-content-head">
-          <h3>{__('Content', 'ohmylms')}</h3>
-          <AddContentMenu
-            label={sprintf(__('Add to this %s', 'ohmylms'), noun)}
-            disabled={w.pending}
-            items={[
-              {
-                key: 'chapter',
-                title: __('Chapter', 'ohmylms'),
-                info: __('A group of skills, and a chapter of the course', 'ohmylms'),
-                onClick: () => setAdding('chapter'),
-              },
-              {
-                key: 'topic',
-                title: __('Topic', 'ohmylms'),
-                info: __('A section that holds chapters, such as a unit or a strand', 'ohmylms'),
-                onClick: () => setAdding('topic'),
-              },
-            ]}
-          />
-        </div>
-        {adding === 'chapter' && (
-          <QuickAdd
-            nameLabel={__('Chapter name', 'ohmylms')}
-            codeLabel={__('Code', 'ohmylms')}
-            submitLabel={__('Add chapter', 'ohmylms')}
-            codeOnly
-            pending={w.pending}
-            help={__('Press Enter to add it and start the next one.', 'ohmylms')}
-            onAdd={(data) => w.actions.addChapter(node.id, data, { open: false })}
-            onCancel={() => setAdding('')}
-          />
-        )}
-        {adding === 'topic' && (
-          <QuickAdd
-            nameLabel={__('Topic name', 'ohmylms')}
-            codeLabel={__('Code', 'ohmylms')}
-            submitLabel={__('Add topic', 'ohmylms')}
-            pending={w.pending}
-            help={__('Press Enter to add it and start the next one.', 'ohmylms')}
-            onAdd={(data) => w.actions.addTopic(node.id, data, { open: false })}
-            onCancel={() => setAdding('')}
-          />
-        )}
-        {chapters.length + topics.length > 0 ? (
-          <ul className="ohmylms-ws-rows">
-            {chapters.map((child, at) => (
-              <Row
-                key={child.key}
-                kind="chapter"
-                icon={child.group.icon}
-                title={groupLabel(child.group)}
-                tag={__('Chapter', 'ohmylms')}
-                meta={sprintf(
-                  _n('%d skill', '%d skills', child.children.length, 'ohmylms'),
-                  child.children.length,
-                )}
-                onOpen={() => w.select(child.key)}
-                menu={
-                  <RowMenu
-                    label={sprintf(__('Actions for %s', 'ohmylms'), groupLabel(child.group))}
-                    controls={chapterControls(child, at)}
-                    disabled={w.pending}
+      {!root && (
+        <section className="ohmylms-ws-content" aria-label={__('Content', 'ohmylms')}>
+          <div className="ohmylms-ws-content-head">
+            <h3>{__('Content', 'ohmylms')}</h3>
+            <AddContentMenu
+              compact
+              label={sprintf(__('Add to this %s', 'ohmylms'), noun)}
+              disabled={w.pending}
+              items={[
+                {
+                  key: 'topic',
+                  title: __('Topic', 'ohmylms'),
+                  info: __('A topic containing skills and nested topics', 'ohmylms'),
+                  onClick: () => setAdding('topic'),
+                },
+                {
+                  key: 'skill',
+                  title: __('Skill', 'ohmylms'),
+                  info: __('A learning objective', 'ohmylms'),
+                  onClick: () => setAdding('skill'),
+                },
+              ]}
+            />
+          </div>
+          {adding === 'skill' && (
+            <QuickAdd
+              nameLabel={__('Skill name', 'ohmylms')}
+              codeLabel={__('Code', 'ohmylms')}
+              submitLabel={__('Add skill', 'ohmylms')}
+              pending={w.pending}
+              help={__('Press Enter to add it and start the next one.', 'ohmylms')}
+              onAdd={(data) => w.actions.addSkillInTopic(node.id, data)}
+              onCancel={() => setAdding('')}
+            />
+          )}
+          {adding === 'topic' && (
+            <QuickAdd
+              nameLabel={__('Topic name', 'ohmylms')}
+              codeLabel={__('Code', 'ohmylms')}
+              submitLabel={__('Add topic', 'ohmylms')}
+              pending={w.pending}
+              help={__('Press Enter to add it and start the next one.', 'ohmylms')}
+              onAdd={(data) => w.actions.addTopic(node.id, data, { open: false })}
+              onCancel={() => setAdding('')}
+            />
+          )}
+          {skills.length + topics.length > 0 ? (
+            <ul className="ohmylms-ws-rows">
+              {topics.map((child) => {
+                const counts = displayCounts(child, w.outline.settings);
+                return (
+                  <Row
+                    key={child.key}
+                    kind="topic"
+                    icon={child.content.icon}
+                    title={topicLabel(child.content)}
+                    tag={__('Topic', 'ohmylms')}
+                    meta={[
+                      sprintf(_n('%d skill', '%d skills', counts.skills, 'ohmylms'), counts.skills),
+                      sprintf(_n('%d topic', '%d topics', counts.topics, 'ohmylms'), counts.topics),
+                    ].join(' · ')}
+                    onOpen={() => w.select(child.key)}
+                    menu={
+                      <RowMenu
+                        label={sprintf(__('Actions for %s', 'ohmylms'), topicLabel(child.content))}
+                        controls={topicControls(child)}
+                        disabled={w.pending}
+                      />
+                    }
                   />
-                }
-              />
-            ))}
-            {topics.map((child) => {
-              const counts = nodeCounts(child);
-              return (
-                <Row
-                  key={child.key}
-                  kind="topic"
-                  icon={child.content.icon}
-                  title={topicLabel(child.content)}
-                  tag={__('Topic', 'ohmylms')}
-                  meta={sprintf(
-                    _n('%d chapter', '%d chapters', counts.chapters, 'ohmylms'),
-                    counts.chapters,
-                  )}
-                  onOpen={() => w.select(child.key)}
-                  menu={
-                    <RowMenu
-                      label={sprintf(__('Actions for %s', 'ohmylms'), topicLabel(child.content))}
-                      controls={topicControls(child)}
-                      disabled={w.pending}
-                    />
-                  }
-                />
-              );
-            })}
-          </ul>
-        ) : (
-          adding === '' && (
-            <p className="ohmylms-ext-muted ohmylms-ws-empty">
-              {root
-                ? __(
-                    'Nothing is in this syllabus yet. Add a chapter, or a topic to hold chapters, or import a CSV file with one skill per row.',
-                    'ohmylms',
-                  )
-                : __('Nothing is in this topic yet. Add a chapter to it.', 'ohmylms')}
-            </p>
-          )
-        )}
-      </section>
-
-      {confirm?.kind === 'chapter' && (
-        <DeleteChapterDialog
-          group={confirm.group}
-          pending={w.pending}
-          onClose={() => setConfirm(null)}
-          onConfirm={async () => {
-            if (await w.actions.deleteChapter(confirm.group)) setConfirm(null);
-          }}
-        />
+                );
+              })}
+              {skills.map((child, position) => {
+                const appearance = categoryAppearance(
+                  child.skill,
+                  w.outline.settings,
+                  w.tree.index.get(child.parentKey)?.group,
+                );
+                return (
+                  <Row
+                    key={child.key}
+                    kind="skill"
+                    icon={appearance.icon}
+                    iconColor={appearance.color}
+                    title={child.skill.name}
+                    notes={child.skill.description}
+                    tag={appearance.category || child.skill.code || undefined}
+                    reorder={skillReorder(child, position)}
+                    onOpen={() => w.select(child.key)}
+                  />
+                );
+              })}
+            </ul>
+          ) : (
+            adding === '' && (
+              <p className="ohmylms-ext-muted ohmylms-ws-empty">
+                {root
+                  ? __(
+                      'Nothing is in this syllabus yet. Add a topic or a skill, or import a CSV file.',
+                      'ohmylms',
+                    )
+                  : __('Nothing is in this topic yet. Add a skill or a nested topic.', 'ohmylms')}
+              </p>
+            )
+          )}
+        </section>
       )}
+
       {confirm?.kind === 'topic' && (
         <DeleteTopicDialog
           item={confirm.item}

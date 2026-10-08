@@ -1,5 +1,7 @@
 # Quiz and question form editors
 
+See [ASSESSMENT-MODULES.md](ASSESSMENT-MODULES.md) for source module boundaries, public interfaces and extension guidance.
+
 Quizzes and the question bank use form fields, without Gutenberg. Lesson authoring continues to use its existing Gutenberg workspace.
 
 The Questions tab shows a stack of form-style question cards. Click **Add question** for a new single-choice draft, use its type dropdown to change the response format, and click a collapsed card to edit it. Each card provides duplicate, remove, move up/down and Required controls. Duplicate creates an independent draft, including new answer rows; removing a saved question only removes its quiz placement.

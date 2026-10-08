@@ -1,7 +1,14 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import * as api from './api.mjs';
 import { siblingMove } from './model.mjs';
-import { contentKey, groupKey, skillKey, stepAmongSiblings } from './workspace.mjs';
+import { categoryAppearance } from './categoryAppearance.mjs';
+import {
+  contentKey,
+  groupKey,
+  skillKey,
+  stepAmongSiblings,
+  outlineDropPosition,
+} from './workspace.mjs';
 
 /**
  * Every change the workspace can make, each saved on the server first (see `useSyllabusWorkspace.run`).
@@ -14,6 +21,72 @@ export function createActions({ ws, syllabusId, tree, items, select }) {
   const done = (response) => Boolean(response);
 
   return {
+    async reorderOutline(sourceKey, targetKey, after, { selectMoved = true } = {}) {
+      const position = outlineDropPosition(tree, sourceKey, targetKey, after);
+      if (position === null) return false;
+      const node = tree.index.get(sourceKey);
+      const parent = tree.index.get(node.parentKey);
+      const targetParent = tree.index.get(tree.index.get(targetKey).parentKey);
+      const move =
+        node.kind === 'content'
+          ? () => api.moveItem(node.id, parent.id, position)
+          : node.kind === 'group'
+            ? () => api.moveGroup(syllabusId, node.id, parent.id, position)
+            : async () => {
+                const appearance = categoryAppearance(
+                  node.skill,
+                  ws.outline?.settings,
+                  parent.group,
+                );
+                if (!node.skill.category && appearance.category && parent.id !== targetParent.id)
+                  await api.updateSkill(syllabusId, node.id, { category: appearance.category });
+                return api.moveSkill(syllabusId, parent.id, node.id, targetParent.id, position);
+              };
+      const response = await run(move, __('Outline order saved.', 'ohmylms'), {
+        refresh: node.kind === 'content',
+      });
+      if (response && selectMoved && node.kind === 'skill' && parent.id !== targetParent.id)
+        select(skillKey(targetParent.id, node.id));
+      return done(response);
+    },
+    async addSkillInTopic(itemId, data) {
+      let groupId = tree.index
+        .get(contentKey(itemId))
+        ?.children.find((child) => child.kind === 'group' && child.group.name === 'Skills')?.id;
+      if (!groupId) {
+        const response = await run(() =>
+          api.addGroup(syllabusId, { name: 'Skills', item_id: itemId }),
+        );
+        if (!response?.group_id) return false;
+        groupId = response.group_id;
+      }
+      return done(await run(() => api.addSkill(syllabusId, groupId, data)));
+    },
+    async moveSkillToTopic(groupId, termId, itemId) {
+      let destination = tree.index
+        .get(contentKey(itemId))
+        ?.children.find((child) => child.kind === 'group' && child.group.name === 'Skills')?.id;
+      if (!destination) {
+        const response = await run(() =>
+          api.addGroup(syllabusId, { name: 'Skills', item_id: itemId }),
+        );
+        if (!response?.group_id) return false;
+        destination = response.group_id;
+      }
+      const response = await run(async () => {
+        const node = tree.index.get(skillKey(groupId, termId));
+        const appearance = categoryAppearance(
+          node?.skill || {},
+          ws.outline?.settings,
+          tree.index.get(groupKey(groupId))?.group,
+        );
+        if (!node?.skill.category && appearance.category)
+          await api.updateSkill(syllabusId, termId, { category: appearance.category });
+        return api.moveSkill(syllabusId, groupId, termId, destination);
+      });
+      if (response) select(skillKey(destination, termId));
+      return done(response);
+    },
     // ---- Topics: curriculum items beneath the syllabus ----
     async addTopic(parentId, { name, code }, { open = true } = {}) {
       const response = await run(

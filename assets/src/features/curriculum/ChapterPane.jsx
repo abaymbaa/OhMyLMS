@@ -1,9 +1,9 @@
 import { createElement, useState } from '@wordpress/element';
+import { categoryAppearance } from './categoryAppearance.mjs';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { AttachDialog } from '../content-hub/AttachDialog';
 import { AttachmentItem } from '../content-hub/AttachmentItem';
-import { IconPicker } from './IconPicker';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { attachmentsFor } from '../content-hub/catalogModel.mjs';
 import { AddContentMenu } from './AddContentMenu';
@@ -11,7 +11,16 @@ import { useWorkspace } from './context';
 import { ExistingSkill } from './SyllabusForms';
 import { containerOptions, groupLabel, validateGroup } from './syllabus.mjs';
 import { DeleteChapterDialog } from './WorkspaceDialogs';
-import { Breadcrumb, MESSAGES, QuickAdd, Row, RowMenu, SaveField, Tag } from './WorkspaceParts';
+import {
+  Breadcrumb,
+  MESSAGES,
+  QuickAdd,
+  Row,
+  RowMenu,
+  SaveField,
+  Tag,
+  KindIcon,
+} from './WorkspaceParts';
 import { pathTo, stepAmongSiblings, topicLabel } from './workspace.mjs';
 
 /**
@@ -82,12 +91,7 @@ export function ChapterPane({ node }) {
       />
       <header className="ohmylms-ws-pane-head">
         <div className="ohmylms-ws-pane-title">
-          <IconPicker
-            kind="chapter"
-            value={group.icon}
-            disabled={w.pending}
-            onChange={(icon) => w.actions.saveChapter(group, { icon })}
-          />
+          <KindIcon kind="chapter" />
           <SaveField
             id={`ohmylms-ws-chapter-name-${group.id}`}
             label={__('Chapter name', 'ohmylms')}
@@ -214,10 +218,13 @@ export function ChapterPane({ node }) {
           <ul className="ohmylms-ws-rows">
             {skills.map((child, position) => {
               const owned = attachedTo(child.skill);
+              const appearance = categoryAppearance(child.skill, w.outline.settings, group);
               return (
                 <Row
                   key={child.key}
                   kind="skill"
+                  icon={appearance.icon}
+                  iconColor={appearance.color}
                   title={child.skill.name}
                   notes={child.skill.description}
                   tag={child.skill.code || undefined}

@@ -1,5 +1,5 @@
 import { createElement, useEffect, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Dashicon, DropdownMenu } from '@wordpress/components';
 
 /** The words behind a validation code, for fields that save as you leave them. */
@@ -186,7 +186,7 @@ export function QuickAdd({
 
 const ICONS = {
   topic: 'category',
-  chapter: 'book-alt',
+  chapter: 'category',
   skill: 'awards',
   lesson: 'media-document',
   quiz: 'editor-help',
@@ -194,11 +194,12 @@ const ICONS = {
   syllabus: 'welcome-learn-more',
 };
 
-export function KindIcon({ kind, icon }) {
+export function KindIcon({ kind, icon, color }) {
   return (
     <Dashicon
-      icon={icon || ICONS[kind] || 'marker'}
+      icon={kind === 'topic' || kind === 'chapter' ? 'category' : icon || ICONS[kind] || 'marker'}
       className={`ohmylms-ws-kind is-${kind}`}
+      style={color ? { color } : undefined}
       aria-hidden="true"
     />
   );
@@ -230,6 +231,7 @@ export function RowMenu({ label, controls, disabled, icon = 'ellipsis' }) {
 export function Row({
   kind,
   icon,
+  iconColor,
   title,
   tag,
   tagTone,
@@ -240,10 +242,11 @@ export function Row({
   notes,
   status,
   children,
+  reorder,
 }) {
   const body = (
     <>
-      <KindIcon kind={kind} icon={icon} />
+      <KindIcon kind={kind} icon={icon} color={iconColor} />
       <span className="ohmylms-ws-row-title">
         {title}
         {notes && <span className="ohmylms-ws-row-notes">{notes}</span>}
@@ -254,8 +257,30 @@ export function Row({
     </>
   );
   return (
-    <li className="ohmylms-ws-row">
+    <li
+      className={`ohmylms-ws-row${reorder?.target ? (reorder.after ? ' is-drop-after' : ' is-drop-before') : ''}`}
+      onDragOver={reorder?.onDragOver}
+      onDrop={reorder?.onDrop}
+    >
       <div className="ohmylms-ws-row-line">
+        {reorder && (
+          <button
+            type="button"
+            className="ohmylms-ws-drag-handle"
+            draggable={!reorder.disabled}
+            disabled={reorder.disabled}
+            aria-label={sprintf(
+              __('Reorder %s. Use Alt and arrow keys to move.', 'ohmylms'),
+              title,
+            )}
+            title={__('Drag to reorder; Alt + Up/Down also works', 'ohmylms')}
+            onDragStart={reorder.onDragStart}
+            onDragEnd={reorder.onDragEnd}
+            onKeyDown={reorder.onKeyDown}
+          >
+            <span className="ohmylms-ws-drag-grip" aria-hidden="true" />
+          </button>
+        )}
         {href ? (
           <a className="ohmylms-ws-row-main" href={href}>
             {body}

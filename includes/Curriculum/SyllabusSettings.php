@@ -10,7 +10,7 @@ final class SyllabusSettings {
     const META = '_ohmylms_syllabus_settings';
 
     public static function defaults() {
-        return ['grade' => '', 'subject' => '', 'language' => '', 'categories' => ['Core', 'Extended', 'Advanced']];
+        return ['grade' => '', 'subject' => '', 'language' => '', 'categories' => ['Core', 'Extended', 'Advanced'], 'category_styles' => []];
     }
 
     public static function category_allowed($category, array $categories) {
@@ -41,6 +41,24 @@ final class SyllabusSettings {
                 if ($value !== '' && !in_array($value, $clean['categories'], true)) { $clean['categories'][] = $value; }
             }
         }
+        if (array_key_exists('category_styles', $data)) {
+            if (!is_array($data['category_styles']) || count($data['category_styles']) > 50) {
+                return Access::error('ohmylms_syllabus_settings_invalid', __('Use at most 50 category styles.', 'ohmylms'));
+            }
+            $clean['category_styles'] = [];
+            foreach ($data['category_styles'] as $category => $style) {
+                if (!is_string($category) || $category === '' || mb_strlen($category) > 60 || !is_array($style)) {
+                    return Access::error('ohmylms_syllabus_settings_invalid', __('Invalid category style.', 'ohmylms'));
+                }
+                $icon = Icons::clean($style['icon'] ?? '');
+                if (is_wp_error($icon)) { return $icon; }
+                $color = $style['color'] ?? '#6e42d3';
+                if (!is_string($color) || !preg_match('/^#[0-9a-f]{6}$/i', $color)) {
+                    return Access::error('ohmylms_syllabus_settings_invalid', __('Choose a valid category icon color.', 'ohmylms'));
+                }
+                $clean['category_styles'][$category] = ['icon' => $icon, 'color' => strtolower($color)];
+            }
+        }
         return $clean;
     }
 
@@ -56,14 +74,24 @@ final class SyllabusSettings {
         $course = SyllabusCourse::course_id($syllabus_id);
         if (!$course) { return Access::error('ohmylms_syllabus_missing', __('Open the syllabus before saving its settings.', 'ohmylms'), 404); }
         $next = $clean + self::get($syllabus_id);
+        if (isset($clean['category_styles'])) {
+            foreach (array_keys($clean['category_styles']) as $category) {
+                if (!in_array($category, $next['categories'], true)) {
+                    return Access::error('ohmylms_syllabus_category_unknown', __('Choose a category created on the syllabus home.', 'ohmylms'));
+                }
+            }
+        }
+        $next['category_styles'] = array_intersect_key($next['category_styles'], array_fill_keys($next['categories'], true));
         if (isset($clean['categories'])) {
             $removed = array_diff(self::get($syllabus_id)['categories'], $clean['categories']);
             if ($removed) {
                 $outline = Syllabus::outline($syllabus_id);
                 if (is_wp_error($outline)) { return $outline; }
                 foreach ($outline['contents'] as $content) { foreach ($content['groups'] as $group) { foreach ($group['skills'] as $skill) {
-                    if (in_array($skill['category'] ?? '', $removed, true)) {
-                        return Access::error('ohmylms_syllabus_category_used', sprintf(__('The category “%s” is used by skills. Change their category before removing it.', 'ohmylms'), $skill['category']), 409);
+                    $category = $skill['category'] ?? '';
+                    if (empty($skill['category_assigned']) && in_array($group['name'], self::get($syllabus_id)['categories'], true)) { $category = $group['name']; }
+                    if (in_array($category, $removed, true)) {
+                        return Access::error('ohmylms_syllabus_category_used', sprintf(__('The category “%s” is used by skills. Change their category before removing it.', 'ohmylms'), $category), 409);
                     }
                 } } }
             }

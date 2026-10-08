@@ -23,6 +23,23 @@ const runtime = (extra) => ({
 // useState slots, in order: courses, items, tracks, preview, error, previewError, loading, item status.
 const preview = { total: 1, courses: [{ id: 1, name: 'Direct course', reasons: ['Individual course'] }] };
 
+test('membership topic options stay hidden and existing topic access survives picker edits', () => {
+  const plan = { course_curriculum: [10, 99] };
+  const states = [[], [{ value: 10, label: 'Syllabus', item_type: 'syllabus' }, { value: 99, label: 'Hidden topic', item_type: 'topic' }], [], preview, '', '', false, 'ready'];
+  let index = 0;
+  const writes = [];
+  const Component = factory(() => runtime({
+    g: { useState: () => [states[index++], () => {}], useEffect: () => {}, useRef: () => ({ current: 0 }) },
+    y: { useSelect: (read) => read(() => ({ selectMembershipPlanData: () => plan })), useDispatch: () => ({ updateMembershipPlan: (...args) => writes.push(args) }) },
+    l: () => () => Promise.resolve([]),
+  }));
+  const picker = flatten(Component()).filter((node) => node.type === 'Select')[1];
+  assert.deepEqual(picker.props.value.map((item) => item.value), [10]);
+  assert.deepEqual(picker.props.options.map((item) => item.value), [10]);
+  picker.props.onChange(null);
+  assert.deepEqual(writes, [['course_curriculum', [99]]]);
+});
+
 test('membership editor restores all selections, saves IDs and shows the resolved preview', () => {
   const plan = { products: [{ id: 1, name: 'Direct course' }], course_curriculum: [10], course_tracks: [20], course_categories: [], course_tags: [], excluded_courses: [3] };
   const states = [[], [{ value: 10, label: 'Mathematics' }], [{ value: 20, label: 'Advanced' }], preview, '', '', false, 'ready'];

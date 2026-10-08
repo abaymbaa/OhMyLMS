@@ -144,6 +144,7 @@ final class Syllabus {
                 'name' => self::text($term->name),
                 'code' => (string) get_term_meta($term->term_id, self::CODE_META, true),
                 'category' => (string) get_term_meta($term->term_id, self::CATEGORY_META, true),
+                'category_assigned' => metadata_exists('term', $term->term_id, self::CATEGORY_META),
                 'description' => self::text($term->description),
             ];
         }

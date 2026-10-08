@@ -6,7 +6,7 @@ const ICONS = {
   skill: 'awards',
   library: 'book',
   attach: 'media-document',
-  chapter: 'book-alt',
+  chapter: 'category',
   topic: 'category',
 };
 
@@ -14,27 +14,37 @@ const ICONS = {
  * The "Add Content" button of the right pane, like the course builder's. `items` are
  * `{key, title, info, onClick}`; picking one closes the menu and runs it.
  */
-export function AddContentMenu({ label, items, disabled }) {
+export function AddContentMenu({
+  label,
+  items,
+  disabled,
+  buttonLabel = __('Add Content', 'ohmylms'),
+  className = '',
+  compact = false,
+}) {
   return (
     <Dropdown
-      className="ohmylms-ws-add-content-wrap"
-      popoverProps={{ placement: 'bottom-end', className: 'ohmylms-ws-content-popover' }}
+      className={`ohmylms-ws-add-content-wrap ${className}`.trim()}
+      popoverProps={{
+        placement: 'bottom-end',
+        className: `ohmylms-ws-content-popover${compact ? ' is-compact' : ''}`,
+      }}
       renderToggle={({ isOpen, onToggle }) => (
         <Button
           variant="secondary"
-          className={`ohmylms-ws-add-content${isOpen ? ' is-open' : ''}`}
+          className={`ohmylms-ws-add-content${isOpen ? ' is-open' : ''}${compact ? ' is-compact' : ''}`}
           onClick={onToggle}
           aria-expanded={isOpen}
           aria-haspopup="menu"
           disabled={disabled}
         >
           <Dashicon icon="plus-alt2" aria-hidden="true" />
-          {__('Add Content', 'ohmylms')}
+          {buttonLabel}
           <Dashicon icon="arrow-down-alt2" className="ohmylms-ws-add-chevron" aria-hidden="true" />
         </Button>
       )}
       renderContent={({ onClose }) => (
-        <MenuGroup label={label}>
+        <MenuGroup label={compact ? undefined : label}>
           {items.map((item) => (
             <MenuItem
               key={item.key}
@@ -49,13 +59,15 @@ export function AddContentMenu({ label, items, disabled }) {
               </span>
               <span className="ohmylms-ws-content-copy">
                 <span className="ohmylms-ws-content-title">{item.title}</span>
-                <span className="ohmylms-ws-content-info">{item.info}</span>
+                {!compact && <span className="ohmylms-ws-content-info">{item.info}</span>}
               </span>
-              <Dashicon
-                icon="arrow-right-alt2"
-                className="ohmylms-ws-content-arrow"
-                aria-hidden="true"
-              />
+              {!compact && (
+                <Dashicon
+                  icon="arrow-right-alt2"
+                  className="ohmylms-ws-content-arrow"
+                  aria-hidden="true"
+                />
+              )}
             </MenuItem>
           ))}
         </MenuGroup>

@@ -1,9 +1,17 @@
 import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Button, Dashicon } from '@wordpress/components';
+import { Dashicon } from '@wordpress/components';
+import { AddContentMenu } from './AddContentMenu';
 import { QuickAdd, KindIcon } from './WorkspaceParts';
-import { containerOf, nodeCounts, topicLabel } from './workspace.mjs';
+import {
+  containerOf,
+  displayCounts,
+  topicLabel,
+  outlineDropPosition,
+  visibleChildren,
+} from './workspace.mjs';
 import { groupLabel, skillLabel } from './syllabus.mjs';
+import { categoryAppearance } from './categoryAppearance.mjs';
 
 function label(node) {
   if (node.kind === 'content') return topicLabel(node.content);
@@ -12,14 +20,39 @@ function label(node) {
 }
 
 /** One node of the outline: a button that selects it, and a toggle when something is nested inside. */
-function Branch({ node, selected, open, onSelect, onToggle }) {
+function Branch({ node, selected, open, onSelect, onToggle, drag }) {
   const isOpen = open.has(node.key);
-  const nested = node.children.length > 0;
-  const kind = node.kind === 'content' ? 'topic' : node.kind === 'group' ? 'chapter' : 'skill';
+  const nested = visibleChildren(node, drag.settings).length > 0;
+  const kind = node.kind === 'content' ? 'topic' : 'skill';
   const total = node.kind === 'group' ? node.children.length : 0;
+  const appearance =
+    node.kind === 'skill'
+      ? categoryAppearance(node.skill, drag.settings, drag.tree.index.get(node.parentKey)?.group)
+      : null;
+  const counts = node.kind === 'content' ? displayCounts(node, drag.settings) : null;
   return (
     <li className={`ohmylms-ws-node is-${kind}`}>
-      <div className={`ohmylms-ws-node-line${selected === node.key ? ' is-selected' : ''}`}>
+      <div
+        className={`ohmylms-ws-node-line${selected === node.key ? ' is-selected' : ''}${drag.target?.key === node.key ? (drag.target.after ? ' is-drop-after' : ' is-drop-before') : ''}`}
+        onDragOver={(event) => drag.over(event, node)}
+        onDrop={(event) => drag.drop(event, node)}
+      >
+        <button
+          type="button"
+          className="ohmylms-ws-drag-handle"
+          draggable={!drag.pending}
+          disabled={drag.pending}
+          aria-label={sprintf(
+            __('Reorder %s. Use Alt and arrow keys to move.', 'ohmylms'),
+            label(node),
+          )}
+          title={__('Drag to reorder; Alt + Up/Down also works', 'ohmylms')}
+          onDragStart={(event) => drag.start(event, node)}
+          onDragEnd={drag.end}
+          onKeyDown={(event) => drag.key(event, node)}
+        >
+          <span className="ohmylms-ws-drag-grip" aria-hidden="true" />
+        </button>
         {nested ? (
           <button
             type="button"
@@ -42,8 +75,20 @@ function Branch({ node, selected, open, onSelect, onToggle }) {
           aria-current={selected === node.key ? 'true' : undefined}
           onClick={() => onSelect(node.key)}
         >
-          <KindIcon kind={kind} icon={node.group?.icon || node.content?.icon} />
+          <KindIcon
+            kind={kind}
+            icon={appearance?.icon || node.group?.icon || node.content?.icon}
+            color={appearance?.color}
+          />
           <span className="ohmylms-ws-node-label">{label(node)}</span>
+          {counts && (
+            <span className="ohmylms-ws-node-count">
+              {[
+                sprintf(_n('%d skill', '%d skills', counts.skills, 'ohmylms'), counts.skills),
+                sprintf(_n('%d topic', '%d topics', counts.topics, 'ohmylms'), counts.topics),
+              ].join(' · ')}
+            </span>
+          )}
           {node.kind === 'group' && (
             <span
               className="ohmylms-ws-node-count"
@@ -56,7 +101,7 @@ function Branch({ node, selected, open, onSelect, onToggle }) {
       </div>
       {nested && isOpen && (
         <ul className="ohmylms-ws-children">
-          {node.children.map((child) => (
+          {visibleChildren(node, drag.settings).map((child) => (
             <Branch
               key={child.key}
               node={child}
@@ -64,6 +109,7 @@ function Branch({ node, selected, open, onSelect, onToggle }) {
               open={open}
               onSelect={onSelect}
               onToggle={onToggle}
+              drag={drag}
             />
           ))}
         </ul>
@@ -72,11 +118,7 @@ function Branch({ node, selected, open, onSelect, onToggle }) {
   );
 }
 
-/**
- * The left panel: the whole syllabus as a nested outline (topics, the chapters in them, the skills in each
- * chapter), with Add Chapter on top like the course builder. A chapter is a skill group; it goes into the
- * topic the selection is in, or into the syllabus itself.
- */
+/** The syllabus outline, with nested topics and skills. */
 export function WorkspaceSidebar({
   tree,
   selected,
@@ -85,15 +127,86 @@ export function WorkspaceSidebar({
   onToggle,
   onOpenAll,
   onCloseAll,
-  onAddChapter,
+  onAddSkill,
+  onAddTopic,
+  onReorder,
+  settings,
   collapsed,
   onCollapse,
   pending,
 }) {
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState('');
+  const [dragged, setDragged] = useState('');
+  const [target, setTarget] = useState(null);
+  const endDrag = () => {
+    setDragged('');
+    setTarget(null);
+  };
+  const drag = {
+    pending,
+    target,
+    tree,
+    settings,
+    start(event, node) {
+      if (pending) {
+        event.preventDefault();
+        return;
+      }
+      event.stopPropagation();
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', node.key);
+      setDragged(node.key);
+    },
+    over(event, node) {
+      const box = event.currentTarget.getBoundingClientRect();
+      const after = event.clientY > box.top + box.height / 2;
+      if (pending || outlineDropPosition(tree, dragged, node.key, after) === null) {
+        setTarget(null);
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      event.dataTransfer.dropEffect = 'move';
+      setTarget({ key: node.key, after });
+    },
+    drop(event, node) {
+      event.preventDefault();
+      event.stopPropagation();
+      const box = event.currentTarget.getBoundingClientRect();
+      const after = event.clientY > box.top + box.height / 2;
+      if (!pending && outlineDropPosition(tree, dragged, node.key, after) !== null)
+        onReorder(dragged, node.key, after);
+      endDrag();
+    },
+    end: endDrag,
+    key(event, node) {
+      if (pending || !event.altKey || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+      event.preventDefault();
+      const parent = tree.index.get(node.parentKey);
+      const siblings =
+        node.kind === 'skill'
+          ? visibleChildren(tree.index.get(parent.parentKey), settings).filter(
+              (child) => child.kind === 'skill',
+            )
+          : parent.children.filter((child) => child.kind === node.kind);
+      const index = siblings.findIndex((child) => child.key === node.key);
+      const down = event.key === 'ArrowDown';
+      const sibling = siblings[index + (down ? 1 : -1)];
+      if (sibling) onReorder(node.key, sibling.key, down);
+    },
+  };
   if (!tree.root) return null;
   const container = containerOf(tree, selected);
-  const counts = nodeCounts(tree.root);
+  const counts = displayCounts(tree.root, settings);
+  const expandable = [];
+  const collectTopics = (parent) =>
+    visibleChildren(parent, settings).forEach((child) => {
+      if (visibleChildren(child, settings).length) expandable.push(child.key);
+      collectTopics(child);
+    });
+  collectTopics(tree.root);
+  const allExpanded = expandable.length > 0 && expandable.every((key) => open.has(key));
+  const toggleLabel = allExpanded ? __('Collapse all', 'ohmylms') : __('Expand all', 'ohmylms');
   const into =
     container.depth === 0 ? __('the syllabus', 'ohmylms') : topicLabel(container.content);
   return (
@@ -102,18 +215,57 @@ export function WorkspaceSidebar({
       aria-label={__('Syllabus outline', 'ohmylms')}
     >
       <div className="ohmylms-ws-side-head">
-        <Button
-          variant="primary"
+        <AddContentMenu
+          compact
           className="ohmylms-ws-add-chapter"
+          buttonLabel={__('Add', 'ohmylms')}
+          label={__('Add to the outline', 'ohmylms')}
           disabled={pending}
-          onClick={() => setAdding(true)}
-        >
-          <Dashicon icon="plus-alt2" />
-          {__('Add Chapter', 'ohmylms')}
-        </Button>
+          items={[
+            {
+              key: 'topic',
+              title: __('Topic', 'ohmylms'),
+              info: __('A topic containing skills and nested topics', 'ohmylms'),
+              onClick: () => setAdding('topic'),
+            },
+            {
+              key: 'skill',
+              title: __('Skill', 'ohmylms'),
+              info: __('A learning objective in this topic', 'ohmylms'),
+              onClick: () => setAdding('skill'),
+            },
+          ]}
+        />
+        <div className="ohmylms-ws-side-tools is-header">
+          <button
+            type="button"
+            onClick={() => onSelect(tree.root.key)}
+            aria-label={__('Syllabus home', 'ohmylms')}
+            title={__('Syllabus home', 'ohmylms')}
+          >
+            <Dashicon icon="admin-home" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={allExpanded ? onCloseAll : onOpenAll}
+            aria-label={toggleLabel}
+            title={toggleLabel}
+            aria-expanded={allExpanded}
+            disabled={!expandable.length}
+          >
+            <Dashicon icon={allExpanded ? 'editor-contract' : 'editor-expand'} aria-hidden="true" />
+          </button>
+        </div>
         <span className="ohmylms-ws-side-count">
           <Dashicon icon="screenoptions" />
-          {sprintf(_n('%d Chapter', '%d Chapters', counts.chapters, 'ohmylms'), counts.chapters)}
+          <span>
+            <span>
+              {sprintf(_n('%d Topic', '%d Topics', counts.topics, 'ohmylms'), counts.topics)}
+            </span>
+            <span>
+              {sprintf(_n('%d Skill', '%d Skills', counts.skills, 'ohmylms'), counts.skills)}
+            </span>
+          </span>
         </span>
         <button
           type="button"
@@ -131,43 +283,26 @@ export function WorkspaceSidebar({
         <div className="ohmylms-ws-side-body">
           {adding && (
             <QuickAdd
-              nameLabel={__('Chapter name', 'ohmylms')}
+              key={adding}
+              nameLabel={
+                adding === 'topic' ? __('Topic name', 'ohmylms') : __('Skill name', 'ohmylms')
+              }
               codeLabel={__('Code', 'ohmylms')}
-              submitLabel={__('Add chapter', 'ohmylms')}
-              codeOnly
+              submitLabel={
+                adding === 'topic' ? __('Add topic', 'ohmylms') : __('Add skill', 'ohmylms')
+              }
+
               pending={pending}
               help={sprintf(__('Goes into %s.', 'ohmylms'), into)}
-              onAdd={(data) => onAddChapter(container.id, data)}
-              onCancel={() => setAdding(false)}
+              onAdd={(data) =>
+                adding === 'topic' ? onAddTopic(container.id, data) : onAddSkill(container.id, data)
+              }
+              onCancel={() => setAdding('')}
             />
           )}
-          <div className="ohmylms-ws-side-tools">
-            <button type="button" onClick={onOpenAll}>
-              {__('Open all', 'ohmylms')}
-            </button>
-            <button type="button" onClick={onCloseAll}>
-              {__('Close all', 'ohmylms')}
-            </button>
-          </div>
-          <ul className="ohmylms-ws-tree" aria-label={__('Topics, chapters and skills', 'ohmylms')}>
-            <li className="ohmylms-ws-node is-syllabus">
-              <div
-                className={`ohmylms-ws-node-line${selected === tree.root.key ? ' is-selected' : ''}`}
-              >
-                <span className="ohmylms-ws-toggle-spacer" aria-hidden="true" />
-                <button
-                  type="button"
-                  className="ohmylms-ws-node-main"
-                  aria-current={selected === tree.root.key ? 'true' : undefined}
-                  onClick={() => onSelect(tree.root.key)}
-                >
-                  <KindIcon kind="syllabus" />
-                  <span className="ohmylms-ws-node-label">{tree.root.content.name}</span>
-                  <span className="ohmylms-ws-node-hint">{__('Syllabus', 'ohmylms')}</span>
-                </button>
-              </div>
-            </li>
-            {tree.root.children.map((node) => (
+
+          <ul className="ohmylms-ws-tree" aria-label={__('Topics and skills', 'ohmylms')}>
+            {visibleChildren(tree.root, settings).map((node) => (
               <Branch
                 key={node.key}
                 node={node}
@@ -175,12 +310,13 @@ export function WorkspaceSidebar({
                 open={open}
                 onSelect={onSelect}
                 onToggle={onToggle}
+                drag={drag}
               />
             ))}
           </ul>
           {!tree.root.children.length && (
             <p className="ohmylms-ext-muted ohmylms-ws-side-empty">
-              {__('No chapters yet. Add the first one, or import a CSV file.', 'ohmylms')}
+              {__('No topics or skills yet. Use Add, or import a CSV file.', 'ohmylms')}
             </p>
           )}
         </div>

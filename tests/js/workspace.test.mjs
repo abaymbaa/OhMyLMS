@@ -21,6 +21,9 @@ import {
   topicsOf,
   validateTopic,
   workspacePath,
+  outlineDropPosition,
+  visibleChildren,
+  displayCounts,
 } from '../../assets/src/features/curriculum/workspace.mjs';
 import * as api from '../../assets/src/features/curriculum/api.mjs';
 
@@ -169,16 +172,16 @@ test('counts cover everything underneath a node', () => {
   assert.equal(topicsOf(tree.root).length, 2);
 });
 
-test('selection starts on the first chapter and survives deletions', () => {
+test('selection starts on the syllabus home and survives deletions', () => {
   const tree = buildOutline(outline);
-  assert.equal(defaultKey(tree), groupKey(9));
+  assert.equal(defaultKey(tree), contentKey(1));
   const bare = buildOutline({
     contents: [
       { id: 1, parent_id: 0, depth: 0, name: 'S', groups: [] },
       { id: 2, parent_id: 1, depth: 1, name: 'T', groups: [group(5, 2, 'G', '')] },
     ],
   });
-  assert.equal(defaultKey(bare), groupKey(5), 'the first chapter is found inside a topic');
+  assert.equal(defaultKey(bare), contentKey(1), 'nested chapters do not replace the syllabus home');
   assert.equal(
     defaultKey(
       buildOutline({ contents: [{ id: 1, parent_id: 0, depth: 0, name: 'S', groups: [] }] }),
@@ -226,6 +229,69 @@ test('labels and edit addresses', () => {
   assert.equal(editPath('quiz', 6), '/quiz-edit/6');
   assert.equal(editPath('assignment', 7), '/assignment-edit/7');
   assert.equal(editPath('bank', 8), '');
+});
+
+test('topic numbering follows outline order at every depth without changing stored names or codes', () => {
+  const before = JSON.stringify(outline);
+  const tree = buildOutline(outline);
+  assert.equal(topicLabel(tree.index.get(contentKey(2)).content), '1 · Number');
+  assert.equal(topicLabel(tree.index.get(contentKey(3)).content), '1.1 · Extra');
+  assert.equal(topicLabel(tree.index.get(contentKey(4)).content), '2 · Algebra');
+  const reordered = buildOutline({
+    ...outline,
+    contents: [outline.contents[0], outline.contents[3], outline.contents[1], outline.contents[2]],
+  });
+  assert.equal(topicLabel(reordered.index.get(contentKey(2)).content), '2 · Number');
+  assert.equal(topicLabel(reordered.index.get(contentKey(3)).content), '2.1 · Extra');
+  assert.equal(JSON.stringify(outline), before);
+});
+
+test('drop positions account for removing the source before insertion in either direction', () => {
+  const tree = buildOutline(outline);
+  assert.equal(outlineDropPosition(tree, contentKey(2), contentKey(4), true), 1);
+  assert.equal(outlineDropPosition(tree, contentKey(4), contentKey(2), false), 0);
+  assert.equal(outlineDropPosition(tree, contentKey(2), contentKey(4), false), null);
+  assert.equal(outlineDropPosition(tree, groupKey(10), groupKey(11), true), 1);
+  assert.equal(outlineDropPosition(tree, skillKey(10, 100), skillKey(10, 101), true), 1);
+});
+
+test('outline drops reject other parents, different kinds, the syllabus root, and missing nodes', () => {
+  const tree = buildOutline(outline);
+  assert.equal(outlineDropPosition(tree, contentKey(2), contentKey(3)), null);
+  assert.equal(outlineDropPosition(tree, groupKey(9), groupKey(10)), null);
+  assert.equal(outlineDropPosition(tree, groupKey(9), contentKey(2)), null);
+  assert.equal(outlineDropPosition(tree, contentKey(1), contentKey(2)), null);
+  assert.equal(outlineDropPosition(tree, 'gone', contentKey(2)), null);
+  assert.equal(outlineDropPosition(tree, contentKey(2), contentKey(2)), null);
+});
+
+test('all legacy skill groups flatten into topic skills without changing stored placements', () => {
+  const tree = buildOutline({
+    contents: [
+      { id: 1, name: 'S', depth: 0, groups: [] },
+      {
+        id: 2,
+        parent_id: 1,
+        name: 'T',
+        depth: 1,
+        groups: [
+          group(5, 2, 'Core', '', [skill(50, 'A')]),
+          group(6, 2, 'Extended', '', [skill(60, 'B')]),
+          group(7, 2, 'Applications', '', [skill(70, 'C')]),
+        ],
+      },
+    ],
+  });
+  const children = visibleChildren(tree.index.get(contentKey(2)), {
+    categories: ['Core', 'Extended'],
+  });
+  assert.deepEqual(
+    children.map((child) => child.kind),
+    ['skill', 'skill', 'skill'],
+  );
+  assert.deepEqual(displayCounts(tree.root), { topics: 1, chapters: 0, skills: 3 });
+  assert.equal(tree.index.get(skillKey(5, 50)).groupId, 5, 'stored placement stays intact');
+  assert.equal(outlineDropPosition(tree, skillKey(5, 50), skillKey(6, 60), true), 1);
 });
 
 test('topic fields are checked like the server does', () => {
