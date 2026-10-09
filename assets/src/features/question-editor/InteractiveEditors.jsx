@@ -7,7 +7,7 @@ import {
 	TextControl,
 	TextareaControl,
 } from '@wordpress/components';
-import { MediaUpload } from '@wordpress/block-editor';
+import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { VisualPreview } from './VisualEditors';
 import { listToNumbers, numbersToList } from '../question-bank/model.mjs';
 import {
@@ -54,7 +54,8 @@ function ParsedField( {
 	help,
 } ) {
 	const [ text, setText ] = useState( () => format( value ) );
-	const shown = format( parse( text ) ) === format( value ) ? text : format( value );
+	const shown =
+		format( parse( text ) ) === format( value ) ? text : format( value );
 	const Control = multiline ? TextareaControl : TextControl;
 	return (
 		<Control
@@ -71,7 +72,10 @@ function ParsedField( {
 
 const lines = ( text ) => String( text ).split( '\n' );
 const joinLines = ( list ) => ( list || [] ).join( '\n' );
-const csv = ( text ) => String( text ).split( ',' ).map( ( s ) => s.trim() );
+const csv = ( text ) =>
+	String( text )
+		.split( ',' )
+		.map( ( s ) => s.trim() );
 const joinCsv = ( list ) => ( list || [] ).join( ', ' );
 
 /**
@@ -145,7 +149,10 @@ export function ExpressionEditor( { value, onChange } ) {
 			/>
 			<ParsedField
 				multiline
-				label={ __( 'Other accepted answers (one per line, optional)', 'ohmylms' ) }
+				label={ __(
+					'Other accepted answers (one per line, optional)',
+					'ohmylms'
+				) }
 				help={ __(
 					'Only needed when two answers are both right but not equivalent, such as x=2 or x=-2.',
 					'ohmylms'
@@ -188,14 +195,18 @@ export function DropdownBlanksEditor( { value, onChange } ) {
 			/>
 			{ slots.map( ( slot ) => (
 				<fieldset key={ slot.id } className="ohmylms-interactive-row">
-					<legend>{ sprintf( __( 'Dropdown {%s}', 'ohmylms' ), slot.id ) }</legend>
+					<legend>
+						{ sprintf( __( 'Dropdown {%s}', 'ohmylms' ), slot.id ) }
+					</legend>
 					<ParsedField
 						multiline
 						label={ __( 'Choices (one per line)', 'ohmylms' ) }
 						value={ slot.choices }
 						format={ joinLines }
 						parse={ lines }
-						onChange={ ( choices ) => setSlot( slot.id, { choices } ) }
+						onChange={ ( choices ) =>
+							setSlot( slot.id, { choices } )
+						}
 					/>
 					<SelectControl
 						label={ __( 'Correct choice', 'ohmylms' ) }
@@ -209,7 +220,9 @@ export function DropdownBlanksEditor( { value, onChange } ) {
 									label: choice,
 								} ) ),
 						] }
-						onChange={ ( answer ) => setSlot( slot.id, { answer } ) }
+						onChange={ ( answer ) =>
+							setSlot( slot.id, { answer } )
+						}
 					/>
 				</fieldset>
 			) ) }
@@ -246,15 +259,22 @@ export function CategorizeEditor( { value, onChange } ) {
 			{ buckets.map( ( bucket, index ) => (
 				<div key={ bucket.id } className="ohmylms-interactive-row">
 					<TextControl
-						label={ sprintf( __( 'Group %d', 'ohmylms' ), index + 1 ) }
+						label={ sprintf(
+							__( 'Group %d', 'ohmylms' ),
+							index + 1
+						) }
 						value={ bucket.label || '' }
-						onChange={ ( label ) => setBucket( bucket.id, { label } ) }
+						onChange={ ( label ) =>
+							setBucket( bucket.id, { label } )
+						}
 					/>
 					<Button
 						isDestructive
 						variant="tertiary"
 						disabled={ buckets.length <= 2 }
-						onClick={ () => onChange( removeBucket( value, bucket.id ) ) }
+						onClick={ () =>
+							onChange( removeBucket( value, bucket.id ) )
+						}
 					>
 						{ __( 'Remove group', 'ohmylms' ) }
 					</Button>
@@ -277,7 +297,10 @@ export function CategorizeEditor( { value, onChange } ) {
 			{ items.map( ( item, index ) => (
 				<div key={ item.id } className="ohmylms-interactive-row">
 					<TextControl
-						label={ sprintf( __( 'Item %d', 'ohmylms' ), index + 1 ) }
+						label={ sprintf(
+							__( 'Item %d', 'ohmylms' ),
+							index + 1
+						) }
 						value={ item.text || '' }
 						onChange={ ( text ) => setItem( item.id, { text } ) }
 					/>
@@ -290,11 +313,16 @@ export function CategorizeEditor( { value, onChange } ) {
 								value: bucket.id,
 								label:
 									bucket.label ||
-									sprintf( __( 'Group %s', 'ohmylms' ), bucket.id ),
+									sprintf(
+										__( 'Group %s', 'ohmylms' ),
+										bucket.id
+									),
 							} ) ),
 						] }
 						onChange={ ( bucketId ) =>
-							onChange( { key: { ...key, [ item.id ]: bucketId } } )
+							onChange( {
+								key: { ...key, [ item.id ]: bucketId },
+							} )
 						}
 					/>
 					<MediaUpload
@@ -318,7 +346,10 @@ export function CategorizeEditor( { value, onChange } ) {
 						<Button
 							variant="tertiary"
 							onClick={ () =>
-								setItem( item.id, { thumbnail_id: 0, image_url: '' } )
+								setItem( item.id, {
+									thumbnail_id: 0,
+									image_url: '',
+								} )
 							}
 						>
 							{ __( 'Remove image', 'ohmylms' ) }
@@ -328,7 +359,9 @@ export function CategorizeEditor( { value, onChange } ) {
 						isDestructive
 						variant="tertiary"
 						disabled={ items.length <= 1 }
-						onClick={ () => onChange( removeItem( value, item.id ) ) }
+						onClick={ () =>
+							onChange( removeItem( value, item.id ) )
+						}
 					>
 						{ __( 'Remove item', 'ohmylms' ) }
 					</Button>
@@ -352,7 +385,8 @@ export function CategorizeEditor( { value, onChange } ) {
 	);
 }
 
-const rowsText = ( rows ) => ( rows || [] ).map( ( row ) => row.join( ' | ' ) ).join( '\n' );
+const rowsText = ( rows ) =>
+	( rows || [] ).map( ( row ) => row.join( ' | ' ) ).join( '\n' );
 const parseRows = ( text ) =>
 	String( text )
 		.split( '\n' )
@@ -383,7 +417,10 @@ export function MultiBlankEditor( { value, onChange } ) {
 				label={ __( 'Layout', 'ohmylms' ) }
 				value={ table ? 'table' : 'inline' }
 				options={ [
-					{ value: 'inline', label: __( 'Sentence with blanks', 'ohmylms' ) },
+					{
+						value: 'inline',
+						label: __( 'Sentence with blanks', 'ohmylms' ),
+					},
 					{ value: 'table', label: __( 'Table', 'ohmylms' ) },
 				] }
 				onChange={ ( layout ) =>
@@ -392,7 +429,10 @@ export function MultiBlankEditor( { value, onChange } ) {
 							? {
 									layout,
 									columns: [ 'x', 'y' ],
-									rows: [ [ '1', '{a}' ], [ '2', '{b}' ] ],
+									rows: [
+										[ '1', '{a}' ],
+										[ '2', '{b}' ],
+									],
 								}
 							: { layout }
 					)
@@ -401,7 +441,10 @@ export function MultiBlankEditor( { value, onChange } ) {
 			{ table ? (
 				<Fragment>
 					<ParsedField
-						label={ __( 'Column headings (comma separated)', 'ohmylms' ) }
+						label={ __(
+							'Column headings (comma separated)',
+							'ohmylms'
+						) }
 						value={ value.columns }
 						format={ joinCsv }
 						parse={ csv }
@@ -409,7 +452,10 @@ export function MultiBlankEditor( { value, onChange } ) {
 					/>
 					<ParsedField
 						multiline
-						label={ __( 'Rows (one per line, cells separated by |)', 'ohmylms' ) }
+						label={ __(
+							'Rows (one per line, cells separated by |)',
+							'ohmylms'
+						) }
 						help={ __(
 							'Write {a}, {b} … in a cell where the learner fills in a value.',
 							'ohmylms'
@@ -435,13 +481,21 @@ export function MultiBlankEditor( { value, onChange } ) {
 				const spec = value.blanks?.[ id ] || { kind: 'text' };
 				return (
 					<fieldset key={ id } className="ohmylms-interactive-row">
-						<legend>{ sprintf( __( 'Blank {%s}', 'ohmylms' ), id ) }</legend>
+						<legend>
+							{ sprintf( __( 'Blank {%s}', 'ohmylms' ), id ) }
+						</legend>
 						<SelectControl
 							label={ __( 'Answer type', 'ohmylms' ) }
 							value={ spec.kind || 'text' }
 							options={ [
-								{ value: 'numerical', label: __( 'Number', 'ohmylms' ) },
-								{ value: 'text', label: __( 'Exact text', 'ohmylms' ) },
+								{
+									value: 'numerical',
+									label: __( 'Number', 'ohmylms' ),
+								},
+								{
+									value: 'text',
+									label: __( 'Exact text', 'ohmylms' ),
+								},
 								{
 									value: 'expression',
 									label: __( 'Math expression', 'ohmylms' ),
@@ -458,15 +512,23 @@ export function MultiBlankEditor( { value, onChange } ) {
 									value={ spec.answer ?? '' }
 									onChange={ ( answer ) =>
 										setBlank( id, {
-											answer: answer === '' ? undefined : Number( answer ),
+											answer:
+												answer === ''
+													? undefined
+													: Number( answer ),
 										} )
 									}
 								/>
 								<TextControl
-									label={ __( 'Other accepted answers (comma separated)', 'ohmylms' ) }
+									label={ __(
+										'Other accepted answers (comma separated)',
+										'ohmylms'
+									) }
 									value={ numbersToList( spec.answers ) }
 									onChange={ ( text ) =>
-										setBlank( id, { answers: listToNumbers( text ) } )
+										setBlank( id, {
+											answers: listToNumbers( text ),
+										} )
 									}
 								/>
 								<TextControl
@@ -476,34 +538,56 @@ export function MultiBlankEditor( { value, onChange } ) {
 									label={ __( 'Tolerance', 'ohmylms' ) }
 									value={ spec.tolerance ?? 0 }
 									onChange={ ( tolerance ) =>
-										setBlank( id, { tolerance: Math.max( 0, Number( tolerance ) || 0 ) } )
+										setBlank( id, {
+											tolerance: Math.max(
+												0,
+												Number( tolerance ) || 0
+											),
+										} )
 									}
 								/>
 								<TextControl
-									label={ __( 'Unit shown after the box', 'ohmylms' ) }
+									label={ __(
+										'Unit shown after the box',
+										'ohmylms'
+									) }
 									value={ spec.unit || '' }
-									onChange={ ( unit ) => setBlank( id, { unit } ) }
+									onChange={ ( unit ) =>
+										setBlank( id, { unit } )
+									}
 								/>
 							</Fragment>
 						) : spec.kind === 'expression' ? (
 							<Fragment>
 								<TextControl
-									label={ __( 'Correct expression', 'ohmylms' ) }
+									label={ __(
+										'Correct expression',
+										'ohmylms'
+									) }
 									value={ spec.answer || '' }
-									onChange={ ( answer ) => setBlank( id, { answer } ) }
+									onChange={ ( answer ) =>
+										setBlank( id, { answer } )
+									}
 								/>
 								<FormSelect
 									value={ spec.form }
-									onChange={ ( form ) => setBlank( id, { form } ) }
+									onChange={ ( form ) =>
+										setBlank( id, { form } )
+									}
 								/>
 							</Fragment>
 						) : (
 							<ParsedField
-								label={ __( 'Accepted answers (comma separated, not case-sensitive)', 'ohmylms' ) }
+								label={ __(
+									'Accepted answers (comma separated, not case-sensitive)',
+									'ohmylms'
+								) }
 								value={ spec.accepted }
 								format={ joinCsv }
 								parse={ csv }
-								onChange={ ( accepted ) => setBlank( id, { accepted } ) }
+								onChange={ ( accepted ) =>
+									setBlank( id, { accepted } )
+								}
 							/>
 						) }
 					</fieldset>
@@ -524,7 +608,10 @@ export function BuildExpressionEditor( { value, onChange } ) {
 	return (
 		<div className="ohmylms-interactive-editor">
 			<ParsedField
-				label={ __( 'Correct tiles in order (separate tiles with spaces)', 'ohmylms' ) }
+				label={ __(
+					'Correct tiles in order (separate tiles with spaces)',
+					'ohmylms'
+				) }
 				help={ __( 'Example: 3 x + 4 = 10', 'ohmylms' ) }
 				value={ value.correct }
 				format={ ( list ) => ( list || [] ).join( ' ' ) }
@@ -532,7 +619,10 @@ export function BuildExpressionEditor( { value, onChange } ) {
 				onChange={ ( correct ) => onChange( { correct } ) }
 			/>
 			<ParsedField
-				label={ __( 'Extra tiles that do not belong (distractors)', 'ohmylms' ) }
+				label={ __(
+					'Extra tiles that do not belong (distractors)',
+					'ohmylms'
+				) }
 				value={ value.distractors }
 				format={ ( list ) => ( list || [] ).join( ' ' ) }
 				parse={ tilesFromText }
@@ -540,13 +630,18 @@ export function BuildExpressionEditor( { value, onChange } ) {
 			/>
 			<ParsedField
 				multiline
-				label={ __( 'Other accepted orders (one per line, optional)', 'ohmylms' ) }
+				label={ __(
+					'Other accepted orders (one per line, optional)',
+					'ohmylms'
+				) }
 				help={ __(
 					'Use these when more than one order is correct, such as 2 + 3 and 3 + 2.',
 					'ohmylms'
 				) }
 				value={ value.alternatives }
-				format={ ( list ) => ( list || [] ).map( ( s ) => s.join( ' ' ) ).join( '\n' ) }
+				format={ ( list ) =>
+					( list || [] ).map( ( s ) => s.join( ' ' ) ).join( '\n' )
+				}
 				parse={ sequencesFromText }
 				onChange={ ( alternatives ) => onChange( { alternatives } ) }
 			/>
@@ -593,10 +688,19 @@ export function InteractivePreview( { type, settings = {} } ) {
 		return (
 			<p>
 				{ parts( settings.text, ( id ) => {
-					const slot = ( settings.slots || [] ).find( ( s ) => s.id === id );
+					const slot = ( settings.slots || [] ).find(
+						( s ) => s.id === id
+					);
 					return slot ? (
-						<select aria-label={ sprintf( __( 'Choice %s', 'ohmylms' ), id ) }>
-							<option value="">{ __( 'Choose…', 'ohmylms' ) }</option>
+						<select
+							aria-label={ sprintf(
+								__( 'Choice %s', 'ohmylms' ),
+								id
+							) }
+						>
+							<option value="">
+								{ __( 'Choose…', 'ohmylms' ) }
+							</option>
 							{ ( slot.choices || [] ).map( ( choice, i ) => (
 								<option key={ i }>{ choice }</option>
 							) ) }
@@ -653,16 +757,25 @@ export function InteractivePreview( { type, settings = {} } ) {
 			<ul className="ohmylms-cat-items">
 				{ ( settings.items || [] ).map( ( item ) => (
 					<li key={ item.id }>
-						{ item.image_url && <img src={ item.image_url } alt="" /> }
+						{ item.image_url && (
+							<img src={ item.image_url } alt="" />
+						) }
 						<label>
 							{ item.text }{ ' ' }
 							<select>
-								<option value="">{ __( 'Choose a group…', 'ohmylms' ) }</option>
-								{ ( settings.buckets || [] ).map( ( bucket ) => (
-									<option key={ bucket.id } value={ bucket.id }>
-										{ bucket.label }
-									</option>
-								) ) }
+								<option value="">
+									{ __( 'Choose a group…', 'ohmylms' ) }
+								</option>
+								{ ( settings.buckets || [] ).map(
+									( bucket ) => (
+										<option
+											key={ bucket.id }
+											value={ bucket.id }
+										>
+											{ bucket.label }
+										</option>
+									)
+								) }
 							</select>
 						</label>
 					</li>
@@ -677,14 +790,19 @@ export function InteractivePreview( { type, settings = {} } ) {
 		].map( ( text, index ) => ( { text, index } ) );
 		return (
 			<div className="ohmylms-build-expression">
-				<div className="ohmylms-build-answer" aria-label={ __( 'Your answer', 'ohmylms' ) }>
+				<div
+					className="ohmylms-build-answer"
+					aria-label={ __( 'Your answer', 'ohmylms' ) }
+				>
 					{ picked.map( ( tile ) => (
 						<button
 							type="button"
 							key={ tile.index }
 							className="ohmylms-tile is-placed"
 							onClick={ () =>
-								setPicked( picked.filter( ( t ) => t !== tile ) )
+								setPicked(
+									picked.filter( ( t ) => t !== tile )
+								)
 							}
 						>
 							{ tile.text }
@@ -700,7 +818,9 @@ export function InteractivePreview( { type, settings = {} } ) {
 								type="button"
 								key={ tile.index }
 								className="ohmylms-tile"
-								onClick={ () => setPicked( [ ...picked, tile ] ) }
+								onClick={ () =>
+									setPicked( [ ...picked, tile ] )
+								}
 							>
 								{ tile.text }
 							</button>

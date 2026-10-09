@@ -3554,6 +3554,7 @@
 
 .ohmylms-form-workspace-actions {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: flex-end;
 	gap: 12px;
 	margin-bottom: 20px;
@@ -3597,7 +3598,7 @@
 }
 
 .ohmylms-form-workspace-actions:has(.ohmylms-question-type-picker) {
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	align-items: center;
 }
 

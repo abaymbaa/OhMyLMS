@@ -48,19 +48,7 @@ import {
 	questionTypePatch,
 } from '../question-editor/questionBlocks.mjs';
 
-const TYPES = [
-	'single-choice',
-	'multiple-choice',
-	'true-false',
-	'short-text',
-	'long-text',
-	'fill-in-the-blank',
-	'statement',
-	'reorder',
-	'matching',
-	'numerical',
-	'structured',
-];
+const TYPES = QUESTION_BLOCK_TYPES.map( ( [ type ] ) => type );
 
 /** Question bank management: search, approve, archive, duplicate, metadata and sharing. */
 export function QuestionBankPage() {

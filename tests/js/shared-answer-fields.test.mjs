@@ -10,6 +10,7 @@ import {
 	validateDraft,
 } from '../../assets/src/features/question-bank/model.mjs';
 import { QUESTION_BLOCK_TYPES } from '../../assets/src/features/question-editor/questionBlocks.mjs';
+import { isExtendedType } from '../../assets/src/features/question-editor/extendedModel.mjs';
 
 const source = fs
 	.readFileSync(
@@ -57,6 +58,8 @@ const scope = {
 	FillLevelEditor: 'FillLevel',
 	BuildChartEditor: 'BuildChart',
 	GridBuildEditor: 'GridBuild',
+	ExtendedEditor: 'extended',
+	isExtendedType,
 	moveOption,
 };
 const Fields = new Function(

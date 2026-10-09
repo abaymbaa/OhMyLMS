@@ -17,6 +17,11 @@ class QuestionSnapshot {
 
 	public function __construct( array $version ) {
 		$this->version = $version;
+		foreach ( array( 'image_url', 'video_url' ) as $setting ) {
+			if ( ! empty( $this->version['settings'][ $setting ] ) ) {
+				$this->version['settings'][ $setting ] = $this->frozen_url( 'settings:' . $setting, (string) $this->version['settings'][ $setting ] );
+			}
+		}
 		// Option images resolve to the copies frozen with this version.
 		foreach ( (array) ( $version['options'] ?? array() ) as $index => $option ) {
 			$id = (int) ( $option['id'] ?? 0 );

@@ -120,7 +120,7 @@ final class AttemptReport {
 				// Server verdict (null while awaiting review) so reports need not re-grade client-side.
 				'correct'                  => $item['correct'] === null ? null : (bool) (int) $item['correct'],
 				// Structured questions: current mark and maximum for each part.
-				'parts'                    => $snapshot->get_type() === 'structured' ? self::parts( $attempt_id, $item, $snapshot ) : null,
+				'parts'                    => in_array( $snapshot->get_type(), array( 'structured', 'passage' ), true ) ? self::parts( $attempt_id, $item, $snapshot ) : null,
 				'quiz_attempts_answers_id' => $row ? (int) $row['id'] : null,
 				'item_id'                  => (int) $item['id'],
 				'section'                  => (string) ( $item['display']['section'] ?? '' ),

@@ -1,6 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { MovableTabPanel } from '../navigation/MovableTabPanel';
+import { AiTutorSettings } from './AiTutorSettings';
 export function createSettingsPage( readRuntime ) {
 	return function SettingsPage() {
 		const {
@@ -462,6 +463,15 @@ export function createSettingsPage( readRuntime ) {
 					),
 					key: 'migration-settings',
 					children: <MemoMigrationSettings />,
+				},
+				{
+					label: (
+						<React.Fragment>
+							{ ( 0, I18n.__ )( 'AI tutor', 'ohmylms' ) }
+						</React.Fragment>
+					),
+					key: 'ai-tutor-settings',
+					children: <AiTutorSettings />,
 				},
 			].concat(
 				S6(

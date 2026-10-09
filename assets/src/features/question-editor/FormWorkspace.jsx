@@ -8,6 +8,7 @@ import {
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
+import { QuestionMediaUpload } from './QuestionMediaUpload';
 import { QuestionLivePreview } from './QuestionLivePreview';
 
 /**
@@ -50,21 +51,62 @@ function FormDescription( {
 					[ 'italic', 'Italic', 'editor-italic' ],
 					[ 'underline', 'Underline', 'editor-underline' ],
 					[ 'insertUnorderedList', 'Bullet list', 'editor-ul' ],
-				].map( ( [ command, label, icon ] ) => (
+					[ 'superscript', 'Superscript', 'editor-superscript' ],
+					[ 'subscript', 'Subscript', 'editor-subscript' ],
+				].map( ( [ command, formatLabel, icon ] ) => (
 					<Button
 						key={ command }
-						icon={ icon }
-						label={ label }
+						icon={
+							[ 'superscript', 'subscript' ].includes( command )
+								? undefined
+								: icon
+						}
+						label={ formatLabel }
 						onMouseDown={ ( event ) => event.preventDefault() }
 						onClick={ () => format( command ) }
-					/>
+					>
+						{ 'superscript' === command && (
+							<span>
+								x<sup>2</sup>
+							</span>
+						) }
+						{ 'subscript' === command && (
+							<span>
+								x<sub>2</sub>
+							</span>
+						) }
+					</Button>
 				) ) }
+				<QuestionMediaUpload
+					allowedTypes={ [ 'image' ] }
+					onSelect={ ( image ) => {
+						if ( ! /^https?:\/\//i.test( image.url || '' ) ) {
+							return;
+						}
+						const node = document.createElement( 'img' );
+						node.src = image.url;
+						node.alt = image.alt || '';
+						field.current.appendChild( node );
+						onChange( field.current.innerHTML );
+					} }
+					render={ ( { open } ) => (
+						<Button
+							icon="format-image"
+							label={ __( 'Add question image', 'ohmylms' ) }
+							onClick={ open }
+						/>
+					) }
+				/>
 			</div>
 			<div
 				ref={ field }
 				role="textbox"
 				aria-label={ label }
 				aria-multiline="true"
+				data-placeholder={ __(
+					'Type your question here …',
+					'ohmylms'
+				) }
 				contentEditable
 				suppressContentEditableWarning
 				onInput={ ( event ) =>
@@ -124,31 +166,21 @@ export function FormWorkspace( {
 	const [ preview, setPreview ] = useState( false );
 	return (
 		<section
-			className="ohmylms-form-workspace"
+			className={ `ohmylms-form-workspace${ previewQuestion ? ' ohmylms-question-authoring' : '' }` }
 			aria-label={ workspaceLabel }
 		>
 			<div className="ohmylms-form-workspace-actions">
-				{ toolbarLeading }
-				{ toolbarActions }
-				{ previewQuestion && (
-					<Button
-						variant="secondary"
-						icon={ preview ? 'edit' : 'visibility' }
-						onClick={ () => setPreview( ! preview ) }
-					>
-						{ preview
-							? __( 'Edit', 'ohmylms' )
-							: __( 'Preview', 'ohmylms' ) }
-					</Button>
-				) }
 				{ toolbarEnd }
+				{ toolbarLeading }
+				{ ! previewQuestion && toolbarActions }
 			</div>
 			{ preview ? (
 				<QuestionLivePreview
 					question={ {
 						...previewQuestion,
 						name: document.name,
-						description: document.description,
+						description:
+							previewQuestion.description ?? document.description,
 					} }
 				/>
 			) : (
@@ -202,6 +234,22 @@ export function FormWorkspace( {
 						</fieldset>
 					</details>
 				) ) }
+			{ previewQuestion && (
+				<div className="ohmylms-question-authoring-footer">
+					{ previewQuestion && (
+						<Button
+							variant="secondary"
+							icon={ preview ? 'edit' : 'visibility' }
+							onClick={ () => setPreview( ! preview ) }
+						>
+							{ preview
+								? __( 'Edit question', 'ohmylms' )
+								: __( 'Preview question', 'ohmylms' ) }
+						</Button>
+					) }
+					{ toolbarActions }
+				</div>
+			) }
 		</section>
 	);
 }

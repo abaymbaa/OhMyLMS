@@ -13,7 +13,10 @@ test( 'each question type creates the existing assessment data schema', () => {
 	for ( const [ type ] of QUESTION_BLOCK_TYPES ) {
 		const patch = questionTypePatch( { settings: {} }, type, 100 );
 		assert.equal( patch.settings.type, type );
-		assert.equal( patch.settings.score.value, 1 );
+		assert.equal(
+			patch.settings.score.value,
+			[ 'poll', 'word-cloud', 'slide' ].includes( type ) ? 0 : 1
+		);
 		assert.ok( Array.isArray( patch.questions ) );
 		if ( type === 'true-false' )
 			assert.deepEqual(

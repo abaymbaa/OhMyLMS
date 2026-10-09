@@ -1,6 +1,6 @@
-import { createElement, useState } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { ComboboxControl } from '@wordpress/components';
+import { SelectControl } from '@wordpress/components';
 import { FormWorkspace } from './FormWorkspace';
 import { BankAnswerFields } from './BankAnswerFields';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
@@ -28,7 +28,6 @@ export function QuestionForm( {
 	onTypeChange,
 	...props
 } ) {
-	const [ typeSearch, setTypeSearch ] = useState( '' );
 	const sharedAnswers = (
 		<BankAnswerFields
 			type={ question.settings?.type }
@@ -54,7 +53,15 @@ export function QuestionForm( {
 			previewQuestion={ question }
 			questionBlockContent={
 				<>
-					<h3>{ __( 'Answers', 'ohmylms' ) }</h3>
+					<div className="ohmylms-response-heading">
+						<h3>
+							{ types?.find(
+								( option ) =>
+									option.value === question.settings?.type
+							)?.label || __( 'Answers', 'ohmylms' ) }
+						</h3>
+						<span>{ __( 'Answer setup', 'ohmylms' ) }</span>
+					</div>
 					{ answers || sharedAnswers }
 					<TemplatePanel
 						question={ question }
@@ -70,20 +77,16 @@ export function QuestionForm( {
 				<>
 					{ types && (
 						<div className="ohmylms-question-type-picker">
-							<ComboboxControl
+							<SelectControl
 								label={ __( 'Question type', 'ohmylms' ) }
-								hideLabelFromVision
-								value={ question.settings?.type }
-								options={ types.filter( ( { label } ) =>
-									label
-										.toLowerCase()
-										.includes( typeSearch.toLowerCase() )
+								help={ __(
+									'Changing type resets the answer setup.',
+									'ohmylms'
 								) }
-								onFilterValueChange={ setTypeSearch }
-								allowReset={ false }
+								value={ question.settings?.type }
+								options={ types }
 								disabled={ props.readOnly }
 								onChange={ ( type ) => {
-									setTypeSearch( '' );
 									if ( type ) {
 										onTypeChange( type );
 									}
@@ -93,7 +96,8 @@ export function QuestionForm( {
 					) }
 				</>
 			}
-			flatSettings
+			flatSettings={ false }
+			compact
 			settings={
 				<>
 					<QuestionOptionsBar

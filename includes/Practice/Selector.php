@@ -144,7 +144,7 @@ final class Selector {
 						if ( in_array( $row['type'], $manual, true ) ) {
 							return null; }
 						// Structured questions with teacher-marked parts cannot give immediate practice feedback.
-						if ( $row['type'] === 'structured' ) {
+						if ( in_array( $row['type'], array( 'structured', 'passage' ), true ) ) {
 							foreach ( \OhMyLMS\Assessment\Structured::parts( json_decode( $row['settings'], true ) ?: array() ) as $part ) {
 								if ( $part['kind'] === 'written' ) {
 										return null; }

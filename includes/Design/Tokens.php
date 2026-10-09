@@ -178,6 +178,8 @@ final class Tokens {
 			return; }
 		$ui_version = OHMYLMS_VERSION . '.' . substr( hash_file( 'sha256', OHMYLMS_DIR . '/assets/css/admin-ui.css' ), 0, 12 );
 		wp_enqueue_style( 'ohmylms-admin-ui', plugins_url( 'assets/css/admin-ui.css', OHMYLMS_FILE ), array( 'ohmylms-main' ), $ui_version );
+		$question_editor_version = OHMYLMS_VERSION . '.' . substr( hash_file( 'sha256', OHMYLMS_DIR . '/assets/css/question-editor.css' ), 0, 12 );
+		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'ohmylms-admin-ui' ), $question_editor_version );
 		wp_add_inline_style( 'ohmylms-admin-ui', self::admin_css() );
 		$url = self::font_url( self::font( 'ohmylms_admin_font_family' ) );
 		if ( $url ) {

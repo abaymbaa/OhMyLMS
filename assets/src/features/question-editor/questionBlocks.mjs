@@ -1,3 +1,9 @@
+import {
+	EXTENDED_TYPES,
+	isExtendedType,
+	isUngradedType,
+	extendedDefaults,
+} from './extendedModel.mjs';
 export const QUESTION_BLOCK_PREFIX = 'ohmylms/question-';
 import { promptText } from './questionPrompt.mjs';
 import {
@@ -30,6 +36,7 @@ export const QUESTION_BLOCK_TYPES = [
 	[ 'fill-level', 'Fill to a level' ],
 	[ 'build-chart', 'Build a chart' ],
 	[ 'grid-build', 'Build on a grid' ],
+	...EXTENDED_TYPES,
 ];
 export const questionBlockName = ( type ) => QUESTION_BLOCK_PREFIX + type;
 export const isQuestionBlock = ( block ) =>
@@ -77,6 +84,15 @@ export function questionTypePatch( question, type, seed = Date.now() ) {
 	if ( isInteractiveType( type ) ) {
 		Object.assign( settings, interactiveDefaults( type ) );
 	}
+	if ( isExtendedType( type ) ) {
+		Object.assign( settings, extendedDefaults( type ) );
+		if ( isUngradedType( type ) ) {
+			settings.score = { enabled: true, value: 0 };
+		}
+		if ( type === 'slide' ) {
+			settings.required = false;
+		}
+	}
 	const count = [
 		'short-text',
 		'long-text',
@@ -85,28 +101,32 @@ export function questionTypePatch( question, type, seed = Date.now() ) {
 	].includes( type )
 		? 1
 		: 2;
-	const questions = [ 'numerical', 'structured' ].includes( type ) ||
-		isInteractiveType( type )
-		? []
-		: Array.from( { length: count }, ( _, index ) => ( {
-				id: seed + index,
-				answer:
-					type === 'true-false' ? ( index ? 'False' : 'True' ) : '',
-				is_correct: [ 'statement', 'fill-in-the-blank' ].includes(
-					type
-				),
-				order_number: index + 1,
-				temp: true,
-				...( [ 'matching', 'reorder' ].includes( type )
-					? {
-							matching_data: {
-								label: '',
-								image_id: '',
-								image_url: '',
-							},
-						}
-					: {} ),
-			} ) );
+	const questions =
+		[ 'numerical', 'structured' ].includes( type ) ||
+		isInteractiveType( type ) ||
+		isExtendedType( type )
+			? []
+			: Array.from( { length: count }, ( _, index ) => ( {
+					id: seed + index,
+					answer:
+						type === 'true-false'
+							? [ 'True', 'False' ][ index ]
+							: '',
+					is_correct: [ 'statement', 'fill-in-the-blank' ].includes(
+						type
+					),
+					order_number: index + 1,
+					temp: true,
+					...( [ 'matching', 'reorder' ].includes( type )
+						? {
+								matching_data: {
+									label: '',
+									image_id: '',
+									image_url: '',
+								},
+							}
+						: {} ),
+				} ) );
 	return {
 		settings,
 		questions,
@@ -148,19 +168,21 @@ export function questionPreviewModel( question ) {
 			( option, index ) => ( {
 				id: String( option.id ?? index ),
 				answer: option.answer || '',
+				imageUrl: option.image_url || '',
 				match: option.matching_data?.label || '',
 			} )
 		),
 		interactive: isInteractiveType( type ) ? question.settings : null,
-		parts: ( question.settings?.parts || [] ).map(
-			( { id, label, prompt, kind, marks } ) => ( {
-				id,
-				label,
-				prompt,
-				kind,
-				marks,
-			} )
-		),
+		parts: ( Array.isArray( question.settings?.parts )
+			? question.settings.parts
+			: []
+		).map( ( { id, label, prompt, kind, marks } ) => ( {
+			id,
+			label,
+			prompt,
+			kind,
+			marks,
+		} ) ),
 	};
 }
 

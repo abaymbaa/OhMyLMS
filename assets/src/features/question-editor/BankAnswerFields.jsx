@@ -1,3 +1,5 @@
+import { ExtendedEditor } from './ExtendedEditor';
+import { isExtendedType } from './extendedModel.mjs';
 import { createElement, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
@@ -20,7 +22,7 @@ import {
 	SetClockEditor,
 	ShadeModelEditor,
 } from './VisualEditors';
-import { MediaUpload } from '@wordpress/block-editor';
+import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { moveOption } from './model.mjs';
 
 /**
@@ -40,6 +42,17 @@ export function BankAnswerFields( {
 	prompt = '',
 } ) {
 	const dragged = useRef( null );
+	if ( isExtendedType( type ) ) {
+		return (
+			<ExtendedEditor
+				type={ type }
+				value={ settings }
+				onChange={ ( patch ) =>
+					onChange( { settings: { ...settings, ...patch } } )
+				}
+			/>
+		);
+	}
 	const blanks =
 		type === 'fill-in-the-blank'
 			? parseInlineBlankPrompt( prompt ).answers
@@ -192,6 +205,32 @@ export function BankAnswerFields( {
 					) }
 				</p>
 			) }
+			<p className="ohmylms-answer-guidance">
+				{
+					{
+						matching: __(
+							'Enter each item and its matching answer. Add a pair for every match learners should make.',
+							'ohmylms'
+						),
+						reorder: __(
+							'Enter items in the correct order. Use Move up and Move down to set the answer key.',
+							'ohmylms'
+						),
+						'multiple-choice': __(
+							'Enter answer options and check every correct answer.',
+							'ohmylms'
+						),
+						'single-choice': __(
+							'Select the circle beside the correct answer.',
+							'ohmylms'
+						),
+						'true-false': __(
+							'Select the circle beside the correct answer.',
+							'ohmylms'
+						),
+					}[ type ]
+				}
+			</p>
 			{ options.map( ( option, index ) => (
 				<fieldset
 					key={ option.id || index }
@@ -401,6 +440,14 @@ export function BankAnswerFields( {
 							questions: [
 								...options,
 								{
+									id: Math.max(
+										Date.now(),
+										...options.map(
+											( option ) =>
+												Number( option.id ) + 1 || 0
+										)
+									),
+									temp: true,
 									answer: '',
 									is_correct: false,
 									order_number: options.length + 1,
@@ -410,7 +457,10 @@ export function BankAnswerFields( {
 						} )
 					}
 				>
-					{ __( 'Add answer', 'ohmylms' ) }
+					{ {
+						matching: __( 'Add pair', 'ohmylms' ),
+						reorder: __( 'Add item', 'ohmylms' ),
+					}[ type ] || __( 'Add answer', 'ohmylms' ) }
 				</Button>
 			) }
 		</div>

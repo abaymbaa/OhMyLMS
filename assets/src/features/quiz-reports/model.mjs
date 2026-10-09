@@ -104,6 +104,52 @@ function describeVisualExpected( s ) {
 
 export function describeExpected( question ) {
 	const settings = question?.settings || {};
+	if ( settings.type === 'graphing' ) {
+		return ( settings.points || [] )
+			.map( ( point ) => `(${ point.x }, ${ point.y })` )
+			.join( ', ' );
+	}
+	if ( settings.type === 'hot-text' ) {
+		return ( settings.tokens || [] )
+			.filter( ( token ) =>
+				( settings.correct || [] ).includes( token.id )
+			)
+			.map( ( token ) => token.text )
+			.join( ', ' );
+	}
+	if ( settings.type === 'match-table-grid' ) {
+		const columns = Object.fromEntries(
+			( settings.columns || [] ).map( ( column ) => [
+				column.id,
+				column.label,
+			] )
+		);
+		return ( settings.rows || [] )
+			.map(
+				( row ) =>
+					`${ row.label } → ${ columns[ settings.key?.[ row.id ] ] || '' }`
+			)
+			.join( ', ' );
+	}
+	if ( settings.type === 'labeling' ) {
+		return ( settings.targets || [] )
+			.map( ( target ) => `${ target.id }: ${ target.answer }` )
+			.join( ', ' );
+	}
+	if ( settings.type === 'hotspot' ) {
+		return ( settings.zones || [] )
+			.map(
+				( zone ) => `(${ zone.x }%, ${ zone.y }%), ±${ zone.radius }%`
+			)
+			.join( ', ' );
+	}
+	if ( settings.type === 'interactive-video' ) {
+		return ( settings.checkpoints || [] )
+			.map(
+				( checkpoint ) => `${ checkpoint.at }s: ${ checkpoint.answer }`
+			)
+			.join( ', ' );
+	}
 	if ( settings.type === 'numerical' ) {
 		const answers = [
 			...list( settings.answer ),
@@ -132,7 +178,7 @@ export function describeExpected( question ) {
 					( item ) =>
 						`${ item.text } → ${ labels[ settings.key?.[ item.id ] ] ?? '' }`
 				)
-				.join(', ') || '—'
+				.join( ', ' ) || '—'
 		);
 	}
 	if ( settings.type === 'multi-blank' ) {
@@ -142,7 +188,9 @@ export function describeExpected( question ) {
 					( [ id, spec ] ) =>
 						`{${ id }} = ${
 							spec.kind === 'numerical'
-								? ( spec.answer ?? ( spec.answers || [] )[ 0 ] ?? '' )
+								? ( spec.answer ??
+									( spec.answers || [] )[ 0 ] ??
+									'' )
 								: ( spec.accepted || [] ).join( ' / ' )
 						}`
 				)

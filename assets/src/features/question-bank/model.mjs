@@ -1,3 +1,10 @@
+import {
+	EXTENDED_TYPES,
+	isExtendedType,
+	isUngradedType,
+	extendedDefaults,
+	extendedIssues,
+} from '../question-editor/extendedModel.mjs';
 /** Pure helpers for the question bank, skills and picker UIs. */
 import { promptText } from '../question-editor/questionPrompt.mjs';
 import {
@@ -240,6 +247,7 @@ export const NEW_QUESTION_TYPES = [
 	'numerical',
 	'structured',
 	...INTERACTIVE_TYPES,
+	...EXTENDED_TYPES.map( ( [ type ] ) => type ),
 ];
 const CHOICE_TYPES = [ 'single-choice', 'multiple-choice' ];
 
@@ -248,11 +256,17 @@ const CHOICE_TYPES = [ 'single-choice', 'multiple-choice' ];
  * @param type
  */
 export function emptyDraft( type = 'single-choice' ) {
+	let settings = interactiveDefaults( type );
+	if ( type === 'structured' ) {
+		settings = { parts: addPart( [] ) };
+	} else if ( isExtendedType( type ) ) {
+		settings = extendedDefaults( type );
+	}
 	return {
 		type,
 		name: '',
 		description: '',
-		marks: 1,
+		marks: isUngradedType( type ) ? 0 : 1,
 		options:
 			type === 'true-false'
 				? [
@@ -265,10 +279,7 @@ export function emptyDraft( type = 'single-choice' ) {
 							{ answer: '', correct: false },
 						]
 					: [],
-		settings:
-			type === 'structured'
-				? { parts: addPart( [] ) }
-				: interactiveDefaults( type ),
+		settings,
 	};
 }
 
@@ -289,7 +300,7 @@ export function changeDraftType( draft, type ) {
 				: 'Question 1'
 			: draft.name,
 		description: draft.description,
-		marks: draft.marks,
+		marks: isUngradedType( type ) ? 0 : draft.marks,
 		settings: {
 			...blank.settings,
 			...( draft.settings?.question_code
@@ -368,7 +379,7 @@ export function validateDraft( draft ) {
 		}
 	}
 	if (
-		draft.type === 'structured' &&
+		[ 'structured', 'passage' ].includes( draft.type ) &&
 		! ( draft.settings.parts || [] ).length
 	) {
 		problems.push( 'parts' );
@@ -393,6 +404,12 @@ export function validateDraft( draft ) {
 		) {
 			problems.push( 'options-empty' );
 		}
+	}
+	if (
+		isExtendedType( draft.type ) &&
+		extendedIssues( draft.type, draft.settings ).length
+	) {
+		problems.push( 'extended' );
 	}
 	return problems;
 }

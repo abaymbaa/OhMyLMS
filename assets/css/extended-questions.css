@@ -1,0 +1,47 @@
+.ohmylms-author-diagram img { display: block; max-width: 100%; max-height: 300px; }
+
+.ohmylms-extended-question { display: grid; gap: 12px; }
+
+.ohmylms-extended-question .ohmylms-extended-field { display: grid; gap: 6px; }
+
+.ohmylms-extended-question canvas { display: block; max-width: 100%; height: auto; border: 1px solid #a7aaad; background: #fff; touch-action: none; }
+
+.ohmylms-extended-question .ohmylms-plot-toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ohmylms-extended-question .ohmylms-plot-toolbar input { width: 100px; }
+
+.ohmylms-extended-question button { min-height: 40px; padding: 8px 16px; border: 1px solid #b4a6cb; border-radius: 6px; background: #f5f0fc; color: #432474; cursor: pointer; }
+
+.ohmylms-extended-question button[aria-pressed="true"] { background: #7153c6; color: #fff; }
+
+.ohmylms-extended-question .ohmylms-diagram { position: relative; }
+
+.ohmylms-extended-question .ohmylms-diagram img { display: block; max-width: 100%; }
+
+.ohmylms-extended-question .ohmylms-diagram select { position: absolute; max-width: 180px; transform: translate(-50%, -50%); }
+
+.ohmylms-extended-question .ohmylms-hotspot-pin { position: absolute; transform: translate(-50%, -50%); color: #d63638; font-size: 28px; pointer-events: none; }
+
+.ohmylms-extended-question .ohmylms-match-grid { width: 100%; border-collapse: collapse; }
+
+.ohmylms-extended-question .ohmylms-match-grid th,
+.ohmylms-extended-question .ohmylms-match-grid td { padding: 12px; border: 1px solid #dcdcde; text-align: center; }
+
+.ohmylms-extended-question video,
+.ohmylms-extended-question audio { width: 100%; max-height: 360px; }
+
+.ohmylms-extended-question .ohmylms-passage { white-space: pre-wrap; padding: 20px; border-left: 4px solid #7153c6; background: #f8f5fc; }
+
+
+
+.ohmylms-author-diagram { position: relative; width: fit-content; max-height: none; }
+
+.ohmylms-author-diagram .ohmylms-diagram-place { display: block; padding: 0; border: 0; background: none; cursor: crosshair; }
+
+
+
+.ohmylms-author-diagram .ohmylms-author-marker { position: absolute; width: 32px; height: 32px; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #432474; transform: translate(-50%, -50%); cursor: move; }
+
+.ohmylms-author-diagram .ohmylms-author-marker[aria-pressed="true"] { outline: 3px solid #dba617; }
+
+.ohmylms-extended-question .ohmylms-word-cloud { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; color: #432474; }

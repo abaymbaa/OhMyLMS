@@ -8,6 +8,7 @@ import {
 	emptyDraft,
 	validateDraft,
 } from './model.mjs';
+import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
 import { QuestionForm } from '../question-editor/QuestionForm';
 import { QUESTION_BLOCK_TYPES } from '../question-editor/questionBlocks.mjs';
 
@@ -19,6 +20,10 @@ const PROBLEMS = () => ( {
 	'options-correct': __( 'Mark the correct answer.', 'ohmylms' ),
 	'numerical-answer': __( 'Enter the expected number.', 'ohmylms' ),
 	parts: __( 'Add at least one part.', 'ohmylms' ),
+	extended: __(
+		'Complete the diagram, video, response controls, and correct answer setup.',
+		'ohmylms'
+	),
 	interactive: __(
 		'Complete the question: every choice, group, blank or tile needs its content and answer.',
 		'ohmylms'
@@ -36,6 +41,7 @@ const PROBLEMS = () => ( {
 export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 	const creator = useRef( null );
 	const [ draft, setDraft ] = useState( () => emptyDraft() );
+	const [ choosingType, setChoosingType ] = useState( true );
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	const [ tried, setTried ] = useState( false );
@@ -63,6 +69,17 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 		}
 	}
 
+	if ( choosingType ) {
+		return (
+			<QuestionTypeChooser
+				onClose={ onClose }
+				onSelect={ ( type ) => {
+					setDraft( emptyDraft( type ) );
+					setChoosingType( false );
+				} }
+			/>
+		);
+	}
 	return (
 		<Modal
 			title={ __( 'New question', 'ohmylms' ) }

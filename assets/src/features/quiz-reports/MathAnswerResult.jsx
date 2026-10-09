@@ -1,3 +1,5 @@
+import { ExtendedResponse } from './ExtendedResponse';
+import { isExtendedType } from '../question-editor/extendedModel.mjs';
 import { createElement, Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { describeExpected, setPartMark, structuredRows } from './model.mjs';
@@ -26,6 +28,24 @@ export function MathAnswerResult( {
 } ) {
 	const type = data?.settings?.type;
 	const given = data?.given_answer;
+	const response = () => {
+		if ( isExtendedType( type ) ) {
+			return (
+				<ExtendedResponse
+					type={ type }
+					answer={ given || {} }
+					settings={ data.settings }
+				/>
+			);
+		}
+		if ( Array.isArray( given ) && given.length ) {
+			return given.join( ', ' );
+		}
+		if ( given && typeof given === 'object' ) {
+			return JSON.stringify( given );
+		}
+		return __( 'No answer given', 'ohmylms' );
+	};
 	return (
 		<div
 			className={ `ohmylms-question-types ohmylms-text-type-question ohmylms-${ data?.status || '' }` }
@@ -42,7 +62,7 @@ export function MathAnswerResult( {
 				variant="secondary"
 				style={ { padding: '16px' } }
 			>
-				{ type === 'structured' ? (
+				{ [ 'structured', 'passage' ].includes( type ) ? (
 					<table className="widefat striped ohmylms-structured-result">
 						<thead>
 							<tr>
@@ -130,11 +150,7 @@ export function MathAnswerResult( {
 							{ __( "Student's response:", 'ohmylms' ) }
 						</Controls.TextWP>
 						<div className="ohmylms-question-options ohmylms-text-type">
-							{ Array.isArray( given ) && given.length
-								? given.join( ', ' )
-								: given && typeof given === 'object'
-									? JSON.stringify( given )
-									: __( 'No answer given', 'ohmylms' ) }
+							{ response() }
 						</div>
 						<p>
 							<strong>{ __( 'Expected:', 'ohmylms' ) }</strong>{ ' ' }
@@ -146,7 +162,9 @@ export function MathAnswerResult( {
 					<p className="ohmylms-instance-note">
 						{ __( 'Numbers this learner was given:', 'ohmylms' ) }{ ' ' }
 						{ Object.entries( data.instance.params || {} )
-							.map( ( [ name, value ] ) => `${ name } = ${ value }` )
+							.map(
+								( [ name, value ] ) => `${ name } = ${ value }`
+							)
 							.join( ', ' ) }
 					</p>
 				) }

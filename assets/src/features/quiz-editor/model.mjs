@@ -1,5 +1,10 @@
+import {
+	isExtendedType,
+	extendedIssues,
+} from '../question-editor/extendedModel.mjs';
 export { moveOption } from '../question-editor/model.mjs';
 import { parseInlineBlankPrompt } from '../question-editor/inlineBlanks.mjs';
+import { promptText } from '../question-editor/questionPrompt.mjs';
 /**
  * Keep saved option IDs and extension settings; remove only temporary UI IDs.
  * A temporary (unsaved or duplicated) question never sends option IDs: copied
@@ -46,6 +51,16 @@ export function prepareQuizPayload( quiz, questions ) {
 	return payload;
 }
 export function canLeaveQuestion( question, validate ) {
+	if ( isExtendedType( question?.settings?.type ) ) {
+		return (
+			!! ( question.settings.question_code
+				? promptText( question.description )
+				: question.name?.trim() ) &&
+			! extendedIssues( question.settings.type, question.settings )
+				.length &&
+			Number( question.settings.score?.value ?? 0 ) >= 0
+		);
+	}
 	if (
 		question?.settings?.type === 'fill-in-the-blank' &&
 		parseInlineBlankPrompt( question.name ).answers.length

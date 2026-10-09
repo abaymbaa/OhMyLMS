@@ -7,6 +7,7 @@ final class Bootstrap {
 		QuestionTypes::register_defaults();
 		QuestionTypes::register_math();
 		QuestionTypes::register_interactive();
+		\OhMyLMS\Assessment\ExtendedQuestions::register();
 		Activities::register_defaults();
 		foreach ( array( 'text', 'audio', 'video' ) as $type ) {
 			Registry::register(

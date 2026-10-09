@@ -1,7 +1,11 @@
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { Button, Modal } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { QUESTION_BLOCK_TYPES } from '../question-editor/questionBlocks.mjs';
+import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
+import {
+	questionTypePatch,
+	QUESTION_BLOCK_TYPES,
+} from '../question-editor/questionBlocks.mjs';
 
 /**
  * Form cards share the canonical quiz store; only the active card mounts the block workspace.
@@ -13,6 +17,7 @@ import { QUESTION_BLOCK_TYPES } from '../question-editor/questionBlocks.mjs';
 export function QuizQuestionCards( { editor, children, onBank } ) {
 	const [ removing, setRemoving ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
+	const [ choosingType, setChoosingType ] = useState( false );
 	useEffect( () => {
 		if ( ! editor.loading && ! editor.questions.length ) {
 			editor.addQuestion();
@@ -31,7 +36,8 @@ export function QuizQuestionCards( { editor, children, onBank } ) {
 				<Button
 					variant="primary"
 					icon="plus-alt2"
-					onClick={ () => editor.addQuestion() }
+					disabled={ editor.loading || editor.saving }
+					onClick={ () => setChoosingType( true ) }
 				>
 					{ __( 'Add question', 'ohmylms' ) }
 				</Button>
@@ -172,10 +178,20 @@ export function QuizQuestionCards( { editor, children, onBank } ) {
 				className="ohmylms-form-add-bottom"
 				variant="secondary"
 				icon="plus-alt2"
-				onClick={ () => editor.addQuestion() }
+				disabled={ editor.loading || editor.saving }
+				onClick={ () => setChoosingType( true ) }
 			>
 				{ __( 'Add question', 'ohmylms' ) }
 			</Button>
+			{ choosingType && (
+				<QuestionTypeChooser
+					onClose={ () => setChoosingType( false ) }
+					onSelect={ ( type ) => {
+						editor.addQuestion( questionTypePatch( {}, type ) );
+						setChoosingType( false );
+					} }
+				/>
+			) }
 			{ removing && (
 				<Modal
 					title={ __( 'Remove question from quiz?', 'ohmylms' ) }

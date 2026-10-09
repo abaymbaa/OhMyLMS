@@ -30,6 +30,9 @@ final class MediaFreezer {
 		$media   = (array) ( $content['media'] ?? array() );
 		self::add( $sources, 'image', (string) ( $media['image_url'] ?? '' ), (int) ( $media['image_id'] ?? 0 ) );
 		self::add( $sources, 'video', (string) ( $media['video_url'] ?? '' ), (int) ( $media['video_id'] ?? 0 ) );
+		foreach ( array( 'image_url', 'video_url' ) as $setting ) {
+			self::add( $sources, 'settings:' . $setting, (string) ( $content['settings'][ $setting ] ?? '' ), 0 );
+		}
 		foreach ( (array) ( $content['options'] ?? array() ) as $option ) {
 			$id = (int) ( $option['id'] ?? 0 );
 			self::add( $sources, 'option:' . $id, (string) ( $option['image_url'] ?? '' ), (int) ( $option['thumbnail_id'] ?? 0 ) );

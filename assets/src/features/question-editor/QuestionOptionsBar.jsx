@@ -1,3 +1,4 @@
+import { isUngradedType } from './extendedModel.mjs';
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
@@ -18,6 +19,7 @@ export function QuestionOptionsBar( { question, onChange } ) {
 			<div className="ohmylms-question-options-controls">
 				<ToggleControl
 					label={ __( 'Required', 'ohmylms' ) }
+					disabled={ settings.type === 'slide' }
 					checked={ !! settings.required }
 					onChange={ ( required ) => set( { required } ) }
 				/>
@@ -32,7 +34,10 @@ export function QuestionOptionsBar( { question, onChange } ) {
 					min={ 0 }
 					step="0.5"
 					value={ String( settings.score?.value ?? 1 ) }
-					disabled={ settings.type === 'structured' }
+					disabled={
+						[ 'structured', 'passage' ].includes( settings.type ) ||
+						isUngradedType( settings.type )
+					}
 					onChange={ ( value ) =>
 						set( {
 							score: {

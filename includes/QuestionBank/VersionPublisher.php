@@ -78,7 +78,7 @@ final class VersionPublisher {
 				'fraction' => 1,
 			),
 		);
-		if ( $type === 'structured' ) {
+		if ( in_array( $type, array( 'structured', 'passage' ), true ) ) {
 			// Part weights follow part marks, so evidence is attributed per part.
 			$parts = array();
 			foreach ( \OhMyLMS\Assessment\Structured::weights( $settings ) as $part_id => $weight ) {

@@ -105,3 +105,27 @@ registerQuestionMount( 'reorder', mountDynamic );
 registerAnswerValidator( 'build-expression', ( root ) =>
 	Boolean( root.querySelector( 'input[data-tile-answer]' ) )
 );
+
+// Extended widgets write bounded scalar fields through the same answer collection contract.
+[
+	'passage',
+	'graphing',
+	'hot-text',
+	'match-table-grid',
+	'labeling',
+	'hotspot',
+	'draw',
+	'audio-response',
+	'video-response',
+	'poll',
+	'word-cloud',
+	'discussion-board',
+	'slide',
+	'interactive-video',
+].forEach( ( type ) =>
+	registerAnswerValidator( type, ( root ) =>
+		Array.from( root.querySelectorAll( 'input[data-answer-key]' ) ).some(
+			( input ) => input.value.trim() !== ''
+		)
+	)
+);

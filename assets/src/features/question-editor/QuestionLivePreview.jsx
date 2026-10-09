@@ -1,3 +1,5 @@
+import { ExtendedPreview } from './ExtendedPreview';
+import { isExtendedType } from './extendedModel.mjs';
 import { createElement, RawHTML, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
@@ -61,25 +63,27 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 			view.title.some( ( part ) => part.blank ) ? (
 				<InlineBlankPreview text={ question.name } />
 			) : (
-				<h3>
-					{ view.title.map( ( part, index ) =>
-						part.blank ? (
-							<input
-								key={ index }
-								aria-label={ sprintf(
-									__( 'Blank %d', 'ohmylms' ),
-									index + 1
-								) }
-								className="ohmylms-preview-blank"
-							/>
-						) : (
-							<span key={ index }>
-								{ part.text ||
-									__( 'Untitled question', 'ohmylms' ) }
-							</span>
-						)
-					) }
-				</h3>
+				! question.settings?.question_code && (
+					<h3>
+						{ view.title.map( ( part, index ) =>
+							part.blank ? (
+								<input
+									key={ index }
+									aria-label={ sprintf(
+										__( 'Blank %d', 'ohmylms' ),
+										index + 1
+									) }
+									className="ohmylms-preview-blank"
+								/>
+							) : (
+								<span key={ index }>
+									{ part.text ||
+										__( 'Untitled question', 'ohmylms' ) }
+								</span>
+							)
+						) }
+					</h3>
+				)
 			) }
 			{ ! (
 				view.type === 'fill-in-the-blank' &&
@@ -101,21 +105,31 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 			) }
 			{ [ 'single-choice', 'multiple-choice', 'true-false' ].includes(
 				view.type
-			) &&
-				view.options.map( ( option ) => (
-					<label key={ option.id } className="ohmylms-preview-choice">
-						<input
-							type={
-								view.type === 'multiple-choice'
-									? 'checkbox'
-									: 'radio'
-							}
-							name={ group.current }
-							value={ option.id }
-						/>
-						{ option.answer || __( 'Answer option', 'ohmylms' ) }
-					</label>
-				) ) }
+			) && (
+				<div className="ohmylms-preview-options">
+					{ view.options.map( ( option ) => (
+						<label
+							key={ option.id }
+							className="ohmylms-preview-choice"
+						>
+							<input
+								type={
+									view.type === 'multiple-choice'
+										? 'checkbox'
+										: 'radio'
+								}
+								name={ group.current }
+								value={ option.id }
+							/>
+							{ option.answer ||
+								__( 'Answer option', 'ohmylms' ) }
+							{ option.imageUrl && (
+								<img src={ option.imageUrl } alt="" />
+							) }
+						</label>
+					) ) }
+				</div>
+			) }
 			{ [ 'short-text', 'statement', 'numerical' ].includes(
 				view.type
 			) &&
@@ -180,6 +194,12 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 						</li>
 					) ) }
 				</ol>
+			) }
+			{ isExtendedType( view.type ) && (
+				<ExtendedPreview
+					type={ view.type }
+					settings={ question.settings || {} }
+				/>
 			) }
 			{ view.interactive && (
 				<InteractivePreview

@@ -67,7 +67,7 @@ final class Review {
 							$part_marks   = null;
 							if ( $item ) {
 								$version = VersionPublisher::version( $item['version_id'] );
-								if ( $version && $version['type'] === 'structured' ) {
+								if ( $version && in_array( $version['type'], array( 'structured', 'passage' ), true ) ) {
 									$distribution = self::distribute_parts( $attempt_id, $item, ( AttemptItems::snapshot( $item ) ? AttemptItems::snapshot( $item )->get_settings() : array() ), $marks[ $id ], (float) $row['question_marks'], $policy );
 									if ( is_wp_error( $distribution ) ) {
 										throw new ErrorException( $distribution );
