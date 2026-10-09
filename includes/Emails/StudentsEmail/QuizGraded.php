@@ -54,9 +54,9 @@ class QuizGraded {
 		$quiz       = get_post( $quiz_id );
 		$quiz_title = $quiz ? $quiz->post_title : '';
 
-		$passing_mark = get_post_meta( $quiz_id, '_passing_grade', true );
-		$total_marks  = get_post_meta( $quiz_id, '_total_marks', true );
-		$status       = ( $total_marks > 0 && $score >= $passing_mark ) ? 'passed' : 'failed';
+		$passing_mark   = get_post_meta( $quiz_id, '_passing_grade', true );
+		$total_marks    = get_post_meta( $quiz_id, '_total_marks', true );
+		$status         = ( $total_marks > 0 && $score >= $passing_mark ) ? 'passed' : 'failed';
 		$email_settings = Emails::get_email_settings();
 
 		$to      = $student->user_email;

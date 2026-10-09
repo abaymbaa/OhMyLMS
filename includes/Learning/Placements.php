@@ -1,7 +1,7 @@
 <?php
 namespace OhMyLMS\Learning;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Which courses place a lesson, quiz or assignment in their published learning program.
@@ -17,101 +17,116 @@ defined('ABSPATH') || exit;
  * that has a single course behaves exactly as before. Attempt history is shared across all of them.
  */
 final class Placements {
-    const OPTION = 'ohmylms_learning_placements';
-    const TYPES = ['lesson', 'quiz', 'assignment'];
+	const OPTION = 'ohmylms_learning_placements';
+	const TYPES  = array( 'lesson', 'quiz', 'assignment' );
 
-    private static $index;
-    private static $enrolled = [];
+	private static $index;
+	private static $enrolled = array();
 
-    /**
-     * Pure: content ID => course IDs, from rows of `[course_id, program JSON or array]`.
-     *
-     * @param array<int, array{0:int,1:string|array}> $rows
-     * @return array<int, int[]>
-     */
-    public static function index_from(array $rows) {
-        $index = [];
-        foreach ($rows as $row) {
-            $course = (int) $row[0];
-            $program = is_array($row[1]) ? $row[1] : json_decode((string) $row[1], true);
-            foreach ((array) ($program['items'] ?? []) as $item) {
-                if (!is_array($item) || !in_array($item['type'] ?? '', self::TYPES, true) || empty($item['content_id'])) { continue; }
-                $index[(int) $item['content_id']][$course] = $course;
-            }
-        }
-        foreach ($index as $content => $courses) { sort($courses); $index[$content] = array_values($courses); }
-        return $index;
-    }
+	/**
+	 * Pure: content ID => course IDs, from rows of `[course_id, program JSON or array]`.
+	 *
+	 * @param array<int, array{0:int,1:string|array}> $rows
+	 * @return array<int, int[]>
+	 */
+	public static function index_from( array $rows ) {
+		$index = array();
+		foreach ( $rows as $row ) {
+			$course  = (int) $row[0];
+			$program = is_array( $row[1] ) ? $row[1] : json_decode( (string) $row[1], true );
+			foreach ( (array) ( $program['items'] ?? array() ) as $item ) {
+				if ( ! is_array( $item ) || ! in_array( $item['type'] ?? '', self::TYPES, true ) || empty( $item['content_id'] ) ) {
+					continue; }
+				$index[ (int) $item['content_id'] ][ $course ] = $course;
+			}
+		}
+		foreach ( $index as $content => $courses ) {
+			sort( $courses );
+			$index[ $content ] = array_values( $courses ); }
+		return $index;
+	}
 
-    /**
-     * Pure: the course to use among candidates. The first candidate the learner is enrolled in wins,
-     * so the home course stays the default; with no enrollment (or no learner) the first candidate.
-     *
-     * @param int[]    $candidates Home course first.
-     * @param callable $enrolled   fn(int $course): bool
-     */
-    public static function choose(array $candidates, callable $enrolled) {
-        $candidates = array_values(array_unique(array_filter(array_map('intval', $candidates))));
-        if (!$candidates) { return 0; }
-        foreach ($candidates as $course) {
-            if ($enrolled($course)) { return $course; }
-        }
-        return $candidates[0];
-    }
+	/**
+	 * Pure: the course to use among candidates. The first candidate the learner is enrolled in wins,
+	 * so the home course stays the default; with no enrollment (or no learner) the first candidate.
+	 *
+	 * @param int[]    $candidates Home course first.
+	 * @param callable $enrolled   fn(int $course): bool
+	 */
+	public static function choose( array $candidates, callable $enrolled ) {
+		$candidates = array_values( array_unique( array_filter( array_map( 'intval', $candidates ) ) ) );
+		if ( ! $candidates ) {
+			return 0; }
+		foreach ( $candidates as $course ) {
+			if ( $enrolled( $course ) ) {
+				return $course; }
+		}
+		return $candidates[0];
+	}
 
-    public static function index() {
-        if (self::$index !== null) { return self::$index; }
-        $stored = get_option(self::OPTION, null);
-        self::$index = is_array($stored) ? $stored : self::rebuild();
-        return self::$index;
-    }
+	public static function index() {
+		if ( self::$index !== null ) {
+			return self::$index; }
+		$stored      = get_option( self::OPTION, null );
+		self::$index = is_array( $stored ) ? $stored : self::rebuild();
+		return self::$index;
+	}
 
-    public static function rebuild() {
-        global $wpdb;
-        if (!Schema::ready()) { return self::$index = []; }
-        $rows = $wpdb->get_results($wpdb->prepare(
-            'SELECT m.post_id AS course_id, p.program FROM ' . $wpdb->postmeta . ' m JOIN ' . Schema::table('programs') . ' p ON p.id = m.meta_value JOIN ' . $wpdb->posts . " c ON c.ID = m.post_id WHERE m.meta_key = %s AND c.post_type = %s AND c.post_status IN ('publish','private')",
-            CourseProgram::CURRENT,
-            OHMYLMS_COURSE_CPT
-        ), ARRAY_N);
-        $index = self::index_from(is_array($rows) ? $rows : []);
-        update_option(self::OPTION, $index, false);
-        return self::$index = $index;
-    }
+	public static function rebuild() {
+		global $wpdb;
+		if ( ! Schema::ready() ) {
+			return self::$index = array(); }
+		$rows  = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT m.post_id AS course_id, p.program FROM ' . $wpdb->postmeta . ' m JOIN ' . Schema::table( 'programs' ) . ' p ON p.id = m.meta_value JOIN ' . $wpdb->posts . " c ON c.ID = m.post_id WHERE m.meta_key = %s AND c.post_type = %s AND c.post_status IN ('publish','private')",
+				CourseProgram::CURRENT,
+				OHMYLMS_COURSE_CPT
+			),
+			ARRAY_N
+		);
+		$index = self::index_from( is_array( $rows ) ? $rows : array() );
+		update_option( self::OPTION, $index, false );
+		return self::$index = $index;
+	}
 
-    /** Drop the derived index; it is rebuilt on next use. Call when a program is published or a course changes state. */
-    public static function flush() {
-        self::$index = null;
-        self::$enrolled = [];
-        delete_option(self::OPTION);
-    }
+	/** Drop the derived index; it is rebuilt on next use. Call when a program is published or a course changes state. */
+	public static function flush() {
+		self::$index    = null;
+		self::$enrolled = array();
+		delete_option( self::OPTION );
+	}
 
-    /** @return int[] Courses whose published program places this content. */
-    public static function courses_for($content_id) {
-        return self::index()[(int) $content_id] ?? [];
-    }
+	/** @return int[] Courses whose published program places this content. */
+	public static function courses_for( $content_id ) {
+		return self::index()[ (int) $content_id ] ?? array();
+	}
 
-    private static function enrolled($student_id, $course_id) {
-        global $wpdb;
-        $key = $student_id . ':' . $course_id;
-        if (!isset(self::$enrolled[$key])) {
-            self::$enrolled[$key] = (bool) $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d AND status='enrolled' LIMIT 1", $student_id, $course_id));
-        }
-        return self::$enrolled[$key];
-    }
+	private static function enrolled( $student_id, $course_id ) {
+		global $wpdb;
+		$key = $student_id . ':' . $course_id;
+		if ( ! isset( self::$enrolled[ $key ] ) ) {
+			self::$enrolled[ $key ] = (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d AND status='enrolled' LIMIT 1", $student_id, $course_id ) );
+		}
+		return self::$enrolled[ $key ];
+	}
 
-    /**
-     * The course a piece of content is opened in. `$home` is its original chapter-based course (or
-     * null); it is returned untouched unless a published program places the content too.
-     */
-    public static function resolve($content_id, $home, $student_id = 0) {
-        $placed = self::courses_for($content_id);
-        if (!$placed) { return $home; }
-        $candidates = array_values(array_unique(array_filter(array_merge([(int) $home], $placed))));
-        if (count($candidates) === 1) { return $candidates[0]; }
-        $student_id = (int) ($student_id ?: get_current_user_id());
-        return self::choose($candidates, static function ($course) use ($student_id) {
-            return $student_id > 0 && self::enrolled($student_id, $course);
-        });
-    }
+	/**
+	 * The course a piece of content is opened in. `$home` is its original chapter-based course (or
+	 * null); it is returned untouched unless a published program places the content too.
+	 */
+	public static function resolve( $content_id, $home, $student_id = 0 ) {
+		$placed = self::courses_for( $content_id );
+		if ( ! $placed ) {
+			return $home; }
+		$candidates = array_values( array_unique( array_filter( array_merge( array( (int) $home ), $placed ) ) ) );
+		if ( count( $candidates ) === 1 ) {
+			return $candidates[0]; }
+		$student_id = (int) ( $student_id ?: get_current_user_id() );
+		return self::choose(
+			$candidates,
+			static function ( $course ) use ( $student_id ) {
+				return $student_id > 0 && self::enrolled( $student_id, $course );
+			}
+		);
+	}
 }

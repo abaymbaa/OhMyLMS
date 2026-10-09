@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 $single_course_layout = get_option( 'ohmylms_single_course_page_layout', 'layout_1' );
 
@@ -136,7 +138,7 @@ add_action( 'ohmylms_after_single_course_content', 'ohmylms_widget_pricebox', 5 
 */
 
 add_action( 'ohmylms_before_courses_loop_item', 'ohmylms_template_loop_product_link_open', 5, 2 );
-add_action( 'ohmylms_after_courses_loop_item', 'ohmylms_template_loop_product_link_close', 5, 2);
+add_action( 'ohmylms_after_courses_loop_item', 'ohmylms_template_loop_product_link_close', 5, 2 );
 
 add_action( 'ohmylms_before_courses_loop_item_content', 'ohmylms_template_loop_course_thumbnail', 5 );
 
@@ -323,7 +325,6 @@ add_action( 'ohmylms_course_card_popup', 'ohmylms_loop_course_add_to_cart', 25 )
 
 /**
  * course single layout-3 header meta hooks
- *
 */
 add_action( 'ohmylms_single_course_layout3_header_meta', 'ohmylms_single_course_review', 5 );
 add_action( 'ohmylms_single_course_layout3_header_meta', 'ohmylms_single_course_level', 10 );

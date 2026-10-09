@@ -362,10 +362,10 @@ class ChapterController extends RestController {
 		$order_number = 0;
 
 		foreach ( $request->get_json_params() as $lesson ) {
-			if (( isset( $lesson['content_type'] ) && $lesson['content_type'] == 'session' ) || ( isset( $lesson['type'] ) && $lesson['type'] == 'session' )) {
+			if ( ( isset( $lesson['content_type'] ) && $lesson['content_type'] == 'session' ) || ( isset( $lesson['type'] ) && $lesson['type'] == 'session' ) ) {
 				++$order_number;
 				$lesson['order_number'] = ! empty( $lesson['order_number'] ) ? intval( $lesson['order_number'] ) : $order_number;
-				$chapter->get_data_store()->set_session( $chapter, $lesson);
+				$chapter->get_data_store()->set_session( $chapter, $lesson );
 				$lessons[] = $lesson;
 			} else {
 				if ( isset( $lesson['type'] ) && $lesson['type'] == 'quiz' ) {

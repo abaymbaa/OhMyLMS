@@ -14,48 +14,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if( !$lesson ){
+if ( ! $lesson ) {
 	return;
 }
 
-$lesson_id = $lesson->get_id();
+$lesson_id  = $lesson->get_id();
 $current_id = get_the_ID();
-$student = new \OhMyLMS\Data\Student(get_current_user_id());
-$get_type = $lesson->get_type();
-$is_active = $lesson_id == $current_id ? 'active' : '';
+$student    = new \OhMyLMS\Data\Student( get_current_user_id() );
+$get_type   = $lesson->get_type();
+$is_active  = $lesson_id == $current_id ? 'active' : '';
 
 
- $type = $lesson->get_type();
+$type = $lesson->get_type();
 
- $content_type = get_post_meta( $lesson_id, '_content_type', true );
+$content_type = get_post_meta( $lesson_id, '_content_type', true );
 
- if('session' === $content_type) {
+if ( 'session' === $content_type ) {
 	$type = 'session';
- }
+}
 
- switch ($type) {
-	 case 'video':
-		 $icon_class = 'type-video';
-		 break;
-	 case 'audio':
-		 $icon_class = 'type-audio';
-		 break;
-	 case 'quiz':
-		 $icon_class = 'type-quiz';
-		 break;
-	 case 'assignment':
-		 $icon_class = 'type-assignment';
-		 break;
-	 case 'session':
+switch ( $type ) {
+	case 'video':
+		$icon_class = 'type-video';
+		break;
+	case 'audio':
+		$icon_class = 'type-audio';
+		break;
+	case 'quiz':
+		$icon_class = 'type-quiz';
+		break;
+	case 'assignment':
+		$icon_class = 'type-assignment';
+		break;
+	case 'session':
 		$icon_class = 'type-session';
 		break;
-	 default:
-		 $icon_class = 'type-text';
- }
+	default:
+		$icon_class = 'type-text';
+}
 
- $is_checked = $student->maybe_completed($lesson_id) ? 'checked' : '';
+$is_checked = $student->maybe_completed( $lesson_id ) ? 'checked' : '';
 
-$_course_id = ohmylms_get_course_id_by_content_id( $lesson_id );
+$_course_id       = ohmylms_get_course_id_by_content_id( $lesson_id );
 $is_lesson_locked = false;
 if ( $_course_id && function_exists( 'apply_filters' ) ) {
 	$is_lesson_locked = apply_filters( 'ohmylms_is_lesson_locked', false, $lesson_id, $_course_id, get_current_user_id() );
@@ -63,16 +63,25 @@ if ( $_course_id && function_exists( 'apply_filters' ) ) {
 ?>
 
 
-<li class="lesson-item <?php echo $icon_class . ' '; echo $is_active; ?><?php echo $is_lesson_locked ? ' lesson-locked' : ''; ?>">
+<li class="lesson-item 
+<?php
+echo $icon_class . ' ';
+echo $is_active;
+?>
+<?php echo $is_lesson_locked ? ' lesson-locked' : ''; ?>">
 	<a href="<?php echo $is_lesson_locked ? '#' : esc_url( $lesson->get_permalink() ); ?>"
-	   lesson-id="<?php echo $lesson_id; ?>"
-	   <?php if ( $is_lesson_locked ) { echo 'onclick="return false;" style="cursor:not-allowed;opacity:0.6;"'; } ?>>
+		lesson-id="<?php echo $lesson_id; ?>"
+		<?php
+		if ( $is_lesson_locked ) {
+			echo 'onclick="return false;" style="cursor:not-allowed;opacity:0.6;"'; }
+		?>
+		>
 		<?php echo esc_html( $lesson->get_name() ); ?>
 	</a>
 
 	<?php if ( $is_lesson_locked ) : ?>
 		<span style="position:absolute;right:17px;top:50%;transform:translateY(-50%);z-index:1;line-height:1;">
-			<?php include( OHMYLMS_DIR . '/assets/images/icon/lock-icon.php' ); ?>
+			<?php include OHMYLMS_DIR . '/assets/images/icon/lock-icon.php'; ?>
 		</span>
 	<?php else : ?>
 		<span class="lesson-status <?php echo $is_checked ? 'checked' : ''; ?>">

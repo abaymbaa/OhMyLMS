@@ -25,7 +25,7 @@ abstract class RestController extends WP_REST_Controller {
 	 */
 	protected function check_object_permission( $request, $action, $post_types, $id_param = 'id' ) {
 		$post_id = isset( $request[ $id_param ] ) ? absint( $request[ $id_param ] ) : 0;
-		$post = $post_id ? get_post( $post_id ) : null;
+		$post    = $post_id ? get_post( $post_id ) : null;
 
 		if ( ! $post || ! in_array( $post->post_type, (array) $post_types, true ) ) {
 			return new \WP_Error( 'ohmylms_rest_invalid_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );

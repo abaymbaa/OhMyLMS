@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </div>
 
 <p class="review-description">
-	<?php echo get_comment_text($comment); ?>
+	<?php echo get_comment_text( $comment ); ?>
 </p>
 
 <?php

@@ -1,4 +1,3 @@
-
 <?php
 /**
  * The template for displaying short text question
@@ -13,21 +12,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-$quiz 		= ohmylms_get_quiz(get_the_ID());
-$settings = $quiz->get_settings();
-$short_text_limit = is_array($settings) && isset($settings['short_text_limit']) ? $settings['short_text_limit'] : '';
-$class = '';
+$quiz             = ohmylms_get_quiz( get_the_ID() );
+$settings         = $quiz->get_settings();
+$short_text_limit = is_array( $settings ) && isset( $settings['short_text_limit'] ) ? $settings['short_text_limit'] : '';
+$class            = '';
 
-if(!empty($short_text_limit)){
+if ( ! empty( $short_text_limit ) ) {
 	$class = 'ohmylms-has-character-limit';
 }
 ?>
 
-<?php foreach ($question['questions'] as $option){ ?>
+<?php foreach ( $question['questions'] as $option ) { ?>
 	<div class="answer-type-text">
-		<input type="text" data-question-id="<?php echo $option['question_id']; ?>"class="ohmylms-text-input <?php echo $class; ?>" data-limit="<?php echo $short_text_limit; ?>" name="attempt[<?php echo $attempt['id']; ?>][quiz_question][<?php echo $option['question_id'] ?>][]" placeholder="Type your answer here ... ">
+		<input type="text" data-question-id="<?php echo $option['question_id']; ?>"class="ohmylms-text-input <?php echo $class; ?>" data-limit="<?php echo $short_text_limit; ?>" name="attempt[<?php echo $attempt['id']; ?>][quiz_question][<?php echo $option['question_id']; ?>][]" placeholder="Type your answer here ... ">
 
-		<?php if(!empty($short_text_limit)){ ?>
+		<?php if ( ! empty( $short_text_limit ) ) { ?>
 			<span class="ohmylms-character-limit-hints">
 				<span>0</span>/<?php echo $short_text_limit; ?>
 			</span>

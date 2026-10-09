@@ -19,15 +19,15 @@ $should_show_add_to_cart = true;
 
 // If course is cohort-based, check enrollment deadline and course expiration
 if ( $course && $course->get_type() === 'cohort-based' ) {
-	$cohorts = $course->get_cohort();
+	$cohorts               = $course->get_cohort();
 	$has_active_enrollment = false;
-	$all_expired = true;
-	$current_time = current_time( 'timestamp' );
+	$all_expired           = true;
+	$current_time          = current_time( 'timestamp' );
 	foreach ( $cohorts as $cohort ) {
 		// Check if any cohort has an active enrollment period
 		if ( ! empty( $cohort['enrollment_deadline'] ) ) {
 			$enrollment_end = strtotime( $cohort['enrollment_deadline'] );
-			
+
 			if ( $enrollment_end > $current_time ) {
 				$has_active_enrollment = true;
 			}
@@ -48,7 +48,7 @@ if ( $course && $course->get_type() === 'cohort-based' ) {
 	}
 
 	// Don't show add to cart if all cohorts are expired or no active enrollment
-	$should_show_add_to_cart = $has_active_enrollment && !$all_expired;
+	$should_show_add_to_cart = $has_active_enrollment && ! $all_expired;
 }
 
 // Only show add to cart button if enrollment is active

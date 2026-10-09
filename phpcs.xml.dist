@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="OhMyLMS WordPress">
+  <description>WordPress standards for plugin-owned PHP. Dependencies and generated assets are excluded.</description>
+  <config name="installed_paths" value="tools/coding-standards/vendor/wp-coding-standards/wpcs,tools/coding-standards/vendor/phpcsstandards/phpcsutils,tools/coding-standards/vendor/phpcsstandards/phpcsextra"/>
+  <arg name="extensions" value="php"/>
+  <arg name="encoding" value="UTF-8"/>
+  <arg name="basepath" value="."/>
+  <file>ohmylms.php</file>
+  <file>includes</file>
+  <file>modules</file>
+  <file>packages</file>
+  <file>templates</file>
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <rule ref="WordPress"/>
+  <rule ref="WordPress.WP.I18n">
+    <properties><property name="text_domain" type="array"><element value="ohmylms"/></property></properties>
+  </rule>
+</ruleset>

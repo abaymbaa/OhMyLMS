@@ -22,10 +22,10 @@ function ecommerce_get_subscription( $subscription_id ) {
  */
 function ecommerce_get_subscription_notes( $args ) {
 	$key_mapping = array(
-		'limit'         => 'number',
-		'subscription_id'      => 'post_id',
-		'order__in'     => 'post__in',
-		'order__not_in' => 'post__not_in',
+		'limit'           => 'number',
+		'subscription_id' => 'post_id',
+		'order__in'       => 'post__in',
+		'order__not_in'   => 'post__not_in',
 	);
 
 	foreach ( $key_mapping as $query_key => $db_key ) {
@@ -116,7 +116,7 @@ function ecommerce_get_subscription_info( $membership_id ) {
 	$subscription_length = get_post_meta( $membership_id, '_subscription_length', true );
 	if ( ! is_array( $subscription_length ) || empty( $subscription_length['period'] ) ) {
 		return array(
-			'period' => 'unknown',
+			'period'   => 'unknown',
 			'duration' => 1,
 		);
 	}
@@ -127,18 +127,18 @@ function ecommerce_get_subscription_info( $membership_id ) {
 		'year'  => __( 'yearly', 'ohmylms' ),
 	);
 
-	$_period = strtolower( $subscription_length['period'] );
-	$period = isset( $period_map[ $_period ] ) ? $period_map[ $_period ] : __( 'Unknown', 'ohmylms' );
+	$_period  = strtolower( $subscription_length['period'] );
+	$period   = isset( $period_map[ $_period ] ) ? $period_map[ $_period ] : __( 'Unknown', 'ohmylms' );
 	$duration = 1;
-	if ( !empty( $subscription_length['every'] ) ) {
+	if ( ! empty( $subscription_length['every'] ) ) {
 		if ( strtolower( $subscription_length['every'] ) !== 'every' ) {
 			$duration = intval( $subscription_length['every'] );
 		}
 	}
 
 	return array(
-		'period' => $period,
-		'duration' => $duration,
+		'period'     => $period,
+		'duration'   => $duration,
 		'period_raw' => $_period,
 	);
 }

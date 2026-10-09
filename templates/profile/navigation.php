@@ -17,57 +17,57 @@ do_action( 'ohmylms_before_account_navigation' );
 
 <aside class="ohmylms-student-profile-sidebar">
 	<ul class="ohmylms-student-profile-tab">
-		<li class="item-profile <?php echo ohmylms_get_account_menu_item_classes('profile') . ' ' . ohmylms_get_account_menu_item_classes('profile-edit'); ?> ">
+		<li class="item-profile <?php echo ohmylms_get_account_menu_item_classes( 'profile' ) . ' ' . ohmylms_get_account_menu_item_classes( 'profile-edit' ); ?> ">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'profile' ) ); ?>">
 				<span class="icon icon-regular">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/profile-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/profile-icon.php'; ?>
 				</span>
 
 				<span class="icon icon-active">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/profile-active-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/profile-active-icon.php'; ?>
 				</span>
 
 				<?php echo __( 'Profile', 'ohmylms' ); ?>
 			</a>
 		</li>
 
-		<!-- <li class="item-notifications <?php echo ohmylms_get_account_menu_item_classes('notification') ?>">
+		<!-- <li class="item-notifications <?php echo ohmylms_get_account_menu_item_classes( 'notification' ); ?>">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'notification' ) ); ?>">
 				<span class="icon icon-regular">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/notification-o-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/notification-o-icon.php'; ?>
 				</span>
 
 				<span class="icon icon-active">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/notification-o-active-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/notification-o-active-icon.php'; ?>
 				</span>
 
 				<?php echo __( 'Notifications', 'ohmylms' ); ?>
 			</a>
 		</li> -->
 
-		<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes('transactions-history') ?>">
+		<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes( 'transactions-history' ); ?>">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'transactions-history' ) ); ?>">
 				<span class="icon icon-regular">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/cart-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/cart-icon.php'; ?>
 				</span>
 
 				<span class="icon icon-active">
-					<?php include(OHMYLMS_DIR . '/assets/images/icon/cart-active-icon.php'); ?>
+					<?php require OHMYLMS_DIR . '/assets/images/icon/cart-active-icon.php'; ?>
 				</span>
 
 				<?php echo __( 'Transaction History', 'ohmylms' ); ?>
 			</a>
 		</li>
 
-		<?php if( ohmylms_is_pro() ): ?>
-			<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes('membership') ?>">
+		<?php if ( ohmylms_is_pro() ) : ?>
+			<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes( 'membership' ); ?>">
 				<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'membership' ) ); ?>">
 					<span class="icon icon-regular">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/membership-icon.php'); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/membership-icon.php'; ?>
 					</span>
 
 					<span class="icon icon-active">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/membership-active-icon.php'); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/membership-active-icon.php'; ?>
 					</span>
 
 					<?php echo __( 'Membership', 'ohmylms' ); ?>
@@ -75,17 +75,17 @@ do_action( 'ohmylms_before_account_navigation' );
 			</li>
 		<?php endif; ?>
 
-		<!-- <li class="item-billing <?php //echo ohmylms_get_account_menu_item_classes('billing-information') ?>">
-			<a href="<?php //echo esc_url( ohmylms_get_account_endpoint_url( 'billing-information' ) ); ?>">
+		<!-- <li class="item-billing <?php // echo ohmylms_get_account_menu_item_classes('billing-information') ?>">
+			<a href="<?php // echo esc_url( ohmylms_get_account_endpoint_url( 'billing-information' ) ); ?>">
 				<span class="icon icon-regular">
-					<?php //include(OHMYLMS_DIR . '/assets/images/icon/billing-icon.php'); ?>
+					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-icon.php'); ?>
 				</span>
 
 				<span class="icon icon-active">
-					<?php //include(OHMYLMS_DIR . '/assets/images/icon/billing-active-icon.php'); ?>
+					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-active-icon.php'); ?>
 				</span>
 
-				<?php //echo __( 'Billing Information', 'ohmylms' ); ?>
+				<?php // echo __( 'Billing Information', 'ohmylms' ); ?>
 			</a>
 		</li> -->
 	</ul>

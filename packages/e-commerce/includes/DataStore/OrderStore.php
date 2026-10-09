@@ -299,7 +299,7 @@ class OrderStore extends DataStore {
 	 * Read items of a specific type from the order.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to read items from.
-	 * @param string $type The type of items to read.
+	 * @param string                        $type The type of items to read.
 	 * @return array The items of the specified type.
 	 *
 	 * @since 1.0.0
@@ -405,33 +405,38 @@ class OrderStore extends DataStore {
 	public function get_related_orders( $order ) {
 		global $wpdb;
 		$order_id = is_object( $order ) ? $order->get_id() : (int) $order;
-		$related = array();
+		$related  = array();
 
 		// 1. Get the subscription for this order (assuming only one subscription per order)
-		$_subscription = $wpdb->get_row( $wpdb->prepare(
-			"SELECT ID, post_type, post_date, post_status FROM {$wpdb->posts} WHERE post_parent = %d AND post_type = %s LIMIT 1",
-			$order_id,
-			'ohmylms-subscription'
-		) );
+		$_subscription = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT ID, post_type, post_date, post_status FROM {$wpdb->posts} WHERE post_parent = %d AND post_type = %s LIMIT 1",
+				$order_id,
+				'ohmylms-subscription'
+			)
+		);
 		if ( $_subscription ) {
 			$subscription_id = (int) $_subscription->ID;
-			$subscription = ecommerce_get_subscription( $subscription_id );
-			$renewal_orders = $wpdb->get_results( $wpdb->prepare(
-				"SELECT p.ID, p.post_type, p.post_date, p.post_status FROM {$wpdb->posts} p
+			$subscription    = ecommerce_get_subscription( $subscription_id );
+			$renewal_orders  = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT p.ID, p.post_type, p.post_date, p.post_status FROM {$wpdb->posts} p
 				INNER JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
 				WHERE m.meta_key = %s AND m.meta_value = %d
 				ORDER BY p.post_date DESC",
-				'_subscription_renewal_id', $subscription_id
-			) );
+					'_subscription_renewal_id',
+					$subscription_id
+				)
+			);
 
 			foreach ( $renewal_orders as $renewal ) {
-				$order = ecommerce_get_order( $renewal->ID );
+				$order     = ecommerce_get_order( $renewal->ID );
 				$related[] = array(
 					'id'           => (int) $renewal->ID,
 					'status'       => ucfirst( $order->get_status() ),
 					'total'        => $order->get_order_total(),
 					'relationship' => __( 'Renewal Order', 'ohmylms' ),
-					'date' 			=> $renewal->post_date,
+					'date'         => $renewal->post_date,
 				);
 			}
 			$related[] = array(
@@ -439,7 +444,7 @@ class OrderStore extends DataStore {
 				'status'       => ucfirst( $subscription->get_status() ),
 				'total'        => $subscription->get_order_total(),
 				'relationship' => __( 'Subscription', 'ohmylms' ),
-				'date' 			=> $_subscription->post_date,
+				'date'         => $_subscription->post_date,
 			);
 		}
 		return $related;
@@ -450,6 +455,7 @@ class OrderStore extends DataStore {
 	 * Check if the given order is a renewal order.
 	 *
 	 * This function checks if the order has a related subscription renewal ID.
+	 *
 	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID to check.
 	 * @return bool True if the order is a renewal order, false otherwise.
 	 * @since 1.0.0
@@ -458,7 +464,7 @@ class OrderStore extends DataStore {
 		if ( ! is_a( $order, 'CodeRex\Ecommerce\Data\Order' ) ) {
 			$order = ecommerce_get_order( $order );
 		}
-		$order_id = $order->get_id();
+		$order_id                = $order->get_id();
 		$related_subscription_id = get_post_meta( $order_id, '_subscription_renewal_id', true );
 		if ( $related_subscription_id ) {
 			return true;
@@ -475,16 +481,18 @@ class OrderStore extends DataStore {
 	 * @return bool True if the order is a parent order, false otherwise.
 	 * @since 1.0.0
 	 */
-	public function is_parent_order($order) {
+	public function is_parent_order( $order ) {
 		if ( ! is_a( $order, 'CodeRex\Ecommerce\Data\Order' ) ) {
 			$order = ecommerce_get_order( $order );
 		}
-		$is_parent_order = new \WP_Query( array(
-			'post_type'   	=> 'ohmylms-subscription',
-			'parent_id' => $order->get_id(),
-			'post_status' 	=> 'any',
-			'fields'      	=> 'ids',
-		) );
+		$is_parent_order = new \WP_Query(
+			array(
+				'post_type'   => 'ohmylms-subscription',
+				'parent_id'   => $order->get_id(),
+				'post_status' => 'any',
+				'fields'      => 'ids',
+			)
+		);
 
 		return ! empty( $is_parent_order->posts ) ? true : false;
 	}
@@ -495,8 +503,8 @@ class OrderStore extends DataStore {
 	 * This method provides a dedicated way to update order status with proper hooks.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID.
-	 * @param string $new_status The new status to set.
-	 * @param string $note Optional note for the status change.
+	 * @param string                            $new_status The new status to set.
+	 * @param string                            $note Optional note for the status change.
 	 * @since 1.0.0
 	 */
 	public function update_order_status( $order, $new_status, $note = '' ) {

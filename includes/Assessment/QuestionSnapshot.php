@@ -1,7 +1,7 @@
 <?php
 namespace OhMyLMS\Assessment;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Read-only question object built from an immutable version row.
@@ -11,119 +11,197 @@ defined('ABSPATH') || exit;
  * the learner saw, never the current draft.
  */
 class QuestionSnapshot {
-    private $version;
+	private $version;
+	/** @var array|null seed and numbers of a template instance */
+	private $instance = null;
 
-    public function __construct(array $version) {
-        $this->version = $version;
-        // Option images resolve to the copies frozen with this version.
-        foreach ((array) ($version['options'] ?? []) as $index => $option) {
-            $id = (int) ($option['id'] ?? 0);
-            if (!empty($option['image_url'])) { $this->version['options'][$index]['image_url'] = $this->frozen_url('option:' . $id, (string) $option['image_url']); }
-            if (!empty($option['matching_data']['image_url'])) { $this->version['options'][$index]['matching_data']['image_url'] = $this->frozen_url('match:' . $id, (string) $option['matching_data']['image_url']); }
-        }
-    }
+	public function __construct( array $version ) {
+		$this->version = $version;
+		// Option images resolve to the copies frozen with this version.
+		foreach ( (array) ( $version['options'] ?? array() ) as $index => $option ) {
+			$id = (int) ( $option['id'] ?? 0 );
+			if ( ! empty( $option['image_url'] ) ) {
+				$this->version['options'][ $index ]['image_url'] = $this->frozen_url( 'option:' . $id, (string) $option['image_url'] ); }
+			if ( ! empty( $option['matching_data']['image_url'] ) ) {
+				$this->version['options'][ $index ]['matching_data']['image_url'] = $this->frozen_url( 'match:' . $id, (string) $option['matching_data']['image_url'] ); }
+		}
+	}
 
-    /** Decode a qb_question_versions row (JSON columns) into a snapshot. */
-    public static function from_row($row) {
-        if (!$row) { return null; }
-        $row = (array) $row;
-        foreach (['settings', 'options', 'media', 'extension', 'parts'] as $column) {
-            $value = isset($row[$column]) && is_string($row[$column]) ? json_decode($row[$column], true) : ($row[$column] ?? []);
-            $row[$column] = is_array($value) ? $value : [];
-        }
-        return new self($row);
-    }
+	/** Decode a qb_question_versions row (JSON columns) into a snapshot. */
+	public static function from_row( $row ) {
+		if ( ! $row ) {
+			return null; }
+		$row = (array) $row;
+		foreach ( array( 'settings', 'options', 'media', 'extension', 'parts' ) as $column ) {
+			$value          = isset( $row[ $column ] ) && is_string( $row[ $column ] ) ? json_decode( $row[ $column ], true ) : ( $row[ $column ] ?? array() );
+			$row[ $column ] = is_array( $value ) ? $value : array();
+		}
+		return new self( $row );
+	}
 
-    public function get_id() { return (int) $this->version['question_id']; }
-    public function get_version_id() { return (int) $this->version['id']; }
-    public function get_version_no() { return (int) $this->version['version_no']; }
-    public function get_uuid() { return (string) $this->version['question_uuid']; }
-    public function get_type() { return (string) $this->version['type']; }
-    public function get_name() { return (string) $this->version['title']; }
-    public function get_description() { return \OhMyLMS\QuestionBank\MediaFreezer::body((string) $this->version['body'], $this->frozen()); }
-    public function get_settings(): array { return $this->version['settings']; }
-    /** Full option rows, including correctness. Server-side use only. */
-    public function get_questions(): array { return $this->version['options']; }
-    public function get_correct_options() {
-        return array_values(array_filter($this->version['options'], static function ($option) { return !empty($option['is_correct']); }));
-    }
-    public function get_parts() { return $this->version['parts'] ?: [['id' => 'p1', 'fraction' => 1]]; }
-    public function get_extension_settings() { return $this->version['extension']; }
-    public function get_thumbnail_id() { return (int) ($this->version['media']['thumbnail_id'] ?? 0); }
-    public function get_image_id() { return (int) ($this->version['media']['image_id'] ?? 0); }
-    public function get_video_id() { return (int) ($this->version['media']['video_id'] ?? 0); }
-    public function get_image_url() { return $this->frozen_url('image', (string) ($this->version['media']['image_url'] ?? '')); }
-    public function get_video_url() { return $this->frozen_url('video', (string) ($this->version['media']['video_url'] ?? '')); }
-    /** Frozen media copies captured with this version (see QuestionBank\MediaFreezer). */
-    public function frozen() { return (array) ($this->version['media']['frozen'] ?? []); }
-    private function frozen_url($key, $live) {
-        $frozen = $this->frozen();
-        return isset($frozen[$key]['url']) ? (string) $frozen[$key]['url'] : $live;
-    }
-    public function is_migration_snapshot() { return !empty($this->version['is_migration_snapshot']); }
-    public function to_array() { return $this->version; }
+	/** Does this version carry a randomisation template? */
+	public function is_template() {
+		return Template::has( $this->version['settings'] );
+	}
 
-    /** Types whose option text is the expected answer and must never reach the learner. */
-    public static function hides_option_text($type) {
-        return in_array($type, ['statement', 'fill-in-the-blank', 'short-text', 'long-text'], true);
-    }
+	/**
+	 * The concrete question for one instance seed. A version without a template is returned
+	 * unchanged, so callers can instantiate every item without checking.
+	 */
+	public function instantiate( $seed ) {
+		if ( ! $this->is_template() ) {
+			return $this; }
+		$applied                    = Template::apply( $this->version['title'], $this->version['body'], $this->version['settings'], $this->version['options'], (int) $seed );
+		$clone                      = clone $this;
+		$clone->version['title']    = $applied['title'];
+		$clone->version['body']     = $applied['body'];
+		$clone->version['settings'] = $applied['settings'];
+		$clone->version['options']  = $applied['options'];
+		$clone->instance            = array(
+			'seed'   => (int) $seed,
+			'params' => $applied['params'],
+		);
+		return $clone;
+	}
 
-    /**
-     * Learner-safe question in the array shape the quiz templates render.
-     *
-     * Correctness, expected text and teacher-only settings are removed. Option IDs are
-     * replaced by per-delivery tokens so markup cannot reveal matches or ordering.
-     *
-     * @param array $option_order Option IDs in delivery order.
-     * @param array $tokens       option id => token.
-     * @param array $display      Extra frozen presentation data (e.g. matching definition order).
-     */
-    public function student_view(array $option_order = [], array $tokens = [], array $display = [], array $definition_tokens = []) {
-        $type = $this->get_type();
-        $by_id = [];
-        foreach ($this->version['options'] as $option) { $by_id[(int) $option['id']] = $option; }
-        $ordered = [];
-        foreach ($option_order ?: array_keys($by_id) as $option_id) {
-            if (!isset($by_id[(int) $option_id])) { continue; }
-            $ordered[] = $this->safe_option($by_id[(int) $option_id], $tokens, $type);
-        }
-        $definitions = [];
-        foreach ((array) ($display['definitions'] ?? []) as $option_id) {
-            if (isset($by_id[(int) $option_id])) { $definitions[] = $this->safe_option($by_id[(int) $option_id], $definition_tokens ?: $tokens, $type); }
-        }
-        // Only settings a renderer needs are public; a type may name more via 'public_settings'.
-        $definition = \OhMyLMS\Extensions\Registry::get('question', $type);
-        $public = array_merge(['type', 'required', 'score', 'randomize'], (array) ($definition['public_settings'] ?? []));
-        $settings = array_intersect_key($this->get_settings(), array_flip($public));
-        if ($type === 'structured') { $settings['parts'] = Structured::public_parts($this->get_settings()); }
-        $body = $this->get_description();
-        if (function_exists('has_blocks') && has_blocks($body)) { $body = apply_filters('the_content', $body); }
-        return InlineBlanks::public_view([
-            'id' => $this->get_id(),
-            'uuid' => $this->get_uuid(),
-            'version_id' => $this->get_version_id(),
-            'name' => $this->get_name(),
-            'description' => $body,
-            'settings' => $settings,
-            'questions' => $ordered,
-            'definitions' => $definitions,
-            'image_src' => $this->get_image_url(),
-            'video_src' => $this->get_video_url(),
-            'frozen' => true,
-        ]);
-    }
+	/** Seed and numbers of this instance, or null for a plain question. */
+	public function get_instance() {
+		return $this->instance;
+	}
 
-    private function safe_option(array $option, array $tokens, $type) {
-        $id = (int) $option['id'];
-        $matching = is_array($option['matching_data'] ?? null) ? $option['matching_data'] : [];
-        return [
-            'id' => $tokens[$id] ?? (string) $id,
-            'question_id' => $this->get_id(),
-            'answer' => self::hides_option_text($type) ? '' : (string) ($option['answer'] ?? ''),
-            'order_number' => 0,
-            'image_url' => (string) ($option['image_url'] ?? ''),
-            'thumbnail_id' => (int) ($option['thumbnail_id'] ?? 0),
-            'matching_data' => array_intersect_key($matching, array_flip(['label', 'image_url'])),
-        ];
-    }
+	public function get_id() {
+		return (int) $this->version['question_id']; }
+	public function get_version_id() {
+		return (int) $this->version['id']; }
+	public function get_version_no() {
+		return (int) $this->version['version_no']; }
+	public function get_uuid() {
+		return (string) $this->version['question_uuid']; }
+	public function get_type() {
+		return (string) $this->version['type']; }
+	public function get_name() {
+		return (string) $this->version['title']; }
+	public function get_description() {
+		return \OhMyLMS\QuestionBank\MediaFreezer::body( (string) $this->version['body'], $this->frozen() ); }
+	public function get_settings(): array {
+		return $this->version['settings']; }
+	/** Full option rows, including correctness. Server-side use only. */
+	public function get_questions(): array {
+		return $this->version['options']; }
+	public function get_correct_options() {
+		return array_values(
+			array_filter(
+				$this->version['options'],
+				static function ( $option ) {
+					return ! empty( $option['is_correct'] );
+				}
+			)
+		);
+	}
+	public function get_parts() {
+		return $this->version['parts'] ?: array(
+			array(
+				'id'       => 'p1',
+				'fraction' => 1,
+			),
+		); }
+	public function get_extension_settings() {
+		return $this->version['extension']; }
+	public function get_thumbnail_id() {
+		return (int) ( $this->version['media']['thumbnail_id'] ?? 0 ); }
+	public function get_image_id() {
+		return (int) ( $this->version['media']['image_id'] ?? 0 ); }
+	public function get_video_id() {
+		return (int) ( $this->version['media']['video_id'] ?? 0 ); }
+	public function get_image_url() {
+		return $this->frozen_url( 'image', (string) ( $this->version['media']['image_url'] ?? '' ) ); }
+	public function get_video_url() {
+		return $this->frozen_url( 'video', (string) ( $this->version['media']['video_url'] ?? '' ) ); }
+	/** Frozen media copies captured with this version (see QuestionBank\MediaFreezer). */
+	public function frozen() {
+		return (array) ( $this->version['media']['frozen'] ?? array() ); }
+	private function frozen_url( $key, $live ) {
+		$frozen = $this->frozen();
+		return isset( $frozen[ $key ]['url'] ) ? (string) $frozen[ $key ]['url'] : $live;
+	}
+	public function is_migration_snapshot() {
+		return ! empty( $this->version['is_migration_snapshot'] ); }
+	public function to_array() {
+		return $this->version; }
+
+	/** Types whose option text is the expected answer and must never reach the learner. */
+	public static function hides_option_text( $type ) {
+		return in_array( $type, array( 'statement', 'fill-in-the-blank', 'short-text', 'long-text' ), true );
+	}
+
+	/**
+	 * Learner-safe question in the array shape the quiz templates render.
+	 *
+	 * Correctness, expected text and teacher-only settings are removed. Option IDs are
+	 * replaced by per-delivery tokens so markup cannot reveal matches or ordering.
+	 *
+	 * @param array $option_order Option IDs in delivery order.
+	 * @param array $tokens       option id => token.
+	 * @param array $display      Extra frozen presentation data (e.g. matching definition order).
+	 */
+	public function student_view( array $option_order = array(), array $tokens = array(), array $display = array(), array $definition_tokens = array() ) {
+		$type  = $this->get_type();
+		$by_id = array();
+		foreach ( $this->version['options'] as $option ) {
+			$by_id[ (int) $option['id'] ] = $option; }
+		$ordered = array();
+		foreach ( $option_order ?: array_keys( $by_id ) as $option_id ) {
+			if ( ! isset( $by_id[ (int) $option_id ] ) ) {
+				continue; }
+			$ordered[] = $this->safe_option( $by_id[ (int) $option_id ], $tokens, $type );
+		}
+		$definitions = array();
+		foreach ( (array) ( $display['definitions'] ?? array() ) as $option_id ) {
+			if ( isset( $by_id[ (int) $option_id ] ) ) {
+				$definitions[] = $this->safe_option( $by_id[ (int) $option_id ], $definition_tokens ?: $tokens, $type ); }
+		}
+		// Only settings a renderer needs are public; a type may name more via 'public_settings'.
+		$definition = \OhMyLMS\Extensions\Registry::get( 'question', $type );
+		$public     = array_merge( array( 'type', 'required', 'score', 'randomize' ), (array) ( $definition['public_settings'] ?? array() ) );
+		$settings   = array_intersect_key( $this->get_settings(), array_flip( $public ) );
+		if ( $type === 'structured' ) {
+			$settings['parts'] = Structured::public_parts( $this->get_settings() ); }
+		// A type with private keys inside public structures builds its own learner view.
+		if ( is_callable( $definition['public_view'] ?? null ) ) {
+			$settings = array_merge( $settings, (array) call_user_func( $definition['public_view'], $this->get_settings(), $this->get_id() . '|' . $this->get_version_id() ) ); }
+		$body = $this->get_description();
+		if ( $type === 'fill-in-the-blank' && ! empty( $this->get_settings()['question_code'] ) ) {
+			$body = ''; }
+		if ( function_exists( 'has_blocks' ) && has_blocks( $body ) ) {
+			$body = apply_filters( 'the_content', $body ); }
+		return InlineBlanks::public_view(
+			array(
+				'id'          => $this->get_id(),
+				'uuid'        => $this->get_uuid(),
+				'version_id'  => $this->get_version_id(),
+				'name'        => $this->get_name(),
+				'description' => $body,
+				'settings'    => $settings,
+				'questions'   => $ordered,
+				'definitions' => $definitions,
+				'image_src'   => $this->get_image_url(),
+				'video_src'   => $this->get_video_url(),
+				'frozen'      => true,
+			)
+		);
+	}
+
+	private function safe_option( array $option, array $tokens, $type ) {
+		$id       = (int) $option['id'];
+		$matching = is_array( $option['matching_data'] ?? null ) ? $option['matching_data'] : array();
+		return array(
+			'id'            => $tokens[ $id ] ?? (string) $id,
+			'question_id'   => $this->get_id(),
+			'answer'        => self::hides_option_text( $type ) ? '' : (string) ( $option['answer'] ?? '' ),
+			'order_number'  => 0,
+			'image_url'     => (string) ( $option['image_url'] ?? '' ),
+			'thumbnail_id'  => (int) ( $option['thumbnail_id'] ?? 0 ),
+			'matching_data' => array_intersect_key( $matching, array_flip( array( 'label', 'image_url' ) ) ),
+		);
+	}
 }

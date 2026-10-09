@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $post;
 
-$meet_link = get_post_meta( $post->ID, '_googlemeet_link', true );
-$meeting_id = get_post_meta( $post->ID, '_googlemeet_meeting_id', true );
-$start_time = get_post_meta( $post->ID, '_session_start_time', true );
-$end_time = get_post_meta( $post->ID, '_session_end_time', true );
-$timezone = get_post_meta( $post->ID, '_session_timezone', true );
-$meeting_topic = get_post_meta( $post->ID, '_session_topic', true );
+$meet_link      = get_post_meta( $post->ID, '_googlemeet_link', true );
+$meeting_id     = get_post_meta( $post->ID, '_googlemeet_meeting_id', true );
+$start_time     = get_post_meta( $post->ID, '_session_start_time', true );
+$end_time       = get_post_meta( $post->ID, '_session_end_time', true );
+$timezone       = get_post_meta( $post->ID, '_session_timezone', true );
+$meeting_topic  = get_post_meta( $post->ID, '_session_topic', true );
 $meeting_agenda = get_post_meta( $post->ID, '_session_agenda', true );
 
-$now = current_time( 'timestamp' );
+$now            = current_time( 'timestamp' );
 $meeting_status = 'upcoming';
 
 if ( $now >= $start_time && $now <= $end_time ) {
@@ -84,16 +84,16 @@ if ( $now >= $start_time && $now <= $end_time ) {
 			<div class="googlemeet-actions">
 				<?php if ( $meeting_status === 'live' ) : ?>
 					<a href="<?php echo esc_url( $meet_link ); ?>" 
-					   target="_blank" 
-					   rel="noopener noreferrer" 
-					   class="button googlemeet-join-button primary">
+						target="_blank" 
+						rel="noopener noreferrer" 
+						class="button googlemeet-join-button primary">
 						<?php esc_html_e( 'Join Meeting Now', 'ohmylms' ); ?>
 					</a>
 				<?php elseif ( $meeting_status === 'upcoming' ) : ?>
 					<a href="<?php echo esc_url( $meet_link ); ?>" 
-					   target="_blank" 
-					   rel="noopener noreferrer" 
-					   class="button googlemeet-join-button">
+						target="_blank" 
+						rel="noopener noreferrer" 
+						class="button googlemeet-join-button">
 						<?php esc_html_e( 'View Meeting Link', 'ohmylms' ); ?>
 					</a>
 					<p class="meeting-info">
@@ -104,13 +104,22 @@ if ( $now >= $start_time && $now <= $end_time ) {
 						<?php esc_html_e( 'This meeting has ended', 'ohmylms' ); ?>
 					</p>
 				<?php endif; ?>
-				<a href="<?php echo esc_url( add_query_arg( array(
-					'action' => 'ohmylms_googlemeet_add_to_calendar',
-					'meeting_id' => $meeting_id,
-				), admin_url( 'admin-ajax.php' ) ) ); ?>"
-				   class="button googlemeet-calendar-button"
-				   target="_blank"
-				   rel="noopener noreferrer">
+				<a href="
+				<?php
+				echo esc_url(
+					add_query_arg(
+						array(
+							'action'     => 'ohmylms_googlemeet_add_to_calendar',
+							'meeting_id' => $meeting_id,
+						),
+						admin_url( 'admin-ajax.php' )
+					)
+				);
+				?>
+				"
+					class="button googlemeet-calendar-button"
+					target="_blank"
+					rel="noopener noreferrer">
 					<?php esc_html_e( 'Add to Calendar', 'ohmylms' ); ?>
 				</a>
 			</div>

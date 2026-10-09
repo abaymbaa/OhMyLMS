@@ -1,7 +1,7 @@
 <?php
 namespace OhMyLMS\Assessment;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * UTC deadlines for versioned attempts.
@@ -12,59 +12,67 @@ defined('ABSPATH') || exit;
  * answers — only autosaved responses received in time count.
  */
 final class Deadlines {
-    const DEFAULT_GRACE = 15;
+	const DEFAULT_GRACE = 15;
 
-    public static function deadline_ts(array $context) {
-        return empty($context['deadline_at']) ? null : strtotime($context['deadline_at'] . ' UTC');
-    }
+	public static function deadline_ts( array $context ) {
+		return empty( $context['deadline_at'] ) ? null : strtotime( $context['deadline_at'] . ' UTC' );
+	}
 
-    /** Seconds left before the deadline (null when untimed). */
-    public static function remaining(array $context, $now = null) {
-        $deadline = self::deadline_ts($context);
-        return $deadline === null ? null : max(0, $deadline - ($now ?? time()));
-    }
+	/** Seconds left before the deadline (null when untimed). */
+	public static function remaining( array $context, $now = null ) {
+		$deadline = self::deadline_ts( $context );
+		return $deadline === null ? null : max( 0, $deadline - ( $now ?? time() ) );
+	}
 
-    /** Past the deadline itself (the learner should stop answering). */
-    public static function expired(array $context, $now = null) {
-        $deadline = self::deadline_ts($context);
-        return $deadline !== null && ($now ?? time()) >= $deadline;
-    }
+	/** Past the deadline itself (the learner should stop answering). */
+	public static function expired( array $context, $now = null ) {
+		$deadline = self::deadline_ts( $context );
+		return $deadline !== null && ( $now ?? time() ) >= $deadline;
+	}
 
-    /**
-     * Finalize versioned attempts whose deadline (plus grace) has passed and that nobody
-     * submitted, e.g. because the browser was closed. Runs from WP-Cron.
-     *
-     * @return int number of attempts finalized
-     */
-    public static function finalize_due($limit = 50) {
-        global $wpdb;
-        $context = Schema::table('attempt_context');
-        $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT c.attempt_id FROM $context c JOIN {$wpdb->prefix}ohmylms_quiz_attempts a ON a.id=c.attempt_id
+	/**
+	 * Finalize versioned attempts whose deadline (plus grace) has passed and that nobody
+	 * submitted, e.g. because the browser was closed. Runs from WP-Cron.
+	 *
+	 * @return int number of attempts finalized
+	 */
+	public static function finalize_due( $limit = 50 ) {
+		global $wpdb;
+		$context = Schema::table( 'attempt_context' );
+		$ids     = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT c.attempt_id FROM $context c JOIN {$wpdb->prefix}ohmylms_quiz_attempts a ON a.id=c.attempt_id
              WHERE c.finalized_at IS NULL AND c.deadline_at IS NOT NULL AND a.status='in-progress'
              AND DATE_ADD(c.deadline_at, INTERVAL c.grace_seconds SECOND) < %s ORDER BY c.deadline_at LIMIT %d",
-            gmdate('Y-m-d H:i:s'), max(1, (int) $limit)
-        ));
-        $done = 0;
-        foreach ($ids as $attempt_id) {
-            $result = \OhMyLMS\Quiz\Submission::finalize_expired((int) $attempt_id);
-            if (!is_wp_error($result)) { $done++; }
-        }
-        return $done;
-    }
+				gmdate( 'Y-m-d H:i:s' ),
+				max( 1, (int) $limit )
+			)
+		);
+		$done    = 0;
+		foreach ( $ids as $attempt_id ) {
+			$result = \OhMyLMS\Quiz\Submission::finalize_expired( (int) $attempt_id );
+			if ( ! is_wp_error( $result ) ) {
+				++$done; }
+		}
+		return $done;
+	}
 
-    public static function schedules($schedules) {
-        $schedules['ohmylms_five_minutes'] = ['interval' => 300, 'display' => __('Every five minutes', 'ohmylms')];
-        return $schedules;
-    }
+	public static function schedules( $schedules ) {
+		$schedules['ohmylms_five_minutes'] = array(
+			'interval' => 300,
+			'display'  => __( 'Every five minutes', 'ohmylms' ),
+		);
+		return $schedules;
+	}
 
-    public static function schedule() {
-        if (!wp_next_scheduled('ohmylms_finalize_attempts')) { wp_schedule_event(time() + 300, 'ohmylms_five_minutes', 'ohmylms_finalize_attempts'); }
-    }
+	public static function schedule() {
+		if ( ! wp_next_scheduled( 'ohmylms_finalize_attempts' ) ) {
+			wp_schedule_event( time() + 300, 'ohmylms_five_minutes', 'ohmylms_finalize_attempts' ); }
+	}
 
-    /** Past deadline + grace: new responses can no longer be accepted. */
-    public static function closed(array $context, $now = null) {
-        $deadline = self::deadline_ts($context);
-        return $deadline !== null && ($now ?? time()) > $deadline + (int) $context['grace_seconds'];
-    }
+	/** Past deadline + grace: new responses can no longer be accepted. */
+	public static function closed( array $context, $now = null ) {
+		$deadline = self::deadline_ts( $context );
+		return $deadline !== null && ( $now ?? time() ) > $deadline + (int) $context['grace_seconds'];
+	}
 }

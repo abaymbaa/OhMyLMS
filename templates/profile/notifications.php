@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit();
 
 					<div class="notification-settings-right">
 						<label class="ohmylms-switcher">
-							<input type="checkbox" name="notification_chapter" value="<?php echo $student->get_notification_chapter(); ?>" <?php echo  $student->get_notification_chapter() === 'on' ? 'checked' : '' ?>>
+							<input type="checkbox" name="notification_chapter" value="<?php echo $student->get_notification_chapter(); ?>" <?php echo $student->get_notification_chapter() === 'on' ? 'checked' : ''; ?>>
 							<span class="switcher-slider"></span>
 						</label>
 					</div>
@@ -57,7 +57,7 @@ defined( 'ABSPATH' ) || exit();
 
 					<div class="notification-settings-right">
 						<label class="ohmylms-switcher">
-							<input type="checkbox" name="notification_new_course_content" value="<?php echo $student->get_notification_new_course_content(); ?>" <?php echo  $student->get_notification_new_course_content() === 'on' ? 'checked' : '' ?>>
+							<input type="checkbox" name="notification_new_course_content" value="<?php echo $student->get_notification_new_course_content(); ?>" <?php echo $student->get_notification_new_course_content() === 'on' ? 'checked' : ''; ?>>
 							<span class="switcher-slider"></span>
 						</label>
 					</div>
@@ -66,11 +66,11 @@ defined( 'ABSPATH' ) || exit();
 				<!-- <div class="single-notification-settings modules">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php //echo __( 'Modules ', 'ohmylms' ); ?>
+							<?php // echo __( 'Modules ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php //echo __( 'Notify me when a new Module is released. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me when a new Module is released. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -86,17 +86,17 @@ defined( 'ABSPATH' ) || exit();
 
 			<!-- <div class="ohmylms-notification-settings-group instructor-notification">
 				<p class="settings-group-title">
-					<?php //echo __( 'Instructor Notifications ', 'ohmylms' ); ?>
+					<?php // echo __( 'Instructor Notifications ', 'ohmylms' ); ?>
 				</p>
 
 				<div class="single-notification-settings registrations">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php //echo __( 'Registrations ', 'ohmylms' ); ?>
+							<?php // echo __( 'Registrations ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php //echo __( 'Notify me about new learner registrations and course applications. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me about new learner registrations and course applications. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -111,11 +111,11 @@ defined( 'ABSPATH' ) || exit();
 				<div class="single-notification-settings assignments">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php //echo __( 'Assignments ', 'ohmylms' ); ?>
+							<?php // echo __( 'Assignments ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php //echo __( 'Notify me about new assignment submissions. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me about new assignment submissions. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -147,7 +147,7 @@ defined( 'ABSPATH' ) || exit();
 
 					<div class="notification-settings-right">
 						<label class="ohmylms-switcher">
-							<input type="checkbox" name="notification_direct_messages" value="<?php echo $student->get_notification_direct_messages(); ?>" <?php echo  $student->get_notification_direct_messages() === 'on' ? 'checked' : '' ?>>
+							<input type="checkbox" name="notification_direct_messages" value="<?php echo $student->get_notification_direct_messages(); ?>" <?php echo $student->get_notification_direct_messages() === 'on' ? 'checked' : ''; ?>>
 							<span class="switcher-slider"></span>
 						</label>
 					</div>
@@ -166,7 +166,7 @@ defined( 'ABSPATH' ) || exit();
 
 					<div class="notification-settings-right">
 						<label class="ohmylms-switcher">
-							<input type="checkbox" name="notification_comments_replies" value="<?php echo $student->get_notification_comments_replies(); ?>" <?php echo  $student->get_notification_comments_replies() === 'on' ? 'checked' : '' ?>>
+							<input type="checkbox" name="notification_comments_replies" value="<?php echo $student->get_notification_comments_replies(); ?>" <?php echo $student->get_notification_comments_replies() === 'on' ? 'checked' : ''; ?>>
 							<span class="switcher-slider"></span>
 						</label>
 					</div>

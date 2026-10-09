@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-if(!$course){
-    return;
+if ( ! $course ) {
+	return;
 }
 
 $post_object = get_post( $course->get_id() );
-$content = !empty($post_object->post_content) && '<p></p>' !== $post_object->post_content ? $post_object->post_content : '';
+$content     = ! empty( $post_object->post_content ) && '<p></p>' !== $post_object->post_content ? $post_object->post_content : '';
 
 $description_class = empty( get_the_content( $course->get_id() ) ) ? 'no-description' : '';
 
@@ -28,25 +28,25 @@ $description_class = empty( get_the_content( $course->get_id() ) ) ? 'no-descrip
 <div class="ohmylms-description-content ohmylms-wysiwyg-content layout3-description">
 	<div class="ohmylms-description-content-inner" initial-height="330" style="--initial-height: 330px;">
 		<div class="ohmylms-description-content-height <?php echo esc_attr( $description_class ); ?>">
-			<?php 
-				if ( ! empty( get_the_content($course->get_id()) ) ) {
-					echo get_the_content($course->get_id());
+			<?php
+			if ( ! empty( get_the_content( $course->get_id() ) ) ) {
+				echo get_the_content( $course->get_id() );
 
-				}else {
-					?>
+			} else {
+				?>
 					<div class="no-course-data">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+					<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 						<p>
-							<?php echo __( 'No course description found.', 'ohmylms' ); ?>
+						<?php echo __( 'No course description found.', 'ohmylms' ); ?>
 						</p>
 					</div>
 					<?php
-				}
+			}
 			?>
 			
 		</div>
 
-		<?php if ( ! empty( get_the_content($course->get_id()) ) ) { ?>
+		<?php if ( ! empty( get_the_content( $course->get_id() ) ) ) { ?>
 			<div class="layout3-content-readmore">
 				<button type="button" class="layout3-content-readmore-button">
 					<span class="button-text">

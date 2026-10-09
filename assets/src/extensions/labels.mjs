@@ -8,22 +8,29 @@
  * belong to contacts and automation ("Add Tag", "Apply Tags", ...), are different strings, and are
  * left alone.
  */
-export const RELABELED = Object.freeze({
-  Categories: 'Curriculum',
-  Category: 'Curriculum',
-  'Category: ': 'Curriculum: ',
-  'Enable course category.': 'Show the curriculum as tabs.',
-  Tags: 'Learning tracks',
-  Tag: 'Learning track',
-  'Tag: ': 'Learning track: ',
-});
+export const RELABELED = Object.freeze( {
+	Categories: 'Curriculum',
+	Category: 'Curriculum',
+	'Category: ': 'Curriculum: ',
+	'Enable course category.': 'Show the curriculum as tabs.',
+	Tags: 'Learning tracks',
+	Tag: 'Learning track',
+	'Tag: ': 'Learning track: ',
+} );
 
 /**
  * The text for a gettext lookup: the replacement (through `translate`) when the original string was
  * relabeled, otherwise the translation WordPress already found.
+ * @param translation
+ * @param text
+ * @param translate
  */
-export function relabel(translation, text, translate = (replacement) => replacement) {
-  return Object.prototype.hasOwnProperty.call(RELABELED, text)
-    ? translate(RELABELED[text])
-    : translation;
+export function relabel(
+	translation,
+	text,
+	translate = ( replacement ) => replacement
+) {
+	return Object.prototype.hasOwnProperty.call( RELABELED, text )
+		? translate( RELABELED[ text ] )
+		: translation;
 }

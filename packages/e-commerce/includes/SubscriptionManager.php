@@ -22,12 +22,14 @@ class SubscriptionManager {
 
 	/**
 	 * Post type slug for subscriptions.
+	 *
 	 * @var string
 	 */
 	const POST_TYPE = 'ohmylms-subscription';
 
 	/**
 	 * Action Scheduler hook for processing renewals.
+	 *
 	 * @var string
 	 */
 	const RENEWAL_ACTION_HOOK = 'ohmylms_process_subscription_renewal';
@@ -57,14 +59,14 @@ class SubscriptionManager {
 			return new \WP_Error( 'missing_student_id', __( 'Order is missing a student ID, cannot create subscription.', 'ohmylms' ) );
 		}
 
-		$dates = self::calculate_subscription_dates( $order, $membership_id );
+		$dates             = self::calculate_subscription_dates( $order, $membership_id );
 		$subscription_data = array(
 			'post_type'   => self::POST_TYPE,
 			'post_title'  => sprintf(
-						__( 'Subscription for Order #%1$s - Membership: %2$s', 'ohmylms' ),
-						$order->get_id(),
-						get_the_title( $membership_id )
-					),
+				__( 'Subscription for Order #%1$s - Membership: %2$s', 'ohmylms' ),
+				$order->get_id(),
+				get_the_title( $membership_id )
+			),
 			'post_status' => 'ohmylms-pending',
 			'post_parent' => $order->get_id(),
 			'post_author' => $student_id,
@@ -104,7 +106,7 @@ class SubscriptionManager {
 		if ( $recurring_amount > 0 ) {
 			update_post_meta( $subscription_id, '_recurring_amount', $recurring_amount );
 		}
-		$subscription_period = get_post_meta( $membership_id, '_subscription_period', true );
+		$subscription_period          = get_post_meta( $membership_id, '_subscription_period', true );
 		$subscription_period_interval = (int) get_post_meta( $membership_id, '_subscription_period_interval', true );
 		update_post_meta( $subscription_id, '_billing_interval', $subscription_period_interval );
 		update_post_meta( $subscription_id, '_billing_period', $subscription_period );
@@ -139,9 +141,9 @@ class SubscriptionManager {
 	 * @since 1.0.0
 	 *
 	 * @param int|\WP_Post $subscription_ref   Subscription post ID or object. Can be 0 if post not yet created (note will not be saved).
-	 * @param string      $note               The note content.
-	 * @param bool        $is_customer_note   Optional. Whether this is a customer-visible note. Default false.
-	 *                                        (Currently not implemented with specific visibility for subscriptions).
+	 * @param string       $note               The note content.
+	 * @param bool         $is_customer_note   Optional. Whether this is a customer-visible note. Default false.
+	 *                                         (Currently not implemented with specific visibility for subscriptions).
 	 * @return int|false Comment ID on success, false on failure or if $subscription_ref is invalid/0.
 	 */
 	public static function add_subscription_note( $subscription_ref, $note, $is_customer_note = false ) {
@@ -162,7 +164,7 @@ class SubscriptionManager {
 		}
 
 		// Determine comment author.
-		$comment_author       = __( 'OhMyLMS System', 'ohmylms' );
+		$comment_author = __( 'OhMyLMS System', 'ohmylms' );
 		// Generate a unique system email, e.g., system@mydomain.com (removes www.)
 		$comment_author_email = 'system@' . preg_replace( '#^www\.#', '', strtolower( wp_parse_url( home_url( '/' ), PHP_URL_HOST ) ) );
 		$comment_author_url   = '';
@@ -200,7 +202,7 @@ class SubscriptionManager {
 
 		// Future: if $is_customer_note functionality is added for subscriptions.
 		// if ( $comment_id && $is_customer_note ) {
-		//    add_comment_meta( $comment_id, '_is_customer_note', 1 );
+		// add_comment_meta( $comment_id, '_is_customer_note', 1 );
 		// }
 
 		return $comment_id;
@@ -216,8 +218,8 @@ class SubscriptionManager {
 	 * @return bool True if status updated successfully, false otherwise.
 	 */
 	public static function mark_subscription_active( $subscription_id ) {
-		$subscription_id 	= absint( $subscription_id );
-		$updated 			= self::update_subscription_status( $subscription_id, 'active' );
+		$subscription_id = absint( $subscription_id );
+		$updated         = self::update_subscription_status( $subscription_id, 'active' );
 		if ( ! $updated ) {
 			return false;
 		}
@@ -229,11 +231,10 @@ class SubscriptionManager {
 
 			if ( ! empty( $next_payment_date_gmt ) ) {
 				$next_payment_timestamp_gmt = strtotime( $next_payment_date_gmt );
-				if ( $next_payment_timestamp_gmt > current_time( 'timestamp' ) && ( empty($end_date_gmt) || $next_payment_timestamp_gmt <= strtotime($end_date_gmt) ) ) {
+				if ( $next_payment_timestamp_gmt > current_time( 'timestamp' ) && ( empty( $end_date_gmt ) || $next_payment_timestamp_gmt <= strtotime( $end_date_gmt ) ) ) {
 					self::clear_scheduled_renewal_actions( $subscription_id );
 					self::schedule_renewal_payment( $subscription_id, $next_payment_timestamp_gmt );
 				}
-
 			} else {
 				$last_payment_date = get_post_meta( $subscription_id, '_last_payment_date', true );
 				$membership_id     = get_post_meta( $subscription_id, '_membership_id', true );
@@ -247,11 +248,10 @@ class SubscriptionManager {
 					$next_payment_dt->modify( "+{$interval} {$period}" );
 					$next_payment_timestamp_gmt = $next_payment_dt->getTimestamp();
 					// Only schedule if before end date
-					if ( empty($end_date_gmt) || $next_payment_timestamp_gmt <= strtotime($end_date_gmt) ) {
+					if ( empty( $end_date_gmt ) || $next_payment_timestamp_gmt <= strtotime( $end_date_gmt ) ) {
 						self::clear_scheduled_renewal_actions( $subscription_id );
 						self::schedule_renewal_payment( $subscription_id, $next_payment_timestamp_gmt );
 					}
-
 				} catch ( \Exception $e ) {
 					self::add_subscription_note( $subscription_id, __( 'Error calculating next payment date for scheduling.', 'ohmylms' ) );
 				}
@@ -271,7 +271,7 @@ class SubscriptionManager {
 	 */
 	public static function mark_subscription_on_hold( $subscription_id ) {
 		$subscription_id = absint( $subscription_id );
-		$updated = self::update_subscription_status( $subscription_id, 'on-hold' );
+		$updated         = self::update_subscription_status( $subscription_id, 'on-hold' );
 
 		if ( $updated ) {
 			self::add_subscription_note( $subscription_id, __( 'Subscription status changed to On-Hold.', 'ohmylms' ) );
@@ -293,7 +293,7 @@ class SubscriptionManager {
 	 */
 	public static function mark_subscription_pending_cancellation( $subscription_id ) {
 		$subscription_id = absint( $subscription_id );
-		$updated = self::update_subscription_status( $subscription_id, 'pending-cancel' );
+		$updated         = self::update_subscription_status( $subscription_id, 'pending-cancel' );
 
 		if ( $updated ) {
 			self::add_subscription_note( $subscription_id, __( 'Subscription marked for cancellation. It will be cancelled at the end of the current term.', 'ohmylms' ) );
@@ -313,17 +313,17 @@ class SubscriptionManager {
 	 */
 	public static function mark_subscription_cancelled( $subscription_id, $user_id = 0 ) {
 		$subscription_id = absint( $subscription_id );
-		$updated = self::update_subscription_status( $subscription_id, 'cancelled' );
+		$updated         = self::update_subscription_status( $subscription_id, 'cancelled' );
 		if ( $updated ) {
 			$user_id = $user_id ? absint( $user_id ) : get_current_user_id();
-			if( $user_id ) {
+			if ( $user_id ) {
 				$user = get_user_by( 'id', $user_id );
 				if ( $user && $user->exists() ) {
 					self::add_subscription_note( $subscription_id, sprintf( __( 'Subscription cancelled by user: %s.', 'ohmylms' ), $user->display_name ) );
 				} else {
 					self::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
 				}
-			}else{
+			} else {
 				self::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
 			}
 			self::clear_scheduled_renewal_actions( $subscription_id );
@@ -344,7 +344,7 @@ class SubscriptionManager {
 	 */
 	public static function mark_subscription_expired( $subscription_id ) {
 		$subscription_id = absint( $subscription_id );
-		$updated = self::update_subscription_status( $subscription_id, 'expired' );
+		$updated         = self::update_subscription_status( $subscription_id, 'expired' );
 		update_post_meta( $subscription_id, '_schedule_next_payment_date', 0 );
 
 		if ( $updated ) {
@@ -372,7 +372,7 @@ class SubscriptionManager {
 		}
 
 		$new_status_slug_clean = sanitize_key( $new_status_slug );
-		$full_status = 'ohmylms-' . $new_status_slug_clean;
+		$full_status           = 'ohmylms-' . $new_status_slug_clean;
 
 		// Verify if it's a valid registered post status.
 		// get_post_stati() returns registered status objects.
@@ -417,32 +417,31 @@ class SubscriptionManager {
 	 * @return array An associative array with 'start_date', 'trial_end_date', 'next_payment_date', and 'end_date'.
 	 */
 	private static function calculate_subscription_dates( $order, $membership_id ) {
-		$subscription_length 			= get_post_meta( $membership_id, '_subscription_length', true );
-		$subscription_period 			= get_post_meta( $membership_id, '_subscription_period', true );
-		$subscription_period_interval 	= get_post_meta( $membership_id, '_subscription_period_interval', true );
+		$subscription_length          = get_post_meta( $membership_id, '_subscription_length', true );
+		$subscription_period          = get_post_meta( $membership_id, '_subscription_period', true );
+		$subscription_period_interval = get_post_meta( $membership_id, '_subscription_period_interval', true );
 
-		$timezone = function_exists('wp_timezone') ? wp_timezone() : new \DateTimeZone( ohmylms_timezone_string() );
-		$now = ( new \DateTime( 'now', $timezone ) )->format( 'Y-m-d H:i:s' );
-		$start_date_obj = new \DateTime( $now, $timezone );
+		$timezone              = function_exists( 'wp_timezone' ) ? wp_timezone() : new \DateTimeZone( ohmylms_timezone_string() );
+		$now                   = ( new \DateTime( 'now', $timezone ) )->format( 'Y-m-d H:i:s' );
+		$start_date_obj        = new \DateTime( $now, $timezone );
 		$next_payment_date_obj = '';
-		$end_date_obj = '';
-		$next_payment_date = '';
-		$end_date = '';
+		$end_date_obj          = '';
+		$next_payment_date     = '';
+		$end_date              = '';
 
 		// Map period to DateInterval code
-		$interval_map = [
+		$interval_map = array(
 			'day'   => 'D',
 			'week'  => 'W',
 			'month' => 'M',
 			'year'  => 'Y',
-		];
-		$period_code = isset( $interval_map[ $subscription_period ] ) ? $interval_map[ $subscription_period ] : 'M';
-		$interval = max( 1, $subscription_period_interval );
-		$length = max( 1, $subscription_length );
-
+		);
+		$period_code  = isset( $interval_map[ $subscription_period ] ) ? $interval_map[ $subscription_period ] : 'M';
+		$interval     = max( 1, $subscription_period_interval );
+		$length       = max( 1, $subscription_length );
 
 		$date_format = 'Y-m-d H:i:s';
-		if ($subscription_length == "0") {
+		if ( $subscription_length == '0' ) {
 			$end_date = '';
 
 			$next_payment_date_obj = clone $start_date_obj;
@@ -452,12 +451,12 @@ class SubscriptionManager {
 			$next_payment_date = '';
 
 			$end_date_obj = clone $start_date_obj;
-			$end_date_obj->add(new \DateInterval('P' . ($interval * $length) . $period_code));
-			$end_date = $end_date_obj->format($date_format);
+			$end_date_obj->add( new \DateInterval( 'P' . ( $interval * $length ) . $period_code ) );
+			$end_date = $end_date_obj->format( $date_format );
 		} else {
 			$end_date_obj = clone $start_date_obj;
-			$end_date_obj->add(new \DateInterval('P' . ($interval * $length) . $period_code));
-			$end_date = $end_date_obj->format($date_format);
+			$end_date_obj->add( new \DateInterval( 'P' . ( $interval * $length ) . $period_code ) );
+			$end_date = $end_date_obj->format( $date_format );
 
 			$next_payment_date_obj = clone $start_date_obj;
 			$next_payment_date_obj->add( new \DateInterval( 'P' . $interval . $period_code ) );
@@ -466,7 +465,7 @@ class SubscriptionManager {
 		return array(
 			'start_date'        => $start_date_obj->format( $date_format ),
 			'next_payment_date' => $next_payment_date,
-			'end_date'          => $end_date
+			'end_date'          => $end_date,
 		);
 	}
 
@@ -495,10 +494,10 @@ class SubscriptionManager {
 			'ohmylms-subscription-renewals'
 		);
 		if ( $action_id ) {
-			$date_format       = get_option( 'date_format', 'Y-m-d' ) . ' ' . get_option( 'time_format', 'H:i:s' );
-			$formatted_gmt     = gmdate( $date_format, $next_payment_gmt_ts );
-			$formatted_local   = wp_date( $date_format, $next_payment_gmt_ts );
-			if ( empty(get_post_meta( $subscription_id, '_schedule_next_payment_date', true )) ) {
+			$date_format     = get_option( 'date_format', 'Y-m-d' ) . ' ' . get_option( 'time_format', 'H:i:s' );
+			$formatted_gmt   = gmdate( $date_format, $next_payment_gmt_ts );
+			$formatted_local = wp_date( $date_format, $next_payment_gmt_ts );
+			if ( empty( get_post_meta( $subscription_id, '_schedule_next_payment_date', true ) ) ) {
 				self::add_subscription_note(
 					$subscription_id,
 					sprintf(
@@ -546,7 +545,7 @@ class SubscriptionManager {
 		}
 
 		// Query for pending actions matching the hook and arguments.
-		$args = array(
+		$args       = array(
 			'hook'   => self::RENEWAL_ACTION_HOOK,
 			'args'   => array( 'subscription_id' => $subscription_id ),
 			'group'  => 'ohmylms-subscription-renewals',
@@ -573,7 +572,7 @@ class SubscriptionManager {
 	 */
 	public static function process_subscription_renewal( $subscription_id ) {
 		$subscription_id = absint( $subscription_id );
-		$subscription = ecommerce_get_subscription( $subscription_id );
+		$subscription    = ecommerce_get_subscription( $subscription_id );
 		// Validate subscription existence and post type.
 		if ( ! $subscription || self::POST_TYPE !== get_post_field( 'post_type', $subscription_id ) ) {
 			return;
@@ -589,7 +588,7 @@ class SubscriptionManager {
 		}
 
 		// Only process if active or on-hold.
-		if ( ! in_array( $status, ['active', 'on-hold'], true ) ) {
+		if ( ! in_array( $status, array( 'active', 'on-hold' ), true ) ) {
 			self::add_subscription_note( $subscription_id, sprintf( __( 'Subscription renewal skipped. Current status is "%s".', 'ohmylms' ), esc_html( $status ) ) );
 			return;
 		}
@@ -613,10 +612,10 @@ class SubscriptionManager {
 			return;
 		}
 
-		$original_order_id 	= $subscription->get_original_order_id();
-		$student_id 		= absint( get_post_meta( $subscription_id, '_student_id', true ) );
-		$membership_id 		= absint( get_post_meta( $subscription_id, '_membership_id', true ) );
-		$gateway_id 		= sanitize_text_field( get_post_meta( $subscription_id, '_payment_gateway_id', true ) );
+		$original_order_id = $subscription->get_original_order_id();
+		$student_id        = absint( get_post_meta( $subscription_id, '_student_id', true ) );
+		$membership_id     = absint( get_post_meta( $subscription_id, '_membership_id', true ) );
+		$gateway_id        = sanitize_text_field( get_post_meta( $subscription_id, '_payment_gateway_id', true ) );
 
 		if ( ! $original_order_id || ! $student_id || ! $membership_id || ! $gateway_id ) {
 			self::add_subscription_note( $subscription_id, __( 'Missing critical data (Order ID, Student ID, Membership ID, or Gateway ID). Cannot process renewal.', 'ohmylms' ) );
@@ -633,9 +632,9 @@ class SubscriptionManager {
 
 		// Determine renewal amount.
 		$amount_to_charge = (float) get_post_meta( $subscription_id, '_recurring_amount', true );
-		
-		$tax_amount = \TaxCalculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $amount_to_charge ) );
-		$amount_to_charge = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $amount_to_charge;
+
+		$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $amount_to_charge ) );
+		$amount_to_charge = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $amount_to_charge;
 		if ( $amount_to_charge <= 0 ) {
 			$amount_to_charge = (float) get_post_meta( $membership_id, '_regular_price', true );
 		}
@@ -647,7 +646,7 @@ class SubscriptionManager {
 
 		// Validate payment gateway.
 		$available_gateways = ecommerce()->gateways()->get_payment_gateways();
-		
+
 		$gateway = $available_gateways[ $gateway_id ];
 		if ( ! isset( $available_gateways[ $gateway_id ] ) ) {
 			self::add_subscription_note( $subscription_id, sprintf( __( 'Payment gateway "%s" not found or inactive.', 'ohmylms' ), esc_html( $gateway_id ) ) );
@@ -674,7 +673,7 @@ class SubscriptionManager {
 			$renewal_order->set_parent_id( $original_order_id );
 			$renewal_order->set_order_version( OHMYLMS_VERSION );
 
-			foreach ( $original_order->get_items('line_item') as $item ) {
+			foreach ( $original_order->get_items( 'line_item' ) as $item ) {
 				$product_id = $item->get_course_id();
 				if ( ! $product_id ) {
 					continue;
@@ -684,10 +683,10 @@ class SubscriptionManager {
 					continue;
 				}
 
-				if( ohmylms_is_pro () ) {
+				if ( ohmylms_is_pro() ) {
 					$product = ohmylms_get_membership( $product_id );
 				}
-				if( !$product ) {
+				if ( ! $product ) {
 					continue;
 				}
 
@@ -736,9 +735,9 @@ class SubscriptionManager {
 
 		update_post_meta( $subscription_id, '_last_payment_date', current_time( 'mysql' ) );
 
-		$base_ts 	= $next_payment_date ? strtotime( $next_payment_date ) : strtotime( current_time( 'mysql' ) );
-		$period    	= get_post_meta( $membership_id, '_subscription_period', true );
-		$interval  	= (int) get_post_meta( $membership_id, '_subscription_period_interval', true );
+		$base_ts  = $next_payment_date ? strtotime( $next_payment_date ) : strtotime( current_time( 'mysql' ) );
+		$period   = get_post_meta( $membership_id, '_subscription_period', true );
+		$interval = (int) get_post_meta( $membership_id, '_subscription_period_interval', true );
 
 		try {
 			$next_payment_dt = ( new \DateTime( "@$base_ts" ) )->setTimezone( new \DateTimeZone( 'GMT' ) );
@@ -789,14 +788,15 @@ class SubscriptionManager {
 
 
 	/**
-     * Initialize hooks for the subscription manager.
-     * This method should be called once from the main plugin file or a relevant setup routine
-     * (e.g., on `plugins_loaded` or `init` action) to ensure the Action Scheduler hook is registered.
+	 * Initialize hooks for the subscription manager.
+	 * This method should be called once from the main plugin file or a relevant setup routine
+	 * (e.g., on `plugins_loaded` or `init` action) to ensure the Action Scheduler hook is registered.
+	 *
 	 * @since 1.0.0
-     */
-    public static function init_hooks() {
-        add_action( self::RENEWAL_ACTION_HOOK, array( __CLASS__, 'process_subscription_renewal' ) );
-    }
+	 */
+	public static function init_hooks() {
+		add_action( self::RENEWAL_ACTION_HOOK, array( __CLASS__, 'process_subscription_renewal' ) );
+	}
 
 	/**
 	 * Copy all meta from the order post to the subscription post, skipping protected meta keys.
@@ -805,7 +805,7 @@ class SubscriptionManager {
 	 * @param int $subscription_id
 	 */
 	private static function copy_order_meta_to_subscription( $order_id, $subscription_id ) {
-		$order_id = absint( $order_id );
+		$order_id        = absint( $order_id );
 		$subscription_id = absint( $subscription_id );
 		if ( ! $order_id || ! $subscription_id ) {
 			return;
@@ -823,5 +823,3 @@ class SubscriptionManager {
 		}
 	}
 }
-
-?>

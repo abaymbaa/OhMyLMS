@@ -18,4 +18,3 @@ global $course;
 <?php if ( $price_html = $course->get_price_html() ) : ?>
 	<p class="price"><?php echo $price_html; ?></p>
 <?php endif; ?>
-

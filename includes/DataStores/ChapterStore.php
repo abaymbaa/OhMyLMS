@@ -76,7 +76,7 @@ class ChapterStore extends DataStore {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$chapter->set_id( $id );
-			flush_rewrite_rules(true);
+			flush_rewrite_rules( true );
 			$this->update_chapter_meta( $chapter );
 
 			/**
@@ -193,7 +193,7 @@ class ChapterStore extends DataStore {
 	 * Delete the chapter
 	 *
 	 * @param $chapter
-	 * @param array   $args
+	 * @param array $args
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -248,7 +248,7 @@ class ChapterStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function set_contents( $chapter, $lessons ) {
-		if ( empty($lessons) ) {
+		if ( empty( $lessons ) ) {
 			return;
 		}
 		global $wpdb;
@@ -259,7 +259,7 @@ class ChapterStore extends DataStore {
 			$values[] = $chapter_id;
 			$values[] = $lesson['id'];
 			$values[] = $lesson['order_number'];
-			$values[] = isset($lesson['content_type']) ? $lesson['content_type'] : $lesson['type'];
+			$values[] = isset( $lesson['content_type'] ) ? $lesson['content_type'] : $lesson['type'];
 
 			// Create placeholders for each set of values
 			$placeholders[] = '(%d, %d, %d, %s)';
@@ -351,17 +351,17 @@ class ChapterStore extends DataStore {
 	 */
 	public function get_lessons( &$chapter, $return_type = 'array' ) {
 		$chapter_id = $chapter->get_id();
-		$cache_key = $chapter_id . '_' . $return_type;
-		
+		$cache_key  = $chapter_id . '_' . $return_type;
+
 		// Check if result is already cached
 		if ( isset( self::$lessons_cache[ $cache_key ] ) ) {
 			return self::$lessons_cache[ $cache_key ];
 		}
-		
+
 		// Check if raw database results are cached
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
+			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
@@ -369,8 +369,8 @@ class ChapterStore extends DataStore {
 				)
 			);
 		}
-		
-		$lessons = self::$raw_contents_cache[ $chapter_id ];
+
+		$lessons          = self::$raw_contents_cache[ $chapter_id ];
 		$filtered_lessons = array();
 
 		if ( $lessons ) {
@@ -420,7 +420,7 @@ class ChapterStore extends DataStore {
 						$lesson_data['prerequisites'] = $lesson_obj->get_prerequisites();
 					}
 
-					if( 'session' === $lesson->content_type ) {
+					if ( 'session' === $lesson->content_type ) {
 						$lesson_data['platform'] = get_post_meta( $lesson_obj->get_id(), '_platform', true );
 					}
 
@@ -431,10 +431,10 @@ class ChapterStore extends DataStore {
 				}
 			}
 		}
-		
+
 		// Cache the result
 		self::$lessons_cache[ $cache_key ] = $filtered_lessons;
-		
+
 		return $filtered_lessons;
 	}
 
@@ -480,7 +480,7 @@ class ChapterStore extends DataStore {
 
 	public function get_all_contents( &$chapter ) {
 		$chapter_id = $chapter->get_id();
-		$cache_key = $chapter_id . '_all_contents';
+		$cache_key  = $chapter_id . '_all_contents';
 
 		if ( isset( self::$lessons_cache[ $cache_key ] ) ) {
 			return self::$lessons_cache[ $cache_key ];
@@ -489,7 +489,7 @@ class ChapterStore extends DataStore {
 		// Check if raw database results are cached
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
+			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
@@ -498,7 +498,7 @@ class ChapterStore extends DataStore {
 			);
 		}
 
-		$lessons = self::$raw_contents_cache[ $chapter_id ];
+		$lessons          = self::$raw_contents_cache[ $chapter_id ];
 		$filtered_lessons = array();
 		if ( $lessons ) {
 			foreach ( $lessons as $lesson ) {
@@ -527,7 +527,7 @@ class ChapterStore extends DataStore {
 		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
+		$table_name  = $wpdb->prefix . 'ohmylms_content_relationship';
 		$posts_table = $wpdb->posts;
 
 		$count = $wpdb->get_var(
@@ -541,7 +541,7 @@ class ChapterStore extends DataStore {
 			)
 		);
 
-		$result = intval($count);
+		$result                                       = intval( $count );
 		self::$all_content_count_cache[ $chapter_id ] = $result;
 		return $result;
 	}
@@ -550,7 +550,7 @@ class ChapterStore extends DataStore {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
-		$lesson = $wpdb->get_row(
+		$lesson     = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} WHERE chapter_id = %d AND order_number = %d",
 				$chapter_id,
@@ -596,7 +596,7 @@ class ChapterStore extends DataStore {
 
 	public function total_completion_rate( $chapter, $student_id ) {
 		$completed_count = $this->completed_content_count( $chapter, $student_id );
-		
+
 		$total_content   = $this->get_all_content_count( $chapter );
 		$completion_rate = 0;
 		if ( $total_content > 0 ) {

@@ -33,7 +33,7 @@ function ohmylms_lostpassword_url( $default_url = '' ) {
 
 	$ohmylms_account_page_url    = ohmylms_get_page_permalink( 'student_profile' );
 	$ohmylms_account_page_exists = ohmylms_get_page_id( 'student_profile' ) > 0;
-	$lost_password_endpoint          = get_option( 'ohmylms_myaccount_lost_password_endpoint' );
+	$lost_password_endpoint      = get_option( 'ohmylms_myaccount_lost_password_endpoint' );
 
 	if ( $ohmylms_account_page_exists && ! empty( $lost_password_endpoint ) ) {
 		return ohmylms_get_endpoint_url( $lost_password_endpoint, '', $ohmylms_account_page_url );
@@ -196,11 +196,11 @@ function ohmylms_get_account_endpoint_url( $endpoint, $query_params = array() ) 
 	if ( 'dashboard' === $endpoint ) {
 		return ohmylms_get_page_permalink( 'student_dashboard' );
 	}
-	
+
 	if ( 'profile' === $endpoint ) {
 		return ohmylms_get_page_permalink( 'student_profile' );
 	}
-	
+
 	if ( 'my-courses' === $endpoint ) {
 		return ohmylms_get_page_permalink( 'student_courses' );
 	}

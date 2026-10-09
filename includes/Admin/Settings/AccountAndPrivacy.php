@@ -58,9 +58,9 @@ class AccountAndPrivacy extends Settings {
 				'default' => 'optional',
 				'type'    => 'select',
 				'options' => array(
-					'optional'  => __( 'Optional', 'ohmylms' ),
-					'required'  => __( 'Required', 'ohmylms' ),
-					'hidden'    => __( 'Hidden', 'ohmylms' ),
+					'optional' => __( 'Optional', 'ohmylms' ),
+					'required' => __( 'Required', 'ohmylms' ),
+					'hidden'   => __( 'Hidden', 'ohmylms' ),
 				),
 				'value'   => '',
 			),

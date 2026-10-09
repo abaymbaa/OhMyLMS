@@ -73,16 +73,16 @@ class Course extends Data {
 		'benefiter_description' => '',
 		'requirement'           => '',
 		'download_resource'     => '',
-		'type'					=> 'self-paced',
+		'type'                  => 'self-paced',
 		'creation_method'       => 'scratch',
 		'leaderboard_disabled'  => 'no',
-		'has_community'			=> 'no',
+		'has_community'         => 'no',
 		'sequential_mode'       => 'no',
 		'funnel_steps'          => array(),
-		'point_disabled'  		=> 'no',
-		'reward_disabled'  		=> 'no',
-		'space_title'			=> '',
-		'space_description'		=> '',
+		'point_disabled'        => 'no',
+		'reward_disabled'       => 'no',
+		'space_title'           => '',
+		'space_description'     => '',
 	);
 
 
@@ -377,10 +377,10 @@ class Course extends Data {
 		$item_slug             = get_post_field( 'post_name', $content_id );
 
 		$slugs       = array(
-			'ohmylms-course' => $course_base_permalink,
-			'ohmylms-lesson' => $lesson_base_permalink,
-			'ohmylms-quiz'   => $quiz_base_permalink,
-			'ohmylms-assignment'   => 'assignments',
+			'ohmylms-course'     => $course_base_permalink,
+			'ohmylms-lesson'     => $lesson_base_permalink,
+			'ohmylms-quiz'       => $quiz_base_permalink,
+			'ohmylms-assignment' => 'assignments',
 		);
 		$slug_prefix = trailingslashit( $slugs[ $item_type ] ?? '' );
 		return trailingslashit( $course_permalink . $slug_prefix . $item_slug );
@@ -721,7 +721,7 @@ class Course extends Data {
 	 * @since 1.0.0
 	 */
 	public function get_quiz_ids() {
-		return $this->data_store->get_quiz_ids( $this ) ?? [];
+		return $this->data_store->get_quiz_ids( $this ) ?? array();
 	}
 
 	/**
@@ -1347,80 +1347,80 @@ class Course extends Data {
 		return $this->data_store->search_lessons_in_course( $this, $term );
 	}
 
-    /**
-     * Get the type of the course (self-paced or cohort-based)
-     *
-     * @param string $context
-     * @return string
-     * @since 1.0.0
-     */
-    public function get_type( $context = 'view' ) {
-        return $this->get_prop( 'type', $context ) ?? 'self-paced';
-    }
-
-    /**
-     * Set the type of the course (self-paced or cohort-based)
-     *
-     * @param string $type
-     * @since 1.0.0
-     */
-    public function set_type( $type ) {
-        $this->set_prop( 'type', $type );
-    }
-
-    /**
-     * Get the creation method of the course (scratch, template, or ai)
-     *
-     * @param string $context
-     * @return string
-     * @since 1.0.0
-     */
-    public function get_creation_method( $context = 'view' ) {
-        return $this->get_prop( 'creation_method', $context ) ?? 'scratch';
-    }
-
-    /**
-     * Set the creation method of the course (scratch, template, or ai)
-     *
-     * @param string $creation_method
-     * @since 1.0.0
-     */
-    public function set_creation_method( $creation_method ) {
-        $this->set_prop( 'creation_method', $creation_method );
-    }
-
-    /**
-     * Get whether the course has community features enabled
-     *
-     * @param string $context
-     * @return bool
-     * @since 1.0.0
-     */
-    public function get_has_community( $context = 'view' ) {
-        return $this->get_prop( 'has_community', $context ) ?? false;
-    }
+	/**
+	 * Get the type of the course (self-paced or cohort-based)
+	 *
+	 * @param string $context
+	 * @return string
+	 * @since 1.0.0
+	 */
+	public function get_type( $context = 'view' ) {
+		return $this->get_prop( 'type', $context ) ?? 'self-paced';
+	}
 
 	/**
-     * Get the title of the course space.
-     *
-     * @param string $context
-     * @return string
-     * @since 1.0.0
-     */
-    public function get_space_title( $context = 'view' ) {
-        return $this->get_prop( 'space_title', $context ) ?? '';
-    }
+	 * Set the type of the course (self-paced or cohort-based)
+	 *
+	 * @param string $type
+	 * @since 1.0.0
+	 */
+	public function set_type( $type ) {
+		$this->set_prop( 'type', $type );
+	}
 
 	/**
-     * Get the description of the course space.
-     *
-     * @param string $context
-     * @return string
-     * @since 1.0.0
-     */
-    public function get_space_description( $context = 'view' ) {
-        return $this->get_prop( 'space_description', $context ) ?? '';
-    }
+	 * Get the creation method of the course (scratch, template, or ai)
+	 *
+	 * @param string $context
+	 * @return string
+	 * @since 1.0.0
+	 */
+	public function get_creation_method( $context = 'view' ) {
+		return $this->get_prop( 'creation_method', $context ) ?? 'scratch';
+	}
+
+	/**
+	 * Set the creation method of the course (scratch, template, or ai)
+	 *
+	 * @param string $creation_method
+	 * @since 1.0.0
+	 */
+	public function set_creation_method( $creation_method ) {
+		$this->set_prop( 'creation_method', $creation_method );
+	}
+
+	/**
+	 * Get whether the course has community features enabled
+	 *
+	 * @param string $context
+	 * @return bool
+	 * @since 1.0.0
+	 */
+	public function get_has_community( $context = 'view' ) {
+		return $this->get_prop( 'has_community', $context ) ?? false;
+	}
+
+	/**
+	 * Get the title of the course space.
+	 *
+	 * @param string $context
+	 * @return string
+	 * @since 1.0.0
+	 */
+	public function get_space_title( $context = 'view' ) {
+		return $this->get_prop( 'space_title', $context ) ?? '';
+	}
+
+	/**
+	 * Get the description of the course space.
+	 *
+	 * @param string $context
+	 * @return string
+	 * @since 1.0.0
+	 */
+	public function get_space_description( $context = 'view' ) {
+		return $this->get_prop( 'space_description', $context ) ?? '';
+	}
 
 	/**
 	 * Get the URL of the course space.
@@ -1432,66 +1432,66 @@ class Course extends Data {
 		return $this->data_store->get_space_url( $this );
 	}
 
-    /**
-     * Set whether the course has community features enabled
-     *
-     * @param bool $has_community
-     * @since 1.0.0
-     */
-    public function set_has_community( $has_community ) {
-        $this->set_prop( 'has_community', $has_community );
-    }
-
-    /**
-     * Get whether sequential lesson access mode is enabled
-     *
-     * @param string $context
-     * @return string 'yes' or 'no'
-     * @since 1.0.0
-     */
-    public function get_sequential_mode( $context = 'view' ) {
-        return $this->get_prop( 'sequential_mode', $context ) ?? 'no';
-    }
-
-    /**
-     * Set sequential lesson access mode
-     *
-     * @param string $sequential_mode 'yes' or 'no'
-     * @since 1.0.0
-     */
-    public function set_sequential_mode( $sequential_mode ) {
-        $this->set_prop( 'sequential_mode', $sequential_mode );
-    }
+	/**
+	 * Set whether the course has community features enabled
+	 *
+	 * @param bool $has_community
+	 * @since 1.0.0
+	 */
+	public function set_has_community( $has_community ) {
+		$this->set_prop( 'has_community', $has_community );
+	}
 
 	/**
-     * Set the title of the course space.
-     *
-     * @param string $title
-     * @since 1.0.0
-     */
-    public function set_space_title( $title ) {
-        $this->set_prop( 'space_title', $title );
-    }
+	 * Get whether sequential lesson access mode is enabled
+	 *
+	 * @param string $context
+	 * @return string 'yes' or 'no'
+	 * @since 1.0.0
+	 */
+	public function get_sequential_mode( $context = 'view' ) {
+		return $this->get_prop( 'sequential_mode', $context ) ?? 'no';
+	}
 
 	/**
-     * Set the description of the course space.
-     *
-     * @param string $description
-     * @since 1.0.0
-     */
-    public function set_space_description( $description ) {
-        $this->set_prop( 'space_description', $description );
-    }
+	 * Set sequential lesson access mode
+	 *
+	 * @param string $sequential_mode 'yes' or 'no'
+	 * @since 1.0.0
+	 */
+	public function set_sequential_mode( $sequential_mode ) {
+		$this->set_prop( 'sequential_mode', $sequential_mode );
+	}
 
 	/**
-     * Set the URL of the course space.
-     *
-     * @param string $url
-     * @since 1.0.0
-     */
-    public function set_space_url( $url ) {
-        $this->set_prop( 'space_url', $url );
-    }
+	 * Set the title of the course space.
+	 *
+	 * @param string $title
+	 * @since 1.0.0
+	 */
+	public function set_space_title( $title ) {
+		$this->set_prop( 'space_title', $title );
+	}
+
+	/**
+	 * Set the description of the course space.
+	 *
+	 * @param string $description
+	 * @since 1.0.0
+	 */
+	public function set_space_description( $description ) {
+		$this->set_prop( 'space_description', $description );
+	}
+
+	/**
+	 * Set the URL of the course space.
+	 *
+	 * @param string $url
+	 * @since 1.0.0
+	 */
+	public function set_space_url( $url ) {
+		$this->set_prop( 'space_url', $url );
+	}
 
 	/**
 	 * Get the cohort associated with the course.
@@ -1503,56 +1503,56 @@ class Course extends Data {
 		return $this->data_store->get_cohort( $this );
 	}
 
-public function get_additional_resource_count() {
+	public function get_additional_resource_count() {
 		$download_resource = $this->get_download_resource();
 		return isset( $download_resource['file'] ) ? count( $download_resource['file'] ) : 0;
 	}
 
-public function get_download_resource($context = 'view') {
-        return $this->get_prop('download_resource', $context) ?? array();
-    }
-
-public function get_purchase_point() {
-        return $this->data_store->get_purchase_point( $this );
+	public function get_download_resource( $context = 'view' ) {
+		return $this->get_prop( 'download_resource', $context ) ?? array();
 	}
 
-public function set_purchase_point( $point ) {
+	public function get_purchase_point() {
+		return $this->data_store->get_purchase_point( $this );
+	}
+
+	public function set_purchase_point( $point ) {
 		update_post_meta( $this->get_id(), '_purchase_point', $point );
 	}
 
-public function get_resources() {
+	public function get_resources() {
 		return $this->data_store->get_resources( $this );
 	}
 
-public function get_leaderboard_disabled() {
-        return $this->data_store->get_leaderboard_disabled( $this );
-    }
+	public function get_leaderboard_disabled() {
+		return $this->data_store->get_leaderboard_disabled( $this );
+	}
 
-public function set_leaderboard_disabled( $disabled ) {
-        update_post_meta( $this->get_id(), '_leaderboard_disabled', $disabled );
-    }
+	public function set_leaderboard_disabled( $disabled ) {
+		update_post_meta( $this->get_id(), '_leaderboard_disabled', $disabled );
+	}
 
-public function get_funnel_steps() {
-        return $this->data_store->get_funnel_steps( $this );
-    }
+	public function get_funnel_steps() {
+		return $this->data_store->get_funnel_steps( $this );
+	}
 
-public function set_funnel_steps( $steps ) {
-        update_post_meta( $this->get_id(), '_funnel_steps', $steps );
-    }
+	public function set_funnel_steps( $steps ) {
+		update_post_meta( $this->get_id(), '_funnel_steps', $steps );
+	}
 
-public function get_point_disabled() {
-        return $this->data_store->get_point_disabled( $this );
-    }
+	public function get_point_disabled() {
+		return $this->data_store->get_point_disabled( $this );
+	}
 
-public function set_point_disabled( $disabled ) {
-        update_post_meta( $this->get_id(), '_point_disabled', $disabled );
-    }
+	public function set_point_disabled( $disabled ) {
+		update_post_meta( $this->get_id(), '_point_disabled', $disabled );
+	}
 
-public function get_reward_disabled() {
-        return $this->data_store->get_reward_disabled( $this );
-    }
+	public function get_reward_disabled() {
+		return $this->data_store->get_reward_disabled( $this );
+	}
 
-public function set_reward_disabled( $disabled ) {
-        update_post_meta( $this->get_id(), '_reward_disabled', $disabled );
-    }
+	public function set_reward_disabled( $disabled ) {
+		update_post_meta( $this->get_id(), '_reward_disabled', $disabled );
+	}
 }

@@ -109,7 +109,7 @@ class CourseHelper {
 	 * Update course
 	 *
 	 * @param $post_id
-	 * @param array   $map_data
+	 * @param array $map_data
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -394,7 +394,7 @@ class CourseHelper {
 	/**
 	 * Save course settings
 	 *
-	 * @param int           $course_id
+	 * @param int $course_id
 	 * @param $settings_data
 	 * @return array
 	 * @since 1.0.0

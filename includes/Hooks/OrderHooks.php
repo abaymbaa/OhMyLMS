@@ -100,12 +100,12 @@ class OrderHooks extends HookHandler {
 				array( '%d' )
 			);
 		}
-		
+
 		$subscription_id = get_post_meta( $order_id, '_subscription_id', true );
 		$subscription_id = $subscription_id ? $subscription_id : get_post_meta( $order_id, '_subscription_renewal_id', true );
 		if ( $subscription_id ) {
 			$subscription_id = absint( $subscription_id );
-			$subscription = ecommerce_get_subscription( $subscription_id );
+			$subscription    = ecommerce_get_subscription( $subscription_id );
 
 			// Validate subscription existence and post type.
 			if ( ! $subscription ) {
@@ -123,7 +123,7 @@ class OrderHooks extends HookHandler {
 	 * @param int $order_id The order ID.
 	 *
 	 * @since 1.0.0
-	 */	public function after_payment_completed( $order ) {
+	 */ public function after_payment_completed( $order ) {
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
 			$order    = ecommerce_get_order( $order_id );
@@ -133,17 +133,20 @@ class OrderHooks extends HookHandler {
 			return;
 		}
 
-		// Check any pending enrollment for this order. 
+		// Check any pending enrollment for this order.
 		// To check pending enrollment, we will check in ohmylms_user_enrollment table with status 'pending' for this order id.
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );	
+		$enroll_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );
 		if ( ! empty( $enroll_data ) ) {
 			foreach ( $enroll_data as $enroll ) {
 				$rows = $wpdb->update(
 					$table_name,
 					array( 'status' => 'enrolled' ),
-					array( 'id' => $enroll['id'], 'status' => 'pending' ),
+					array(
+						'id'     => $enroll['id'],
+						'status' => 'pending',
+					),
 					array( '%s' ),
 					array( '%d', '%s' )
 				);
@@ -154,18 +157,18 @@ class OrderHooks extends HookHandler {
 		}
 
 		// for ohmylms_user_membership as well, check pending membership for this order.
-		if( ! ohmylms_is_pro() ) {
+		if ( ! ohmylms_is_pro() ) {
 			return;
 		}
-		$table_name  = $wpdb->prefix . 'ohmylms_user_membership';
-		$membership_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );	
+		$table_name      = $wpdb->prefix . 'ohmylms_user_membership';
+		$membership_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );
 		if ( ! empty( $membership_data ) ) {
 			// update the status to 'enrolled' for each membership using query.
 			foreach ( $membership_data as $membership ) {
-				$student_id = $membership['user_id'];
+				$student_id               = $membership['user_id'];
 				$membership_data_instance = new \OhMyLMS\DataStores\StudentStore();
 				$membership_data_instance->update_membership_enrollment_status( $student_id, $order->get_id(), 'enrolled' );
 			}
 		}
-	}
+}
 }

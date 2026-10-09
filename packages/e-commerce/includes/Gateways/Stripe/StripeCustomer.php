@@ -126,7 +126,7 @@ class StripeCustomer {
 	public function create_customer( $args ) {
 		$args     = $this->generate_customer_request( $args );
 		$response = StripeApi::request( $args, 'customers' );
-		
+
 		if ( ! empty( $response->error ) ) {
 			throw new \Exception( print_r( $response, true ), $response->error->message );
 		}

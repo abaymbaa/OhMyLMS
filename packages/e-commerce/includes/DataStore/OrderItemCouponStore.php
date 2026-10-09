@@ -17,7 +17,7 @@ class OrderItemCouponStore extends OrderItemStore {
 		$id = $item->get_id();
 		$item->set_props(
 			array(
-				'discount'  => $this->get_metadata( $id, 'discount_amount', true ),
+				'discount' => $this->get_metadata( $id, 'discount_amount', true ),
 				'code'     => $item->get_name(),
 			)
 		);

@@ -9,7 +9,7 @@ use OhMyLMS\Data\Student;
 class StudentStore extends DataStore {
 	public static function clear_learning_cache( $student_id, $course_id ) {
 		$key = $student_id . '_' . $course_id;
-		unset( self::$course_completed_cache[$key], self::$course_in_progress_cache[$key], self::$completed_content_count_cache[$key] );
+		unset( self::$course_completed_cache[ $key ], self::$course_in_progress_cache[ $key ], self::$completed_content_count_cache[ $key ] );
 		self::$maybe_completed_cache = array();
 	}
 
@@ -145,7 +145,7 @@ class StudentStore extends DataStore {
 	 * Delete new record
 	 *
 	 * @param $student Student
-	 * @param array           $args
+	 * @param array $args
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -291,9 +291,9 @@ class StudentStore extends DataStore {
 		}
 
 		global $wpdb;
-		$table_name     = $wpdb->prefix . 'ohmylms_user_membership';
-		$post_table     = $wpdb->prefix . 'posts';
-		$query          = $wpdb->prepare(
+		$table_name      = $wpdb->prefix . 'ohmylms_user_membership';
+		$post_table      = $wpdb->prefix . 'posts';
+		$query           = $wpdb->prepare(
 			"
 			SELECT e.membership_id, e.order_id
 			FROM $table_name e
@@ -329,14 +329,14 @@ class StudentStore extends DataStore {
 			}
 		}
 
-	self::$enrolled_memberships_cache[ $cache_key ] = $memberships;
-	return $memberships;
-}
+		self::$enrolled_memberships_cache[ $cache_key ] = $memberships;
+		return $memberships;
+	}
 
-public function get_enrolled_courses( $student ) {
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-	$post_table = $wpdb->prefix . 'posts';
+	public function get_enrolled_courses( $student ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
+		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
 			"
 			SELECT DISTINCT e.course_id
@@ -483,7 +483,7 @@ public function get_enrolled_courses( $student ) {
 		// Convert duration to total hours
 		$total_hours = $hours + ( $mins / 60 ) + ( $secs / 3600 );
 		// $hours            = $duration['hour'] + ( $duration['min'] / 60 ) + ( $duration['sec'] / 3600 );
-		if( ! $total_point || 0 == $total_point ) {
+		if ( ! $total_point || 0 == $total_point ) {
 			return false;
 		}
 		$left = $completed_points > 0 ? intval( $total_hours - ( $total_hours * $completed_points / $total_point ) ) : $total_hours;
@@ -505,20 +505,20 @@ public function get_enrolled_courses( $student ) {
 		if ( ! $course ) {
 			return '#'; // Return fallback URL if course doesn't exist
 		}
-		$completion_rate = $student->get_course_progress_percentage(  $course_id );
-		
-		if( 100 <= $completion_rate ) {
+		$completion_rate = $student->get_course_progress_percentage( $course_id );
+
+		if ( 100 <= $completion_rate ) {
 			return $course->get_course_first_lesson_url(); // Return certificate URL if course is completed
 		}
 
 		$chapters = $course->get_chapters();
-		if( is_array($chapters) ) {
+		if ( is_array( $chapters ) ) {
 			foreach ( $chapters as $chapter_array ) {
-				if( !isset($chapter_array['id']) ) {
+				if ( ! isset( $chapter_array['id'] ) ) {
 					continue;
 				}
 				$chapter = ohmylms_get_chapter( $chapter_array['id'] );
-				
+
 				if ( ! $chapter ) {
 					continue;
 				}
@@ -526,23 +526,23 @@ public function get_enrolled_courses( $student ) {
 				$lessons = $chapter->get_lessons();
 				if ( is_array( $lessons ) ) {
 					foreach ( $lessons as $lesson_array ) {
-						if( !isset($lesson_array['id']) ) {
+						if ( ! isset( $lesson_array['id'] ) ) {
 							continue;
 						}
-						if( isset($lesson_array['type']) && 'quiz' === $lesson_array['type'] ) {
+						if ( isset( $lesson_array['type'] ) && 'quiz' === $lesson_array['type'] ) {
 							$quiz = ohmylms_get_quiz( $lesson_array['id'] );
 							if ( $quiz && ! $student->maybe_completed( $quiz->get_id() ) ) {
 								return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
 							}
 						}
-						
-						if( isset($lesson_array['type']) && 'assignment' === $lesson_array['type'] ) {
+
+						if ( isset( $lesson_array['type'] ) && 'assignment' === $lesson_array['type'] ) {
 							$assignment = ohmylms_get_assignment( $lesson_array['id'] );
 							if ( $assignment && ! $student->maybe_completed( $assignment->get_id() ) ) {
 								return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
 							}
 						}
-						
+
 						$lesson = ohmylms_get_lesson( $lesson_array['id'] );
 						if ( ! $lesson ) {
 							continue;
@@ -693,21 +693,21 @@ public function get_enrolled_courses( $student ) {
 	 */
 	public function maybe_enrolled( $student, $course_id ) {
 		$cache_key = $student->get_id() . '_' . $course_id;
-		
+
 		// Check if result is already cached
 		if ( array_key_exists( $cache_key, self::$enrollment_cache ) ) {
 			return self::$enrollment_cache[ $cache_key ];
 		}
-		
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$query      = $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d AND status = %s", $student->get_id(), $course_id, 'enrolled' );
 		$course     = $wpdb->get_row( $query, ARRAY_A );
 		$result     = $course ? true : false;
-		
+
 		// Cache the result
 		self::$enrollment_cache[ $cache_key ] = $result;
-		
+
 		return $result;
 	}
 
@@ -733,11 +733,11 @@ public function get_enrolled_courses( $student ) {
 	 */
 	public function complete_lesson( $student, $lesson_id, $course_id ) {
 		global $wpdb;
-		$content_type 	= ohmylms_get_content_type_id_by_content_id( $lesson_id );
-		$lesson 		= ohmylms_get_content_object( $content_type, $lesson_id );
-		$content_type  	= $lesson->get_type();
-		$enrollment_id 	= $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d", $student->get_id(), $course_id ) );
-		$table_name    	= $wpdb->prefix . 'ohmylms_user_progress';
+		$content_type  = ohmylms_get_content_type_id_by_content_id( $lesson_id );
+		$lesson        = ohmylms_get_content_object( $content_type, $lesson_id );
+		$content_type  = $lesson->get_type();
+		$enrollment_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d", $student->get_id(), $course_id ) );
+		$table_name    = $wpdb->prefix . 'ohmylms_user_progress';
 
 		if ( ! $enrollment_id ) {
 			return null;
@@ -758,15 +758,15 @@ public function get_enrolled_courses( $student ) {
 				)
 			);
 			self::clear_learning_cache( $student->get_id(), $course_id );
-			if ($progress_id) {
-				do_action('ohmylms_verified_lesson_completed', (int) $wpdb->insert_id, $lesson_id, $course_id, $student->get_id());
+			if ( $progress_id ) {
+				do_action( 'ohmylms_verified_lesson_completed', (int) $wpdb->insert_id, $lesson_id, $course_id, $student->get_id() );
 			}
 			if ( \OhMyLMS\Learning\CourseProgram::managed( $student->get_id(), $course_id ) ) {
 				do_action( 'ohmylms_learning_activity_completed', $student->get_id(), $course_id );
 				return $progress_id;
 			}
 			$percentage = $student->get_course_progress_percentage( $course_id );
-			if( $percentage >= 100  ){
+			if ( $percentage >= 100 ) {
 				do_action( 'ohmylms_lesson_already_completed', $student->get_id(), $course_id, $lesson_id );
 			}
 
@@ -867,9 +867,9 @@ public function get_enrolled_courses( $student ) {
 		$course                  = ohmylms_get_course( $course_id );
 		$completed_content_count = 0;
 		if ( $course && ! empty( $content_type ) ) {
-			$course_id    = $course->get_id();
-			$placeholders = implode( ',', array_fill( 0, count( $content_type ), '%s' ) );
-			$args         = array_merge( array( $user_id, $course_id, 'completed' ), array_values( $content_type ) );
+			$course_id               = $course->get_id();
+			$placeholders            = implode( ',', array_fill( 0, count( $content_type ), '%s' ) );
+			$args                    = array_merge( array( $user_id, $course_id, 'completed' ), array_values( $content_type ) );
 			$completed_content_count = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM $table_name up
@@ -1014,10 +1014,10 @@ public function get_enrolled_courses( $student ) {
 
 
 	public function update_membership_enrollment_status( $student_id, $order_id, $new_status ) {
-		if( ! ohmylms_is_pro() ) {
+		if ( ! ohmylms_is_pro() ) {
 			return false;
 		}
-		
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
@@ -1052,7 +1052,7 @@ public function get_enrolled_courses( $student ) {
 	 * @since 1.0.0
 	 */
 	public function get_all_assignment_attempts( &$student, $course_id ) {
-		if( ! ohmylms_is_pro() ) {
+		if ( ! ohmylms_is_pro() ) {
 			return array();
 		}
 		global $wpdb;
@@ -1201,7 +1201,7 @@ public function get_enrolled_courses( $student ) {
 	}
 
 
-/**
+	/**
 	 * Get the total number of orders for a student.
 	 *
 	 * @param object $student The student object.
@@ -1219,9 +1219,9 @@ public function get_enrolled_courses( $student ) {
 		if ( $student->get_id() ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   	=> '_student_id',
-					'value' 	=> $student->get_id(),
-					'compare' 	=> '=',
+					'key'     => '_student_id',
+					'value'   => $student->get_id(),
+					'compare' => '=',
 				),
 			);
 		}
@@ -1251,16 +1251,16 @@ public function get_enrolled_courses( $student ) {
 		if ( $student->get_id() ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   	=> '_student_id',
-					'value' 	=> $student->get_id(),
-					'compare' 	=> '=',
+					'key'     => '_student_id',
+					'value'   => $student->get_id(),
+					'compare' => '=',
 				),
 			);
 		}
-		$query = new \WP_Query( $args );
+		$query         = new \WP_Query( $args );
 		$total_revenue = 0;
 		foreach ( $query->posts as $order_id ) {
-			$order = new \CodeRex\Ecommerce\Data\Order( $order_id );
+			$order          = new \CodeRex\Ecommerce\Data\Order( $order_id );
 			$total_revenue += floatval( $order->get_total() );
 		}
 		if ( 'view' === $context ) {
@@ -1270,7 +1270,8 @@ public function get_enrolled_courses( $student ) {
 	}
 
 
-	/* Get the Average Order Value (AOV) for a student.
+	/*
+	Get the Average Order Value (AOV) for a student.
 	 *
 	 * @param int|null $student_id The ID of the student. If null, uses the current user.
 	 * @return float The average order value for the student.
@@ -1278,9 +1279,8 @@ public function get_enrolled_courses( $student ) {
 	 * @since 1.0.0
 	 */
 	public function get_aov( $student_id = null ) {
-		$total_orders 	= $this->get_total_orders( $student_id );
-		$total_revenue 	= $this->get_total_revenue( $student_id, 'edit' );
+		$total_orders  = $this->get_total_orders( $student_id );
+		$total_revenue = $this->get_total_revenue( $student_id, 'edit' );
 		return $total_orders > 0 ? \ohmylms_price( $total_revenue / $total_orders, 2 ) : 0;
 	}
-
 }

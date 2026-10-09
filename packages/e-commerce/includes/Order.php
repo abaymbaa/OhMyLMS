@@ -8,6 +8,7 @@ class Order {
 
 	/**
 	 * Order id
+	 *
 	 * @var int
 	 * @since 1.0.0
 	 */
@@ -15,6 +16,7 @@ class Order {
 
 	/**
 	 * Allowed statuses
+	 *
 	 * @var array
 	 * @since 1.0.0
 	 */
@@ -22,6 +24,7 @@ class Order {
 
 	/**
 	 * Order items
+	 *
 	 * @var array
 	 * @since 1.0.0
 	 */
@@ -29,6 +32,7 @@ class Order {
 
 	/**
 	 * Order amount
+	 *
 	 * @var float
 	 * @since 1.0.0
 	 */
@@ -36,6 +40,7 @@ class Order {
 
 	/**
 	 * Order source
+	 *
 	 * @var string
 	 * @since 1.0.0
 	 */
@@ -43,6 +48,7 @@ class Order {
 
 	/**
 	 * Order status
+	 *
 	 * @var string
 	 * @since 1.0.0
 	 */
@@ -50,6 +56,7 @@ class Order {
 
 	/**
 	 * Order payment method
+	 *
 	 * @var string
 	 * @since 1.0.0
 	 */
@@ -70,7 +77,7 @@ class Order {
 	 * @return array|string
 	 * @since 1.0.0
 	 */
-	public function get_order_items(){
+	public function get_order_items() {
 		$items = get_post_meta( $this->id, 'ohmylms_order_items', true );
 		if ( is_array( $items ) ) {
 			return $items;
@@ -81,6 +88,7 @@ class Order {
 
 	/**
 	 * Get order amount
+	 *
 	 * @return float
 	 * @since 1.0.0
 	 */
@@ -96,6 +104,7 @@ class Order {
 
 	/**
 	 * Get order source
+	 *
 	 * @return string
 	 * @since 1.0.0
 	 */
@@ -110,6 +119,7 @@ class Order {
 
 	/**
 	 * Get order discount
+	 *
 	 * @return float
 	 * @since 1.0.0
 	 */
@@ -119,6 +129,7 @@ class Order {
 
 	/**
 	 * Create new order
+	 *
 	 * @param $cart_data
 	 * @param $posted_data
 	 * @return int
@@ -163,6 +174,7 @@ class Order {
 	/**
 	 *
 	 * Save billing details
+	 *
 	 * @param $posted_data
 	 * @return void
 	 * @since 1.0.0
@@ -175,6 +187,7 @@ class Order {
 
 	/**
 	 * Change order status
+	 *
 	 * @param $status
 	 * @return array|null
 	 * @since 1.0.0
@@ -196,6 +209,7 @@ class Order {
 
 	/**
 	 * Get order status
+	 *
 	 * @return string
 	 * @since 1.0.0
 	 */
@@ -205,6 +219,7 @@ class Order {
 
 	/**
 	 * Get order payment method
+	 *
 	 * @return string
 	 * @since 1.0.0
 	 */
@@ -214,6 +229,7 @@ class Order {
 
 	/**
 	 * Update order meta
+	 *
 	 * @param $key
 	 * @param $value
 	 * @return void
@@ -225,6 +241,7 @@ class Order {
 
 	/**
 	 * Get order meta
+	 *
 	 * @param $key
 	 * @param bool $single
 	 * @return mixed
@@ -236,6 +253,7 @@ class Order {
 
 	/**
 	 * Save payment details after order completion
+	 *
 	 * @param $payment_method
 	 * @param $payment_type
 	 * @param $payment_details

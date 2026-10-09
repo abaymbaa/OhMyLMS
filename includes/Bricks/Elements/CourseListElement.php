@@ -10,7 +10,9 @@ namespace OhMyLMS\Bricks\Elements;
 
 use OhMyLMS\Shortcodes\ShortcodeCourseList;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * CourseListElement class
@@ -75,7 +77,7 @@ class CourseListElement extends \Bricks\Element {
 	 * @return void
 	 */
 	public function set_controls() {
-		$this->controls = array();
+		$this->controls       = array();
 		$this->control_groups = array();
 
 		$this->set_content_controls();
@@ -126,27 +128,27 @@ class CourseListElement extends \Bricks\Element {
 		);
 
 		$this->controls['columns'] = array(
-			'tab'      => 'content',
-			'label'    => esc_html__( 'Columns Per Row', 'ohmylms' ),
-			'type'     => 'select',
-			'options'  => array(
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Columns Per Row', 'ohmylms' ),
+			'type'        => 'select',
+			'options'     => array(
 				'1' => esc_html__( '1 Column', 'ohmylms' ),
 				'2' => esc_html__( '2 Columns', 'ohmylms' ),
 				'3' => esc_html__( '3 Columns', 'ohmylms' ),
 				'4' => esc_html__( '4 Columns', 'ohmylms' ),
 			),
-			'default'  => get_option( 'ohmylms_columns_per_row', '3' ),
-			'required' => array( array( 'layout', '=', 'grid' ) ),
+			'default'     => get_option( 'ohmylms_columns_per_row', '3' ),
+			'required'    => array( array( 'layout', '=', 'grid' ) ),
 			'description' => esc_html__( 'Note: If "Show Filter" is enabled for Layout Style 1 or 2, maximum columns allowed is 3.', 'ohmylms' ),
 		);
 
 		$this->controls['posts_per_page'] = array(
-			'tab'         => 'content',
-			'label'       => esc_html__( 'Courses Per Page', 'ohmylms' ),
-			'type'        => 'number',
-			'min'         => 1,
-			'max'         => 100,
-			'default'     => get_option( 'ohmylms_courses_per_page', 10 ),
+			'tab'     => 'content',
+			'label'   => esc_html__( 'Courses Per Page', 'ohmylms' ),
+			'type'    => 'number',
+			'min'     => 1,
+			'max'     => 100,
+			'default' => get_option( 'ohmylms_courses_per_page', 10 ),
 		);
 
 		$this->controls['curriculum'] = array(
@@ -221,7 +223,7 @@ class CourseListElement extends \Bricks\Element {
 			),
 		);
 
-	// Row Settings for grid-style3 and grid-style4
+		// Row Settings for grid-style3 and grid-style4
 		$this->controls['row_settings_heading'] = array(
 			'tab'      => 'content',
 			'label'    => esc_html__( 'Row Settings', 'ohmylms' ),
@@ -233,10 +235,10 @@ class CourseListElement extends \Bricks\Element {
 		);
 
 		$this->controls['course_rows'] = array(
-			'tab'        => 'content',
-			'label'      => esc_html__( 'Course Rows', 'ohmylms' ),
-			'type'       => 'repeater',
-			'fields'     => array(
+			'tab'      => 'content',
+			'label'    => esc_html__( 'Course Rows', 'ohmylms' ),
+			'type'     => 'repeater',
+			'fields'   => array(
 				'row_display_criteria' => array(
 					'label'   => esc_html__( 'Select Course Display Criteria', 'ohmylms' ),
 					'type'    => 'select',
@@ -250,20 +252,20 @@ class CourseListElement extends \Bricks\Element {
 					),
 					'default' => 'all',
 				),
-				'row_heading' => array(
+				'row_heading'          => array(
 					'label'       => esc_html__( 'Row Heading', 'ohmylms' ),
 					'type'        => 'text',
 					'default'     => esc_html__( 'All Course', 'ohmylms' ),
 					'placeholder' => esc_html__( 'Enter Row Heading', 'ohmylms' ),
 				),
 			),
-			'default'    => array(
+			'default'  => array(
 				array(
 					'row_display_criteria' => 'all',
 					'row_heading'          => esc_html__( 'All Course', 'ohmylms' ),
 				),
 			),
-			'required'   => array(
+			'required' => array(
 				array( 'layout', '=', 'grid' ),
 				array( 'layout_style', '=', array( 'grid-style3', 'grid-style4' ) ),
 			),
@@ -276,164 +278,305 @@ class CourseListElement extends \Bricks\Element {
 	private function set_style_controls() {
 
 		// -------- Step 1: Define Groups --------
-		$groups = [
-			'wrapper'      => esc_html__( 'Wrapper Style', 'ohmylms' ),
-			'card'         => esc_html__( 'Card Style', 'ohmylms' ),
+		$groups = array(
+			'wrapper' => esc_html__( 'Wrapper Style', 'ohmylms' ),
+			'card'    => esc_html__( 'Card Style', 'ohmylms' ),
 			// 'card_header'  => esc_html__( 'Card Header', 'ohmylms' ),
-			'title'        => esc_html__( 'Title Style', 'ohmylms' ),
+			'title'   => esc_html__( 'Title Style', 'ohmylms' ),
 			// 'description'  => esc_html__( 'Description Style', 'ohmylms' ),
-			'price'        => esc_html__( 'Price Style', 'ohmylms' ),
-			'button'       => esc_html__( 'Button Style', 'ohmylms' ),
-		];
+			'price'   => esc_html__( 'Price Style', 'ohmylms' ),
+			'button'  => esc_html__( 'Button Style', 'ohmylms' ),
+		);
 
 		foreach ( $groups as $group => $label ) {
-			$this->control_groups[ $group ] = [
+			$this->control_groups[ $group ] = array(
 				'title' => $label,
 				'tab'   => 'style',
-			];
+			);
 		}
 
 		// -------- Step 2: Add Controls under Groups --------
 		// Wrapper
-		$this->controls['wrapper_background'] = [
+		$this->controls['wrapper_background'] = array(
 			'group' => 'wrapper',
-			'label' => esc_html__('Background','ohmylms'),
+			'label' => esc_html__( 'Background', 'ohmylms' ),
 			'type'  => 'color',
-			'css'   => [['property'=>'background','selector'=>'{{WRAPPER}} .ohmylms-container']],
-		];
-		$this->controls['wrapper_padding'] = [
-			'group'=>'wrapper',
-			'label'=>esc_html__('Padding','ohmylms'),
-			'type'=>'spacing',
-			'css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .ohmylms-container']],
-		];
-		$this->controls['wrapper_margin'] = [
-			'group'=>'wrapper',
-			'label'=>esc_html__('Margin','ohmylms'),
-			'type'=>'spacing',
-			'css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .ohmylms-container']],
-		];
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .ohmylms-container',
+				),
+			),
+		);
+		$this->controls['wrapper_padding']    = array(
+			'group' => 'wrapper',
+			'label' => esc_html__( 'Padding', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'padding',
+					'selector' => '{{WRAPPER}} .ohmylms-container',
+				),
+			),
+		);
+		$this->controls['wrapper_margin']     = array(
+			'group' => 'wrapper',
+			'label' => esc_html__( 'Margin', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'margin',
+					'selector' => '{{WRAPPER}} .ohmylms-container',
+				),
+			),
+		);
 
 		// Card
-		$this->controls['card_background'] = [
-			'group'=>'card','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .ohmylms-container .course-card']],
-		];
+		$this->controls['card_background'] = array(
+			'group' => 'card',
+			'label' => esc_html__( 'Background', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .ohmylms-container .course-card',
+				),
+			),
+		);
 
-		$this->controls['card_border'] = [
-			'group'=>'card','label'=>esc_html__('Border','ohmylms'),
-			'type'=>'border','css'=>[['selector'=>'{{WRAPPER}} .course-card']],
-		];
+		$this->controls['card_border'] = array(
+			'group' => 'card',
+			'label' => esc_html__( 'Border', 'ohmylms' ),
+			'type'  => 'border',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card' ) ),
+		);
 
-		$this->controls['card_padding'] = [
-			'group'=>'card','label'=>esc_html__('Padding','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card']],
-		];
+		$this->controls['card_padding'] = array(
+			'group' => 'card',
+			'label' => esc_html__( 'Padding', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'padding',
+					'selector' => '{{WRAPPER}} .course-card',
+				),
+			),
+		);
 
-		$this->controls['card_box_shadow'] = [
-			'group'=>'card','label'=>esc_html__('Box Shadow','ohmylms'),
-			'type'=>'box-shadow','css'=>[['selector'=>'{{WRAPPER}} .course-card']],
-		];
-		$this->controls['card_hover_background'] = [
-			'group'=>'card','label'=>esc_html__('Hover Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card:hover']],
-		];
+		$this->controls['card_box_shadow']       = array(
+			'group' => 'card',
+			'label' => esc_html__( 'Box Shadow', 'ohmylms' ),
+			'type'  => 'box-shadow',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card' ) ),
+		);
+		$this->controls['card_hover_background'] = array(
+			'group' => 'card',
+			'label' => esc_html__( 'Hover Background', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .course-card:hover',
+				),
+			),
+		);
 
 		// Card Header
 		// $this->controls['card_header_image_radius'] = [
-		// 	'group'=>'card_header','label'=>esc_html__('Image Border Radius','ohmylms'),
-		// 	'type'=>'dimension','css'=>[['property'=>'border-radius','selector'=>'{{WRAPPER}} .course-card .card-header img']],
+		// 'group'=>'card_header','label'=>esc_html__('Image Border Radius','ohmylms'),
+		// 'type'=>'dimension','css'=>[['property'=>'border-radius','selector'=>'{{WRAPPER}} .course-card .card-header img']],
 		// ];
 		// $this->controls['card_header_margin'] = [
-		// 	'group'=>'card_header','label'=>esc_html__('Margin','ohmylms'),
-		// 	'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .card-header']],
+		// 'group'=>'card_header','label'=>esc_html__('Margin','ohmylms'),
+		// 'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .card-header']],
 		// ];
 		// $this->controls['card_header_padding'] = [
-		// 	'group'=>'card_header','label'=>esc_html__('Padding','ohmylms'),
-		// 	'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card .card-header']],
+		// 'group'=>'card_header','label'=>esc_html__('Padding','ohmylms'),
+		// 'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card .card-header']],
 		// ];
 
 		// Title
-		$this->controls['title_typography'] = [
-			'group'=>'title','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .ohmylms-course-cards .course-card .course-info .ohmylms-loop-course-title']],
-		];
-		$this->controls['title_color'] = [
-			'group'=>'title','label'=>esc_html__('Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title']],
-		];
-		
-		$this->controls['title_margin'] = [
-			'group'=>'title','label'=>esc_html__('Margin','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title']],
-		];
+		$this->controls['title_typography'] = array(
+			'group' => 'title',
+			'label' => esc_html__( 'Typography', 'ohmylms' ),
+			'type'  => 'typography',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .ohmylms-course-cards .course-card .course-info .ohmylms-loop-course-title' ) ),
+		);
+		$this->controls['title_color']      = array(
+			'group' => 'title',
+			'label' => esc_html__( 'Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title',
+				),
+			),
+		);
+
+		$this->controls['title_margin'] = array(
+			'group' => 'title',
+			'label' => esc_html__( 'Margin', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'margin',
+					'selector' => '{{WRAPPER}} .course-card .course-info .ohmylms-loop-course-link .ohmylms-loop-course-title',
+				),
+			),
+		);
 
 		// Description
-		$this->controls['description_typography'] = [
-			'group'=>'description','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .course-description']],
-		];
-		$this->controls['description_color'] = [
-			'group'=>'description','label'=>esc_html__('Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .course-description']],
-		];
-		$this->controls['description_margin'] = [
-			'group'=>'description','label'=>esc_html__('Margin','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'margin','selector'=>'{{WRAPPER}} .course-card .course-description']],
-		];
+		$this->controls['description_typography'] = array(
+			'group' => 'description',
+			'label' => esc_html__( 'Typography', 'ohmylms' ),
+			'type'  => 'typography',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card .course-description' ) ),
+		);
+		$this->controls['description_color']      = array(
+			'group' => 'description',
+			'label' => esc_html__( 'Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .course-description',
+				),
+			),
+		);
+		$this->controls['description_margin']     = array(
+			'group' => 'description',
+			'label' => esc_html__( 'Margin', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'margin',
+					'selector' => '{{WRAPPER}} .course-card .course-description',
+				),
+			),
+		);
 
 		// Price
-		$this->controls['price_typography'] = [
-			'group'=>'price','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .price .ohmylms-price-amount bdi']],
-		];
-		$this->controls['price_background'] = [
-			'group'=>'price','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-price-amount']],
-		];
-		$this->controls['price_color'] = [
-			'group'=>'price','label'=>esc_html__('Sale Price Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .price del .ohmylms-price-amount bdi']],
-		];
-		
-		$this->controls['price_regular_color'] = [
-			'group'=>'price','label'=>esc_html__('Regular Price Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-price-amount bdi']],
-		];
+		$this->controls['price_typography'] = array(
+			'group' => 'price',
+			'label' => esc_html__( 'Typography', 'ohmylms' ),
+			'type'  => 'typography',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card .price .ohmylms-price-amount bdi' ) ),
+		);
+		$this->controls['price_background'] = array(
+			'group' => 'price',
+			'label' => esc_html__( 'Background', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-price-amount',
+				),
+			),
+		);
+		$this->controls['price_color']      = array(
+			'group' => 'price',
+			'label' => esc_html__( 'Sale Price Text Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .price del .ohmylms-price-amount bdi',
+				),
+			),
+		);
+
+		$this->controls['price_regular_color'] = array(
+			'group' => 'price',
+			'label' => esc_html__( 'Regular Price Text Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-price-amount bdi',
+				),
+			),
+		);
 
 		// Button
-		$this->controls['button_typography'] = [
-			'group'=>'button','label'=>esc_html__('Typography','ohmylms'),
-			'type'=>'typography','css'=>[['selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_background'] = [
-			'group'=>'button','label'=>esc_html__('Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_color'] = [
-			'group'=>'button','label'=>esc_html__('Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_padding'] = [
-			'group'=>'button','label'=>esc_html__('Padding','ohmylms'),
-			'type'=>'spacing','css'=>[['property'=>'padding','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_border'] = [
-			'group'=>'button','label'=>esc_html__('Border','ohmylms'),
-			'type'=>'border','css'=>[['selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_border_radius'] = [
-			'group'=>'button','label'=>esc_html__('Border Radius','ohmylms'),
-			'type'=>'dimension','css'=>[['property'=>'border-radius','selector'=>'{{WRAPPER}} .course-card .ohmylms-button']],
-		];
-		$this->controls['button_hover_background'] = [
-			'group'=>'button','label'=>esc_html__('Hover Background','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'background','selector'=>'{{WRAPPER}} .course-card .ohmylms-button:hover']],
-		];
-		$this->controls['button_hover_color'] = [
-			'group'=>'button','label'=>esc_html__('Hover Text Color','ohmylms'),
-			'type'=>'color','css'=>[['property'=>'color','selector'=>'{{WRAPPER}} .course-card .ohmylms-button:hover']],
-		];
+		$this->controls['button_typography']       = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Typography', 'ohmylms' ),
+			'type'  => 'typography',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card .ohmylms-button' ) ),
+		);
+		$this->controls['button_background']       = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Background', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button',
+				),
+			),
+		);
+		$this->controls['button_color']            = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Text Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button',
+				),
+			),
+		);
+		$this->controls['button_padding']          = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Padding', 'ohmylms' ),
+			'type'  => 'spacing',
+			'css'   => array(
+				array(
+					'property' => 'padding',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button',
+				),
+			),
+		);
+		$this->controls['button_border']           = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Border', 'ohmylms' ),
+			'type'  => 'border',
+			'css'   => array( array( 'selector' => '{{WRAPPER}} .course-card .ohmylms-button' ) ),
+		);
+		$this->controls['button_border_radius']    = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Border Radius', 'ohmylms' ),
+			'type'  => 'dimension',
+			'css'   => array(
+				array(
+					'property' => 'border-radius',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button',
+				),
+			),
+		);
+		$this->controls['button_hover_background'] = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Hover Background', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'background',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button:hover',
+				),
+			),
+		);
+		$this->controls['button_hover_color']      = array(
+			'group' => 'button',
+			'label' => esc_html__( 'Hover Text Color', 'ohmylms' ),
+			'type'  => 'color',
+			'css'   => array(
+				array(
+					'property' => 'color',
+					'selector' => '{{WRAPPER}} .course-card .ohmylms-button:hover',
+				),
+			),
+		);
 	}
 
 
@@ -448,10 +591,10 @@ class CourseListElement extends \Bricks\Element {
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 		// Use the same wrapper class as shortcode for consistency
 		echo '<div class="ohmylms-container ohmylms ohmylms-page">';
-		
+
 		// Use the shortcode class to render the course list
 		ShortcodeCourseList::output( $shortcode_attrs );
-		
+
 		echo '</div>';
 	}
 
@@ -479,22 +622,22 @@ class CourseListElement extends \Bricks\Element {
 
 		if ( isset( $settings['columns'] ) && $settings['columns'] !== '' ) {
 			// Check if filter is enabled for layout styles 1 & 2
-			$layout_style = $settings['layout_style'] ?? '';
-			$show_filter = isset( $settings['show_filter'] ) && $settings['show_filter'];
+			$layout_style         = $settings['layout_style'] ?? '';
+			$show_filter          = isset( $settings['show_filter'] ) && $settings['show_filter'];
 			$is_restricted_layout = in_array( $layout_style, array( 'grid-style1', 'grid-style2' ), true );
-			
+
 			// If filter is enabled for layout styles 1 & 2 and columns is set to 4, force it to 3
 			if ( $show_filter && $is_restricted_layout && $settings['columns'] === '4' ) {
-				$attrs['columns'] = '3';
+				$attrs['columns']          = '3';
 				$this->settings['columns'] = '3'; // Update default to avoid confusion in editor
 			} else {
 				$attrs['columns'] = $settings['columns'];
 			}
 		}
 		// Toggle controls - these return true when enabled, false/empty when disabled
-		$attrs['show_filter'] = isset( $settings['show_filter'] ) && $settings['show_filter'] ? 'yes' : 'no';
-		$attrs['show_search'] = isset( $settings['show_search'] ) && $settings['show_search'] ? 'yes' : 'no';
-		$attrs['show_sort'] = isset( $settings['show_sort'] ) && $settings['show_sort'] ? 'yes' : 'no';
+		$attrs['show_filter']        = isset( $settings['show_filter'] ) && $settings['show_filter'] ? 'yes' : 'no';
+		$attrs['show_search']        = isset( $settings['show_search'] ) && $settings['show_search'] ? 'yes' : 'no';
+		$attrs['show_sort']          = isset( $settings['show_sort'] ) && $settings['show_sort'] ? 'yes' : 'no';
 		$attrs['is_enable_category'] = isset( $settings['is_enable_category'] ) && $settings['is_enable_category'] ? 'yes' : 'no';
 
 		// Curriculum items and Learning Tracks the list is limited to (comma-separated slugs).
@@ -516,15 +659,15 @@ class CourseListElement extends \Bricks\Element {
 		// Convert style controls to shortcode attributes
 		// Wrapper styles
 		$attrs['wrapper_background'] = $this->extract_color_value( $settings, 'wrapper_background' );
-		$attrs['wrapper_padding'] = $this->extract_spacing_value( $settings, 'wrapper_padding' );
-		$attrs['wrapper_margin'] = $this->extract_spacing_value( $settings, 'wrapper_margin' );
+		$attrs['wrapper_padding']    = $this->extract_spacing_value( $settings, 'wrapper_padding' );
+		$attrs['wrapper_margin']     = $this->extract_spacing_value( $settings, 'wrapper_margin' );
 
 		// Card styles
-		$attrs['card_background'] = $this->extract_color_value( $settings, 'card_background' );
+		$attrs['card_background']       = $this->extract_color_value( $settings, 'card_background' );
 		$attrs['card_hover_background'] = $this->extract_color_value( $settings, 'card_hover_background' );
-		$attrs['card_padding'] = $this->extract_spacing_value( $settings, 'card_padding' );
-		$attrs['card_box_shadow'] = $this->extract_box_shadow_value( $settings, 'card_box_shadow' );
-		
+		$attrs['card_padding']          = $this->extract_spacing_value( $settings, 'card_padding' );
+		$attrs['card_box_shadow']       = $this->extract_box_shadow_value( $settings, 'card_box_shadow' );
+
 		// Extract border values (width, style, color, radius)
 		$border_values = $this->extract_border_value( $settings, 'card_border' );
 		if ( ! empty( $border_values ) ) {
@@ -532,36 +675,39 @@ class CourseListElement extends \Bricks\Element {
 		}
 
 		// Title styles
-		$attrs['title_color'] = $this->extract_color_value( $settings, 'title_color' );
+		$attrs['title_color']  = $this->extract_color_value( $settings, 'title_color' );
 		$attrs['title_margin'] = $this->extract_spacing_value( $settings, 'title_margin' );
-		$attrs = array_merge( $attrs, $this->extract_typography_value( $settings, 'title_typography', 'title_typography_' ) );
+		$attrs                 = array_merge( $attrs, $this->extract_typography_value( $settings, 'title_typography', 'title_typography_' ) );
 
 		// Price styles
-		$attrs['price_color'] = $this->extract_color_value( $settings, 'price_color' );
+		$attrs['price_color']         = $this->extract_color_value( $settings, 'price_color' );
 		$attrs['price_regular_color'] = $this->extract_color_value( $settings, 'price_regular_color' );
-		$attrs['price_background'] = $this->extract_color_value( $settings, 'price_background' );
-		$attrs = array_merge( $attrs, $this->extract_typography_value( $settings, 'price_typography', 'price_typography_' ) );
+		$attrs['price_background']    = $this->extract_color_value( $settings, 'price_background' );
+		$attrs                        = array_merge( $attrs, $this->extract_typography_value( $settings, 'price_typography', 'price_typography_' ) );
 
 		// Button styles
-		$attrs['button_background'] = $this->extract_color_value( $settings, 'button_background' );
+		$attrs['button_background']       = $this->extract_color_value( $settings, 'button_background' );
 		$attrs['button_hover_background'] = $this->extract_color_value( $settings, 'button_hover_background' );
-		$attrs['button_color'] = $this->extract_color_value( $settings, 'button_color' );
-		$attrs['button_hover_color'] = $this->extract_color_value( $settings, 'button_hover_color' );
-		$attrs['button_padding'] = $this->extract_spacing_value( $settings, 'button_padding' );
-		$attrs['button_border_radius'] = $this->extract_dimension_value( $settings, 'button_border_radius' );
-		
+		$attrs['button_color']            = $this->extract_color_value( $settings, 'button_color' );
+		$attrs['button_hover_color']      = $this->extract_color_value( $settings, 'button_hover_color' );
+		$attrs['button_padding']          = $this->extract_spacing_value( $settings, 'button_padding' );
+		$attrs['button_border_radius']    = $this->extract_dimension_value( $settings, 'button_border_radius' );
+
 		// Extract button border
 		$button_border_values = $this->extract_button_border_value( $settings, 'button_border' );
 		if ( ! empty( $button_border_values ) ) {
 			$attrs = array_merge( $attrs, $button_border_values );
 		}
-		
+
 		$attrs = array_merge( $attrs, $this->extract_typography_value( $settings, 'button_typography', 'button_typography_' ) );
 
 		// Remove empty values
-		$attrs = array_filter( $attrs, function( $value ) {
-			return $value !== '' && $value !== null && $value !== array();
-		});
+		$attrs = array_filter(
+			$attrs,
+			function ( $value ) {
+				return $value !== '' && $value !== null && $value !== array();
+			}
+		);
 
 		return $attrs;
 	}
@@ -596,13 +742,13 @@ class CourseListElement extends \Bricks\Element {
 		}
 
 		$spacing = $settings[ $key ];
-		$values = array();
+		$values  = array();
 
 		// Extract top, right, bottom, left values
 		$sides = array( 'top', 'right', 'bottom', 'left' );
 		foreach ( $sides as $side ) {
 			if ( isset( $spacing[ $side ] ) && $spacing[ $side ] !== '' ) {
-				$unit = isset( $spacing['unit'] ) ? $spacing['unit'] : 'px';
+				$unit     = isset( $spacing['unit'] ) ? $spacing['unit'] : 'px';
 				$values[] = $spacing[ $side ] . $unit;
 			} else {
 				$values[] = '0';
@@ -633,9 +779,9 @@ class CourseListElement extends \Bricks\Element {
 
 		// Handle dimension with unit
 		if ( isset( $dimension['top'] ) || isset( $dimension['right'] ) || isset( $dimension['bottom'] ) || isset( $dimension['left'] ) ) {
-			$unit = isset( $dimension['unit'] ) ? $dimension['unit'] : 'px';
+			$unit   = isset( $dimension['unit'] ) ? $dimension['unit'] : 'px';
 			$values = array();
-			$sides = array( 'top', 'right', 'bottom', 'left' );
+			$sides  = array( 'top', 'right', 'bottom', 'left' );
 			foreach ( $sides as $side ) {
 				if ( isset( $dimension[ $side ] ) && $dimension[ $side ] !== '' ) {
 					$values[] = $dimension[ $side ] . $unit;
@@ -669,8 +815,8 @@ class CourseListElement extends \Bricks\Element {
 		if ( isset( $border['width'] ) ) {
 			$width = $border['width'];
 			if ( is_array( $width ) ) {
-				$unit = isset( $width['unit'] ) ? $width['unit'] : 'px';
-				$sides = array( 'top', 'right', 'bottom', 'left' );
+				$unit   = isset( $width['unit'] ) ? $width['unit'] : 'px';
+				$sides  = array( 'top', 'right', 'bottom', 'left' );
 				$values = array();
 				foreach ( $sides as $side ) {
 					if ( isset( $width[ $side ] ) && $width[ $side ] !== '' ) {
@@ -701,8 +847,8 @@ class CourseListElement extends \Bricks\Element {
 		if ( isset( $border['radius'] ) ) {
 			$radius = $border['radius'];
 			if ( is_array( $radius ) ) {
-				$unit = isset( $radius['unit'] ) ? $radius['unit'] : 'px';
-				$sides = array( 'top', 'right', 'bottom', 'left' );
+				$unit   = isset( $radius['unit'] ) ? $radius['unit'] : 'px';
+				$sides  = array( 'top', 'right', 'bottom', 'left' );
 				$values = array();
 				foreach ( $sides as $side ) {
 					if ( isset( $radius[ $side ] ) && $radius[ $side ] !== '' ) {
@@ -740,7 +886,7 @@ class CourseListElement extends \Bricks\Element {
 
 		// Build complete border string (width style color)
 		$border_parts = array();
-		
+
 		// Get width
 		$width = '1px';
 		if ( isset( $border['width'] ) ) {
@@ -764,10 +910,10 @@ class CourseListElement extends \Bricks\Element {
 
 		// Get color
 		if ( isset( $border['color']['hex'] ) && ! empty( $border['color']['hex'] ) ) {
-			$border_parts[] = $border['color']['hex'];
+			$border_parts[]                     = $border['color']['hex'];
 			$attrs['button_hover_border_color'] = $border['color']['hex'];
 		} elseif ( isset( $border['color']['rgb'] ) && ! empty( $border['color']['rgb'] ) ) {
-			$border_parts[] = $border['color']['rgb'];
+			$border_parts[]                     = $border['color']['rgb'];
 			$attrs['button_hover_border_color'] = $border['color']['rgb'];
 		}
 
@@ -791,7 +937,7 @@ class CourseListElement extends \Bricks\Element {
 		}
 
 		$shadow = $settings[ $key ];
-		$parts = array();
+		$parts  = array();
 
 		// Extract values
 		if ( isset( $shadow['x'] ) ) {
@@ -832,15 +978,15 @@ class CourseListElement extends \Bricks\Element {
 
 		// Map Bricks typography keys to shortcode keys
 		$mapping = array(
-			'font-family'      => 'font_family',
-			'font-size'        => 'font_size',
-			'font-weight'      => 'font_weight',
-			'text-transform'   => 'text_transform',
-			'font-style'       => 'font_style',
-			'text-decoration'  => 'text_decoration',
-			'line-height'      => 'line_height',
-			'letter-spacing'   => 'letter_spacing',
-			'word-spacing'     => 'word_spacing',
+			'font-family'     => 'font_family',
+			'font-size'       => 'font_size',
+			'font-weight'     => 'font_weight',
+			'text-transform'  => 'text_transform',
+			'font-style'      => 'font_style',
+			'text-decoration' => 'text_decoration',
+			'line-height'     => 'line_height',
+			'letter-spacing'  => 'letter_spacing',
+			'word-spacing'    => 'word_spacing',
 		);
 
 		foreach ( $mapping as $bricks_key => $shortcode_key ) {
@@ -901,14 +1047,14 @@ class CourseListElement extends \Bricks\Element {
 		$primary_color     = isset( $primary_color ) && ! empty( $primary_color ) ? $primary_color : '#6e42d3';
 		$primary_color_rgb = ohmylms_hex_to_rgb( $primary_color );
 
-		$css_variables = ":root {
-			--ohmylms-primary-color: " . esc_html( $primary_color ) . ";
-			--ohmylms-primary-color-rgb: " . esc_html( $primary_color_rgb ) . ";
-			--ohmylms-heading-color: " . ( isset( $heading_color ) && ! empty( $heading_color ) ? esc_html( $heading_color ) : '#000D25' ) . ";
-			--ohmylms-body-text-color: " . ( isset( $body_text_color ) && ! empty( $body_text_color ) ? esc_html( $body_text_color ) : '#52525B' ) . ";
-			--ohmylms-progressbar-color: " . ( $progressbar_color ? esc_html( $progressbar_color ) : '#F85656' ) . ";
+		$css_variables = ':root {
+			--ohmylms-primary-color: ' . esc_html( $primary_color ) . ';
+			--ohmylms-primary-color-rgb: ' . esc_html( $primary_color_rgb ) . ';
+			--ohmylms-heading-color: ' . ( isset( $heading_color ) && ! empty( $heading_color ) ? esc_html( $heading_color ) : '#000D25' ) . ';
+			--ohmylms-body-text-color: ' . ( isset( $body_text_color ) && ! empty( $body_text_color ) ? esc_html( $body_text_color ) : '#52525B' ) . ';
+			--ohmylms-progressbar-color: ' . ( $progressbar_color ? esc_html( $progressbar_color ) : '#F85656' ) . ';
 			--ohmylms-outline-color: var(--ohmylms-primary-color);
-		}";
+		}';
 
 		// Register and enqueue inline styles
 		wp_register_style( 'ohmylms-css-variables', false );
@@ -917,22 +1063,22 @@ class CourseListElement extends \Bricks\Element {
 	}
 
 
-    public function enqueue_scripts() {
-        wp_enqueue_script( 'ohmylms-frontend' );
-        wp_enqueue_script( 'ohmylms-add-to-cart' );
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'ohmylms-frontend' );
+		wp_enqueue_script( 'ohmylms-add-to-cart' );
 
-        wp_enqueue_style( 'ohmylms-frontend' );
+		wp_enqueue_style( 'ohmylms-frontend' );
 		wp_enqueue_style( 'ohmylms-general' );
 		wp_enqueue_script( 'ohmylms-slick' );
-		
+
 		// Ensure CSS variables are available in Bricks builder
 		$this->add_css_variables();
-		
-		$layout = isset( $this->settings['layout'] ) ? $this->settings['layout'] : 'grid';
+
+		$layout       = isset( $this->settings['layout'] ) ? $this->settings['layout'] : 'grid';
 		$layout_style = isset( $this->settings['layout_style'] ) ? $this->settings['layout_style'] : 'grid-style1';
 
 		if ( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) && isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] ) {
-			$columns = isset( $this->settings['columns'] ) ? (int)$this->settings['columns'] : 4;
+			$columns       = isset( $this->settings['columns'] ) ? (int) $this->settings['columns'] : 4;
 			$inline_script = "
 			jQuery(document).ready(function($) {
 				function initSlickCarousel() {
@@ -1003,5 +1149,5 @@ class CourseListElement extends \Bricks\Element {
 			";
 			wp_add_inline_script( 'ohmylms-slick', $inline_script );
 		}
-    }
+	}
 }

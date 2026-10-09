@@ -460,7 +460,7 @@ class TutorLMS {
 			if ( '_video' === $key ) {
 				$settings = maybe_unserialize( $value[0] );
 				if ( isset( $settings['source_video_id'] ) ) {
-					update_post_meta( $new_course_id, '_video_id',  $settings['source_video_id'] );
+					update_post_meta( $new_course_id, '_video_id', $settings['source_video_id'] );
 				}
 			}
 		}
@@ -477,7 +477,7 @@ class TutorLMS {
 	private function migrate_terms_and_taxonomies( $new_course_id ) {
 		// Get all terms associated with the TutorLMS course
 		$terms = wp_get_post_terms( $this->tutor_course_id, array( 'course-category', 'course-tag' ) );
-		
+
 		if ( empty( $terms ) || is_wp_error( $terms ) ) {
 			return;
 		}
@@ -493,7 +493,7 @@ class TutorLMS {
 				$course_tags[] = $term;
 			}
 		}
-		
+
 		// Tutor categories become curriculum items (keeping their parent chain) and its tags become
 		// Learning Tracks. Existing items and tracks with the same name are reused.
 		$paths = array();
@@ -848,7 +848,7 @@ class TutorLMS {
 			return;
 		}
 		foreach ( $student_data as $student ) {
-			$user_id = isset($student->{$field_name}) ? $student->{$field_name} : 0;
+			$user_id = isset( $student->{$field_name} ) ? $student->{$field_name} : 0;
 			$user    = get_user_by( 'ID', $user_id );
 			if ( $user ) {
 				$this->enroll_student( $user_id, $new_course_id );

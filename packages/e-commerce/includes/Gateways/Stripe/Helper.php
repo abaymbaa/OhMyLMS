@@ -246,10 +246,10 @@ class Helper {
 
 	/**
 	 * Format the balance transaction fee or net amount.
-	 * 
+	 *
 	 * @param object $balance_transaction The balance transaction object.
 	 * @param string $type The type of amount to format ('fee' or 'net').
-	 * 
+	 *
 	 * @return string|null The formatted amount or null if the input is not valid.
 	 * @since 1.0.0
 	 */

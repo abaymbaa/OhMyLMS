@@ -6,7 +6,7 @@ import { CERTIFICATES_TAB } from './model.mjs';
 const GAMIFICATION_LINK = 'a[href*="#/gamification/"]';
 
 export function useGamificationMenu() {
-  useMenuHighlight(GAMIFICATION_LINK);
+	useMenuHighlight( GAMIFICATION_LINK );
 }
 
 /**
@@ -14,35 +14,40 @@ export function useGamificationMenu() {
  * menu entry on every render, so the Gamification entry is highlighted again after it. `panels` renders
  * what extensions added to the old Certificates screen (the Gamification screen already carries the
  * generic screen slots).
+ * @param Screen
+ * @param panels
  */
-export function certificatesTab(Screen, panels = () => null) {
-  function CertificatesTab() {
-    useGamificationMenu();
-    return (
-      <>
-        <Screen />
-        {panels()}
-      </>
-    );
-  }
-  CertificatesTab.displayName = 'GamificationCertificates';
-  return CertificatesTab;
+export function certificatesTab( Screen, panels = () => null ) {
+	function CertificatesTab() {
+		useGamificationMenu();
+		return (
+			<>
+				<Screen />
+				{ panels() }
+			</>
+		);
+	}
+	CertificatesTab.displayName = 'GamificationCertificates';
+	return CertificatesTab;
 }
 
-/** A screen opened from the Certificates tab (the template editor) keeps the Gamification entry highlighted. */
-export function withGamificationMenu(Screen) {
-  function WithGamificationMenu(props) {
-    useGamificationMenu();
-    return <Screen {...props} />;
-  }
-  WithGamificationMenu.displayName = `WithGamificationMenu(${Screen.displayName || Screen.name || 'Screen'})`;
-  return WithGamificationMenu;
+/**
+ * A screen opened from the Certificates tab (the template editor) keeps the Gamification entry highlighted.
+ * @param Screen
+ */
+export function withGamificationMenu( Screen ) {
+	function WithGamificationMenu( props ) {
+		useGamificationMenu();
+		return <Screen { ...props } />;
+	}
+	WithGamificationMenu.displayName = `WithGamificationMenu(${ Screen.displayName || Screen.name || 'Screen' })`;
+	return WithGamificationMenu;
 }
 
 /** The old `#/certificates` address opens the tab, so links and bookmarks keep working. */
 export function CertificatesMoved() {
-  useEffect(() => {
-    window.location.replace(`#/gamification/${CERTIFICATES_TAB}`);
-  }, []);
-  return null;
+	useEffect( () => {
+		window.location.replace( `#/gamification/${ CERTIFICATES_TAB }` );
+	}, [] );
+	return null;
 }

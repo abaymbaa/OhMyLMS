@@ -53,7 +53,7 @@ class ConnectorOhMyLms extends Automation_Connector {
 	 * @since 1.0.0
 	 */
 	public function maybe_connected() {
-		return defined('MAILMINT');
+		return defined( 'MAILMINT' );
 	}
 
 	/**

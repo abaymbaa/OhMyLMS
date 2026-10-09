@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-$page_features = (array) get_option('ohmylms_single_course_page_features', array());
+$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
 $current_student_id = get_current_user_id();
-$student = new \OhMyLMS\Data\Student( $current_student_id );
-$maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
+$student            = new \OhMyLMS\Data\Student( $current_student_id );
+$maybe_enrolled     = $student->maybe_enrolled( $course->get_id() );
 
 $show_curriculum = in_array( $maybe_enrolled ? 'category_with_enroll' : 'category', $page_features, true );
 $show_tracks     = in_array( $maybe_enrolled ? 'tag_with_enroll' : 'tag', $page_features, true );
@@ -55,9 +55,9 @@ if ( $curriculum || $tracks ) {
 			echo '<div class="single-taxonomy ohmylms-category">';
 				echo '<h3 class="sidebar-widget-title">' . esc_html__( 'Curriculum', 'ohmylms' ) . '</h3>';
 				echo '<ul class="category-lists">';
-					foreach ( $curriculum as $path ) {
-						echo '<li><a href="javascript:void(0)">' . esc_html( $path ) . '</a></li>';
-					}
+			foreach ( $curriculum as $path ) {
+				echo '<li><a href="javascript:void(0)">' . esc_html( $path ) . '</a></li>';
+			}
 				echo '</ul>';
 			echo '</div>';
 		}
@@ -66,9 +66,9 @@ if ( $curriculum || $tracks ) {
 			echo '<div class="single-taxonomy ohmylms-tag">';
 				echo '<h3 class="sidebar-widget-title">' . esc_html__( 'Learning tracks', 'ohmylms' ) . '</h3>';
 				echo '<ul class="tag-lists">';
-					foreach ( $tracks as $title ) {
-						echo '<li><a href="javascript:void(0)">' . esc_html( $title ) . '</a></li>';
-					}
+			foreach ( $tracks as $title ) {
+				echo '<li><a href="javascript:void(0)">' . esc_html( $title ) . '</a></li>';
+			}
 				echo '</ul>';
 			echo '</div>';
 		}

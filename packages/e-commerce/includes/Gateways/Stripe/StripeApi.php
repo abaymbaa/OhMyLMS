@@ -95,10 +95,10 @@ class StripeApi {
 	/**
 	 * Makes a request to the Stripe API.
 	 *
-	 * @param array  $request_body The request data (body).
-	 * @param string $api          The API endpoint to use. Default is 'charges'.
-	 * @param string $method       The HTTP method to use. Default is 'POST'.
-	 * @param bool   $with_headers Whether to include headers in the response. Default is false.
+	 * @param array       $request_body The request data (body).
+	 * @param string      $api          The API endpoint to use. Default is 'charges'.
+	 * @param string      $method       The HTTP method to use. Default is 'POST'.
+	 * @param bool        $with_headers Whether to include headers in the response. Default is false.
 	 * @param string|null $idempotency_key Optional idempotency key. If not provided, one might be generated.
 	 *
 	 * @return array|object The response from the Stripe API.
@@ -125,11 +125,11 @@ class StripeApi {
 		$response = wp_safe_remote_request( // Changed to wp_safe_remote_request for flexibility with GET/POST etc.
 			self::ENDPOINT . $api,
 			array(
-				'method'  => $method,
-				'headers' => $headers,
-				'body'    => 'POST' === $method || 'PUT' === $method ? $request_body : null, // Only include body for relevant methods
+				'method'      => $method,
+				'headers'     => $headers,
+				'body'        => 'POST' === $method || 'PUT' === $method ? $request_body : null, // Only include body for relevant methods
 				'data_format' => 'body', // Ensures body is sent as form data for POST
-				'timeout' => 70,
+				'timeout'     => 70,
 			)
 		);
 
@@ -148,21 +148,20 @@ class StripeApi {
 		$decoded_body = json_decode( $response_body );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			throw new \Exception( __( 'Failed to decode JSON response from Stripe API.', 'ohmylms' ) . ' Body: ' . substr($response_body, 0, 200) );
+			throw new \Exception( __( 'Failed to decode JSON response from Stripe API.', 'ohmylms' ) . ' Body: ' . substr( $response_body, 0, 200 ) );
 		}
 
 		// Check for Stripe errors in the response body itself
-        // Stripe often returns 200 OK for API errors but includes an 'error' object in the JSON.
-        if ( isset( $decoded_body->error ) ) {
-            // It's good practice to throw an exception here so calling code can catch it.
-            // The message can be made more specific based on $decoded_body->error properties.
-            $error_message = isset($decoded_body->error->message) ? $decoded_body->error->message : 'Unknown Stripe API error.';
-            // You might want to include more details like error type or code if available.
-            // For example: $error_message .= " (Type: {$decoded_body->error->type}, Code: {$decoded_body->error->code})";
-            // throw new \Exception( 'Stripe API Error: ' . $error_message );
-            // For now, we will return the decoded body with the error, GatewayStripeIntents will check for ->error
-        }
-
+		// Stripe often returns 200 OK for API errors but includes an 'error' object in the JSON.
+		if ( isset( $decoded_body->error ) ) {
+			// It's good practice to throw an exception here so calling code can catch it.
+			// The message can be made more specific based on $decoded_body->error properties.
+			$error_message = isset( $decoded_body->error->message ) ? $decoded_body->error->message : 'Unknown Stripe API error.';
+			// You might want to include more details like error type or code if available.
+			// For example: $error_message .= " (Type: {$decoded_body->error->type}, Code: {$decoded_body->error->code})";
+			// throw new \Exception( 'Stripe API Error: ' . $error_message );
+			// For now, we will return the decoded body with the error, GatewayStripeIntents will check for ->error
+		}
 
 		if ( $with_headers ) {
 			return array(
@@ -249,7 +248,7 @@ class StripeApi {
 				'default_payment_method' => $payment_method_id,
 			),
 		);
-	
+
 		return self::request( $request, 'customers/' . $customer_id, 'POST' );
 	}
 }

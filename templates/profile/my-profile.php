@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.6.0
  */
-//do_action( 'ohmylms_account_navigation' );
+// do_action( 'ohmylms_account_navigation' );
 do_action( 'ohmylms_account_header' );
 
 ?>

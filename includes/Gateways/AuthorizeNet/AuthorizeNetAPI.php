@@ -45,10 +45,10 @@ class AuthorizeNetAPI {
 	/**
 	 * Constructor for AuthorizeNetAPI.
 	 *
-	 * @param string $api_login_id API Login ID.
-	 * @param string $transaction_key API Transaction Key.
+	 * @param string      $api_login_id API Login ID.
+	 * @param string      $transaction_key API Transaction Key.
 	 * @param string|null $signature_key API Signature Key (for webhooks).
-	 * @param bool $is_test_mode Whether to use sandbox or live API URLs.
+	 * @param bool        $is_test_mode Whether to use sandbox or live API URLs.
 	 */
 	public function __construct( $api_login_id, $transaction_key, $signature_key = null, $is_test_mode = true ) {
 		$this->api_login_id    = $api_login_id;
@@ -66,10 +66,10 @@ class AuthorizeNetAPI {
 	 * Makes an HTTP request to the Authorize.Net API.
 	 *
 	 * @param string $endpoint_path The API endpoint path (e.g., 'transactions').
-	 * @param array $request_body_wrapper The request data, wrapped in its main key (e.g., ['createTransactionRequest' => [...] ]).
-	 *                                     If empty for GET/DELETE, an empty array should be passed.
+	 * @param array  $request_body_wrapper The request data, wrapped in its main key (e.g., ['createTransactionRequest' => [...] ]).
+	 *                                      If empty for GET/DELETE, an empty array should be passed.
 	 * @param string $request_type The HTTP request type (e.g., 'POST', 'GET', 'DELETE').
-	 * @param int $timeout Optional timeout in seconds. Default 60. Use higher for refunds.
+	 * @param int    $timeout Optional timeout in seconds. Default 60. Use higher for refunds.
 	 * @return array|WP_Error The decoded JSON response as an associative array, or WP_Error on failure.
 	 */
 	private function make_api_request( $endpoint_path, array $request_body_wrapper = array(), $request_type = 'POST', $timeout = 60 ) {
@@ -97,10 +97,9 @@ class AuthorizeNetAPI {
 				);
 			}
 		} elseif ( 'POST' === $request_type || 'PUT' === $request_type ) {
-            // Some POST/PUT requests might not have a specific wrapper but still need merchant auth if body is expected
-            // For now, assume $request_body_wrapper is always provided for POST/PUT that need auth
-        }
-
+			// Some POST/PUT requests might not have a specific wrapper but still need merchant auth if body is expected
+			// For now, assume $request_body_wrapper is always provided for POST/PUT that need auth
+		}
 
 		$args = array(
 			'method'  => $request_type,
@@ -110,14 +109,13 @@ class AuthorizeNetAPI {
 
 		if ( ! empty( $body_to_encode ) ) {
 			$args['body'] = wp_json_encode( $body_to_encode );
-		} elseif ( ('POST' === $request_type || 'PUT' === $request_type) && empty($body_to_encode) && !empty($request_body_wrapper) ) {
-            // If request_body_wrapper was passed but didn't fit the key model (e.g. direct array for some other API)
-            // This part is less likely to be used with Authorize.Net's current structure.
-            // For now, this case is not fully handled; requests should have a top-level key.
-        }
+		} elseif ( ( 'POST' === $request_type || 'PUT' === $request_type ) && empty( $body_to_encode ) && ! empty( $request_body_wrapper ) ) {
+			// If request_body_wrapper was passed but didn't fit the key model (e.g. direct array for some other API)
+			// This part is less likely to be used with Authorize.Net's current structure.
+			// For now, this case is not fully handled; requests should have a top-level key.
+		}
 
 		$response = wp_remote_request( $full_api_url, $args );
-
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -144,16 +142,16 @@ class AuthorizeNetAPI {
 	 * Creates a transaction (e.g., authCapture, refund).
 	 *
 	 * @param array $transaction_request_content Content for the 'transactionRequest' part of the API call.
-	 * @param int $timeout Optional timeout in seconds. Default 60. Refunds may need 90-120 seconds.
+	 * @param int   $timeout Optional timeout in seconds. Default 60. Refunds may need 90-120 seconds.
 	 * @return array|WP_Error The API response.
 	 */
 	public function createTransaction( array $transaction_request_content, $timeout = 60 ) {
 		// Automatically increase timeout for refund transactions
-		if ( isset( $transaction_request_content['transactionType'] ) && 
-		     $transaction_request_content['transactionType'] === 'refundTransaction' ) {
+		if ( isset( $transaction_request_content['transactionType'] ) &&
+			$transaction_request_content['transactionType'] === 'refundTransaction' ) {
 			$timeout = max( $timeout, 120 ); // Use at least 120 seconds for refunds
 		}
-		
+
 		$payload = array(
 			'createTransactionRequest' => array(
 				'transactionRequest' => $transaction_request_content,
@@ -224,4 +222,3 @@ class AuthorizeNetAPI {
 		return $this->make_api_request( 'subscriptions', $payload, 'POST' ); // Changed to POST for consistency with AuthNet patterns
 	}
 }
-?>

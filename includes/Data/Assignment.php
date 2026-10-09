@@ -225,8 +225,8 @@ class Assignment extends PostTypeData {
 		return $this->get_prop( 'content', $context ) ?? '';
 	}
 
-	public function get_assignment_title( ) {
-		return $this->get_prop('name') ?? '';
+	public function get_assignment_title() {
+		return $this->get_prop( 'name' ) ?? '';
 	}
 
 	public function get_submission( $student_id ) {
@@ -373,13 +373,12 @@ class Assignment extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function set_time_limit( string $time_limit ) {
-		$exiting_limit = get_post_meta( $this->get_id(), '_time_limit', true);
-		
-		if( $this->get_id() && $exiting_limit != $time_limit ) {
+		$exiting_limit = get_post_meta( $this->get_id(), '_time_limit', true );
+
+		if ( $this->get_id() && $exiting_limit != $time_limit ) {
 			$this->delete_assignment_deadline();
 		}
 		$this->set_prop( 'time_limit', $time_limit );
-		
 	}
 	/**
 	 * Get the time limit.
@@ -417,10 +416,10 @@ class Assignment extends PostTypeData {
 	 * @since 1.0.0
 	 */
 	public function set_time_limit_type( string $time_limit_type ) {
-		$exiting_limit_type = get_post_meta( $this->get_id(), '_time_limit_type', true);
-		if(  $this->get_id() && $exiting_limit_type != $time_limit_type ) {
-            $this->delete_assignment_deadline();
-        }
+		$exiting_limit_type = get_post_meta( $this->get_id(), '_time_limit_type', true );
+		if ( $this->get_id() && $exiting_limit_type != $time_limit_type ) {
+			$this->delete_assignment_deadline();
+		}
 		$this->set_prop( 'time_limit_type', $time_limit_type );
 	}
 
@@ -642,16 +641,16 @@ class Assignment extends PostTypeData {
 	}
 
 	public function update_assignment_attempts( $attempt_id, $get_data ) {
-		return $this->data_store->update_assignment_attempts($this, $attempt_id, $get_data);
+		return $this->data_store->update_assignment_attempts( $this, $attempt_id, $get_data );
 	}
 
 	private function delete_assignment_deadline() {
-		
+
 		global $wpdb;
 		$meta_key_pattern = '_ohmylms_deadline_' . get_current_user_id() . '_%';
-		$wpdb->query( 
-			$wpdb->prepare( 
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
 				$meta_key_pattern
 			)
 		);

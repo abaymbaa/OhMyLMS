@@ -172,13 +172,13 @@ class CertificateController extends RestController {
 
 		// Filter by course_id if passed
 		// if ( ! empty( $request['course_id'] ) ) {
-		//  $course_id = intval( $request['course_id'] );
+		// $course_id = intval( $request['course_id'] );
 
-		//  $args['meta_query'][] = array(
-		//      'key'     => 'course_ids', // Adjust the meta key if needed
-		//      'value'   => '"' . $course_id . '"',
-		//      'compare' => 'LIKE',
-		//  );
+		// $args['meta_query'][] = array(
+		// 'key'     => 'course_ids', // Adjust the meta key if needed
+		// 'value'   => '"' . $course_id . '"',
+		// 'compare' => 'LIKE',
+		// );
 		// }
 
 		// Allow further filters
@@ -209,10 +209,10 @@ class CertificateController extends RestController {
 			}
 		}
 
-		$total_posts = $posts_query->found_posts;
+		$total_posts    = $posts_query->found_posts;
 		$posts_per_page = (int) ( $query_args['posts_per_page'] > 0 ? $query_args['posts_per_page'] : $total_posts );
 		$max_pages      = ceil( $total_posts / $posts_per_page );
-		
+
 		$response = rest_ensure_response( $filter_posts );
 		$response->header( 'X-WP-Total', $total_posts );
 		$response->header( 'X-WP-TotalCertificates', (int) $total_posts );

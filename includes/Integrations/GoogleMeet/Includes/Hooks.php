@@ -33,19 +33,19 @@ class Hooks {
 		// Register GoogleMeet in integrations list
 		\add_filter( 'ohmylms_integrations', array( $this, 'register_googlemeet_integration' ), 10, 1 );
 		\add_filter( 'init', array( $this, 'google_meet_authentication' ), 10 );
-		
+
 		// Add GoogleMeet as a live class platform option
 		\add_filter( 'ohmylms_live_class_platforms', array( $this, 'add_googlemeet_platform' ) );
-		
+
 		// Register Sessions menu when GoogleMeet is enabled
 		\add_filter( 'ohmylms_show_sessions_menu', array( $this, 'register_session_menu' ) );
-		
+
 		// Enqueue scripts for GoogleMeet
 		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
-		
+
 		// Add GoogleMeet template
 		\add_filter( 'ohmylms_lesson_template_path', array( $this, 'add_googlemeet_template' ), 10, 2 );
-		
+
 		// Session lifecycle hooks
 
 		\add_action( 'ohmylms_googlemeet_session_created', array( $this, 'create_googlemeet_session' ), 10, 2 );
@@ -69,7 +69,7 @@ class Hooks {
 			'icon'        => OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
 			'categories'  => array( 'live-classes' ),
 			'hasSettings' => true,
-			'dependency' => __('Requires Cohorts', 'ohmylms'),
+			'dependency'  => __( 'Requires Cohorts', 'ohmylms' ),
 			'class'       => 'OhMyLMS\\Integrations\\GoogleMeet\\GoogleMeet',
 			'is_valid'    => true,
 		);
@@ -87,8 +87,8 @@ class Hooks {
 	 */
 	public function add_googlemeet_platform( $platforms ) {
 		$platforms['googlemeet'] = array(
-			'name'  => __( 'Google Meet', 'ohmylms' ),
-			'icon'  => OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
+			'name' => __( 'Google Meet', 'ohmylms' ),
+			'icon' => OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/Images/googlemeet-icon.svg',
 		);
 		return $platforms;
 	}
@@ -103,13 +103,13 @@ class Hooks {
 	 * @return bool Whether to show sessions menu.
 	 */
 	public function register_session_menu( $should_show ) {
-		$integrations = get_option( 'ohmylms_integrations' );
+		$integrations       = get_option( 'ohmylms_integrations' );
 		$googlemeet_enabled = isset( $integrations['googlemeet']['is_enable'] ) && $integrations['googlemeet']['is_enable'];
-		
+
 		if ( $googlemeet_enabled ) {
 			return true;
 		}
-		
+
 		return $should_show;
 	}
 
@@ -124,7 +124,7 @@ class Hooks {
 		if ( is_singular( 'lesson' ) ) {
 			global $post;
 			$platform = get_post_meta( $post->ID, '_lesson_platform', true );
-			
+
 			if ( $platform === 'googlemeet' ) {
 				\wp_enqueue_script(
 					'ohmylms-googlemeet-content',
@@ -157,18 +157,18 @@ class Hooks {
 		return $template;
 	}
 
-	
+
 	/**
 	 * Create a GoogleMeet session.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param \WP_Post $post    The post object.
-	 * @param array   $request The request data.
+	 * @param array    $request The request data.
 	 *
 	 * @return void
 	 */
-	public function create_googlemeet_session( $post, $request ){
+	public function create_googlemeet_session( $post, $request ) {
 		$session_id = $post->ID;
 
 		$user_id      = get_current_user_id();
@@ -186,29 +186,35 @@ class Hooks {
 		$desc     = $request->get_param( 'agenda' );
 		$timezone = $request->get_param( 'timezone' ) ?: 'UTC';
 
-		$event_data = [
-			'summary'     => $title,
-			'description' => $desc,
-			'start'       => [ 'dateTime' => $start, 'timeZone' => $timezone ],
-			'end'         => [ 'dateTime' => $end, 'timeZone' => $timezone ],
-			'reminders'   => [ 'useDefault' => true ],
-			'conferenceData' => [
-				'createRequest' => [
-					'requestId' => uniqid(),
-					'conferenceSolutionKey' => [ 'type' => 'hangoutsMeet' ],
-				],
-			],
-		];
-		$response = wp_remote_post(
+		$event_data = array(
+			'summary'        => $title,
+			'description'    => $desc,
+			'start'          => array(
+				'dateTime' => $start,
+				'timeZone' => $timezone,
+			),
+			'end'            => array(
+				'dateTime' => $end,
+				'timeZone' => $timezone,
+			),
+			'reminders'      => array( 'useDefault' => true ),
+			'conferenceData' => array(
+				'createRequest' => array(
+					'requestId'             => uniqid(),
+					'conferenceSolutionKey' => array( 'type' => 'hangoutsMeet' ),
+				),
+			),
+		);
+		$response   = wp_remote_post(
 			'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1',
-			[
-				'headers' => [
+			array(
+				'headers' => array(
 					'Authorization' => "Bearer $access_token",
 					'Content-Type'  => 'application/json',
-				],
+				),
 				'body'    => wp_json_encode( $event_data ),
 				'timeout' => 20,
-			]
+			)
 		);
 
 		if ( is_wp_error( $response ) ) {
@@ -241,9 +247,11 @@ class Hooks {
 	}
 
 
-    private function get_valid_token( $user_id ) {
+	private function get_valid_token( $user_id ) {
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
-		if ( empty( $tokens['access_token'] ) ) return false;
+		if ( empty( $tokens['access_token'] ) ) {
+			return false;
+		}
 
 		if ( time() > ( $tokens['expires_in'] ?? 0 ) ) {
 			return $this->refresh_access_token( $user_id );
@@ -253,7 +261,7 @@ class Hooks {
 	}
 
 
-    private function refresh_access_token( $user_id ) {
+	private function refresh_access_token( $user_id ) {
 		$creds  = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 
@@ -261,14 +269,17 @@ class Hooks {
 			return false;
 		}
 
-		$response = wp_remote_post( 'https://oauth2.googleapis.com/token', [
-			'body' => [
-				'client_id'     => $creds['client_id'],
-				'client_secret' => $creds['client_secret'],
-				'refresh_token' => $tokens['refresh_token'],
-				'grant_type'    => 'refresh_token',
-			],
-		] );
+		$response = wp_remote_post(
+			'https://oauth2.googleapis.com/token',
+			array(
+				'body' => array(
+					'client_id'     => $creds['client_id'],
+					'client_secret' => $creds['client_secret'],
+					'refresh_token' => $tokens['refresh_token'],
+					'grant_type'    => 'refresh_token',
+				),
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -292,12 +303,12 @@ class Hooks {
 	 * @since 1.0.0
 	 *
 	 * @param \WP_Post $post    The post object.
-	 * @param array   $request The request data.
+	 * @param array    $request The request data.
 	 *
 	 * @return void
 	 */
 	public function update_googlemeet_session( $post, $request ) {
-		$session_id = $post->ID;
+		$session_id          = $post->ID;
 		$existing_meeting_id = get_post_meta( $session_id, '_googlemeet_meeting_id', true );
 
 		if ( ! $existing_meeting_id ) {
@@ -305,7 +316,7 @@ class Hooks {
 			return;
 		}
 
-		$user_id = get_current_user_id();
+		$user_id      = get_current_user_id();
 		$access_token = $this->get_valid_token( $user_id );
 
 		if ( ! $access_token ) {
@@ -321,21 +332,21 @@ class Hooks {
 		$timezone = sanitize_text_field( $request->get_param( 'timezone' ) ?: 'UTC' );
 
 		// Prepare event payload
-		$event_data = [
+		$event_data = array(
 			'summary'     => $title,
 			'description' => $desc,
-			'start'       => [
+			'start'       => array(
 				'dateTime' => $start,
 				'timeZone' => $timezone,
-			],
-			'end'         => [
+			),
+			'end'         => array(
 				'dateTime' => $end,
 				'timeZone' => $timezone,
-			],
-			'reminders'   => [
+			),
+			'reminders'   => array(
 				'useDefault' => true,
-			],
-		];
+			),
+		);
 
 		/**
 		 * Determine if a Meet link already exists.
@@ -346,12 +357,12 @@ class Hooks {
 
 		// Include conferenceData only if no Meet exists
 		if ( empty( $existing_meet_link ) ) {
-			$event_data['conferenceData'] = [
-				'createRequest' => [
-					'requestId' => uniqid( 'meet_', true ),
-					'conferenceSolutionKey' => [ 'type' => 'hangoutsMeet' ],
-				],
-			];
+			$event_data['conferenceData'] = array(
+				'createRequest' => array(
+					'requestId'             => uniqid( 'meet_', true ),
+					'conferenceSolutionKey' => array( 'type' => 'hangoutsMeet' ),
+				),
+			);
 		}
 
 		$api_url = sprintf(
@@ -360,18 +371,21 @@ class Hooks {
 		);
 
 		// PATCH method is correct for partial updates
-		$response = wp_remote_request( $api_url, [
-			'method'  => 'PATCH',
-			'headers' => [
-				'Authorization' => "Bearer $access_token",
-				'Content-Type'  => 'application/json',
-			],
-			'body'    => wp_json_encode( $event_data ),
-			'timeout' => 20,
-		] );
+		$response = wp_remote_request(
+			$api_url,
+			array(
+				'method'  => 'PATCH',
+				'headers' => array(
+					'Authorization' => "Bearer $access_token",
+					'Content-Type'  => 'application/json',
+				),
+				'body'    => wp_json_encode( $event_data ),
+				'timeout' => 20,
+			)
+		);
 
 		$status_code = wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body        = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $status_code < 200 || $status_code >= 300 ) {
 			error_log( 'Google Meet update failed (' . $status_code . '): ' . print_r( $body, true ) );
@@ -413,11 +427,11 @@ class Hooks {
 	 */
 	public function delete_googlemeet_session( $session_id, $request ) {
 		$meeting_id = \get_post_meta( $session_id, '_googlemeet_meeting_id', true );
-		
+
 		if ( $meeting_id ) {
 			$meeting_service = new Services\MeetingService();
-			$result = $meeting_service->delete_meeting( $meeting_id );
-			
+			$result          = $meeting_service->delete_meeting( $meeting_id );
+
 			if ( isset( $result['success'] ) && $result['success'] ) {
 				// Clean up all GoogleMeet-related post meta
 				\delete_post_meta( $session_id, '_googlemeet_meeting_id' );
@@ -432,9 +446,9 @@ class Hooks {
 
 	public function google_meet_authentication() {
 		if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) && $_GET['state'] === 'googlemeet_auth' ) {
-			$code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
-			$user_id  = get_current_user_id();
-			$creds    = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+			$code    = sanitize_text_field( wp_unslash( $_GET['code'] ) );
+			$user_id = get_current_user_id();
+			$creds   = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 			if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
 				// Redirect back with error
@@ -442,16 +456,19 @@ class Hooks {
 				exit;
 			}
 
-			$response = wp_remote_post( 'https://oauth2.googleapis.com/token', [
-				'body' => [
-					'code'          => $code,
-					'client_id'     => $creds['client_id'],
-					'client_secret' => $creds['client_secret'],
-					'redirect_uri'  => $creds['redirect_url'],
-					'grant_type'    => 'authorization_code',
-				],
-			] );
-			
+			$response = wp_remote_post(
+				'https://oauth2.googleapis.com/token',
+				array(
+					'body' => array(
+						'code'          => $code,
+						'client_id'     => $creds['client_id'],
+						'client_secret' => $creds['client_secret'],
+						'redirect_uri'  => $creds['redirect_url'],
+						'grant_type'    => 'authorization_code',
+					),
+				)
+			);
+
 			if ( is_wp_error( $response ) ) {
 				// Redirect back with error
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=oauth_failed' ) );
@@ -460,12 +477,16 @@ class Hooks {
 
 			$body = json_decode( wp_remote_retrieve_body( $response ), true );
 			if ( isset( $body['access_token'] ) ) {
-				update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', [
-					'access_token'  => $body['access_token'],
-					'refresh_token' => $body['refresh_token'] ?? '',
-					'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
-				] );
-				
+				update_user_meta(
+					$user_id,
+					'ohmylms_googlemeet_tokens',
+					array(
+						'access_token'  => $body['access_token'],
+						'refresh_token' => $body['refresh_token'] ?? '',
+						'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
+					)
+				);
+
 				// Redirect back to integrations page with success
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=success' ) );
 				exit;

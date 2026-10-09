@@ -73,10 +73,10 @@ class Order extends Data {
 		'parent_id'            => 0,
 		'related_orders'       => array(),
 		'order_version'        => OHMYLMS_VERSION,
-		'subscription_id'	   => 0,
-		'line_items'		   => array(),
+		'subscription_id'      => 0,
+		'line_items'           => array(),
 		'tax_amount'           => 0,
-		'tax_rate'             => 0
+		'tax_rate'             => 0,
 	);
 
 	/**
@@ -152,9 +152,9 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	protected function status_transition() {
-		$status_transition 			= $this->status_transition;
-		$this->status_transition 	= false;
-		if ( !$this->get_status() || !$status_transition ) {
+		$status_transition       = $this->status_transition;
+		$this->status_transition = false;
+		if ( ! $this->get_status() || ! $status_transition ) {
 			return;
 		}
 		try {
@@ -164,8 +164,7 @@ class Order extends Data {
 				$this->add_order_note( $transition_note );
 				do_action( 'ohmylms_order_status_' . $status_transition['from'] . '_to_' . $status_transition['to'], $this->get_id(), $this );
 				do_action( 'ohmylms_order_status_changed', $this->get_id(), $status_transition['from'], $status_transition['to'], $this );
-			}
-			else {
+			} else {
 				$transition_note = sprintf( __( 'Order status set to %s.', 'ohmylms' ), $status_transition['to'] );
 				$this->add_order_note( $transition_note );
 			}
@@ -210,7 +209,8 @@ class Order extends Data {
 			}
 
 			if ( ! $this->get_date_paid( 'edit' ) ) {
-				$this->set_date_paid( current_time( 'mysql' ) );;
+				$this->set_date_paid( current_time( 'mysql' ) );
+
 			}
 
 			$this->set_status( 'completed' );
@@ -399,7 +399,7 @@ class Order extends Data {
 		$formatted_total = ohmylms_price( $order_total, array( 'currency' => $this->get_currency() ) );
 
 		if ( $total_refunded ) {
-			$formatted_total = '<del aria-hidden="true">' . wp_strip_all_tags( $formatted_total ) . '</del> <ins>' . ohmylms_price( $order_total - $total_refunded, array( 'currency' => $this->get_currency() ) )  . '</ins>';
+			$formatted_total = '<del aria-hidden="true">' . wp_strip_all_tags( $formatted_total ) . '</del> <ins>' . ohmylms_price( $order_total - $total_refunded, array( 'currency' => $this->get_currency() ) ) . '</ins>';
 		}
 
 		return $formatted_total;
@@ -441,8 +441,8 @@ class Order extends Data {
 		return $this->get_prop( 'cart_hash' );
 	}
 
-	public function get_order_version($context = 'view') {
-		return $this->get_prop('order_version', $context);
+	public function get_order_version( $context = 'view' ) {
+		return $this->get_prop( 'order_version', $context );
 	}
 
 	/**
@@ -490,6 +490,7 @@ class Order extends Data {
 	 * Get the URL to the student's profile page.
 	 *
 	 * This function constructs the URL to the student's profile page in the admin area.
+	 *
 	 * @since 1.0.0
 	 */
 	public function get_student_profile_url() {
@@ -999,12 +1000,12 @@ class Order extends Data {
 		$this->maybe_set_date_paid();
 		$this->maybe_set_date_completed();
 
-		if ($old_status) {
-			$transition_note = sprintf( __( 'Order status changed from %s to %s.', 'ohmylms' ), $old_status, $new_status );
+		if ( $old_status ) {
+			$transition_note         = sprintf( __( 'Order status changed from %1$s to %2$s.', 'ohmylms' ), $old_status, $new_status );
 			$this->status_transition = array(
-				'from'   => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
-				'to'     => $new_status,
-				'note'   => $transition_note
+				'from' => ! empty( $this->status_transition['from'] ) ? $this->status_transition['from'] : $old_status,
+				'to'   => $new_status,
+				'note' => $transition_note,
 			);
 		}
 	}
@@ -1019,8 +1020,8 @@ class Order extends Data {
 		$this->set_date_prop( 'date_created', $value );
 	}
 
-	public function set_order_version($value) {
-		$this->set_prop('order_version', $value);
+	public function set_order_version( $value ) {
+		$this->set_prop( 'order_version', $value );
 	}
 
 	/**
@@ -1104,7 +1105,8 @@ class Order extends Data {
 		}
 	}
 
-	/* Get the key for the items array based on the item type.
+	/*
+	Get the key for the items array based on the item type.
 	 *
 	 * This function determines the key to use for storing items in the order based on the type of the item.
 	 *
@@ -1349,7 +1351,8 @@ class Order extends Data {
 		return $this->get_status() === $status;
 	}
 
-	/* Get items of specified types from the order.
+	/*
+	Get items of specified types from the order.
 	 *
 	 * @param array $types The types of items to retrieve. Default is ['line_item'].
 	 * @return array The items of the specified types.
@@ -1382,7 +1385,7 @@ class Order extends Data {
 	 * This function retrieves the formatted line subtotal for the specified order item.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The order item to get the subtotal for.
-	 * @param string $tax_display The tax display mode. Default is an empty string.
+	 * @param string                            $tax_display The tax display mode. Default is an empty string.
 	 * @return string The formatted line subtotal.
 	 *
 	 * @since 1.0.0
@@ -1397,8 +1400,8 @@ class Order extends Data {
 	 * This function calculates the line subtotal for the specified order item.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The order item to calculate the subtotal for.
-	 * @param bool $inc_tax Whether to include tax in the subtotal calculation. Default is false.
-	 * @param bool $round Whether to round the subtotal. Default is true.
+	 * @param bool                              $inc_tax Whether to include tax in the subtotal calculation. Default is false.
+	 * @param bool                              $round Whether to round the subtotal. Default is true.
 	 * @return float The line subtotal for the order item.
 	 *
 	 * @since 1.0.0
@@ -1453,9 +1456,9 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	protected function add_order_items_totals_total_row( &$total_rows ) {
-		$tax_amount = $this->get_tax_amount();
+		$tax_amount                = $this->get_tax_amount();
 		$total_rows['order_total'] = array(
-			'label' => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ? esc_html(sprintf('Total ( Including tax : %s )', number_format($tax_amount, 2))) : __( 'Total:', 'ohmylms' ),
+			'label' => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ? esc_html( sprintf( 'Total ( Including tax : %s )', number_format( $tax_amount, 2 ) ) ) : __( 'Total:', 'ohmylms' ),
 			'value' => ohmylms_price( $this->get_formatted_order_total(), array( 'currency' => $this->get_currency() ) ),
 		);
 	}
@@ -1508,7 +1511,7 @@ class Order extends Data {
 	protected function add_order_items_tax_row( &$total_rows ) {
 		$tax_amount = $this->get_tax_amount();
 		if ( $tax_amount ) {
-			$tax_rate = $this->get_tax_rate();
+			$tax_rate  = $this->get_tax_rate();
 			$tax_label = TaxService::get_instance()->get_tax_label();
 
 			// Add tax rate span if tax rate exists
@@ -1535,7 +1538,7 @@ class Order extends Data {
 		$total_rows = array();
 		$this->add_order_items_subtotal_row( $total_rows );
 		$this->add_order_item_totals_discount_row( $total_rows );
-		$this->add_order_items_tax_row($total_rows);
+		$this->add_order_items_tax_row( $total_rows );
 		$this->add_order_items_totals_total_row( $total_rows );
 		$this->add_order_item_order_id_row( $total_rows );
 		$this->add_order_item_purchase_date_row( $total_rows );
@@ -1543,7 +1546,7 @@ class Order extends Data {
 		return $total_rows;
 	}
 
-	public function add_order_item_order_id_row( &$total_rows ){
+	public function add_order_item_order_id_row( &$total_rows ) {
 		$total_rows['order_id'] = array(
 			'label' => __( 'Order ID', 'ohmylms' ),
 			'value' => $this->get_id(),
@@ -1551,10 +1554,10 @@ class Order extends Data {
 	}
 
 
-	public function add_order_item_purchase_date_row( &$total_rows ){
+	public function add_order_item_purchase_date_row( &$total_rows ) {
 		$total_rows['purchase_date'] = array(
 			'label' => __( 'Purchase date', 'ohmylms' ),
-			'value' => (new \DateTime($this->get_date_paid( 'edit' )))->format('d/m/Y'),
+			'value' => ( new \DateTime( $this->get_date_paid( 'edit' ) ) )->format( 'd/m/Y' ),
 		);
 	}
 
@@ -1565,8 +1568,8 @@ class Order extends Data {
 	 * and can indicate if it was added by a user.
 	 *
 	 * @param string $note The content of the note to add.
-	 * @param int $is_customer_note Whether the note is a customer note. Default is 0.
-	 * @param bool $added_by_user Whether the note was added by a user. Default is false.
+	 * @param int    $is_customer_note Whether the note is a customer note. Default is 0.
+	 * @param bool   $added_by_user Whether the note was added by a user. Default is false.
 	 *
 	 * @since 1.0.0
 	 */
@@ -1644,7 +1647,7 @@ class Order extends Data {
 	 *
 	 * @param string $new_status The new status to set for the order.
 	 * @param string $note Optional. A note to add to the order. Default is an empty string.
-	 * @param bool $manual Optional. Whether the status change is manual. Default is false.
+	 * @param bool   $manual Optional. Whether the status change is manual. Default is false.
 	 * @return bool True if the status was successfully updated, false otherwise.
 	 *
 	 * @since 1.0.0

@@ -35,7 +35,7 @@ class SetupWizardController extends RestController {
 	 *
 	 * @param WP_REST_Request $request The REST API request object.
 	 * @return bool|WP_Error True if the nonce is valid, WP_Error otherwise.
-	 * 
+	 *
 	 * @since 1.1.18
 	 */
 	public function verify_nonce( WP_REST_Request $request ) {
@@ -174,7 +174,7 @@ class SetupWizardController extends RestController {
 		if ( is_wp_error( $nonce_verification ) ) {
 			return rest_ensure_response( $nonce_verification );
 		}
-		
+
 		/**
 		 * Fires when the setup wizard onboarding is completed.
 		 *
@@ -241,8 +241,8 @@ class SetupWizardController extends RestController {
 			return new WP_Error( 'invalid_course_data', __( 'Invalid course data provided.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		$course_ids  = array();
-		$is_first    = ! get_option( 'ohmylms_first_course_created', false );
+		$course_ids = array();
+		$is_first   = ! get_option( 'ohmylms_first_course_created', false );
 
 		foreach ( $courses_data as $course_data ) {
 			if ( ! isset( $course_data['title'] ) ) {
@@ -259,7 +259,6 @@ class SetupWizardController extends RestController {
 					'post_author'  => get_current_user_id(),
 				)
 			);
-
 
 			if ( is_wp_error( $course_id ) ) {
 				continue;
@@ -287,8 +286,8 @@ class SetupWizardController extends RestController {
 
 		return rest_ensure_response(
 			array(
-				'status'  => 'success',
-				'message' => __( 'Sample course imported successfully.', 'ohmylms' ),
+				'status'     => 'success',
+				'message'    => __( 'Sample course imported successfully.', 'ohmylms' ),
 				'course_ids' => $course_ids,
 			)
 		);
@@ -297,9 +296,8 @@ class SetupWizardController extends RestController {
 
 	/**
 	 * Update default meta data
-	 * 
+	 *
 	 * @param int $course_id
-	 * 
 	 */
 	private function update_default_meta_data( $course_id ) {
 		update_post_meta( $course_id, '_access_type', 'public' );
@@ -452,7 +450,7 @@ class SetupWizardController extends RestController {
 			update_option( 'ohmylms_setup_wizard_certificate_id', $request['certificate_id'] );
 		}
 
-		flush_rewrite_rules(true);
+		flush_rewrite_rules( true );
 
 		if ( 'yes' === get_option( 'ohmylms_allow_tracking', 'no' ) ) {
 			/**
@@ -478,7 +476,7 @@ class SetupWizardController extends RestController {
 	 */
 	public function activate_addon( $request ) {
 		$slug = sanitize_text_field( $request['slug'] );
-		
+
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return new WP_Error( 'rest_forbidden', __( 'You do not have permissions to activate plugins.', 'ohmylms' ), array( 'status' => 403 ) );
 		}
@@ -560,7 +558,7 @@ class SetupWizardController extends RestController {
 			foreach ( $request['permalink'] as $key => $payment ) {
 				update_option( $key, $payment );
 			}
-			flush_rewrite_rules(true);
+			flush_rewrite_rules( true );
 		}
 	}
 

@@ -29,6 +29,7 @@ class Membership {
 
 	/**
 	 * Generate membership product
+	 *
 	 * @param $membership_id
 	 * @param $membership_plans
 	 * @return array|void
@@ -52,6 +53,7 @@ class Membership {
 
 	/**
 	 * Request membership
+	 *
 	 * @param $membership_id
 	 * @return void
 	 * @since 1.0.0

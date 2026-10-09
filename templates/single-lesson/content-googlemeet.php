@@ -63,7 +63,7 @@ $join_url  = get_post_meta( $post_id, '_join_url', true ) ?: $meet_link;
 // Check if current user is the instructor/admin — only they can "start" the
 // meeting early; students see a disabled Join button until it's live.
 $current_user_id = get_current_user_id();
-$is_instructor    = false;
+$is_instructor   = false;
 if ( $current_user_id ) {
 	$course_id = ohmylms_get_course_by_content_id( $post_id );
 	if ( $course_id ) {
@@ -113,13 +113,16 @@ if ( $minutes > 0 ) {
 $duration_formatted = trim( $duration_formatted );
 
 // Format multiline description for the calendar link
-$details = implode( PHP_EOL, [
-	"Topic: {$topic}",
-	'Agenda: ' . wp_strip_all_tags( $post_content_raw ?: ( $event_data['description'] ?? '' ) ),
-	"Join URL: {$meet_link}",
-	"Meeting ID: {$meeting_id}",
-	"Duration: {$duration_formatted}",
-] );
+$details         = implode(
+	PHP_EOL,
+	array(
+		"Topic: {$topic}",
+		'Agenda: ' . wp_strip_all_tags( $post_content_raw ?: ( $event_data['description'] ?? '' ) ),
+		"Join URL: {$meet_link}",
+		"Meeting ID: {$meeting_id}",
+		"Duration: {$duration_formatted}",
+	)
+);
 $encoded_details = rawurlencode( $details );
 
 $google_calendar_url = sprintf(
@@ -138,9 +141,9 @@ if ( ! is_array( $attachments ) ) {
 
 // Replay, if the instructor attached one (manually, link or upload).
 $recording_source = get_post_meta( $post_id, '_recording_source', true );
-$recording_url     = get_post_meta( $post_id, '_recording_url', true );
-$recording_state   = get_post_meta( $post_id, '_recording_state', true );
-$has_recording      = ( 'attached' === $recording_state ) && ! empty( $recording_url );
+$recording_url    = get_post_meta( $post_id, '_recording_url', true );
+$recording_state  = get_post_meta( $post_id, '_recording_state', true );
+$has_recording    = ( 'attached' === $recording_state ) && ! empty( $recording_url );
 
 // YouTube/Vimeo/Uploaded play through the site's custom video player
 // (assets/src/frontend/js/lesson/video-player.js — same one lesson videos
@@ -186,11 +189,14 @@ if ( ! empty( $attachments ) ) {
 	?>
 	<ul class="ohmylms-resources-list creator-zoom-attachments-list">
 		<?php foreach ( $attachments as $attachment ) : ?>
-			<?php if ( empty( $attachment['url'] ) ) continue; ?>
+			<?php
+			if ( empty( $attachment['url'] ) ) {
+				continue;}
+			?>
 			<li>
 				<div class="ohmylms-single-resource-info">
 					<span class="resource-icon">
-						<?php include( OHMYLMS_DIR . '/assets/images/icon/file-icon.php' ); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/file-icon.php'; ?>
 					</span>
 					<span class="resource-name"><?php echo esc_html( $attachment['name'] ?? '' ); ?></span>
 					<?php if ( ! empty( $attachment['size'] ) ) : ?>
@@ -199,7 +205,7 @@ if ( ! empty( $attachments ) ) {
 				</div>
 
 				<a href="<?php echo esc_url( $attachment['url'] ); ?>" class="resource-action" download>
-					<?php include( OHMYLMS_DIR . '/assets/images/icon/download-icon.php' ); ?>
+					<?php include OHMYLMS_DIR . '/assets/images/icon/download-icon.php'; ?>
 				</a>
 			</li>
 		<?php endforeach; ?>

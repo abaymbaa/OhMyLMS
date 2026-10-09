@@ -5,10 +5,10 @@ import { createGoogleSignInSettings } from './GoogleSignInSettings';
 import { createIntegrationConfig } from './IntegrationConfig';
 import { createIntegrationsPage } from './IntegrationsPage';
 export const integrationComponents = {
-  IntegrationCard: createIntegrationCard,
-  ZoomSettings: createZoomSettings,
-  GoogleMeetSettings: createGoogleMeetSettings,
-  GoogleSignInSettings: createGoogleSignInSettings,
-  IntegrationConfig: createIntegrationConfig,
-  IntegrationsPage: createIntegrationsPage,
+	IntegrationCard: createIntegrationCard,
+	ZoomSettings: createZoomSettings,
+	GoogleMeetSettings: createGoogleMeetSettings,
+	GoogleSignInSettings: createGoogleSignInSettings,
+	IntegrationConfig: createIntegrationConfig,
+	IntegrationsPage: createIntegrationsPage,
 };

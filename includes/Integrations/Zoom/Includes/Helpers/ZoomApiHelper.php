@@ -23,7 +23,7 @@ class ZoomApiHelper {
 	 * @return string
 	 */
 	public static function get_account_id() {
-		$user_id = \get_current_user_id();
+		$user_id  = \get_current_user_id();
 		$settings = \get_user_meta( $user_id, 'ohmylms_zoom_api_credentials', true );
 		if ( is_array( $settings ) && isset( $settings['account_id'] ) ) {
 			return $settings['account_id'];
@@ -40,7 +40,7 @@ class ZoomApiHelper {
 	 * @return string
 	 */
 	public static function get_client_id() {
-		$user_id = \get_current_user_id();
+		$user_id  = \get_current_user_id();
 		$settings = \get_user_meta( $user_id, 'ohmylms_zoom_api_credentials', true );
 		if ( is_array( $settings ) && isset( $settings['client_id'] ) ) {
 			return $settings['client_id'];
@@ -57,7 +57,7 @@ class ZoomApiHelper {
 	 * @return string
 	 */
 	public static function get_client_secret() {
-		$user_id = \get_current_user_id();
+		$user_id  = \get_current_user_id();
 		$settings = \get_user_meta( $user_id, 'ohmylms_zoom_api_credentials', true );
 		if ( is_array( $settings ) && isset( $settings['client_secret'] ) ) {
 			return $settings['client_secret'];

@@ -80,8 +80,6 @@ class AnalyticsController extends RestController {
 		$search          = sanitize_text_field( $request->get_param( 'search' ) );
 		$completion_type = sanitize_text_field( $request->get_param( 'completion_type' ) );
 
-		
-
 		$data = $this->get_course_data( $id, $data_type, $filter, $sort_by, $start_date, $end_date, $search, $completion_type );
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -104,7 +102,6 @@ class AnalyticsController extends RestController {
 	 *
 	 * @since 1.0.0
 	 */
-
 	private function get_course_data( $course_id, $data_type, $filter, $sort_by = null, $start_date = null, $end_date = null, $search = null, $completion_type = null ) {
 		$course = ohmylms_get_course( $course_id );
 

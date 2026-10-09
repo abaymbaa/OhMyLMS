@@ -20,5 +20,3 @@ ohmylms_signup_form(
 		'hidden'      => true,
 	)
 );
-?>
-

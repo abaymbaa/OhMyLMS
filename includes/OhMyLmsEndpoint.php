@@ -35,17 +35,17 @@ class OhMyLmsEndpoint {
 	 */
 	public function init_query_vars() {
 		$this->query_vars = array(
-			'profile'              => get_option( 'ohmylms_myprofile_profile_endpoint', 'profile' ),
-			'profile-edit'         => get_option( 'ohmylms_myprofile_profile_edit_endpoint', 'profile-edit' ),
-			'my-courses'           => get_option( 'ohmylms_myprofile_course_endpoint', 'my-courses' ),
-			'settings'             => get_option( 'ohmylms_myprofile_settings_endpoint', 'settings' ),
-			'notification'         => get_option( 'ohmylms_myprofile_notification_endpoint', 'notification' ),
-			'transactions-history' => get_option( 'ohmylms_myprofile_transactions_history_endpoint', 'transactions-history' ),
-			'membership'           => get_option( 'ohmylms_myprofile_membership_endpoint', 'membership' ),
-			'invoice-details'      => get_option( 'ohmylms_myprofile_invoice_details_endpoint', 'invoice-details' ),
-			'billing-information'  => get_option( 'ohmylms_myprofile_edit_account_endpoint', 'billing-information' ),
-			'customer-logout'      => get_option( 'ohmylms_logout_endpoint', 'customer-logout' ),
-			'ohmylms-order-received'  	   => 'ohmylms-order-received'
+			'profile'                => get_option( 'ohmylms_myprofile_profile_endpoint', 'profile' ),
+			'profile-edit'           => get_option( 'ohmylms_myprofile_profile_edit_endpoint', 'profile-edit' ),
+			'my-courses'             => get_option( 'ohmylms_myprofile_course_endpoint', 'my-courses' ),
+			'settings'               => get_option( 'ohmylms_myprofile_settings_endpoint', 'settings' ),
+			'notification'           => get_option( 'ohmylms_myprofile_notification_endpoint', 'notification' ),
+			'transactions-history'   => get_option( 'ohmylms_myprofile_transactions_history_endpoint', 'transactions-history' ),
+			'membership'             => get_option( 'ohmylms_myprofile_membership_endpoint', 'membership' ),
+			'invoice-details'        => get_option( 'ohmylms_myprofile_invoice_details_endpoint', 'invoice-details' ),
+			'billing-information'    => get_option( 'ohmylms_myprofile_edit_account_endpoint', 'billing-information' ),
+			'customer-logout'        => get_option( 'ohmylms_logout_endpoint', 'customer-logout' ),
+			'ohmylms-order-received' => 'ohmylms-order-received',
 		);
 	}
 

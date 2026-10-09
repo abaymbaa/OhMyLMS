@@ -23,19 +23,28 @@ class MembershipListBlock {
 	}
 
 	private function register_block() {
-		register_block_type( self::BLOCK_NAME, array(
-			'attributes' => $this->get_block_attributes(),
-			'render_callback' => array( $this, 'render_block' ),
-			'editor_script' => 'ohmylms-blocks-editor',
-			'editor_style' => 'ohmylms-blocks-editor',
-			'style' => 'ohmylms-blocks-frontend',
-		) );
+		register_block_type(
+			self::BLOCK_NAME,
+			array(
+				'attributes'      => $this->get_block_attributes(),
+				'render_callback' => array( $this, 'render_block' ),
+				'editor_script'   => 'ohmylms-blocks-editor',
+				'editor_style'    => 'ohmylms-blocks-editor',
+				'style'           => 'ohmylms-blocks-frontend',
+			)
+		);
 	}
 
 	private function get_block_attributes() {
 		return array(
-			'title' => array( 'type' => 'string', 'default' => '' ),
-			'align' => array( 'type' => 'string', 'default' => 'full' ),
+			'title' => array(
+				'type'    => 'string',
+				'default' => '',
+			),
+			'align' => array(
+				'type'    => 'string',
+				'default' => 'full',
+			),
 		);
 	}
 
@@ -47,10 +56,13 @@ class MembershipListBlock {
 		// normally added by ohmylms_body_class() via ohmylms_is_membership_plan_shortcode(),
 		// but force it here too so the block renders styled even if that detection
 		// path is bypassed (matches CourseListBlock::render_block()).
-		add_filter( 'body_class', function( $classes ) {
-			$classes[] = 'ohmylms-page';
-			return $classes;
-		} );
+		add_filter(
+			'body_class',
+			function ( $classes ) {
+				$classes[] = 'ohmylms-page';
+				return $classes;
+			}
+		);
 
 		$shortcode_atts = array(
 			'title' => isset( $attributes['title'] ) ? $attributes['title'] : '',

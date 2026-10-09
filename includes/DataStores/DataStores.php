@@ -49,10 +49,10 @@ class DataStores {
 	 * @since 1.0.0
 	 */
 	private $stores = array(
-		'membership' => 'OhMyLMS\\DataStores\\MembershipStore',
- 'assignment' => 'OhMyLMS\\DataStores\\AssignmentStore',
- 'session' => 'OhMyLMS\\DataStores\\SessionStore',
- 'order'       => 'OhMyLMS\DataStores\OrderStore',
+		'membership'  => 'OhMyLMS\\DataStores\\MembershipStore',
+		'assignment'  => 'OhMyLMS\\DataStores\\AssignmentStore',
+		'session'     => 'OhMyLMS\\DataStores\\SessionStore',
+		'order'       => 'OhMyLMS\DataStores\OrderStore',
 		'course'      => 'OhMyLMS\DataStores\CourseStore',
 		'chapter'     => 'OhMyLMS\DataStores\ChapterStore',
 		'quiz'        => 'OhMyLMS\DataStores\QuizStore',
@@ -60,7 +60,7 @@ class DataStores {
 		'question'    => 'OhMyLMS\DataStores\QuestionStore',
 		'student'     => 'OhMyLMS\DataStores\StudentStore',
 		'certificate' => 'OhMyLMS\DataStores\CertificateStore',
-		'attempt' 	  => 'OhMyLMS\DataStores\AttemptStore',
+		'attempt'     => 'OhMyLMS\DataStores\AttemptStore',
 		'webhook'     => 'OhMyLMS\DataStores\WebhookStore',
 	);
 

@@ -158,7 +158,7 @@ class Tax extends Settings {
 			foreach ( $countries as $code => $name ) {
 				$formatted_countries[] = array(
 					'value' => $code,
-					'label' => $name
+					'label' => $name,
 				);
 			}
 			return $formatted_countries;
@@ -184,7 +184,7 @@ class Tax extends Settings {
 				foreach ( $country_states as $state_code => $state_name ) {
 					$formatted_states[ $country_code ][] = array(
 						'value' => $state_code,
-						'label' => $state_name
+						'label' => $state_name,
 					);
 				}
 			}
@@ -192,5 +192,4 @@ class Tax extends Settings {
 		}
 		return array();
 	}
-
 }

@@ -63,7 +63,7 @@ class Gateways extends SettingsPage {
 		$order_end = 999;
 
 		foreach ( $load_gateways as $gateway ) {
-			
+
 			if ( is_string( $gateway ) && class_exists( $gateway ) ) {
 				$gateway = new $gateway();
 				if ( isset( $ordering[ $gateway->id ] ) && is_numeric( $ordering[ $gateway->id ] ) ) {
@@ -80,6 +80,7 @@ class Gateways extends SettingsPage {
 
 	/**
 	 * Initialize paypal
+	 *
 	 * @return \PaypalGateway
 	 * @since 1.0.0
 	 */
@@ -129,7 +130,7 @@ class Gateways extends SettingsPage {
 	 */
 	public function get_payment_gateway_settings() {
 		$payment_gateways = $this->get_payment_gateways();
-		$settings = array();
+		$settings         = array();
 		foreach ( $payment_gateways as $gateway ) {
 			$settings[ $gateway->id ] = $gateway->get_settings();
 		}

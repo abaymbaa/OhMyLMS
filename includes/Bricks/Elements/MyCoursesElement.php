@@ -15,7 +15,9 @@ namespace OhMyLMS\Bricks\Elements;
 
 use OhMyLMS\Shortcodes\ShortCodeMyCourses;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * MyCoursesElement class
@@ -76,40 +78,40 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Groups ────────────────────────────────────────────────────────────
 
-		$this->control_groups['header_style'] = array(
+		$this->control_groups['header_style']          = array(
 			'title'    => esc_html__( 'Header Style', 'ohmylms' ),
 			'tab'      => 'style',
 			'required' => array( array( 'show_header', '=', true ) ),
 		);
-		$this->control_groups['user_menu_style'] = array(
+		$this->control_groups['user_menu_style']       = array(
 			'title' => esc_html__( 'User Menu Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['layout_style'] = array(
+		$this->control_groups['layout_style']          = array(
 			'title' => esc_html__( 'Layout Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['title_typography'] = array(
+		$this->control_groups['title_typography']      = array(
 			'title' => esc_html__( 'Title Typography', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['text_typography'] = array(
+		$this->control_groups['text_typography']       = array(
 			'title' => esc_html__( 'Text Typography', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['button_style'] = array(
+		$this->control_groups['button_style']          = array(
 			'title' => esc_html__( 'Button Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['card_style'] = array(
+		$this->control_groups['card_style']            = array(
 			'title' => esc_html__( 'Card Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['progress_bar_style'] = array(
+		$this->control_groups['progress_bar_style']    = array(
 			'title' => esc_html__( 'Progress Bar Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
-		$this->control_groups['tab_style'] = array(
+		$this->control_groups['tab_style']             = array(
 			'title' => esc_html__( 'Tab Style', 'ohmylms' ),
 			'tab'   => 'style',
 		);
@@ -130,21 +132,21 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── User Menu Style ───────────────────────────────────────────────────
 
-		$this->controls['user_menu_color'] = array(
+		$this->controls['user_menu_color']            = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Text Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#7A8B9A' ),
 		);
-		$this->controls['user_menu_bg_color'] = array(
+		$this->controls['user_menu_bg_color']         = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Background Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#FFFFFF' ),
 		);
-		$this->controls['user_menu_font_size'] = array(
+		$this->controls['user_menu_font_size']        = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Font Size (px)', 'ohmylms' ),
@@ -153,7 +155,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 1,
 			'max'     => 200,
 		);
-		$this->controls['user_menu_font_weight'] = array(
+		$this->controls['user_menu_font_weight']      = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Font Weight', 'ohmylms' ),
@@ -162,21 +164,21 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 100,
 			'max'     => 900,
 		);
-		$this->controls['user_menu_hover_color'] = array(
+		$this->controls['user_menu_hover_color']      = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Hover Text Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#000D25' ),
 		);
-		$this->controls['user_menu_hover_bg_color'] = array(
+		$this->controls['user_menu_hover_bg_color']   = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Hover Background Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#F5F5F5' ),
 		);
-		$this->controls['user_menu_icon_color'] = array(
+		$this->controls['user_menu_icon_color']       = array(
 			'tab'     => 'style',
 			'group'   => 'user_menu_style',
 			'label'   => esc_html__( 'Icon Color', 'ohmylms' ),
@@ -207,7 +209,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'type'    => 'color',
 			'default' => array( 'hex' => '#FFFFFF' ),
 		);
-		$this->controls['wrapper_padding'] = array(
+		$this->controls['wrapper_padding']  = array(
 			'tab'     => 'style',
 			'group'   => 'layout_style',
 			'label'   => esc_html__( 'Wrapper Padding (px)', 'ohmylms' ),
@@ -219,14 +221,14 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Title Typography ──────────────────────────────────────────────────
 
-		$this->controls['title_color'] = array(
+		$this->controls['title_color']       = array(
 			'tab'     => 'style',
 			'group'   => 'title_typography',
 			'label'   => esc_html__( 'Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#1E1E1E' ),
 		);
-		$this->controls['title_font_size'] = array(
+		$this->controls['title_font_size']   = array(
 			'tab'     => 'style',
 			'group'   => 'title_typography',
 			'label'   => esc_html__( 'Font Size (px)', 'ohmylms' ),
@@ -247,14 +249,14 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Text Typography ───────────────────────────────────────────────────
 
-		$this->controls['text_color'] = array(
+		$this->controls['text_color']       = array(
 			'tab'     => 'style',
 			'group'   => 'text_typography',
 			'label'   => esc_html__( 'Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#52525B' ),
 		);
-		$this->controls['text_font_size'] = array(
+		$this->controls['text_font_size']   = array(
 			'tab'     => 'style',
 			'group'   => 'text_typography',
 			'label'   => esc_html__( 'Font Size (px)', 'ohmylms' ),
@@ -275,21 +277,21 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Button Style ──────────────────────────────────────────────────────
 
-		$this->controls['button_text_color'] = array(
+		$this->controls['button_text_color']       = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Text Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#FFFFFF' ),
 		);
-		$this->controls['button_bg_color'] = array(
+		$this->controls['button_bg_color']         = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Background Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#6E42D3' ),
 		);
-		$this->controls['button_font_size'] = array(
+		$this->controls['button_font_size']        = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Font Size (px)', 'ohmylms' ),
@@ -298,7 +300,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 1,
 			'max'     => 200,
 		);
-		$this->controls['button_font_weight'] = array(
+		$this->controls['button_font_weight']      = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Font Weight', 'ohmylms' ),
@@ -307,7 +309,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 100,
 			'max'     => 900,
 		);
-		$this->controls['button_border_width'] = array(
+		$this->controls['button_border_width']     = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Border Width (px)', 'ohmylms' ),
@@ -316,14 +318,14 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 0,
 			'max'     => 50,
 		);
-		$this->controls['button_border_color'] = array(
+		$this->controls['button_border_color']     = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Border Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#6E42D3' ),
 		);
-		$this->controls['button_border_radius'] = array(
+		$this->controls['button_border_radius']    = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Border Radius (px)', 'ohmylms' ),
@@ -332,7 +334,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 0,
 			'max'     => 100,
 		);
-		$this->controls['button_padding'] = array(
+		$this->controls['button_padding']          = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Padding (px)', 'ohmylms' ),
@@ -341,7 +343,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'min'     => 0,
 			'max'     => 100,
 		);
-		$this->controls['button_hover_bg_color'] = array(
+		$this->controls['button_hover_bg_color']   = array(
 			'tab'     => 'style',
 			'group'   => 'button_style',
 			'label'   => esc_html__( 'Hover Background Color', 'ohmylms' ),
@@ -358,14 +360,14 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Card Style ────────────────────────────────────────────────────────
 
-		$this->controls['card_bg_color'] = array(
+		$this->controls['card_bg_color']      = array(
 			'tab'     => 'style',
 			'group'   => 'card_style',
 			'label'   => esc_html__( 'Background Color', 'ohmylms' ),
 			'type'    => 'color',
 			'default' => array( 'hex' => '#FFFFFF' ),
 		);
-		$this->controls['card_padding'] = array(
+		$this->controls['card_padding']       = array(
 			'tab'     => 'style',
 			'group'   => 'card_style',
 			'label'   => esc_html__( 'Padding (px)', 'ohmylms' ),
@@ -386,7 +388,7 @@ class MyCoursesElement extends \Bricks\Element {
 
 		// ── Progress Bar Style ────────────────────────────────────────────────
 
-		$this->controls['progress_bar_bg_color'] = array(
+		$this->controls['progress_bar_bg_color']   = array(
 			'tab'     => 'style',
 			'group'   => 'progress_bar_style',
 			'label'   => esc_html__( 'Track Color', 'ohmylms' ),
@@ -427,7 +429,7 @@ class MyCoursesElement extends \Bricks\Element {
 			'type'    => 'color',
 			'default' => array( 'hex' => '#F9FAFB' ),
 		);
-		$this->controls['no_course_card_padding'] = array(
+		$this->controls['no_course_card_padding']  = array(
 			'tab'     => 'style',
 			'group'   => 'no_courses_card_style',
 			'label'   => esc_html__( 'Padding (px)', 'ohmylms' ),

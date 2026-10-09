@@ -49,42 +49,42 @@ class ShortCodeDashboard {
 		$args = shortcode_atts(
 			array(
 				// Header visibility and configuration
-				'show_header' => 'yes',
+				'show_header'                    => 'yes',
 				// Header styling
-				'header_bg_color' => '#000D2C',
+				'header_bg_color'                => '#000D2C',
 				// User menu styling
-				'user_menu_color' => '#7A8B9A',
-				'user_menu_bg_color' => '#FFFFFF',
-				'user_menu_font_size' => 14,
-				'user_menu_font_weight' => 400,
+				'user_menu_color'                => '#7A8B9A',
+				'user_menu_bg_color'             => '#FFFFFF',
+				'user_menu_font_size'            => 14,
+				'user_menu_font_weight'          => 400,
 				// User menu hover styling
-				'user_menu_hover_color' => '#000D25',
-				'user_menu_hover_bg_color' => '#f5f5f5',
+				'user_menu_hover_color'          => '#000D25',
+				'user_menu_hover_bg_color'       => '#f5f5f5',
 				// User menu icon styling
-				'user_menu_icon_color' => '#7A8B9A',
-				'user_menu_icon_hover_color' => '#4361EE',
+				'user_menu_icon_color'           => '#7A8B9A',
+				'user_menu_icon_hover_color'     => '#4361EE',
 				// Dashboard background
-				'dashboard_bg_color' => '#F9FAFD',
+				'dashboard_bg_color'             => '#F9FAFD',
 				// Course card button styling
-				'course_button_text_color' => '#FFFFFF',
-				'course_button_bg_color' => '#4361EE',
-				'course_button_font_size' => 15,
-				'course_button_font_weight' => 500,
-				'course_button_border_radius' => 10,
+				'course_button_text_color'       => '#FFFFFF',
+				'course_button_bg_color'         => '#4361EE',
+				'course_button_font_size'        => 15,
+				'course_button_font_weight'      => 500,
+				'course_button_border_radius'    => 10,
 				'course_button_hover_text_color' => '#ffffff',
-				'course_button_hover_bg_color' => 'transparent',
+				'course_button_hover_bg_color'   => 'transparent',
 				// Card styling
-				'card_bg_color' => '#FFFFFF',
-				'card_text_color' => '#52525B',
-				'card_text_font_size' => 14,
-				'card_text_font_weight' => 400,
-				'card_number_color' => '#1E1E1E',
-				'card_number_font_size' => 30,
-				'card_number_font_weight' => 700,
+				'card_bg_color'                  => '#FFFFFF',
+				'card_text_color'                => '#52525B',
+				'card_text_font_size'            => 14,
+				'card_text_font_weight'          => 400,
+				'card_number_color'              => '#1E1E1E',
+				'card_number_font_size'          => 30,
+				'card_number_font_weight'        => 700,
 				// Title styling
-				'title_color' => '#1E1E1E',
-				'title_font_size' => 22,
-				'title_font_weight' => 700,
+				'title_color'                    => '#1E1E1E',
+				'title_font_size'                => 22,
+				'title_font_weight'              => 700,
 			),
 			$atts,
 			'ohmylms_dashboard'
@@ -109,7 +109,7 @@ class ShortCodeDashboard {
 		// Display dashboard content.
 		echo '<section class="ohmylms-dashboard">';
 		echo '<div class="ohmylms-container">';
-		
+
 		// Show notices.
 		if ( function_exists( 'ohmylms_show_all_notices' ) ) {
 			ohmylms_show_all_notices();
@@ -123,7 +123,7 @@ class ShortCodeDashboard {
 				'student' => $student,
 			)
 		);
-		
+
 		/**
 		 * Add-ons such as Learning Tracks render their own learner sections below the standard content.
 		 *
@@ -133,7 +133,7 @@ class ShortCodeDashboard {
 
 		echo '</div>';
 		echo '</section>';
-		
+
 		// Add JavaScript to prevent navigation redirects.
 		self::add_navigation_handler( $args );
 	}
@@ -193,23 +193,23 @@ class ShortCodeDashboard {
 	 */
 	private static function generate_custom_styles( $args ) {
 		// Sanitize values
-		$header_bg_color = sanitize_hex_color( $args['header_bg_color'] );
-		$user_menu_color = sanitize_hex_color( $args['user_menu_color'] );
-		$user_menu_bg_color = sanitize_hex_color( $args['user_menu_bg_color'] );
-		$user_menu_font_size = absint( $args['user_menu_font_size'] );
-		$user_menu_font_weight = absint( $args['user_menu_font_weight'] );
-		$user_menu_hover_color = sanitize_hex_color( $args['user_menu_hover_color'] );
-		$user_menu_hover_bg_color = sanitize_hex_color( $args['user_menu_hover_bg_color'] );
-		$user_menu_icon_color = sanitize_hex_color( $args['user_menu_icon_color'] );
-		$user_menu_icon_hover_color = sanitize_hex_color( $args['user_menu_icon_hover_color'] );
-		$dashboard_bg_color = sanitize_hex_color( $args['dashboard_bg_color'] );
-		$course_button_text_color = sanitize_hex_color( $args['course_button_text_color'] );
-		$course_button_bg_color = sanitize_hex_color( $args['course_button_bg_color'] );
-		$course_button_font_size = absint( $args['course_button_font_size'] );
-		$course_button_font_weight = absint( $args['course_button_font_weight'] );
-		$course_button_border_radius = absint( $args['course_button_border_radius'] );
+		$header_bg_color                = sanitize_hex_color( $args['header_bg_color'] );
+		$user_menu_color                = sanitize_hex_color( $args['user_menu_color'] );
+		$user_menu_bg_color             = sanitize_hex_color( $args['user_menu_bg_color'] );
+		$user_menu_font_size            = absint( $args['user_menu_font_size'] );
+		$user_menu_font_weight          = absint( $args['user_menu_font_weight'] );
+		$user_menu_hover_color          = sanitize_hex_color( $args['user_menu_hover_color'] );
+		$user_menu_hover_bg_color       = sanitize_hex_color( $args['user_menu_hover_bg_color'] );
+		$user_menu_icon_color           = sanitize_hex_color( $args['user_menu_icon_color'] );
+		$user_menu_icon_hover_color     = sanitize_hex_color( $args['user_menu_icon_hover_color'] );
+		$dashboard_bg_color             = sanitize_hex_color( $args['dashboard_bg_color'] );
+		$course_button_text_color       = sanitize_hex_color( $args['course_button_text_color'] );
+		$course_button_bg_color         = sanitize_hex_color( $args['course_button_bg_color'] );
+		$course_button_font_size        = absint( $args['course_button_font_size'] );
+		$course_button_font_weight      = absint( $args['course_button_font_weight'] );
+		$course_button_border_radius    = absint( $args['course_button_border_radius'] );
 		$course_button_hover_text_color = sanitize_hex_color( $args['course_button_hover_text_color'] );
-		$course_button_hover_bg_color = sanitize_hex_color( $args['course_button_hover_bg_color'] );
+		$course_button_hover_bg_color   = sanitize_hex_color( $args['course_button_hover_bg_color'] );
 
 		// Generate CSS
 		?>

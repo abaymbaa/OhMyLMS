@@ -25,12 +25,12 @@ class SessionReminderScheduler {
 	public static function init() {
 		// Schedule reminders for upcoming sessions
 		\add_action( 'ohmylms_googlemeet_send_reminder', array( __CLASS__, 'send_session_reminder' ) );
-		
+
 		// Check for upcoming sessions every hour
 		if ( ! \wp_next_scheduled( 'ohmylms_googlemeet_check_sessions' ) ) {
 			\wp_schedule_event( time(), 'hourly', 'ohmylms_googlemeet_check_sessions' );
 		}
-		
+
 		\add_action( 'ohmylms_googlemeet_check_sessions', array( __CLASS__, 'check_upcoming_sessions' ) );
 	}
 
@@ -65,7 +65,7 @@ class SessionReminderScheduler {
 		$sessions = \get_posts( $args );
 
 		foreach ( $sessions as $session ) {
-			$start_time = \get_post_meta( $session->ID, '_session_start_time', true );
+			$start_time    = \get_post_meta( $session->ID, '_session_start_time', true );
 			$reminder_sent = \get_post_meta( $session->ID, '_googlemeet_reminder_sent', true );
 
 			// Send reminder 1 hour before session
@@ -89,7 +89,7 @@ class SessionReminderScheduler {
 	 */
 	public static function send_session_reminder( $session_id ) {
 		$course_id = \get_post_meta( $session_id, '_lesson_course_id', true );
-		
+
 		if ( ! $course_id ) {
 			return;
 		}
@@ -102,12 +102,12 @@ class SessionReminderScheduler {
 		}
 
 		$session_title = \get_the_title( $session_id );
-		$meet_link = \get_post_meta( $session_id, '_googlemeet_link', true );
-		$start_time = \get_post_meta( $session_id, '_session_start_time', true );
+		$meet_link     = \get_post_meta( $session_id, '_googlemeet_link', true );
+		$start_time    = \get_post_meta( $session_id, '_session_start_time', true );
 
 		foreach ( $enrolled_students as $student_id ) {
 			$user = \get_userdata( $student_id );
-			
+
 			if ( ! $user ) {
 				continue;
 			}
@@ -115,14 +115,17 @@ class SessionReminderScheduler {
 			// Send email reminder
 			$subject = sprintf( __( 'Reminder: %s starts in 1 hour', 'ohmylms' ), $session_title );
 			$message = sprintf(
-				__( 'Hi %s,
+				__(
+					'Hi %1$s,
 
-This is a reminder that your Google Meet session "%s" will start in 1 hour.
+This is a reminder that your Google Meet session "%2$s" will start in 1 hour.
 
-Start Time: %s
-Join Link: %s
+Start Time: %3$s
+Join Link: %4$s
 
-See you there!', 'ohmylms' ),
+See you there!',
+					'ohmylms'
+				),
 				$user->display_name,
 				$session_title,
 				\wp_date( 'F j, Y g:i A', $start_time ),

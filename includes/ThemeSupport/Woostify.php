@@ -29,7 +29,7 @@ class Woostify {
 
 	/**
 	 * Prevent Woostify AJAX error when product_id is invalid
-	 * 
+	 *
 	 * This intercepts the AJAX call before Woostify's handler and validates
 	 * that we have a valid WooCommerce product. If not, we send an empty
 	 * response to prevent the fatal error.
@@ -43,23 +43,23 @@ class Woostify {
 		if ( ! isset( $_POST['ajax_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ajax_nonce'] ) ), 'woostify_woocommerce_general_nonce' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed', 'ohmylms' ) ) );
 		}
-		
+
 		// Check if product_id is set and valid
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
-		
+
 		// If product_id is invalid or not a WooCommerce product, send error response
 		if ( ! $product_id || ! function_exists( 'wc_get_product' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid product', 'ohmylms' ) ) );
 		}
-		
+
 		$product = wc_get_product( $product_id );
-		
+
 		// If product doesn't exist, send error response to prevent fatal error
 		if ( ! $product || is_bool( $product ) ) {
 			wp_send_json_error( array( 'message' => __( 'Product not found', 'ohmylms' ) ) );
 		}
-		
+
 		// Product is valid, let Woostify's handler process it normally
 		// We return here without sending JSON to allow the next hook to run
 	}

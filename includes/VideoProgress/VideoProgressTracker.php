@@ -37,13 +37,13 @@ class VideoProgressTracker {
 	public function __construct() {
 		global $wpdb;
 		$this->table_name = $wpdb->prefix . 'ohmylms_video_progress';
-		
+
 		// Get threshold from settings, default to 90
 		$threshold = (int) get_option( 'ohmylms_video_completion_threshold', 90 );
-		
+
 		// Ensure threshold is within valid range
 		$threshold = max( 1, min( 100, $threshold ) );
-		
+
 		$this->completion_threshold = apply_filters( 'ohmylms_video_completion_threshold', $threshold );
 	}
 
@@ -82,7 +82,7 @@ class VideoProgressTracker {
 		$watch_percentage = min( $watch_percentage, 100 ); // Cap at 100%
 
 		// Determine if video is completed
-		$is_completed = $watch_percentage >= $this->completion_threshold;
+		$is_completed   = $watch_percentage >= $this->completion_threshold;
 		$completed_date = $is_completed ? current_time( 'mysql' ) : null;
 
 		// Check if record exists
@@ -222,7 +222,7 @@ class VideoProgressTracker {
 		global $wpdb;
 
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$count = $wpdb->get_var(
+		$count            = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$enrollment_table} WHERE user_id = %d AND course_id = %d AND status = %s",
 				$user_id,
@@ -252,7 +252,7 @@ class VideoProgressTracker {
 
 		// Use existing lesson completion logic
 		$student = new \OhMyLMS\Data\Student( $user_id );
-		$result = $student->complete_lesson( $lesson_id, $course_id );
+		$result  = $student->complete_lesson( $lesson_id, $course_id );
 
 		if ( $result ) {
 			do_action( 'ohmylms_video_lesson_completed', $lesson_id, $course_id, $user_id, $progress );

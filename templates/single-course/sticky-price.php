@@ -19,22 +19,22 @@ $student            = new \OhMyLMS\Data\Student( $current_student_id );
 $maybe_enrolled     = false;
 
 if ( $student ) {
-    $maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
+	$maybe_enrolled = $student->maybe_enrolled( $course->get_id() );
 }
 
 ?>
 
 <div class="ohmylms-sticky-price <?php echo esc_attr( $maybe_enrolled ? 'course-enrolled' : '' ); ?>">
-    <div class="ohmylms-container">
-        <div class="sticky-price-wrapper">
-            <div class="sticky-price-left">
-                <p class="course-name">
-                    <?php echo esc_html( $course->get_name() ); ?>
-                </p>
-            </div>
+	<div class="ohmylms-container">
+		<div class="sticky-price-wrapper">
+			<div class="sticky-price-left">
+				<p class="course-name">
+					<?php echo esc_html( $course->get_name() ); ?>
+				</p>
+			</div>
 
-            <?php ohmylms_get_template( 'single-course/widgets/pricebox.php' ); ?>
-            <?php ohmylms_continue_learn_button(); ?>
-        </div>
-    </div>
+			<?php ohmylms_get_template( 'single-course/widgets/pricebox.php' ); ?>
+			<?php ohmylms_continue_learn_button(); ?>
+		</div>
+	</div>
 </div>

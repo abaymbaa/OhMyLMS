@@ -3,7 +3,7 @@
  * Get the coupon ID by code.
  *
  * @param string $code The coupon code.
- * @param int $exclude Optional. The ID to exclude from the results. Default is 0.
+ * @param int    $exclude Optional. The ID to exclude from the results. Default is 0.
  * @return int The coupon ID.
  *
  * @since 1.0.0

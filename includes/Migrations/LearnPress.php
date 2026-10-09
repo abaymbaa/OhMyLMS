@@ -153,7 +153,7 @@ class LearnPress {
 
 			// Migrate course duration
 			if ( '_lp_duration' === $key && ! empty( $value[0] ) ) {
-				$lp_duration = $value[0];
+				$lp_duration  = $value[0];
 				$new_duration = $this->convert_duration( $lp_duration );
 				if ( ! empty( $new_duration ) ) {
 					update_post_meta( $new_course_id, '_duration', $new_duration );
@@ -193,7 +193,7 @@ class LearnPress {
 	 */
 	private function convert_duration( $lp_duration ) {
 		$duration = array();
-		
+
 		if ( empty( $lp_duration ) || '0' === $lp_duration ) {
 			return $duration;
 		}
@@ -202,17 +202,17 @@ class LearnPress {
 		$parts = explode( ' ', trim( $lp_duration ) );
 		if ( count( $parts ) >= 2 ) {
 			$value = intval( $parts[0] );
-			$unit = strtolower( $parts[1] );
+			$unit  = strtolower( $parts[1] );
 
 			// Map LearnPress units to OhMyLMS units
 			$unit_map = array(
-				'week'   => 'week',
-				'weeks'  => 'week',
-				'day'    => 'day',
-				'days'   => 'day',
-				'hour'   => 'hour',
-				'hours'  => 'hour',
-				'minute' => 'min',
+				'week'    => 'week',
+				'weeks'   => 'week',
+				'day'     => 'day',
+				'days'    => 'day',
+				'hour'    => 'hour',
+				'hours'   => 'hour',
+				'minute'  => 'min',
 				'minutes' => 'min',
 			);
 
@@ -273,13 +273,13 @@ class LearnPress {
 		} elseif ( method_exists( $lp_course, 'get_curriculum_raw' ) ) {
 			$curriculum = $lp_course->get_curriculum_raw();
 		}
-		
+
 		if ( empty( $curriculum ) ) {
 			return;
 		}
 
 		$author_id = get_post_field( 'post_author', $this->lp_course_id );
-		$i = 0;
+		$i         = 0;
 
 		foreach ( $curriculum as $section ) {
 			// Check if section is an array
@@ -288,10 +288,10 @@ class LearnPress {
 			}
 
 			// Get section properties - try multiple key names for compatibility
-			$section_id = $section['section_id'] ?? $section['id'] ?? 0;
-			$section_title = $section['section_name'] ?? $section['title'] ?? __( 'Section', 'ohmylms' );
+			$section_id          = $section['section_id'] ?? $section['id'] ?? 0;
+			$section_title       = $section['section_name'] ?? $section['title'] ?? __( 'Section', 'ohmylms' );
 			$section_description = $section['section_description'] ?? $section['description'] ?? '';
-			
+
 			if ( ! $section_id ) {
 				continue;
 			}
@@ -325,13 +325,13 @@ class LearnPress {
 
 			// Get section items (lessons and quizzes) from array
 			$section_items = $section['items'] ?? array();
-			
+
 			// Migrate section items (lessons and quizzes)
 			if ( ! empty( $section_items ) && is_array( $section_items ) ) {
 				$this->migrate_section_items( $new_chapter_id, $section_items );
 			}
 
-			$i++;
+			++$i;
 		}
 	}
 
@@ -348,11 +348,11 @@ class LearnPress {
 			// Handle both array and object formats
 			if ( is_array( $item ) ) {
 				// Array format from get_curriculum_raw()
-				$item_id = isset( $item['id'] ) ? $item['id'] : 0;
+				$item_id   = isset( $item['id'] ) ? $item['id'] : 0;
 				$item_type = isset( $item['type'] ) ? $item['type'] : '';
 			} elseif ( is_object( $item ) ) {
 				// Object format (LP_Course_Item)
-				$item_id = isset( $item->id ) ? $item->id : 0;
+				$item_id   = isset( $item->id ) ? $item->id : 0;
 				$item_type = isset( $item->type ) ? $item->type : '';
 			} else {
 				continue;
@@ -369,7 +369,7 @@ class LearnPress {
 				$this->migrate_quiz( $new_chapter_id, $item_id, $index );
 			}
 
-			$index++;
+			++$index;
 		}
 	}
 
@@ -444,7 +444,7 @@ class LearnPress {
 
 		// Migrate lesson duration
 		if ( isset( $meta_data['_lp_duration'][0] ) && ! empty( $meta_data['_lp_duration'][0] ) ) {
-			$lp_duration = $meta_data['_lp_duration'][0];
+			$lp_duration  = $meta_data['_lp_duration'][0];
 			$new_duration = $this->convert_duration( $lp_duration );
 			if ( ! empty( $new_duration ) ) {
 				update_post_meta( $new_lesson_id, '_duration', $new_duration );
@@ -591,7 +591,7 @@ class LearnPress {
 
 		// Get quiz questions
 		$questions = $lp_quiz->get_questions();
-		
+
 		if ( empty( $questions ) ) {
 			return;
 		}
@@ -642,8 +642,8 @@ class LearnPress {
 
 			// Migrate question answers
 			$this->migrate_question_answers( $new_question_id, $old_question_id, $mapped_type );
-			
-			$order++;
+
+			++$order;
 		}
 	}
 
@@ -655,9 +655,9 @@ class LearnPress {
 	 */
 	private function map_question_type( $lp_type ) {
 		$type_map = array(
-			'true_or_false' => 'true-false',
-			'single_choice' => 'single-choice',
-			'multi_choice'  => 'multiple-choice',
+			'true_or_false'  => 'true-false',
+			'single_choice'  => 'single-choice',
+			'multi_choice'   => 'multiple-choice',
 			'fill_in_blanks' => 'fill-in-the-blank',
 		);
 		return isset( $type_map[ $lp_type ] ) ? $type_map[ $lp_type ] : 'single-choice';
@@ -689,7 +689,7 @@ class LearnPress {
 		);
 
 		update_post_meta( $new_question_id, '_question_settings', $new_settings );
-		
+
 		// Also set the old meta keys for compatibility
 		update_post_meta( $new_question_id, '_question_type', $question_type );
 		if ( ! empty( $mark ) ) {
@@ -783,9 +783,9 @@ class LearnPress {
 			$wpdb->insert(
 				$wpdb->prefix . 'ohmylms_course_enrollment',
 				array(
-					'user_id'   => $user_id,
-					'course_id' => $new_course_id,
-					'status'    => 'enrolled',
+					'user_id'     => $user_id,
+					'course_id'   => $new_course_id,
+					'status'      => 'enrolled',
 					'enrolled_at' => current_time( 'mysql' ),
 				),
 				array( '%d', '%d', '%s', '%s' )

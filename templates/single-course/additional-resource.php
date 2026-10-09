@@ -13,20 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $course;
-if ( !method_exists( $course, 'get_download_resource' ) || !method_exists( $course, 'get_additional_resource_count' ) ) {
+if ( ! method_exists( $course, 'get_download_resource' ) || ! method_exists( $course, 'get_additional_resource_count' ) ) {
 	return;
 }
 
-if ( !$course->get_download_resource() ) {
+if ( ! $course->get_download_resource() ) {
 	return;
 }
 
 ?>
 
 <li class="course-additional-resource">
-	<?php include(OHMYLMS_DIR . '/assets/images/icon/file-icon.php'); ?>
+	<?php require OHMYLMS_DIR . '/assets/images/icon/file-icon.php'; ?>
 	<?php
-	echo sprintf(
+	printf(
 		_n( '%d Additional resource', '%d Additional resources', $course->get_additional_resource_count(), 'ohmylms' ),
 		$course->get_additional_resource_count()
 	);

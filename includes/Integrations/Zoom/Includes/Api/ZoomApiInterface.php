@@ -53,4 +53,4 @@ interface ZoomApiInterface {
 	 * @return array The API response.
 	 */
 	public function delete( $endpoint );
-} 
+}

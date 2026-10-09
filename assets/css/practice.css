@@ -7,12 +7,14 @@
 	margin: 16px 0;
 	background: #fff;
 }
+
 .ohmylms-inline-check .the-question,
 .ohmylms-inline-check-question,
 .ohmylms-practice-question .the-question {
 	font-weight: 600;
 	margin: 0 0 12px;
 }
+
 .ohmylms-inline-check label,
 .ohmylms-practice-option,
 .ohmylms-practice-match {
@@ -25,11 +27,13 @@
 	border-radius: 6px;
 	cursor: pointer;
 }
+
 .ohmylms-inline-check label:focus-within,
 .ohmylms-practice-option:focus-within {
 	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
 	outline-offset: 1px;
 }
+
 .ohmylms-inline-check .ohmylms-text-input,
 .ohmylms-practice-inputs .ohmylms-text-input {
 	width: 100%;
@@ -37,42 +41,51 @@
 	padding: 8px;
 	margin: 4px 0;
 }
+
 .ohmylms-inline-answer {
 	border-color: #16a34a !important;
 	background: #f0fdf4;
 }
+
 .ohmylms-inline-correct {
 	color: #15803d;
 	font-weight: 600;
 }
+
 .ohmylms-inline-incorrect {
 	color: #b91c1c;
 	font-weight: 600;
 }
+
 .ohmylms-inline-check-feedback,
 .ohmylms-practice-feedback {
 	margin-top: 12px;
 }
+
 .ohmylms-practice-reorder li {
 	display: flex;
 	gap: 8px;
 	align-items: center;
 	padding: 6px 0;
 }
+
 .ohmylms-practice-progress {
 	color: var(--ohmylms-body-text-color, #52525b);
 	font-size: 0.9em;
 }
+
 .ohmylms-skill-table {
 	width: 100%;
 	border-collapse: collapse;
 }
+
 .ohmylms-skill-table th,
 .ohmylms-skill-table td {
 	text-align: left;
 	padding: 8px;
 	border-bottom: 1px solid #e4e4e7;
 }
+
 .ohmylms-skill-level {
 	display: inline-block;
 	padding: 2px 8px;
@@ -81,52 +94,281 @@
 	background: #f4f4f5;
 	color: var(--ohmylms-body-text-color, #3f3f46);
 }
+
 .ohmylms-skill-developing { background: #fef3c7; color: #92400e; }
+
 .ohmylms-skill-proficient { background: #dbeafe; color: #1e40af; }
+
 .ohmylms-skill-mastered { background: #dcfce7; color: #166534; }
+
 .ohmylms-skill-review {
 	margin-left: 6px;
 	font-size: 0.85em;
 	color: var(--ohmylms-primary-color, #6e42d3);
 }
+
 .ohmylms-autosave-status {
 	font-size: 0.85em;
 	color: var(--ohmylms-body-text-color, #52525b);
 	margin: 0 12px;
 }
+
 .ohmylms-quiz-section-title {
 	margin: 24px 0 8px;
 	font-size: 1.2em;
 }
+
 @media (prefers-color-scheme: dark) {
+
 	.ohmylms-inline-check,
 	.ohmylms-practice-question {
 		background: transparent;
 		border-color: #3f3f46;
 	}
+
 	.ohmylms-inline-check label,
 	.ohmylms-practice-option,
 	.ohmylms-practice-match {
 		border-color: #3f3f46;
 	}
+
 	.ohmylms-inline-answer {
 		background: rgba(22, 163, 74, 0.15);
 	}
 }
+
 .ohmylms-structured-question .ohmylms-structured-part {
 	display: block;
 	margin: 12px 0;
 }
+
 .ohmylms-structured-question .ohmylms-structured-part label {
 	display: block;
 	margin-bottom: 6px;
 }
+
 .ohmylms-structured-question .ohmylms-structured-part .ohmylms-text-input,
 .ohmylms-numerical-answer .ohmylms-text-input {
 	width: 100%;
 	max-width: 420px;
 	box-sizing: border-box;
 }
+
 .ohmylms-numerical-unit {
 	margin-left: 6px;
+}
+
+/* Fast-feedback lessons and the AI tutor */
+.ohmylms-lesson-header {
+	margin: 8px 0 12px;
+}
+
+.ohmylms-lesson-bar {
+	display: flex;
+	gap: 4px;
+}
+
+.ohmylms-lesson-seg {
+	flex: 1 1 0;
+	height: 10px;
+	border-radius: 5px;
+	background: #e5e7eb;
+}
+
+.ohmylms-lesson-seg.is-done {
+	background: #22c55e;
+}
+
+.ohmylms-lesson-seg.is-current {
+	background: #93c5fd;
+}
+
+.ohmylms-lesson-stages {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-lesson-stages li {
+	padding: 2px 10px;
+	border-radius: 999px;
+	background: #f3f4f6;
+	color: #6b7280;
+	font-size: 0.85em;
+}
+
+.ohmylms-lesson-stages li.is-active {
+	background: #1d4ed8;
+	color: #fff;
+	font-weight: 600;
+}
+
+.ohmylms-practice-sound {
+	display: inline-block;
+	margin: 0 0 6px;
+	font-size: 0.85em;
+	opacity: 0.8;
+}
+
+.ohmylms-replay-banner {
+	margin: 8px 0;
+	padding: 8px 12px;
+	border-left: 4px solid #f59e0b;
+	background: #fffbeb;
+	font-weight: 600;
+}
+
+.ohmylms-practice-feedback.is-correct,
+.ohmylms-practice-feedback.is-wrong {
+	margin-top: 14px;
+	padding: 12px 16px;
+	border-radius: 12px;
+}
+
+.ohmylms-practice-feedback.is-correct {
+	background: #dcfce7;
+	border: 2px solid #22c55e;
+}
+
+.ohmylms-practice-feedback.is-wrong {
+	background: #fee2e2;
+	border: 2px solid #ef4444;
+}
+
+.ohmylms-solution {
+	margin: 10px 0;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.ohmylms-tutor {
+	margin: 10px 0;
+}
+
+.ohmylms-ai-reply {
+	margin: 8px 0;
+	white-space: pre-wrap;
+}
+
+.ohmylms-ai-reply:empty {
+	display: none;
+}
+
+.ohmylms-ai-reply.is-waiting {
+	opacity: 0.7;
+	font-style: italic;
+}
+
+.ohmylms-ai-reply:not(.is-error):not(.is-waiting):not(:empty) {
+	padding: 10px 12px;
+	border-left: 4px solid #7c3aed;
+	background: #f5f3ff;
+	border-radius: 0 8px 8px 0;
+}
+
+.ohmylms-ai-reply.is-error {
+	color: #991b1b;
+}
+
+.ohmylms-missed {
+	margin: 8px 0 16px 20px;
+}
+
+.ohmylms-missed .is-fixed em {
+	color: #15803d;
+}
+
+.ohmylms-missed .is-open em {
+	color: #b45309;
+}
+.ohmylms-tutor-button[aria-disabled="true"] {
+	opacity: 0.6;
+	cursor: default;
+}
+
+/* Rewards after a lesson: XP, mastery score, medals, streak */
+.ohmylms-reward {
+	display: grid;
+	gap: 14px;
+	margin: 14px 0;
+	padding: 14px 16px;
+	border: 2px solid #fcd34d;
+	border-radius: 14px;
+	background: #fffbeb;
+}
+
+.ohmylms-reward-gain {
+	font-size: 1.6em;
+	color: #b45309;
+}
+
+.ohmylms-reward-parts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 6px 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-reward-parts li {
+	padding: 2px 10px;
+	border-radius: 999px;
+	background: #fef3c7;
+	font-size: 0.85em;
+}
+
+.ohmylms-reward progress {
+	width: 100%;
+	height: 12px;
+}
+
+.ohmylms-reward-goal {
+	margin: 4px 0 0;
+	color: #15803d;
+	font-weight: 700;
+}
+
+.ohmylms-reward-note {
+	margin: 4px 0 0;
+	font-size: 0.9em;
+	opacity: 0.8;
+}
+
+.ohmylms-reward-score {
+	margin: 2px 0;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
+.ohmylms-reward-medal {
+	display: inline-block;
+	margin: 6px 0 0;
+	padding: 2px 12px;
+	border-radius: 999px;
+	font-weight: 700;
+}
+
+.ohmylms-reward-medal.is-80 {
+	background: #fed7aa;
+	color: #9a3412;
+}
+
+.ohmylms-reward-medal.is-90 {
+	background: #e5e7eb;
+	color: #374151;
+}
+
+.ohmylms-reward-medal.is-100 {
+	background: #fde68a;
+	color: #92400e;
+}
+
+.ohmylms-reward-streak {
+	margin: 0;
+	font-weight: 700;
 }

@@ -2,7 +2,7 @@
 
 /**
  * Get membership object
- * 
+ *
  * @param int|bool $membership_id Membership ID or false to get current post's membership
  * @return bool|OhMyLMS\Membership
  * @throws \Exception

@@ -8,7 +8,7 @@ use CodeRex\Ecommerce\EcommerceDateTime;
  * This function formats a date for the REST API response.
  *
  * @param int|string|\DateTimeInterface $date The date to be formatted.
- * @param bool $utc Whether to convert the date to UTC. Default true.
+ * @param bool                          $utc Whether to convert the date to UTC. Default true.
  * @return string|null The formatted date string, or null if the date is invalid.
  *
  * @since 1.0.0

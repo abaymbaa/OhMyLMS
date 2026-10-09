@@ -6,68 +6,68 @@ use OhMyLMS\Abstracts\DataStore;
 defined( 'ABSPATH' ) || exit;
 
 class AttemptStore extends DataStore {
-    public function create( &$data ) {}
+	public function create( &$data ) {}
 
-    /**
-     * Read an attempt from the database and populate the data object.
-     *
-     * @param \OhMyLMS\Data\Attempt $data The attempt data object to populate.
-     * @return bool Returns true on success, false on failure.
-     *
-     * @since 1.0.0
-     */
-    public function read( &$data ) {
-        if ( ! $data instanceof \OhMyLMS\Data\Attempt ) {
-            return false;
-        }
+	/**
+	 * Read an attempt from the database and populate the data object.
+	 *
+	 * @param \OhMyLMS\Data\Attempt $data The attempt data object to populate.
+	 * @return bool Returns true on success, false on failure.
+	 *
+	 * @since 1.0.0
+	 */
+	public function read( &$data ) {
+		if ( ! $data instanceof \OhMyLMS\Data\Attempt ) {
+			return false;
+		}
 
-        global $wpdb;
-        $attempt_id = $data->get_id();
-        if ( ! $attempt_id ) {
-            return false;
-        }
+		global $wpdb;
+		$attempt_id = $data->get_id();
+		if ( ! $attempt_id ) {
+			return false;
+		}
 
-        $query = $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
-            $attempt_id
-        );
-        $result = $wpdb->get_row( $query, ARRAY_A );
+		$query  = $wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
+			$attempt_id
+		);
+		$result = $wpdb->get_row( $query, ARRAY_A );
 
-        if ( ! $result ) {
-            return false;
-        }
-        $data->set_props( $result );
-    }
+		if ( ! $result ) {
+			return false;
+		}
+		$data->set_props( $result );
+	}
 
-    public function update( &$data ) {}
-    public function delete( &$data, $args = array() ) {}
+	public function update( &$data ) {}
+	public function delete( &$data, $args = array() ) {}
 
-    /**
-     * Get the student associated with an attempt.
-     *
-     * @param \OhMyLMS\Data\Attempt $attempt The attempt object.
-     * @return \OhMyLMS\Data\Student|bool Returns the Student object if found, or false if not.
-     *
-     * @since 1.0.0
-     */
-    public function get_student( &$attempt ) {
-        if ( ! $attempt instanceof \OhMyLMS\Data\Attempt ) {
-            return false;
-        }
+	/**
+	 * Get the student associated with an attempt.
+	 *
+	 * @param \OhMyLMS\Data\Attempt $attempt The attempt object.
+	 * @return \OhMyLMS\Data\Student|bool Returns the Student object if found, or false if not.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_student( &$attempt ) {
+		if ( ! $attempt instanceof \OhMyLMS\Data\Attempt ) {
+			return false;
+		}
 
-        global $wpdb;
-        $student_id = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
-                $attempt->get_id()
-            )
-        );
-        if ( ! $student_id ) {
-            return false;
-        }
-        $student = ohmylms_get_student( $student_id );
-        return $student;
-    }
+		global $wpdb;
+		$student_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
+				$attempt->get_id()
+			)
+		);
+		if ( ! $student_id ) {
+			return false;
+		}
+		$student = ohmylms_get_student( $student_id );
+		return $student;
+	}
 
 
 	/**

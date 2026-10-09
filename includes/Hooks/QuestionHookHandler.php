@@ -146,7 +146,12 @@ class QuestionHookHandler extends HookHandler {
 			return;
 		}
 		// Delegate to the ownership-checked writer; foreign option IDs are rejected.
-		\OhMyLMS\QuestionBank\DraftWriter::save( array( 'id' => $question->ID, 'questions' => $answers ) );
+		\OhMyLMS\QuestionBank\DraftWriter::save(
+			array(
+				'id'        => $question->ID,
+				'questions' => $answers,
+			)
+		);
 	}
 
 	/**
@@ -165,13 +170,13 @@ class QuestionHookHandler extends HookHandler {
 		$table = $wpdb->prefix . 'ohmylms_question_answermeta';
 
 		// Define allowed meta keys
-		$allowed_keys = [
+		$allowed_keys = array(
 			'thumbnail_id'  => '_thumbnail_id',
-			'image_url'  	=> '_image_url',
+			'image_url'     => '_image_url',
 			'matching_data' => '_matching_data',
-		];
+		);
 
-		foreach ( $allowed_keys as $key=>$meta_key ) {
+		foreach ( $allowed_keys as $key => $meta_key ) {
 			if ( isset( $answer_data[ $key ] ) ) {
 				$meta_value = maybe_serialize( $answer_data[ $key ] );
 
@@ -188,24 +193,24 @@ class QuestionHookHandler extends HookHandler {
 					// Update existing meta
 					$wpdb->update(
 						$table,
-						[ 'meta_value' => $meta_value ],
-						[
+						array( 'meta_value' => $meta_value ),
+						array(
 							'answer_id' => $answer_id,
 							'meta_key'  => $meta_key,
-						],
-						[ '%s' ],
-						[ '%d', '%s' ]
+						),
+						array( '%s' ),
+						array( '%d', '%s' )
 					);
 				} else {
 					// Insert new meta
 					$wpdb->insert(
 						$table,
-						[
+						array(
 							'answer_id'  => $answer_id,
 							'meta_key'   => $meta_key,
 							'meta_value' => $meta_value,
-						],
-						[ '%d', '%s', '%s' ]
+						),
+						array( '%d', '%s', '%s' )
 					);
 				}
 			}

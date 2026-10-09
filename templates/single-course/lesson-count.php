@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 ?>
 
-<?php if ($course->get_lessons_count() > 0){ ?>
+<?php if ( $course->get_lessons_count() > 0 ) { ?>
 	<li class="course-lesson-count">
-		<?php include(OHMYLMS_DIR . '/assets/images/icon/text-file-icon.php'); ?>
+		<?php include OHMYLMS_DIR . '/assets/images/icon/text-file-icon.php'; ?>
 		<?php
-		echo sprintf(
+		printf(
 			_n( '%d Lesson', '%d Lessons', $course->get_lessons_count(), 'ohmylms' ),
 			$course->get_lessons_count()
 		);

@@ -1,14 +1,22 @@
 <?php
-defined('ABSPATH') || exit;
-function ohmylms_register_layout($id,array $definition) { \OhMyLMS\Extensions\Registry::register('layout',$id,$definition); }
-function ohmylms_register_question_type($id,array $definition) { \OhMyLMS\Extensions\Registry::register('question',$id,$definition); }
-function ohmylms_register_lesson_type($id,array $definition) { \OhMyLMS\Extensions\Registry::register('lesson',$id,$definition); }
-function ohmylms_register_activity($id,array $definition) { \OhMyLMS\Extensions\Registry::register('activity',$id,$definition); }
-function ohmylms_register_extension_settings($id,array $definition) { \OhMyLMS\Extensions\Settings::register($id,$definition); }
-function ohmylms_register_checkout_field($id,array $definition) { \OhMyLMS\Extensions\CheckoutFields::register($id,$definition); }
-function ohmylms_render_slot($name,array $context=[]) { \OhMyLMS\Extensions\Slots::render($name,$context); }
-function ohmylms_enqueue_interactivity_module($id) { \OhMyLMS\Extensions\Interactivity::enqueue($id); }
-add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
+defined( 'ABSPATH' ) || exit;
+function ohmylms_register_layout( $id, array $definition ) {
+	\OhMyLMS\Extensions\Registry::register( 'layout', $id, $definition ); }
+function ohmylms_register_question_type( $id, array $definition ) {
+	\OhMyLMS\Extensions\Registry::register( 'question', $id, $definition ); }
+function ohmylms_register_lesson_type( $id, array $definition ) {
+	\OhMyLMS\Extensions\Registry::register( 'lesson', $id, $definition ); }
+function ohmylms_register_activity( $id, array $definition ) {
+	\OhMyLMS\Extensions\Registry::register( 'activity', $id, $definition ); }
+function ohmylms_register_extension_settings( $id, array $definition ) {
+	\OhMyLMS\Extensions\Settings::register( $id, $definition ); }
+function ohmylms_register_checkout_field( $id, array $definition ) {
+	\OhMyLMS\Extensions\CheckoutFields::register( $id, $definition ); }
+function ohmylms_render_slot( $name, array $context = array() ) {
+	\OhMyLMS\Extensions\Slots::render( $name, $context ); }
+function ohmylms_enqueue_interactivity_module( $id ) {
+	\OhMyLMS\Extensions\Interactivity::enqueue( $id ); }
+add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Extensions\SourceAssets::init();
 \OhMyLMS\Extensions\Interactivity::init();
 \OhMyLMS\Extensions\Settings::init();
@@ -21,9 +29,10 @@ add_action('init',['OhMyLMS\\Extensions\\Bootstrap','init'],5);
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Assessment\Bootstrap::init();
 \OhMyLMS\Engagement\StreakHooks::init();
+\OhMyLMS\Engagement\XpHooks::init();
 \OhMyLMS\Practice\Dashboard::init();
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();
 \OhMyLMS\Schools\Bootstrap::init();
-add_action('plugins_loaded', ['OhMyLMS\\Extensions\\Modules','load']);
+add_action( 'plugins_loaded', array( 'OhMyLMS\\Extensions\\Modules', 'load' ) );

@@ -80,7 +80,10 @@ class EmailVerificationService {
 	 */
 	public static function verify_token_detailed( string $token ): array {
 
-		$invalid = array( 'status' => 'invalid', 'user_id' => 0 );
+		$invalid = array(
+			'status'  => 'invalid',
+			'user_id' => 0,
+		);
 
 		if ( empty( $token ) ) {
 			return $invalid;
@@ -88,14 +91,14 @@ class EmailVerificationService {
 
 		$user_ids = get_users(
 			array(
-				'meta_key' => self::META_TOKEN,
-				'meta_value' => $token,
-				'fields' => 'ID',
-				'number' => 1,
+				'meta_key'    => self::META_TOKEN,
+				'meta_value'  => $token,
+				'fields'      => 'ID',
+				'number'      => 1,
 				'count_total' => false,
 			)
 		);
-		$user_id = $user_ids ? (int) $user_ids[0] : 0;
+		$user_id  = $user_ids ? (int) $user_ids[0] : 0;
 
 		if ( ! $user_id ) {
 			return $invalid;
@@ -105,14 +108,20 @@ class EmailVerificationService {
 		if ( time() > $expires ) {
 			delete_user_meta( $user_id, self::META_TOKEN );
 			delete_user_meta( $user_id, self::META_EXPIRES );
-			return array( 'status' => 'expired', 'user_id' => $user_id );
+			return array(
+				'status'  => 'expired',
+				'user_id' => $user_id,
+			);
 		}
 
 		update_user_meta( $user_id, self::META_VERIFIED, 'yes' );
 		delete_user_meta( $user_id, self::META_TOKEN );
 		delete_user_meta( $user_id, self::META_EXPIRES );
 
-		return array( 'status' => 'verified', 'user_id' => $user_id );
+		return array(
+			'status'  => 'verified',
+			'user_id' => $user_id,
+		);
 	}
 
 	/**

@@ -14,58 +14,58 @@ defined( 'ABSPATH' ) || exit;
  */
 class Session extends PostTypeData {
 
-    /**
-     * Name of the store
-     *
-     * @var string
-     */
-    protected string $data_store_name = 'session';
+	/**
+	 * Name of the store
+	 *
+	 * @var string
+	 */
+	protected string $data_store_name = 'session';
 
-    /**
-     * Object type
-     *
-     * @var string
-     */
-    public string $object_type = 'session';
+	/**
+	 * Object type
+	 *
+	 * @var string
+	 */
+	public string $object_type = 'session';
 
-    /**
-     * Session data array
-     *
-     * @var array
-     */
-    protected array $data = array(
-        'name'          => '',
-        'description'   => '',
-        'status'        => '',
-        'date_created'  => null,
-        'date_modified' => null,
-        'type'          => '',
-    );
+	/**
+	 * Session data array
+	 *
+	 * @var array
+	 */
+	protected array $data = array(
+		'name'          => '',
+		'description'   => '',
+		'status'        => '',
+		'date_created'  => null,
+		'date_modified' => null,
+		'type'          => '',
+	);
 
-    /**
-     * Session constructor.
-     *
-     * @param $session
-     * @throws \Exception
-     */
-    public function __construct( $session = '' ) {
-        if ( is_numeric( $session ) && $session > 0 ) {
-            $this->set_id( $session );
-        } elseif ( $session instanceof self ) {
-            $this->set_id( absint( $session->get_id() ) );
-        } elseif ( ! empty( $session->ID ) ) {
-            $this->set_id( absint( $session->ID ) );
-        }
+	/**
+	 * Session constructor.
+	 *
+	 * @param $session
+	 * @throws \Exception
+	 */
+	public function __construct( $session = '' ) {
+		if ( is_numeric( $session ) && $session > 0 ) {
+			$this->set_id( $session );
+		} elseif ( $session instanceof self ) {
+			$this->set_id( absint( $session->get_id() ) );
+		} elseif ( ! empty( $session->ID ) ) {
+			$this->set_id( absint( $session->ID ) );
+		}
 
-        // load the data store
-        $this->data_store = DataStores::load( $this->data_store_name );
+		// load the data store
+		$this->data_store = DataStores::load( $this->data_store_name );
 
-        if ( $this->get_id() > 0 ) {
-            $this->data_store->read( $this );
-        }
-    }
+		if ( $this->get_id() > 0 ) {
+			$this->data_store->read( $this );
+		}
+	}
 
-    /**
+	/**
 	 * Get the lesson type.
 	 *
 	 * @return string
@@ -75,7 +75,7 @@ class Session extends PostTypeData {
 		return $this->get_prop( 'type' ) ?? '';
 	}
 
-    /**
+	/**
 	 * Set the lesson type.
 	 *
 	 * @return string
@@ -84,4 +84,4 @@ class Session extends PostTypeData {
 	public function set_type( $type ) {
 		$this->set_prop( 'type', $type );
 	}
-} 
+}

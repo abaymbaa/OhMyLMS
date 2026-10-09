@@ -94,13 +94,13 @@ if ( ! empty( $redirect_to ) ) {
 					<span class="show-password" aria-label="Toggle password visibility">
 						<span class="eye-on">
 							<?php
-								include(OHMYLMS_DIR . '/assets/images/icon/eye-icon2.php');
+								require OHMYLMS_DIR . '/assets/images/icon/eye-icon2.php';
 							?>
 						</span>
 
 						<span class="eye-off">
 							<?php
-								include(OHMYLMS_DIR . '/assets/images/icon/eye-off-icon.php');
+								require OHMYLMS_DIR . '/assets/images/icon/eye-off-icon.php';
 							?>
 						</span>
 					</span>
@@ -139,9 +139,9 @@ if ( ! empty( $redirect_to ) ) {
 		</button>
 	</p>
 
-	<?php if( !is_ohmylms_checkout() ) : ?>
+	<?php if ( ! is_ohmylms_checkout() ) : ?>
 		<p class="ohmylms-form-row dont-have-account">
-			<?php echo __('Don\'t have an account?', 'ohmylms') ?>
+			<?php echo __( 'Don\'t have an account?', 'ohmylms' ); ?>
 			<a href="#" class="ohmylms-show-signup-form">
 				<?php esc_html_e( 'Sign Up', 'ohmylms' ); ?>
 			</a>

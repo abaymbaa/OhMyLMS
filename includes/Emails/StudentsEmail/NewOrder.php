@@ -134,7 +134,7 @@ class NewOrder {
 			}
 
 			$email_sent = wp_mail( $to, $subject, $html_body, $headers );
-			
+
 			// Mark email as sent to prevent duplicates
 			if ( $email_sent ) {
 				update_post_meta( $order->get_id(), '_student_new_order_email_sent', true );

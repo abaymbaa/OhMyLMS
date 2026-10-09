@@ -72,7 +72,8 @@ class PaymentGatewaySettings extends SettingsPage {
 				'default'       => 'yes',
 				'type'          => 'checkbox',
 				'checkboxgroup' => 'start',
-			),array(
+			),
+			array(
 				'title'         => __( 'Allow purchase without login', 'ohmylms' ),
 				'desc'          => __( 'Allow purchase without login', 'ohmylms' ),
 				'id'            => 'ohmylms_allow_purchase_without_login',

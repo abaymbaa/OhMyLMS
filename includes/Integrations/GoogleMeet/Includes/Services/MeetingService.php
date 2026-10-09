@@ -29,7 +29,7 @@ class MeetingService {
 	 * MeetingService constructor.
 	 */
 	public function __construct() {
-		$token_service = new TokenService();
+		$token_service    = new TokenService();
 		$this->api_client = new GoogleMeetApiClient( $token_service );
 	}
 
@@ -47,19 +47,19 @@ class MeetingService {
 
 		// Prepare event data for Google Calendar API
 		$event_data = array(
-			'summary'     => $meeting_data['topic'],
-			'description' => $meeting_data['agenda'],
-			'start'       => array(
+			'summary'        => $meeting_data['topic'],
+			'description'    => $meeting_data['agenda'],
+			'start'          => array(
 				'dateTime' => $this->format_datetime( $meeting_data['date'], $meeting_data['timezone'] ),
 				'timeZone' => $meeting_data['timezone'],
 			),
-			'end'         => array(
+			'end'            => array(
 				'dateTime' => $this->calculate_end_time( $meeting_data['date'], $meeting_data['duration'], $meeting_data['timezone'] ),
 				'timeZone' => $meeting_data['timezone'],
 			),
 			'conferenceData' => array(
 				'createRequest' => array(
-					'requestId' => uniqid( 'ohmylms_' ),
+					'requestId'             => uniqid( 'ohmylms_' ),
 					'conferenceSolutionKey' => array(
 						'type' => 'hangoutsMeet',
 					),
@@ -80,7 +80,7 @@ class MeetingService {
 
 		if ( $response['success'] && isset( $response['data']['id'] ) ) {
 			$event_data = $response['data'];
-			
+
 			// Extract Google Meet link
 			$meet_link = '';
 			if ( isset( $event_data['conferenceData']['entryPoints'] ) ) {
@@ -93,11 +93,11 @@ class MeetingService {
 			}
 
 			return array(
-				'success'     => true,
-				'meeting_id'  => $event_data['id'],
-				'meet_link'   => $meet_link,
-				'html_link'   => $event_data['htmlLink'],
-				'event_data'  => $event_data,
+				'success'    => true,
+				'meeting_id' => $event_data['id'],
+				'meet_link'  => $meet_link,
+				'html_link'  => $event_data['htmlLink'],
+				'event_data' => $event_data,
 			);
 		}
 

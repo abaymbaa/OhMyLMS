@@ -153,10 +153,10 @@ class CourseListWidget extends Widget_Base {
 		$this->add_control(
 			'layout_style',
 			array(
-				'label'   => esc_html__( 'Layout Style', 'ohmylms' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
-				'options' => $layout_options,
+				'label'     => esc_html__( 'Layout Style', 'ohmylms' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
+				'options'   => $layout_options,
 				'condition' => array(
 					'layout' => 'grid',
 				),
@@ -181,7 +181,7 @@ class CourseListWidget extends Widget_Base {
 			)
 		);
 
-        $this->add_control(
+		$this->add_control(
 			'posts_per_page',
 			array(
 				'label'   => esc_html__( 'Courses Per Page', 'ohmylms' ),
@@ -216,7 +216,6 @@ class CourseListWidget extends Widget_Base {
 			)
 		);
 
-        
 		// Feature Toggles Section
 		$this->add_control(
 			'features_heading',
@@ -320,12 +319,12 @@ class CourseListWidget extends Widget_Base {
 						'type'    => Controls_Manager::SELECT,
 						'default' => 'all',
 						'options' => array(
-							'all'     		  => esc_html__( 'All Courses', 'ohmylms' ),
-							'recent'          => esc_html__( 'Recent Courses', 'ohmylms' ),
-							'top_rated'       => esc_html__( 'Top Rated Courses', 'ohmylms' ),
-							'free'            => esc_html__( 'Free Courses', 'ohmylms' ),
-							'paid'            => esc_html__( 'Paid Courses', 'ohmylms' ),
-							'best_selling'    => esc_html__( 'Best Selling Courses', 'ohmylms' ),
+							'all'          => esc_html__( 'All Courses', 'ohmylms' ),
+							'recent'       => esc_html__( 'Recent Courses', 'ohmylms' ),
+							'top_rated'    => esc_html__( 'Top Rated Courses', 'ohmylms' ),
+							'free'         => esc_html__( 'Free Courses', 'ohmylms' ),
+							'paid'         => esc_html__( 'Paid Courses', 'ohmylms' ),
+							'best_selling' => esc_html__( 'Best Selling Courses', 'ohmylms' ),
 						),
 					),
 					array(
@@ -334,12 +333,12 @@ class CourseListWidget extends Widget_Base {
 						'type'        => Controls_Manager::TEXT,
 						'default'     => esc_html__( 'All Course', 'ohmylms' ),
 						'placeholder' => esc_html__( 'Enter Row Heading', 'ohmylms' ),
-					)
+					),
 				),
 				'default'     => array(
 					array(
-						'row_display_criteria' 	=> 'all',
-						'row_heading'  			=> esc_html__( 'All Course', 'ohmylms' ),
+						'row_display_criteria' => 'all',
+						'row_heading'          => esc_html__( 'All Course', 'ohmylms' ),
 					),
 				),
 				'title_field' => '{{{ row_heading }}}',
@@ -1259,10 +1258,10 @@ class CourseListWidget extends Widget_Base {
 
 		// Use the same wrapper class as shortcode for consistency
 		echo '<div class="ohmylms ohmylms-page">';
-		
+
 		// Use the shortcode class to render the course list
 		ShortcodeCourseList::output( $shortcode_attrs );
-		
+
 		echo '</div>';
 	}
 

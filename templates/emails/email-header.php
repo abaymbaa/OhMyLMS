@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$email_logo = $email_settings['ohmylms_email_branding_image'] ?? '';
+$email_logo          = $email_settings['ohmylms_email_branding_image'] ?? '';
 $email_body_bg_color = $email_settings['ohmylms_email_body_background_color'] ?? '#ffffff';
 
 ?>

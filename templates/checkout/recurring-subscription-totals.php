@@ -11,4 +11,4 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <strong><?php echo $price_html; ?></strong><br>
-<span><?php echo esc_html__('First renewal:', 'ohmylms') . ' ' . esc_html($renewal_date); ?></span><br>
+<span><?php echo esc_html__( 'First renewal:', 'ohmylms' ) . ' ' . esc_html( $renewal_date ); ?></span><br>

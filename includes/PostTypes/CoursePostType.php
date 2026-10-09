@@ -73,10 +73,10 @@ class CoursePostType extends PostType {
 			'filter_items_list'     => __( 'Filter Courses list', 'ohmylms' ),
 		);
 
-		$permalinks = ohmylms_get_permalink_structure();
+		$permalinks     = ohmylms_get_permalink_structure();
 		$course_page_id = ohmylms_get_page_id( 'course' );
-		$has_archive    = $course_page_id && get_post( $course_page_id ) ? urldecode( get_page_uri( $course_page_id ) ) : 'course';		
-		$supports = array( 'title', 'editor', 'thumbnail', 'revisions', 'comments', 'excerpt' );
+		$has_archive    = $course_page_id && get_post( $course_page_id ) ? urldecode( get_page_uri( $course_page_id ) ) : 'course';
+		$supports       = array( 'title', 'editor', 'thumbnail', 'revisions', 'comments', 'excerpt' );
 
 		$this->args = array(
 			'labels'             => $labels,
@@ -95,7 +95,7 @@ class CoursePostType extends PostType {
 			'supports'           => $supports,
 			'hierarchical'       => false,
 			'rewrite'            => $permalinks['course_base'] ? array(
-				'slug'       => $permalinks['course_base'] ,
+				'slug'       => $permalinks['course_base'],
 				'with_front' => false,
 			) : false,
 		);

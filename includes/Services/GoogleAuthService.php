@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class GoogleAuthService
  */
 class GoogleAuthService {
-    private static $link_user_id = 0;
+	private static $link_user_id = 0;
 
 	const OPTION_KEY        = 'ohmylms_google_oauth';
 	const STATE_TRANSIENT   = 'ohmylms_lms_google_state_';
@@ -107,8 +107,25 @@ class GoogleAuthService {
 
 		$state = wp_generate_password( 32, false );
 		// Bind this authorization attempt to the browser that started it.
-		setcookie( 'ohmylms_google_state', $state, array( 'expires' => time() + self::STATE_TTL, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
-		set_transient( self::STATE_TRANSIENT . $state, array( 'redirect_to' => $redirect_to, 'link_user_id' => get_current_user_id() ), self::STATE_TTL );
+		setcookie(
+			'ohmylms_google_state',
+			$state,
+			array(
+				'expires'  => time() + self::STATE_TTL,
+				'path'     => '/',
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
+		set_transient(
+			self::STATE_TRANSIENT . $state,
+			array(
+				'redirect_to'  => $redirect_to,
+				'link_user_id' => get_current_user_id(),
+			),
+			self::STATE_TTL
+		);
 
 		$args = array(
 			'client_id'     => $settings['client_id'],
@@ -139,7 +156,17 @@ class GoogleAuthService {
 		$key   = self::STATE_TRANSIENT . $state;
 		$value = get_transient( $key );
 		delete_transient( $key );
-		setcookie( 'ohmylms_google_state', '', array( 'expires' => time() - HOUR_IN_SECONDS, 'path' => '/', 'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax' ) );
+		setcookie(
+			'ohmylms_google_state',
+			'',
+			array(
+				'expires'  => time() - HOUR_IN_SECONDS,
+				'path'     => '/',
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
 
 		if ( false === $value ) {
 			return false;
@@ -147,7 +174,8 @@ class GoogleAuthService {
 
 		if ( is_array( $value ) ) {
 			$link_user = (int) ( $value['link_user_id'] ?? 0 );
-			if ( $link_user && (int) wp_validate_auth_cookie( '', 'logged_in' ) !== $link_user ) { return false; }
+			if ( $link_user && (int) wp_validate_auth_cookie( '', 'logged_in' ) !== $link_user ) {
+				return false; }
 			self::$link_user_id = $link_user;
 			return (string) ( $value['redirect_to'] ?? '' );
 		}
@@ -231,7 +259,7 @@ class GoogleAuthService {
 	 * @return WP_User|WP_Error
 	 */
 	public static function find_or_create_user( array $profile ) {
-		$email = sanitize_email( $profile['email'] ?? '' );
+		$email   = sanitize_email( $profile['email'] ?? '' );
 		$subject = sanitize_text_field( $profile['sub'] ?? '' );
 		if ( ! $subject || empty( $profile['email_verified'] ) ) {
 			return new WP_Error( 'google_identity_invalid', __( 'Google did not return a verified identity.', 'ohmylms' ) );
@@ -241,7 +269,13 @@ class GoogleAuthService {
 			return new WP_Error( 'google_invalid_email', __( 'Google did not return a valid email address.', 'ohmylms' ) );
 		}
 
-		$linked = get_users( array( 'meta_key' => self::META_GOOGLE_ID, 'meta_value' => $subject, 'number' => 2 ) );
+		$linked = get_users(
+			array(
+				'meta_key'   => self::META_GOOGLE_ID,
+				'meta_value' => $subject,
+				'number'     => 2,
+			)
+		);
 		if ( count( $linked ) > 1 ) {
 			return new WP_Error( 'google_identity_conflict', __( 'This Google identity needs administrator review.', 'ohmylms' ) );
 		}
@@ -336,7 +370,7 @@ class GoogleAuthService {
 
 		while ( username_exists( $username ) ) {
 			$username = $base . $suffix;
-			$suffix++;
+			++$suffix;
 		}
 
 		return $username;

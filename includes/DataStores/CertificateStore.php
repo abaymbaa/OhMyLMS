@@ -46,7 +46,7 @@ class CertificateStore extends DataStore {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$certificate->set_id( $id );
-			flush_rewrite_rules(true);
+			flush_rewrite_rules( true );
 
 			/**
 			 * Fires after a new certificate is created.
@@ -184,7 +184,7 @@ class CertificateStore extends DataStore {
 	 * Delete the certificate
 	 *
 	 * @param $certificate
-	 * @param array       $args
+	 * @param array $args
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */

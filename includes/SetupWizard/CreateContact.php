@@ -89,7 +89,7 @@ class CreateContact {
 	 *
 	 * @param string $email
 	 * @param string $name
-	 * @param array $setup_data
+	 * @param array  $setup_data
 	 * @since 3.3.2
 	 */
 	public function __construct( $email, $name, $setup_data = array() ) {
@@ -120,19 +120,19 @@ class CreateContact {
 		);
 
 		$data = array(
-			'email'      => $this->email,
-			'first_name' => $this->name,
-			'level'     => $this->setup_data['level'] ?? '',
+			'email'               => $this->email,
+			'first_name'          => $this->name,
+			'level'               => $this->setup_data['level'] ?? '',
 			'archive_page_layout' => $this->setup_data['archive_page_layout'] ?? '',
-			'courses_per_row' => $this->setup_data['courses_per_row'] ?? '',
-			'currency' => $this->setup_data['currency'] ?? '',
-			'language' => $this->setup_data['language'] ?? '',
-			'certificate' => $this->setup_data['certificate'] ?? '',
-			'selectedPlatform' => $this->setup_data['selectedPlatform'] ?? '',
-			'niche' => isset($this->setup_data['niche'])
-				? (is_array($this->setup_data['niche'])
-					? implode(',', $this->setup_data['niche'])
-					: $this->setup_data['niche'])
+			'courses_per_row'     => $this->setup_data['courses_per_row'] ?? '',
+			'currency'            => $this->setup_data['currency'] ?? '',
+			'language'            => $this->setup_data['language'] ?? '',
+			'certificate'         => $this->setup_data['certificate'] ?? '',
+			'selectedPlatform'    => $this->setup_data['selectedPlatform'] ?? '',
+			'niche'               => isset( $this->setup_data['niche'] )
+				? ( is_array( $this->setup_data['niche'] )
+					? implode( ',', $this->setup_data['niche'] )
+					: $this->setup_data['niche'] )
 				: '',
 		);
 

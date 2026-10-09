@@ -17,7 +17,7 @@ class Shortcodes {
 	 */
 	public static function init() {
 		$shortcodes = array(
- 'ohmylms_offer_button' => __CLASS__ . '::offer_button',
+			'ohmylms_offer_button'    => __CLASS__ . '::offer_button',
 			'ohmylms_checkout'        => __CLASS__ . '::checkout',
 			'ohmylms_membership_plan' => __CLASS__ . '::membership_plan',
 			'ohmylms_course_list'     => __CLASS__ . '::course_list',
@@ -151,7 +151,7 @@ class Shortcodes {
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyCourses', 'output' ), $atts );
 	}
 
-public static function offer_button( $atts ) {
+	public static function offer_button( $atts ) {
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeOfferButton', 'output' ), $atts );
 	}
 }

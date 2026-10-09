@@ -43,10 +43,10 @@ class General extends Settings {
 
 		$settings = array(
 			array(
-				'id'        => 'ohmylms_navigation_links_section',
-				'type'      => 'title',
-				'title'     => __( 'Navigation Links', 'ohmylms' ),
-				'desc'      => __( 'Configure navigation links for student dashboard, profile, and courses pages. These links will be used globally across all blocks.', 'ohmylms' ),
+				'id'    => 'ohmylms_navigation_links_section',
+				'type'  => 'title',
+				'title' => __( 'Navigation Links', 'ohmylms' ),
+				'desc'  => __( 'Configure navigation links for student dashboard, profile, and courses pages. These links will be used globally across all blocks.', 'ohmylms' ),
 			),
 			array(
 				'id'        => 'ohmylms_nav_my_profile_url',

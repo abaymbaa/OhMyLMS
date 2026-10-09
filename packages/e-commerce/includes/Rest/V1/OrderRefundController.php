@@ -121,7 +121,7 @@ class OrderRefundController extends RestController {
 	/**
 	 * Prepare a single refund item for response.
 	 *
-	 * @param \WP_Post $post The post object.
+	 * @param \WP_Post         $post The post object.
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response|\WP_Error The response object or WP_Error on failure.
 	 *
@@ -161,7 +161,7 @@ class OrderRefundController extends RestController {
 	 * Prepare links for the refund object.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
-	 * @param \WP_REST_Request $request The request object.
+	 * @param \WP_REST_Request                    $request The request object.
 	 * @return array Links for the given refund.
 	 */
 	protected function prepare_links( $refund, $request ) {

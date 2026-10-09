@@ -51,10 +51,10 @@ class BlocksManager {
 	private function init() {
 		// Hook into init to register blocks
 		add_action( 'init', array( $this, 'register_blocks' ) );
-		
+
 		// Enqueue block editor assets
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-		
+
 		// Enqueue frontend block assets
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 	}
@@ -72,17 +72,17 @@ class BlocksManager {
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );
 
 		// Register individual blocks
-		   new CheckoutBlock();
-		   new DashboardGutenbergBlock();
-		   new ProfileGutenbergBlock();
-		   new MyCoursesGutenbergBlock();
-		   new \OhMyLMS\Blocks\Blocks\CourseListBlock();
-		   \OhMyLMS\Blocks\Blocks\BuyNowBlock::register();
-		   if ( class_exists( '\OhMyLMS\Blocks\Blocks\OfferButtonBlock' ) ) {
-			   \OhMyLMS\Blocks\Blocks\OfferButtonBlock::register();
-		   }
+			new CheckoutBlock();
+			new DashboardGutenbergBlock();
+			new ProfileGutenbergBlock();
+			new MyCoursesGutenbergBlock();
+			new \OhMyLMS\Blocks\Blocks\CourseListBlock();
+			\OhMyLMS\Blocks\Blocks\BuyNowBlock::register();
+		if ( class_exists( '\OhMyLMS\Blocks\Blocks\OfferButtonBlock' ) ) {
+			\OhMyLMS\Blocks\Blocks\OfferButtonBlock::register();
+		}
 
-		   new \OhMyLMS\Blocks\Blocks\MembershipListBlock();
+			new \OhMyLMS\Blocks\Blocks\MembershipListBlock();
 	}
 
 	/**
@@ -90,16 +90,16 @@ class BlocksManager {
 	 *
 	 * @return void
 	 */
-	   private function include_blocks() {
-		   require_once OHMYLMS_PATH . '/includes/Blocks/CheckoutBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/CourseListBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/BuyNowBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/OfferButtonBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/DashboardGutenbergBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/ProfileGutenbergBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/MyCoursesGutenbergBlock.php';
-		   require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/MembershipListBlock.php';
-	   }
+	private function include_blocks() {
+		require_once OHMYLMS_PATH . '/includes/Blocks/CheckoutBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/CourseListBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/BuyNowBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/OfferButtonBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/DashboardGutenbergBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/ProfileGutenbergBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/MyCoursesGutenbergBlock.php';
+		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/MembershipListBlock.php';
+	}
 
 	/**
 	 * Register OhMyLMS block category
@@ -109,11 +109,14 @@ class BlocksManager {
 	 */
 	public function register_block_category( $categories ) {
 		// Add OhMyLMS category at the beginning
-		array_unshift( $categories, array(
-			'slug'  => 'ohmylms',
-			'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
-			'icon'  => 'graduation-cap',
-		) );
+		array_unshift(
+			$categories,
+			array(
+				'slug'  => 'ohmylms',
+				'title' => esc_html__( 'OhMyLMS', 'ohmylms' ),
+				'icon'  => 'graduation-cap',
+			)
+		);
 
 		return $categories;
 	}
@@ -135,7 +138,7 @@ class BlocksManager {
 
 		// Enqueue individual block scripts
 		$this->enqueue_individual_block_scripts();
-		
+
 		// Enqueue slick.js for carousel functionality in editor
 		wp_enqueue_script(
 			'ohmylms-slick-editor',
@@ -144,7 +147,7 @@ class BlocksManager {
 			'1.8.1',
 			true
 		);
-		
+
 		// Enqueue frontend script for slick initialization in editor
 		wp_enqueue_script(
 			'ohmylms-frontend-editor',
@@ -162,14 +165,14 @@ class BlocksManager {
 			OHMYLMS_VERSION
 		);
 
-        // Enqueue frontend styles
+		// Enqueue frontend styles
 		wp_enqueue_style(
 			'ohmylms-blocks-frontend',
 			OHMYLMS_URL . '/assets/blocks/css/blocks-frontend.css',
 			array(),
 			OHMYLMS_VERSION
 		);
-		
+
 		// Enqueue main OhMyLMS styles in editor for ServerSideRender checkout styling
 		wp_enqueue_style(
 			'ohmylms-main-editor',
@@ -177,7 +180,6 @@ class BlocksManager {
 			array(),
 			OHMYLMS_VERSION
 		);
-		
 	}
 
 	/**
@@ -187,7 +189,7 @@ class BlocksManager {
 	 */
 	private function enqueue_individual_block_scripts() {
 		$suffix = $this->is_development_mode() ? '' : '.min';
-		
+
 		// Checkout block
 		wp_enqueue_script(
 			'ohmylms-checkout-block',
@@ -262,7 +264,7 @@ class BlocksManager {
 
 		// Add more blocks here as needed
 	}
-	
+
 	/**
 	 * Check if development mode is enabled
 	 *

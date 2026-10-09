@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class DataStores
+ *
  * @package OhMyLMS\DataStores
  * @since 1.0.0
  */
@@ -143,9 +144,9 @@ class DataStores {
 	/**
 	 * Update or delete post meta based on the value.
 	 *
-	 * @param Data $object The data object.
+	 * @param Data   $object The data object.
 	 * @param string $meta_key The meta key.
-	 * @param mixed $meta_value The meta value.
+	 * @param mixed  $meta_value The meta value.
 	 * @return bool True if the meta was updated or deleted, false otherwise.
 	 *
 	 * @since 1.0.0

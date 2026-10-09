@@ -211,7 +211,7 @@ class CourseHookHandler extends HookHandler {
 				continue; // Skip if no membership found
 			}
 
-			$products = $membership->get_products('edit');
+			$products = $membership->get_products( 'edit' );
 
 			if ( ! is_array( $products ) ) {
 				continue; // Ensure $products is an array before processing

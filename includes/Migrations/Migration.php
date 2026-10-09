@@ -47,17 +47,17 @@ class Migration {
 	 */
 	public function get_sources(): array {
 		$sources = array(
-			'tutorLMS' => array(
+			'tutorLMS'    => array(
 				'title'       => 'Tutor LMS',
 				'description' => 'Migrate Tutor LMS courses, lessons, quizzes and other data to OhMyLMS.',
 				'class'       => 'OhMyLMS\\Migrations\\TutorLMS',
 			),
-			'learnDash' => array(
+			'learnDash'   => array(
 				'title'       => 'LearnDash LMS',
 				'description' => 'Migrate LearnDash LMS courses, lessons, quizzes and other data to OhMyLMS.',
 				'class'       => 'OhMyLMS\\Migrations\\LearnDash',
 			),
-			'learnPress' => array(
+			'learnPress'  => array(
 				'title'       => 'LearnPress',
 				'description' => 'Migrate LearnPress courses, lessons, quizzes and other data to OhMyLMS.',
 				'class'       => 'OhMyLMS\\Migrations\\LearnPress',

@@ -68,3 +68,17 @@ $legacyInsensitive = new class {
 check(Q::grade_builtin('fill-in-the-blank', ['PARIS'], $legacyInsensitive)['correct'], 'Legacy blanks honor case setting');
 check(!B::matches('axb', 'a.b', $legacyInsensitive), 'Expected answers are literal, not regex');
 echo "Inline blank parsing, rendering, privacy and grading checks passed.\n";
+$dragSnapshot = new \OhMyLMS\Assessment\QuestionSnapshot([
+    'id' => 2, 'question_id' => 8, 'question_uuid' => 'drag-test', 'version_no' => 1,
+    'type' => 'fill-in-the-blank', 'title' => 'Use {one} and {one}.', 'body' => '<p>Use {one} and {one}.</p>',
+    'settings' => ['type' => 'fill-in-the-blank', 'blank_mode' => 'drag', 'question_code' => 'Q-8'], 'options' => [], 'media' => [],
+]);
+$dragView = $dragSnapshot->student_view();
+check($dragView['blank_bank'] === ['one', 'one'], 'Repeated answers have independent bank entries');
+check($dragView['description'] === '', 'Question body does not duplicate the authored answer positions');
+check(strpos($dragView['name'], '{one}') === false, 'Drag delivery hides the positional answer key');
+$dragHtml = B::render($dragView, ['id' => 9]);
+check(substr_count($dragHtml, 'draggable="true"') === 2, 'Two draggable answer tokens');
+check(substr_count($dragHtml, 'type="text" readonly') === 2, 'Drag targets submit ordered answers');
+check(Q::grade_builtin('fill-in-the-blank', ['one', 'one'], $dragSnapshot)['correct'], 'Drag answers retain frozen grading');
+echo "Drag blank bank, rendering and frozen grading checks passed.\n";

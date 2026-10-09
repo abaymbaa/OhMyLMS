@@ -4,7 +4,7 @@
 /**
  * Convert a string representation of a date/time into a Unix timestamp.
  *
- * @param string $time_string The date/time string to convert.
+ * @param string   $time_string The date/time string to convert.
  * @param int|null $from_timestamp Optional. The timestamp to use as a base for relative date/time strings. Default is null.
  * @return int|false The Unix timestamp on success, or false on failure.
  *

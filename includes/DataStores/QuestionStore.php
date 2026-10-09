@@ -18,9 +18,9 @@ class QuestionStore extends DataStore {
 
 	protected $must_exist_meta_keys = array(
 		'_questions_settings',
-		'_thumbnail_id' 	=> 'thumbnail_id',
-		'_video_id'     	=> 'video_id',
-		'_image_id'     	=> 'image_id',
+		'_thumbnail_id' => 'thumbnail_id',
+		'_video_id'     => 'video_id',
+		'_image_id'     => 'image_id',
 	);
 	/**
 	 * Create a new question.
@@ -235,11 +235,11 @@ class QuestionStore extends DataStore {
 		);
 
 		foreach ( $results as &$answer ) {
-			$meta_values = [
+			$meta_values = array(
 				'_thumbnail_id'  => '',
 				'_matching_data' => '',
-				'_image_url' 	=> '',
-			];
+				'_image_url'     => '',
+			);
 
 			$answer_meta = $wpdb->get_results(
 				$wpdb->prepare(
@@ -257,8 +257,8 @@ class QuestionStore extends DataStore {
 				}
 			}
 			$answer['thumbnail_id']  = $meta_values['_thumbnail_id'];
-			$answer['matching_data'] = maybe_unserialize($meta_values['_matching_data']);
-			$answer['image_url'] = ! empty( $answer['thumbnail_id'] ) ? wp_get_attachment_url( $answer['thumbnail_id'] ) : '';
+			$answer['matching_data'] = maybe_unserialize( $meta_values['_matching_data'] );
+			$answer['image_url']     = ! empty( $answer['thumbnail_id'] ) ? wp_get_attachment_url( $answer['thumbnail_id'] ) : '';
 		}
 
 		return $results;
@@ -286,7 +286,12 @@ class QuestionStore extends DataStore {
 		if ( empty( $answers ) ) {
 			return true;
 		}
-		$saved = \OhMyLMS\QuestionBank\DraftWriter::save( array( 'id' => (int) $question_id, 'questions' => $answers ) );
+		$saved = \OhMyLMS\QuestionBank\DraftWriter::save(
+			array(
+				'id'        => (int) $question_id,
+				'questions' => $answers,
+			)
+		);
 		return is_wp_error( $saved ) ? $saved : true;
 	}
 }

@@ -36,18 +36,18 @@ class OrderRefundStore extends OrderStore {
 	 * Cancel the student enrollment for a given refund and order.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \CodeRex\Ecommerce\Data\Order       $order The order object.
 	 *
 	 * @since 1.0.0
 	 */
 	public function cancel_student_enrollment( $refund, $order ) {
 		global $wpdb;
-		$order_id = $order->get_id();
+		$order_id        = $order->get_id();
 		$parent_order_id = wp_get_post_parent_id( $order_id );
 		if ( $parent_order_id ) {
 			$order_id = $parent_order_id;
 		}
-		
+
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$wpdb->update(
 			$table_name,

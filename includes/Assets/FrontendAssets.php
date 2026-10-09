@@ -24,19 +24,19 @@ class FrontendAssets extends Assets {
 	public function get_scripts() {
 		$suffix  = '';
 		$scripts = array(
-			'ohmylms-slick'       => array(
+			'ohmylms-slick'                  => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/slick' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
 				'version'   => '1.8.1',
 			),
-			'ohmylms-frontend'    => array(
+			'ohmylms-frontend'               => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/ohmylms' . $suffix . '.js' ),
-				'deps'      => array(  'wp-i18n', 'jquery' ),
+				'deps'      => array( 'wp-i18n', 'jquery' ),
 				'in_footer' => true,
 				'version'   => OHMYLMS_VERSION,
 			),
-			'ohmylms-video-player' => array(
+			'ohmylms-video-player'           => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/video-player' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
@@ -44,23 +44,23 @@ class FrontendAssets extends Assets {
 			),
 			'ohmylms-video-progress-tracker' => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/video-progress-tracker' . $suffix . '.js' ),
-				'deps'      => array( 'jquery'),
+				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
 				'version'   => OHMYLMS_VERSION,
 			),
-			'ohmylms-add-to-cart' => array(
+			'ohmylms-add-to-cart'            => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/add-to-cart' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
 				'version'   => OHMYLMS_VERSION,
 			),
-			'ohmylms-checkout'    => array(
+			'ohmylms-checkout'               => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/checkout' . $suffix . '.js' ),
-				'deps'      => array(  'wp-i18n', 'jquery' ),
+				'deps'      => array( 'wp-i18n', 'jquery' ),
 				'in_footer' => true,
 				'version'   => OHMYLMS_VERSION . '-' . filemtime( OHMYLMS_DIR . '/assets/dist/frontend/checkout.js' ),
 			),
-			'ohmylms-tax-calculation' => array(
+			'ohmylms-tax-calculation'        => array(
 				'src'       => self::get_asset_url( 'assets/dist/frontend/tax-calculation' . $suffix . '.js' ),
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
@@ -88,13 +88,13 @@ class FrontendAssets extends Assets {
 					'media'   => 'all',
 					'has_rtl' => false,
 				),
-				'ohmylms-frontend' => array(
+				'ohmylms-frontend'  => array(
 					'src'     => self::get_asset_url( 'assets/css/style.css' ),
 					'deps'    => array( 'ohmylms-quiz-a11y' ),
 					'version' => OHMYLMS_VERSION,
 					'media'   => 'all',
 					'has_rtl' => true,
-				)
+				),
 			)
 		);
 		return is_array( $styles ) ? array_filter( $styles ) : array();
@@ -125,7 +125,7 @@ class FrontendAssets extends Assets {
 				}
 
 				if ( ohmylms_is_single_course_page() || is_ohmylms_dashboard() || is_ohmylms_my_courses_shortcode() ) {
-					$localized_data['course_drop_nonce']        = wp_create_nonce( 'course_drop_nonce' );
+					$localized_data['course_drop_nonce']          = wp_create_nonce( 'course_drop_nonce' );
 					$localized_data['download_certificate_nonce'] = wp_create_nonce( 'download_certificate_nonce' );
 				}
 
@@ -219,7 +219,7 @@ class FrontendAssets extends Assets {
 			wp_enqueue_script( 'ohmylms-slick' );
 		}
 
-		if(ohmylms_is_course_list_shortcode()) {
+		if ( ohmylms_is_course_list_shortcode() ) {
 			wp_enqueue_script( 'ohmylms-slick' );
 			wp_enqueue_script( 'ohmylms-frontend' );
 		}
@@ -242,7 +242,7 @@ class FrontendAssets extends Assets {
 		if ( ohmylms_is_single_course_page() ) {
 			wp_enqueue_script( 'ohmylms-add-to-cart' );
 		}
-		
+
 		if ( is_ohmylms_checkout() ) {
 			wp_enqueue_script( 'ohmylms-checkout' );
 			wp_enqueue_script( 'ohmylms-tax-calculation' );

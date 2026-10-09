@@ -148,8 +148,8 @@ class AssignmentSubmitted {
 
 		$digest_items = array();
 		foreach ( $items as $item ) {
-			$s          = get_userdata( $item['student_id'] );
-			$a          = get_post( $item['assignment_id'] );
+			$s              = get_userdata( $item['student_id'] );
+			$a              = get_post( $item['assignment_id'] );
 			$digest_items[] = array(
 				'student_name'     => $s ? $s->display_name : __( 'Unknown Student', 'ohmylms' ),
 				'assignment_title' => $a ? $a->post_title : __( 'Unknown Assignment', 'ohmylms' ),
@@ -158,7 +158,7 @@ class AssignmentSubmitted {
 			);
 		}
 
-		$digest_settings = $settings;
+		$digest_settings                = $settings;
 		$digest_settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/assignment-report' );
 
 		ob_start();

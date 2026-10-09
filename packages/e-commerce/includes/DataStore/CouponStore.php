@@ -48,11 +48,11 @@ class CouponStore extends DataStore {
 	public function read( &$coupon ) {
 		$coupon_id   = $coupon->get_id();
 		$post_object = get_post( $coupon->get_id() );
-		if( ! $post_object || 'ohmylms_coupon' !== $post_object->post_type ) {
-			\CodeRex\Ecommerce\ecommerce()->session->set( 'applied_coupons', [] );
+		if ( ! $post_object || 'ohmylms_coupon' !== $post_object->post_type ) {
+			\CodeRex\Ecommerce\ecommerce()->session->set( 'applied_coupons', array() );
 			return false;
 		}
-		
+
 		$coupon->set_props(
 			array(
 				'title'                  => get_post_meta( $coupon_id, 'title', true ),
@@ -92,7 +92,7 @@ class CouponStore extends DataStore {
 	public function update( &$coupon ) {
 		$post_data = array(
 			'post_content' => $coupon->get_description( 'edit' ),
-			'post_excerpt'  => $coupon->get_description( 'edit' ),
+			'post_excerpt' => $coupon->get_description( 'edit' ),
 			'post_title'   => $coupon->get_code( 'edit' ),
 		);
 		if ( $coupon->get_date_created( 'edit' ) ) {
@@ -131,27 +131,29 @@ class CouponStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function get_ids_by_code( $code ) {
-		return get_posts( array(
-			'post_type' => 'ohmylms_coupon',
-			'post_status' => 'publish',
-			'title' => ecommerce_format_coupon_code( $code ),
-			'fields' => 'ids',
-			'posts_per_page' => -1,
-			'orderby' => 'date',
-			'order' => 'DESC',
-		) );
+		return get_posts(
+			array(
+				'post_type'      => 'ohmylms_coupon',
+				'post_status'    => 'publish',
+				'title'          => ecommerce_format_coupon_code( $code ),
+				'fields'         => 'ids',
+				'posts_per_page' => -1,
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+			)
+		);
 	}
 	/**
 	 * Update post meta data for the given coupon.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\Coupon $coupon The coupon object to update.
-	 * @param bool $force Whether to force the update.
+	 * @param bool                           $force Whether to force the update.
 	 *
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$coupon, $force = false ) {
 		$meta_key_to_props = array(
-			'title'        		   => 'title',
+			'title'                => 'title',
 			'discount_type'        => 'discount_type',
 			'amount'               => 'amount',
 			'individual_use'       => 'individual_use',

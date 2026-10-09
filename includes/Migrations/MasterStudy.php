@@ -160,10 +160,10 @@ class MasterStudy {
 	 * @param array $meta_data Source meta data.
 	 */
 	private function migrate_course_metadata( $new_course_id, $meta_data ) {
-		$price_keys = array( 'price', '_price', 'current_price', '_stm_price', 'sale_price' );
+		$price_keys         = array( 'price', '_price', 'current_price', '_stm_price', 'sale_price' );
 		$regular_price_keys = array( 'sale_price', '_regular_price', '_stm_regular_price' );
 
-		$price = $this->get_first_meta_value( $meta_data, $price_keys );
+		$price         = $this->get_first_meta_value( $meta_data, $price_keys );
 		$regular_price = $this->get_first_meta_value( $meta_data, $regular_price_keys );
 
 		if ( '' !== $regular_price ) {
@@ -258,8 +258,8 @@ class MasterStudy {
 
 			$items = isset( $chapter_data['items'] ) && is_array( $chapter_data['items'] ) ? $chapter_data['items'] : array();
 			foreach ( $items as $item_index => $item ) {
-				$item_id = isset( $item['id'] ) ? intval( $item['id'] ) : 0;
-				$item_type = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : '';
+				$item_id    = isset( $item['id'] ) ? intval( $item['id'] ) : 0;
+				$item_type  = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : '';
 				$item_order = isset( $item['order'] ) ? intval( $item['order'] ) : $item_index;
 
 				if ( ! $item_id || '' === $item_type ) {
@@ -293,7 +293,7 @@ class MasterStudy {
 			return $table_curriculum;
 		}
 
-		$meta = get_post_meta( $this->ms_course_id );
+		$meta           = get_post_meta( $this->ms_course_id );
 		$candidate_keys = array(
 			'curriculum',
 			'_curriculum',
@@ -337,9 +337,9 @@ class MasterStudy {
 
 		foreach ( $decoded as $chapter_index => $chapter ) {
 			if ( is_array( $chapter ) && isset( $chapter['items'] ) && is_array( $chapter['items'] ) ) {
-				$title = isset( $chapter['title'] ) ? sanitize_text_field( $chapter['title'] ) : '';
-				$items = $this->normalize_curriculum_items( $chapter['items'] );
-				$section_key = ! empty( $chapter['id'] ) ? sanitize_title( (string) $chapter['id'] ) : $this->generate_section_key( $title, $chapter_index, $items );
+				$title        = isset( $chapter['title'] ) ? sanitize_text_field( $chapter['title'] ) : '';
+				$items        = $this->normalize_curriculum_items( $chapter['items'] );
+				$section_key  = ! empty( $chapter['id'] ) ? sanitize_title( (string) $chapter['id'] ) : $this->generate_section_key( $title, $chapter_index, $items );
 				$normalized[] = array(
 					'section_key'   => $section_key,
 					'section_title' => $title,
@@ -350,7 +350,7 @@ class MasterStudy {
 
 			if ( is_array( $chapter ) && ! isset( $chapter['items'] ) ) {
 				$maybe_section_title = is_string( $chapter_index ) ? sanitize_text_field( $chapter_index ) : '';
-				$items = $this->normalize_curriculum_items( $chapter );
+				$items               = $this->normalize_curriculum_items( $chapter );
 				if ( ! empty( $items ) ) {
 					$normalized[] = array(
 						'section_key'   => $this->generate_section_key( $maybe_section_title, $chapter_index, $items ),
@@ -362,7 +362,7 @@ class MasterStudy {
 			}
 
 			if ( is_array( $chapter ) && isset( $chapter[0] ) ) {
-				$items = $this->normalize_curriculum_items( $chapter );
+				$items        = $this->normalize_curriculum_items( $chapter );
 				$normalized[] = array(
 					'section_key'   => $this->generate_section_key( '', $chapter_index, $items ),
 					'section_title' => '',
@@ -475,7 +475,7 @@ class MasterStudy {
 		}
 
 		foreach ( $sections as &$section ) {
-			$section_id            = isset( $section['id'] ) ? intval( $section['id'] ) : 0;
+			$section_id           = isset( $section['id'] ) ? intval( $section['id'] ) : 0;
 			$section['materials'] = isset( $materials_by_section[ $section_id ] ) ? $materials_by_section[ $section_id ] : array();
 		}
 
@@ -495,7 +495,7 @@ class MasterStudy {
 
 		usort(
 			$sections,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				$a_order = isset( $a['order'] ) ? intval( $a['order'] ) : 0;
 				$b_order = isset( $b['order'] ) ? intval( $b['order'] ) : 0;
 				return $a_order <=> $b_order;
@@ -514,7 +514,7 @@ class MasterStudy {
 
 			usort(
 				$materials,
-				function( $a, $b ) {
+				function ( $a, $b ) {
 					$a_order = isset( $a['order'] ) ? intval( $a['order'] ) : 0;
 					$b_order = isset( $b['order'] ) ? intval( $b['order'] ) : 0;
 					return $a_order <=> $b_order;
@@ -593,7 +593,7 @@ class MasterStudy {
 					}
 
 					$section_title = $this->extract_section_title( $row );
-					$section_index++;
+					++$section_index;
 					$current_section = array(
 						'section_key'   => $this->generate_section_key( $section_title, $section_index, array( $row ) ),
 						'section_title' => $section_title,
@@ -627,7 +627,7 @@ class MasterStudy {
 
 		foreach ( $items as $item ) {
 			if ( is_array( $item ) ) {
-				$id = 0;
+				$id   = 0;
 				$type = '';
 				if ( isset( $item['id'] ) ) {
 					$id = intval( $item['id'] );
@@ -816,19 +816,19 @@ class MasterStudy {
 			return;
 		}
 
-		$source_meta   = get_post_meta( $old_lesson_id );
-		$lesson_type   = $this->get_creator_lesson_type( $source_meta );
-		$excerpt       = isset( $old_lesson->post_excerpt ) ? $old_lesson->post_excerpt : '';
+		$source_meta = get_post_meta( $old_lesson_id );
+		$lesson_type = $this->get_creator_lesson_type( $source_meta );
+		$excerpt     = isset( $old_lesson->post_excerpt ) ? $old_lesson->post_excerpt : '';
 		if ( '' === trim( (string) $excerpt ) ) {
 			$excerpt = (string) $this->get_first_meta_value( $source_meta, array( 'lesson_excerpt', 'excerpt', '_lesson_excerpt', '_excerpt' ) );
 		}
-		$excerpt = sanitize_textarea_field( (string) $excerpt );
+		$excerpt             = sanitize_textarea_field( (string) $excerpt );
 		$description_content = isset( $old_lesson->post_content ) ? (string) $old_lesson->post_content : '';
 		if ( '' === trim( wp_strip_all_tags( $description_content ) ) ) {
 			$description_content = (string) $this->get_first_meta_value( $source_meta, array( 'lesson_excerpt', 'excerpt', '_lesson_excerpt', '_excerpt' ) );
 		}
 		$description_content = wp_kses_post( $description_content );
-		$new_lesson_id = $this->find_existing_migrated_post( 'ohmylms-lesson', $old_lesson_id );
+		$new_lesson_id       = $this->find_existing_migrated_post( 'ohmylms-lesson', $old_lesson_id );
 		if ( ! $new_lesson_id ) {
 			$new_lesson_data = array(
 				'post_title'   => sanitize_text_field( $old_lesson->post_title ),
@@ -1046,8 +1046,8 @@ class MasterStudy {
 			return;
 		}
 
-		$new_quiz_id = $this->find_existing_migrated_post( 'ohmylms-quiz', $old_quiz_id );
-		$source_meta = get_post_meta( $old_quiz_id );
+		$new_quiz_id  = $this->find_existing_migrated_post( 'ohmylms-quiz', $old_quiz_id );
+		$source_meta  = get_post_meta( $old_quiz_id );
 		$quiz_excerpt = isset( $old_quiz->post_excerpt ) ? $old_quiz->post_excerpt : '';
 		if ( '' === trim( (string) $quiz_excerpt ) ) {
 			$quiz_excerpt = (string) $this->get_first_meta_value( $source_meta, array( 'lesson_excerpt', 'excerpt', '_lesson_excerpt', '_excerpt' ) );
@@ -1090,13 +1090,13 @@ class MasterStudy {
 	 * @param array $meta_data Source quiz meta.
 	 */
 	private function migrate_quiz_metadata( $new_quiz_id, $meta_data ) {
-		$attempts = intval( $this->get_first_meta_value( $meta_data, array( 'attempts', 'attempts_allowed', '_attempts', 'quiz_attempts' ) ) );
-		$passing  = intval( $this->get_first_meta_value( $meta_data, array( 'passing_grade', 'pass_mark', '_passing_grade' ) ) );
-		$duration_raw = $this->get_first_meta_value( $meta_data, array( 'duration', 'quiz_duration', '_duration' ) );
-		$duration_measure = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'duration_measure' ) ) );
-		$random_questions = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'random_questions' ) ) );
-		$random_answers = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'random_answers' ) ) );
-		$retry_after_passing = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'retry_after_passing' ) ) );
+		$attempts              = intval( $this->get_first_meta_value( $meta_data, array( 'attempts', 'attempts_allowed', '_attempts', 'quiz_attempts' ) ) );
+		$passing               = intval( $this->get_first_meta_value( $meta_data, array( 'passing_grade', 'pass_mark', '_passing_grade' ) ) );
+		$duration_raw          = $this->get_first_meta_value( $meta_data, array( 'duration', 'quiz_duration', '_duration' ) );
+		$duration_measure      = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'duration_measure' ) ) );
+		$random_questions      = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'random_questions' ) ) );
+		$random_answers        = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'random_answers' ) ) );
+		$retry_after_passing   = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'retry_after_passing' ) ) );
 		$show_attempts_history = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'show_attempts_history' ) ) );
 
 		$settings = array(
@@ -1125,7 +1125,7 @@ class MasterStudy {
 			$duration = intval( $duration_raw );
 			if ( $duration > 0 ) {
 				$settings['time_limit']['enabled'] = true;
-				$settings['time_limit']['value'] = $duration;
+				$settings['time_limit']['value']   = $duration;
 				if ( in_array( $duration_measure, array( 'hour', 'hours' ), true ) ) {
 					$settings['time_limit']['type'] = 'hours';
 				}
@@ -1162,7 +1162,7 @@ class MasterStudy {
 			$new_question_id = $this->find_existing_migrated_post( 'ohmylms-question', $old_question_id );
 			if ( ! $new_question_id ) {
 				$source_question_meta = get_post_meta( $old_question_id );
-				$question_title = sanitize_text_field( $old_question->post_title );
+				$question_title       = sanitize_text_field( $old_question->post_title );
 				if ( '' === trim( $question_title ) ) {
 					$question_title = sanitize_text_field( wp_strip_all_tags( (string) $this->get_first_meta_value( $source_question_meta, array( 'question' ) ) ) );
 				}
@@ -1234,22 +1234,22 @@ class MasterStudy {
 	 */
 	private function migrate_question_metadata( $new_question_id, $meta_data ) {
 		$source_type = strtolower( (string) $this->get_first_meta_value( $meta_data, array( 'type', 'question_type', '_question_type' ) ) );
-		$score = intval( $this->get_first_meta_value( $meta_data, array( 'score', 'points', 'mark', 'question_mark' ) ) );
+		$score       = intval( $this->get_first_meta_value( $meta_data, array( 'score', 'points', 'mark', 'question_mark' ) ) );
 
 		$type_map = array(
-			'single_choice'    => 'single-choice',
-			'multi_choice'     => 'multiple-choice',
-			'multiple_choice'  => 'multiple-choice',
-			'true_false'       => 'true-false',
-			'true_or_false'    => 'true-false',
-			'fill_the_gap'     => 'fill-in-the-blank',
-			'fill_in_the_gap'  => 'fill-in-the-blank',
+			'single_choice'     => 'single-choice',
+			'multi_choice'      => 'multiple-choice',
+			'multiple_choice'   => 'multiple-choice',
+			'true_false'        => 'true-false',
+			'true_or_false'     => 'true-false',
+			'fill_the_gap'      => 'fill-in-the-blank',
+			'fill_in_the_gap'   => 'fill-in-the-blank',
 			'fill_in_the_blank' => 'fill-in-the-blank',
-			'keywords'         => 'short-text',
-			'item_match'       => 'matching',
-			'image_match'      => 'matching',
-			'sortable'         => 'reorder',
-			'question_bank'    => 'single-choice',
+			'keywords'          => 'short-text',
+			'item_match'        => 'matching',
+			'image_match'       => 'matching',
+			'sortable'          => 'reorder',
+			'question_bank'     => 'single-choice',
 		);
 
 		$mapped_type = isset( $type_map[ $source_type ] ) ? $type_map[ $source_type ] : 'single-choice';
@@ -1309,7 +1309,7 @@ class MasterStudy {
 
 			if ( is_string( $answer ) ) {
 				$answer_text = $answer;
-				$is_correct = false;
+				$is_correct  = false;
 			} elseif ( is_array( $answer ) ) {
 				$answer_text = isset( $answer['text'] ) ? $answer['text'] : ( $answer['title'] ?? '' );
 				if ( '' === trim( (string) $answer_text ) && isset( $answer['question'] ) ) {
@@ -1800,7 +1800,7 @@ class MasterStudy {
 	private function extract_duration( $meta_data ) {
 		$duration = array();
 
-		$hours = intval( $this->get_first_meta_value( $meta_data, array( 'duration_hours', '_duration_hours' ) ) );
+		$hours   = intval( $this->get_first_meta_value( $meta_data, array( 'duration_hours', '_duration_hours' ) ) );
 		$minutes = intval( $this->get_first_meta_value( $meta_data, array( 'duration_minutes', '_duration_minutes' ) ) );
 
 		if ( $hours > 0 ) {
@@ -1827,7 +1827,7 @@ class MasterStudy {
 		$parts = explode( ' ', trim( strtolower( (string) $raw ) ) );
 		if ( count( $parts ) >= 2 ) {
 			$value = intval( $parts[0] );
-			$unit = $parts[1];
+			$unit  = $parts[1];
 			if ( $value > 0 ) {
 				if ( false !== strpos( $unit, 'hour' ) ) {
 					$duration['hour'] = strval( $value );
@@ -1856,7 +1856,7 @@ class MasterStudy {
 			return $repository_ids;
 		}
 
-		$meta = get_post_meta( $old_quiz_id );
+		$meta           = get_post_meta( $old_quiz_id );
 		$candidate_keys = array(
 			'questions',
 			'_questions',
@@ -1936,7 +1936,7 @@ class MasterStudy {
 
 		try {
 			$quiz_repository = new \MasterStudy\Lms\Repositories\QuizRepository();
-			$quiz_data = $quiz_repository->get( intval( $old_quiz_id ) );
+			$quiz_data       = $quiz_repository->get( intval( $old_quiz_id ) );
 		} catch ( \Throwable $throwable ) {
 			return array();
 		}

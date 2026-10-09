@@ -12,7 +12,6 @@ class Discounts {
 
 	/**
 	 * Constructor for the Discount class.
-	 *
 	 */
 	public function __construct( $object = null ) {
 		$this->set_items_from_cart( $object );
@@ -33,12 +32,12 @@ class Discounts {
 			if ( empty( $cart_item['data'] ) || ! is_object( $cart_item['data'] ) ) {
 				continue;
 			}
-			
+
 			// Additional check to ensure the course object has the get_price method
 			if ( ! method_exists( $cart_item['data'], 'get_price' ) ) {
 				continue;
 			}
-			
+
 			$item                = new \stdClass();
 			$item->key           = $key;
 			$item->object        = $cart_item;
@@ -57,7 +56,7 @@ class Discounts {
 		}
 		$items_to_apply = $this->get_items_to_apply_coupon( $coupon );
 
-		if( ! $this->validate_coupon( $coupon, $items_to_apply ) ) {
+		if ( ! $this->validate_coupon( $coupon, $items_to_apply ) ) {
 			return false;
 		}
 
@@ -119,16 +118,15 @@ class Discounts {
 		$applied_count  = 0;
 		$coupon_amount  = $coupon->get_amount();
 
-	
 		foreach ( $items_to_apply as $item ) {
 			$price_to_discount = round( $item->price );
-			
+
 			$apply_quantity    = $item->quantity;
 			$price_to_discount = ( $price_to_discount ) * $apply_quantity;
-			$discount       = ( $price_to_discount * ( $coupon_amount / 100 ) );
-			$cart_total     = $cart_total + $price_to_discount;
-			$total_discount = $total_discount + $discount;
-			$applied_count  = $applied_count + $apply_quantity;
+			$discount          = ( $price_to_discount * ( $coupon_amount / 100 ) );
+			$cart_total        = $cart_total + $price_to_discount;
+			$total_discount    = $total_discount + $discount;
+			$applied_count     = $applied_count + $apply_quantity;
 			$this->discounts[ $coupon->get_code() ][ $item->key ] += $discount;
 		}
 		return $total_discount;
@@ -166,7 +164,7 @@ class Discounts {
 	 * Validate coupon
 	 *
 	 * @param object $coupon
-	 * @param array $items_to_apply
+	 * @param array  $items_to_apply
 	 *
 	 * @return array
 	 *
@@ -205,27 +203,27 @@ class Discounts {
 		$uses_limit = $coupon->get_usage_limit();
 
 		// Check uses limit
-		if( $uses_limit && $uses_limit <= $uses_count ){
+		if ( $uses_limit && $uses_limit <= $uses_count ) {
 			return false;
 		}
 
 		$uses_limit_per_user = $coupon->get_usage_limit_per_user();
-		if( $uses_limit_per_user && is_user_logged_in()) {
-			$current_user_id = get_current_user_id();
+		if ( $uses_limit_per_user && is_user_logged_in() ) {
+			$current_user_id       = get_current_user_id();
 			$current_uses_per_user = get_post_meta( $coupon->get_id(), 'usage_count_' . $current_user_id, true );
-			if( $uses_limit_per_user <= $current_uses_per_user ) {
+			if ( $uses_limit_per_user <= $current_uses_per_user ) {
 				return false;
 			}
 		}
 
 		// Check course ids are in checkout or not.
 		$course_id_type = $coupon->get_course_id_type();
-		if( 'selected_course' === $course_id_type ) {
+		if ( 'selected_course' === $course_id_type ) {
 			$course_ids = $coupon->get_course_ids();
-			if( is_array( $course_ids ) && !empty( $course_ids ) ) {
+			if ( is_array( $course_ids ) && ! empty( $course_ids ) ) {
 				$should_apply = true;
 				foreach ( $items_to_apply as $item ) {
-					if( ! in_array( $item->object['course_id'], $course_ids, true ) ) {
+					if ( ! in_array( $item->object['course_id'], $course_ids, true ) ) {
 						$should_apply = false;
 						break;
 					}

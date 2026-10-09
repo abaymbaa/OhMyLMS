@@ -147,7 +147,7 @@ class WebhookStore extends DataStore {
 	 * Delete webhook
 	 *
 	 * @param Webhook $webhook
-	 * @param array $args
+	 * @param array   $args
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -207,7 +207,7 @@ class WebhookStore extends DataStore {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		$where_clauses = array( '1=1' );
 		$values        = array();
 
@@ -223,15 +223,15 @@ class WebhookStore extends DataStore {
 
 		if ( ! empty( $args['search'] ) ) {
 			$where_clauses[] = '(name LIKE %s OR webhook_url LIKE %s OR trigger_event LIKE %s)';
-			$search_term = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$values[] = $search_term;
-			$values[] = $search_term;
-			$values[] = $search_term;
+			$search_term     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$values[]        = $search_term;
+			$values[]        = $search_term;
+			$values[]        = $search_term;
 		}
 
-		$where = implode( ' AND ', $where_clauses );
+		$where   = implode( ' AND ', $where_clauses );
 		$orderby = sanitize_sql_orderby( $args['orderby'] . ' ' . $args['order'] );
-		
+
 		$limit_clause = '';
 		if ( $args['limit'] > 0 ) {
 			$limit_clause = $wpdb->prepare( ' LIMIT %d', $args['limit'] );
@@ -241,11 +241,11 @@ class WebhookStore extends DataStore {
 		}
 
 		$query = "SELECT * FROM {$wpdb->prefix}ohmylms_webhooks WHERE {$where}";
-		
+
 		if ( $orderby ) {
 			$query .= " ORDER BY {$orderby}";
 		}
-		
+
 		$query .= $limit_clause;
 
 		if ( ! empty( $values ) ) {
@@ -288,10 +288,10 @@ class WebhookStore extends DataStore {
 
 		if ( ! empty( $args['search'] ) ) {
 			$where_clauses[] = '(name LIKE %s OR webhook_url LIKE %s OR trigger_event LIKE %s)';
-			$search_term = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$values[] = $search_term;
-			$values[] = $search_term;
-			$values[] = $search_term;
+			$search_term     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$values[]        = $search_term;
+			$values[]        = $search_term;
+			$values[]        = $search_term;
 		}
 
 		$where = implode( ' AND ', $where_clauses );

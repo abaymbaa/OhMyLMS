@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class PaymentGateway
+ *
  * @package OhMyLMS\Order\Abstracts
  * @since 1.0.0
  */
@@ -263,7 +264,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * If the option is not set, it will initialize the settings and return the default value if provided.
 	 *
 	 * @param string $key The key of the option to retrieve.
-	 * @param mixed $empty_value The value to return if the option is not set. Default is null.
+	 * @param mixed  $empty_value The value to return if the option is not set. Default is null.
 	 * @return mixed The value of the option, or the empty value if the option is not set.
 	 *
 	 * @since 1.0.0
@@ -300,7 +301,7 @@ abstract class PaymentGateway extends SettingsApi {
 	public function get_transaction_url( $order ) {
 		$transaction_id = $order->get_transaction_id();
 		// phpcs:ignore Generic.Functions.SprintfPlaceholders.Invalid
-		$return_url 	= sprintf( $this->transaction_url, $transaction_id );
+		$return_url = sprintf( $this->transaction_url, $transaction_id );
 		return $return_url;
 	}
 
@@ -311,10 +312,10 @@ abstract class PaymentGateway extends SettingsApi {
 	 * Gateways should implement this to charge the customer using stored payment details.
 	 * It should NOT handle subscription status changes or rescheduling, only the payment attempt.
 	 *
-	 * @param int $original_order_id The ID of the original order that created the subscription.
+	 * @param int   $original_order_id The ID of the original order that created the subscription.
 	 * @param float $amount The amount to charge for this renewal.
-	 * @param int $subscription_id The ID of the ohmylms-subscription post.
-	 * @param int $student_id The ID of the student/user.
+	 * @param int   $subscription_id The ID of the ohmylms-subscription post.
+	 * @param int   $student_id The ID of the student/user.
 	 * @return array Should return an array with 'result' => 'success' or 'failure'.
 	 *               On success, can optionally include 'transaction_id'.
 	 *               On failure, should include 'message' with the error.
@@ -338,7 +339,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * @since 1.0.0
 	 */
 	public function get_payment_gateway_meta( $order ) {
-		return [];
+		return array();
 	}
 
 
@@ -349,7 +350,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * It first checks the gateway-specific settings, then falls back to the default settings.
 	 *
 	 * @param string $key The setting key to retrieve.
-	 * @param mixed $default The default value if the setting is not found.
+	 * @param mixed  $default The default value if the setting is not found.
 	 * @return mixed The setting value or default if not found.
 	 * @since 1.0.0
 	 */

@@ -14,5 +14,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 $description = $course->get_description();
-?>
-

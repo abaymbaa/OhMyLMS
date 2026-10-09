@@ -141,10 +141,10 @@ class FormHandler {
 			$student->save();
 
 			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
-			
+
 			// Check if redirect_to parameter is set (for shortcode usage).
 			$redirect_url = ! empty( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
-			
+
 			if ( $redirect_url ) {
 				wp_safe_redirect( $redirect_url );
 			} else {
@@ -154,7 +154,7 @@ class FormHandler {
 		} else {
 			// Check if redirect_to parameter is set (for shortcode usage).
 			$redirect_url = ! empty( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
-			
+
 			if ( $redirect_url ) {
 				// Add edit parameter back for error state.
 				$redirect_url = add_query_arg( 'edit', 'true', $redirect_url );
@@ -311,15 +311,21 @@ class FormHandler {
 	 * @return void
 	 */
 	public static function save_quiz_attempt() {
-        if (($_POST['action'] ?? '') !== 'quiz-action') return;
-        if (!wp_verify_nonce($_POST['save-quiz-attempt-nonce'] ?? '', 'save_quiz_attempt')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
-        $student_id=get_current_user_id();
-        $result=\OhMyLMS\Quiz\Submission::start($quiz_id,$student_id);
-        if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
-        wp_safe_redirect(get_permalink($quiz_id));
-        exit;
-    }
+		if ( ( $_POST['action'] ?? '' ) !== 'quiz-action' ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( $_POST['save-quiz-attempt-nonce'] ?? '', 'save_quiz_attempt' ) ) {
+			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
+		}
+		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );
+		$student_id = get_current_user_id();
+		$result     = \OhMyLMS\Quiz\Submission::start( $quiz_id, $student_id );
+		if ( is_wp_error( $result ) ) {
+			wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 400 ) );
+		}
+		wp_safe_redirect( get_permalink( $quiz_id ) );
+		exit;
+	}
 
 	/**
 	 * Save quiz submission.
@@ -327,31 +333,47 @@ class FormHandler {
 	 * @return void
 	 */
 	public static function save_quiz_submit() {
-        if (($_POST['action'] ?? '') !== 'ohmylms-quiz-submission') return;
-        if (!wp_verify_nonce($_POST['save-quiz-submit-nonce'] ?? '', 'save_quiz_submit')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
-        $student_id=get_current_user_id();
-        $attempt_id=absint($_POST['quiz_attempt_id'] ?? 0);
-        $answers=wp_unslash($_POST['attempt'][$attempt_id]['quiz_question'] ?? []);
-        if (!is_array($answers)) wp_die('Invalid answers.', '', ['response'=>400]);
-        $result=\OhMyLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'submit');
-        if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
-        wp_safe_redirect(get_permalink($quiz_id));
-        exit;
-    }
+		if ( ( $_POST['action'] ?? '' ) !== 'ohmylms-quiz-submission' ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( $_POST['save-quiz-submit-nonce'] ?? '', 'save_quiz_submit' ) ) {
+			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
+		}
+		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );
+		$student_id = get_current_user_id();
+		$attempt_id = absint( $_POST['quiz_attempt_id'] ?? 0 );
+		$answers    = wp_unslash( $_POST['attempt'][ $attempt_id ]['quiz_question'] ?? array() );
+		if ( ! is_array( $answers ) ) {
+			wp_die( 'Invalid answers.', '', array( 'response' => 400 ) );
+		}
+		$result = \OhMyLMS\Quiz\Submission::submit( $quiz_id, $attempt_id, $student_id, $answers, 'submit' );
+		if ( is_wp_error( $result ) ) {
+			wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 400 ) );
+		}
+		wp_safe_redirect( get_permalink( $quiz_id ) );
+		exit;
+	}
 
 
 	public static function save_quiz_exit_submit() {
-        if (($_POST['action'] ?? '') !== 'ohmylms-quiz-exit-submission') return;
-        if (!wp_verify_nonce($_POST['save-quiz-exit-submit-nonce'] ?? '', 'save_quiz_exit_submit')) wp_die('Invalid quiz request.', '', ['response'=>403]);
-        $quiz_id=absint($_POST['ohmylms_quiz_id'] ?? 0);
-        $student_id=get_current_user_id();
-        $attempt_id=absint($_POST['quiz_attempt_id'] ?? 0);
-        $answers=wp_unslash($_POST['attempt'][$attempt_id]['quiz_question'] ?? []);
-        if (!is_array($answers)) wp_die('Invalid answers.', '', ['response'=>400]);
-        $result=\OhMyLMS\Quiz\Submission::submit($quiz_id,$attempt_id,$student_id,$answers,'exit');
-        if (is_wp_error($result)) wp_die(esc_html($result->get_error_message()), '', ['response'=>400]);
-        wp_safe_redirect(get_permalink($quiz_id));
-        exit;
-    }
+		if ( ( $_POST['action'] ?? '' ) !== 'ohmylms-quiz-exit-submission' ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( $_POST['save-quiz-exit-submit-nonce'] ?? '', 'save_quiz_exit_submit' ) ) {
+			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
+		}
+		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );
+		$student_id = get_current_user_id();
+		$attempt_id = absint( $_POST['quiz_attempt_id'] ?? 0 );
+		$answers    = wp_unslash( $_POST['attempt'][ $attempt_id ]['quiz_question'] ?? array() );
+		if ( ! is_array( $answers ) ) {
+			wp_die( 'Invalid answers.', '', array( 'response' => 400 ) );
+		}
+		$result = \OhMyLMS\Quiz\Submission::submit( $quiz_id, $attempt_id, $student_id, $answers, 'exit' );
+		if ( is_wp_error( $result ) ) {
+			wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 400 ) );
+		}
+		wp_safe_redirect( get_permalink( $quiz_id ) );
+		exit;
+	}
 }

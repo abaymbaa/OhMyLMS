@@ -108,13 +108,13 @@ class IntegrationsController extends RestController {
 	public function get_items( $request ) {
 		$integrations = get_option( 'ohmylms_integrations', array() );
 		unset( $integrations['ai_model'], $integrations['question_bank'] );
-		if( is_array( $integrations ) ) {
-			foreach( $integrations as $key => $value ) {
-				$validity = self::get_integration_validity( $key );
+		if ( is_array( $integrations ) ) {
+			foreach ( $integrations as $key => $value ) {
+				$validity             = self::get_integration_validity( $key );
 				$integrations[ $key ] = array(
-					'is_enable' => isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0,
-					'class'     => isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '',
-					'is_valid'  => $validity['is_valid'],
+					'is_enable'     => isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0,
+					'class'         => isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '',
+					'is_valid'      => $validity['is_valid'],
 					'required_plan' => $validity['required_plan'],
 				);
 			}
@@ -122,11 +122,11 @@ class IntegrationsController extends RestController {
 
 		$is_community_active = defined( 'OHMYLMS_COMMUNITY_VERSION' );
 
-        if( $is_community_active ) {
-            $integrations['community']['is_enable'] = 1;
-        } else {
-            $integrations['community']['is_enable'] = 0;
-        }
+		if ( $is_community_active ) {
+			$integrations['community']['is_enable'] = 1;
+		} else {
+			$integrations['community']['is_enable'] = 0;
+		}
 		return new WP_REST_Response( $integrations, 200 );
 	}
 
@@ -154,38 +154,40 @@ class IntegrationsController extends RestController {
 	public function update_items( $request ) {
 		$integrations = $request->get_json_params();
 		// Managed elsewhere (or core): never saved or returned from this endpoint.
-		$skipped_keys = array( 'ai_model', 'question_bank', 'skills' );
+		$skipped_keys         = array( 'ai_model', 'question_bank', 'skills' );
 		$current_integrations = get_option( 'ohmylms_integrations', array() );
 		foreach ( $skipped_keys as $skipped_key ) {
 			unset( $current_integrations[ $skipped_key ] );
 		}
 		do_action( 'ohmylms_integrations_before_update', $integrations, $current_integrations );
 		$sanitized_integrations = array();
-		$previous_integrations  = get_option( 'ohmylms_integrations', [] );
-		$need_reload = false;
+		$previous_integrations  = get_option( 'ohmylms_integrations', array() );
+		$need_reload            = false;
 
 		foreach ( $integrations as $key => $value ) {
-			if ( in_array( $key, $skipped_keys, true ) ) continue;
-			$sanitized_key   = sanitize_text_field( $key );
-			$is_enable       = isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0;
-			$validity        = self::get_integration_validity( $key );
-			$is_valid        = $validity['is_valid'];
-			$required_plan   = $validity['required_plan'];
-			$class           = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
+			if ( in_array( $key, $skipped_keys, true ) ) {
+				continue;
+			}
+			$sanitized_key = sanitize_text_field( $key );
+			$is_enable     = isset( $value['is_enable'] ) ? absint( $value['is_enable'] ) : 0;
+			$validity      = self::get_integration_validity( $key );
+			$is_valid      = $validity['is_valid'];
+			$required_plan = $validity['required_plan'];
+			$class         = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
 
 			// Check if gamification or zoom settings changed
-			if( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
-				$previous_enabled = isset( $previous_integrations[$sanitized_key]['is_enable'] ) ? absint( $previous_integrations[$sanitized_key]['is_enable'] ) : 0;
-				if( $previous_enabled !== $is_enable ) {
+			if ( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
+				$previous_enabled = isset( $previous_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $previous_integrations[ $sanitized_key ]['is_enable'] ) : 0;
+				if ( $previous_enabled !== $is_enable ) {
 					$need_reload = true;
 				}
 			}
 
-			$was_enabled = isset( $current_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $current_integrations[ $sanitized_key ]['is_enable'] ) : 0;
+			$was_enabled      = isset( $current_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $current_integrations[ $sanitized_key ]['is_enable'] ) : 0;
 			$is_being_enabled = ( $is_enable === 1 && $was_enabled === 0 );
 
 			$current_integrations[ $sanitized_key ] = array(
-				'is_enable' => $is_enable
+				'is_enable' => $is_enable,
 			);
 
 			do_action( 'ohmylms_integration_' . $sanitized_key . '_updated', $is_enable );
@@ -202,14 +204,14 @@ class IntegrationsController extends RestController {
 				// Trigger addon activation tracking
 				do_action( 'ohmylms_addon_activated', $sanitized_key );
 			}
-			if( 'content_protection' === $sanitized_key ) {
+			if ( 'content_protection' === $sanitized_key ) {
 				update_option( 'ohmylms_content_protection', $is_enable ? 'yes' : 'no' );
 			}
 
-			$integrations[ $sanitized_key ][ 'is_enable' ] = $is_enable;
-			$integrations[ $sanitized_key ][ 'class' ]     = $class;
-			$integrations[ $sanitized_key ][ 'is_valid' ]     = $is_valid;
-			$integrations[ $sanitized_key ][ 'required_plan' ]     = $required_plan;
+			$integrations[ $sanitized_key ]['is_enable']     = $is_enable;
+			$integrations[ $sanitized_key ]['class']         = $class;
+			$integrations[ $sanitized_key ]['is_valid']      = $is_valid;
+			$integrations[ $sanitized_key ]['required_plan'] = $required_plan;
 		}
 
 		foreach ( $skipped_keys as $skipped_key ) {
@@ -219,14 +221,14 @@ class IntegrationsController extends RestController {
 		update_option( 'ohmylms_integrations', $integrations );
 
 		do_action( 'ohmylms_integrations_after_update', $current_integrations );
-		do_action( 'ohmylms_integrations_'.$sanitized_key.'_after_update', $current_integrations );
+		do_action( 'ohmylms_integrations_' . $sanitized_key . '_after_update', $current_integrations );
 
 		return new WP_REST_Response(
 			array(
-				'success' => true,
+				'success'      => true,
 				'integrations' => $integrations,
 				'need_reload'  => $need_reload,
-				'message' => __( 'Integrations updated successfully.', 'ohmylms' ),
+				'message'      => __( 'Integrations updated successfully.', 'ohmylms' ),
 			),
 			200
 		);

@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 
 $post_object = get_post( $course->get_id() );
-$content = !empty($post_object->post_content) && '<p></p>' !== $post_object->post_content ? $post_object->post_content : '';
+$content     = ! empty( $post_object->post_content ) && '<p></p>' !== $post_object->post_content ? $post_object->post_content : '';
 
-$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
+$single_course_layout = get_option( 'ohmylms_single_course_page_layout', 'layout_1' );
 
 if ( 'layout_1' === $single_course_layout ) {
 	ohmylms_course_feature_image_and_video();
@@ -28,8 +28,8 @@ if ( 'layout_1' === $single_course_layout ) {
 <div class="ohmylms-description-content ohmylms-wysiwyg-content">
 	<div class="ohmylms-description-content-inner" initial-height="330" style="--initial-height: 330px;">
 		<div class="ohmylms-description-content-height">
-			<?php 
-				echo get_the_content($course->get_id());
+			<?php
+				echo get_the_content( $course->get_id() );
 			?>
 		</div>
 	</div>

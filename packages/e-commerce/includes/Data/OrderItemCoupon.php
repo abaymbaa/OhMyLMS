@@ -40,7 +40,7 @@ class OrderItemCoupon extends OrderItem {
 		return 'coupon';
 	}
 
-	public function set_name($name) {
+	public function set_name( $name ) {
 		$this->set_prop( 'name', $name );
 	}
 }

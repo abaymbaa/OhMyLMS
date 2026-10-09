@@ -10,12 +10,12 @@
  */
 function ohmylms_get_course( $course_id ) {
 	// Ensure the plugin is loaded and course_factory exists
-    if ( function_exists( 'OhMyLMS' ) && isset( ohmylms()->course_factory ) && ohmylms()->course_factory ) {
-        return ohmylms()->course_factory->get_course( $course_id );
-    }
+	if ( function_exists( 'OhMyLMS' ) && isset( ohmylms()->course_factory ) && ohmylms()->course_factory ) {
+		return ohmylms()->course_factory->get_course( $course_id );
+	}
 
-    // Fallback: return null if course_factory is not ready
-    return null;
+	// Fallback: return null if course_factory is not ready
+	return null;
 }
 
 function ohmylms_get_course_id_by_content_id( $content_id ) {
@@ -51,15 +51,15 @@ function ohmylms_get_course_id_by_content_id( $content_id ) {
  * @since 1.0.0
  */
 function ohmylms_get_course_first_lesson_url( $course_id ) {
-	$course = ohmylms_get_course( $course_id );
+	$course   = ohmylms_get_course( $course_id );
 	$chapters = $course->get_chapters();
-	if( is_array($chapters) ) {
+	if ( is_array( $chapters ) ) {
 		foreach ( $chapters as $chapter_array ) {
-			if( !isset($chapter_array['id']) ) {
+			if ( ! isset( $chapter_array['id'] ) ) {
 				continue;
 			}
 			$chapter = ohmylms_get_chapter( $chapter_array['id'] );
-			
+
 			if ( ! $chapter ) {
 				continue;
 			}
@@ -67,34 +67,33 @@ function ohmylms_get_course_first_lesson_url( $course_id ) {
 			$lessons = $chapter->get_lessons();
 			if ( is_array( $lessons ) ) {
 				foreach ( $lessons as $lesson_array ) {
-					if( !isset($lesson_array['id']) ) {
+					if ( ! isset( $lesson_array['id'] ) ) {
 						continue;
 					}
-					if( isset($lesson_array['type']) && 'quiz' === $lesson_array['type'] ) {
+					if ( isset( $lesson_array['type'] ) && 'quiz' === $lesson_array['type'] ) {
 						$quiz = ohmylms_get_quiz( $lesson_array['id'] );
 						if ( $quiz ) {
 							return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
 						}
 					}
-					
-					if( isset($lesson_array['type']) && 'assignment' === $lesson_array['type'] ) {
+
+					if ( isset( $lesson_array['type'] ) && 'assignment' === $lesson_array['type'] ) {
 						$assignment = ohmylms_get_assignment( $lesson_array['id'] );
 						if ( $assignment ) {
 							return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
 						}
 					}
-					
+
 					$lesson = ohmylms_get_lesson( $lesson_array['id'] );
 					if ( ! $lesson ) {
 						continue;
 					}
 					return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson
-					
+
 				}
 			}
 		}
 	}
-
 
 	global $wpdb;
 	$sql       = $wpdb->prepare(
@@ -132,13 +131,15 @@ function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
 	}
 
 	global $wpdb;
-	$sql = $wpdb->prepare(
+	$sql    = $wpdb->prepare(
 		"SELECT course_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE chapter_id = %d LIMIT 1",
 		$chapter_id
 	);
 	$result = $wpdb->get_var( $sql );
 
-	if ($result) $cache[ $chapter_id ] = $result;
+	if ( $result ) {
+		$cache[ $chapter_id ] = $result;
+	}
 	return $result;
 }
 
@@ -210,7 +211,7 @@ function get_best_selling_course_ids( $category = null ) {
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
-	
+
 	return $results;
 }
 
@@ -255,7 +256,7 @@ function get_top_rated_course_ids( $category = null ) {
 
 	// Execute the query and return the results
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
-	
+
 	return $results;
 }
 
@@ -421,4 +422,3 @@ function get_recent_course_ids( $category = null ) {
 	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
 	return $results;
 }
-

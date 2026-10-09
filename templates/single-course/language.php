@@ -16,6 +16,6 @@ global $course;
 ?>
 
 <li class="course-language">
-	<?php include(OHMYLMS_DIR . '/assets/images/icon/speaker-icon.php'); ?>
-	<?php echo __('English', 'ohmylms'); ?>
+	<?php require OHMYLMS_DIR . '/assets/images/icon/speaker-icon.php'; ?>
+	<?php echo __( 'English', 'ohmylms' ); ?>
 </li>

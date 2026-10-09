@@ -87,7 +87,7 @@ class AssignmentStore extends DataStore {
 				'date_created'  => $post_object->post_date_gmt,
 				'date_modified' => $post_object->post_modified_gmt,
 				'description'   => $post_object->post_content,
-				'content'   	=> $post_object->post_content,
+				'content'       => $post_object->post_content,
 				'thumbnail_id'  => get_post_thumbnail_id( $assignment->get_id() ),
 			)
 		);
@@ -377,13 +377,13 @@ class AssignmentStore extends DataStore {
 		$report  = array();
 
 		foreach ( $results as $submission ) {
-			$submission['files'] = maybe_unserialize( $submission['files'] );
-			$submission_file_name = isset( $submission['files']['file'] ) ? basename( $submission['files']['file'] ) : '';
-			$submission_file_size = isset( $submission['files']['file'] ) ? filesize( $submission['files']['file'] ) : 0;
-			$submission_file_size = ohmylms_format_file_size( $submission_file_size );
+			$submission['files']              = maybe_unserialize( $submission['files'] );
+			$submission_file_name             = isset( $submission['files']['file'] ) ? basename( $submission['files']['file'] ) : '';
+			$submission_file_size             = isset( $submission['files']['file'] ) ? filesize( $submission['files']['file'] ) : 0;
+			$submission_file_size             = ohmylms_format_file_size( $submission_file_size );
 			$submission['files']['file_name'] = $submission_file_name;
 			$submission['files']['file_size'] = $submission_file_size;
-			$key                 = $submission['user_id'] . '_' . $submission['course_id'] . '_' . $submission['assignment_id'];
+			$key                              = $submission['user_id'] . '_' . $submission['course_id'] . '_' . $submission['assignment_id'];
 
 			if ( ! isset( $report[ $key ] ) ) {
 				$report[ $key ] = array(
@@ -405,14 +405,22 @@ class AssignmentStore extends DataStore {
 	public function update_assignment_attempts( $assignment, $student_id, $attempt_data ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts';
-		foreach ( $attempt_data as $key => $value){
+		foreach ( $attempt_data as $key => $value ) {
 			$data = array(
-				'note' => !empty($value['note']) ? $value['note'] : '',
-				'status' => $value['status'],
-				'score' => $value['score'],
-				'end_date' => current_time('mysql', 1)
+				'note'     => ! empty( $value['note'] ) ? $value['note'] : '',
+				'status'   => $value['status'],
+				'score'    => $value['score'],
+				'end_date' => current_time( 'mysql', 1 ),
 			);
-			$wpdb->update($table_name, $data, array( "id" =>$value['id'] ,'user_id' => $student_id, 'assignment_id' => $assignment->get_id()));
+			$wpdb->update(
+				$table_name,
+				$data,
+				array(
+					'id'            => $value['id'],
+					'user_id'       => $student_id,
+					'assignment_id' => $assignment->get_id(),
+				)
+			);
 		}
 	}
 }

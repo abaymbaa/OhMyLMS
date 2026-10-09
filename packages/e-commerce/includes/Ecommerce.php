@@ -90,7 +90,6 @@ final class Ecommerce {
 
 	/**
 	 * Constructor.
-	 *
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
@@ -113,12 +112,12 @@ final class Ecommerce {
 		$this->session    = new SessionHandler();
 		$this->session->init();
 
-		$this->cart          		= new Cart();
-		$this->order_factory 		= new OrderFactory();
+		$this->cart                 = new Cart();
+		$this->order_factory        = new OrderFactory();
 		$this->subscription_factory = new SubscriptionFactory();
-		$this->query         		= new CustomEndpoints();
-		$this->rest_api      		= new Api();
-		$this->gateways				= $this->gateways();
+		$this->query                = new CustomEndpoints();
+		$this->rest_api             = new Api();
+		$this->gateways             = $this->gateways();
 		$this->subscription_manager = new SubscriptionManager();
 		$this->subscription_manager::init_hooks();
 
@@ -149,6 +148,7 @@ final class Ecommerce {
 
 	/**
 	 * Membership instance declared
+	 *
 	 * @return Membership|null
 	 * @since 1.0.0
 	 */
@@ -167,6 +167,7 @@ final class Ecommerce {
 
 	/**
 	 * Order object
+	 *
 	 * @param $order_id
 	 * @return Order
 	 * @sincee 1.0.0

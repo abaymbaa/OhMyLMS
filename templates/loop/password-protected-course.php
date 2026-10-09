@@ -21,10 +21,10 @@ $should_show_add_to_cart = true;
 
 // If course is cohort-based, check enrollment deadline
 if ( $course && $course->get_type() === 'cohort-based' ) {
-	$cohorts = $course->get_cohort();
+	$cohorts               = $course->get_cohort();
 	$has_active_enrollment = false;
-	$current_time = current_time( 'mysql' );
-	
+	$current_time          = current_time( 'mysql' );
+
 	foreach ( $cohorts as $cohort ) {
 		if ( ! empty( $cohort['enrollment_deadline'] ) ) {
 			$enrollment_end = $cohort['enrollment_deadline'];
@@ -34,7 +34,7 @@ if ( $course && $course->get_type() === 'cohort-based' ) {
 			}
 		}
 	}
-	
+
 	$should_show_add_to_cart = $has_active_enrollment;
 }
 
@@ -55,6 +55,6 @@ if ( $should_show_add_to_cart ) {
 	);
 }
 ?>
-<!-- <a href="<?php echo esc_url($url);?>" class="ohmylms-button">
+<!-- <a href="<?php echo esc_url( $url ); ?>" class="ohmylms-button">
 	<?php echo wp_kses_post( $course->add_to_cart_text() ); ?>
 </a> -->

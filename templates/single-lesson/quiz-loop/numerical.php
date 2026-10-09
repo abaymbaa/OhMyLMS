@@ -11,7 +11,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$unit = isset( $question['settings']['unit'] ) ? (string) $question['settings']['unit'] : '';
+$unit     = isset( $question['settings']['unit'] ) ? (string) $question['settings']['unit'] : '';
 $field_id = 'ohmylms-numerical-' . (int) $attempt['id'] . '-' . (int) $question['id'];
 ?>
 <div class="answer-type-text ohmylms-numerical-answer">

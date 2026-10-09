@@ -97,8 +97,8 @@ abstract class DataStore {
 	/**
 	 * Generate a unique slug for a given post type.
 	 *
-	 * @param string $slug The desired slug.
-	 * @param string $post_type The post type to check uniqueness against.
+	 * @param string   $slug The desired slug.
+	 * @param string   $post_type The post type to check uniqueness against.
 	 * @param int|null $exclude_id Optional. A post ID to exclude from the check (useful for updates).
 	 * @return string Unique slug.
 	 */

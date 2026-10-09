@@ -32,12 +32,12 @@ class MembershipStore extends DataStore {
 			apply_filters(
 				'ohmylms_new_membership_data',
 				array(
-					'post_type'     => OHMYLMS_MEMBERSHIP_CPT,
-					'post_author'   => get_current_user_id(),
-					'post_status'   => $membership->get_status() ? $membership->get_status() : 'publish',
-					'post_title'    => $membership->get_name() ? $membership->get_name() : __( 'Untitled', 'ohmylms' ),
-					'post_content'  => $membership->get_description(),
-					'post_name'     => $membership->get_slug( 'edit' )
+					'post_type'    => OHMYLMS_MEMBERSHIP_CPT,
+					'post_author'  => get_current_user_id(),
+					'post_status'  => $membership->get_status() ? $membership->get_status() : 'publish',
+					'post_title'   => $membership->get_name() ? $membership->get_name() : __( 'Untitled', 'ohmylms' ),
+					'post_content' => $membership->get_description(),
+					'post_name'    => $membership->get_slug( 'edit' ),
 				)
 			),
 			true
@@ -140,23 +140,23 @@ class MembershipStore extends DataStore {
 	 */
 	protected function update_post_meta( &$membership, $force = false ) {
 		$meta_key_to_props = array(
-			'_price'                 => 'price',
-			'_regular_price'         => 'regular_price',
-			'_sale_price'            => 'sale_price',
-			'_sale_price_dates_from' => 'sale_price_dates_from',
-			'_sale_price_dates_to'   => 'sale_price_dates_to',
-			'_sign_up_fee'           => 'sign_up_fee',
-			'_free_trial'            => 'free_trial',
-			'_stop_renew'            => 'stop_renew',
-			'_subscription_length'   => 'subscription_length',
-			'_subscription_period'   => 'subscription_period',
-			'_subscription_period_interval'   => 'subscription_period_interval',
-			'_products'              => 'products',
-            '_course_categories' => 'course_categories',
-            '_course_tags' => 'course_tags',
-            '_course_curriculum' => 'course_curriculum',
-            '_course_tracks' => 'course_tracks',
-            '_excluded_courses' => 'excluded_courses',
+			'_price'                        => 'price',
+			'_regular_price'                => 'regular_price',
+			'_sale_price'                   => 'sale_price',
+			'_sale_price_dates_from'        => 'sale_price_dates_from',
+			'_sale_price_dates_to'          => 'sale_price_dates_to',
+			'_sign_up_fee'                  => 'sign_up_fee',
+			'_free_trial'                   => 'free_trial',
+			'_stop_renew'                   => 'stop_renew',
+			'_subscription_length'          => 'subscription_length',
+			'_subscription_period'          => 'subscription_period',
+			'_subscription_period_interval' => 'subscription_period_interval',
+			'_products'                     => 'products',
+			'_course_categories'            => 'course_categories',
+			'_course_tags'                  => 'course_tags',
+			'_course_curriculum'            => 'course_curriculum',
+			'_course_tracks'                => 'course_tracks',
+			'_excluded_courses'             => 'excluded_courses',
 		);
 
 		$props_to_update = $meta_key_to_props;
@@ -174,7 +174,7 @@ class MembershipStore extends DataStore {
 			$membership_price_props = array( '_regular_price', '_sale_price' );
 			if ( in_array( $meta_key, $membership_price_props ) ) {
 				$value = ohmylms_format_decimal( $value );
-				
+
 				if ( $membership->is_on_sale( 'edit' ) ) {
 					update_post_meta( $membership->get_id(), '_price', $membership->get_sale_price( 'edit' ) );
 					$membership->set_price( $membership->get_sale_price( 'edit' ) );
@@ -193,7 +193,7 @@ class MembershipStore extends DataStore {
 	 * Delete the membership
 	 *
 	 * @param $membership
-	 * @param array      $args
+	 * @param array $args
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -228,23 +228,23 @@ class MembershipStore extends DataStore {
 		$post_meta_values = get_post_meta( $id );
 
 		$meta_key_to_props = array(
-			'_price'                 => 'price',
-			'_regular_price'         => 'regular_price',
-			'_sale_price'            => 'sale_price',
-			'_sale_price_dates_from' => 'sale_price_dates_from',
-			'_sale_price_dates_to'   => 'sale_price_dates_to',
-			'_sign_up_fee'           => 'sign_up_fee',
-			'_free_trial'            => 'free_trial',
-			'_stop_renew'            => 'stop_renew',
-			'_subscription_length'   => 'subscription_length',
-			'_subscription_period'   => 'subscription_period',
-			'_subscription_period_interval'   => 'subscription_period_interval',
-			'_products'              => 'products',
-            '_course_categories' => 'course_categories',
-            '_course_tags' => 'course_tags',
-            '_course_curriculum' => 'course_curriculum',
-            '_course_tracks' => 'course_tracks',
-            '_excluded_courses' => 'excluded_courses',
+			'_price'                        => 'price',
+			'_regular_price'                => 'regular_price',
+			'_sale_price'                   => 'sale_price',
+			'_sale_price_dates_from'        => 'sale_price_dates_from',
+			'_sale_price_dates_to'          => 'sale_price_dates_to',
+			'_sign_up_fee'                  => 'sign_up_fee',
+			'_free_trial'                   => 'free_trial',
+			'_stop_renew'                   => 'stop_renew',
+			'_subscription_length'          => 'subscription_length',
+			'_subscription_period'          => 'subscription_period',
+			'_subscription_period_interval' => 'subscription_period_interval',
+			'_products'                     => 'products',
+			'_course_categories'            => 'course_categories',
+			'_course_tags'                  => 'course_tags',
+			'_course_curriculum'            => 'course_curriculum',
+			'_course_tracks'                => 'course_tracks',
+			'_excluded_courses'             => 'excluded_courses',
 		);
 
 		foreach ( $meta_key_to_props as $meta_key => $prop ) {
@@ -343,22 +343,22 @@ class MembershipStore extends DataStore {
 
 	public function cancel_enrollment( &$membership, $student_id, $order_id ) {
 		global $wpdb;
-		$user_id = $student_id;
+		$user_id          = $student_id;
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
-    	$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
-		$products = $membership->get_products();
+		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
+		$products         = $membership->get_products();
 
-		if (!empty($products)) {
-			foreach ($products as $product) {
+		if ( ! empty( $products ) ) {
+			foreach ( $products as $product ) {
 				$wpdb->update(
 					$enrollment_table,
-					[
+					array(
 						'status' => 'cancelled',
-                    ],
-					[
-                        'user_id' => $user_id,
-                        'order_id' => $order_id,
-                    ]
+					),
+					array(
+						'user_id'  => $user_id,
+						'order_id' => $order_id,
+					)
 				);
 			}
 		}
@@ -366,41 +366,41 @@ class MembershipStore extends DataStore {
 		// Remove the user from the membership
 		$wpdb->update(
 			$membership_table,
-			[
-                'status' => 'cancelled',
-            ],
-			[
-                'user_id' => $user_id,
-                'order_id' => $order_id,
-            ]
+			array(
+				'status' => 'cancelled',
+			),
+			array(
+				'user_id'  => $user_id,
+				'order_id' => $order_id,
+			)
 		);
-        \OhMyLMS\Membership\CourseSelection::sync($membership->get_id());
+		\OhMyLMS\Membership\CourseSelection::sync( $membership->get_id() );
 	}
 
 
 	public function get_billing_period( &$membership ) {
-		$membership_id = $membership->get_id();
-		$subscription_length = get_post_meta($membership_id, '_subscription_period', true);
-		
+		$membership_id       = $membership->get_id();
+		$subscription_length = get_post_meta( $membership_id, '_subscription_period', true );
+
 		return $subscription_length;
 	}
 
 
 	public function get_billing_interval( &$membership ) {
-		$membership_id = $membership->get_id();
-		$subscription_length = get_post_meta($membership_id, '_subscription_length', true);
-		
-		if (empty($subscription_length)) {
+		$membership_id       = $membership->get_id();
+		$subscription_length = get_post_meta( $membership_id, '_subscription_length', true );
+
+		if ( empty( $subscription_length ) ) {
 			return false;
 		}
-		
-		$subscription_data = maybe_unserialize($subscription_length);
-		
-		if (!is_array($subscription_data) || !isset($subscription_data['duration']) || !isset($subscription_data['period'])) {
+
+		$subscription_data = maybe_unserialize( $subscription_length );
+
+		if ( ! is_array( $subscription_data ) || ! isset( $subscription_data['duration'] ) || ! isset( $subscription_data['period'] ) ) {
 			return false;
 		}
-		
-		if ($subscription_data['period'] === 'every') {
+
+		if ( $subscription_data['period'] === 'every' ) {
 			return 1;
 		}
 		return $subscription_data['duration'];

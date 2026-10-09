@@ -30,7 +30,7 @@ class Api {
 			OrderRefundController::class,
 			CouponController::class,
 			OrdersController::class,
-			SubscriptionController::class
+			SubscriptionController::class,
 		);
 
 		$controllers_v2 = array();

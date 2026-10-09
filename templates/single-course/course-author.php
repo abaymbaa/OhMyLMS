@@ -13,24 +13,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $course;
-$course_id 		= get_the_ID();
-$author_id 		= get_post_field ('post_author', $course_id);
-$display_name 	= get_the_author_meta( 'nickname' , $author_id );
-$avatar_url 	= get_avatar_url( $author_id );
+$course_id    = get_the_ID();
+$author_id    = get_post_field( 'post_author', $course_id );
+$display_name = get_the_author_meta( 'nickname', $author_id );
+$avatar_url   = get_avatar_url( $author_id );
 
 ?>
 
 <div class="course-author-wrapper">
-    <figure class="author-avatar">
-        <img src="<?php echo $avatar_url; ?>" alt="course author avatar">
-    </figure>
+	<figure class="author-avatar">
+		<img src="<?php echo $avatar_url; ?>" alt="course author avatar">
+	</figure>
 
-    <p class="author-info">
-        <?php
-            echo sprintf(
-                __('by <strong>%s</strong>', 'ohmylms'),
-                ucfirst($display_name)
-            );
-        ?>
-    </p>
+	<p class="author-info">
+		<?php
+			printf(
+				__( 'by <strong>%s</strong>', 'ohmylms' ),
+				ucfirst( $display_name )
+			);
+			?>
+	</p>
 </div>

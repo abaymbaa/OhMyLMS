@@ -194,9 +194,9 @@ abstract class Assets {
 		$should_load = false;
 		if ( in_array( 'all', $script['screens'], true ) ) {
 			$should_load = true;
-		}else if ( ! empty( $script['screens'] ) ) {
+		} elseif ( ! empty( $script['screens'] ) ) {
 			$should_load = in_array( $screen_id, $script['screens'] );
-		}else {
+		} else {
 			$should_load = true;
 		}
 		return $should_load;

@@ -65,13 +65,13 @@ class PostTypes {
 		$this->register_post_type(
 			'ohmylms-subscription',
 			array(
-				'name'          => __( 'Subscriptions', 'ohmylms' ),
-				'singular_name' => __( 'Subscription', 'ohmylms' ),
-				'menu_name'     => _x( 'Subscriptions', 'Admin menu name', 'ohmylms' ),
-				'edit_item'     => __( 'Edit Subscription', 'ohmylms' ),
-				'view_item'     => __( 'View Subscription', 'ohmylms' ),
-				'search_items'  => __( 'Search Subscriptions', 'ohmylms' ),
-				'not_found'     => __( 'No Subscriptions found', 'ohmylms' ),
+				'name'              => __( 'Subscriptions', 'ohmylms' ),
+				'singular_name'     => __( 'Subscription', 'ohmylms' ),
+				'menu_name'         => _x( 'Subscriptions', 'Admin menu name', 'ohmylms' ),
+				'edit_item'         => __( 'Edit Subscription', 'ohmylms' ),
+				'view_item'         => __( 'View Subscription', 'ohmylms' ),
+				'search_items'      => __( 'Search Subscriptions', 'ohmylms' ),
+				'not_found'         => __( 'No Subscriptions found', 'ohmylms' ),
 				'parent_item_colon' => __( 'Parent Order:', 'ohmylms' ),
 			),
 			array(
@@ -215,7 +215,7 @@ class PostTypes {
 
 		// Subscription Statuses
 		$subscription_statuses = array(
-			'ohmylms-pending'           => array(
+			'ohmylms-pending'        => array(
 				'label'                     => _x( 'Pending', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -224,7 +224,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Pending <span class="count">(%s)</span>', 'Pending <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'ohmylms-active'            => array(
+			'ohmylms-active'         => array(
 				'label'                     => _x( 'Active', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -233,7 +233,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'ohmylms-on-hold'           => array(
+			'ohmylms-on-hold'        => array(
 				'label'                     => _x( 'On Hold', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -251,7 +251,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Pending Cancellation <span class="count">(%s)</span>', 'Pending Cancellation <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'ohmylms-cancelled'         => array(
+			'ohmylms-cancelled'      => array(
 				'label'                     => _x( 'Cancelled', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,
@@ -260,7 +260,7 @@ class PostTypes {
 				/* translators: %s: count */
 				'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'ohmylms' ),
 			),
-			'ohmylms-expired'           => array(
+			'ohmylms-expired'        => array(
 				'label'                     => _x( 'Expired', 'Subscription status', 'ohmylms' ),
 				'public'                    => false,
 				'exclude_from_search'       => false,

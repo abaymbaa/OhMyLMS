@@ -195,7 +195,7 @@ class ElementorManager {
 	 *
 	 * @return void
 	 */
-	   private function include_widgets() {
+	private function include_widgets() {
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/CheckoutWidget.php';
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/CourseListWidget.php';
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/BuyNowWidget.php';
@@ -203,7 +203,7 @@ class ElementorManager {
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/MyCoursesWidget.php';
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/DashboardWidget.php';
 		require_once OHMYLMS_PATH . '/includes/Elementor/Widgets/ProfileWidget.php';
-	   }
+	}
 
 	/**
 	 * Initialize Gutenberg blocks
@@ -261,10 +261,10 @@ class ElementorManager {
 				'ohmylms-frontend',
 				'ohmylms_frontend_params',
 				array(
-					'ajax_url'         => admin_url( 'admin-ajax.php' ),
+					'ajax_url'           => admin_url( 'admin-ajax.php' ),
 					'current_student_id' => get_current_user_id(),
-					'nonce'            => wp_create_nonce( 'ohmylms' ),
-					'is_creator_page'  => true,
+					'nonce'              => wp_create_nonce( 'ohmylms' ),
+					'is_creator_page'    => true,
 				)
 			);
 		}

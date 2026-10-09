@@ -22,7 +22,7 @@ class Package {
 
 	/**
 	 * Check if WooCommerce is active and ActionScheduler is available
-	 * 
+	 *
 	 * @return bool
 	 */
 	private static function is_woocommerce_active(): bool {
@@ -31,13 +31,13 @@ class Package {
 
 	/**
 	 * Check if ActionScheduler is already loaded
-	 * 
+	 *
 	 * @return bool
 	 */
 	private static function is_action_scheduler_loaded(): bool {
-		return function_exists( 'as_next_scheduled_action' ) || 
-			   function_exists( 'as_schedule_single_action' ) || 
-			   class_exists( 'ActionScheduler' );
+		return function_exists( 'as_next_scheduled_action' ) ||
+				function_exists( 'as_schedule_single_action' ) ||
+				class_exists( 'ActionScheduler' );
 	}
 
 	public static function includes(): void {

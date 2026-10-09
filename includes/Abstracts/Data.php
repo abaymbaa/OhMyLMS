@@ -209,7 +209,7 @@ abstract class Data {
 	 * Set a date property.
 	 *
 	 * @param string $prop The name of the property to set.
-	 * @param string  $value The value to set for the property. Can be a string, timestamp, or OhMyLmsDateTime object.
+	 * @param string $value The value to set for the property. Can be a string, timestamp, or OhMyLmsDateTime object.
 	 *
 	 * @link https://github.com/woocommerce/woocommerce/blob/5907114d6eabae41edf39c593a36345b92990b38/plugins/woocommerce/includes/abstracts/abstract-wc-data.php#L898
 	 * @since 1.0.0

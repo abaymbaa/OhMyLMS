@@ -5,11 +5,14 @@
  */
 const tabs = new Map();
 
-/** `{ key, label, Component }`: `key` is the `#/gamification/<key>` address and `label` the English tab title. */
-export function registerGamificationTab(tab) {
-  tabs.set(tab.key, tab);
+/**
+ * `{ key, label, Component }`: `key` is the `#/gamification/<key>` address and `label` the English tab title.
+ * @param tab
+ */
+export function registerGamificationTab( tab ) {
+	tabs.set( tab.key, tab );
 }
 
 export function gamificationExtraTabs() {
-  return [...tabs.values()];
+	return [ ...tabs.values() ];
 }

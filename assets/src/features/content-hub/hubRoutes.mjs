@@ -13,59 +13,67 @@
 export const HUB_PATH = '/content-hub';
 
 export const HUB_TABS = [
-  { id: 'courses', path: '/content-hub/courses', label: 'Courses' },
-  { id: 'lessons', path: '/content-hub/lessons', label: 'Lessons' },
-  { id: 'quizzes', path: '/content-hub/quizzes', label: 'Quizzes' },
-  { id: 'question-bank', path: '/content-hub/question-bank', label: 'Question Bank' },
-  { id: 'assignments', path: '/content-hub/assignments', label: 'Assignments' },
-  { id: 'skills', path: '/content-hub/skills', label: 'Skills' },
-  { id: 'curriculum', path: '/content-hub/curriculum', label: 'Curriculum' },
-  { id: 'tracks', path: '/content-hub/tracks', label: 'Learning Tracks' },
+	{ id: 'courses', path: '/content-hub/courses', label: 'Courses' },
+	{ id: 'lessons', path: '/content-hub/lessons', label: 'Lessons' },
+	{ id: 'quizzes', path: '/content-hub/quizzes', label: 'Quizzes' },
+	{
+		id: 'question-bank',
+		path: '/content-hub/question-bank',
+		label: 'Question Bank',
+	},
+	{
+		id: 'assignments',
+		path: '/content-hub/assignments',
+		label: 'Assignments',
+	},
+	{ id: 'skills', path: '/content-hub/skills', label: 'Skills' },
+	{ id: 'curriculum', path: '/content-hub/curriculum', label: 'Curriculum' },
+	{ id: 'tracks', path: '/content-hub/tracks', label: 'Learning Tracks' },
 ];
 
 /** SDK admin pages that are hub tabs, keyed by their `#/extensions/<id>` address. */
 export const HUB_EXTENSION_TABS = {
-  skills: 'skills',
-  'question-bank': 'question-bank',
-  curriculum: 'curriculum',
-  tracks: 'tracks',
+	skills: 'skills',
+	'question-bank': 'question-bank',
+	curriculum: 'curriculum',
+	tracks: 'tracks',
 };
 
 /** The application's own list screens that are hub tabs, keyed by their old route. */
 export const HUB_APP_ROUTES = {
-  '/courses': 'courses',
-  '/quizzes': 'quizzes',
-  '/assignments': 'assignments',
+	'/courses': 'courses',
+	'/quizzes': 'quizzes',
+	'/assignments': 'assignments',
 };
 
 /** The retired Assessments addresses and the tab each one opens. */
 export const HUB_ALIASES = {
-  '/assessments': 'quizzes',
-  '/assessments/question-bank': 'question-bank',
-  '/assessments/assignments': 'assignments',
+	'/assessments': 'quizzes',
+	'/assessments/question-bank': 'question-bank',
+	'/assessments/assignments': 'assignments',
 };
 
 /** Hub-provided page for each tab that is not one of the application's own screens. */
 const TAB_PAGES = {
-  lessons: 'LessonsPage',
-  'question-bank': 'QuestionBankPage',
-  skills: 'SkillsPage',
-  curriculum: 'CurriculumPage',
-  tracks: 'TracksPage',
+	lessons: 'LessonsPage',
+	'question-bank': 'QuestionBankPage',
+	skills: 'SkillsPage',
+	curriculum: 'CurriculumPage',
+	tracks: 'TracksPage',
 };
 
 /** Core screens that are opened from the hub; the admin menu keeps Content Hub highlighted for them. */
 export const HUB_MENU_ROUTES = [
-  '/course-edit/:id/:step?/:subStep?',
-  '/course/:id/report',
-  '/courses/:id/students',
-  '/lesson-edit/:id',
-  '/quiz-edit/:id',
-  '/quiz-report/:id',
-  '/quiz-report/:id/grade-quiz/:quizId',
-  '/assignment-edit/:id',
-  '/assignment-report/:id',
-  '/assignment-report/:id/grade-assignment/:assignmentId',
+	'/course-edit/:id/:step?/:subStep?',
+	'/course/:id/report',
+	'/courses/:id/students',
+	'/lesson-edit/:id',
+	'/quiz-edit/:id',
+	'/quiz-report/:id',
+	'/quiz-report/:id/grade-quiz/:quizId',
+	'/assignment-edit/:id',
+	'/assignment-report/:id',
+	'/assignment-report/:id/grade-assignment/:assignmentId',
 ];
 
 /**
@@ -74,20 +82,30 @@ export const HUB_MENU_ROUTES = [
  */
 export const SYLLABUS_ROUTE = '/content-hub/curriculum/syllabus/:id';
 
-/** Where a course is opened: its own editor, which the Courses tab lists. */
-export const courseEditPath = (courseId) => `/course-edit/${Number(courseId)}`;
+/**
+ * Where a course is opened: its own editor, which the Courses tab lists.
+ * @param courseId
+ */
+export const courseEditPath = ( courseId ) =>
+	`/course-edit/${ Number( courseId ) }`;
 
-/** Where an address of the retired Catalog tab leads: the course's editor, or the Courses tab. */
-export function legacyCatalogTarget(hash) {
-  const match = /#\/content-hub\/catalog\/(\d+)/.exec(String(hash || ''));
-  return match ? courseEditPath(match[1]) : '/content-hub/courses';
+/**
+ * Where an address of the retired Catalog tab leads: the course's editor, or the Courses tab.
+ * @param hash
+ */
+export function legacyCatalogTarget( hash ) {
+	const match = /#\/content-hub\/catalog\/(\d+)/.exec( String( hash || '' ) );
+	return match ? courseEditPath( match[ 1 ] ) : '/content-hub/courses';
 }
 
-/** Query parameters of the current hash route, e.g. `#/content-hub/skills?add=1`. */
-export function hashQuery(hash) {
-  const text = String(hash || '');
-  const index = text.indexOf('?');
-  return new URLSearchParams(index === -1 ? '' : text.slice(index + 1));
+/**
+ * Query parameters of the current hash route, e.g. `#/content-hub/skills?add=1`.
+ * @param hash
+ */
+export function hashQuery( hash ) {
+	const text = String( hash || '' );
+	const index = text.indexOf( '?' );
+	return new URLSearchParams( index === -1 ? '' : text.slice( index + 1 ) );
 }
 
 /**
@@ -97,30 +115,47 @@ export function hashQuery(hash) {
  * The old Assessments addresses reuse the screens of the tabs they open, and the hub's own address shows
  * the first tab. `redirect(resolve)` makes the screen that sends the retired Catalog addresses on to
  * `resolve(hash)`.
+ * @param routes
+ * @param pages
+ * @param screen
+ * @param redirect
  */
-export function contentHubRoutes(routes, pages, screen, redirect) {
-  const appRoute = Object.fromEntries(
-    Object.entries(HUB_APP_ROUTES).map(([path, tab]) => [tab, path]),
-  );
-  const hub = [];
-  const screens = {};
-  for (const tab of HUB_TABS) {
-    const Component = appRoute[tab.id]
-      ? routes.find((route) => route.path === appRoute[tab.id])?.element
-      : pages[TAB_PAGES[tab.id]];
-    if (appRoute[tab.id] && !Component) continue;
-    screens[tab.id] = screen(Component, tab.id);
-    hub.push({ path: tab.path, element: screens[tab.id] });
-  }
-  const home = screens[HUB_TABS[0].id] || Object.values(screens)[0];
-  const aliases = Object.entries(HUB_ALIASES)
-    .filter(([, tab]) => screens[tab])
-    .map(([path, tab]) => ({ path, element: screens[tab] }));
-  const retired = redirect
-    ? ['/content-hub/catalog', '/content-hub/catalog/:courseId'].map((path) => ({
-        path,
-        element: redirect(legacyCatalogTarget),
-      }))
-    : [];
-  return [...(home ? [{ path: HUB_PATH, element: home }] : []), ...hub, ...aliases, ...retired];
+export function contentHubRoutes( routes, pages, screen, redirect ) {
+	const appRoute = Object.fromEntries(
+		Object.entries( HUB_APP_ROUTES ).map( ( [ path, tab ] ) => [
+			tab,
+			path,
+		] )
+	);
+	const hub = [];
+	const screens = {};
+	for ( const tab of HUB_TABS ) {
+		const Component = appRoute[ tab.id ]
+			? routes.find( ( route ) => route.path === appRoute[ tab.id ] )
+					?.element
+			: pages[ TAB_PAGES[ tab.id ] ];
+		if ( appRoute[ tab.id ] && ! Component ) {
+			continue;
+		}
+		screens[ tab.id ] = screen( Component, tab.id );
+		hub.push( { path: tab.path, element: screens[ tab.id ] } );
+	}
+	const home = screens[ HUB_TABS[ 0 ].id ] || Object.values( screens )[ 0 ];
+	const aliases = Object.entries( HUB_ALIASES )
+		.filter( ( [ , tab ] ) => screens[ tab ] )
+		.map( ( [ path, tab ] ) => ( { path, element: screens[ tab ] } ) );
+	const retired = redirect
+		? [ '/content-hub/catalog', '/content-hub/catalog/:courseId' ].map(
+				( path ) => ( {
+					path,
+					element: redirect( legacyCatalogTarget ),
+				} )
+			)
+		: [];
+	return [
+		...( home ? [ { path: HUB_PATH, element: home } ] : [] ),
+		...hub,
+		...aliases,
+		...retired,
+	];
 }

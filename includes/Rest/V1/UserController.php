@@ -61,7 +61,7 @@ class UserController extends RestController {
 	 */
 	public function get_items( $request ) {
 		$search = $request->get_param( 'search' ); // Get the search parameter from the request.
-		
+
 		// Prepare query arguments.
 		$query_args = array(
 			'number' => -1, // Limit the number of users to return.

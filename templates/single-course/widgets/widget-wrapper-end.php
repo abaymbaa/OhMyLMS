@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-//note: this div starts on widget-wrapper-start.php
+// note: this div starts on widget-wrapper-start.php
 ?>
 
 </div>

@@ -35,7 +35,7 @@ class LessonStore extends DataStore {
 		}
 
 		$original_slug = $slug;
-		$slug = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
+		$slug          = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
 
 		$id = wp_insert_post(
 			apply_filters(
@@ -56,7 +56,7 @@ class LessonStore extends DataStore {
 
 		if ( $id && ! is_wp_error( $id ) ) {
 			$lesson->set_id( $id );
-			flush_rewrite_rules(true);
+			flush_rewrite_rules( true );
 			$this->update_lesson_meta( $lesson );
 
 			/**
@@ -116,8 +116,8 @@ class LessonStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function update( &$lesson ) {
-		$slug = $lesson->get_slug( 'edit' );
-		$slug = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
+		$slug      = $lesson->get_slug( 'edit' );
+		$slug      = $this->generate_unique_slug( $slug, OHMYLMS_LESSON_CPT );
 		$post_data = array(
 			'post_content' => $lesson->get_description( 'edit' ),
 			'post_excerpt' => $lesson->get_short_description( 'edit' ),
@@ -148,7 +148,7 @@ class LessonStore extends DataStore {
 		do_action( 'ohmylms_after_updating_lesson', $lesson->get_id(), $lesson );
 	}
 
-	
+
 	/**
 	 * Update post meta for the lesson.
 	 *
@@ -171,7 +171,7 @@ class LessonStore extends DataStore {
 			'_video_id'          => 'video_id',
 			'_audio_id'          => 'audio_id',
 			'_external_url'      => 'external_url',
-			'_video_settings'      => 'video_settings',
+			'_video_settings'    => 'video_settings',
 		);
 
 		$props_to_update = $meta_key_to_props;
@@ -307,8 +307,8 @@ class LessonStore extends DataStore {
 	 */
 	public function get_order_number( &$lesson ) {
 		global $wpdb;
-		$lesson_id  = $lesson->get_id();
-		$chapter_id = ohmylms_get_chapter_id_by_content_id( $lesson_id );
+		$lesson_id    = $lesson->get_id();
+		$chapter_id   = ohmylms_get_chapter_id_by_content_id( $lesson_id );
 		$table_name   = $wpdb->prefix . 'ohmylms_content_relationship';
 		$order_number = $wpdb->get_var(
 			$wpdb->prepare(
@@ -319,6 +319,4 @@ class LessonStore extends DataStore {
 		);
 		return $order_number;
 	}
-
-
 }

@@ -6,9 +6,9 @@ use function CodeRex\Ecommerce\ecommerce;
  * Get other templates passing attributes and including the file.
  *
  * @param $template_name
- * @param array         $args
- * @param string        $template_path
- * @param string        $default_path
+ * @param array  $args
+ * @param string $template_path
+ * @param string $default_path
  * @since 1.0.0
  */
 function ohmylms_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
@@ -56,11 +56,11 @@ function ohmylms_get_template( $template_name, $args = array(), $template_path =
 	try {
 		include $action_args['located'];
 		$ohmylms_template_html = ob_get_clean();
-	} catch (\Throwable $error) {
+	} catch ( \Throwable $error ) {
 		ob_end_clean();
 		throw $error;
 	}
-	echo apply_filters('ohmylms_template_html', $ohmylms_template_html, $action_args['template_name'], $action_args['args']); // phpcs:ignore WordPress.Security.EscapeOutput -- templates escape their own fields.
+	echo apply_filters( 'ohmylms_template_html', $ohmylms_template_html, $action_args['template_name'], $action_args['args'] ); // phpcs:ignore WordPress.Security.EscapeOutput -- templates escape their own fields.
 
 	do_action( 'ohmylms_after_template_part', $action_args['template_name'], $action_args['template_path'], $action_args['located'], $action_args['args'] );
 }
@@ -70,8 +70,8 @@ function ohmylms_get_template( $template_name, $args = array(), $template_path =
  * Locate template
  *
  * @param $template_name
- * @param string        $template_path
- * @param string        $default_path
+ * @param string $template_path
+ * @param string $default_path
  * @return mixed|void
  * @since 1.0.0
  */
@@ -107,7 +107,7 @@ function ohmylms_locate_template( $template_name, $template_path = '', $default_
  *
  * @param $slug
  * @param string $name
- * @param array $atts Variables to pass to the template
+ * @param array  $atts Variables to pass to the template
  * @since 1.0.0
  */
 function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
@@ -142,9 +142,9 @@ function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
  *
  * @param $name
  * @param $value
- * @param int   $expire
- * @param bool  $secure
- * @param bool  $httponly
+ * @param int  $expire
+ * @param bool $secure
+ * @param bool $httponly
  * @since 1.0.0
  */
 function ohmylms_setcookie( $name, $value, $expire = 0, $secure = false, $httponly = false ) {
@@ -220,8 +220,8 @@ function ohmylms_template_path() {
  * @since 1.0.0
  */
 function ohmylms_get_permalink_structure() {
-	$saved_permalinks = (array) get_option( 'ohmylms_permalink', array() );
-	$permalinks       = wp_parse_args(
+	$saved_permalinks              = (array) get_option( 'ohmylms_permalink', array() );
+	$permalinks                    = wp_parse_args(
 		array_filter( $saved_permalinks ),
 		array(
 			'course_base'     => _x( 'ohmylms-courses', 'slug', 'ohmylms' ),
@@ -1875,7 +1875,7 @@ function ohmylms_hex_to_rgb( $hex ) {
  * @since 1.0.0
  */
 function ohmylms_get_dashboard_url() {
-	return ohmylms_get_page_url('profile');
+	return ohmylms_get_page_url( 'profile' );
 }
 
 
@@ -1907,17 +1907,17 @@ function ohmylms_get_payment_gateways_settings() {
  * Get the content object
  *
  * @param string $content_type The content type.
- * @param int $content_id The content ID.
+ * @param int    $content_id The content ID.
  *
  * @return object The content object.
  * @since 1.0.0
  */
 function ohmylms_get_content_object( $content_type, $content_id ) {
 	$default = null;
-    if ( 'quiz' === $content_type ) {
-        $default = ohmylms_get_quiz( $content_id );
-    } else {
-        $default = ohmylms_get_lesson( $content_id );
-    }
-    return apply_filters( 'ohmylms_get_content_object', $default, $content_type, $content_id );
+	if ( 'quiz' === $content_type ) {
+		$default = ohmylms_get_quiz( $content_id );
+	} else {
+		$default = ohmylms_get_lesson( $content_id );
+	}
+	return apply_filters( 'ohmylms_get_content_object', $default, $content_type, $content_id );
 }

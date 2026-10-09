@@ -49,28 +49,27 @@ defined( 'ABSPATH' ) || exit();
 
 		<div class="dashboard-table-body">
 			<?php
-				if(count($student_orders->orders) > 0){
-					foreach ( $student_orders->orders as $student_order ) {
-						$order = ecommerce_get_order( $student_order );
-						$item_count = $order->get_item_count() - $order->get_item_count_refunded();
-						$items = $order->get_items();
-						$purchased_by = get_post_meta( $order->get_id(), '_purchased_by', true );
-						$item  = $items[0] ?? null;
-						if ( $item ) {
-							$course_id 	= $item->get_course_id();
-							$course 	= ohmylms_get_course( $course_id );
-							if(!$course) {
-								$course 	= ohmylms_is_pro() ? ohmylms_get_membership( $course_id ) : '';
-								
-								if(!$course){
-									continue;
-								}
-								// $subscription_length = $membership->get_subscription_length();
-								// $products = $membership->get_products();
+			if ( count( $student_orders->orders ) > 0 ) {
+				foreach ( $student_orders->orders as $student_order ) {
+					$order        = ecommerce_get_order( $student_order );
+					$item_count   = $order->get_item_count() - $order->get_item_count_refunded();
+					$items        = $order->get_items();
+					$purchased_by = get_post_meta( $order->get_id(), '_purchased_by', true );
+					$item         = $items[0] ?? null;
+					if ( $item ) {
+						$course_id = $item->get_course_id();
+						$course    = ohmylms_get_course( $course_id );
+						if ( ! $course ) {
+							$course = ohmylms_is_pro() ? ohmylms_get_membership( $course_id ) : '';
+
+							if ( ! $course ) {
+								continue;
 							}
-							
+							// $subscription_length = $membership->get_subscription_length();
+							// $products = $membership->get_products();
 						}
-						?>
+					}
+					?>
 						<div class="dashboard-table-tr">
 							<div class="table-accordion-handler"></div>
 
@@ -79,24 +78,24 @@ defined( 'ABSPATH' ) || exit();
 							</div>
 
 							<div class="dashboard-table-td course-name">
-								<?php
-									if ( $course ) {
-										echo $course->get_name();
-									}
-								?>
+							<?php
+							if ( $course ) {
+								echo $course->get_name();
+							}
+							?>
 							</div>
 
 							<div class="dashboard-table-td purchase-method">
 								<?php
-									echo esc_html( $purchased_by ?  ucfirst($purchased_by) : __( 'Currency', 'ohmylms' ) );
+								echo esc_html( $purchased_by ? ucfirst( $purchased_by ) : __( 'Currency', 'ohmylms' ) );
 								?>
 							</div>
 
 							<div class="dashboard-table-td price">
 								<?php
-									if ( $course ) {
-										echo ohmylms_price($order->get_total());
-									}
+								if ( $course ) {
+									echo ohmylms_price( $order->get_total() );
+								}
 								?>
 							</div>
 
@@ -106,30 +105,30 @@ defined( 'ABSPATH' ) || exit();
 
 							<div class="dashboard-table-td status">
 								<span class="status-tag <?php echo $order->get_status(); ?>">
-									<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
+								<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 								</span>
 							</div>
 
 							<div class="dashboard-table-mobile-td">
 								<div class="dashboard-table-td course-name" data-title="Course Name: ">
-									<?php
-										if ( $course ) {
-											echo $course->get_name();
-										}
-									?>
+								<?php
+								if ( $course ) {
+									echo $course->get_name();
+								}
+								?>
 								</div>
 
 								<div class="dashboard-table-td price" data-title="Purchase Method: ">
 									<?php
-										echo esc_html( $purchased_by ?  ucfirst($purchased_by) : __( 'Currency', 'ohmylms' ) );
+									echo esc_html( $purchased_by ? ucfirst( $purchased_by ) : __( 'Currency', 'ohmylms' ) );
 									?>
 								</div>
 
 								<div class="dashboard-table-td price" data-title="Price: ">
 									<?php
-										if ( $course ) {
-											echo ohmylms_price($order->get_formatted_order_total());
-										}
+									if ( $course ) {
+										echo ohmylms_price( $order->get_formatted_order_total() );
+									}
 									?>
 								</div>
 
@@ -139,22 +138,22 @@ defined( 'ABSPATH' ) || exit();
 							</div>
 
 						</div>
-					<?php 
-					}
-				}else{
-					?>
+					<?php
+				}
+			} else {
+				?>
 					<div class="no-course-data">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'); ?>
+					<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 						<p>
-							<?php echo __( 'No Order Found.', 'ohmylms' ); ?>
+						<?php echo __( 'No Order Found.', 'ohmylms' ); ?>
 						</p>
 					</div>
 					<?php
-				}
+			}
 			?>
 		</div>
 
-		<!-- <?php if( $student_orders->total > 0 ) { ?>
+		<!-- <?php if ( $student_orders->total > 0 ) { ?>
 			<div class="dashboard-table-foot">
 				<div class="ohmylms-table-pagination">
 					<strong>
@@ -162,13 +161,13 @@ defined( 'ABSPATH' ) || exit();
 					</strong> items
 
 					<a class="previous-page" aria-label="Previous page" title="Previous Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page - 1 ) ); ?>">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-left-icon.php'); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/arrow-left-icon.php'; ?>
 					</a>
 
 					<input type="number" name="current-page-number" id="current-page-number" min="1" max="<?php echo $student_orders->max_num_pages; ?>" value="1" class="current-page-number">
 
 					<a class="next-page" aria-label="Next page" title="Next Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page + 1 ) ); ?>">
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/arrow-right-icon.php'); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/arrow-right-icon.php'; ?>
 					</a>
 
 					of <strong>

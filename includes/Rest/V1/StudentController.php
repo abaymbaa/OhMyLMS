@@ -69,7 +69,7 @@ class StudentController extends RestController {
 							'required'          => true,
 							'type'              => 'array',
 							'description'       => __( 'User IDs to unban', 'ohmylms' ),
-							'sanitize_callback' => function( $ids ) {
+							'sanitize_callback' => function ( $ids ) {
 								return array_map( 'absint', (array) $ids );
 							},
 						),
@@ -188,23 +188,23 @@ class StudentController extends RestController {
 
 		// Base query with optional search filter
 		// $query = "
-		//     SELECT
-		//         u.ID AS user_id,
-		//         u.display_name AS student_name,
-		//         u.user_email AS student_email,
-		//         COUNT(e.course_id) AS courses_enrolled,
-		//         MIN(e.start_date) AS registration_date,
-		//         COUNT(DISTINCT m.membership_id) AS membership_enrolled
-		//     FROM
-		//         {$wpdb->users} u
-		//     INNER JOIN
-		//         {$wpdb->prefix}ohmylms_user_enrollment e
-		//         ON u.ID = e.user_id AND e.status = 'enrolled'
-		//     LEFT JOIN
-		//         {$wpdb->prefix}ohmylms_user_membership m
-		//         ON u.ID = m.user_id AND m.status = 'enrolled'
-		//     WHERE
-		//         1=1
+		// SELECT
+		// u.ID AS user_id,
+		// u.display_name AS student_name,
+		// u.user_email AS student_email,
+		// COUNT(e.course_id) AS courses_enrolled,
+		// MIN(e.start_date) AS registration_date,
+		// COUNT(DISTINCT m.membership_id) AS membership_enrolled
+		// FROM
+		// {$wpdb->users} u
+		// INNER JOIN
+		// {$wpdb->prefix}ohmylms_user_enrollment e
+		// ON u.ID = e.user_id AND e.status = 'enrolled'
+		// LEFT JOIN
+		// {$wpdb->prefix}ohmylms_user_membership m
+		// ON u.ID = m.user_id AND m.status = 'enrolled'
+		// WHERE
+		// 1=1
 		// ";
 
 		$course_name = '';
@@ -417,9 +417,9 @@ class StudentController extends RestController {
 
 		return rest_ensure_response(
 			array(
-				'message' => __( 'Student blocked successfully.', 'ohmylms' ),
+				'message'  => __( 'Student blocked successfully.', 'ohmylms' ),
 				'user_ids' => $user_ids,
-				'status'  => 'success',
+				'status'   => 'success',
 			)
 		);
 	}
@@ -453,9 +453,9 @@ class StudentController extends RestController {
 			$wpdb->update(
 				$enrollment_table,
 				array( 'status' => 'enrolled' ),
-				array( 
+				array(
 					'user_id' => $user_id,
-					'status' => 'banned'
+					'status'  => 'banned',
 				),
 				array( '%s' ),
 				array( '%d', '%s' )
@@ -466,9 +466,9 @@ class StudentController extends RestController {
 				$wpdb->update(
 					$membership_table,
 					array( 'status' => 'enrolled' ),
-					array( 
+					array(
 						'user_id' => $user_id,
-						'status' => 'banned'
+						'status'  => 'banned',
 					),
 					array( '%s' ),
 					array( '%d', '%s' )
@@ -481,9 +481,9 @@ class StudentController extends RestController {
 
 		return rest_ensure_response(
 			array(
-				'message' => __( 'Student unblocked successfully.', 'ohmylms' ),
+				'message'  => __( 'Student unblocked successfully.', 'ohmylms' ),
 				'user_ids' => $user_ids,
-				'status'  => 'success',
+				'status'   => 'success',
 			)
 		);
 	}

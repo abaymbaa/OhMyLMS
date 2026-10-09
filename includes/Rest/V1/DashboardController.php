@@ -170,10 +170,10 @@ class DashboardController extends RestController {
 				'refund'  => 0,
 			);
 		}
-	
+
 		// Process query results
 		foreach ( $results as $result ) {
-			
+
 			$line_total     = floatval( $result['order_total'] );
 			$total_earning += $line_total;
 
@@ -204,7 +204,6 @@ class DashboardController extends RestController {
 			}
 			$graph_data[ $date_key ]['earning'] += $line_total;
 		}
-	
 
 		ksort( $graph_data );
 		$course_data = $this->get_all_courses_with_sales_count_and_enrollment( $filter, $start_date, $end_date );
@@ -220,31 +219,34 @@ class DashboardController extends RestController {
 		$query          = new WP_Query( $args );
 		$total_courses  = $query->found_posts;
 		$recent_courses = $this->get_recent_courses_with_30_day_stats();
-		return apply_filters('ohmylms_dashboard_data', array(
-			'total_earning'          => $total_earning,
-			'currency'               => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
-			'currency_pos'           => get_ohmylms_currency_position(),
-			'total_students'         => $course_data['total_students'],
-			'total_course'           => $course_data['total_course'],
-			'total_reviews'          => $course_data['total_reviews'],
-			'earning_graph'          => array(
-				'total_revenue' => $total_earning,
-				'total_refund'  => $total_refund,
-				'net_amount'    => $total_net_earning,
-				'graph_data'    => $graph_data,
-			),
-			'courses'                => $course_data['course_data'],
-			'course_sold'            => $course_data['course_sold'],
-			'total_created_courses'  => $total_courses,
+		return apply_filters(
+			'ohmylms_dashboard_data',
+			array(
+				'total_earning'          => $total_earning,
+				'currency'               => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+				'currency_pos'           => get_ohmylms_currency_position(),
+				'total_students'         => $course_data['total_students'],
+				'total_course'           => $course_data['total_course'],
+				'total_reviews'          => $course_data['total_reviews'],
+				'earning_graph'          => array(
+					'total_revenue' => $total_earning,
+					'total_refund'  => $total_refund,
+					'net_amount'    => $total_net_earning,
+					'graph_data'    => $graph_data,
+				),
+				'courses'                => $course_data['course_data'],
+				'course_sold'            => $course_data['course_sold'],
+				'total_created_courses'  => $total_courses,
 
-			'earning'                => $this->get_earning_overview(),
-			'recent_courses'         => $recent_courses['recent_courses'],
-			'total_sales'            => $recent_courses['total_sales'],
-			'sales_growth_rate'      => $recent_courses['sales_growth_rate'],
-			'total_enrollments'      => $recent_courses['total_enrollments'],
-			'enrollment_growth_rate' => $recent_courses['enrollment_growth_rate'],
-			'top_course'             => $this->get_top_performed_course_last_30_days(),
-		));
+				'earning'                => $this->get_earning_overview(),
+				'recent_courses'         => $recent_courses['recent_courses'],
+				'total_sales'            => $recent_courses['total_sales'],
+				'sales_growth_rate'      => $recent_courses['sales_growth_rate'],
+				'total_enrollments'      => $recent_courses['total_enrollments'],
+				'enrollment_growth_rate' => $recent_courses['enrollment_growth_rate'],
+				'top_course'             => $this->get_top_performed_course_last_30_days(),
+			)
+		);
 	}
 
 
@@ -266,15 +268,15 @@ class DashboardController extends RestController {
 
 		// Common query parts
 		// $base_query = "SELECT m.meta_value as line_total, pm.meta_value as order_total, p.post_status, p.ID as order_id
-		// 	FROM {$wpdb->posts} p
-		// 	INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
-		// 	INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
-		// 	INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-		// 	WHERE p.post_type = 'ohmylms-order'
-		// 	AND m.meta_key = '_line_total'
-		// 	AND pm.meta_key = '_order_total'
-		// 	AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
-		// 	AND p.post_date BETWEEN %s AND %s";
+		// FROM {$wpdb->posts} p
+		// INNER JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
+		// INNER JOIN {$wpdb->prefix}ohmylms_order_items oi ON p.ID = oi.order_id
+		// INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
+		// WHERE p.post_type = 'ohmylms-order'
+		// AND m.meta_key = '_line_total'
+		// AND pm.meta_key = '_order_total'
+		// AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
+		// AND p.post_date BETWEEN %s AND %s";
 
 		$base_query = "SELECT 
 				pm.meta_value as order_total, 
@@ -457,18 +459,18 @@ class DashboardController extends RestController {
 		foreach ( $results as $row ) {
 			$course    = ohmylms_get_course( $row['course_id'] );
 			$courses[] = array(
-				'id'           	=> $row['course_id'],
-				'currency'     	=> html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
-				'currency_pos' 	=> get_ohmylms_currency_position(),
-				'name'         	=> $row['course_name'],
-				'chapters'     	=> (int) $row['chapters'],
-				'lessons'      	=> (int) $row['lessons'],
-				'quizzes'      	=> (int) $row['quizzes'],
-				'earnings'     	=> (float) $row['earnings'],
-				'url'          	=> get_permalink( $row['course_id'] ),
-				'video_id'		=> $course->get_video_id(),
-				'video_src'		=> wp_get_attachment_url( $course->get_video_id() ),
-				'image_src'    	=> wp_get_attachment_image_src( $course->get_thumbnail_id(), 'large' ) ? wp_get_attachment_image_src( $course->get_thumbnail_id(), 'large' )[0] : '',
+				'id'           => $row['course_id'],
+				'currency'     => html_entity_decode( get_ohmylms_currency_symbol( get_ohmylms_currency() ) ),
+				'currency_pos' => get_ohmylms_currency_position(),
+				'name'         => $row['course_name'],
+				'chapters'     => (int) $row['chapters'],
+				'lessons'      => (int) $row['lessons'],
+				'quizzes'      => (int) $row['quizzes'],
+				'earnings'     => (float) $row['earnings'],
+				'url'          => get_permalink( $row['course_id'] ),
+				'video_id'     => $course->get_video_id(),
+				'video_src'    => wp_get_attachment_url( $course->get_video_id() ),
+				'image_src'    => wp_get_attachment_image_src( $course->get_thumbnail_id(), 'large' ) ? wp_get_attachment_image_src( $course->get_thumbnail_id(), 'large' )[0] : '',
 			);
 		}
 
@@ -581,8 +583,8 @@ class DashboardController extends RestController {
 				'ratings'                 => $ratings,
 				'total_sales_count'       => $sales_count ? intval( $sales_count ) : 0, // Default to 0 if no sales
 				'total_enrolled_students' => $enrolled_students_count ? intval( $enrolled_students_count ) : 0, // Default to 0 if no enrollments
-				'video_id'		=> $course_obj->get_video_id(),
-				'video_src'		=> wp_get_attachment_url( $course_obj->get_video_id() ),
+				'video_id'                => $course_obj->get_video_id(),
+				'video_src'               => wp_get_attachment_url( $course_obj->get_video_id() ),
 			);
 			$course_sold  += $sales_count ? intval( $sales_count ) : 0;
 		}
@@ -714,8 +716,8 @@ class DashboardController extends RestController {
 				'total_enrolled_students' => $enrolled_count, // Includes current day
 				'sales_growth_rate'       => $sales_growth_rate, // Individual course growth rate
 				'categories'              => $this->get_taxonomy_terms( $course['ID'] ),
-				'video_id'		=> $course_obj->get_video_id(),
-				'video_src'		=> wp_get_attachment_url( $course_obj->get_video_id() ),
+				'video_id'                => $course_obj->get_video_id(),
+				'video_src'               => wp_get_attachment_url( $course_obj->get_video_id() ),
 			);
 		}
 
@@ -871,8 +873,8 @@ class DashboardController extends RestController {
 			'total_students'  => $enrolled_count,
 			'total_completed' => $completed_count,
 			'ratings'         => $ratings,
-			'video_id'		=> $course_obj->get_video_id(),
-			'video_src'		=> wp_get_attachment_url( $course_obj->get_video_id() ),
+			'video_id'        => $course_obj->get_video_id(),
+			'video_src'       => wp_get_attachment_url( $course_obj->get_video_id() ),
 		);
 	}
 

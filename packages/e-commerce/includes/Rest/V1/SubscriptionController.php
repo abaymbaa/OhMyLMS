@@ -20,7 +20,6 @@ class SubscriptionController extends RestController {
 	 *
 	 * This is used to define the structure of the subscription item in the REST API.
 	 * It includes properties like student ID, membership ID, original order ID, payment gateway details, and subscription dates.
-	 *
 	 */
 	public function check_order_permission() {
 		return current_user_can( 'edit_posts' );
@@ -42,34 +41,34 @@ class SubscriptionController extends RestController {
 			'title'      => $this->post_type,
 			'type'       => 'object',
 			'properties' => array(
-				'id' => array(
+				'id'                            => array(
 					'description' => __( 'Unique identifier for the object.', 'cx-ecommerce' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 				// Define properties for each meta field
-				'_student_id' => array(
+				'_student_id'                   => array(
 					'description' => __( 'Student ID associated with the subscription.', 'cx-ecommerce' ),
 					'type'        => 'integer', // Or string, depending on ID format
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_membership_id' => array(
+				'_membership_id'                => array(
 					'description' => __( 'Membership ID associated with the subscription.', 'cx-ecommerce' ),
 					'type'        => 'integer', // Or string
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_original_order_id' => array(
+				'_original_order_id'            => array(
 					'description' => __( 'Original order ID that created the subscription.', 'cx-ecommerce' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_payment_gateway_id' => array(
+				'_payment_gateway_id'           => array(
 					'description' => __( 'Payment gateway ID used for the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_gateway_customer_id' => array(
+				'_gateway_customer_id'          => array(
 					'description' => __( 'Customer ID from the payment gateway.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
@@ -79,53 +78,53 @@ class SubscriptionController extends RestController {
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_schedule_start_date' => array(
+				'_schedule_start_date'          => array(
 					'description' => __( 'Start date of the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_schedule_next_payment_date' => array(
+				'_schedule_next_payment_date'   => array(
 					'description' => __( 'Next payment due date for the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_schedule_end_date' => array(
+				'_schedule_end_date'            => array(
 					'description' => __( 'End date for the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_scheduled_renewal_action_id' => array(
+				'_scheduled_renewal_action_id'  => array(
 					'description' => __( 'ID of the scheduled action for renewal (e.g., Action Scheduler ID).', 'cx-ecommerce' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_status' => array(
+				'_status'                       => array(
 					'description' => __( 'Status of the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'enum'        => array( 'active', 'pending', 'on-hold', 'cancelled', 'expired', 'failed' ), // Example statuses
 					'context'     => array( 'view', 'edit' ),
 				),
 				// Add new fields
-				'_trial_end' => array(
+				'_trial_end'                    => array(
 					'description' => __( 'End date of the trial period.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_last_payment_date' => array(
+				'_last_payment_date'            => array(
 					'description' => __( 'Date of the last payment.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'_recurring_amount' => array(
+				'_recurring_amount'             => array(
 					'description' => __( 'Recurring payment amount.', 'cx-ecommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-				)
+				),
 			),
 		);
 
@@ -256,10 +255,16 @@ class SubscriptionController extends RestController {
 
 		// Handle date queries ('before', 'after')
 		if ( isset( $request['before'] ) ) {
-			$args['date_query'][] = array( 'before' => $request['before'], 'inclusive' => true );
+			$args['date_query'][] = array(
+				'before'    => $request['before'],
+				'inclusive' => true,
+			);
 		}
 		if ( isset( $request['after'] ) ) {
-			$args['date_query'][] = array( 'after' => $request['after'], 'inclusive' => true );
+			$args['date_query'][] = array(
+				'after'     => $request['after'],
+				'inclusive' => true,
+			);
 		}
 		if ( empty( $args['date_query'] ) ) {
 			unset( $args['date_query'] );
@@ -283,7 +288,7 @@ class SubscriptionController extends RestController {
 		if ( $total_posts < 1 ) {
 			// Out-of-bounds, run the query again without LIMIT for total count.
 			unset( $args['paged'], $args['posts_per_page'] );
-			$query_count   = new \WP_Query();
+			$query_count = new \WP_Query();
 			$query_count->query( $args );
 			$total_posts = $query_count->found_posts;
 		}
@@ -314,9 +319,9 @@ class SubscriptionController extends RestController {
 	 * @return WP_REST_Response Response object.
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$id        = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
+		$id           = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		$subscription = new \CodeRex\Ecommerce\Data\Subscription( $id );
-		$data_keys = array(
+		$data_keys    = array(
 			'student_id',
 			'membership_id',
 			'original_order_id',
@@ -353,7 +358,7 @@ class SubscriptionController extends RestController {
 	 * @param WP_REST_Request $request The request object.
 	 */
 	protected function update_subscription_meta( $post_id, $request ) {
-		$schema = $this->get_item_schema();
+		$schema      = $this->get_item_schema();
 		$meta_fields = array_filter(
 			array_keys( $schema['properties'] ),
 			function ( $key ) {
@@ -392,8 +397,8 @@ class SubscriptionController extends RestController {
 				update_post_meta( $post_id, $meta_key, $value );
 			} elseif ( isset( $schema['properties'][ $meta_key ]['default'] ) && $request->is_creating() ) {
 				// Set default value if creating and not provided in request
-                // update_post_meta( $post_id, $meta_key, $schema['properties'][ $meta_key ]['default'] );
-            }
+				// update_post_meta( $post_id, $meta_key, $schema['properties'][ $meta_key ]['default'] );
+			}
 		}
 	}
 
@@ -405,7 +410,7 @@ class SubscriptionController extends RestController {
 	 */
 	public function get_item( $request ) {
 		$post_id = (int) $request['id'];
-		$post = get_post( $post_id );
+		$post    = get_post( $post_id );
 
 		if ( ! $post || $post->post_type !== $this->post_type ) {
 			return new WP_Error(
@@ -428,7 +433,6 @@ class SubscriptionController extends RestController {
 		if ( 'view' === $request['context'] && is_callable( array( $this, 'add_links' ) ) ) {
 			$this->add_links( $response, $post, $request );
 		}
-
 
 		return $response;
 	}
@@ -512,21 +516,21 @@ class SubscriptionController extends RestController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function update_item( $request ) {
-		$post_id = (int) $request['id'];
-		$previous_subscription = function_exists('ecommerce_get_subscription') ? ecommerce_get_subscription( $post_id ) : null;
-		$get_previous_status = $previous_subscription ? $previous_subscription->get_status() : null;
-		$subscription_id = $this->update_subscription( $request );
-		$current_subscription       = ecommerce_get_subscription( $post_id );
+		$post_id               = (int) $request['id'];
+		$previous_subscription = function_exists( 'ecommerce_get_subscription' ) ? ecommerce_get_subscription( $post_id ) : null;
+		$get_previous_status   = $previous_subscription ? $previous_subscription->get_status() : null;
+		$subscription_id       = $this->update_subscription( $request );
+		$current_subscription  = ecommerce_get_subscription( $post_id );
 
 		$post = get_post( $subscription_id );
 		$this->update_additional_fields_for_object( $post, $request );
-		$response           = $this->prepare_item_for_response( $post, $request );
+		$response = $this->prepare_item_for_response( $post, $request );
 
 		// Get current status
 		$get_current_status = $current_subscription ? $current_subscription->get_status() : null;
 		// If status changed, add a note
 		if ( $get_previous_status && $get_current_status && $get_previous_status !== $get_current_status ) {
-			
+
 			$note = sprintf(
 				/* translators: 1: old status 2: new status */
 				__( 'Subscription status changed from %1$s to %2$s by %3$s.', 'cx-ecommerce' ),
@@ -537,13 +541,13 @@ class SubscriptionController extends RestController {
 			\CodeRex\Ecommerce\SubscriptionManager::add_subscription_note( $post_id, $note );
 			// // Add a comment as a note (type 'subscription_note')
 			// wp_insert_comment( array(
-			// 	'comment_post_ID'      => $post_id,
-			// 	'comment_author'       => __( 'OhMyLMS', 'ohmylms' ),
-			// 	'comment_author_email' => 'noreply@' . ( isset( $_SERVER['HTTP_HOST'] ) ? str_replace( 'www.', '', sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) ) : 'noreply.com' ),
-			// 	'comment_content'      => $note,
-			// 	'comment_agent'        => 'OhMyLMS',
-			// 	'comment_type'         => 'subscription_note',
-			// 	'comment_approved'     => 1,
+			// 'comment_post_ID'      => $post_id,
+			// 'comment_author'       => __( 'OhMyLMS', 'ohmylms' ),
+			// 'comment_author_email' => 'noreply@' . ( isset( $_SERVER['HTTP_HOST'] ) ? str_replace( 'www.', '', sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) ) : 'noreply.com' ),
+			// 'comment_content'      => $note,
+			// 'comment_agent'        => 'OhMyLMS',
+			// 'comment_type'         => 'subscription_note',
+			// 'comment_approved'     => 1,
 			// ) );
 		}
 
@@ -640,38 +644,37 @@ class SubscriptionController extends RestController {
 	 * @return array Subscription data.
 	 */
 	protected function get_subscription_data( $subscription ) {
-		if( !$subscription ) {
-			return [];
+		if ( ! $subscription ) {
+			return array();
 		}
-		
-		$student_id = $subscription->get_student_id();
-		$order_id 	= $subscription->get_original_order_id();
-		$order 		= \ecommerce_get_order( $order_id );
-		$membership_id = $subscription->get_membership_id();
-		$membership_name = get_the_title( $membership_id );
-		
-		$tax_amount = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
-		$recurring_amount = is_array( $tax_amount ) && isset($tax_amount['total_with_tax']) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 
+		$student_id      = $subscription->get_student_id();
+		$order_id        = $subscription->get_original_order_id();
+		$order           = \ecommerce_get_order( $order_id );
+		$membership_id   = $subscription->get_membership_id();
+		$membership_name = get_the_title( $membership_id );
+
+		$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+		$recurring_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 
 		$data = array(
-			'id'                => $subscription->get_id(),
-			'student_id'        => $student_id,
-			'student_name'      => $subscription->get_student_name(),
-			'student_email'     => $subscription->get_student_email(),
-			'student_profile'   => $subscription->get_student_profile(),
-			'membership_id'     => $subscription->get_membership_id(),
-			'billing_period'      => $subscription->get_billing_period(),
-			'plan_name'         => $membership_name,
-			'original_order_id' => $subscription->get_original_order_id(),
+			'id'                         => $subscription->get_id(),
+			'student_id'                 => $student_id,
+			'student_name'               => $subscription->get_student_name(),
+			'student_email'              => $subscription->get_student_email(),
+			'student_profile'            => $subscription->get_student_profile(),
+			'membership_id'              => $subscription->get_membership_id(),
+			'billing_period'             => $subscription->get_billing_period(),
+			'plan_name'                  => $membership_name,
+			'original_order_id'          => $subscription->get_original_order_id(),
 			'schedule_start_date'        => $subscription->get_schedule_start_date(),
 			'schedule_next_payment_date' => $subscription->get_schedule_next_payment_date(),
-			'schedule_end_date' => $subscription->get_schedule_end_date(),
-			'last_payment_date' => $subscription->get_last_payment_date(),
-			'recurring_amount'  => $recurring_amount,
-			'status'            => $subscription->get_status(),
-			'related_orders'	=> $subscription->get_related_orders(),
-			'subscription_notes'       => ecommerce_get_subscription_notes(
+			'schedule_end_date'          => $subscription->get_schedule_end_date(),
+			'last_payment_date'          => $subscription->get_last_payment_date(),
+			'recurring_amount'           => $recurring_amount,
+			'status'                     => $subscription->get_status(),
+			'related_orders'             => $subscription->get_related_orders(),
+			'subscription_notes'         => ecommerce_get_subscription_notes(
 				array(
 					'subscription_id' => $subscription->get_id(),
 				)
@@ -698,19 +701,19 @@ class SubscriptionController extends RestController {
 					$course_id = $item->get_course_id();
 				}
 				if ( $course ) {
-					$item_meta            = array(
-						'key'   => 'membership_id',
-						'name'  => $course->get_name(),
-						'price' => ohmylms_format_decimal( $course->get_price(), ohmylms_get_price_decimals() ),
+					$item_meta = array(
+						'key'      => 'membership_id',
+						'name'     => $course->get_name(),
+						'price'    => ohmylms_format_decimal( $course->get_price(), ohmylms_get_price_decimals() ),
 						'quantity' => 1,
 					);
-					$courses = method_exists($course, 'get_products') ? $course->get_products() : array();
+					$courses   = method_exists( $course, 'get_products' ) ? $course->get_products() : array();
 					if ( ! empty( $courses ) ) {
 						$item_meta['courses'] = array();
 						foreach ( $courses as $id => $course ) {
 							$item_meta['courses'][] = array(
-								'id'    => $course['id'],
-								'name'  => $course['label'],
+								'id'   => $course['id'],
+								'name' => $course['label'],
 							);
 						}
 					}
@@ -720,7 +723,7 @@ class SubscriptionController extends RestController {
 			}
 			$data['coupon_lines'] = array();
 			foreach ( $order->get_items( 'coupon' ) as $item_id => $item ) {
-				$coupon_line = array(
+				$coupon_line          = array(
 					'title'    => $item->get_name(),
 					'code'     => $item->get_code(),
 					'discount' => ohmylms_format_decimal( $item->get_discount(), ohmylms_get_price_decimals() ),
@@ -743,9 +746,9 @@ class SubscriptionController extends RestController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$subscription = ecommerce_get_subscription($item->ID);
-		$data = $this->get_subscription_data( $subscription );
-		$response = rest_ensure_response( $data );
+		$subscription = ecommerce_get_subscription( $item->ID );
+		$data         = $this->get_subscription_data( $subscription );
+		$response     = rest_ensure_response( $data );
 		// Optionally add links, filters, etc. here as needed.
 		return $response;
 	}
@@ -763,16 +766,16 @@ class SubscriptionController extends RestController {
 
 		// Add our specific filter parameters based on meta fields
 		$meta_fields_for_filtering = array(
-			'_student_id'                     => 'integer',
-			'_membership_id'                  => 'integer',
-			'_original_order_id'              => 'integer',
-			'_payment_gateway_id'             => 'string',
-			'_gateway_customer_id'            => 'string',
-			'_gateway_payment_method_token'   => 'string',
-			'_status'                         => 'string', // For filtering by subscription status meta
-			'_trial_end'                      => 'string',
-			'_last_payment_date'              => 'string',
-			'_recurring_amount'               => 'string',
+			'_student_id'                   => 'integer',
+			'_membership_id'                => 'integer',
+			'_original_order_id'            => 'integer',
+			'_payment_gateway_id'           => 'string',
+			'_gateway_customer_id'          => 'string',
+			'_gateway_payment_method_token' => 'string',
+			'_status'                       => 'string', // For filtering by subscription status meta
+			'_trial_end'                    => 'string',
+			'_last_payment_date'            => 'string',
+			'_recurring_amount'             => 'string',
 			// Dates (_start_date, _next_payment_date) can be filtered using 'before' and 'after' if mapped to post_date, or custom logic.
 			// For now, we'll allow direct meta query for them if needed, or rely on 'before'/'after' for post_date.
 		);
@@ -810,4 +813,3 @@ class SubscriptionController extends RestController {
 		return (int) $request['id'];
 	}
 }
-

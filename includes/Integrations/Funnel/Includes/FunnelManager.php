@@ -4,9 +4,9 @@ namespace OhMyLMS\Integrations\Funnel\Includes;
 
 /**
  * FunnelManager Class
- * 
+ *
  * Handles one-click offer funnel processing after successful payments.
- * 
+ *
  * @since 1.0.0
  */
 class FunnelManager {
@@ -14,7 +14,7 @@ class FunnelManager {
 	/**
 	 * Check if funnel processing is needed and handle it.
 	 *
-	 * @param int $order_id The order ID.
+	 * @param int   $order_id The order ID.
 	 * @param array $posted_data The posted checkout data.
 	 * @param array $payment_result The payment processing result.
 	 * @return array|null Funnel redirect result or null if no funnel needed.
@@ -26,7 +26,7 @@ class FunnelManager {
 		if ( ! $this->is_supported_payment_method( $order_id ) ) {
 			return false;
 		}
-		
+
 		// Only process funnel for successful payments
 		if ( ! $this->is_payment_successful( $payment_result ) ) {
 			return false;
@@ -67,11 +67,11 @@ class FunnelManager {
 
 		// Store funnel session data
 		$funnel_session_data = array(
-			'order_id'         => $order_id,
-			'course_id'        => $funnel_course,
-			'current_step'     => $first_funnel_step['step_id'],
-			'step_data'        => $first_funnel_step,
-			'created_at'       => time(),
+			'order_id'     => $order_id,
+			'course_id'    => $funnel_course,
+			'current_step' => $first_funnel_step['step_id'],
+			'step_data'    => $first_funnel_step,
+			'created_at'   => time(),
 		);
 		$this->store_funnel_session( $funnel_session_data );
 
@@ -97,12 +97,12 @@ class FunnelManager {
 	 */
 	private function is_payment_successful( $payment_result ) {
 		return ( isset( $payment_result['result'] ) && 'success' === $payment_result['result'] ) ||
-		       ( isset( $payment_result['success'] ) && true === $payment_result['success'] );
+				( isset( $payment_result['success'] ) && true === $payment_result['success'] );
 	}
 
 	/**
 	 * Check if the order is with supported payment methods.
-	 * 
+	 *
 	 * @param int $order_id The order ID.
 	 * @return bool True if the order has a supported payment method.
 	 * @since 1.0.0
@@ -113,7 +113,7 @@ class FunnelManager {
 			return false;
 		}
 
-		$payment_method = $order->get_payment_method();
+		$payment_method    = $order->get_payment_method();
 		$supported_methods = array( 'paypal', 'stripe' );
 
 		return in_array( $payment_method, $supported_methods, true );
@@ -131,7 +131,7 @@ class FunnelManager {
 		foreach ( $course_ids as $course_id ) {
 			$funnel_steps = get_post_meta( $course_id, '_funnel_steps', true );
 
-            if ( ! empty( $funnel_steps ) && is_array( $funnel_steps ) ) {
+			if ( ! empty( $funnel_steps ) && is_array( $funnel_steps ) ) {
 				return $course_id;
 			}
 		}
@@ -156,7 +156,7 @@ class FunnelManager {
 			return array();
 		}
 
-		$courses = array();
+		$courses     = array();
 		$order_items = $order->get_items();
 
 		foreach ( $order_items as $item ) {
@@ -180,7 +180,7 @@ class FunnelManager {
 	 */
 	private function get_first_funnel_step( $course_id ) {
 		$funnel_steps = get_post_meta( $course_id, '_funnel_steps', true );
-		
+
 		if ( empty( $funnel_steps ) || ! is_array( $funnel_steps ) ) {
 			return null;
 		}
@@ -196,7 +196,7 @@ class FunnelManager {
 	 * @return void
 	 * @since 1.0.0
 	 */
-	private function store_funnel_session( $data ) {		
+	private function store_funnel_session( $data ) {
 		if ( ! function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
 			return;
 		}
@@ -208,7 +208,7 @@ class FunnelManager {
 	/**
 	 * Build funnel step URL.
 	 *
-	 * @param int $order_id The order ID.
+	 * @param int   $order_id The order ID.
 	 * @param array $funnel_step The funnel step data.
 	 * @return string The funnel step URL.
 	 * @since 1.0.0
@@ -216,14 +216,14 @@ class FunnelManager {
 	public function build_funnel_step_url( $order_id, $funnel_step ) {
 		// Try pretty URLs first, fallback to query parameters.
 		$step_number = $funnel_step['step_id'] ?? 'step_1';
-		
+
 		// Remove 'step_' prefix if it exists to get just the number.
 		if ( strpos( $step_number, 'step_' ) === 0 ) {
 			$step_number = substr( $step_number, 5 );
 		}
-		
+
 		// Try pretty URL format first.
-		return home_url( sprintf( '/post-checkout-funnel/order/%d/step/%s', $order_id, $step_number ) );		
+		return home_url( sprintf( '/post-checkout-funnel/order/%d/step/%s', $order_id, $step_number ) );
 	}
 
 	/**
@@ -232,7 +232,7 @@ class FunnelManager {
 	 * @return array|null Funnel session data or null.
 	 * @since 1.0.0
 	 */
-	public static function get_funnel_session() {		
+	public static function get_funnel_session() {
 		if ( ! function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
 			return null;
 		}
@@ -259,7 +259,7 @@ class FunnelManager {
 	/**
 	 * Process order funnel (for compatibility with ohmylms-pro).
 	 *
-	 * @param int $order_id The order ID.
+	 * @param int   $order_id The order ID.
 	 * @param array $posted_data The posted checkout data.
 	 * @return array|null Funnel redirect result or null if no funnel needed.
 	 * @since 1.0.0

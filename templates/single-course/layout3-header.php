@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 
-$single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1');
+$single_course_layout = get_option( 'ohmylms_single_course_page_layout', 'layout_1' );
 ?>
 
 <div class="ohmylms-course-header">
@@ -23,38 +23,37 @@ $single_course_layout = get_option('ohmylms_single_course_page_layout','layout_1
 		<?php echo esc_html( $course->get_name() ); ?>
 	</h1>
 
-	<?php if( ohmylms_has_header_course_meta()){ ?>
+	<?php if ( ohmylms_has_header_course_meta() ) { ?>
 		<ul class="ohmylms-course-meta">
 			<?php
 			/**
 			 * Hook: ohmylms_single_course_layout3_header_meta.
-			 * 
+			 *
 			 * Hooked: ohmylms_single_course_review (5).
 			 * Hooked: ohmylms_single_course_level (10).
 			 * Hooked: ohmylms_single_course_duration (15).
 			 * Hooked: ohmylms_single_course_student_count (20).
 			 * Hooked: ohmylms_single_course_capacity (25).
-			 *
 			 */
-			do_action('ohmylms_single_course_layout3_header_meta');
+			do_action( 'ohmylms_single_course_layout3_header_meta' );
 			?>
 		</ul>
 	<?php } ?>
 	
 	<div class="ohmylms-course-author">
-		<?php 
-			if( 'layout_3' === $single_course_layout ){
-				ohmylms_course_author();
-			}
+		<?php
+		if ( 'layout_3' === $single_course_layout ) {
+			ohmylms_course_author();
+		}
 
-			ohmylms_loop_course_update(get_the_ID())
+			ohmylms_loop_course_update( get_the_ID() )
 		?>
 	</div>
 
-	<?php 
-		if( 'layout_3' === $single_course_layout ){
-			ohmylms_course_feature_image_and_video();
-		}
+	<?php
+	if ( 'layout_3' === $single_course_layout ) {
+		ohmylms_course_feature_image_and_video();
+	}
 	?>
 	
 </div>

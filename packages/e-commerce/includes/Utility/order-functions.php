@@ -133,7 +133,7 @@ function ecommerce_create_refund( $args = array() ) {
 		$order->set_date_modified( time() );
 		$current_user_id = get_current_user_id();
 		$display_name    = $current_user_id ? get_user_by( 'id', $current_user_id )->display_name : __( 'System', 'ohmylms' );
-		$refund_note = sprintf(
+		$refund_note     = sprintf(
 			/* translators: %s: refund reason */
 			__( 'Order is refunded by %1$s.', 'ohmylms' ),
 			$display_name
@@ -160,8 +160,8 @@ function ecommerce_create_refund( $args = array() ) {
  * Process a refund payment.
  *
  * @param \CodeRex\Ecommerce\Data\Order $order The order object.
- * @param float     $amount The amount to refund.
- * @param string    $reason The reason for the refund.
+ * @param float                         $amount The amount to refund.
+ * @param string                        $reason The reason for the refund.
  * @return bool|\WP_Error True on success, WP_Error on failure.
  *
  * @since 1.0.0
@@ -176,20 +176,22 @@ function ecommerce_refund_payment( $order, $amount, $reason = '' ) {
 			throw new \Exception( __( 'The payment gateway for this order does not exist.', 'ohmylms' ) );
 		}
 
-		if( 'offline' !== $gateway->id ) {
+		if ( 'offline' !== $gateway->id ) {
 			$result = $gateway->process_refund( $order->get_id(), $amount, $reason );
-			if ( is_array($result) && isset($result['result']) && $result['result'] === 'failure' ) {
+			if ( is_array( $result ) && isset( $result['result'] ) && $result['result'] === 'failure' ) {
 				throw new \Exception( $result['message'] ?: __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
 			}
 			if ( $result === false ) {
 				throw new \Exception( __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
 			}
-		}else{
+		} else {
 			// Add order note about the refund
-			$order->add_order_note(sprintf(
-				__('Refund processed.Reason: %s', 'ohmylms'),
-				$reason ?: __('No reason provided', 'ohmylms')
-			));
+			$order->add_order_note(
+				sprintf(
+					__( 'Refund processed.Reason: %s', 'ohmylms' ),
+					$reason ?: __( 'No reason provided', 'ohmylms' )
+				)
+			);
 			$order->save();
 		}
 		return true;

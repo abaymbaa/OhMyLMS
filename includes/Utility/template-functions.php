@@ -21,7 +21,7 @@ function ohmylms_body_class( $classes ) {
 		$classes[] = 'ohmylms-page';
 	}
 
-	if(ohmylms_is_course_list_shortcode()) {
+	if ( ohmylms_is_course_list_shortcode() ) {
 		$classes[] = 'ohmylms-course-list-shortcode';
 	}
 
@@ -66,10 +66,8 @@ function ohmylms_template_redirect() {
 		exit;
 	}
 
-
-
 	// Check if user already has access to items in cart and redirect to profile
-	if ( is_page( ohmylms_get_page_id( 'checkout' ) ) && is_user_logged_in() && !is_ohmylms_order_received_page() ) {
+	if ( is_page( ohmylms_get_page_id( 'checkout' ) ) && is_user_logged_in() && ! is_ohmylms_order_received_page() ) {
 		$cart_data                  = ecommerce()->cart->get_cart_contents();
 		$is_course_already_enrolled = false;
 		$url                        = '';
@@ -180,8 +178,8 @@ function ohmylms_mobile_place_order() {
 	ohmylms_get_template(
 		'checkout/mobile-place-order-button.php',
 		array(
-			'checkout'           => \CodeRex\Ecommerce\ecommerce()->checkout(),
-			'order_button_text'  => apply_filters( 'ohmylms_order_button_text', __( 'Complete Checkout', 'ohmylms' ) ),
+			'checkout'          => \CodeRex\Ecommerce\ecommerce()->checkout(),
+			'order_button_text' => apply_filters( 'ohmylms_order_button_text', __( 'Complete Checkout', 'ohmylms' ) ),
 		)
 	);
 }
@@ -273,7 +271,7 @@ add_action( 'the_post', 'ohmylms_setup_membership_data' );
 function ohmylms_template_loop_product_link_open( $layout, $layout_style ): void {
 	if (
 		'grid' === $layout &&
-		in_array( $layout_style, [ 'grid-style2', 'grid-style3', 'grid-style4' ], true )
+		in_array( $layout_style, array( 'grid-style2', 'grid-style3', 'grid-style4' ), true )
 	) {
 		$link = apply_filters( 'ohmylms_loop_product_link', get_the_permalink() );
 		echo '<a href="' . esc_url( $link ) . '" class="ohmylms-course-card-link">';
@@ -289,7 +287,7 @@ function ohmylms_template_loop_product_link_open( $layout, $layout_style ): void
 function ohmylms_template_loop_product_link_close( $layout, $layout_style ): void {
 	if (
 		'grid' === $layout &&
-		in_array( $layout_style, [ 'grid-style2', 'grid-style3', 'grid-style4' ], true )
+		in_array( $layout_style, array( 'grid-style2', 'grid-style3', 'grid-style4' ), true )
 	) {
 		echo '</a>';
 	}
@@ -301,7 +299,7 @@ function ohmylms_template_loop_product_link_close( $layout, $layout_style ): voi
  * @since 1.0.0
  */
 function ohmylms_loop_course_title( $layout, $layout_style ) {
-	$link         = apply_filters( 'ohmylms_loop_product_link', get_the_permalink() );
+	$link = apply_filters( 'ohmylms_loop_product_link', get_the_permalink() );
 	if ( 'grid' === $layout ) {
 		if ( 'grid-style1' == $layout_style ) {
 			?>
@@ -339,7 +337,7 @@ function ohmylms_loop_course_title( $layout, $layout_style ) {
  */
 function ohmylms_loop_course_popup_title() {
 	$link         = apply_filters( 'ohmylms_loop_product_link', get_the_permalink() );
-	$layout	  = get_option( 'ohmylms_archive_page_layout', 'grid' );
+	$layout       = get_option( 'ohmylms_archive_page_layout', 'grid' );
 	$layout_style = get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
 	if ( 'grid' === $layout ) {
 		if ( 'grid-style1' == $layout_style ) {
@@ -463,61 +461,58 @@ function ohmylms_loop_course_add_to_cart( $args = array() ): void {
 		$args     = apply_filters( 'ohmylms_loop_add_to_cart_args', wp_parse_args( $args, $defaults ), $course );
 		if ( $maybe_enrolled ) {
 			ohmylms_get_template( 'loop/continue-course.php' );
-		}else {
-			if( $course->get_type() === 'cohort-based' ) {
-				$cohorts = $course->get_cohort();
-				$has_capacity = false;
+		} elseif ( $course->get_type() === 'cohort-based' ) {
+				$cohorts               = $course->get_cohort();
+				$has_capacity          = false;
 				$has_active_enrollment = false;
-				$all_expired = true;
-				$current_time = current_time( 'timestamp' );
-				foreach ( $cohorts as $cohort ) {
-					if (  empty( $cohort['has_capacity'] ) ||  ( ! empty( $cohort['has_capacity'] ) && $cohort['has_capacity'] && ! empty( $cohort['capacity'] ) && (int)($cohort['capacity']) > $course->get_total_enrolled_users() ) ){
-						if ( 'password_protected' === $course->get_access_type() ) {
-							$has_capacity = true;
-							ohmylms_get_template( 'loop/password-protected-course.php', $args );
-						} else {
-							$has_capacity = true;
-							ohmylms_get_template( 'loop/add-to-cart.php', $args );
-						}
-					}
-
-					if ( ! empty( $cohort['enrollment_deadline'] ) ) {
-						$enrollment_end = strtotime( $cohort['enrollment_deadline'] );
-
-						if ( $enrollment_end > $current_time ) {
-							$has_active_enrollment = true;
-						}
+				$all_expired           = true;
+				$current_time          = current_time( 'timestamp' );
+			foreach ( $cohorts as $cohort ) {
+				if ( empty( $cohort['has_capacity'] ) || ( ! empty( $cohort['has_capacity'] ) && $cohort['has_capacity'] && ! empty( $cohort['capacity'] ) && (int) ( $cohort['capacity'] ) > $course->get_total_enrolled_users() ) ) {
+					if ( 'password_protected' === $course->get_access_type() ) {
+						$has_capacity = true;
+						ohmylms_get_template( 'loop/password-protected-course.php', $args );
 					} else {
-						// If enrollment deadline is not set, consider it as active enrollment
+						$has_capacity = true;
+						ohmylms_get_template( 'loop/add-to-cart.php', $args );
+					}
+				}
+
+				if ( ! empty( $cohort['enrollment_deadline'] ) ) {
+					$enrollment_end = strtotime( $cohort['enrollment_deadline'] );
+
+					if ( $enrollment_end > $current_time ) {
 						$has_active_enrollment = true;
 					}
+				} else {
+					// If enrollment deadline is not set, consider it as active enrollment
+					$has_active_enrollment = true;
+				}
 
-					// Check if any cohort is not expired
-					if ( ! empty( $cohort['end_date'] ) ) {
-						if ( strtotime( $cohort['end_date'] ) >= $current_time ) {
-							$all_expired = false;
-						}
-					} else {
-						// If no end date, consider not expired
+				// Check if any cohort is not expired
+				if ( ! empty( $cohort['end_date'] ) ) {
+					if ( strtotime( $cohort['end_date'] ) >= $current_time ) {
 						$all_expired = false;
 					}
-				}
-
-				if ( ! $has_active_enrollment || $all_expired ) {
-					ohmylms_get_template( 'loop/exceed-deadline.php', $args );
-				}else if ( ! $has_capacity ) {
-					ohmylms_get_template( 'loop/exceed-capacity.php', $args );
-				}
-
-			}elseif( ! $course->get_has_capacity() || ( $course->get_has_capacity() && $course->get_capacity() > $course->get_total_enrolled_users() ) ) {
-				if ( 'password_protected' === $course->get_access_type() ) {
-					ohmylms_get_template( 'loop/password-protected-course.php', $args );
 				} else {
-					ohmylms_get_template( 'loop/add-to-cart.php', $args );
+					// If no end date, consider not expired
+					$all_expired = false;
 				}
-			}else{
+			}
+
+			if ( ! $has_active_enrollment || $all_expired ) {
+				ohmylms_get_template( 'loop/exceed-deadline.php', $args );
+			} elseif ( ! $has_capacity ) {
 				ohmylms_get_template( 'loop/exceed-capacity.php', $args );
 			}
+		} elseif ( ! $course->get_has_capacity() || ( $course->get_has_capacity() && $course->get_capacity() > $course->get_total_enrolled_users() ) ) {
+			if ( 'password_protected' === $course->get_access_type() ) {
+				ohmylms_get_template( 'loop/password-protected-course.php', $args );
+			} else {
+				ohmylms_get_template( 'loop/add-to-cart.php', $args );
+			}
+		} else {
+			ohmylms_get_template( 'loop/exceed-capacity.php', $args );
 		}
 	}
 }
@@ -529,7 +524,7 @@ function ohmylms_loop_course_add_to_cart( $args = array() ): void {
  * @since 1.0.0
  */
 function ohmylms_loop_course_after_add_to_cart( $args = array() ): void {
-	if( ! is_user_logged_in() ) {
+	if ( ! is_user_logged_in() ) {
 		return;
 	}
 
@@ -541,15 +536,15 @@ function ohmylms_loop_course_after_add_to_cart( $args = array() ): void {
 	$student            = new \OhMyLMS\Data\Student( $current_student_id );
 	$maybe_enrolled     = $student->maybe_enrolled( $course->get_id() );
 
-	if( $maybe_enrolled ) {
+	if ( $maybe_enrolled ) {
 		return;
 	}
 
-	if( ohmylms_is_pro() ) {
+	if ( ohmylms_is_pro() ) {
 		$integrations = get_option( 'ohmylms_integrations', array() );
-		if( isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] && \OhMyLMS\Engagement\Reward::maybe_met_rules( 'purchase_course' ) && $course->get_reward_disabled() !== 'yes' ) {
+		if ( isset( $integrations['gamification']['is_enable'] ) && $integrations['gamification']['is_enable'] && \OhMyLMS\Engagement\Reward::maybe_met_rules( 'purchase_course' ) && $course->get_reward_disabled() !== 'yes' ) {
 			if ( $course ) {
-				if( ! $course->get_purchase_point() ) {
+				if ( ! $course->get_purchase_point() ) {
 					return;
 				}
 				$defaults = array(
@@ -860,32 +855,30 @@ if ( ! function_exists( 'ohmylms_get_product_thumbnail' ) ) {
 				echo '<figure class="ohmylms-loop-course-thumbnail-link">';
 					echo '<img src="' . esc_url( $image_src ) . '" alt="' . esc_attr( $course->get_name() ) . '" class="ohmylms-img-fluid" />';
 				echo '</figure>';
-			} else {
-				if ( 'grid-style1' === $layout_style ) {
+			} elseif ( 'grid-style1' === $layout_style ) {
 					echo '<a href="' . esc_url( $link ) . '" class="ohmylms-loop-course-thumbnail-link">';
 						echo '<figure>';
 							echo '<img src="' . esc_url( $image_src ) . '" alt="' . esc_attr( $course->get_name() ) . '" class="ohmylms-img-fluid" />';
-							if ( $course->get_duration() ) {
-								echo '<span class="ohmylms-course-time-label">';
-								include(OHMYLMS_DIR . '/assets/images/icon/clock-icon-white.php');
-								echo esc_html( ohmylms_format_duration( $course->get_duration() ) );
-								echo '</span>';
-							}
+				if ( $course->get_duration() ) {
+					echo '<span class="ohmylms-course-time-label">';
+					include OHMYLMS_DIR . '/assets/images/icon/clock-icon-white.php';
+					echo esc_html( ohmylms_format_duration( $course->get_duration() ) );
+					echo '</span>';
+				}
 						echo '</figure>';
 					echo '</a>';
-				} else {
-					echo '<div class="ohmylms-loop-course-thumbnail-link">';
-						echo '<figure>';
-							echo '<img src="' . esc_url( $image_src ) . '" alt="' . esc_attr( $course->get_name() ) . '" class="ohmylms-img-fluid" />';
-							if ( $course->get_duration() ) {
-								echo '<span class="ohmylms-course-time-label">';
-								include(OHMYLMS_DIR . '/assets/images/icon/clock-icon-white.php');
-								echo esc_html( ohmylms_format_duration( $course->get_duration() ) );
-								echo '</span>';
-							}
-						echo '</figure>';
-					echo '</div>';
+			} else {
+				echo '<div class="ohmylms-loop-course-thumbnail-link">';
+					echo '<figure>';
+						echo '<img src="' . esc_url( $image_src ) . '" alt="' . esc_attr( $course->get_name() ) . '" class="ohmylms-img-fluid" />';
+				if ( $course->get_duration() ) {
+					echo '<span class="ohmylms-course-time-label">';
+					include OHMYLMS_DIR . '/assets/images/icon/clock-icon-white.php';
+					echo esc_html( ohmylms_format_duration( $course->get_duration() ) );
+					echo '</span>';
 				}
+					echo '</figure>';
+				echo '</div>';
 			}
 			return ob_get_clean();
 		}
@@ -963,6 +956,7 @@ if ( ! function_exists( 'ohmylms_output_content_wrapper_end' ) ) {
 if ( ! function_exists( 'ohmylms_scroll_to_top' ) ) {
 	/**
 	 * scroll to top.
+	 *
 	 * @since 1.0.0
 	 */
 	function ohmylms_scroll_to_top() {
@@ -1247,7 +1241,7 @@ if ( ! function_exists( 'ohmylms_widget_certificate' ) ) {
 	function ohmylms_widget_certificate() {
 		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
-		if ( is_array($page_features) && in_array( 'certificate_with_enroll', $page_features ) ) {
+		if ( is_array( $page_features ) && in_array( 'certificate_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/certificate.php' );
 		}
 	}
@@ -1262,7 +1256,7 @@ if ( ! function_exists( 'ohmylms_widget_course_progress' ) ) {
 	function ohmylms_widget_course_progress() {
 		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
-		if ( is_array($page_features) && in_array( 'progress_bar_with_enroll', $page_features ) ) {
+		if ( is_array( $page_features ) && in_array( 'progress_bar_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/progressbar.php' );
 		}
 	}
@@ -1281,7 +1275,7 @@ if ( ! function_exists( 'ohmylms_widget_course_leaderboard' ) ) {
 
 		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
-		if ( is_array($page_features) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
+		if ( is_array( $page_features ) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/leaderboard.php' );
 		}
 	}
@@ -1535,7 +1529,6 @@ if ( ! function_exists( 'ohmylms_course_assignments_tab' ) ) {
 		} else {
 			ohmylms_get_template( 'single-course/tabs/assignments.php' );
 		}
-
 	}
 }
 
@@ -1705,9 +1698,9 @@ if ( ! function_exists( 'ohmylms_login_form' ) ) {
 	 */
 	function ohmylms_login_form( $args ) {
 		$defaults = array(
-			'message'  => '',
+			'message'     => '',
 			'redirect_to' => '',
-			'hidden'   => false,
+			'hidden'      => false,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -1720,9 +1713,9 @@ if ( ! function_exists( 'ohmylms_login_form' ) ) {
 if ( ! function_exists( 'ohmylms_signup_form' ) ) {
 	function ohmylms_signup_form( $args ) {
 		$defaults = array(
-			'message'  => '',
+			'message'     => '',
 			'redirect_to' => '',
-			'hidden'   => false,
+			'hidden'      => false,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -1799,19 +1792,19 @@ if ( ! function_exists( 'ohmylms_checkout_form_contact_title' ) ) {
 				echo esc_html__( 'Contact', 'ohmylms' );
 			echo '</h2>';
 
-			if ( is_user_logged_in()  ) {
+		if ( is_user_logged_in() ) {
 
-			} else {
-				?>
+		} else {
+			?>
 					<div class="ohmylms-form-login-toggle">
-						<?php echo esc_html__( 'Already have an account?', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Already have an account?', 'ohmylms' ); ?>
 
 						<a href="#" class="showlogin">
-							<?php echo esc_html__( 'Log In', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Log In', 'ohmylms' ); ?>
 						</a>
 					</div>
 				<?php
-			}
+		}
 		echo '</div>';
 	}
 }
@@ -1916,10 +1909,18 @@ if ( ! function_exists( 'ohmylms_get_header' ) ) {
 
 		if ( version_compare( $wp_version, '5.9', '>=' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 			// Discover block styles/module dependencies before wp_head prints the import map.
-			$theme_slug = wp_get_theme()->get( 'TextDomain' );
+			$theme_slug                   = wp_get_theme()->get( 'TextDomain' );
 			$ohmylms_block_template_parts = array();
 			foreach ( array( 'header', 'footer' ) as $part ) {
-				$attributes = wp_json_encode( array( 'slug' => $part, 'theme' => $theme_slug, 'tagName' => $part, 'className' => 'site-' . $part, 'layout' => array( 'inherit' => true ) ) );
+				$attributes                            = wp_json_encode(
+					array(
+						'slug'      => $part,
+						'theme'     => $theme_slug,
+						'tagName'   => $part,
+						'className' => 'site-' . $part,
+						'layout'    => array( 'inherit' => true ),
+					)
+				);
 				$ohmylms_block_template_parts[ $part ] = do_blocks( '<!-- wp:template-part ' . $attributes . ' /-->' );
 			}
 			?>
@@ -2616,9 +2617,12 @@ if ( ! function_exists( 'ohmylms_course_filters' ) ) {
 	 */
 	function ohmylms_course_filters( $atts = array() ) {
 
-		ohmylms_get_template( 'filters/filters.php', array(
-			'atts' => $atts,
-		) );
+		ohmylms_get_template(
+			'filters/filters.php',
+			array(
+				'atts' => $atts,
+			)
+		);
 	}
 }
 
@@ -2631,16 +2635,19 @@ if ( ! function_exists( 'ohmylms_course_loop_before_category_filter' ) ) {
 	 */
 	function ohmylms_course_loop_before_category_filter( $atts ) {
 		$is_enable_category = isset( $atts ) && is_array( $atts ) && isset( $atts['is_enable_category'] ) ? $atts['is_enable_category'] : get_option( 'ohmylms_archive_page_category_is_enabled', 'no' );
-		$layout_style = isset( $atts ) && is_array( $atts ) && isset( $atts['layout_style'] ) ? $atts['layout_style'] : get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
-		$layout = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
+		$layout_style       = isset( $atts ) && is_array( $atts ) && isset( $atts['layout_style'] ) ? $atts['layout_style'] : get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
+		$layout             = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
 		if ( ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) &&
 			'grid' === $layout &&
 			'yes' === $is_enable_category
 		) {
-			ohmylms_get_template( 'filters/category-type-button.php', array(
-				'is_enable_category' => $is_enable_category,
-				'layout_style'      => $layout_style,
-			) );
+			ohmylms_get_template(
+				'filters/category-type-button.php',
+				array(
+					'is_enable_category' => $is_enable_category,
+					'layout_style'       => $layout_style,
+				)
+			);
 		}
 	}
 }
@@ -2654,13 +2661,16 @@ if ( ! function_exists( 'ohmylms_course_loop_before_filter' ) ) {
 	 */
 	function ohmylms_course_loop_before_filter( $atts ) {
 		$layout_style = isset( $atts ) && is_array( $atts ) && isset( $atts['layout_style'] ) ? $atts['layout_style'] : get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
-		$layout      = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
+		$layout       = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
 		if ( 'grid' === $layout &&
 			( 'grid-style1' === $layout_style || 'grid-style2' === $layout_style )
 		) {
-			ohmylms_get_template( 'filters/search-sort.php', array(
-				'atts'        => $atts, // Pass shortcode attributes to template
-			) );
+			ohmylms_get_template(
+				'filters/search-sort.php',
+				array(
+					'atts' => $atts, // Pass shortcode attributes to template
+				)
+			);
 		}
 	}
 }
@@ -2673,12 +2683,11 @@ if ( ! function_exists( 'ohmylms_course_carousel_item_hover' ) ) {
 	 */
 	function ohmylms_course_carousel_item_hover( $atts ) {
 		$layout_style = isset( $atts ) && is_array( $atts ) && isset( $atts['layout_style'] ) ? $atts['layout_style'] : get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
-		$layout      = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
+		$layout       = isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) ? $atts['layout'] : get_option( 'ohmylms_archive_page_layout', 'grid' );
 
 		if ( 'grid' === $layout && 'grid-style3' === $layout_style ) {
 			ohmylms_get_template_part( 'content', 'course-popup', $atts );
 		}
-
 	}
 }
 
@@ -2711,7 +2720,7 @@ if ( ! function_exists( 'ohmylms_get_number_suffix' ) ) {
 	}
 }
 
-//-----start course single layout-3 all functions-----//
+// -----start course single layout-3 all functions-----//
 if ( ! function_exists( 'ohmylms_pricebox_and_course_meta' ) ) {
 	function ohmylms_pricebox_and_course_meta() {
 		echo '<div class="ohmylms-course-pricebox-and-meta">';
@@ -2735,12 +2744,12 @@ if ( ! function_exists( 'ohmylms_widget_course_leaderboard_layout3' ) ) {
 	 * @since 1.0.0
 	 */
 	function ohmylms_widget_course_leaderboard_layout3() {
-		if( ! ohmylms_is_pro() ) {
+		if ( ! ohmylms_is_pro() ) {
 			return; // Exit if OhMyLMS is not active.
 		}
 		$page_features = (array) get_option( 'ohmylms_single_course_page_features', array() );
 
-		if ( is_array($page_features) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
+		if ( is_array( $page_features ) && in_array( 'leaderboard_with_enroll', $page_features ) ) {
 			ohmylms_get_template( 'single-course/widgets/leaderboard-layout3.php' );
 		}
 	}
@@ -2760,19 +2769,19 @@ if ( ! function_exists( 'ohmylms_single_course_layout3_content' ) ) {
 	}
 }
 
-//-----end course single layout-3 all functions-----//
+// -----end course single layout-3 all functions-----//
 if ( ! function_exists( 'ohmylms_login_header' ) ) {
 
-/**
- * Outputs the header for the login pages.
- *
- * This function displays a title and description at the top of the login pages.
- *
- * @since 1.0.0
- */
+	/**
+	 * Outputs the header for the login pages.
+	 *
+	 * This function displays a title and description at the top of the login pages.
+	 *
+	 * @since 1.0.0
+	 */
 	function ohmylms_login_header() {
 
-		if( is_ohmylms_checkout() ) {
+		if ( is_ohmylms_checkout() ) {
 			return;
 		}
 		?>
@@ -2785,19 +2794,18 @@ if ( ! function_exists( 'ohmylms_login_header' ) ) {
 				</p>
 			</div>
 		<?php
-
 	}
 }
 
 if ( ! function_exists( 'ohmylms_signup_header' ) ) {
 
-/**
- * Outputs the header for the signup pages.
- *
- * This function displays a title and description at the top of the signup pages.
- *
- * @since 1.0.0
- */
+	/**
+	 * Outputs the header for the signup pages.
+	 *
+	 * This function displays a title and description at the top of the signup pages.
+	 *
+	 * @since 1.0.0
+	 */
 	function ohmylms_signup_header() {
 		?>
 			<div class="ohmylms-login-signup-header">
@@ -2809,25 +2817,23 @@ if ( ! function_exists( 'ohmylms_signup_header' ) ) {
 				</p>
 			</div>
 		<?php
-
 	}
 }
 
 if ( ! function_exists( 'ohmylms_login_signup_form_title' ) ) {
 
-/**
- * Outputs the title for the login and signup forms.
- *
- * This function displays a title at the top of the login and signup forms.
- *
- * @since 1.0.0
- */
+	/**
+	 * Outputs the title for the login and signup forms.
+	 *
+	 * This function displays a title at the top of the login and signup forms.
+	 *
+	 * @since 1.0.0
+	 */
 	function ohmylms_login_signup_form_title() {
 		?>
 			<span class="account-details-title">
 				<?php echo is_ohmylms_checkout() ? __( 'Log in', 'ohmylms' ) : __( 'Account details', 'ohmylms' ); ?>
 			</span>
 		<?php
-
 	}
 }

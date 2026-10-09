@@ -148,27 +148,27 @@ class QuizHookHandler extends HookHandler {
 
 		// Step 3: Get all question IDs linked to the quiz
 		$relationship_table = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
-		$question_ids = $wpdb->get_col(
+		$question_ids       = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT question_id FROM {$relationship_table} WHERE quiz_id = %d",
 				$quiz_id
 			)
 		);
-		
+
 		if ( ! empty( $question_ids ) ) {
 			// Step 4: Get all answer IDs for the above question IDs
 			$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
-			$placeholders = implode( ',', array_fill( 0, count( $question_ids ), '%d' ) );
-			$answer_ids = $wpdb->get_col(
+			$placeholders  = implode( ',', array_fill( 0, count( $question_ids ), '%d' ) );
+			$answer_ids    = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT id FROM {$answers_table} WHERE question_id IN ($placeholders)",
 					...$question_ids
 				)
 			);
-	
+
 			// Step 5: Delete answer meta
 			if ( ! empty( $answer_ids ) ) {
-				$ans_meta_table = $wpdb->prefix . 'ohmylms_question_answermeta';
+				$ans_meta_table    = $wpdb->prefix . 'ohmylms_question_answermeta';
 				$meta_placeholders = implode( ',', array_fill( 0, count( $answer_ids ), '%d' ) );
 				$wpdb->query(
 					$wpdb->prepare(
@@ -177,7 +177,7 @@ class QuizHookHandler extends HookHandler {
 					)
 				);
 			}
-	
+
 			// Step 6: Delete answers (options)
 			$wpdb->query(
 				$wpdb->prepare(
@@ -190,9 +190,8 @@ class QuizHookHandler extends HookHandler {
 		// Step 7: Delete quiz-question relationship
 		$wpdb->delete(
 			$relationship_table,
-			[ 'quiz_id' => $quiz_id ],
-			[ '%d' ]
+			array( 'quiz_id' => $quiz_id ),
+			array( '%d' )
 		);
-		
 	}
 }

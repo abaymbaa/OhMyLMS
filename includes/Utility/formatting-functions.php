@@ -34,8 +34,8 @@ function ohmylms_clean( $var ) {
  * Format decimal number
  *
  * @param $number
- * @param bool   $dp
- * @param bool   $trim_zeros
+ * @param bool $dp
+ * @param bool $trim_zeros
  * @return string|string[]|null
  * @since 1.0.0
  */
@@ -340,8 +340,8 @@ function ohmylms_format_datetime( $date, $format = '' ) {
  * @throws Exception
  * @since 1.0.0
  */
-function ohmylms_convert_to_utc($localDateTimeString, $localTimezone = 'Asia/Dhaka') {
-	$date = new DateTime($localDateTimeString, new DateTimeZone($localTimezone));
-	$date->setTimezone(new DateTimeZone('UTC'));
-	return $date->format('Y-m-d\TH:i:s\Z');
+function ohmylms_convert_to_utc( $localDateTimeString, $localTimezone = 'Asia/Dhaka' ) {
+	$date = new DateTime( $localDateTimeString, new DateTimeZone( $localTimezone ) );
+	$date->setTimezone( new DateTimeZone( 'UTC' ) );
+	return $date->format( 'Y-m-d\TH:i:s\Z' );
 }

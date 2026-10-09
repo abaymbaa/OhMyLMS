@@ -59,7 +59,7 @@ class QuizStore extends DataStore {
 		);
 		if ( $quiz_id && ! is_wp_error( $quiz_id ) ) {
 			$quiz->set_id( $quiz_id );
-			flush_rewrite_rules(true);
+			flush_rewrite_rules( true );
 			$this->update_post_meta( $quiz );
 
 			/**
@@ -123,7 +123,7 @@ class QuizStore extends DataStore {
 			'post_name'    => $quiz->get_name( 'edit' ),
 			'post_type'    => OHMYLMS_QUIZ_CPT,
 		);
-		
+
 		if ( $quiz->get_date_created( 'edit' ) ) {
 			$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $quiz->get_date_created( 'edit' )->getOffsetTimestamp() );
 			$post_data['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $quiz->get_date_created( 'edit' )->getTimestamp() );
@@ -237,7 +237,7 @@ class QuizStore extends DataStore {
 		global $wpdb;
 		$table_name         = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$quiz_id            = $quiz->get_id();
-		$questions = $wpdb->get_results(
+		$questions          = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} WHERE quiz_id = %d ORDER BY order_number ASC",
 				$quiz_id
@@ -572,7 +572,7 @@ class QuizStore extends DataStore {
 	 * Get the report of a specific quiz attempt.
 	 *
 	 * @param Quiz $quiz The quiz object.
-	 * @param int $attempt_id The ID of the quiz attempt.
+	 * @param int  $attempt_id The ID of the quiz attempt.
 	 * @return array The report of the quiz attempt.
 	 * @since 1.0.0
 	 */
@@ -582,9 +582,9 @@ class QuizStore extends DataStore {
 		if ( \OhMyLMS\Assessment\Schema::ready() && \OhMyLMS\Assessment\AttemptItems::is_versioned( $attempt_id ) ) {
 			return \OhMyLMS\Assessment\AttemptReport::versioned( $quiz->get_id(), (int) $attempt_id );
 		}
-		$report = array();
+		$report      = array();
 		$quiz_result = array();
-		$result = $wpdb->get_results(
+		$result      = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * from {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id = %d",
 				$attempt_id
@@ -593,7 +593,7 @@ class QuizStore extends DataStore {
 		foreach ( $result as $key => $value ) {
 			$quiz_result[ $value->question_id ] = (array) $value;
 		}
-		$questions 					= $this->get_questions( $quiz );
+		$questions = $this->get_questions( $quiz );
 		// Legacy attempts: also show answered questions that were later removed from the quiz.
 		$linked = array_map( 'intval', array_column( $questions, 'id' ) );
 		foreach ( array_diff( array_map( 'intval', array_keys( $quiz_result ) ), $linked ) as $removed_id ) {
@@ -612,30 +612,33 @@ class QuizStore extends DataStore {
 				'removed'      => true,
 			);
 		}
-		$total_marks				= 0;
+		$total_marks = 0;
 		// Grade-report status is supplied by the registered question type.
-		
+
 		foreach ( $questions as $key => $question ) {
-			$question_id 									= $question['id'];
-			$questions[ $key ]['given_answer'] 				= isset($quiz_result[ $question_id ]['given_answer']) ? (maybe_unserialize($quiz_result[ $question_id ]['given_answer'])) : null;
-			$obj                               				= ohmylms_get_question( $question_id );
-			$question_settings 				   				= $obj->get_settings();
-			$question_type                                 	= isset( $question_settings['type'] ) ? $question_settings['type'] : '';
-			$definition = \OhMyLMS\Extensions\Registry::get('question', $question_type);
-			$questions[ $key ]['status']                   	= !empty($quiz_result[$question_id]['is_manually_reviewed']) || (isset($quiz_result[$question_id]) && !empty($definition) && empty($definition['manual'])) ? 'graded' : 'in-review';
-			$questions[ $key ]['image']                    	= $obj->get_image_url();
-			$questions[ $key ]['video']                    	= $obj->get_video_url();
-			$questions[ $key ]['achive_mark']              	= (float) ( $quiz_result[ $question_id ]['achive_mark'] ?? 0 );
-			$questions[ $key ]['quiz_attempts_answers_id'] 	= isset( $quiz_attempts_answers_id[ $key ] ) ? $quiz_attempts_answers_id[ $key ] : null;
+			$question_id                       = $question['id'];
+			$questions[ $key ]['given_answer'] = isset( $quiz_result[ $question_id ]['given_answer'] ) ? ( maybe_unserialize( $quiz_result[ $question_id ]['given_answer'] ) ) : null;
+			$obj                               = ohmylms_get_question( $question_id );
+			$question_settings                 = $obj->get_settings();
+			$question_type                     = isset( $question_settings['type'] ) ? $question_settings['type'] : '';
+			$definition                        = \OhMyLMS\Extensions\Registry::get( 'question', $question_type );
+			$questions[ $key ]['status']       = ! empty( $quiz_result[ $question_id ]['is_manually_reviewed'] ) || ( isset( $quiz_result[ $question_id ] ) && ! empty( $definition ) && empty( $definition['manual'] ) ) ? 'graded' : 'in-review';
+			$questions[ $key ]['image']        = $obj->get_image_url();
+			$questions[ $key ]['video']        = $obj->get_video_url();
+			$questions[ $key ]['achive_mark']  = (float) ( $quiz_result[ $question_id ]['achive_mark'] ?? 0 );
+			$questions[ $key ]['quiz_attempts_answers_id'] = isset( $quiz_attempts_answers_id[ $key ] ) ? $quiz_attempts_answers_id[ $key ] : null;
 
 			$total_marks = $total_marks + $questions[ $key ]['achive_mark'];
 		}
-		$report['questions'] 		= $questions;
-		$report['quiz_attempt_id']	= $attempt_id;
-		$report['status'] = $wpdb->get_var($wpdb->prepare(
-			"SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d AND quiz_id = %d",
-			$attempt_id, $quiz->get_id()
-		));
+		$report['questions']            = $questions;
+		$report['quiz_attempt_id']      = $attempt_id;
+		$report['status']               = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d AND quiz_id = %d",
+				$attempt_id,
+				$quiz->get_id()
+			)
+		);
 		$report['total_achieved_marks'] = $total_marks;
 		// Recorded before versioning: question content shown is the current content, which may differ from what was seen.
 		$report['engine'] = 'legacy';

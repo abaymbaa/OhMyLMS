@@ -650,7 +650,14 @@ class QuizController extends RestController {
 		if ( ! empty( $request['base_modified'] ) ) {
 			$current = get_post_field( 'post_modified_gmt', $post_id );
 			if ( $current && strtotime( $current . ' UTC' ) > strtotime( (string) $request['base_modified'] . ' UTC' ) ) {
-				return new WP_Error( 'ohmylms_quiz_conflict', __( 'This quiz was changed by someone else. Reload it before saving.', 'ohmylms' ), array( 'status' => 409, 'modified' => $current ) );
+				return new WP_Error(
+					'ohmylms_quiz_conflict',
+					__( 'This quiz was changed by someone else. Reload it before saving.', 'ohmylms' ),
+					array(
+						'status'   => 409,
+						'modified' => $current,
+					)
+				);
 			}
 		}
 		$content = $request['content'] ?? null;
@@ -828,31 +835,31 @@ class QuizController extends RestController {
 		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$quiz     	= ohmylms_get_quiz( $post->ID );
-		$report   	= $quiz->get_attempt_report( $attempt_id );
-		$attempt 	= ohmylms_get_attempt( $attempt_id );
-		$student 	= $attempt->get_student();
-		$course_id 	= $attempt->get_course_id();
-		$course	 	= ohmylms_get_course( $course_id );
-		$data     = array(
-			'report'               	=> $report,
-			'question_total_marks' 	=> $quiz->get_total_marks(),
-			'total_question'       	=> $quiz->get_total_question(),
-			'passing_mark'         	=> $quiz->get_passing_grade(),
-			'start_date'			=> $attempt->get_start_date(),
-			'end_date'              => ($attempt->get_end_date() instanceof \DateTimeInterface) ? $attempt->get_end_date()->format('Y-m-d H:i:s') : $attempt->get_end_date(),
-			'score'					=> $attempt->get_total_score(),
-			'student'              	=> array(
-				'id'         => $student->get_id(),
-				'name'       => $student->get_name(),
-				'email'      => $student->get_email(),
+		$quiz      = ohmylms_get_quiz( $post->ID );
+		$report    = $quiz->get_attempt_report( $attempt_id );
+		$attempt   = ohmylms_get_attempt( $attempt_id );
+		$student   = $attempt->get_student();
+		$course_id = $attempt->get_course_id();
+		$course    = ohmylms_get_course( $course_id );
+		$data      = array(
+			'report'               => $report,
+			'question_total_marks' => $quiz->get_total_marks(),
+			'total_question'       => $quiz->get_total_question(),
+			'passing_mark'         => $quiz->get_passing_grade(),
+			'start_date'           => $attempt->get_start_date(),
+			'end_date'             => ( $attempt->get_end_date() instanceof \DateTimeInterface ) ? $attempt->get_end_date()->format( 'Y-m-d H:i:s' ) : $attempt->get_end_date(),
+			'score'                => $attempt->get_total_score(),
+			'student'              => array(
+				'id'    => $student->get_id(),
+				'name'  => $student->get_name(),
+				'email' => $student->get_email(),
 			),
-			'course'	=> array(
-				'id'         => $course->get_id(),
-				'name'       => $course->get_name(),
+			'course'               => array(
+				'id'   => $course->get_id(),
+				'name' => $course->get_name(),
 			),
 		);
-		$response = rest_ensure_response( $data );
+		$response  = rest_ensure_response( $data );
 		$response->link_header( 'alternate', get_permalink( $id ), array( 'type' => 'text/html' ) );
 		return $response;
 	}
@@ -1042,7 +1049,7 @@ class QuizController extends RestController {
 			'name'                  => $quiz->get_name(),
 			'type'                  => 'quiz',
 			'description'           => $quiz->get_description(),
-			'preview_url'           => \OhMyLMS\Assessment\PreviewPlayer::url($quiz->get_id()),
+			'preview_url'           => \OhMyLMS\Assessment\PreviewPlayer::url( $quiz->get_id() ),
 			'slug'                  => $quiz->get_slug(),
 			'status'                => $quiz->get_status(),
 			'settings'              => $quiz->get_settings(),

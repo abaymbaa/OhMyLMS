@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class DataStore
+ *
  * @package OhMyLMS\Abstracts
  * @since 1.0.0
  */

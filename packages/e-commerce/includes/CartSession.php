@@ -164,9 +164,9 @@ class CartSession {
 	 * @since 1.0.0
 	 */
 	public function maybe_set_cart_cookies() {
-		//      if ( headers_sent() || ! did_action( 'wp_loaded' ) ) {
-		//          return;
-		//      }
+		// if ( headers_sent() || ! did_action( 'wp_loaded' ) ) {
+		// return;
+		// }
 
 		if ( ! $this->cart->is_empty() ) {
 			$this->set_cart_cookies( true );
@@ -174,7 +174,7 @@ class CartSession {
 			$this->set_cart_cookies( false );
 		}
 
-		//      $this->remove_duplicate_cookies();
+		// $this->remove_duplicate_cookies();
 	}
 
 
@@ -308,6 +308,7 @@ class CartSession {
 
 	/**
 	 * Destroy cart session
+	 *
 	 * @return void
 	 * @since 1.0.0
 	 */

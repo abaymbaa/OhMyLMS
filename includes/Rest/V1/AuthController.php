@@ -160,7 +160,7 @@ class AuthController extends RestController {
 		$redirect_to = sanitize_text_field( (string) $redirect_to );
 
 		$target = wp_parse_url( $redirect_to );
-		$home = wp_parse_url( home_url() );
+		$home   = wp_parse_url( home_url() );
 		if ( '' === $redirect_to || ! $target || ! isset( $target['host'], $target['scheme'] ) || strtolower( $target['host'] ) !== strtolower( $home['host'] ) || $target['scheme'] !== $home['scheme'] || ( $target['port'] ?? null ) !== ( $home['port'] ?? null ) || isset( $target['user'] ) || isset( $target['pass'] ) ) {
 			return '';
 		}

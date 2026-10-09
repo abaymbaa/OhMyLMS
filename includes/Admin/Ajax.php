@@ -57,12 +57,12 @@ class Ajax {
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'ohmylms_delete_cache_nonce' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed', 'ohmylms' ) ) );
 		}
-		
+
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Unauthorized access', 'ohmylms' ) ) );
 		}
 
-global $wpdb;
+		global $wpdb;
 
 		// Delete all OhMyLMS related transients
 		$count = $wpdb->query(
@@ -74,7 +74,7 @@ global $wpdb;
 				$wpdb->esc_like( '_site_transient_ohmylms_' ) . '%'
 			)
 		);
-		
+
 		// Also delete transients with 'ohmylms' and 'ohmylms' prefix
 		$count += $wpdb->query(
 			$wpdb->prepare(
@@ -109,15 +109,14 @@ global $wpdb;
 			);
 		}
 
-
-		wp_send_json_success( 
-			array( 
+		wp_send_json_success(
+			array(
 				'message' => sprintf(
 					/* translators: %d: number of cache items deleted */
 					_n( '%d cache item deleted successfully.', '%d cache items deleted successfully.', $count, 'ohmylms' ),
 					$count
-				)
-			) 
+				),
+			)
 		);
 	}
 
@@ -146,7 +145,7 @@ global $wpdb;
 		foreach ( array( '_site_transient_', '_site_transient_timeout_' ) as $prefix ) {
 			foreach ( array( 'ohmylms_', 'update_ohmylms_' ) as $name ) {
 				$pattern = $wpdb->esc_like( $prefix . $name ) . '%';
-				$rows = is_multisite()
+				$rows    = is_multisite()
 					? $wpdb->get_col( $wpdb->prepare( "SELECT meta_key FROM {$wpdb->sitemeta} WHERE site_id = %d AND meta_key LIKE %s", get_current_network_id(), $pattern ) )
 					: $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $pattern ) );
 				foreach ( $rows as $row ) {

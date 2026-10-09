@@ -23,7 +23,7 @@ function ohmylmse_cart_totals_subtotal_html() {
  * Outputs or returns the label for a given coupon.
  *
  * @param \CodeRex\Ecommerce\Data\Coupon|string $coupon Coupon object or coupon code.
- * @param bool $echo Whether to echo the label or return it. Default true.
+ * @param bool                                  $echo Whether to echo the label or return it. Default true.
  * @return string|null The coupon label if $echo is false, otherwise null.
  *
  * @since 1.0.0
@@ -33,7 +33,7 @@ function ohmylmse_cart_totals_coupon_label( $coupon, $echo = true ) {
 		$coupon = new \CodeRex\Ecommerce\Data\Coupon( $coupon );
 	}
 
-	if ( ! $coupon->get_code()) {
+	if ( ! $coupon->get_code() ) {
 		return ''; // Return null if the coupon is not valid.
 	}
 
@@ -75,7 +75,7 @@ function ohmylmse_cart_totals_coupon_html( $coupon ) {
  * @since 1.0.0
  */
 function ohmylmse_cart_totals_order_total_html() {
-	$value = '<strong>' . \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key('total') . '</strong> ';
-	$value = apply_filters( 'ohmylmse_cart_totals_order_total_html', ohmylms_price($value),  );
+	$value = '<strong>' . \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'total' ) . '</strong> ';
+	$value = apply_filters( 'ohmylmse_cart_totals_order_total_html', ohmylms_price( $value ), );
 	echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }

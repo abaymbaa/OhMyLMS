@@ -168,7 +168,7 @@ class Cart {
 	/**
 	 * Generate a unique id for cart
 	 *
-	 * @param int $course_id Id of course
+	 * @param int   $course_id Id of course
 	 * @param array $cart_item_data other cart item data
 	 * @return string cart item key
 	 *
@@ -265,7 +265,7 @@ class Cart {
 	 * Add to cart functionality of course
 	 *
 	 * @param $course_id
-	 * @param int $quantity
+	 * @param int   $quantity
 	 * @param array $cart_item_data
 	 * @return bool|string
 	 *
@@ -276,7 +276,7 @@ class Cart {
 			$this->empty_cart( true );
 			$course_id = absint( $course_id );
 			$post_type = get_post_type( $course_id );
-			$course   = null;
+			$course    = null;
 			if ( $post_type === OHMYLMS_COURSE_CPT ) {
 				$course = ohmylms_get_course( $course_id );
 				if ( ! $course ) {
@@ -288,8 +288,8 @@ class Cart {
 					throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );
 				}
 			}
-			
-			if( ! $course ) {
+
+			if ( ! $course ) {
 				return false;
 			}
 
@@ -300,7 +300,7 @@ class Cart {
 				$cart_item_key = $cart_id;
 			}
 
-			//          $course = ohmylms_get_course( $course_id );
+			// $course = ohmylms_get_course( $course_id );
 
 			$this->cart_contents[ $cart_item_key ] = apply_filters(
 				'ohmylms_add_cart_item',
@@ -363,30 +363,30 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	protected function calculate_item_totals() {
-	   $this->get_items_from_cart();
-	   $this->calculate_discounts();
-	   $total     = 0;
-	   $sub_total = 0;
-	   foreach ( $this->items as $item_key => $item ) {
-		   // Set item total as full price (no discount per item)
-		   $item->total = $item->price;
-		   $item->subtotal = $item->subtotal;
-		   $item->total = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
-		   $this->cart_contents[ $item_key ]['line_total'] = $item->total;
-		   $total     += $item->total;
-		   $sub_total += $item->subtotal;
-	   }
+		$this->get_items_from_cart();
+		$this->calculate_discounts();
+		$total     = 0;
+		$sub_total = 0;
+		foreach ( $this->items as $item_key => $item ) {
+			// Set item total as full price (no discount per item)
+			$item->total                                    = $item->price;
+			$item->subtotal                                 = $item->subtotal;
+			$item->total                                    = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
+			$this->cart_contents[ $item_key ]['line_total'] = $item->total;
+			$total     += $item->total;
+			$sub_total += $item->subtotal;
+		}
 
-	   // Subtract total discount from cart total
-	   $discount_total = isset($this->totals['discounts_total']) ? $this->totals['discounts_total'] : 0;
-	   $cart_total = $total - $discount_total;
-	   if ($cart_total < 0) {
-		   $cart_total = 0;
-	   }
+		// Subtract total discount from cart total
+		$discount_total = isset( $this->totals['discounts_total'] ) ? $this->totals['discounts_total'] : 0;
+		$cart_total     = $total - $discount_total;
+		if ( $cart_total < 0 ) {
+			$cart_total = 0;
+		}
 
-	   $this->totals['total']    = $cart_total;
-	   $this->totals['subtotal'] = $sub_total;
-	   $this->set_total( $cart_total );
+		$this->totals['total']    = $cart_total;
+		$this->totals['subtotal'] = $sub_total;
+		$this->set_total( $cart_total );
 	}
 
 	/**
@@ -398,7 +398,7 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	public function get_discounted_price_in_cents( $item_key ) {
-		$item = $this->items[ $item_key ];
+		$item             = $this->items[ $item_key ];
 		$discounted_price = isset( $this->coupon_discount_totals[ $item_key ]['discount'] ) ? $item->price - $this->coupon_discount_totals[ $item_key ]['discount'] : $item->price;
 		return apply_filters( 'ohmylms_cart_discounted_price', $discounted_price, $item, $item_key, $this );
 	}
@@ -523,7 +523,7 @@ class Cart {
 	 * Set the total amount for a specific key in the cart totals.
 	 *
 	 * @param string $key The key to set the total for.
-	 * @param float $value The total amount to set.
+	 * @param float  $value The total amount to set.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -574,7 +574,7 @@ class Cart {
 	 * Gets cart total after calculation
 	 *
 	 * @param array $cart_data
-	 * @param int $discount
+	 * @param int   $discount
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -631,7 +631,7 @@ class Cart {
 	 * Set the total amount for a specific key in the cart totals.
 	 *
 	 * @param string $key The key to set the total for.
-	 * @param float $value The total amount to set.
+	 * @param float  $value The total amount to set.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -656,7 +656,7 @@ class Cart {
 			if ( empty( $cart_item['data'] ) || ! is_object( $cart_item['data'] ) ) {
 				continue;
 			}
-			
+
 			$item                          = (object) array(
 				'object'   => null,
 				'quantity' => 0,
@@ -668,16 +668,16 @@ class Cart {
 			$item->key                     = $cart_item_key;
 			$item->object                  = $cart_item;
 			$item->quantity                = $cart_item['quantity'];
-			$item->price = $cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale()
+			$item->price                   = $cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale()
 			? (float) $cart_item['data']->get_price() * (float) $cart_item['quantity']
 			: (float) $cart_item['data']->get_regular_price() * (float) $cart_item['quantity'];
-			$item->subtotal = apply_filters(
+			$item->subtotal                = apply_filters(
 				'ohmylms_cart_item_subtotal',
 				$cart_item['data']->is_on_sale() && $cart_item['data']->validate_on_sale() ? (float) $cart_item['data']->get_price() * (float) $cart_item['quantity'] : (float) $cart_item['data']->get_regular_price() * (float) $cart_item['quantity'],
 				$cart_item,
 				$cart_item_key,
 				$this
-			);	
+			);
 			$item->course                  = $cart_item['data'];
 			$this->items[ $cart_item_key ] = $item;
 		}
@@ -710,8 +710,8 @@ class Cart {
 		$the_coupon = new Coupon( $coupon_code );
 
 		$coupon_validity = $this->validate_coupon( $the_coupon, $this->cart_contents );
-		
-		if( isset( $coupon_validity['validity'] ) && ! $coupon_validity['validity'] ) {
+
+		if ( isset( $coupon_validity['validity'] ) && ! $coupon_validity['validity'] ) {
 			ohmylmse_add_notice( $coupon_validity['message'], 'error' );
 			return false;
 		}
@@ -759,7 +759,7 @@ class Cart {
 		}
 
 		$this->applied_coupons[] = $coupon_code;
-		
+
 		do_action( 'ohmylms_applied_coupon', $coupon_code );
 		// Recalculate totals including tax if tax information is available.
 		$this->recalculate_totals_with_tax();
@@ -769,22 +769,22 @@ class Cart {
 
 	/**
 	 * Validate coupon
-	 * 
+	 *
 	 * @param object $coupon
-	 * @param array $items_to_apply
-	 * 
+	 * @param array  $items_to_apply
+	 *
 	 * @return array
-	 * 
+	 *
 	 * @since 1.0.0
 	 */
 	private function validate_coupon( $coupon, $items_to_apply = array() ) {
 
 		$response = array(
 			'validity' => true,
-			'message'  => ''
+			'message'  => '',
 		);
 
-		if( count( $this->get_applied_coupons() ) ) {
+		if ( count( $this->get_applied_coupons() ) ) {
 			$response['validity'] = false;
 			$response['message']  = __( 'Use one coupon at a time', 'ohmylms' );
 		}
@@ -824,36 +824,36 @@ class Cart {
 		$uses_count          = $coupon->get_usage_count();
 		$uses_limit          = $coupon->get_usage_limit();
 		$uses_limit_per_user = $coupon->get_usage_limit_per_user();
-		
+
 		// Check uses limit
-		if( $uses_limit && $uses_limit <= $uses_count ){
+		if ( $uses_limit && $uses_limit <= $uses_count ) {
 			$response['validity'] = false;
 			$response['message']  = __( 'Coupon limit is over', 'ohmylms' );
 		}
 
-		if( $uses_limit_per_user && is_user_logged_in() ) {
-			$current_user_id = get_current_user_id();
-			$current_uses_per_user = get_post_meta( $coupon->get_id(), 'usage_count_'.$current_user_id, true );
-			if( $uses_limit_per_user <= $current_uses_per_user ) {
+		if ( $uses_limit_per_user && is_user_logged_in() ) {
+			$current_user_id       = get_current_user_id();
+			$current_uses_per_user = get_post_meta( $coupon->get_id(), 'usage_count_' . $current_user_id, true );
+			if ( $uses_limit_per_user <= $current_uses_per_user ) {
 				$response['validity'] = false;
 				$response['message']  = __( 'Coupon limit is over for you', 'ohmylms' );
 			}
 		}
 
-		//Check course ids are in checkout or not
+		// Check course ids are in checkout or not
 		$course_id_type = $coupon->get_course_id_type();
-		if( 'selected_course' === $course_id_type ) {
+		if ( 'selected_course' === $course_id_type ) {
 			$course_ids = $coupon->get_course_ids();
-			if( is_array( $course_ids ) && !empty( $course_ids ) && ! empty( $items_to_apply ) ) {
+			if ( is_array( $course_ids ) && ! empty( $course_ids ) && ! empty( $items_to_apply ) ) {
 				$should_apply = true;
 				foreach ( $items_to_apply as $item ) {
-					if( ! in_array( $item['course_id'], $course_ids, true ) ) {
+					if ( ! in_array( $item['course_id'], $course_ids, true ) ) {
 						$should_apply = false;
 						break;
 					}
 				}
-				
-				if( ! $should_apply ) {
+
+				if ( ! $should_apply ) {
 					$response['validity'] = false;
 					$response['message']  = __( 'Coupon is not valid for this item', 'ohmylms' );
 				}
@@ -876,7 +876,7 @@ class Cart {
 		if ( false !== $position ) {
 			unset( $this->applied_coupons[ $position ] );
 		}
-		
+
 		do_action( 'ohmylms_removed_coupon', $coupon_code );
 		// Recalculate totals including tax if tax information is available.
 		$this->recalculate_totals_with_tax();
@@ -893,7 +893,7 @@ class Cart {
 	 * @param string $state The state code (optional).
 	 * @param string $vat_number The VAT number (optional).
 	 * @return bool True if the tax rate was successfully retrieved and applied.
-	 * 
+	 *
 	 * @since 1.0.0
 	 */
 	public function get_country_tax_rate( $country, $state = '', $vat_number = '' ) {
@@ -901,11 +901,11 @@ class Cart {
 		if ( $tax_rate > 0 ) {
 			if ( TaxService::get_instance()->is_eu_vat_enabled() && TaxService::get_instance()->is_eu_countries( $country ) ) {
 				if ( ! empty( $vat_number ) ) {
-					$session_data = [
+					$session_data = array(
 						'cart_contents' => ecommerce()->cart->get_cart_contents(),
 						'vat_number'    => $vat_number,
 						'country_code'  => $country,
-					];
+					);
 
 					if ( ! TaxService::get_instance()->is_vat_validation_disabled() ) {
 
@@ -930,7 +930,7 @@ class Cart {
 					} else {
 						// VAT validation is disabled - assume valid and apply reverse charge.
 						$session_data['reverse_charged'] = true;
-						ecommerce()->session->set( 'ohmylms_checkout_eu_vat_number', $session_data);
+						ecommerce()->session->set( 'ohmylms_checkout_eu_vat_number', $session_data );
 						$tax_rate = 0;
 						// Apply reverse charge when validation is disabled.
 					}
@@ -949,45 +949,45 @@ class Cart {
 			$total     = 0;
 			$sub_total = 0;
 			foreach ( $this->items as $item_key => $item ) {
-				$item->total    = $this->get_discounted_price_in_cents( $item_key );
-				$item->subtotal = $item->subtotal;
-				$item->total = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
-				$this->cart_contents[$item_key]['line_total'] = $item->total;
+				$item->total                                    = $this->get_discounted_price_in_cents( $item_key );
+				$item->subtotal                                 = $item->subtotal;
+				$item->total                                    = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
+				$this->cart_contents[ $item_key ]['line_total'] = $item->total;
 				$total     += $item->total;
 				$sub_total += $item->subtotal;
 			}
 
-			$this->totals['total']    = $total;
-			$this->totals['subtotal'] = $sub_total;
+			$this->totals['total']      = $total;
+			$this->totals['subtotal']   = $sub_total;
 			$this->totals['tax_amount'] = 0;
-			$this->totals['tax_rate'] = 0;
+			$this->totals['tax_rate']   = 0;
 			$this->set_total( $total );
-			ecommerce()->session->set('cart_totals', $this->totals);
+			ecommerce()->session->set( 'cart_totals', $this->totals );
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Recalculate cart totals with tax if tax information is available
-	 * 
+	 *
 	 * This method checks if tax calculation data is available in the session
 	 * and recalculates the cart totals including tax amounts
-	 * 
+	 *
 	 * @return void
 	 * @since 1.0.0
 	 */
 	public function recalculate_totals_with_tax() {
 		// Check if we have tax information in the session.
-		$stored_totals = ecommerce()->session->get('cart_totals');
-		if (!empty($stored_totals) && isset($stored_totals['tax_rate']) && $stored_totals['tax_rate'] > 0) {
+		$stored_totals = ecommerce()->session->get( 'cart_totals' );
+		if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
 			$tax_rate = $stored_totals['tax_rate'];
 			$this->calculate_totals();
-			
+
 			// Now calculate tax based on the discounted total.
-			$tax_data = \TaxCalculator::get_instance()->calculate_tax($tax_rate, $this->totals);
-			
-			if( TaxService::get_instance()->prices_include_tax() ) {
+			$tax_data = \TaxCalculator::get_instance()->calculate_tax( $tax_rate, $this->totals );
+
+			if ( TaxService::get_instance()->prices_include_tax() ) {
 				$this->totals['total'] = $this->totals['total'];
 			} else {
 				$this->totals['total'] = $this->totals['total'] + $tax_data['tax_amount'];
@@ -997,7 +997,7 @@ class Cart {
 			$this->totals['tax_amount'] = $tax_data['tax_amount'];
 			$this->totals['tax_rate']   = $tax_rate;
 			// Update session with new totals.
-			ecommerce()->session->set('cart_totals', $this->totals);
+			ecommerce()->session->set( 'cart_totals', $this->totals );
 		} else {
 			$this->calculate_totals();
 		}

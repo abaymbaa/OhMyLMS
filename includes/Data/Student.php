@@ -288,25 +288,25 @@ class Student extends Data {
 	 * Set the social links of the student.
 	 *
 	 * @param array|string $social_links Array of social links or labels array (for backward compatibility).
-	 * @param array $urls Array of link URLs (optional, for backward compatibility).
+	 * @param array        $urls Array of link URLs (optional, for backward compatibility).
 	 * @since 1.0.0
 	 */
 	public function set_social_links( $social_links, $urls = null ) {
 		$links = array();
-		
+
 		// Handle empty string or null (set empty)
 		if ( empty( $social_links ) || $social_links === '' ) {
 			$this->set_prop( 'social_links', '' );
 			return;
 		}
-		
+
 		// Handle new format: array of objects with 'label' and 'url' keys
 		if ( is_array( $social_links ) && $urls === null ) {
 			foreach ( $social_links as $link ) {
 				if ( is_array( $link ) && isset( $link['label'] ) && isset( $link['url'] ) ) {
 					$label = sanitize_text_field( $link['label'] );
-					$url = esc_url_raw( $link['url'] );
-					
+					$url   = esc_url_raw( $link['url'] );
+
 					if ( ! empty( $label ) && ! empty( $url ) ) {
 						$links[] = array(
 							'label' => $label,
@@ -319,21 +319,21 @@ class Student extends Data {
 		// Handle old format: separate arrays for labels and URLs
 		elseif ( is_array( $social_links ) && is_array( $urls ) ) {
 			$count = min( count( $social_links ), count( $urls ) );
-			
+
 			for ( $i = 0; $i < $count; $i++ ) {
 				$label = sanitize_text_field( $social_links[ $i ] );
-				$url = esc_url_raw( $urls[ $i ] );
-				
+				$url   = esc_url_raw( $urls[ $i ] );
+
 				// Only add if both label and URL are not empty
 				if ( ! empty( $label ) && ! empty( $url ) ) {
 					$links[] = array(
 						'label' => $label,
-						'url' => $url
+						'url'   => $url,
 					);
 				}
 			}
 		}
-		
+
 		$this->set_prop( 'social_links', wp_json_encode( $links ) );
 	}
 
@@ -941,6 +941,7 @@ class Student extends Data {
 
 	/**
 	 * Get the total number of completed orders, optionally for a specific student.
+	 *
 	 * @param int|null $student_id
 	 * @return int
 	 *
@@ -952,6 +953,7 @@ class Student extends Data {
 
 	/**
 	 * Get the total revenue from completed orders, optionally for a specific student.
+	 *
 	 * @param int|null $student_id
 	 * @return float
 	 */
@@ -961,6 +963,7 @@ class Student extends Data {
 
 	/**
 	 * Get the average order value (AOV) from completed orders, optionally for a specific student.
+	 *
 	 * @param int|null $student_id
 	 * @return float
 	 */

@@ -106,7 +106,7 @@ class ZoomApiClient implements ZoomApiInterface {
 	 * @return array The API response.
 	 */
 	private function request( $method, $url, $data = array() ) {
-		$token = $this->token_service->get_valid_access_token();
+		$token   = $this->token_service->get_valid_access_token();
 		$headers = array(
 			'Authorization' => 'Bearer ' . $token,
 			'Content-Type'  => 'application/json',
@@ -132,8 +132,8 @@ class ZoomApiClient implements ZoomApiInterface {
 		}
 
 		$status_code = \wp_remote_retrieve_response_code( $response );
-		$body = \wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
+		$body        = \wp_remote_retrieve_body( $response );
+		$data        = json_decode( $body, true );
 
 		if ( $body === '' ) {
 			return array(

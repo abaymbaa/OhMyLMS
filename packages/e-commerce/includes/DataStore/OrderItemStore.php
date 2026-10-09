@@ -87,7 +87,7 @@ class OrderItemStore extends DataStore {
 	 * Get the properties to update for the given object.
 	 *
 	 * @param object $object The object to get properties for.
-	 * @param array $meta_key_to_props Mapping of meta keys to properties.
+	 * @param array  $meta_key_to_props Mapping of meta keys to properties.
 	 * @param string $meta_type The type of metadata. Default is 'post'.
 	 * @return array The properties to update.
 	 *

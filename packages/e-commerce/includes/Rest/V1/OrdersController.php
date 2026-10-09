@@ -157,20 +157,20 @@ class OrdersController extends RestController {
 
 		$args['date_query'] = array();
 		// if (isset($request['before'])) {
-		//  $args['date_query'][0]['before'] = sanitize_text_field($request['before']);
+		// $args['date_query'][0]['before'] = sanitize_text_field($request['before']);
 		// }
 		// if (!empty($request['start_date'])) {
-		//  $args['date_query'][0] = array(
-		//      'year'  => date('Y', strtotime(sanitize_text_field($request['start_date']))),
-		//      'month' => date('m', strtotime(sanitize_text_field($request['start_date']))),
-		//      'day'   => date('d', strtotime(sanitize_text_field($request['start_date']))),
-		//  );
-		//  $args['paged']  = 1;
-		//  $args['offset'] = 0;
+		// $args['date_query'][0] = array(
+		// 'year'  => date('Y', strtotime(sanitize_text_field($request['start_date']))),
+		// 'month' => date('m', strtotime(sanitize_text_field($request['start_date']))),
+		// 'day'   => date('d', strtotime(sanitize_text_field($request['start_date']))),
+		// );
+		// $args['paged']  = 1;
+		// $args['offset'] = 0;
 
 		// }
 		// if (isset($request['after'])) {
-		//  $args['date_query'][0]['after'] = sanitize_text_field($request['after']);
+		// $args['date_query'][0]['after'] = sanitize_text_field($request['after']);
 		// }
 
 		// Check if 's' is provided, and if so, add the meta_query
@@ -362,13 +362,13 @@ class OrdersController extends RestController {
 
 		$response_data = $this->prepare_item_for_response( $post, $request );
 		$data          = $response_data->get_data();
-		$order = ecommerce_get_order( $post );
+		$order         = ecommerce_get_order( $post );
 		// get the line items
 		foreach ( $order->get_items() as $item_id => $item ) {
 			$item_meta            = array(
-				'key'   => 'course_id',
-				'name'  => $item->get_name(),
-				'price' => ohmylms_format_decimal( $item->get_total(), ohmylms_get_price_decimals() ),
+				'key'      => 'course_id',
+				'name'     => $item->get_name(),
+				'price'    => ohmylms_format_decimal( $item->get_total(), ohmylms_get_price_decimals() ),
 				'quantity' => 1,
 			);
 			$data['line_items'][] = $item_meta;
@@ -376,7 +376,7 @@ class OrdersController extends RestController {
 
 		// get the coupon line items
 		foreach ( $order->get_items( 'coupon' ) as $item_id => $item ) {
-			$coupon_line = array(
+			$coupon_line          = array(
 				'title'    => $item->get_name(),
 				'code'     => $item->get_code(),
 				'discount' => ohmylms_format_decimal( $item->get_discount(), ohmylms_get_price_decimals() ),
@@ -613,22 +613,22 @@ class OrdersController extends RestController {
 	 * @return \WP_REST_Response
 	 */
 	public function get_order_stats( $request ) {
-		$args = array(
+		$args          = array(
 			'post_type'      => 'ohmylms-order',
 			'post_status'    => 'ohmylms-completed',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		);
-		$query = new \WP_Query( $args );
-		$order_ids = $query->posts;
-		$total_orders = count( $order_ids );
+		$query         = new \WP_Query( $args );
+		$order_ids     = $query->posts;
+		$total_orders  = count( $order_ids );
 		$total_revenue = 0;
 		foreach ( $order_ids as $order_id ) {
-			$order = new \CodeRex\Ecommerce\Data\Order( $order_id );
+			$order          = new \CodeRex\Ecommerce\Data\Order( $order_id );
 			$total_revenue += floatval( $order->get_total() );
 		}
 		$average_order_value = $total_orders > 0 ? $total_revenue / $total_orders : 0;
-		$data = array(
+		$data                = array(
 			'total_orders'        => $total_orders,
 			'total_revenue'       => round( $total_revenue, 2 ),
 			'average_order_value' => round( $average_order_value, 2 ),
@@ -678,7 +678,7 @@ class OrdersController extends RestController {
 			'coupon_lines',
 			'refunds',
 			'tax_amount',
-			'tax_rate'
+			'tax_rate',
 		);
 		foreach ( $data_keys as $key ) {
 			$value = $request[ $key ];
@@ -694,7 +694,7 @@ class OrdersController extends RestController {
 	/**
 	 * Prepare the query arguments for retrieving items.
 	 *
-	 * @param array $prepared_args The prepared arguments for the query.
+	 * @param array                 $prepared_args The prepared arguments for the query.
 	 * @param \WP_REST_Request|null $request The REST request object.
 	 * @return array The query arguments.
 	 *
@@ -732,7 +732,7 @@ class OrdersController extends RestController {
 	/**
 	 * Prepare a single course item for response.
 	 *
-	 * @param \WP_Post $post The post object representing the course.
+	 * @param \WP_Post         $post The post object representing the course.
 	 * @param \WP_REST_Request $request The REST request object.
 	 * @return \WP_REST_Response The response object containing the course data.
 	 *
@@ -755,19 +755,19 @@ class OrdersController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_order_data( $order ) {
-		$payment_method_title	= $order->get_payment_method_title();
-		$payment_method 		= $order->get_payment_method();
-		$transaction_id			= $order->get_transaction_id();
+		$payment_method_title = $order->get_payment_method_title();
+		$payment_method       = $order->get_payment_method();
+		$transaction_id       = $order->get_transaction_id();
 		if ( ecommerce()->gateways() ) {
 			$payment_gateways = ecommerce()->gateways()->get_payment_gateways();
 		} else {
 			$payment_gateways = array();
 		}
 		$payment_method_title = $order->get_payment_method_title();
-		$student 			  = \ohmylms_get_student( $order->get_student_id() );
-		$related_orders		  = $order->get_related_orders();
-		$purchased_by		  = get_post_meta( $order->get_id(), '_purchased_by', true );
-		$post = get_post( $order->get_id() );
+		$student              = \ohmylms_get_student( $order->get_student_id() );
+		$related_orders       = $order->get_related_orders();
+		$purchased_by         = get_post_meta( $order->get_id(), '_purchased_by', true );
+		$post                 = get_post( $order->get_id() );
 		$data                 = array(
 			'id'                   => $order->get_id(),
 			'parent_id'            => $order->get_parent_id(),
@@ -792,7 +792,7 @@ class OrdersController extends RestController {
 			'formattedTotal'       => $order->get_formatted_order_total(),
 			'subtotal'             => ohmylms_format_decimal( $order->get_cart_subtotal(), ohmylms_get_price_decimals() ),
 			'payment_method'       => $payment_method,
-			'purchased_by'       => $purchased_by ? $purchased_by : 'currency',
+			'purchased_by'         => $purchased_by ? $purchased_by : 'currency',
 			'payment_method_title' => $payment_method_title ? $payment_method_title : 'N/A',
 			'transaction_id'       => $transaction_id,
 			'date_completed'       => ecommerce_rest_prepare_date_response( $order->get_date_completed(), false ),
@@ -806,13 +806,13 @@ class OrdersController extends RestController {
 			'line_items'           => array(),
 			'coupon_lines'         => array(),
 			'refunds'              => array(),
-			'total_orders'		   => $student ? $student->get_total_orders() : 0,
-			'total_revenue'		   => $student ? $student->get_total_revenue() : 0,
-			'aov'		   		   => $student ? $student->get_aov() : 0,
+			'total_orders'         => $student ? $student->get_total_orders() : 0,
+			'total_revenue'        => $student ? $student->get_total_revenue() : 0,
+			'aov'                  => $student ? $student->get_aov() : 0,
 			'related_orders'       => $related_orders,
-			'is_renewal_order'	   => $order->is_renewal_order(),
-			'is_parent_order'	   => $order->is_parent_order(),
-			'is_normal_order'	   => ! $order->is_renewal_order() && ! $order->is_parent_order(),
+			'is_renewal_order'     => $order->is_renewal_order(),
+			'is_parent_order'      => $order->is_parent_order(),
+			'is_normal_order'      => ! $order->is_renewal_order() && ! $order->is_parent_order(),
 			'tax_amount'           => ohmylms_format_decimal( $order->get_tax_amount(), ohmylms_get_price_decimals() ),
 			'tax_rate'             => $order->get_tax_rate(),
 			'is_included_tax'      => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax(),
@@ -825,7 +825,7 @@ class OrdersController extends RestController {
 			}
 		}
 
-		$data['payment_gateway_meta'] =  isset( $payment_gateways[ $payment_method ] ) ? $payment_gateways[ $payment_method ]->get_payment_gateway_meta( $order ) : [];
+		$data['payment_gateway_meta'] = isset( $payment_gateways[ $payment_method ] ) ? $payment_gateways[ $payment_method ]->get_payment_gateway_meta( $order ) : array();
 		return $data;
 	}
 
@@ -835,7 +835,7 @@ class OrdersController extends RestController {
 	 * This method generates the self and collection links for the order item.
 	 *
 	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
-	 * @param \WP_REST_Request $request The REST request object.
+	 * @param \WP_REST_Request              $request The REST request object.
 	 * @return array The array containing the links for the order item.
 	 *
 	 * @since 1.0.0

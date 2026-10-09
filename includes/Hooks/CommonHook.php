@@ -1,6 +1,7 @@
 <?php
 
 namespace OhMyLMS\Hooks;
+
 use MailMintPro\App\Utilities\Helper\Integration;
 use MailMintPro\Mint\Internal\AbandonedCart\Helper\Common;
 use Mint\MRM\DataBase\Models\ContactGroupModel;
@@ -48,11 +49,10 @@ class CommonHook extends HookHandler {
 		add_action( 'delete_user', array( $this, 'after_delete_wp_user' ), 10 );
 		add_filter( 'admin_body_class', array( $this, 'add_ohmylms_admin_body_class' ), 10, 1 );
 		// if ( is_ohmylms() ) {
-		// 	add_action( 'the_password_form', array( $this, 'ohmylms_password_protected_form_class' ));
+		// add_action( 'the_password_form', array( $this, 'ohmylms_password_protected_form_class' ));
 		// }
 
 		add_filter( 'admin_footer_text', array( $this, 'review_text_in_footer' ), 1 );
-
 
 		add_filter( 'plugin_row_meta', array( $this, 'add_row_meta' ), 10, 2 );
 
@@ -67,16 +67,16 @@ class CommonHook extends HookHandler {
 		add_action( 'template_redirect', array( $this, 'handle_add_to_cart_after_login' ), 9 );
 		add_action( 'template_redirect', array( $this, 'enforce_checkout_login_gate' ), 8 );
 
-        add_filter('ohmylms_data_stores', array( $this, 'pro_data_stores' ), 10 );
-        add_filter('ohmylms_modules', array( $this, 'pro_modules' ), 10 );
-        add_filter('ohmylms_is_pro', array( $this, 'ohmylms_is_pro' ), 10 );
-        add_filter('ohmylms_get_admin_script_data', array( $this, 'ohmylms_get_admin_script_data_for_mm' ), 10, 2 );
-        add_action('template_redirect', array( $this, 'restrict_session_access' ), 10 );
-        add_action( 'ohmylms_after_settings_menu_item', array( $this, 'register_submenu' ) );
-        add_filter( 'post_type_link', array( $this, 'session_single_url' ), 1, 2 );
-        add_filter( 'ohmylms_is_lesson_sequentially_locked', array( $this, 'is_lesson_sequentially_locked' ), 10, 4 );
-        add_filter( 'ohmylms_can_save_sequential_mode', '__return_true' );
-    }
+		add_filter( 'ohmylms_data_stores', array( $this, 'pro_data_stores' ), 10 );
+		add_filter( 'ohmylms_modules', array( $this, 'pro_modules' ), 10 );
+		add_filter( 'ohmylms_is_pro', array( $this, 'ohmylms_is_pro' ), 10 );
+		add_filter( 'ohmylms_get_admin_script_data', array( $this, 'ohmylms_get_admin_script_data_for_mm' ), 10, 2 );
+		add_action( 'template_redirect', array( $this, 'restrict_session_access' ), 10 );
+		add_action( 'ohmylms_after_settings_menu_item', array( $this, 'register_submenu' ) );
+		add_filter( 'post_type_link', array( $this, 'session_single_url' ), 1, 2 );
+		add_filter( 'ohmylms_is_lesson_sequentially_locked', array( $this, 'is_lesson_sequentially_locked' ), 10, 4 );
+		add_filter( 'ohmylms_can_save_sequential_mode', '__return_true' );
+	}
 
 	/**
 	 * Remove emoji scripts and styles from admin
@@ -127,7 +127,7 @@ class CommonHook extends HookHandler {
 					$admin_bar->add_node(
 						array(
 							'id'    => 'edit-course', // Use the same ID to modify the existing one
-							'title' => '<span class="ab-icon dashicons dashicons-edit"></span>' . esc_html__('Edit Course', 'wpfnl'),
+							'title' => '<span class="ab-icon dashicons dashicons-edit"></span>' . esc_html__( 'Edit Course', 'wpfnl' ),
 							'href'  => $new_url, // New link for the "Edit Course"
 						)
 					);
@@ -741,7 +741,7 @@ class CommonHook extends HookHandler {
 	public function delete_enrollment_after_delete_order( $order_id ) {
 		global $wpdb;
 		// Ensure order_id is sanitized
-		$order_id = intval( $order_id );
+		$order_id        = intval( $order_id );
 		$parent_order_id = wp_get_post_parent_id( $order_id );
 		if ( $parent_order_id ) {
 			$order_id = $parent_order_id;
@@ -760,7 +760,6 @@ class CommonHook extends HookHandler {
 				array( '%d' )                                 // Data type for the condition
 			);
 		}
-
 	}
 
 	/**
@@ -770,7 +769,7 @@ class CommonHook extends HookHandler {
 		global $wpdb;
 		// Ensure course_id is sanitized
 		$membership_id = intval( $membership_id );
-		$order_id = null;
+		$order_id      = null;
 		if ( ohmylms_is_pro() ) {
 			$order_id = $wpdb->get_var(
 				$wpdb->prepare(
@@ -856,7 +855,7 @@ class CommonHook extends HookHandler {
 			}
 		}
 
-		if( $this->maybe_bricks_theme() ) {
+		if ( $this->maybe_bricks_theme() ) {
 			return $template;
 		}
 
@@ -895,7 +894,7 @@ class CommonHook extends HookHandler {
 
 				// Then check for Gutenberg blocks
 				if ( $post->post_content && has_blocks( $post->post_content ) ) {
-					$blocks = parse_blocks( $post->post_content );
+					$blocks                    = parse_blocks( $post->post_content );
 					$checkout_page_layout_type = $this->find_layout_type_in_blocks( $blocks, $checkout_page_layout_type );
 				}
 
@@ -923,7 +922,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in blocks (handles nested blocks)
 	 *
-	 * @param array $blocks Array of blocks to search
+	 * @param array  $blocks Array of blocks to search
 	 * @param string $default_value Default value to return if not found
 	 * @return string The found layoutType or default value
 	 */
@@ -952,7 +951,7 @@ class CommonHook extends HookHandler {
 	 * Find layoutType in Elementor widget data
 	 *
 	 * @param string|array $elementor_data JSON string or already decoded array of Elementor data
-	 * @param string $default_value Default value to return if not found
+	 * @param string       $default_value Default value to return if not found
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_elementor_data( $elementor_data, $default_value ) {
@@ -969,7 +968,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in Elementor elements
 	 *
-	 * @param array $elements Array of Elementor elements
+	 * @param array  $elements Array of Elementor elements
 	 * @param string $default_value Default value to return if not found
 	 * @return string The found layoutType or default value
 	 */
@@ -997,7 +996,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Find layoutType in Bricks element data
 	 *
-	 * @param array $bricks_data Array of Bricks elements
+	 * @param array  $bricks_data Array of Bricks elements
 	 * @param string $default_value Default value to return if not found
 	 * @return string The found layoutType or default value
 	 */
@@ -1012,7 +1011,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in Bricks elements
 	 *
-	 * @param array $elements Array of Bricks elements
+	 * @param array  $elements Array of Bricks elements
 	 * @param string $default_value Default value to return if not found
 	 * @return string The found layoutType or default value
 	 */
@@ -1040,13 +1039,13 @@ class CommonHook extends HookHandler {
 
 	public function maybe_bricks_theme() {
 		$current_theme = wp_get_theme();
-		$parent_theme = $current_theme->parent();
+		$parent_theme  = $current_theme->parent();
 
-		if ('Bricks' === $current_theme->get('Name')) {
+		if ( 'Bricks' === $current_theme->get( 'Name' ) ) {
 			return true;
 		}
 
-		if ($parent_theme && 'Bricks' === $parent_theme->get('Name')) {
+		if ( $parent_theme && 'Bricks' === $parent_theme->get( 'Name' ) ) {
 			return true;
 		}
 
@@ -1062,15 +1061,15 @@ class CommonHook extends HookHandler {
 	 */
 	public function register_custom_template( $templates ) {
 
-		$templates['ohmylms-profile']    = 'OhMyLMS My Profile'; // Template name as it appears in the editor
+		$templates['ohmylms-profile'] = 'OhMyLMS My Profile'; // Template name as it appears in the editor
 
-		$templates['ohmylms-checkout']    = 'OhMyLMS Checkout'; // Template name as it appears in the editor
+		$templates['ohmylms-checkout'] = 'OhMyLMS Checkout'; // Template name as it appears in the editor
 
-		$templates['ohmylms-thankyou']    = 'OhMyLMS Thank You'; // Template name as it appears in the editor
+		$templates['ohmylms-thankyou'] = 'OhMyLMS Thank You'; // Template name as it appears in the editor
 
 		$templates['ohmylms-certificate'] = 'Certificate template';
 
-		$templates['ohmylms-dashboard']   = 'OhMyLMS Dashboard'; // Template name as it appears in the editor
+		$templates['ohmylms-dashboard'] = 'OhMyLMS Dashboard'; // Template name as it appears in the editor
 
 		$templates['ohmylms-my-courses'] = 'OhMyLMS My Courses'; // Template name as it appears in the editor
 
@@ -1285,10 +1284,10 @@ class CommonHook extends HookHandler {
 	 * @since 1.0.0
 	 */
 	public function maybe_allowed_webhook( $is_allowed ) {
-		$queryString = "mailmint=1&route=webhook&topic=contact&hash=f9fcd11c-fde8-4c7f-9810-0ebb02d2740e";
+		$queryString     = 'mailmint=1&route=webhook&topic=contact&hash=f9fcd11c-fde8-4c7f-9810-0ebb02d2740e';
 		$userQueryString = $_SERVER['QUERY_STRING'] ?? '';
 
-		if( $queryString !== $userQueryString ) {
+		if ( $queryString !== $userQueryString ) {
 			return true;
 		}
 
@@ -1384,7 +1383,7 @@ class CommonHook extends HookHandler {
 	 * @return void
 	 */
 	public function modify_comments_query( $query ) {
-		 global $pagenow;
+		global $pagenow;
 
 		// Only run in admin "Comments" screen
 		if ( is_admin() && $pagenow === 'edit-comments.php' ) {
@@ -1552,7 +1551,7 @@ class CommonHook extends HookHandler {
 				$msg = __( 'The verification link is invalid.', 'ohmylms' );
 			}
 			$resend_url = \OhMyLMS\Services\EmailVerificationService::get_resend_url();
-			$msg .= ' <a href="' . esc_url( $resend_url ) . '">' . esc_html__( 'Resend verification email', 'ohmylms' ) . '</a>';
+			$msg       .= ' <a href="' . esc_url( $resend_url ) . '">' . esc_html__( 'Resend verification email', 'ohmylms' ) . '</a>';
 			$this->render_verification_notice( 'warning', $msg, false );
 			return;
 		}
@@ -1561,8 +1560,8 @@ class CommonHook extends HookHandler {
 		// Persistent banner for unverified logged-in users.
 		if ( $user_id && ! \OhMyLMS\Services\EmailVerificationService::is_verified( $user_id ) ) {
 			$resend_url = \OhMyLMS\Services\EmailVerificationService::get_resend_url();
-			$msg = __( 'Your email address is not yet verified. Please check your inbox.', 'ohmylms' );
-			$msg .= ' <a href="' . esc_url( $resend_url ) . '">' . esc_html__( 'Resend verification email', 'ohmylms' ) . '</a>';
+			$msg        = __( 'Your email address is not yet verified. Please check your inbox.', 'ohmylms' );
+			$msg       .= ' <a href="' . esc_url( $resend_url ) . '">' . esc_html__( 'Resend verification email', 'ohmylms' ) . '</a>';
 			$this->render_verification_notice( 'warning', $msg, false );
 		}
 	}
@@ -1580,11 +1579,23 @@ class CommonHook extends HookHandler {
 			$brand = '#6E42D3';
 		}
 		$colors = array(
-			'success' => array( 'bg' => '#f0fdf4', 'border' => '#16a34a', 'text' => '#15803d' ),
-			'info'    => array( 'bg' => '#eff6ff', 'border' => $brand,    'text' => $brand    ),
-			'warning' => array( 'bg' => '#fffbeb', 'border' => '#d97706', 'text' => '#92400e' ),
+			'success' => array(
+				'bg'     => '#f0fdf4',
+				'border' => '#16a34a',
+				'text'   => '#15803d',
+			),
+			'info'    => array(
+				'bg'     => '#eff6ff',
+				'border' => $brand,
+				'text'   => $brand,
+			),
+			'warning' => array(
+				'bg'     => '#fffbeb',
+				'border' => '#d97706',
+				'text'   => '#92400e',
+			),
 		);
-		$c = $colors[ $type ] ?? $colors['info'];
+		$c      = $colors[ $type ] ?? $colors['info'];
 		?>
 		<div class="ohmylms-verification-notice ohmylms-verification-notice--<?php echo esc_attr( $type ); ?>" style="background:<?php echo esc_attr( $c['bg'] ); ?>;border-left:4px solid <?php echo esc_attr( $c['border'] ); ?>;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:14px;color:<?php echo esc_attr( $c['text'] ); ?>;line-height:1.6;">
 			<?php
@@ -1660,8 +1671,8 @@ class CommonHook extends HookHandler {
 			}
 
 			// Check for a pending post-verification redirect (e.g., checkout after registration).
-			$verified_user_id     = (int) ( $result['user_id'] ?? get_current_user_id() );
-			$pending_redirect     = $verified_user_id ? get_user_meta( $verified_user_id, '_ohmylms_post_verification_redirect', true ) : '';
+			$verified_user_id = (int) ( $result['user_id'] ?? get_current_user_id() );
+			$pending_redirect = $verified_user_id ? get_user_meta( $verified_user_id, '_ohmylms_post_verification_redirect', true ) : '';
 			if ( $pending_redirect ) {
 				delete_user_meta( $verified_user_id, '_ohmylms_post_verification_redirect' );
 				wp_safe_redirect( $pending_redirect );
@@ -1750,7 +1761,10 @@ class CommonHook extends HookHandler {
 			wp_die(
 				esc_html__( 'You must verify your email address before submitting a review.', 'ohmylms' ),
 				esc_html__( 'Email verification required', 'ohmylms' ),
-				array( 'response' => 403, 'back_link' => true )
+				array(
+					'response'  => 403,
+					'back_link' => true,
+				)
 			);
 		}
 
@@ -1794,7 +1808,7 @@ class CommonHook extends HookHandler {
 			return;
 		}
 
-		$course_id    = 0;
+		$course_id      = 0;
 		$from_url_param = false;
 
 		if ( ! empty( $_GET['ohmylms_add_to_cart'] ) ) {
@@ -1828,26 +1842,26 @@ class CommonHook extends HookHandler {
 		}
 	}
 
-public function is_lesson_sequentially_locked( $locked, $content_id, $course_id, $student_id ) {
-        if ( $locked ) {
-            return true;
-        }
-        return \OhMyLMS\SequentialMode::is_sequentially_locked( $content_id, $course_id, $student_id );
-    }
+	public function is_lesson_sequentially_locked( $locked, $content_id, $course_id, $student_id ) {
+		if ( $locked ) {
+			return true;
+		}
+		return \OhMyLMS\SequentialMode::is_sequentially_locked( $content_id, $course_id, $student_id );
+	}
 
-public function pro_data_stores( $stores ){
-        $stores['membership-pro'] = 'OhMyLMS\DataStores\MembershipStore';
-        $stores['assignment-pro'] = 'OhMyLMS\DataStores\AssignmentStore';
-        $stores['course-pro'] = 'OhMyLMS\DataStores\CourseStore';
-        $stores['lesson-pro'] = 'OhMyLMS\DataStores\LessonStore';
-        $stores['session-pro'] = 'OhMyLMS\DataStores\SessionStore';
-        return $stores;
-    }
+	public function pro_data_stores( $stores ) {
+		$stores['membership-pro'] = 'OhMyLMS\DataStores\MembershipStore';
+		$stores['assignment-pro'] = 'OhMyLMS\DataStores\AssignmentStore';
+		$stores['course-pro']     = 'OhMyLMS\DataStores\CourseStore';
+		$stores['lesson-pro']     = 'OhMyLMS\DataStores\LessonStore';
+		$stores['session-pro']    = 'OhMyLMS\DataStores\SessionStore';
+		return $stores;
+	}
 
-public function register_submenu() {
-        $slug       = OHMYLMS_SLUG;
+	public function register_submenu() {
+		$slug       = OHMYLMS_SLUG;
 		$capability = 'manage_options';
-        add_submenu_page(
+		add_submenu_page(
 			$slug,
 			__( 'Add-ons', 'ohmylms' ),
 			__( 'Add-ons', 'ohmylms' ),
@@ -1855,648 +1869,646 @@ public function register_submenu() {
 			admin_url( 'admin.php?page=ohmylms#/integrations' ),
 			null
 		);
-    }
+	}
 
-public function ohmylms_is_pro( $is_pro ){
-        return true;
-    }
+	public function ohmylms_is_pro( $is_pro ) {
+		return true;
+	}
 
-public function pro_modules( $modules ){
-        array_push($modules,"membership","assignment");
-        return $modules;
-    }
+	public function pro_modules( $modules ) {
+		array_push( $modules, 'membership', 'assignment' );
+		return $modules;
+	}
 
-public function restrict_session_access() {
+	public function restrict_session_access() {
 		if ( is_single() ) {
 			global $post;
 
 			$restrict_post_types = apply_filters(
 				'ohmylms_restricted_content_post_types',
-				['ohmylms-lesson','ohmylms-assignment','ohmylms-quiz','ohmylms-session']
+				array( 'ohmylms-lesson', 'ohmylms-assignment', 'ohmylms-quiz', 'ohmylms-session' )
 			);
 			// Check if the current post type is in the restricted list
-			if (in_array($post->post_type, $restrict_post_types, true)) {
+			if ( in_array( $post->post_type, $restrict_post_types, true ) ) {
 				// Implement drip functionality
-                if( 'ohmylms-lesson' === $post->post_type ){
-                    $student = new \OhMyLMS\Data\Student(get_current_user_id());
-                    $lesson_obj = ohmylms_get_lesson($post->ID);
-                    if( $lesson_obj ){
-                        $drip_feed 			= method_exists( $lesson_obj, 'get_drip_feed' )  ? $lesson_obj->get_drip_feed() : '';
-                        $drip_feed          = !$drip_feed && method_exists( $lesson_obj, 'get_drip_settings' ) ? $lesson_obj->get_drip_settings() : '';
-                        // Check drip feed settings
-                        if ( is_array($drip_feed) && !empty($drip_feed['enable']) ) {
-                            if( 'specific-date' === $drip_feed['type'] ) {
-
-                                // Get current WordPress date and time in UTC
-                                $current_time = new \DateTime('now', new \DateTimeZone(wp_timezone_string()));
-                                $current_date = $current_time->format('Y-m-d');
-                                $current_time_only = $current_time->format('H:i:s');
-
-                                // Parse drip feed date and time
-                                $drip_date = (new \DateTime($drip_feed['date'], new \DateTimeZone(wp_timezone_string())))->format('Y-m-d');
-                                $drip_time = (new \DateTime($drip_feed['time'], new \DateTimeZone(wp_timezone_string())))->format('H:i:s');
-
-                                // Compare date
-                                if ($current_date === $drip_date) {
-                                    // If date matches, compare time
-                                    if ($current_time_only < $drip_time) {
-
-                                        ob_start();
-                                        ?>
-                                        <div class="ohmylms-access-denied-modal">
-                                            <div class="ohmylms-access-denied-inner">
-                                                <div class="ohmylms-access-denied-modal-content">
-
-                                                    <span class="denied-icon">
-                                                        <svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
-                                                    </span>
-
-                                                    <h4 class="ohmylms-access-denied-title">
-                                                        <?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
-                                                    </h4>
-
-                                                    <p class="ohmylms-access-denied-description">
-                                                        <?php
-                                                        printf(
-                                                            esc_html__( 'This content will be available after "%s"', 'ohmylms' ),
-                                                            esc_html( $drip_time .' '. wp_timezone_string()  )
-                                                        );
-                                                        ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <style id="access-denied-modal">
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
-                                                background-color: #F4F5F7;
-                                                padding: 40px 40px;
-                                                border-radius: 14px;
-                                                box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
-                                                text-align: center;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon {
-                                                display: block;
-                                                text-align: center;
-                                                margin-bottom: 20px;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon svg {
-                                                display: block;
-                                                margin: 0 auto;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-title {
-                                                margin-bottom: 12px;
-                                                font-size: 36px;
-                                                font-weight: 700;
-                                                line-height: 1;
-                                                color: var(--ohmylms-heading-color);
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-description {
-                                                font-size: 16px !important;
-                                                color: #7A8B9A !important;
-                                                font-weight: 500;
-                                                line-height: 1.5 !important;
-                                                max-width: 380px;
-                                                margin: 0 auto 32px !important;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-button {
-                                                background-color: #1356F0;
-                                                color: #fff;
-                                                padding: 13px 20px;
-                                                border-radius: 8px;
-                                                border: none;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                font-weight: 500;
-                                                line-height: 1;
-                                                text-decoration: none;
-                                                display: inline-block;
-                                            }
-
-                                            @media screen and (max-width: 1199px) {
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
-                                                    font-size: 26px;
-                                                }
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
-                                                    font-size: 14px;
-                                                }
-
-                                            }
-
-                                        </style>
-                                        <?php
-                                        $content = ob_get_clean();
-
-                                        wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
-                                    }
-                                } elseif ($current_date < $drip_date) {
-                                    // If current date is earlier than the drip feed date
-
-
-                                    ob_start();
-                                        ?>
-                                        <div class="ohmylms-access-denied-modal">
-                                            <div class="ohmylms-access-denied-inner">
-                                                <div class="ohmylms-access-denied-modal-content">
-
-                                                    <span class="denied-icon">
-                                                        <svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
-                                                    </span>
-
-                                                    <h4 class="ohmylms-access-denied-title">
-                                                        <?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
-                                                    </h4>
-
-                                                    <p class="ohmylms-access-denied-description">
-                                                        <?php
-                                                        printf(
-                                                            esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
-                                                            esc_html( $drip_date .' '. wp_timezone_string()  )
-                                                        );
-                                                        ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <style id="access-denied-modal">
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
-                                                background-color: #F4F5F7;
-                                                padding: 40px 40px;
-                                                border-radius: 14px;
-                                                box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
-                                                text-align: center;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon {
-                                                display: block;
-                                                text-align: center;
-                                                margin-bottom: 20px;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon svg {
-                                                display: block;
-                                                margin: 0 auto;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-title {
-                                                margin-bottom: 12px;
-                                                font-size: 36px;
-                                                font-weight: 700;
-                                                line-height: 1;
-                                                color: var(--ohmylms-heading-color);
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-description {
-                                                font-size: 16px !important;
-                                                color: #7A8B9A !important;
-                                                font-weight: 500;
-                                                line-height: 1.5 !important;
-                                                max-width: 380px;
-                                                margin: 0 auto 32px !important;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-button {
-                                                background-color: #1356F0;
-                                                color: #fff;
-                                                padding: 13px 20px;
-                                                border-radius: 8px;
-                                                border: none;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                font-weight: 500;
-                                                line-height: 1;
-                                                text-decoration: none;
-                                                display: inline-block;
-                                            }
-
-                                            @media screen and (max-width: 1199px) {
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
-                                                    font-size: 26px;
-                                                }
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
-                                                    font-size: 14px;
-                                                }
-
-                                            }
-
-                                        </style>
-                                        <?php
-                                        $content = ob_get_clean();
-
-                                        wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
-                                }
-                            }elseif( 'enrollment-from-x-days' === $drip_feed['type'] ){
-                                $days = !empty($drip_feed['enrollment_from_x_days']) ? $drip_feed['enrollment_from_x_days'] : 0;
-                                global $wpdb;
-                                $user_id = get_current_user_id(); // Change this as needed
-                                $course_id = $post->post_parent;
-                                $table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-                                $start_date = $wpdb->get_var(
-                                    $wpdb->prepare(
-                                        "SELECT start_date FROM {$table_name} WHERE user_id = %d AND course_id = %d",
-                                        $user_id,
-                                        $course_id
-                                    )
-                                );
-
-                                if ($start_date) {
-                                    $start_date_time = new \DateTime($start_date);
-                                    $current_date_time = new \DateTime();
-
-                                    $interval = $start_date_time->diff($current_date_time);
-                                    $days_difference = $interval->days;
-                                    if( (int)$days > (int)$days_difference ){
-                                         // Calculate the exact date when content will be available
-                                        $available_date = clone $start_date_time;
-                                        $available_date->modify("+$days days");
-
-                                        ob_start();
-                                        ?>
-                                        <div class="ohmylms-access-denied-modal">
-                                            <div class="ohmylms-access-denied-inner">
-                                                <div class="ohmylms-access-denied-modal-content">
-
-                                                    <span class="denied-icon">
-                                                        <svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
-                                                    </span>
-
-                                                    <h4 class="ohmylms-access-denied-title">
-                                                        <?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
-                                                    </h4>
-
-                                                    <p class="ohmylms-access-denied-description">
-                                                        <?php
-                                                        printf(
-                                                            esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
-                                                            esc_html( $available_date->format('F j, Y')  )
-                                                        );
-                                                        ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <style id="access-denied-modal">
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
-                                                background-color: #F4F5F7;
-                                                padding: 40px 40px;
-                                                border-radius: 14px;
-                                                box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
-                                                text-align: center;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon {
-                                                display: block;
-                                                text-align: center;
-                                                margin-bottom: 20px;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon svg {
-                                                display: block;
-                                                margin: 0 auto;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-title {
-                                                margin-bottom: 12px;
-                                                font-size: 36px;
-                                                font-weight: 700;
-                                                line-height: 1;
-                                                color: var(--ohmylms-heading-color);
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-description {
-                                                font-size: 16px !important;
-                                                color: #7A8B9A !important;
-                                                font-weight: 500;
-                                                line-height: 1.5 !important;
-                                                max-width: 380px;
-                                                margin: 0 auto 32px !important;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-button {
-                                                background-color: #1356F0;
-                                                color: #fff;
-                                                padding: 13px 20px;
-                                                border-radius: 8px;
-                                                border: none;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                font-weight: 500;
-                                                line-height: 1;
-                                                text-decoration: none;
-                                                display: inline-block;
-                                            }
-
-                                            @media screen and (max-width: 1199px) {
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
-                                                    font-size: 26px;
-                                                }
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
-                                                    font-size: 14px;
-                                                }
-
-                                            }
-
-                                        </style>
-                                        <?php
-                                        $content = ob_get_clean();
-
-                                        wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
-                                    }
-                                }
-                            }elseif( 'course-content-sequentially' === $drip_feed['type'] ){
-                                $prev_content = ohmylms_get_prev_content($post->ID);
-                                if ( $prev_content && isset($prev_content['id']) ) {
-                                    if( !$student->maybe_completed($prev_content['id']) ){
-                                        // Get the previous content title for better user experience
-                                        $prev_content_title = get_the_title($prev_content['id']);
-                                        $incomplete_course_link = get_permalink( $prev_content['id'] );
-
-
-                                        ob_start();
-                                        ?>
-                                        <div class="ohmylms-access-denied-modal">
-                                            <div class="ohmylms-access-denied-inner">
-                                                <div class="ohmylms-access-denied-modal-content">
-
-                                                    <span class="denied-icon">
-                                                        <svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
-                                                    </span>
-
-                                                    <h4 class="ohmylms-access-denied-title">
-                                                        <?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
-                                                    </h4>
-
-                                                    <p class="ohmylms-access-denied-description">
-                                                        <?php
-                                                        printf(
-                                                            esc_html__( 'You must complete "%s" before viewing this content. Please complete it and try again.', 'ohmylms' ),
-                                                            esc_html( $prev_content_title )
-                                                        );
-                                                        ?>
-                                                    </p>
-
-                                                    <a href="<?php echo esc_url( $incomplete_course_link ); ?>" class="ohmylms-access-denied-button">
-                                                        <?php esc_html_e( 'Go to Prerequisite Content', 'ohmylms' ); ?>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <style id="access-denied-modal">
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
-                                                background-color: #F4F5F7;
-                                                padding: 40px 40px;
-                                                border-radius: 14px;
-                                                box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
-                                                text-align: center;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon {
-                                                display: block;
-                                                text-align: center;
-                                                margin-bottom: 20px;
-                                            }
-
-                                            .ohmylms-access-denied-modal .denied-icon svg {
-                                                display: block;
-                                                margin: 0 auto;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-title {
-                                                margin-bottom: 12px;
-                                                font-size: 36px;
-                                                font-weight: 700;
-                                                line-height: 1;
-                                                color: var(--ohmylms-heading-color);
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-description {
-                                                font-size: 16px !important;
-                                                color: #7A8B9A !important;
-                                                font-weight: 500;
-                                                line-height: 1.5 !important;
-                                                max-width: 380px;
-                                                margin: 0 auto 32px !important;
-                                            }
-
-                                            .ohmylms-access-denied-modal .ohmylms-access-denied-button {
-                                                background-color: #1356F0;
-                                                color: #fff;
-                                                padding: 13px 20px;
-                                                border-radius: 8px;
-                                                border: none;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                font-weight: 500;
-                                                line-height: 1;
-                                                text-decoration: none;
-                                                display: inline-block;
-                                            }
-
-                                            @media screen and (max-width: 1199px) {
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
-                                                    font-size: 26px;
-                                                }
-                                                .ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
-                                                    font-size: 14px;
-                                                }
-
-                                            }
-
-                                        </style>
-                                        <?php
-                                        $content = ob_get_clean();
-
-                                        wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+				if ( 'ohmylms-lesson' === $post->post_type ) {
+					$student    = new \OhMyLMS\Data\Student( get_current_user_id() );
+					$lesson_obj = ohmylms_get_lesson( $post->ID );
+					if ( $lesson_obj ) {
+						$drip_feed = method_exists( $lesson_obj, 'get_drip_feed' ) ? $lesson_obj->get_drip_feed() : '';
+						$drip_feed = ! $drip_feed && method_exists( $lesson_obj, 'get_drip_settings' ) ? $lesson_obj->get_drip_settings() : '';
+						// Check drip feed settings
+						if ( is_array( $drip_feed ) && ! empty( $drip_feed['enable'] ) ) {
+							if ( 'specific-date' === $drip_feed['type'] ) {
+
+								// Get current WordPress date and time in UTC
+								$current_time      = new \DateTime( 'now', new \DateTimeZone( wp_timezone_string() ) );
+								$current_date      = $current_time->format( 'Y-m-d' );
+								$current_time_only = $current_time->format( 'H:i:s' );
+
+								// Parse drip feed date and time
+								$drip_date = ( new \DateTime( $drip_feed['date'], new \DateTimeZone( wp_timezone_string() ) ) )->format( 'Y-m-d' );
+								$drip_time = ( new \DateTime( $drip_feed['time'], new \DateTimeZone( wp_timezone_string() ) ) )->format( 'H:i:s' );
+
+								// Compare date
+								if ( $current_date === $drip_date ) {
+									// If date matches, compare time
+									if ( $current_time_only < $drip_time ) {
+
+										ob_start();
+										?>
+										<div class="ohmylms-access-denied-modal">
+											<div class="ohmylms-access-denied-inner">
+												<div class="ohmylms-access-denied-modal-content">
+
+													<span class="denied-icon">
+														<svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
+													</span>
+
+													<h4 class="ohmylms-access-denied-title">
+														<?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
+													</h4>
+
+													<p class="ohmylms-access-denied-description">
+														<?php
+														printf(
+															esc_html__( 'This content will be available after "%s"', 'ohmylms' ),
+															esc_html( $drip_time . ' ' . wp_timezone_string() )
+														);
+														?>
+													</p>
+												</div>
+											</div>
+										</div>
+
+										<style id="access-denied-modal">
+											.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
+												background-color: #F4F5F7;
+												padding: 40px 40px;
+												border-radius: 14px;
+												box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
+												text-align: center;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon {
+												display: block;
+												text-align: center;
+												margin-bottom: 20px;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon svg {
+												display: block;
+												margin: 0 auto;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-title {
+												margin-bottom: 12px;
+												font-size: 36px;
+												font-weight: 700;
+												line-height: 1;
+												color: var(--ohmylms-heading-color);
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-description {
+												font-size: 16px !important;
+												color: #7A8B9A !important;
+												font-weight: 500;
+												line-height: 1.5 !important;
+												max-width: 380px;
+												margin: 0 auto 32px !important;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-button {
+												background-color: #1356F0;
+												color: #fff;
+												padding: 13px 20px;
+												border-radius: 8px;
+												border: none;
+												cursor: pointer;
+												font-size: 14px;
+												font-weight: 500;
+												line-height: 1;
+												text-decoration: none;
+												display: inline-block;
+											}
+
+											@media screen and (max-width: 1199px) {
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
+													font-size: 26px;
+												}
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
+													font-size: 14px;
+												}
+
+											}
+
+										</style>
+										<?php
+										$content = ob_get_clean();
+
+										wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
+									}
+								} elseif ( $current_date < $drip_date ) {
+									// If current date is earlier than the drip feed date
+
+									ob_start();
+									?>
+										<div class="ohmylms-access-denied-modal">
+											<div class="ohmylms-access-denied-inner">
+												<div class="ohmylms-access-denied-modal-content">
+
+													<span class="denied-icon">
+														<svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
+													</span>
+
+													<h4 class="ohmylms-access-denied-title">
+														<?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
+													</h4>
+
+													<p class="ohmylms-access-denied-description">
+														<?php
+														printf(
+															esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
+															esc_html( $drip_date . ' ' . wp_timezone_string() )
+														);
+														?>
+													</p>
+												</div>
+											</div>
+										</div>
+
+										<style id="access-denied-modal">
+											.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
+												background-color: #F4F5F7;
+												padding: 40px 40px;
+												border-radius: 14px;
+												box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
+												text-align: center;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon {
+												display: block;
+												text-align: center;
+												margin-bottom: 20px;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon svg {
+												display: block;
+												margin: 0 auto;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-title {
+												margin-bottom: 12px;
+												font-size: 36px;
+												font-weight: 700;
+												line-height: 1;
+												color: var(--ohmylms-heading-color);
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-description {
+												font-size: 16px !important;
+												color: #7A8B9A !important;
+												font-weight: 500;
+												line-height: 1.5 !important;
+												max-width: 380px;
+												margin: 0 auto 32px !important;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-button {
+												background-color: #1356F0;
+												color: #fff;
+												padding: 13px 20px;
+												border-radius: 8px;
+												border: none;
+												cursor: pointer;
+												font-size: 14px;
+												font-weight: 500;
+												line-height: 1;
+												text-decoration: none;
+												display: inline-block;
+											}
+
+											@media screen and (max-width: 1199px) {
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
+													font-size: 26px;
+												}
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
+													font-size: 14px;
+												}
+
+											}
+
+										</style>
+										<?php
+										$content = ob_get_clean();
+
+										wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
+								}
+							} elseif ( 'enrollment-from-x-days' === $drip_feed['type'] ) {
+								$days = ! empty( $drip_feed['enrollment_from_x_days'] ) ? $drip_feed['enrollment_from_x_days'] : 0;
+								global $wpdb;
+								$user_id    = get_current_user_id(); // Change this as needed
+								$course_id  = $post->post_parent;
+								$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
+								$start_date = $wpdb->get_var(
+									$wpdb->prepare(
+										"SELECT start_date FROM {$table_name} WHERE user_id = %d AND course_id = %d",
+										$user_id,
+										$course_id
+									)
+								);
+
+								if ( $start_date ) {
+									$start_date_time   = new \DateTime( $start_date );
+									$current_date_time = new \DateTime();
+
+									$interval        = $start_date_time->diff( $current_date_time );
+									$days_difference = $interval->days;
+									if ( (int) $days > (int) $days_difference ) {
+										// Calculate the exact date when content will be available
+										$available_date = clone $start_date_time;
+										$available_date->modify( "+$days days" );
+
+										ob_start();
+										?>
+										<div class="ohmylms-access-denied-modal">
+											<div class="ohmylms-access-denied-inner">
+												<div class="ohmylms-access-denied-modal-content">
+
+													<span class="denied-icon">
+														<svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
+													</span>
+
+													<h4 class="ohmylms-access-denied-title">
+														<?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
+													</h4>
+
+													<p class="ohmylms-access-denied-description">
+														<?php
+														printf(
+															esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
+															esc_html( $available_date->format( 'F j, Y' ) )
+														);
+														?>
+													</p>
+												</div>
+											</div>
+										</div>
+
+										<style id="access-denied-modal">
+											.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
+												background-color: #F4F5F7;
+												padding: 40px 40px;
+												border-radius: 14px;
+												box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
+												text-align: center;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon {
+												display: block;
+												text-align: center;
+												margin-bottom: 20px;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon svg {
+												display: block;
+												margin: 0 auto;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-title {
+												margin-bottom: 12px;
+												font-size: 36px;
+												font-weight: 700;
+												line-height: 1;
+												color: var(--ohmylms-heading-color);
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-description {
+												font-size: 16px !important;
+												color: #7A8B9A !important;
+												font-weight: 500;
+												line-height: 1.5 !important;
+												max-width: 380px;
+												margin: 0 auto 32px !important;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-button {
+												background-color: #1356F0;
+												color: #fff;
+												padding: 13px 20px;
+												border-radius: 8px;
+												border: none;
+												cursor: pointer;
+												font-size: 14px;
+												font-weight: 500;
+												line-height: 1;
+												text-decoration: none;
+												display: inline-block;
+											}
+
+											@media screen and (max-width: 1199px) {
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
+													font-size: 26px;
+												}
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
+													font-size: 14px;
+												}
+
+											}
+
+										</style>
+										<?php
+										$content = ob_get_clean();
+
+										wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
+									}
+								}
+							} elseif ( 'course-content-sequentially' === $drip_feed['type'] ) {
+								$prev_content = ohmylms_get_prev_content( $post->ID );
+								if ( $prev_content && isset( $prev_content['id'] ) ) {
+									if ( ! $student->maybe_completed( $prev_content['id'] ) ) {
+										// Get the previous content title for better user experience
+										$prev_content_title     = get_the_title( $prev_content['id'] );
+										$incomplete_course_link = get_permalink( $prev_content['id'] );
+
+										ob_start();
+										?>
+										<div class="ohmylms-access-denied-modal">
+											<div class="ohmylms-access-denied-inner">
+												<div class="ohmylms-access-denied-modal-content">
+
+													<span class="denied-icon">
+														<svg width="134" height="134" fill="none" viewBox="0 0 134 134" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.049 49.476c9.21 31.863-2.566 44.707 6.956 61.118 4.992 8.602 15.525 14.47 27.765 17.526 11.108 2.774 20.138-5.306 31.19-7.223 13.027-2.26 21.105 3.572 33.892-4.208 12.788-7.779 9.802-14.285 15.984-23.715 12.688-19.356 2.225-49.373-8.03-51.999-13.526-3.464-16.578 23.457-29.127 0C78.242 25.204 97.5 2.73 49.142 5.793 22.918 7.453 1.136 25.565 8.05 49.476z"/><g clip-path="url(#clip0_2404_836)"><path fill="#000D25" d="M30.534 102.826c.751 2.037 4.148.167 7.495-2.362 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154-14.194 2.257-37.995.306-40.048-5.607z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.047" d="M30.418 102.356c.406 2.758 4.037.808 7.611-1.892 3.262-2.465 4.893-3.697 5.774-3.635.88.062 2.338 1.524 5.254 4.45 8.995 9.024 21.525 7.154 21.525 7.154m-40.164-6.077L20.935 42.7c-.348-2.193-.522-3.29.05-4.08.573-.789 1.67-.963 3.863-1.312l62.282-9.9m-56.712 74.948c.925 6.279 25.6 8.392 40.164 6.077m0 0l33.579-5.337c2.193-.349 3.29-.523 3.863-1.313.573-.79.399-1.886.05-4.08l-9.943-62.55m-78.658 76.624h3.533m-1.767 1.767v-3.533"/><path fill="#000D25" d="M108.381 48.694c-.827-.425-1.24-.637-1.24-.867 0-.23.413-.442 1.24-.867.591-.303.96-.672 1.264-1.264.424-.827.637-1.24.867-1.24.23 0 .442.413.866 1.24.304.592.673.96 1.265 1.264.827.425 1.24.637 1.24.867 0 .23-.413.443-1.24.867-.592.304-.961.673-1.265 1.264-.424.827-.636 1.24-.866 1.24-.23 0-.443-.413-.867-1.24-.304-.591-.673-.96-1.264-1.264zm6.72 5.741c-.309-.31-.464-.464-.489-.507-.116-.202-.116-.175 0-.377.025-.043.18-.198.489-.507.31-.31.465-.464.508-.49.201-.115.175-.115.376 0 .043.026.198.18.507.49.31.31.465.464.489.507.116.202.116.175 0 .377-.024.043-.179.198-.489.507-.309.31-.464.464-.507.49-.201.115-.175.115-.376 0-.043-.026-.198-.18-.508-.49z"/><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.178" d="M22.01 26.858l-5.015-6.013m7.495 3.23l-1.579-2.928"/><path fill="#000D25" d="M28.223 30.511c.59-1.023 2.021-.943 1.4.131-.62 1.075 3.691-.063 2.448 2.09-.183.319 2.458-1.367 1.545.215L21.75 53.5c-.606 1.05-1.38-1.456-2.27.088-.892 1.543-2.514-.6-2.83-3.032l11.573-20.044zm79.802 58.433c.711-.741 2.023-.261 1.276.518-.747.778 2.306.28.808 1.841-.221.23 1.33 2.502.23 3.648l-14.601 15.21c-.73.76.132-2.87-.942-1.751-.533.556-1.533-.653-2.747-.023-1.214.629-1.686-1.173-1.09-1.771 0 0 16.354-16.93 17.066-17.672z"/></g><path stroke="#000D25" stroke-linecap="round" stroke-linejoin="round" d="M65 82c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm-7.07-17.07l14.14 14.14"/><defs><clipPath id="clip0_2404_836"><path fill="#fff" d="M0 0h113.062v113.062H0z" transform="translate(10.469 10.469)"/></clipPath></defs></svg>
+													</span>
+
+													<h4 class="ohmylms-access-denied-title">
+														<?php esc_html_e( 'Access Denied', 'ohmylms' ); ?>
+													</h4>
+
+													<p class="ohmylms-access-denied-description">
+														<?php
+														printf(
+															esc_html__( 'You must complete "%s" before viewing this content. Please complete it and try again.', 'ohmylms' ),
+															esc_html( $prev_content_title )
+														);
+														?>
+													</p>
+
+													<a href="<?php echo esc_url( $incomplete_course_link ); ?>" class="ohmylms-access-denied-button">
+														<?php esc_html_e( 'Go to Prerequisite Content', 'ohmylms' ); ?>
+													</a>
+												</div>
+											</div>
+										</div>
+
+										<style id="access-denied-modal">
+											.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content {
+												background-color: #F4F5F7;
+												padding: 40px 40px;
+												border-radius: 14px;
+												box-shadow: -2px 3px 6px rgba(186, 176, 210, 0.10);
+												text-align: center;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon {
+												display: block;
+												text-align: center;
+												margin-bottom: 20px;
+											}
+
+											.ohmylms-access-denied-modal .denied-icon svg {
+												display: block;
+												margin: 0 auto;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-title {
+												margin-bottom: 12px;
+												font-size: 36px;
+												font-weight: 700;
+												line-height: 1;
+												color: var(--ohmylms-heading-color);
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-description {
+												font-size: 16px !important;
+												color: #7A8B9A !important;
+												font-weight: 500;
+												line-height: 1.5 !important;
+												max-width: 380px;
+												margin: 0 auto 32px !important;
+											}
+
+											.ohmylms-access-denied-modal .ohmylms-access-denied-button {
+												background-color: #1356F0;
+												color: #fff;
+												padding: 13px 20px;
+												border-radius: 8px;
+												border: none;
+												cursor: pointer;
+												font-size: 14px;
+												font-weight: 500;
+												line-height: 1;
+												text-decoration: none;
+												display: inline-block;
+											}
+
+											@media screen and (max-width: 1199px) {
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-title {
+													font-size: 26px;
+												}
+												.ohmylms-access-denied-modal .ohmylms-access-denied-modal-content .ohmylms-access-denied-description {
+													font-size: 14px;
+												}
+
+											}
+
+										</style>
+										<?php
+										$content = ob_get_clean();
+
+										wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
-public function ohmylms_get_admin_script_data_for_mm( $localized_data, $handle ){
-        if( defined('MAILMINT') && 'ohmylms' === $handle ){
-            $wc_active         = MrmCommon::is_wc_active();
-            $recaptcha_default = MrmCommon::recaptcha_default_configuration();
-            $default         = array(
-                'business_name' => '',
-                'phone'         => '',
-                'business_address' => array(
-                    'address_line_1' => '',
-                    'postal'         => '',
-                    'city'           => '',
-                    'address_line_2' => '',
-                    'country'        => '',
-                    'state'          => '',
-                ),
-                'logo_url'      => '',
-            );
+	public function ohmylms_get_admin_script_data_for_mm( $localized_data, $handle ) {
+		if ( defined( 'MAILMINT' ) && 'ohmylms' === $handle ) {
+			$wc_active         = MrmCommon::is_wc_active();
+			$recaptcha_default = MrmCommon::recaptcha_default_configuration();
+			$default           = array(
+				'business_name'    => '',
+				'phone'            => '',
+				'business_address' => array(
+					'address_line_1' => '',
+					'postal'         => '',
+					'city'           => '',
+					'address_line_2' => '',
+					'country'        => '',
+					'state'          => '',
+				),
+				'logo_url'         => '',
+			);
 
-            // Admin Name & Email Finding Starts
-            $admin_email = get_option('admin_email');
-            $admin_user = get_user_by('email', $admin_email);
-            $admin_name = $admin_user ? $admin_user->display_name : '';
-            // Get current user email.
-            $current_user       = wp_get_current_user();
-            $current_user_email = $current_user->user_email;
+			// Admin Name & Email Finding Starts
+			$admin_email = get_option( 'admin_email' );
+			$admin_user  = get_user_by( 'email', $admin_email );
+			$admin_name  = $admin_user ? $admin_user->display_name : '';
+			// Get current user email.
+			$current_user       = wp_get_current_user();
+			$current_user_email = $current_user->user_email;
 
-            $new_data = array(
-                'current_userID'                 => get_current_user_id(),
-                'editor_data_source'             => $this->get_editor_source(),
-                'timezone_list'                  => Constants::get_timezone_list(),
-                'admin_url'                      => get_admin_url(),
-                'countries'                      => Constants::get_country_name(),
-                'states'                         => Constants::get_country_state(),
-                'lists'                          => ContactGroupModel::get_all_to_custom_select( 'lists' ),
-                'tags'                           => ContactGroupModel::get_all_to_custom_select( 'tags' ),
-                'email_settings'                 => get_option( '_mrm_email_settings', Email::default_email_settings() ),
-                'is_wc_active'                   => $wc_active,
-                'start_of_week'                  => get_option( 'start_of_week', 1 ),
-                'unsubscribe_url'                => home_url(),
-                'preference_url'                 => home_url(),
-                'business_basic_settings'        => get_option( '_mrm_business_basic_info_setting', $default ),
-                'business_social_settings'       => get_option( '_mrm_business_social_info_setting', array( 'socialMedia' => array() ) ),
-                'date_format'                    => get_option( 'date_format', 'F j, Y' ),
-                'local_time'                     => date_i18n( 'Y-m-d H:i:s' ),
-                'site_url'                       => site_url(),
-                'currency_format'                => $wc_active ? html_entity_decode( get_woocommerce_currency_symbol() ) : '',
-                'is_mailmint_pro_active'         => MrmCommon::is_mailmint_pro_active(),
-                'is_mailmint_pro_license_active' => MrmCommon::is_mailmint_pro_license_active(),
-                'is_edd_active'                  => HelperFunctions::is_edd_active(),
-                'contacts_map_attrs'             => MrmCommon::import_contacts_map_attrs(),
-                'post_types'                     => MrmCommon::get_all_post_types(),
-                'open_ai_key'                    => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible('1.15.2') ? Integration::get_open_ai_secret_key() : array(),
-                'recaptcha_settings'             => get_option( '_mint_recaptcha_settings', $recaptcha_default ),
-                'smtp_warring'                   => MrmCommon::find_active_smtp_plugin(),
-                'exist_contact_field'            => Constants::get_exsiting_fields_array(),
-                'contact_general_fields'         => MrmCommon::get_contact_general_fields(),
-                'contact_custom_fields'          => MrmCommon::get_contact_custom_fields(),
-                'cart_settings'                  => $wc_active && MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.5.0' ) ? Common::get_abandoned_cart_settings() : array(),
-                'images_url'                     => plugins_url( 'Email-Templates/images', __FILE__ ) . '/',
-                'mint_page'                      => 'campaign',
-                'is_learndash_active'            => HelperFunctions::is_learndash_lms_active(),
-                'is_tutor_active'                => HelperFunctions::is_tutor_active(),
-                'tutor_courses'                  => HelperFunctions::get_tutor_lms_courses(),
-                'is_memberpress_active'          => HelperFunctions::is_memberpress_active(),
-                'mint_trans'                     => TransStrings::getStrings(),
-                'is_customize_wc_email'          => method_exists( MrmCommon::class, 'is_email_customization_active' ) ? MrmCommon::is_email_customization_active() : false,
-                'total_batches'                  => MrmCommon::get_total_batches(),
-                'wp_uuid4'                       => wp_generate_uuid4(),
-                'is_lifterlms_active'            => HelperFunctions::is_lifter_lms_active(),
-                'lifter_courses'                 => HelperFunctions::get_lifter_lms_courses(),
-                'lifter_memberships'             => HelperFunctions::get_lifter_lms_memberships(),
-                'admin_img_url'                  => MRM_DIR_URL.'admin/assets/images',
-                'admin_name'                     => $admin_name,
-                'admin_email'                    => $admin_email,
-                'address'                        => MrmCommon::get_business_full_address(),
-                'current_user_email'             => $current_user_email,
-                'bounce_configs'                 => MrmCommon::get_bounce_configs(),
-                'is_wcs_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible('1.15.0') ? Mint_Pro_Helper::is_woocommerce_subscription_active() : false,
-                'is_wcm_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible('1.15.0') ? Mint_Pro_Helper::is_woocommerce_membership_active() : false,
-                'permissions'                    => PermissionManager::get_readable_permissions(),
-                'is_wcw_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.15.0' ) ? Mint_Pro_Helper::is_woocommerce_wishlist_active() : false,
-                'is_fluent_booking_active'       => HelperFunctions::is_fluent_booking_active(),
-                'is_mailpoet_active'             => HelperFunctions::is_mailpoet_active(),
-            );
+			$new_data = array(
+				'current_userID'                 => get_current_user_id(),
+				'editor_data_source'             => $this->get_editor_source(),
+				'timezone_list'                  => Constants::get_timezone_list(),
+				'admin_url'                      => get_admin_url(),
+				'countries'                      => Constants::get_country_name(),
+				'states'                         => Constants::get_country_state(),
+				'lists'                          => ContactGroupModel::get_all_to_custom_select( 'lists' ),
+				'tags'                           => ContactGroupModel::get_all_to_custom_select( 'tags' ),
+				'email_settings'                 => get_option( '_mrm_email_settings', Email::default_email_settings() ),
+				'is_wc_active'                   => $wc_active,
+				'start_of_week'                  => get_option( 'start_of_week', 1 ),
+				'unsubscribe_url'                => home_url(),
+				'preference_url'                 => home_url(),
+				'business_basic_settings'        => get_option( '_mrm_business_basic_info_setting', $default ),
+				'business_social_settings'       => get_option( '_mrm_business_social_info_setting', array( 'socialMedia' => array() ) ),
+				'date_format'                    => get_option( 'date_format', 'F j, Y' ),
+				'local_time'                     => date_i18n( 'Y-m-d H:i:s' ),
+				'site_url'                       => site_url(),
+				'currency_format'                => $wc_active ? html_entity_decode( get_woocommerce_currency_symbol() ) : '',
+				'is_mailmint_pro_active'         => MrmCommon::is_mailmint_pro_active(),
+				'is_mailmint_pro_license_active' => MrmCommon::is_mailmint_pro_license_active(),
+				'is_edd_active'                  => HelperFunctions::is_edd_active(),
+				'contacts_map_attrs'             => MrmCommon::import_contacts_map_attrs(),
+				'post_types'                     => MrmCommon::get_all_post_types(),
+				'open_ai_key'                    => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.15.2' ) ? Integration::get_open_ai_secret_key() : array(),
+				'recaptcha_settings'             => get_option( '_mint_recaptcha_settings', $recaptcha_default ),
+				'smtp_warring'                   => MrmCommon::find_active_smtp_plugin(),
+				'exist_contact_field'            => Constants::get_exsiting_fields_array(),
+				'contact_general_fields'         => MrmCommon::get_contact_general_fields(),
+				'contact_custom_fields'          => MrmCommon::get_contact_custom_fields(),
+				'cart_settings'                  => $wc_active && MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.5.0' ) ? Common::get_abandoned_cart_settings() : array(),
+				'images_url'                     => plugins_url( 'Email-Templates/images', __FILE__ ) . '/',
+				'mint_page'                      => 'campaign',
+				'is_learndash_active'            => HelperFunctions::is_learndash_lms_active(),
+				'is_tutor_active'                => HelperFunctions::is_tutor_active(),
+				'tutor_courses'                  => HelperFunctions::get_tutor_lms_courses(),
+				'is_memberpress_active'          => HelperFunctions::is_memberpress_active(),
+				'mint_trans'                     => TransStrings::getStrings(),
+				'is_customize_wc_email'          => method_exists( MrmCommon::class, 'is_email_customization_active' ) ? MrmCommon::is_email_customization_active() : false,
+				'total_batches'                  => MrmCommon::get_total_batches(),
+				'wp_uuid4'                       => wp_generate_uuid4(),
+				'is_lifterlms_active'            => HelperFunctions::is_lifter_lms_active(),
+				'lifter_courses'                 => HelperFunctions::get_lifter_lms_courses(),
+				'lifter_memberships'             => HelperFunctions::get_lifter_lms_memberships(),
+				'admin_img_url'                  => MRM_DIR_URL . 'admin/assets/images',
+				'admin_name'                     => $admin_name,
+				'admin_email'                    => $admin_email,
+				'address'                        => MrmCommon::get_business_full_address(),
+				'current_user_email'             => $current_user_email,
+				'bounce_configs'                 => MrmCommon::get_bounce_configs(),
+				'is_wcs_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.15.0' ) ? Mint_Pro_Helper::is_woocommerce_subscription_active() : false,
+				'is_wcm_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.15.0' ) ? Mint_Pro_Helper::is_woocommerce_membership_active() : false,
+				'permissions'                    => PermissionManager::get_readable_permissions(),
+				'is_wcw_active'                  => MrmCommon::is_mailmint_pro_active() && MrmCommon::is_mailmint_pro_version_compatible( '1.15.0' ) ? Mint_Pro_Helper::is_woocommerce_wishlist_active() : false,
+				'is_fluent_booking_active'       => HelperFunctions::is_fluent_booking_active(),
+				'is_mailpoet_active'             => HelperFunctions::is_mailpoet_active(),
+			);
 
-            // Merge new data into localized data
-            $localized_data = array_merge( $localized_data, $new_data );
-        }
-        return $localized_data;
-    }
+			// Merge new data into localized data
+			$localized_data = array_merge( $localized_data, $new_data );
+		}
+		return $localized_data;
+	}
 
-private function get_editor_source() {
-        // get product categories for email builder.
-        $wc_categories = $this->get_formatted_wc_categories();
-        $wp_categories = $this->get_formatted_wp_post_categories();
+	private function get_editor_source() {
+		// get product categories for email builder.
+		$wc_categories = $this->get_formatted_wc_categories();
+		$wp_categories = $this->get_formatted_wp_post_categories();
 
-        return apply_filters(
-            'plugin_hook_name',
-            array(
-                'product_categories' => $wc_categories,
-                'post_categories'    => $wp_categories,
-                'placeholder_image'  => MRM_DIR_URL . 'admin/assets/images/mint-placeholder.png'
-            )
-        );
-    }
+		return apply_filters(
+			'plugin_hook_name',
+			array(
+				'product_categories' => $wc_categories,
+				'post_categories'    => $wp_categories,
+				'placeholder_image'  => MRM_DIR_URL . 'admin/assets/images/mint-placeholder.png',
+			)
+		);
+	}
 
-private function get_formatted_wc_categories() {
-        $taxonomy     = 'product_cat';
-        $orderby      = 'name';
-        $show_count   = 0;
-        $pad_counts   = 0;
-        $hierarchical = 1;
-        $title        = '';
-        $empty        = 0;
+	private function get_formatted_wc_categories() {
+		$taxonomy     = 'product_cat';
+		$orderby      = 'name';
+		$show_count   = 0;
+		$pad_counts   = 0;
+		$hierarchical = 1;
+		$title        = '';
+		$empty        = 0;
 
-        $args               = array(
-            'taxonomy'     => $taxonomy,
-            'orderby'      => $orderby,
-            'show_count'   => $show_count,
-            'pad_counts'   => $pad_counts,
-            'hierarchical' => $hierarchical,
-            'title_li'     => $title,
-            'hide_empty'   => $empty,
-        );
-        $product_categories = get_categories( $args );
-        $wc_categories      = array();
-        foreach ( $product_categories as $product_cat ) {
-            $wc_categories[] = array(
-                'value' => $product_cat->term_id,
-                'label' => $product_cat->name,
-            );
-        }
+		$args               = array(
+			'taxonomy'     => $taxonomy,
+			'orderby'      => $orderby,
+			'show_count'   => $show_count,
+			'pad_counts'   => $pad_counts,
+			'hierarchical' => $hierarchical,
+			'title_li'     => $title,
+			'hide_empty'   => $empty,
+		);
+		$product_categories = get_categories( $args );
+		$wc_categories      = array();
+		foreach ( $product_categories as $product_cat ) {
+			$wc_categories[] = array(
+				'value' => $product_cat->term_id,
+				'label' => $product_cat->name,
+			);
+		}
 
-        return $wc_categories;
-    }
+		return $wc_categories;
+	}
 
-private function get_formatted_wp_post_categories() {
-        $taxonomy     = 'category';
-        $orderby      = 'name';
-        $show_count   = 0;
-        $pad_counts   = 0;
-        $hierarchical = 1;
-        $title        = '';
-        $empty        = 0;
+	private function get_formatted_wp_post_categories() {
+		$taxonomy     = 'category';
+		$orderby      = 'name';
+		$show_count   = 0;
+		$pad_counts   = 0;
+		$hierarchical = 1;
+		$title        = '';
+		$empty        = 0;
 
-        $args               = array(
-            'taxonomy'     => $taxonomy,
-            'orderby'      => $orderby,
-            'show_count'   => $show_count,
-            'pad_counts'   => $pad_counts,
-            'hierarchical' => $hierarchical,
-            'title_li'     => $title,
-            'hide_empty'   => $empty,
-        );
-        $post_categories = get_categories( $args );
-        $categories      = array();
-        foreach ( $post_categories as $post_cat ) {
-            $categories[] = array(
-                'value' => $post_cat->term_id,
-                'label' => $post_cat->name,
-            );
-        }
-        return $categories;
-    }
+		$args            = array(
+			'taxonomy'     => $taxonomy,
+			'orderby'      => $orderby,
+			'show_count'   => $show_count,
+			'pad_counts'   => $pad_counts,
+			'hierarchical' => $hierarchical,
+			'title_li'     => $title,
+			'hide_empty'   => $empty,
+		);
+		$post_categories = get_categories( $args );
+		$categories      = array();
+		foreach ( $post_categories as $post_cat ) {
+			$categories[] = array(
+				'value' => $post_cat->term_id,
+				'label' => $post_cat->name,
+			);
+		}
+		return $categories;
+	}
 
-public function session_single_url( $url, $id ) {
-        $post = get_post( $id );
-        if ( is_object( $post ) && 'ohmylms-session' === $post->post_type ) {
+	public function session_single_url( $url, $id ) {
+		$post = get_post( $id );
+		if ( is_object( $post ) && 'ohmylms-session' === $post->post_type ) {
 			$course_id          = $post->post_parent;
 			$course             = get_post( $course_id );
-            $permalink_settings = ohmylms_get_permalink_structure();
-            $course_base        = $permalink_settings['course_base'];
+			$permalink_settings = ohmylms_get_permalink_structure();
+			$course_base        = $permalink_settings['course_base'];
 			if ( is_object( $course ) ) {
 				return home_url( "/{$course_base}/{$course->post_name}/sessions/" . $post->post_name . '/' );
 			} else {
@@ -2505,5 +2517,5 @@ public function session_single_url( $url, $id ) {
 		}
 
 		return $url;
-    }
+	}
 }

@@ -5,8 +5,8 @@ import { createQuizSettingsFields } from './QuizSettingsFields';
 export { useQuizEditor } from './useQuizEditor';
 export { QuizQuestionCards } from './QuizQuestionCards';
 export const quizEditorComponents = {
-  QuizEditor: createQuizEditor,
-  QuestionList: createQuestionList,
-  QuizSettings: createQuizSettings,
-  QuizSettingsFields: createQuizSettingsFields,
+	QuizEditor: createQuizEditor,
+	QuestionList: createQuestionList,
+	QuizSettings: createQuizSettings,
+	QuizSettingsFields: createQuizSettingsFields,
 };

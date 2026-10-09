@@ -111,7 +111,7 @@ class Lesson extends PostTypeData {
 		$this->set_prop( 'type', $type );
 	}
 
-	
+
 	/**
 	 * Get the lesson type.
 	 *
@@ -357,24 +357,24 @@ class Lesson extends PostTypeData {
 	 * @param string $context The context in which the settings are being retrieved (default: 'view').
 	 * @return array The video settings.
 	 */
-	public function get_video_settings($context = 'view') {
-		$settings = $this->get_prop('video_settings', $context);
-		
+	public function get_video_settings( $context = 'view' ) {
+		$settings = $this->get_prop( 'video_settings', $context );
+
 		// Return default settings if none are set
-		if (empty($settings) || !is_array($settings)) {
+		if ( empty( $settings ) || ! is_array( $settings ) ) {
 			return array(
-				'platform' => 'self-hosted',
-				'aspect_ratio' => '16/9',
-				'autoplay' => false,
-				'loop' => false,
-				'controls' => true,
-				'remove_branding' => false,
+				'platform'            => 'self-hosted',
+				'aspect_ratio'        => '16/9',
+				'autoplay'            => false,
+				'loop'                => false,
+				'controls'            => true,
+				'remove_branding'     => false,
 				'hide_related_videos' => false,
-				'width_unit' => '%',
-				'height_unit' => 'px',
+				'width_unit'          => '%',
+				'height_unit'         => 'px',
 			);
 		}
-		
+
 		return $settings;
 	}
 
@@ -384,8 +384,8 @@ class Lesson extends PostTypeData {
 	 * @param array $settings The video settings to be set.
 	 * @return void
 	 */
-	public function set_video_settings($settings) {
-		$this->set_prop('video_settings', $settings);
+	public function set_video_settings( $settings ) {
+		$this->set_prop( 'video_settings', $settings );
 	}
 
 	/**
@@ -447,19 +447,19 @@ class Lesson extends PostTypeData {
 		return $this->data_store->get_order_number( $this );
 	}
 
-public function get_drip_settings($context = 'view') {
-        return $this->get_prop('drip_settings', $context) ?? array();
-    }
+	public function get_drip_settings( $context = 'view' ) {
+		return $this->get_prop( 'drip_settings', $context ) ?? array();
+	}
 
-public function set_drip_settings($drip_feed) {
-        $this->set_prop('drip_settings', $drip_feed);
-    }
+	public function set_drip_settings( $drip_feed ) {
+		$this->set_prop( 'drip_settings', $drip_feed );
+	}
 
-public function get_download_resource($context = 'view') {
-        return $this->get_prop('download_resource', $context) ?? array();
-    }
+	public function get_download_resource( $context = 'view' ) {
+		return $this->get_prop( 'download_resource', $context ) ?? array();
+	}
 
-public function set_download_resource($resources) {
-        $this->set_prop('download_resource', $resources);
-    }
+	public function set_download_resource( $resources ) {
+		$this->set_prop( 'download_resource', $resources );
+	}
 }

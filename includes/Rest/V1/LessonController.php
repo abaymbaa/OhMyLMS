@@ -226,7 +226,7 @@ class LessonController extends RestController {
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
-	public function create_item( $request ){
+	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
 			// Translators: %s is replaced with object name.
 			return new WP_Error( 'ohmylms_rest_lesson_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Lesson' ), array( 'status' => 400 ) );
@@ -611,7 +611,7 @@ class LessonController extends RestController {
 			$lesson->set_type( $request['type'] );
 		}
 		if ( isset( $request['description'] ) ) {
-			$lesson->set_description( $request['description']);
+			$lesson->set_description( $request['description'] );
 		}
 		if ( isset( $request['slug'] ) ) {
 			$lesson->set_slug( wp_filter_post_kses( $request['slug'] ) );
@@ -633,7 +633,7 @@ class LessonController extends RestController {
 	 */
 	protected function get_lesson_data( $lesson, $request = null ) {
 		if ( $request instanceof WP_REST_Request ) {
-			if (isset($request['order_number'])) {
+			if ( isset( $request['order_number'] ) ) {
 				$order_number = intval( $request['order_number'] );
 			} else {
 				$order_number = $lesson->get_order_number();
@@ -644,7 +644,7 @@ class LessonController extends RestController {
 
 		$data = array(
 			'id'                => $lesson->get_id(),
-			'name'              => html_entity_decode($lesson->get_name()),
+			'name'              => html_entity_decode( $lesson->get_name() ),
 			'slug'              => $lesson->get_slug(),
 			'status'            => $lesson->get_status(),
 			'type'              => $lesson->get_type(),

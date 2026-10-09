@@ -12,6 +12,7 @@
 }
 
 .ohmylms-page {
+
     .ohmylms-single-course {
 
         & > .ohmylms-widget-pricebox {
@@ -22,7 +23,7 @@
             left: 0;
             border-radius: 0;
             background-color: #fff !important;
-            box-shadow: 0px -4px 10px 0px #dbdee77a;
+            box-shadow: 0 -4px 10px 0 #dbdee77a;
             transition: all 0.5s ease;
             visibility: hidden;
             z-index: 99;
@@ -59,6 +60,7 @@
 }
 
 @media screen and (max-width: 1199px) {
+
     .ohmylms-page .ohmylms-content-wrapper {
         gap: 30px;
     }
@@ -74,6 +76,7 @@
 }
 
 @media screen and (max-width: 991px) {
+
     .single.ohmylms-page .ohmylms-courses {
         padding: 0 0 50px !important;
     }
@@ -97,7 +100,7 @@
     .ohmylms-page .ohmylms-single-course.show-sticky-price > .ohmylms-widget-pricebox {
         bottom: 0;
         visibility: visible;
-        box-shadow: 0px -4px 10px 0px rgba(219, 222, 231, 0.4784313725);
+        box-shadow: 0 -4px 10px 0 rgba(219, 222, 231, 0.4784313725);
     }
     
 
@@ -108,9 +111,7 @@
 @import 'course-single-chapters';
 @import 'course-single-assignment';
 @import 'course-single-reviews';
-
 @import 'course-single-sidebar';
-
 @import 'course-assignment-details';
 @import 'sticky-price-bar';
 @import 'password-protected';

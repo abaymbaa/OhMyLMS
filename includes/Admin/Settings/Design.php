@@ -212,8 +212,8 @@ class Design extends Settings {
 			array(
 				'id'      => 'ohmylms_leaderboard_settings',
 				'type'    => 'array',
-				'default' => [],
-				'value'   => [],
+				'default' => array(),
+				'value'   => array(),
 			),
 			array(
 				'id'      => 'ohmylms_video_player_logo',

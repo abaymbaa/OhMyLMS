@@ -10,24 +10,29 @@
  */
 
 defined( 'ABSPATH' ) || exit();
-$integrations = get_option( 'ohmylms_integrations', array() );
-$current_level = '';
-$next_level_name = '';
-$engagement_visible = !empty($integrations['gamification']['is_enable']) || \OhMyLMS\Engagement\StreakSettings::enabled();
-if( $engagement_visible ) {
-	$current_point = \OhMyLMS\Engagement\Point::get_total_points( get_current_user_id() );
-	$current_level_data = \OhMyLMS\Engagement\Level::get_current_level_of_a_user();
-	$next_level_data = \OhMyLMS\Engagement\Level::get_next_level_of_a_user();
-	$current_level = isset( $current_level_data['level_name'] ) ? $current_level_data['level_name'] : '';
-	$next_level_name = isset( $next_level_data['level_data']['name'] ) ? $next_level_data['level_data']['name'] : '';
-	$next_level_point = isset( $next_level_data['points_needed'], $next_level_data['current_points'] ) ? (int)$next_level_data['points_needed'] + (int)$current_point : 0 ;
-	$current_level_color = isset( $current_level_data['level_color'] ) ? $current_level_data['level_color'] : '#e3d8fc';
+$integrations       = get_option( 'ohmylms_integrations', array() );
+$current_level      = '';
+$next_level_name    = '';
+$engagement_visible = ! empty( $integrations['gamification']['is_enable'] ) || \OhMyLMS\Engagement\StreakSettings::enabled();
+if ( $engagement_visible ) {
+	$current_point            = \OhMyLMS\Engagement\Point::get_total_points( get_current_user_id() );
+	$current_level_data       = \OhMyLMS\Engagement\Level::get_current_level_of_a_user();
+	$next_level_data          = \OhMyLMS\Engagement\Level::get_next_level_of_a_user();
+	$current_level            = isset( $current_level_data['level_name'] ) ? $current_level_data['level_name'] : '';
+	$next_level_name          = isset( $next_level_data['level_data']['name'] ) ? $next_level_data['level_data']['name'] : '';
+	$next_level_point         = isset( $next_level_data['points_needed'], $next_level_data['current_points'] ) ? (int) $next_level_data['points_needed'] + (int) $current_point : 0;
+	$current_level_color      = isset( $current_level_data['level_color'] ) ? $current_level_data['level_color'] : '#e3d8fc';
 	$current_level_text_color = isset( $current_level_data['level_text_color'] ) ? $current_level_data['level_text_color'] : '#000000';
-	$progress_percent = $next_level_data['progress_percentage'] ?? 0;
-	$point_needed = $next_level_point - $current_point;
-	$badges = \OhMyLMS\Engagement\Badge::maybe_enable() ? \OhMyLMS\Engagement\Badge::get_badges() : (\OhMyLMS\Engagement\StreakSettings::enabled() ? \OhMyLMS\Engagement\StreakSettings::badges() : []);
-	$earned_badges   = \OhMyLMS\Engagement\Badge::get_all_badges_of_a_user( get_current_user_id() );
-	$earned_badges = array_filter($earned_badges, static function ($badge) use ($badges) { return in_array($badge['slug'], array_column($badges, 'slug'), true); });
+	$progress_percent         = $next_level_data['progress_percentage'] ?? 0;
+	$point_needed             = $next_level_point - $current_point;
+	$badges                   = \OhMyLMS\Engagement\Badge::maybe_enable() ? \OhMyLMS\Engagement\Badge::get_badges() : ( \OhMyLMS\Engagement\StreakSettings::enabled() ? \OhMyLMS\Engagement\StreakSettings::badges() : array() );
+	$earned_badges            = \OhMyLMS\Engagement\Badge::get_all_badges_of_a_user( get_current_user_id() );
+	$earned_badges            = array_filter(
+		$earned_badges,
+		static function ( $badge ) use ( $badges ) {
+			return in_array( $badge['slug'], array_column( $badges, 'slug' ), true );
+		}
+	);
 }
 
 ?>
@@ -48,10 +53,10 @@ if( $engagement_visible ) {
 				<figure>
 					<?php
 					$student_profile_photo = $student->get_profile_image();
-					if ($student_profile_photo) {
-						echo '<img src="'.esc_url($student_profile_photo).'" alt="profile photo" id="student-profile-photo">';
-					}else {
-						echo ohmylms_get_initials($student->get_first_name(), $student->get_last_name());
+					if ( $student_profile_photo ) {
+						echo '<img src="' . esc_url( $student_profile_photo ) . '" alt="profile photo" id="student-profile-photo">';
+					} else {
+						echo ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() );
 					}
 					?>
 				</figure>
@@ -60,7 +65,7 @@ if( $engagement_visible ) {
 
 		<div class="ohmylms-profile-actions">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'profile-edit' ) ); ?>" class="profile-edit">
-				<?php include(OHMYLMS_DIR . '/assets/images/icon/edit-icon.php'); ?>
+				<?php require OHMYLMS_DIR . '/assets/images/icon/edit-icon.php'; ?>
 				<?php echo __( 'Edit', 'ohmylms' ); ?>
 			</a>
 		</div>
@@ -69,14 +74,14 @@ if( $engagement_visible ) {
 			
 			<div class="ohmylms-profile-name">
 				<div class="ohmylms-user-details">
-					<?php echo $student->get_first_name() . ' ' .$student->get_last_name(); ?>
+					<?php echo $student->get_first_name() . ' ' . $student->get_last_name(); ?>
 					<?php if ( $current_level ) : ?>
 						<span class="value learning-level" style="background: <?php echo esc_attr( $current_level_color ); ?>; color: <?php echo esc_attr( $current_level_text_color ); ?>;">
 							<?php echo $current_level; ?>
 						</span>
 					<?php endif; ?>
 				</div>
-				<?php if( ohmylms_is_pro() && isset($integrations['gamification']['is_enable']) && $integrations['gamification']['is_enable'] ) : ?>
+				<?php if ( ohmylms_is_pro() && isset( $integrations['gamification']['is_enable'] ) && $integrations['gamification']['is_enable'] ) : ?>
 					<div class="ohmylms-user-xp-display">
 						<span class="ohmylms-xp-value">
 							<?php echo esc_html( $current_point ); ?>
@@ -91,16 +96,16 @@ if( $engagement_visible ) {
 				<?php echo $student->get_bio(); ?>
 			</p>
 
-			<?php if(!empty($student->get_address())):?>
+			<?php if ( ! empty( $student->get_address() ) ) : ?>
 				<div class="profile-contact-info">
 					<address>
-						<?php include(OHMYLMS_DIR . '/assets/images/icon/map-marker.php'); ?>
+						<?php include OHMYLMS_DIR . '/assets/images/icon/map-marker.php'; ?>
 						<span class="profile-address">
 							<?php echo $student->get_address(); ?>
 						</span>
 					</address>
 				</div>
-			<?php endif?>
+			<?php endif ?>
 
 			<?php if ( ! empty( $student->get_phone() ) || ! empty( $student->get_whatsapp() ) || ! empty( $student->get_country() ) ) : ?>
 				<div class="profile-contact-details">
@@ -125,31 +130,33 @@ if( $engagement_visible ) {
 				</div>
 			<?php endif; ?>
 
-			<?php 
+			<?php
 			$skills = $student->get_skills();
-			if (!empty($skills) && is_array($skills)): ?>
+			if ( ! empty( $skills ) && is_array( $skills ) ) :
+				?>
 				<div class="profile-skills">
-					<h5 class="profile-section-title"><?php echo __('Skills', 'ohmylms'); ?></h5>
+					<h5 class="profile-section-title"><?php echo __( 'Skills', 'ohmylms' ); ?></h5>
 					<div class="skills-list">
-						<?php foreach ($skills as $skill): ?>
-							<?php if (!empty($skill)): ?>
-								<span class="skill-tag"><?php echo esc_html($skill); ?></span>
+						<?php foreach ( $skills as $skill ) : ?>
+							<?php if ( ! empty( $skill ) ) : ?>
+								<span class="skill-tag"><?php echo esc_html( $skill ); ?></span>
 							<?php endif; ?>
 						<?php endforeach; ?>
 					</div>
 				</div>
 			<?php endif; ?>
 
-			<?php 
+			<?php
 			$social_links = $student->get_social_links();
-			if (!empty($social_links) && is_array($social_links)): ?>
+			if ( ! empty( $social_links ) && is_array( $social_links ) ) :
+				?>
 				<div class="profile-social-links">
-					<h5 class="profile-section-title"><?php echo __('Social Links', 'ohmylms'); ?></h5>
+					<h5 class="profile-section-title"><?php echo __( 'Social Links', 'ohmylms' ); ?></h5>
 					<div class="social-links-list">
-						<?php foreach ($social_links as $link): ?>
-							<?php if (!empty($link['label']) && !empty($link['url'])): ?>
-								<a href="<?php echo esc_url($link['url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link">
-									<?php echo esc_html($link['label']); ?>
+						<?php foreach ( $social_links as $link ) : ?>
+							<?php if ( ! empty( $link['label'] ) && ! empty( $link['url'] ) ) : ?>
+								<a href="<?php echo esc_url( $link['url'] ); ?>" target="_blank" rel="noopener noreferrer" class="social-link">
+									<?php echo esc_html( $link['label'] ); ?>
 								</a>
 							<?php endif; ?>
 						<?php endforeach; ?>
@@ -158,36 +165,43 @@ if( $engagement_visible ) {
 			<?php endif; ?>
 		</div>
 
-		<?php if( $next_level_name ) : ?>
+		<?php if ( $next_level_name ) : ?>
 			<div class="ohmylms-progress-section">
 				<div class="ohmylms-progress-header">
-					<span class="ohmylms-progress-label"><?php echo esc_html(sprintf(__('Progress to %s', 'ohmylms'), $next_level_name)); ?></span>
+					<span class="ohmylms-progress-label"><?php echo esc_html( sprintf( __( 'Progress to %s', 'ohmylms' ), $next_level_name ) ); ?></span>
 				</div>
 				<ul class="ohmylms-level-conditions">
-					<?php foreach ($next_level_data['rules'] ?? [] as $rule) {
-						$labels = ['points' => __('Bonus points', 'ohmylms'), 'completed_lesson' => __('Completed lessons', 'ohmylms'), 'completed_courses' => __('Completed courses', 'ohmylms')]; ?>
-						<li><?php echo esc_html(sprintf(__('%1$s: %2$s · requirement %3$s %4$s', 'ohmylms'), $labels[$rule['type']] ?? '', $rule['current'], $rule['operator'], $rule['required'])); ?></li>
+					<?php
+					foreach ( $next_level_data['rules'] ?? array() as $rule ) {
+						$labels = array(
+							'points'            => __( 'Bonus points', 'ohmylms' ),
+							'completed_lesson'  => __( 'Completed lessons', 'ohmylms' ),
+							'completed_courses' => __( 'Completed courses', 'ohmylms' ),
+						);
+						?>
+						<li><?php echo esc_html( sprintf( __( '%1$s: %2$s · requirement %3$s %4$s', 'ohmylms' ), $labels[ $rule['type'] ] ?? '', $rule['current'], $rule['operator'], $rule['required'] ) ); ?></li>
 					<?php } ?>
 				</ul>
 				<div class="ohmylms-progress-bar">
 					<div class="ohmylms-progress-fill" style="--fill-width: <?php echo esc_html( $progress_percent ); ?>%"></div>
 				</div>
-				<?php if( $point_needed > 0 ) : ?>
-					<div class="ohmylms-progress-remaining"><?php echo esc_html( $point_needed ); ?> <?php echo __('bonus points until next level','ohmylms');?></div>
+				<?php if ( $point_needed > 0 ) : ?>
+					<div class="ohmylms-progress-remaining"><?php echo esc_html( $point_needed ); ?> <?php echo __( 'bonus points until next level', 'ohmylms' ); ?></div>
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
 
-		<?php if( $engagement_visible ) :
-			$earned_slugs = [];
+		<?php
+		if ( $engagement_visible ) :
+			$earned_slugs = array();
 			foreach ( $earned_badges as $badge ) {
 				$earned_slugs[] = $badge['slug'];
 			}
-			$total_badges    = is_array( $badges ) ? count( $badges ) : 0;
-			$total_earned    = count( $earned_slugs );
-			$progress_percent = $total_badges > 0 ? round( ( $total_earned / $total_badges ) * 100, 2 ) : 0;	
-			if( $total_badges > 0 ) :
-		?>
+			$total_badges     = is_array( $badges ) ? count( $badges ) : 0;
+			$total_earned     = count( $earned_slugs );
+			$progress_percent = $total_badges > 0 ? round( ( $total_earned / $total_badges ) * 100, 2 ) : 0;
+			if ( $total_badges > 0 ) :
+				?>
 		<div class="ohmylms-badges-section">
 			<h3 class="ohmylms-section-title">
 				<svg class="ohmylms-trophy-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -197,15 +211,20 @@ if( $engagement_visible ) {
 			</h3>
 
 			<div class="ohmylms-badges-grid">
-				<?php foreach ( $badges as $badge ) :
-					$is_earned = in_array( $badge['slug'], $earned_slugs, true );
-					$color = esc_attr( isset($badge['color']) ? $badge['color'] : '' );
-					$name = esc_html( isset($badge['name']) ? $badge['name'] : '' );
-					$tooltip = esc_attr( isset($badge['description']) ? $badge['description'] : '' );
-					$image_url = esc_url( isset($badge['image']) ? $badge['image'] : '' );
+				<?php
+				foreach ( $badges as $badge ) :
+					$is_earned    = in_array( $badge['slug'], $earned_slugs, true );
+					$color        = esc_attr( isset( $badge['color'] ) ? $badge['color'] : '' );
+					$name         = esc_html( isset( $badge['name'] ) ? $badge['name'] : '' );
+					$tooltip      = esc_attr( isset( $badge['description'] ) ? $badge['description'] : '' );
+					$image_url    = esc_url( isset( $badge['image'] ) ? $badge['image'] : '' );
 					$status_class = $is_earned ? 'earned' : 'locked';
-				?>
-					<div class="ohmylms-badge <?php echo $status_class; ?>" style="--badge-color: <?php echo $color; ?>;" <?php if( $tooltip ) : ?> data-tooltip="<?php echo $tooltip; ?>" <?php endif; ?>>
+					?>
+					<div class="ohmylms-badge <?php echo $status_class; ?>" style="--badge-color: <?php echo $color; ?>;" 
+					<?php
+					if ( $tooltip ) :
+						?>
+						data-tooltip="<?php echo $tooltip; ?>" <?php endif; ?>>
 						<?php if ( ! $is_earned ) : ?>
 							<div class="ohmylms-lock-overlay">
 								<svg class="ohmylms-lock-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -227,7 +246,7 @@ if( $engagement_visible ) {
 				</div>
 			</div>
 		</div>
-		<?php 
+				<?php
 			endif;
 		endif;
 		?>

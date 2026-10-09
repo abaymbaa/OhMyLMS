@@ -23,7 +23,7 @@ class LessonPostType {
 	 */
 	public function register_lesson_cpt() {
 		$permalinks = ohmylms_get_permalink_structure();
-		$labels = array(
+		$labels     = array(
 			'name'                  => _x( 'Lessons', 'Post Type General Name', 'ohmylms' ),
 			'singular_name'         => _x( 'Lesson', 'Post Type Singular Name', 'ohmylms' ),
 			'menu_name'             => __( 'Lessons', 'ohmylms' ),
@@ -70,7 +70,7 @@ class LessonPostType {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => true,
-			'capability_type'     => 'post'
+			'capability_type'     => 'post',
 		);
 		register_post_type( 'ohmylms-lesson', $args );
 	}

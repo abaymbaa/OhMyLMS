@@ -114,11 +114,13 @@ class SequentialMode {
 		// For assignments, also accept submitted/failed attempts — don't block forever on instructor review.
 		if ( $prev_post && OHMYLMS_ASSIGNMENT_CPT === $prev_post->post_type ) {
 			global $wpdb;
-			$attempt = $wpdb->get_var( $wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}ohmylms_assignment_attempts WHERE user_id = %d AND assignment_id = %d LIMIT 1",
-				$student_id,
-				$prev_id
-			) );
+			$attempt = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT id FROM {$wpdb->prefix}ohmylms_assignment_attempts WHERE user_id = %d AND assignment_id = %d LIMIT 1",
+					$student_id,
+					$prev_id
+				)
+			);
 			if ( $attempt ) {
 				return false;
 			}

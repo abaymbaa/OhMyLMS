@@ -14,8 +14,8 @@ use WP_REST_Server;
 
 class GoogleMeetSettingsController {
 	protected static $instance = null;
-	protected $base = 'googlemeet/settings';
-	protected $namespace = 'ohmylms/v1';
+	protected $base            = 'googlemeet/settings';
+	protected $namespace       = 'ohmylms/v1';
 
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -87,10 +87,22 @@ class GoogleMeetSettingsController {
 					'callback'            => array( $this, 'create_meeting' ),
 					'permission_callback' => array( $this, 'admin_permission' ),
 					'args'                => array(
-						'title' => array( 'type' => 'string', 'required' => true ),
-						'start' => array( 'type' => 'string', 'required' => true ),
-						'end'   => array( 'type' => 'string', 'required' => true ),
-						'description' => array( 'type' => 'string', 'required' => false ),
+						'title'       => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+						'start'       => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+						'end'         => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+						'description' => array(
+							'type'     => 'string',
+							'required' => false,
+						),
 					),
 				),
 			)
@@ -106,11 +118,26 @@ class GoogleMeetSettingsController {
 					'callback'            => array( $this, 'update_meeting' ),
 					'permission_callback' => array( $this, 'admin_permission' ),
 					'args'                => array(
-						'event_id' => array( 'type' => 'string', 'required' => true ),
-						'title'    => array( 'type' => 'string', 'required' => false ),
-						'start'    => array( 'type' => 'string', 'required' => false ),
-						'end'      => array( 'type' => 'string', 'required' => false ),
-						'description' => array( 'type' => 'string', 'required' => false ),
+						'event_id'    => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+						'title'       => array(
+							'type'     => 'string',
+							'required' => false,
+						),
+						'start'       => array(
+							'type'     => 'string',
+							'required' => false,
+						),
+						'end'         => array(
+							'type'     => 'string',
+							'required' => false,
+						),
+						'description' => array(
+							'type'     => 'string',
+							'required' => false,
+						),
 					),
 				),
 			)
@@ -129,31 +156,43 @@ class GoogleMeetSettingsController {
 		$client_secret = \sanitize_text_field( $request->get_param( 'client_secret' ) );
 		$redirect_url  = \sanitize_text_field( $request->get_param( 'redirect_url' ) );
 
-		$user_id = \get_current_user_id();
+		$user_id  = \get_current_user_id();
 		$settings = array(
 			'client_id'     => $client_id,
 			'client_secret' => $client_secret,
 			'redirect_url'  => $redirect_url,
 		);
 		\update_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', $settings );
-		return new WP_REST_Response( [ 'success' => true, 'message' => __( 'Settings saved successfully', 'ohmylms' ) ], 200 );
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'message' => __( 'Settings saved successfully', 'ohmylms' ),
+			),
+			200
+		);
 	}
 
 	public function get_credentials( $request ) {
-		$user_id  = \get_current_user_id();
-		$settings = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
-		$tokens = \get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
+		$user_id            = \get_current_user_id();
+		$settings           = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+		$tokens             = \get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		$settings['tokens'] = $tokens;
-		return new WP_REST_Response( [ 'success' => true, 'data' => $settings ?: [] ], 200 );
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'data'    => $settings ?: array(),
+			),
+			200
+		);
 	}
 
 	// -------------------------
 	// OAUTH HANDLING
 	// -------------------------
 	public function get_auth_url() {
-		$user_id = \get_current_user_id();
+		$user_id     = \get_current_user_id();
 		$credentials = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
-		
+
 		if ( empty( $credentials ) || empty( $credentials['client_id'] ) || empty( $credentials['redirect_url'] ) ) {
 			return new \WP_REST_Response(
 				array(
@@ -167,11 +206,14 @@ class GoogleMeetSettingsController {
 		// Google OAuth parameters
 		$params = array(
 			'access_type'   => 'offline',
-			'scope'         => implode( ' ', array(
-				'https://www.googleapis.com/auth/calendar',
-				'https://www.googleapis.com/auth/userinfo.email',
-				'openid',
-			)),
+			'scope'         => implode(
+				' ',
+				array(
+					'https://www.googleapis.com/auth/calendar',
+					'https://www.googleapis.com/auth/userinfo.email',
+					'openid',
+				)
+			),
 			'response_type' => 'code',
 			'redirect_uri'  => $credentials['redirect_url'],
 			'prompt'        => 'consent',
@@ -183,48 +225,80 @@ class GoogleMeetSettingsController {
 		$auth_url = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query( $params );
 		return new \WP_REST_Response(
 			array(
-				'success' => true,
-				'auth_url'     => $auth_url,
+				'success'  => true,
+				'auth_url' => $auth_url,
 			),
 			200
 		);
 	}
 
 	public function handle_oauth_callback( WP_REST_Request $request ) {
-		$code     = $request->get_param( 'code' );
-		$user_id  = get_current_user_id();
-		$creds    = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
+		$code    = $request->get_param( 'code' );
+		$user_id = get_current_user_id();
+		$creds   = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 		if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
-			return new WP_REST_Response( [ 'success' => false, 'message' => 'Missing client credentials' ], 400 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => 'Missing client credentials',
+				),
+				400
+			);
 		}
 
-		$response = wp_remote_post( 'https://oauth2.googleapis.com/token', [
-			'body' => [
-				'code'          => $code,
-				'client_id'     => $creds['client_id'],
-				'client_secret' => $creds['client_secret'],
-				'redirect_uri'  => $creds['redirect_url'],
-				'grant_type'    => 'authorization_code',
-			],
-		] );
+		$response = wp_remote_post(
+			'https://oauth2.googleapis.com/token',
+			array(
+				'body' => array(
+					'code'          => $code,
+					'client_id'     => $creds['client_id'],
+					'client_secret' => $creds['client_secret'],
+					'redirect_uri'  => $creds['redirect_url'],
+					'grant_type'    => 'authorization_code',
+				),
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
-			return new WP_REST_Response( [ 'success' => false, 'message' => $response->get_error_message() ], 500 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => $response->get_error_message(),
+				),
+				500
+			);
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( isset( $body['access_token'] ) ) {
-			update_user_meta( $user_id, 'ohmylms_googlemeet_tokens', [
-				'access_token'  => $body['access_token'],
-				'refresh_token' => $body['refresh_token'] ?? '',
-				'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
-			] );
+			update_user_meta(
+				$user_id,
+				'ohmylms_googlemeet_tokens',
+				array(
+					'access_token'  => $body['access_token'],
+					'refresh_token' => $body['refresh_token'] ?? '',
+					'expires_in'    => time() + ( $body['expires_in'] ?? 3600 ),
+				)
+			);
 
-			return new WP_REST_Response( [ 'success' => true, 'message' => 'Google account connected successfully!' ], 200 );
+			return new WP_REST_Response(
+				array(
+					'success' => true,
+					'message' => 'Google account connected successfully!',
+				),
+				200
+			);
 		}
 
-		return new WP_REST_Response( [ 'success' => false, 'message' => 'Failed to get access token', 'error' => $body ], 400 );
+		return new WP_REST_Response(
+			array(
+				'success' => false,
+				'message' => 'Failed to get access token',
+				'error'   => $body,
+			),
+			400
+		);
 	}
 
 	// -------------------------
@@ -238,14 +312,17 @@ class GoogleMeetSettingsController {
 			return false;
 		}
 
-		$response = wp_remote_post( 'https://oauth2.googleapis.com/token', [
-			'body' => [
-				'client_id'     => $creds['client_id'],
-				'client_secret' => $creds['client_secret'],
-				'refresh_token' => $tokens['refresh_token'],
-				'grant_type'    => 'refresh_token',
-			],
-		] );
+		$response = wp_remote_post(
+			'https://oauth2.googleapis.com/token',
+			array(
+				'body' => array(
+					'client_id'     => $creds['client_id'],
+					'client_secret' => $creds['client_secret'],
+					'refresh_token' => $tokens['refresh_token'],
+					'grant_type'    => 'refresh_token',
+				),
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -265,7 +342,9 @@ class GoogleMeetSettingsController {
 
 	private function get_valid_token( $user_id ) {
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
-		if ( empty( $tokens['access_token'] ) ) return false;
+		if ( empty( $tokens['access_token'] ) ) {
+			return false;
+		}
 
 		if ( time() > ( $tokens['expires_in'] ?? 0 ) ) {
 			return $this->refresh_access_token( $user_id );
@@ -278,74 +357,109 @@ class GoogleMeetSettingsController {
 	// MEETING METHODS
 	// -------------------------
 	public function create_meeting( WP_REST_Request $request ) {
-		$user_id = get_current_user_id();
+		$user_id      = get_current_user_id();
 		$access_token = $this->get_valid_token( $user_id );
 
 		if ( ! $access_token ) {
-			return new WP_REST_Response( [ 'success' => false, 'message' => 'No valid access token found.' ], 401 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => 'No valid access token found.',
+				),
+				401
+			);
 		}
 
 		// Basic event details
-		$title       = $request->get_param( 'title' );
-		$start       = $request->get_param( 'start' );
-		$end         = $request->get_param( 'end' );
-		$desc        = $request->get_param( 'description' );
-		$timezone    = $request->get_param( 'timezone' ) ?: 'UTC';
+		$title    = $request->get_param( 'title' );
+		$start    = $request->get_param( 'start' );
+		$end      = $request->get_param( 'end' );
+		$desc     = $request->get_param( 'description' );
+		$timezone = $request->get_param( 'timezone' ) ?: 'UTC';
 
-		$event_data = [
-			'summary'     => $title,
-			'description' => $desc,
-			'start'       => [ 'dateTime' => $start, 'timeZone' => $timezone ],
-			'end'         => [ 'dateTime' => $end, 'timeZone' => $timezone ],
-			'reminders'   => [ 'useDefault' => true ],
-			'conferenceData' => [
-				'createRequest' => [
-					'requestId' => uniqid(),
-					'conferenceSolutionKey' => [ 'type' => 'hangoutsMeet' ],
-				],
-			],
-		];
+		$event_data = array(
+			'summary'        => $title,
+			'description'    => $desc,
+			'start'          => array(
+				'dateTime' => $start,
+				'timeZone' => $timezone,
+			),
+			'end'            => array(
+				'dateTime' => $end,
+				'timeZone' => $timezone,
+			),
+			'reminders'      => array( 'useDefault' => true ),
+			'conferenceData' => array(
+				'createRequest' => array(
+					'requestId'             => uniqid(),
+					'conferenceSolutionKey' => array( 'type' => 'hangoutsMeet' ),
+				),
+			),
+		);
 
 		$response = wp_remote_post(
 			'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1',
-			[
-				'headers' => [
+			array(
+				'headers' => array(
 					'Authorization' => "Bearer $access_token",
 					'Content-Type'  => 'application/json',
-				],
-				'body' => wp_json_encode( $event_data ),
-			]
+				),
+				'body'    => wp_json_encode( $event_data ),
+			)
 		);
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( isset( $body['hangoutLink'] ) ) {
-			return new WP_REST_Response( [
-				'success'     => true,
-				'meet_link'   => $body['hangoutLink'],
-				'event_id'    => $body['id'],
-				'calendar_id' => $body['organizer']['email'] ?? '',
-			], 200 );
+			return new WP_REST_Response(
+				array(
+					'success'     => true,
+					'meet_link'   => $body['hangoutLink'],
+					'event_id'    => $body['id'],
+					'calendar_id' => $body['organizer']['email'] ?? '',
+				),
+				200
+			);
 		}
 
-		return new WP_REST_Response( [ 'success' => false, 'error' => $body ], 400 );
+		return new WP_REST_Response(
+			array(
+				'success' => false,
+				'error'   => $body,
+			),
+			400
+		);
 	}
 
 	public function update_meeting( WP_REST_Request $request ) {
-		$user_id = get_current_user_id();
+		$user_id      = get_current_user_id();
 		$access_token = $this->get_valid_token( $user_id );
 		if ( ! $access_token ) {
-			return new WP_REST_Response( [ 'success' => false, 'message' => 'No valid access token found.' ], 401 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => 'No valid access token found.',
+				),
+				401
+			);
 		}
 
 		$event_id = $request->get_param( 'event_id' );
-		$data     = [];
+		$data     = array();
 
-		foreach ( [ 'title' => 'summary', 'start' => 'start', 'end' => 'end', 'description' => 'description' ] as $param => $field ) {
+		foreach ( array(
+			'title'       => 'summary',
+			'start'       => 'start',
+			'end'         => 'end',
+			'description' => 'description',
+		) as $param => $field ) {
 			if ( $request->get_param( $param ) ) {
-				if ( in_array( $param, [ 'start', 'end' ], true ) ) {
-					$timezone = $request->get_param( 'timezone' ) ?: 'UTC';
-					$data[ $field ] = [ 'dateTime' => $request->get_param( $param ), 'timeZone' => $timezone ];
+				if ( in_array( $param, array( 'start', 'end' ), true ) ) {
+					$timezone       = $request->get_param( 'timezone' ) ?: 'UTC';
+					$data[ $field ] = array(
+						'dateTime' => $request->get_param( $param ),
+						'timeZone' => $timezone,
+					);
 				} else {
 					$data[ $field ] = $request->get_param( $param );
 				}
@@ -354,35 +468,63 @@ class GoogleMeetSettingsController {
 
 		$response = wp_remote_request(
 			'https://www.googleapis.com/calendar/v3/calendars/primary/events/' . $event_id . '?conferenceDataVersion=1',
-			[
+			array(
 				'method'  => 'PATCH',
-				'headers' => [
+				'headers' => array(
 					'Authorization' => "Bearer $access_token",
 					'Content-Type'  => 'application/json',
-				],
-				'body' => wp_json_encode( $data ),
-			]
+				),
+				'body'    => wp_json_encode( $data ),
+			)
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return new WP_REST_Response( [ 'success' => false, 'message' => $response->get_error_message() ], 500 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => $response->get_error_message(),
+				),
+				500
+			);
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( isset( $body['error'] ) ) {
-			return new WP_REST_Response( [ 'success' => false, 'error' => $body['error'] ], 400 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'error'   => $body['error'],
+				),
+				400
+			);
 		}
 
 		// Return meet link if available
 		$meet_link = $body['hangoutLink'] ?? '';
-		return new WP_REST_Response( [ 'success' => true, 'data' => $body, 'meet_link' => $meet_link ], 200 );
+		return new WP_REST_Response(
+			array(
+				'success'   => true,
+				'data'      => $body,
+				'meet_link' => $meet_link,
+			),
+			200
+		);
 	}
 
 	public function get_save_credentials_args() {
 		return array(
-			'client_id'     => array( 'type' => 'string', 'required' => true ),
-			'client_secret' => array( 'type' => 'string', 'required' => true ),
-			'redirect_url'  => array( 'type' => 'string', 'required' => true ),
+			'client_id'     => array(
+				'type'     => 'string',
+				'required' => true,
+			),
+			'client_secret' => array(
+				'type'     => 'string',
+				'required' => true,
+			),
+			'redirect_url'  => array(
+				'type'     => 'string',
+				'required' => true,
+			),
 		);
 	}
 }

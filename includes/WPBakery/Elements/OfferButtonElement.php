@@ -20,11 +20,11 @@ class OfferButtonElement {
 	 */
 	public function __construct() {
 		$this->register_element();
-		
+
 		// Disable WPBakery shortcode caching for real-time preview updates
 		add_filter( 'vc_shortcode_content_filter_after', array( $this, 'disable_cache_for_preview' ), 10, 2 );
 	}
-	
+
 	/**
 	 * Disable caching for this shortcode in WPBakery editor
 	 *

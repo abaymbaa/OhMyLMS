@@ -14,4 +14,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $course;
 ?>
-<span class="difficulty beginner"><?php echo __('Beginner','ohmylms'); ?></span>
+<span class="difficulty beginner"><?php echo __( 'Beginner', 'ohmylms' ); ?></span>

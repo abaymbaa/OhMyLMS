@@ -31,62 +31,62 @@ add_filter( 'post_type_link', 'ohmylms_content_link', 10, 2 );
  *
  * @param int $content_id The ID of the lesson, quiz, or assignment.
  * @return string The pretty permalink, or empty string if not found.
- * 
+ *
  * @since 1.0.0
  */
 function ohmylms_get_pretty_content_permalink( $content_id ) {
-	
-    $post = get_post( $content_id );
-    if ( ! $post ) {
-        return '';
-    }
-    $post_type = $post->post_type;
-    $valid_types = array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-assignment' );
-    if ( ! in_array( $post_type, $valid_types ) ) {
-        return get_permalink( $content_id );
-    }
 
-    $course_id = ohmylms_get_course_by_content_id( $content_id );
-    if ( ! $course_id ) {
-        return get_permalink( $content_id );
-    }
-    $course = get_post( $course_id );
-    if ( ! $course ) {
-        return get_permalink( $content_id );
-    }
+	$post = get_post( $content_id );
+	if ( ! $post ) {
+		return '';
+	}
+	$post_type   = $post->post_type;
+	$valid_types = array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-assignment' );
+	if ( ! in_array( $post_type, $valid_types ) ) {
+		return get_permalink( $content_id );
+	}
+
+	$course_id = ohmylms_get_course_by_content_id( $content_id );
+	if ( ! $course_id ) {
+		return get_permalink( $content_id );
+	}
+	$course = get_post( $course_id );
+	if ( ! $course ) {
+		return get_permalink( $content_id );
+	}
 
 	$content_slug = $post->post_name;
 
-    // If permalinks are set to Plain, return a custom query URL
-    if ( ! get_option( 'permalink_structure' ) ) {
-        if ( 'ohmylms-lesson' === $post_type ) {
-            return home_url( '/?ohmylms-lesson=' . $content_slug );
-        } elseif ( 'ohmylms-quiz' === $post_type ) {
-            return home_url( '/?ohmylms-quiz=' . $content_slug );
-        } elseif ( 'ohmylms-assignment' === $post_type ) {
-            return home_url( '/?ohmylms-assignment=' . $content_slug );
-        }
-    }
+	// If permalinks are set to Plain, return a custom query URL
+	if ( ! get_option( 'permalink_structure' ) ) {
+		if ( 'ohmylms-lesson' === $post_type ) {
+			return home_url( '/?ohmylms-lesson=' . $content_slug );
+		} elseif ( 'ohmylms-quiz' === $post_type ) {
+			return home_url( '/?ohmylms-quiz=' . $content_slug );
+		} elseif ( 'ohmylms-assignment' === $post_type ) {
+			return home_url( '/?ohmylms-assignment=' . $content_slug );
+		}
+	}
 
-    $permalink_structure = function_exists( 'ohmylms_get_permalink_structure' ) ? ohmylms_get_permalink_structure() : array();
-    $course_base = isset( $permalink_structure['course_base'] ) ? $permalink_structure['course_base'] : 'ohmylms-courses';
-    $lesson_base = isset( $permalink_structure['lesson_base'] ) ? $permalink_structure['lesson_base'] : 'lessons';
-    $quiz_base = isset( $permalink_structure['quiz_base'] ) ? $permalink_structure['quiz_base'] : 'quizzes';
-    $assignment_base = isset( $permalink_structure['assignment_base'] ) ? $permalink_structure['assignment_base'] : 'assignments';
+	$permalink_structure = function_exists( 'ohmylms_get_permalink_structure' ) ? ohmylms_get_permalink_structure() : array();
+	$course_base         = isset( $permalink_structure['course_base'] ) ? $permalink_structure['course_base'] : 'ohmylms-courses';
+	$lesson_base         = isset( $permalink_structure['lesson_base'] ) ? $permalink_structure['lesson_base'] : 'lessons';
+	$quiz_base           = isset( $permalink_structure['quiz_base'] ) ? $permalink_structure['quiz_base'] : 'quizzes';
+	$assignment_base     = isset( $permalink_structure['assignment_base'] ) ? $permalink_structure['assignment_base'] : 'assignments';
 
-    $course_slug  = $course->post_name;
-    $content_slug = $post->post_name;
+	$course_slug  = $course->post_name;
+	$content_slug = $post->post_name;
 
-    if ( 'ohmylms-lesson'  === $post_type ) {
-        $url = home_url( "/$course_base/$course_slug/$lesson_base/$content_slug/" );
-    } elseif ( 'ohmylms-quiz' === $post_type ) {
-        $url = home_url( "/$course_base/$course_slug/$quiz_base/$content_slug/" );
-    } elseif ( 'ohmylms-assignment' === $post_type ) {
-        $url = home_url( "/$course_base/$course_slug/$assignment_base/$content_slug/" );
-    } else {
-        $url = get_permalink( $content_id );
-    }
-    return $url;
+	if ( 'ohmylms-lesson' === $post_type ) {
+		$url = home_url( "/$course_base/$course_slug/$lesson_base/$content_slug/" );
+	} elseif ( 'ohmylms-quiz' === $post_type ) {
+		$url = home_url( "/$course_base/$course_slug/$quiz_base/$content_slug/" );
+	} elseif ( 'ohmylms-assignment' === $post_type ) {
+		$url = home_url( "/$course_base/$course_slug/$assignment_base/$content_slug/" );
+	} else {
+		$url = get_permalink( $content_id );
+	}
+	return $url;
 }
 
 
@@ -112,9 +112,11 @@ function ohmylms_get_chapter_id_by_content_id( $content_id ) {
 			$content_id
 		)
 	);
-	$result = $chapter_id ? (int) $chapter_id : 0;
+	$result     = $chapter_id ? (int) $chapter_id : 0;
 
-	if ($result) $cache[ $content_id ] = $result;
+	if ( $result ) {
+		$cache[ $content_id ] = $result;
+	}
 	return $result;
 }
 
@@ -134,7 +136,7 @@ function ohmylms_get_content_type_id_by_content_id( $content_id ) {
 		$content_id
 	);
 	$result = $wpdb->get_row( $sql );
-	return isset($result->content_type) ? $result->content_type : null;
+	return isset( $result->content_type ) ? $result->content_type : null;
 }
 
 

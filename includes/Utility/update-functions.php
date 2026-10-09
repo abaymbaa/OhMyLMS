@@ -4,13 +4,14 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Update user membership table
+ *
  * @return void
  * @since 1.0.1
  */
 function ohmylms_update_101_user_membership_table() {
 	if ( ohmylms_is_pro() ) {
 		global $wpdb;
-		if ( !$wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ohmylms_user_membership` LIKE 'subscription_id';" ) ) {
+		if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ohmylms_user_membership` LIKE 'subscription_id';" ) ) {
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}ohmylms_user_membership ADD COLUMN `subscription_id` BIGINT(20) UNSIGNED NOT NULL default 0;" );
 		}
 	}
@@ -18,6 +19,7 @@ function ohmylms_update_101_user_membership_table() {
 
 /**
  * Update database version to 1.0.1
+ *
  * @return void
  * @since 1.0.1
  */
@@ -27,17 +29,18 @@ function ohmylms_update_101_db_version() {
 
 /**
  * Create video progress table
+ *
  * @return void
  * @since 1.2.1
  */
 function ohmylms_update_121_create_video_progress_table() {
 	global $wpdb;
-	
+
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	
+
 	$charset_collate = $wpdb->get_charset_collate();
-	$table_name = $wpdb->prefix . 'ohmylms_video_progress';
-	
+	$table_name      = $wpdb->prefix . 'ohmylms_video_progress';
+
 	// Check if table already exists
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
 		$sql = "CREATE TABLE {$table_name} (
@@ -59,13 +62,14 @@ function ohmylms_update_121_create_video_progress_table() {
 			KEY lesson_id (lesson_id),
 			KEY course_id (course_id)
 		) {$charset_collate};";
-		
+
 		dbDelta( $sql );
 	}
 }
 
 /**
  * Update database version to 1.2.1
+ *
  * @return void
  * @since 1.2.1
  */
@@ -75,6 +79,7 @@ function ohmylms_update_121_db_version() {
 
 /**
  * Create separate student pages (dashboard, profile, my-courses) for existing installations.
+ *
  * @return void
  * @since 1.2.5
  */
@@ -84,6 +89,7 @@ function ohmylms_update_125_create_student_pages() {
 
 /**
  * Update database version to 1.2.5
+ *
  * @return void
  * @since 1.2.5
  */
@@ -93,6 +99,7 @@ function ohmylms_update_125_db_version() {
 
 /**
  * Register the dedicated 'ohmylms_student' role.
+ *
  * @return void
  * @since 1.2.12
  */
@@ -116,6 +123,7 @@ function ohmylms_update_1212_schedule_student_migration() {
 
 /**
  * Update database version to 1.2.12
+ *
  * @return void
  * @since 1.2.12
  */
@@ -184,7 +192,7 @@ function ohmylms_run_student_migration_batch() {
 		}
 		$user->remove_role( 'subscriber' );
 		$user->add_role( $role_slug );
-		$migrated++;
+		++$migrated;
 	}
 
 	// Schedule the next pass only while we're still making progress. A full

@@ -13,9 +13,9 @@ use OhMyLMS\Data\Quiz;
 function ohmylms_get_page_id( $page ) {
 
 	$page_id = apply_filters( 'ohmylms_get_' . $page . '_page_id', get_option( 'ohmylms_' . $page . '_page_id' ) );
-	if( 'course' === $page ) {
+	if ( 'course' === $page ) {
 		$page_slug = get_post_field( 'post_name', $page_id );
-		if( ! in_array( $page_slug, array( 'ohmylms-all-courses', 'ohmylms-all-courses' ), true ) ) {
+		if ( ! in_array( $page_slug, array( 'ohmylms-all-courses', 'ohmylms-all-courses' ), true ) ) {
 			return -1;
 		}
 	}

@@ -17,38 +17,38 @@ namespace OhMyLMS\Migrations;
  */
 class LearnDash {
 
-    /**
-     * LearnDash course id.
-     *
-     * @var int
-     */
-    public $ld_course_id = null;
+	/**
+	 * LearnDash course id.
+	 *
+	 * @var int
+	 */
+	public $ld_course_id = null;
 
-    /**
-     * LearnDash course data.
-     *
-     * @var array
-     */
-    public $ld_course = null;
+	/**
+	 * LearnDash course data.
+	 *
+	 * @var array
+	 */
+	public $ld_course = null;
 
-    /**
-     * Initializes the migration process for a specific LearnDash course.
-     *
-     * @param int|null $ld_course_id The ID of the LearnDash course to migrate.
-     * @return bool Returns true if the initialization was successful, false if not.
-     */
-    public function init( $ld_course_id = null ) {
-        if ( ! $this->should_init() ) {
+	/**
+	 * Initializes the migration process for a specific LearnDash course.
+	 *
+	 * @param int|null $ld_course_id The ID of the LearnDash course to migrate.
+	 * @return bool Returns true if the initialization was successful, false if not.
+	 */
+	public function init( $ld_course_id = null ) {
+		if ( ! $this->should_init() ) {
 			return false;
 		}
 
-        $this->ld_course_id = $ld_course_id;
+		$this->ld_course_id = $ld_course_id;
 
-        return true;
-    }
+		return true;
+	}
 
 
-    /**
+	/**
 	 * Checks if the migration should proceed based on the existence of the LearnDash LMS plugin.
 	 *
 	 * This method ensures that the migration or initialization process only runs if the LearnDash LMS
@@ -61,21 +61,21 @@ class LearnDash {
 		return defined( 'LEARNDASH_VERSION' );
 	}
 
-    /**
-     * Migrates course data from LearnDash to OhMyLMS.
-     *
-     * @return \WP_Error|int Returns the new OhMyLMS course ID on success or WP_Error on failure.
-     */
-    public function migrate_course() {
-		
-        // Fetch the course data
+	/**
+	 * Migrates course data from LearnDash to OhMyLMS.
+	 *
+	 * @return \WP_Error|int Returns the new OhMyLMS course ID on success or WP_Error on failure.
+	 */
+	public function migrate_course() {
+
+		// Fetch the course data
 		$this->ld_course = $this->get_course_data();
 		// Check if fetching course data resulted in an error
 		if ( is_wp_error( $this->ld_course ) ) {
 			return $this->ld_course; // Return error if data fetch failed
 		}
-		
-        // Prepare the course data for insertion
+
+		// Prepare the course data for insertion
 		$post_data = array(
 			'post_title'    => sanitize_text_field( $this->ld_course['post_title'] ),
 			'post_content'  => wp_kses_post( $this->ld_course['post_content'] ),
@@ -86,20 +86,20 @@ class LearnDash {
 			'post_date'     => isset( $this->ld_course['post_date'], $this->ld_course['post_status'] ) && 'future' === $this->ld_course['post_status'] ? gmdate( 'Y-m-d H:i:s', strtotime( $this->ld_course['post_date'] ) ) : current_datetime()->format( 'Y-m-d H:i:s' ),
 			'post_password' => isset( $this->ld_course['post_password'] ) ? $this->ld_course['post_password'] : '',
 		);
-        
-        // Insert the course post into WordPress
+
+		// Insert the course post into WordPress
 		$new_course_id = wp_insert_post( $post_data );
 		if ( is_wp_error( $new_course_id ) ) {
 			return $new_course_id; // Return error if insertion failed
 		}
 
-        // If the course has a password, set the access type to 'password_protected'
+		// If the course has a password, set the access type to 'password_protected'
 		if ( ! empty( $post_data['post_password'] ) ) {
 			update_post_meta( $new_course_id, '_access_type', 'password_protected' );
 		} else {
 			update_post_meta( $new_course_id, '_access_type', 'public' ); // Default to public if no password
 		}
-       
+
 		// Migrate course metadata if available
 		if ( ! empty( $this->ld_course['meta'] ) && is_array( $this->ld_course['meta'] ) ) {
 			$this->migrate_course_metadata( $new_course_id, $this->ld_course['meta'] );
@@ -112,7 +112,7 @@ class LearnDash {
 		$this->migrate_chapters( $new_course_id );
 
 		$this->migrate_students( $new_course_id );
-    }
+	}
 
 
 	/**
@@ -130,7 +130,7 @@ class LearnDash {
 
 			// Migrate the course price type
 			if ( '_ld_price_type' === $key ) {
-				if( in_array( $value[0], array( 'free', 'paid', 'closed' ) ) ) {
+				if ( in_array( $value[0], array( 'free', 'paid', 'closed' ) ) ) {
 					$actual_value = 'closed' === $value[0] ? 'paid' : $value[0];
 					update_post_meta( $new_course_id, '_price_type', $actual_value );
 				} else {
@@ -143,9 +143,9 @@ class LearnDash {
 				update_post_meta( $new_course_id, '_thumbnail_id', $value[0] );
 			}
 
-			if( '_sfwd-courses' === $key ) {
+			if ( '_sfwd-courses' === $key ) {
 				$data = maybe_unserialize( $value[0] );
-				if( is_array( $data ) ) {
+				if ( is_array( $data ) ) {
 					foreach ( $data as $meta_key => $meta_value ) {
 						// Migrate specific course metadata
 						switch ( $meta_key ) {
@@ -167,12 +167,12 @@ class LearnDash {
 				}
 			}
 
-			if( '_learndash_course_grid_duration' === $key ) {
+			if ( '_learndash_course_grid_duration' === $key ) {
 				if ( $value[0] ) {
 					$duration_second = $value[0];
-					$hours   = floor( $duration_second / HOUR_IN_SECONDS );
-					$minutes = floor( ( $duration_second % HOUR_IN_SECONDS ) / MINUTE_IN_SECONDS );
-					
+					$hours           = floor( $duration_second / HOUR_IN_SECONDS );
+					$minutes         = floor( ( $duration_second % HOUR_IN_SECONDS ) / MINUTE_IN_SECONDS );
+
 					$new_duration = array();
 					if ( $hours > 0 ) {
 						$new_duration['hour'] = strval( $hours ); // Migrate hours
@@ -231,20 +231,20 @@ class LearnDash {
 	private function migrate_chapters( $new_course_id ) {
 		global $wpdb;
 
-		$total_data = \LDLMS_Factory_Post::course_steps($this->ld_course_id);
+		$total_data = \LDLMS_Factory_Post::course_steps( $this->ld_course_id );
 		$total_data = $total_data->get_steps();
 
-		if (empty($total_data)) {
+		if ( empty( $total_data ) ) {
 			return;
 		}
 
-		$i = 0;
-		$section_count = 0;
+		$i              = 0;
+		$section_count  = 0;
 		$new_chapter_id = 0;
 		foreach ( $total_data['sfwd-lessons'] as $lesson_key => $lesson_data ) {
-			
-			$author_id = get_post_field('post_author', $this->ld_course_id);
-			$chapter = get_post( $lesson_key );
+
+			$author_id = get_post_field( 'post_author', $this->ld_course_id );
+			$chapter   = get_post( $lesson_key );
 			if ( ! $chapter ) {
 				continue; // Skip if chapter does not exist
 			}
@@ -277,19 +277,16 @@ class LearnDash {
 				array( '%d', '%d', '%d' )
 			);
 
-
-
 			// Migrate the chapter metadata
 			$topics = learndash_course_get_topics( $this->ld_course_id, $chapter->ID );
-			if( is_array( $topics ) && ! empty( $topics ) ) {
+			if ( is_array( $topics ) && ! empty( $topics ) ) {
 				$lesson_index = 0;
-				$quiz_index = 0;
+				$quiz_index   = 0;
 				foreach ( $topics as $topic_id => $topic_data ) {
-					if( 'sfwd-topic' === $topic_data->post_type ) {
+					if ( 'sfwd-topic' === $topic_data->post_type ) {
 						$this->migrate_lesson( $new_chapter_id, $topic_id, $lesson_index );
-						$lesson_index++;
+						++$lesson_index;
 					}
-					
 				}
 			}
 
@@ -301,7 +298,7 @@ class LearnDash {
 					'per_page'    => 0,
 				)
 			);
-			
+
 			if ( ( is_array( $chapter_quizzes ) ) && ( ! empty( $chapter_quizzes ) ) ) {
 				// Loop lesson's quizzes.
 				foreach ( $chapter_quizzes as $quiz ) {
@@ -310,10 +307,10 @@ class LearnDash {
 					}
 
 					$this->migrate_quiz( $new_chapter_id, $quiz, $quiz_index );
-					$quiz_index++;
+					++$quiz_index;
 				}
 			}
-			$i++;
+			++$i;
 		}
 	}
 
@@ -324,9 +321,9 @@ class LearnDash {
 	 * as new quizzes into the OhMyLMS system. The quiz metadata is migrated as well,
 	 * and the relationship between the new chapter and quizzes is established.
 	 *
-	 * @param int $new_chapter_id The ID of the newly created chapter in OhMyLMS.
+	 * @param int     $new_chapter_id The ID of the newly created chapter in OhMyLMS.
 	 * @param WP_Post $quiz The quiz post object from the old chapter.
-	 * @param int $index The index of the quiz in the chapter, used for maintaining order.
+	 * @param int     $index The index of the quiz in the chapter, used for maintaining order.
 	 */
 	private function migrate_quiz( $new_chapter_id, $quiz, $index = 0 ) {
 		global $wpdb;
@@ -409,7 +406,7 @@ class LearnDash {
 				if ( is_array( $settings ) && ! empty( $settings ) ) {
 					foreach ( $settings  as $key => $meta_value ) {
 						if ( 'sfwd-quiz_retry_restrictions' === $key ) {
-							if( isset( $settings['sfwd-quiz_repeats'] ) && $settings['sfwd-quiz_repeats'] > 0 ) {
+							if ( isset( $settings['sfwd-quiz_repeats'] ) && $settings['sfwd-quiz_repeats'] > 0 ) {
 								$new_settings['allow_attempts'] = $settings['sfwd-quiz_repeats'];
 							}
 						} elseif ( 'sfwd-quiz_questionRandom' === $key && $meta_value ) {
@@ -421,17 +418,17 @@ class LearnDash {
 							} elseif ( 1 < $meta_value ) {
 								$layout = 'number_of_questions_per_page';
 							}
-							$new_settings['layout'] = $layout;
+							$new_settings['layout']               = $layout;
 							$new_settings['question_in_one_page'] = $meta_value;
 						} elseif ( 'sfwd-quiz_passingpercentage' === $key ) {
-							
+
 							$new_settings['passing_grade'] = array(
 								'enabled' => true,
 								'value'   => $meta_value,
 							);
 						} elseif ( 'sfwd-quiz_quiz_time_limit_enabled' === $key && 'on' === $meta_value ) {
-							$minutes   = floor( $settings['sfwd-quiz_timeLimit'] / MINUTE_IN_SECONDS );
-						
+							$minutes = floor( $settings['sfwd-quiz_timeLimit'] / MINUTE_IN_SECONDS );
+
 							$new_settings['time_limit'] = array(
 								'value' => $minutes,
 								'type'  => 'minutes',
@@ -473,7 +470,7 @@ class LearnDash {
 				);
 
 				if ( $question_data ) {
-					if( isset( $question_data['answer_data'] ) ) {
+					if ( isset( $question_data['answer_data'] ) ) {
 						$question_data['answer_data'] = maybe_unserialize( $question_data['answer_data'] );
 					}
 
@@ -501,10 +498,10 @@ class LearnDash {
 						),
 						array( '%d', '%d', '%d' )
 					);
-					
+
 					$this->migrate_question_metadata( $new_question_id, $question_data );
 					$this->migrate_answers( $new_question_id, $question_data['answer_data'] );
-					
+
 				}
 			}
 		}
@@ -610,7 +607,7 @@ class LearnDash {
 		if ( ! $lesson ) {
 			return;
 		}
-		
+
 		$new_lesson_data = array(
 			'post_title'   => sanitize_text_field( $lesson->post_title ),
 			'post_content' => wp_kses_post( $lesson->post_content ),
@@ -623,7 +620,7 @@ class LearnDash {
 
 		// Insert the new lesson into the database
 		$new_lesson_id = wp_insert_post( $new_lesson_data );
-		
+
 		// If lesson insertion fails, skip to the next one
 		if ( is_wp_error( $new_lesson_id ) ) {
 			return;
@@ -671,7 +668,7 @@ class LearnDash {
 		}
 	}
 
-    /**
+	/**
 	 * Get course data.
 	 *
 	 * @return array|\WP_Error The course data or error object.
@@ -681,7 +678,7 @@ class LearnDash {
 		if ( ! $this->ld_course_id ) {
 			return new \WP_Error( 'no_course_id', 'No course ID provided.' );
 		}
-		
+
 		// Get course post data
 		$course = get_post( $this->ld_course_id );
 		if ( ! $course || 'sfwd-courses' !== $course->post_type ) {
@@ -787,7 +784,7 @@ class LearnDash {
 	private function get_enrolled_students_ids() {
 		global $wpdb;
 		$course_groups_ids = learndash_get_course_groups( $this->ld_course_id );
-		$meta_keys = [ 'course_' . $this->ld_course_id . '_access_from' ];
+		$meta_keys         = array( 'course_' . $this->ld_course_id . '_access_from' );
 		if ( ! empty( $course_groups_ids ) ) {
 			foreach ( $course_groups_ids as $group_id ) {
 				$meta_keys[] = "learndash_group_users_{$group_id}";
@@ -795,7 +792,7 @@ class LearnDash {
 		}
 
 		$placeholders = implode( ',', array_fill( 0, count( $meta_keys ), '%s' ) );
-		$sql = $wpdb->prepare(
+		$sql          = $wpdb->prepare(
 			"SELECT DISTINCT user_id FROM {$wpdb->usermeta} WHERE meta_key IN ($placeholders)",
 			...$meta_keys
 		);

@@ -1,0 +1,509 @@
+<?php
+namespace OhMyLMS\Assessment;
+
+use OhMyLMS\Assessment\Cas\Expression;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Interactive "recognize and produce" question types.
+ *
+ * Every type keeps its answer key in settings keys that never reach a learner;
+ * public_view() returns the only data a renderer may use. Grading is whole-question
+ * (right or wrong) with per-item results returned for feedback, unless a type is
+ * explicitly marked partial.
+ *
+ * dropdown-blanks  text "The slope is {1}, so the line {2}"; slots = [[id, choices[], answer]]
+ * categorize       buckets = [[id, label]]; items = [[id, text, image_url]]; key = item id => bucket id
+ * multi-blank      layout inline|table; text / columns / rows with {id} markers; blanks = id => spec
+ * build-expression correct = tiles in order; distractors = extra tiles; alternatives = other valid orders
+ */
+final class Interactive {
+	const TYPES = array( 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', ...Visual::TYPES );
+
+	/** Marker such as {1} or {b2} inside a prompt or table cell. */
+	const MARKER = '/\{([a-z0-9_-]{1,20})\}/i';
+
+	public static function is_interactive( $type ) {
+		return in_array( $type, self::TYPES, true );
+	}
+
+	/** Marker IDs in the order they appear. */
+	public static function markers( $text ) {
+		preg_match_all( self::MARKER, (string) $text, $found );
+		return array_values( array_unique( $found[1] ) );
+	}
+
+	/** Blank IDs of a multi-blank question, from its inline text or table cells. */
+	public static function blank_ids( array $settings ) {
+		if ( ( $settings['layout'] ?? 'inline' ) === 'table' ) {
+			$ids = array();
+			foreach ( (array) ( $settings['rows'] ?? array() ) as $row ) {
+				foreach ( (array) $row as $cell ) {
+					$ids = array_merge( $ids, self::markers( is_scalar( $cell ) ? $cell : '' ) );
+				}
+			}
+			return array_values( array_unique( $ids ) );
+		}
+		return self::markers( $settings['text'] ?? '' );
+	}
+
+	/** Same list, same seed, same order: stable across reloads, different across learners. */
+	public static function shuffled( array $list, $seed ) {
+		$keyed = array();
+		foreach ( array_values( $list ) as $index => $item ) {
+			$keyed[] = array( hash( 'sha256', $seed . '|' . $index ), $item );
+		}
+		usort(
+			$keyed,
+			static function ( $a, $b ) {
+				return strcmp( $a[0], $b[0] );
+			}
+		);
+		return array_column( $keyed, 1 );
+	}
+
+	/** The tile bank of a build-expression question, unshuffled. */
+	public static function tiles( array $settings ) {
+		return array_merge(
+			array_map( 'strval', array_values( (array) ( $settings['correct'] ?? array() ) ) ),
+			array_map( 'strval', array_values( (array) ( $settings['distractors'] ?? array() ) ) )
+		);
+	}
+
+	/**
+	 * Learner-safe settings: no answers, accepted values, tolerances or bucket assignments.
+	 *
+	 * @param string $seed Delivery seed that fixes the order of shuffled lists.
+	 */
+	public static function public_view( $type, array $settings, $seed = '' ) {
+		if ( Visual::handles( $type ) ) {
+			return Visual::public_view( $type, $settings ); }
+		$view = array();
+		switch ( $type ) {
+			case 'dropdown-blanks':
+				$view['text']  = (string) ( $settings['text'] ?? '' );
+				$view['slots'] = array();
+				foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
+					$id              = preg_replace( '/[^a-z0-9_-]/i', '', (string) ( $slot['id'] ?? '' ) );
+					$view['slots'][] = array(
+						'id'      => $id,
+						'choices' => self::shuffled( array_values( array_map( 'strval', (array) ( $slot['choices'] ?? array() ) ) ), $seed . '|' . $id ),
+					);
+				}
+				break;
+			case 'categorize':
+				$view['buckets'] = array_map(
+					static function ( $bucket ) {
+						return array(
+							'id'    => (string) ( $bucket['id'] ?? '' ),
+							'label' => (string) ( $bucket['label'] ?? '' ),
+						);
+					},
+					array_values( (array) ( $settings['buckets'] ?? array() ) )
+				);
+				$view['items']   = self::shuffled(
+					array_map(
+						static function ( $item ) {
+							return array(
+								'id'        => (string) ( $item['id'] ?? '' ),
+								'text'      => (string) ( $item['text'] ?? '' ),
+								'image_url' => (string) ( $item['image_url'] ?? '' ),
+							);
+						},
+						array_values( (array) ( $settings['items'] ?? array() ) )
+					),
+					$seed
+				);
+				break;
+			case 'multi-blank':
+				$layout         = ( $settings['layout'] ?? 'inline' ) === 'table' ? 'table' : 'inline';
+				$view['layout'] = $layout;
+				if ( $layout === 'table' ) {
+					$view['columns'] = array_map( 'strval', array_values( (array) ( $settings['columns'] ?? array() ) ) );
+					$view['rows']    = array_map(
+						static function ( $row ) {
+							return array_map( 'strval', array_values( (array) $row ) );
+						},
+						array_values( (array) ( $settings['rows'] ?? array() ) )
+					);
+				} else {
+					$view['text'] = (string) ( $settings['text'] ?? '' );
+				}
+				$view['fields'] = array();
+				foreach ( self::blank_ids( $settings ) as $id ) {
+					$spec                   = (array) ( $settings['blanks'][ $id ] ?? array() );
+					$view['fields'][ $id ] = array(
+						'kind' => in_array( $spec['kind'] ?? '', array( 'numerical', 'expression' ), true ) ? $spec['kind'] : 'text',
+						'unit' => (string) ( $spec['unit'] ?? '' ),
+						'form' => self::form( $spec['form'] ?? 'any' ),
+					);
+				}
+				break;
+			case 'build-expression':
+				$view['tiles'] = self::shuffled( self::tiles( $settings ), $seed );
+				$view['form']  = self::form( $settings['form'] ?? 'any' );
+				break;
+			case 'expression':
+				$view['form'] = self::form( $settings['form'] ?? 'any' );
+				break;
+		}
+		return $view;
+	}
+
+	/** Readable correct answer, revealed only after a response has been graded. */
+	public static function expected( $type, array $settings ) {
+		if ( Visual::handles( $type ) ) {
+			return Visual::expected( $type, $settings ); }
+		switch ( $type ) {
+			case 'dropdown-blanks':
+				return array_map(
+					static function ( $slot ) {
+						return '{' . ( $slot['id'] ?? '' ) . '} = ' . ( $slot['answer'] ?? '' );
+					},
+					array_values( (array) ( $settings['slots'] ?? array() ) )
+				);
+			case 'categorize':
+				$labels = array_column( (array) ( $settings['buckets'] ?? array() ), 'label', 'id' );
+				$key    = (array) ( $settings['key'] ?? array() );
+				return array_map(
+					static function ( $item ) use ( $labels, $key ) {
+						return ( $item['text'] ?? '' ) . ' → ' . ( $labels[ $key[ $item['id'] ?? '' ] ?? '' ] ?? '' );
+					},
+					array_values( (array) ( $settings['items'] ?? array() ) )
+				);
+			case 'multi-blank':
+				$out = array();
+				foreach ( self::blank_ids( $settings ) as $id ) {
+					$spec  = (array) ( $settings['blanks'][ $id ] ?? array() );
+					$kind  = $spec['kind'] ?? 'text';
+					$value = $kind === 'numerical' ? ( $spec['answers'][0] ?? $spec['answer'] ?? '' ) : ( $kind === 'expression' ? ( $spec['answer'] ?? '' ) : ( $spec['accepted'][0] ?? '' ) );
+					$out[] = '{' . $id . '} = ' . $value;
+				}
+				return $out;
+			case 'build-expression':
+				return array( implode( ' ', array_map( 'strval', (array) ( $settings['correct'] ?? array() ) ) ) );
+			case 'expression':
+				return array( (string) ( $settings['answer'] ?? '' ) );
+		}
+		return array();
+	}
+
+	/** Does this settings array still hold an answer key? */
+	private static function has_key( $type, array $settings ) {
+		if ( Visual::handles( $type ) ) {
+			return Visual::has_key( $type, $settings ); }
+		switch ( $type ) {
+			case 'dropdown-blanks':
+				foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
+					if ( isset( $slot['answer'] ) ) {
+						return true; }
+				}
+				return false;
+			case 'categorize':
+				return isset( $settings['key'] );
+			case 'multi-blank':
+				return isset( $settings['blanks'] );
+			case 'build-expression':
+				return isset( $settings['correct'] );
+			case 'expression':
+				return isset( $settings['answer'] );
+		}
+		return false;
+	}
+
+	/**
+	 * Settings a template may output. Student views are already safe; raw settings
+	 * (legacy rendering, previews) are reduced here so a template can never leak a key.
+	 */
+	public static function learner_settings( $type, array $question ) {
+		$settings = (array) ( $question['settings'] ?? array() );
+		if ( self::has_key( $type, $settings ) ) {
+			$private = array(
+				'categorize'       => array( 'key' ),
+				'multi-blank'      => array( 'blanks' ),
+				'build-expression' => array( 'correct', 'distractors', 'alternatives' ),
+				'expression'       => array( 'answer', 'alternatives' ),
+			);
+			$kept    = array_diff_key( $settings, array_flip( $private[ $type ] ?? Visual::private_keys( $type ) ) );
+			return array_merge( $kept, self::public_view( $type, $settings, (string) ( $question['id'] ?? '' ) ) );
+		}
+		return $settings;
+	}
+
+	/** Form field name for a keyed answer, or for the ordered list when $key is null. */
+	public static function field_name( array $attempt, array $question, $key = null ) {
+		return 'attempt[' . (int) $attempt['id'] . '][quiz_question][' . (int) $question['id'] . ']'
+			. ( $key === null ? '[]' : '[' . preg_replace( '/[^a-z0-9_-]/i', '', (string) $key ) . ']' );
+	}
+
+	/** Field-name prefix for widgets that add their own hidden inputs: attempt[a][quiz_question][q]. */
+	public static function field_prefix( array $attempt, array $question ) {
+		return 'attempt[' . (int) $attempt['id'] . '][quiz_question][' . (int) $question['id'] . ']';
+	}
+
+	public static function enqueue() {
+		if ( ! function_exists( 'wp_enqueue_script' ) ) {
+			return; }
+		self::register_assets();
+		wp_enqueue_script( 'ohmylms-interactive' );
+		wp_enqueue_script( 'ohmylms-interactive-visual' );
+		wp_enqueue_style( 'ohmylms-interactive' );
+	}
+
+	/** Registered once so the practice runner can depend on the controls. */
+	public static function register_assets() {
+		if ( ! wp_script_is( 'ohmylms-interactive', 'registered' ) ) {
+			wp_register_script( 'ohmylms-interactive', plugins_url( 'assets/js/interactive-controls.js', OHMYLMS_FILE ), array(), OHMYLMS_VERSION, true ); }
+		if ( ! wp_script_is( 'ohmylms-interactive-visual', 'registered' ) ) {
+			wp_register_script( 'ohmylms-interactive-visual', plugins_url( 'assets/js/interactive-visual.js', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), OHMYLMS_VERSION, true ); }
+		if ( ! wp_style_is( 'ohmylms-interactive', 'registered' ) ) {
+			wp_register_style( 'ohmylms-interactive', plugins_url( 'assets/css/interactive.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION ); }
+	}
+
+	/**
+	 * Split text at {marker}s: calls $field($id) for each marker, escapes the rest.
+	 *
+	 * @param callable $field Receives the marker ID and echoes a control.
+	 */
+	public static function render_marked( $text, callable $field ) {
+		$parts = preg_split( self::MARKER, (string) $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+		foreach ( $parts as $index => $part ) {
+			if ( $index % 2 ) {
+				call_user_func( $field, $part );
+			} else {
+				echo esc_html( $part );
+			}
+		}
+	}
+
+	/**
+	 * @param array|mixed $answer Keyed by slot / item / blank ID, or an ordered list of tiles.
+	 * @return array{correct:bool,fraction:float,manual:bool}
+	 */
+	public static function grade( $type, $answer, array $settings ) {
+		$answer = is_array( $answer ) ? $answer : array();
+		if ( Visual::handles( $type ) ) {
+			return Visual::grade( $type, $answer, $settings ); }
+		switch ( $type ) {
+			case 'dropdown-blanks':
+				return self::grade_dropdown( $answer, $settings );
+			case 'categorize':
+				return self::grade_categorize( $answer, $settings );
+			case 'multi-blank':
+				return self::grade_multi_blank( $answer, $settings );
+			case 'build-expression':
+				return self::grade_tiles( $answer, $settings );
+			case 'expression':
+				return self::grade_expression( $answer, $settings );
+		}
+		return self::result( array( false ), false );
+	}
+
+	/** A form name the engine knows; anything else means no requirement. */
+	private static function form( $form ) {
+		return in_array( $form, Expression::FORMS, true ) ? $form : 'any';
+	}
+
+	/** The one typed value of a single-field answer, posted as a list or as a keyed object. */
+	private static function typed( array $answer ) {
+		foreach ( $answer as $value ) {
+			if ( is_scalar( $value ) ) {
+				return (string) $value; }
+		}
+		return '';
+	}
+
+	private static function grade_expression( array $answer, array $settings ) {
+		$typed = self::typed( $answer );
+		$keys  = array_merge( array( (string) ( $settings['answer'] ?? '' ) ), array_map( 'strval', (array) ( $settings['alternatives'] ?? array() ) ) );
+		$form  = self::form( $settings['form'] ?? 'any' );
+		$ok    = false;
+		$why   = 'different';
+		foreach ( array_filter( $keys, 'strlen' ) as $key ) {
+			$check = Expression::check( $typed, $key, $form, $settings );
+			$ok    = $ok || $check['correct'];
+			// "form" is the most helpful reason when the value was right but the shape was not.
+			$why = $check['correct'] ? 'equivalent' : ( $why === 'equivalent' || $check['reason'] === 'different' ? $why : $check['reason'] );
+		}
+		$result           = self::result( array( $ok ), false );
+		$result['reason'] = $ok ? 'equivalent' : $why;
+		return $result;
+	}
+
+	/** @param bool[] $items per-item correctness */
+	private static function result( array $items, $partial ) {
+		$total = count( $items );
+		$hits  = count( array_filter( $items ) );
+		$all   = $total > 0 && $hits === $total;
+		return array(
+			'correct'  => $all,
+			'fraction' => $all ? 1.0 : ( $partial && $total > 0 ? $hits / $total : 0.0 ),
+			'manual'   => false,
+			'items'    => $items,
+		);
+	}
+
+	private static function same_text( $a, $b ) {
+		return mb_strtolower( trim( (string) $a ) ) === mb_strtolower( trim( (string) $b ) );
+	}
+
+	private static function grade_dropdown( array $answer, array $settings ) {
+		$items = array();
+		foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
+			$id    = (string) ( $slot['id'] ?? '' );
+			$input = $answer[ $id ] ?? '';
+			// The chosen text must be one of the slot's choices and the key.
+			$items[ $id ] = is_scalar( $input ) && (string) $input !== ''
+				&& in_array( (string) $input, array_map( 'strval', (array) ( $slot['choices'] ?? array() ) ), true )
+				&& self::same_text( $input, $slot['answer'] ?? null );
+		}
+		return self::result( $items, ! empty( $settings['partial_credit'] ) );
+	}
+
+	private static function grade_categorize( array $answer, array $settings ) {
+		$items = array();
+		$key   = (array) ( $settings['key'] ?? array() );
+		foreach ( (array) ( $settings['items'] ?? array() ) as $item ) {
+			$id           = (string) ( $item['id'] ?? '' );
+			$items[ $id ] = isset( $answer[ $id ], $key[ $id ] ) && is_scalar( $answer[ $id ] ) && (string) $answer[ $id ] === (string) $key[ $id ];
+		}
+		return self::result( $items, ! empty( $settings['partial_credit'] ) );
+	}
+
+	private static function grade_multi_blank( array $answer, array $settings ) {
+		$items = array();
+		foreach ( self::blank_ids( $settings ) as $id ) {
+			$spec         = (array) ( $settings['blanks'][ $id ] ?? array() );
+			$input        = $answer[ $id ] ?? '';
+			$present      = is_scalar( $input ) && trim( (string) $input ) !== '';
+			if ( ! $present ) {
+				$items[ $id ] = false;
+			} elseif ( ( $spec['kind'] ?? 'text' ) === 'numerical' ) {
+				$items[ $id ] = NumericAnswer::grade( $input, $spec )['fraction'] >= 1.0;
+			} elseif ( ( $spec['kind'] ?? 'text' ) === 'expression' ) {
+				$items[ $id ] = Expression::check( (string) $input, (string) ( $spec['answer'] ?? '' ), self::form( $spec['form'] ?? 'any' ), $spec )['correct'];
+			} else {
+				$accepted     = array_map( array( Structured::class, 'normalize_text' ), (array) ( $spec['accepted'] ?? array() ) );
+				$items[ $id ] = in_array( Structured::normalize_text( $input ), $accepted, true );
+			}
+		}
+		return self::result( $items, ! empty( $settings['partial_credit'] ) );
+	}
+
+	private static function grade_tiles( array $answer, array $settings ) {
+		$given = array_map( 'strval', array_values( array_filter( $answer, 'is_scalar' ) ) );
+		$valid = array_merge(
+			array( (array) ( $settings['correct'] ?? array() ) ),
+			(array) ( $settings['alternatives'] ?? array() )
+		);
+		$ok    = false;
+		foreach ( $valid as $sequence ) {
+			$ok = $ok || ( $given && array_map( 'strval', array_values( (array) $sequence ) ) === $given );
+		}
+		// Different tiles can still say the same thing (2 + 3 x versus 3 x + 2): ask the engine.
+		if ( ! $ok && $given && ! empty( $settings['equivalence'] ) ) {
+			$form = self::form( $settings['form'] ?? 'any' );
+			foreach ( $valid as $sequence ) {
+				$ok = $ok || Expression::check( implode( '', $given ), implode( '', array_map( 'strval', (array) $sequence ) ), $form, $settings )['correct'];
+			}
+		}
+		return self::result( array( $ok ), false );
+	}
+
+	/** Authoring validation: true or a message. */
+	public static function validate_settings( $type, array $settings ) {
+		if ( Visual::handles( $type ) ) {
+			return Visual::validate_settings( $type, $settings ); }
+		switch ( $type ) {
+			case 'dropdown-blanks':
+				$slots = (array) ( $settings['slots'] ?? array() );
+				$ids   = self::markers( $settings['text'] ?? '' );
+				if ( ! $slots || ! $ids ) {
+					return __( 'Write the sentence with at least one {1} marker and add its choices.', 'ohmylms' ); }
+				$seen = array();
+				foreach ( $slots as $slot ) {
+					$id      = (string) ( $slot['id'] ?? '' );
+					$choices = array_map( 'strval', (array) ( $slot['choices'] ?? array() ) );
+					if ( ! preg_match( '/^[a-z0-9_-]{1,20}$/i', $id ) || isset( $seen[ $id ] ) || ! in_array( $id, $ids, true ) ) {
+						return __( 'Each dropdown needs a unique ID that appears in the sentence as {ID}.', 'ohmylms' ); }
+					$seen[ $id ] = true;
+					if ( count( $choices ) < 2 || count( array_unique( array_map( 'mb_strtolower', $choices ) ) ) !== count( $choices ) || in_array( '', $choices, true ) ) {
+						return __( 'Each dropdown needs at least two different, non-empty choices.', 'ohmylms' ); }
+					if ( ! in_array( (string) ( $slot['answer'] ?? '' ), $choices, true ) ) {
+						return __( 'Each dropdown answer must be one of its choices.', 'ohmylms' ); }
+				}
+				return count( $seen ) === count( $ids ) ? true : __( 'Every {marker} in the sentence needs a dropdown.', 'ohmylms' );
+			case 'categorize':
+				$buckets = array_column( (array) ( $settings['buckets'] ?? array() ), 'id' );
+				$items   = (array) ( $settings['items'] ?? array() );
+				$key     = (array) ( $settings['key'] ?? array() );
+				if ( count( $buckets ) < 2 || count( array_unique( $buckets ) ) !== count( $buckets ) || count( array_filter( array_column( (array) $settings['buckets'], 'label' ), 'strlen' ) ) !== count( $buckets ) ) {
+					return __( 'Add at least two labelled groups with unique IDs.', 'ohmylms' ); }
+				if ( ! $items || count( array_unique( array_column( $items, 'id' ) ) ) !== count( $items ) ) {
+					return __( 'Add items with unique IDs.', 'ohmylms' ); }
+				foreach ( $items as $item ) {
+					$id = (string) ( $item['id'] ?? '' );
+					if ( trim( (string) ( $item['text'] ?? '' ) ) === '' && empty( $item['image_url'] ) ) {
+						return __( 'Every item needs text or an image.', 'ohmylms' ); }
+					if ( ! isset( $key[ $id ] ) || ! in_array( (string) $key[ $id ], array_map( 'strval', $buckets ), true ) ) {
+						return __( 'Every item must belong to one of the groups.', 'ohmylms' ); }
+				}
+				return true;
+			case 'multi-blank':
+				$ids = self::blank_ids( $settings );
+				if ( ! $ids ) {
+					return __( 'Add at least one {blank} marker.', 'ohmylms' ); }
+				if ( ( $settings['layout'] ?? 'inline' ) === 'table' && ! array_filter( (array) ( $settings['rows'] ?? array() ) ) ) {
+					return __( 'A table needs at least one row.', 'ohmylms' ); }
+				foreach ( $ids as $id ) {
+					$spec = (array) ( $settings['blanks'][ $id ] ?? array() );
+					if ( ( $spec['kind'] ?? 'text' ) === 'numerical' ) {
+						$expected = $spec['answers'] ?? array( $spec['answer'] ?? null );
+						foreach ( (array) $expected as $value ) {
+							if ( ! is_numeric( $value ) || ! is_finite( (float) $value ) ) {
+								return __( 'Numerical blanks need a finite expected answer.', 'ohmylms' ); }
+						}
+					} elseif ( ( $spec['kind'] ?? 'text' ) === 'expression' ) {
+						if ( Expression::parse( $spec['answer'] ?? '' ) === null ) {
+							return __( 'Expression blanks need an answer written as a valid math expression.', 'ohmylms' ); }
+						if ( ! in_array( $spec['form'] ?? 'any', Expression::FORMS, true ) ) {
+							return __( 'Unknown answer form.', 'ohmylms' ); }
+					} elseif ( ! array_filter( (array) ( $spec['accepted'] ?? array() ), 'strlen' ) ) {
+						return __( 'Text blanks need at least one accepted answer.', 'ohmylms' ); }
+				}
+				return true;
+			case 'build-expression':
+				$correct = array_map( 'strval', (array) ( $settings['correct'] ?? array() ) );
+				if ( count( $correct ) < 2 || in_array( '', $correct, true ) ) {
+					return __( 'Enter the correct tiles in order (at least two).', 'ohmylms' ); }
+				$bank = self::tiles( $settings );
+				if ( in_array( '', $bank, true ) ) {
+					return __( 'Tiles cannot be empty.', 'ohmylms' ); }
+				foreach ( (array) ( $settings['alternatives'] ?? array() ) as $sequence ) {
+					$extra = array_count_values( array_map( 'strval', (array) $sequence ) );
+					$have  = array_count_values( $bank );
+					foreach ( $extra as $tile => $count ) {
+						if ( ( $have[ $tile ] ?? 0 ) < $count ) {
+							return __( 'Alternative orders can only use tiles from the bank.', 'ohmylms' ); }
+					}
+				}
+				if ( ! in_array( $settings['form'] ?? 'any', Expression::FORMS, true ) ) {
+					return __( 'Unknown answer form.', 'ohmylms' ); }
+				if ( ! empty( $settings['equivalence'] ) && Expression::parse( implode( '', $correct ) ) === null ) {
+					return __( 'With "accept equivalent expressions" the correct tiles must form a valid math expression.', 'ohmylms' ); }
+				return true;
+			case 'expression':
+				if ( Expression::parse( $settings['answer'] ?? '' ) === null ) {
+					return __( 'Enter the correct answer as a valid math expression, for example 2(x+3).', 'ohmylms' ); }
+				if ( ! in_array( $settings['form'] ?? 'any', Expression::FORMS, true ) ) {
+					return __( 'Unknown answer form.', 'ohmylms' ); }
+				foreach ( (array) ( $settings['alternatives'] ?? array() ) as $alternative ) {
+					if ( Expression::parse( $alternative ) === null ) {
+						return __( 'Every other accepted answer must be a valid math expression.', 'ohmylms' ); }
+				}
+				return true;
+		}
+		return true;
+	}
+}

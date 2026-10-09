@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-//note: .ohmylms-sidebar-widget-wrapper ends on widget-wrapper-end.php
+// note: .ohmylms-sidebar-widget-wrapper ends on widget-wrapper-end.php
 ?>
 
 <div class="ohmylms-sidebar-widget-wrapper">

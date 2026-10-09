@@ -115,7 +115,7 @@ class GoogleMeetApiClient implements GoogleMeetApiInterface {
 	 */
 	private function request( $method, $url, $data = array() ) {
 		$token = $this->token_service->get_valid_access_token();
-		
+
 		if ( ! $token ) {
 			return array(
 				'success' => false,
@@ -150,8 +150,8 @@ class GoogleMeetApiClient implements GoogleMeetApiInterface {
 		}
 
 		$status_code = \wp_remote_retrieve_response_code( $response );
-		$body = \wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
+		$body        = \wp_remote_retrieve_body( $response );
+		$data        = json_decode( $body, true );
 
 		if ( $body === '' && in_array( $status_code, array( 200, 204 ) ) ) {
 			return array(

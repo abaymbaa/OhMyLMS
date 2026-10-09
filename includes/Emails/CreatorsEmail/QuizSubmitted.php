@@ -108,8 +108,8 @@ class QuizSubmitted {
 			return;
 		}
 
-		$quiz       = get_post( $quiz_id );
-		$quiz_title = $quiz ? $quiz->post_title : '';
+		$quiz           = get_post( $quiz_id );
+		$quiz_title     = $quiz ? $quiz->post_title : '';
 		$email_settings = Emails::get_email_settings();
 
 		$subject = isset( $settings['subject'] ) ? $settings['subject'] : '';
@@ -158,8 +158,8 @@ class QuizSubmitted {
 
 		$digest_items = array();
 		foreach ( $items as $item ) {
-			$s = get_userdata( $item['student_id'] );
-			$q = get_post( $item['quiz_id'] );
+			$s              = get_userdata( $item['student_id'] );
+			$q              = get_post( $item['quiz_id'] );
 			$digest_items[] = array(
 				'student_name' => $s ? $s->display_name : __( 'Unknown Student', 'ohmylms' ),
 				'quiz_title'   => $q ? $q->post_title : __( 'Unknown Quiz', 'ohmylms' ),
@@ -170,7 +170,7 @@ class QuizSubmitted {
 			);
 		}
 
-		$digest_settings = $settings;
+		$digest_settings                = $settings;
 		$digest_settings['button_link'] = admin_url( 'admin.php?page=ohmylms#/quiz-report' );
 
 		ob_start();

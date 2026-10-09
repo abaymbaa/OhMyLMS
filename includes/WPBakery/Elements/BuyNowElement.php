@@ -38,7 +38,7 @@ class BuyNowElement {
 			)
 		);
 
-		$options = array();
+		$options                                       = array();
 		$options[ __( 'Select a course', 'ohmylms' ) ] = '';
 
 		foreach ( $courses as $course ) {
@@ -129,16 +129,16 @@ class BuyNowElement {
 					),
 					// Text Decoration
 					// array(
-					// 	'type'        => 'dropdown',
-					// 	'heading'     => __( 'Text Decoration', 'ohmylms' ),
-					// 	'param_name'  => 'text_decoration',
-					// 	'value'       => array(
-					// 		'none'         => __( 'None', 'ohmylms' ),
-					// 		'underline'    => __( 'underline', 'ohmylms' ),
-					// 		'line-through' => __( 'line-through', 'ohmylms' ),
-					// 	),
-					// 	'description' => __( 'Text decoration style', 'ohmylms' ),
-					// 	'group'       => __( 'Style', 'ohmylms' ),
+					// 'type'        => 'dropdown',
+					// 'heading'     => __( 'Text Decoration', 'ohmylms' ),
+					// 'param_name'  => 'text_decoration',
+					// 'value'       => array(
+					// 'none'         => __( 'None', 'ohmylms' ),
+					// 'underline'    => __( 'underline', 'ohmylms' ),
+					// 'line-through' => __( 'line-through', 'ohmylms' ),
+					// ),
+					// 'description' => __( 'Text decoration style', 'ohmylms' ),
+					// 'group'       => __( 'Style', 'ohmylms' ),
 					// ),
 					// Line Height
 					array(
@@ -198,6 +198,4 @@ class BuyNowElement {
 			)
 		);
 	}
-
-
 }
