@@ -2,6 +2,7 @@
 import { createElement } from '@wordpress/element';
 import { removeQuestionFromQuiz } from '../quiz-editor/api.mjs';
 import { QuestionForm } from './QuestionForm';
+import { questionWorkspaceKey } from './choiceModel.mjs';
 import { QUESTION_BLOCK_TYPES, questionTypePatch } from './questionBlocks.mjs';
 export function createQuestionCanvas( readRuntime ) {
 	return function QuestionCanvas( props ) {
@@ -381,7 +382,7 @@ export function createQuestionCanvas( readRuntime ) {
 		return (
 			<React.Fragment>
 				<QuestionForm
-					key={ String( m?.id ) + ':' + quizType }
+					key={ questionWorkspaceKey( m?.id, quizType ) }
 					question={ {
 						...m,
 						name: E === 'Untitled' ? '' : E,

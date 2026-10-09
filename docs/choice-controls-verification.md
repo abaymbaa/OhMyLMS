@@ -1,0 +1,9 @@
+# Choice controls verification — 2026-10-09
+
+Inspected the Wayground Multiple Select editor, including its bottom-left Multiple correct answers and conditional Allow partial grading switches. See [Wayground question types](https://help.wayground.com/support/solutions/articles/158000411419-question-types-explained) for the reference's multi-selection and partial-credit behavior.
+
+OhMyLMS now presents both choice modes through one Multiple select entry. The existing public type identifiers and radio/checkbox player renderers are preserved. Selection-mode changes update only the selected question, preserve answer identities/content/media, and normalize correctness when returning to single selection. Partial grading is opt-in, restricted to multiple-choice grading, and reads the frozen question settings. Its net-credit formula subtracts incorrect selections and clamps at zero; unknown IDs count as incorrect, and duplicate IDs are deduplicated.
+
+Browser checks on an unsaved draft confirmed that enabling multiple answers changes answer controls to checkboxes, permits independent correct selections, shows the partial-grading switch, and hides it when multiple answers are turned off. The unified selector displays one choice entry. No test question was saved; the previously saved comparison quiz was empty at verification time.
+
+43 relevant JavaScript tests, 18 frozen choice-grading checks and 186 assessment checks pass. Modified editor components pass WordPress ESLint; stage CSS passes Stylelint. New PHP grading tests pass PHPCS, and the grader passes PHP syntax checks. The touched existing QuestionTypes class reports 14 legacy PHPCS errors and 8 warnings; no newly added grading lines have findings and no rules were suppressed. Production assets were rebuilt/synced, and source parsing/contract checks pass (1,563 files, 236 contracts).

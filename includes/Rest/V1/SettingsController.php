@@ -253,6 +253,9 @@ class SettingsController extends RestController {
 	 * @since 1.0.0
 	 */
 	private function is_valid_option_key( $key ) {
+		if ( is_string( $key ) && array_key_exists( $key, \OhMyLMS\Design\Tokens::QUIZ_COLORS ) ) {
+			return true;
+		}
 		$keys = array(
 			'ohmylms_course_page_id',
 			'ohmylms_profile_page_id',

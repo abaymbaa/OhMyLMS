@@ -228,6 +228,9 @@ class Design extends Settings {
 
 		);
 
+		foreach ( \OhMyLMS\Design\Tokens::QUIZ_COLORS as $option => $default ) {
+			$settings[] = array( 'id' => $option, 'type' => 'color', 'default' => $default, 'value' => $default );
+		}
 		return $settings;
 	}
 }

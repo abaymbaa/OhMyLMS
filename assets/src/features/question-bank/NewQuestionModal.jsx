@@ -10,6 +10,7 @@ import {
 } from './model.mjs';
 import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
 import { QuestionForm } from '../question-editor/QuestionForm';
+import { questionWorkspaceKey } from '../question-editor/choiceModel.mjs';
 import { QUESTION_BLOCK_TYPES } from '../question-editor/questionBlocks.mjs';
 
 const PROBLEMS = () => ( {
@@ -94,7 +95,7 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 					</Notice>
 				) }
 				<QuestionForm
-					key={ draft.type }
+					key={ questionWorkspaceKey( 'new', draft.type ) }
 					question={ {
 						...draftToPayload( draft ),
 						name: draft.name,
@@ -124,6 +125,7 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 							...( patch.settings
 								? {
 										settings: patch.settings,
+										type: patch.settings.type ?? draft.type,
 										marks:
 											patch.settings.score?.value ??
 											draft.marks,

@@ -82,7 +82,9 @@
 	text-align: center;
 }
 
-.ohmylms-question-authoring .ohmylms-form-description [role="textbox"]:empty::before {
+.ohmylms-question-authoring
+	.ohmylms-form-description
+	[role="textbox"]:empty::before {
 	content: attr(data-placeholder);
 	color: #cfc3d4;
 	pointer-events: none;
@@ -132,24 +134,54 @@
 	accent-color: #218044;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) .ohmylms-shared-answer-row {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	.ohmylms-shared-answer-row {
 	background: #2d70ad;
 	color: #fff;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) .ohmylms-shared-answer-row:nth-of-type(4n + 2) {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	.ohmylms-shared-answer-row:nth-of-type(4n + 2) {
 	background: #19777d;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) .ohmylms-shared-answer-row:nth-of-type(4n + 3) {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	.ohmylms-shared-answer-row:nth-of-type(4n + 3) {
 	background: #946307;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) .ohmylms-shared-answer-row:nth-of-type(4n + 4) {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	.ohmylms-shared-answer-row:nth-of-type(4n + 4) {
 	background: #984167;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) input[type="text"] {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	input[type="text"] {
 	min-height: 48px;
 	border-color: transparent;
 	background: transparent;
@@ -158,12 +190,24 @@
 	text-align: center;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) input[type="text"]::placeholder {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	input[type="text"]::placeholder {
 	color: #fff;
 	opacity: 0.85;
 }
 
-.ohmylms-question-authoring .ohmylms-shared-answers:is(.is-single-choice, .is-multiple-choice, .is-true-false) button {
+.ohmylms-question-authoring
+	.ohmylms-shared-answers:is(
+		.is-single-choice,
+		.is-multiple-choice,
+		.is-true-false
+	)
+	button {
 	color: #fff;
 }
 

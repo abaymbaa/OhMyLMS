@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class RevisionPublisher {
 	/** Quiz settings frozen into a revision; everything a delivery or grade depends on. */
-	const FROZEN_SETTINGS = array( 'time_limit', 'passing_grade', 'allow_attempts', 'layout', 'question_in_one_page', 'randomize_questions', 'short_text_limit', 'assessment_kind', 'feedback_release', 'late_policy', 'grace_seconds', 'sections' );
+	const FROZEN_SETTINGS = array( 'time_limit', 'passing_grade', 'allow_attempts', 'layout', 'player_template', 'question_in_one_page', 'randomize_questions', 'short_text_limit', 'assessment_kind', 'feedback_release', 'late_policy', 'grace_seconds', 'sections' );
 
 	/**
 	 * Build the revision that represents the quiz now, storing it if it changed.

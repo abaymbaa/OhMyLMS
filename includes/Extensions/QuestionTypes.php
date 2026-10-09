@@ -241,6 +241,19 @@ final class QuestionTypes {
 				sort( $expected );
 				sort( $answer ); }
 			$correct = count( $expected ) > 0 && $answer === $expected;
+			if ( 'multiple-choice' === $type && true === ( $question->get_settings()['partial_credit'] ?? false ) ) {
+				$expected = array_values( array_unique( $expected ) );
+				$answer   = array_values( array_unique( $answer ) );
+				sort( $expected );
+				sort( $answer );
+				$hits   = count( array_intersect( $answer, $expected ) );
+				$misses = count( array_diff( $answer, $expected ) );
+				return array(
+					'correct'  => 0 < count( $expected ) && $answer === $expected,
+					'fraction' => 0 < count( $expected ) ? max( 0.0, ( $hits - $misses ) / count( $expected ) ) : 0.0,
+					'manual'   => false,
+				);
+			}
 			if ( $type === 'fill-in-the-blank' && count( $expected ) > 0 && count( $answer ) === count( $expected ) ) {
 				$correct = true;
 				foreach ( $expected as $i => $value ) {

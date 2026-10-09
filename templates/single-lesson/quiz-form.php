@@ -51,6 +51,8 @@ if ( $attempt_context ) {
 	$is_timer = $quiz->get_timer() > 0 ? true : false;
 }
 
+$player_template = \OhMyLMS\Quiz\PlayerTemplates::resolve( $settings['player_template'] ?? 'classic' );
+\OhMyLMS\Quiz\PlayerTemplates::enqueue( $player_template );
 $quiz_layout = is_array( $settings ) && isset( $settings['layout'] ) ? $settings['layout'] : 'one_question_per_page';
 if ( ! in_array( $quiz_layout, array( 'one_question_per_page', 'all_questions_in_one_page', 'number_of_questions_per_page' ), true ) ) {
 	$quiz_layout = 'one_question_per_page';
@@ -133,32 +135,21 @@ ob_start();
 <input type="hidden" class="ohmylms_quiz_id" value="<?php echo get_the_ID(); ?>">
 <input type="hidden" class="quiz_attempt_id" value="<?php echo $attempt['id']; ?>">
 
-<section class="ohmylms-quiz <?php echo $layout_class; ?>"
+<section class="ohmylms-quiz ohmylms-player-template-<?php echo esc_attr( $player_template ); ?> <?php echo esc_attr( $layout_class ); ?>" data-player-template="<?php echo esc_attr( $player_template ); ?>"
 <?php
 if ( $attempt_context ) {
 	?>
 	data-attempt-engine="versioned" data-autosave="<?php echo esc_url( rest_url( 'ohmylms/v1/attempts/' . (int) $attempt['id'] . '/responses' ) ); ?>" data-deadline="<?php echo esc_attr( $attempt_context['deadline_at'] ? gmdate( 'c', strtotime( $attempt_context['deadline_at'] . ' UTC' ) ) : '' ); ?>"<?php } ?>>
-	<div class="ohmylms-quiz-header">
-		<div class="ohmylms-container">
-			<div class="quiz-header-wrapper">
-				<div class="quiz-header-left">
-					<p class="header-title">
-						<?php echo sanitize_text_field( $quiz->get_name() ); ?>
-					</p>
-					<?php
-					if ( ! empty( $ohmylms_player_preview ) ) {
-						?>
-						<small><?php esc_html_e( 'Preview of saved quiz · Responses are not recorded', 'ohmylms' ); ?></small><?php } ?>
-				</div>
-
-				<div class="quiz-header-right">
-					<a href="#" class="quiz-page-close" aria-label="<?php esc_attr_e( 'Close quiz', 'ohmylms' ); ?>">
-						<svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1L1 13M1 1l12 12"/></svg>
-					</a>
-				</div>
-			</div>
-		</div>
-	</div>
+	<?php
+	\OhMyLMS\Quiz\PlayerTemplates::part(
+		'header',
+		$player_template,
+		array(
+			'quiz_name'  => $quiz->get_name(),
+			'is_preview' => ! empty( $ohmylms_player_preview ),
+		)
+	);
+	?>
 
 	<div class="ohmylms-quiz-alert" >
 		<div class="quiz-alert-inner">
@@ -275,6 +266,10 @@ if ( $attempt_context ) {
 		</div>
 	</div> -->
 
+		<?php
+		$player_total_pages = max( 1, 'all_questions_in_one_page' === $quiz_layout ? 1 : ( 'number_of_questions_per_page' === $quiz_layout ? $totalGroups : $supported_question_count ) );
+		\OhMyLMS\Quiz\PlayerTemplates::part( 'progress', $player_template, array( 'total_pages' => $player_total_pages ) );
+		?>
 	<form action="" method="post">
 		<?php
 		ohmylms_render_slot(
@@ -329,11 +324,17 @@ if ( $attempt_context ) {
 							<h2 class="ohmylms-quiz-section-title"><?php echo esc_html( $question['section'] ); ?></h2>
 						<?php } ?>
 						<div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ( 'one_question_per_page' === $quiz_layout && $count == 1 ) ? 'active' : ''; ?>">
-							<div class="quiz-box-header">
-								<span class="question-number">
-									<?php printf( __( 'Question %d', 'ohmylms' ), $count ); ?>
-								</span>
-							</div>
+							<?php
+							\OhMyLMS\Quiz\PlayerTemplates::part(
+								'question-meta',
+								$player_template,
+								array(
+									'ordinal'        => $count,
+									'question_count' => $supported_question_count,
+									'marks'          => max( 0, (float) ( $question['settings']['score']['value'] ?? 0 ) ),
+								)
+							);
+							?>
 
 							<div class="question-box">
 								<p class="the-question question-type-<?php echo $question['settings']['type']; ?>">

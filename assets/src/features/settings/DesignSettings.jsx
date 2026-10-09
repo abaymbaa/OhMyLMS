@@ -1,6 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { createThemeSettings } from './ThemeSettings';
+import { createQuizDesignSettings } from './QuizDesignSettings';
 export function createDesignSettings( readRuntime ) {
 	return function DesignSettings( props ) {
 		const {
@@ -42,7 +43,18 @@ export function createDesignSettings( readRuntime ) {
 				} );
 			}, [] ),
 			p = ( 0, ReactHooks.useMemo )( function () {
+				const QuizDesignSettings = createQuizDesignSettings(
+					StoreModule.default
+				);
 				return [
+					{
+						label: ( 0, I18n.__ )(
+							'Quiz & Question Editor',
+							'ohmylms'
+						),
+						key: 'quiz-editor',
+						children: React.createElement( QuizDesignSettings ),
+					},
 					{
 						label: ( 0, I18n.__ )(
 							'Course Listing Page',
@@ -158,13 +170,15 @@ export function createDesignSettings( readRuntime ) {
 								marginBottom={ 0 }
 								marginTop={ 4 }
 							>
-								<MemoSettingsActionBar
-									activeTab={ t }
-									handleSave={ n }
-									handleMigration={ r }
-									selectedCourses={ a }
-									isSaving={ o }
-								/>
+								{ s && 'quiz-editor' !== s && (
+									<MemoSettingsActionBar
+										activeTab={ t }
+										handleSave={ n }
+										handleMigration={ r }
+										selectedCourses={ a }
+										isSaving={ o }
+									/>
+								) }
 							</Controls.SpacerWP>
 						</Controls.SpacerWP>
 					</Controls.CardWP>

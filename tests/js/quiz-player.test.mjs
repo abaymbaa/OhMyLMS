@@ -89,9 +89,13 @@ test( 'player state reads current context and formats the timer', () => {
 	assert.equal( player.state.timeLabel, '01h 01m 01s' );
 	assert.equal( player.state.timerWidth, '50%' );
 	assert.equal( player.state.nextDisplay, '' );
+	assert.equal( player.state.pageLabel, '1 / 2' );
+	assert.equal( player.state.pageWidth, '50%' );
 	context.page = 2;
 	assert.equal( player.state.nextDisplay, 'none' );
 	assert.equal( player.state.submitDisplay, '' );
+	assert.equal( player.state.pageLabel, '2 / 2' );
+	assert.equal( player.state.pageWidth, '100%' );
 	context.remaining = 0;
 	assert.equal( player.state.timeLabel, '00m 00s' );
 } );

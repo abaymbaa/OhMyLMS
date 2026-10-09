@@ -4,6 +4,14 @@
  */
 export function createPlayerState( getContext ) {
 	return {
+		get pageLabel() {
+			const c = getContext();
+			return `${ c.page } / ${ c.totalPages }`;
+		},
+		get pageWidth() {
+			const c = getContext();
+			return `${ Math.min( 100, Math.max( 0, ( c.page / Math.max( 1, c.totalPages ) ) * 100 ) ) }%`;
+		},
 		get isPage() {
 			const c = getContext();
 			return c.page === c.questionPage;

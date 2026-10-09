@@ -5,7 +5,7 @@ import {
 	useState,
 	RawHTML,
 } from '@wordpress/element';
-import { Button, TextControl } from '@wordpress/components';
+import { Button, Modal, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
@@ -41,7 +41,7 @@ function FormDescription( {
 	};
 	return (
 		<div className="ohmylms-form-description">
-			<label>{ label }</label>
+			<span className="ohmylms-prompt-label">{ label }</span>
 			<div
 				role="toolbar"
 				aria-label={ __( 'Text formatting', 'ohmylms' ) }
@@ -139,6 +139,7 @@ function FormDescription( {
  * @param root0.compact
  * @param root0.flatSettings
  * @param root0.workspaceLabel
+ * @param root0.footerLeading
  */
 export function FormWorkspace( {
 	document,
@@ -154,6 +155,7 @@ export function FormWorkspace( {
 	toolbarActions,
 	toolbarLeading,
 	toolbarEnd,
+	footerLeading,
 	hideTitle = false,
 	contentLabel,
 
@@ -164,14 +166,59 @@ export function FormWorkspace( {
 	workspaceLabel = __( 'Form editor', 'ohmylms' ),
 } ) {
 	const [ preview, setPreview ] = useState( false );
-	return (
+	const [ expanded, setExpanded ] = useState( Boolean( previewQuestion ) );
+	const [ vertical, setVertical ] = useState( false );
+	const isQuestion = Boolean( previewQuestion );
+	useLayoutEffect( () => {
+		if ( isQuestion ) {
+			setExpanded( true );
+		}
+	}, [ document.id, isQuestion ] );
+	const workspace = (
 		<section
-			className={ `ohmylms-form-workspace${ previewQuestion ? ' ohmylms-question-authoring' : '' }` }
+			className={ `ohmylms-form-workspace${ previewQuestion ? ' ohmylms-question-authoring' : '' }${ expanded ? ' is-stage-editor' : '' }${ vertical ? ' is-vertical-answers' : '' }` }
 			aria-label={ workspaceLabel }
 		>
 			<div className="ohmylms-form-workspace-actions">
+				{ previewQuestion && (
+					<Button
+						icon={ expanded ? 'arrow-left-alt2' : 'editor-expand' }
+						label={
+							expanded
+								? __( 'Back', 'ohmylms' )
+								: __( 'Open full-screen editor', 'ohmylms' )
+						}
+						onClick={ () => setExpanded( ! expanded ) }
+					/>
+				) }
 				{ toolbarEnd }
 				{ toolbarLeading }
+				{ previewQuestion && (
+					<div className="ohmylms-stage-toolbar-end">
+						<Button
+							icon={ preview ? 'edit' : 'visibility' }
+							onClick={ () => setPreview( ! preview ) }
+						>
+							{ preview
+								? __( 'Edit question', 'ohmylms' )
+								: __( 'Preview question', 'ohmylms' ) }
+						</Button>
+						{ toolbarActions }
+						{ expanded &&
+							toolbarActions?.props?.role === 'status' && (
+								<Button
+									variant="primary"
+									disabled={
+										toolbarActions.props.children !==
+										__( 'All changes saved', 'ohmylms' )
+									}
+									onClick={ () => setExpanded( false ) }
+								>
+									{ __( 'Save question', 'ohmylms' ) }
+								</Button>
+							) }
+					</div>
+				) }
 				{ ! previewQuestion && toolbarActions }
 			</div>
 			{ preview ? (
@@ -236,20 +283,31 @@ export function FormWorkspace( {
 				) ) }
 			{ previewQuestion && (
 				<div className="ohmylms-question-authoring-footer">
-					{ previewQuestion && (
-						<Button
-							variant="secondary"
-							icon={ preview ? 'edit' : 'visibility' }
-							onClick={ () => setPreview( ! preview ) }
-						>
-							{ preview
-								? __( 'Edit question', 'ohmylms' )
-								: __( 'Preview question', 'ohmylms' ) }
-						</Button>
-					) }
-					{ toolbarActions }
+					{ footerLeading }
+					<Button
+						variant="secondary"
+						icon="columns"
+						onClick={ () => setVertical( ! vertical ) }
+					>
+						{ vertical
+							? __( 'Switch to horizontal layout', 'ohmylms' )
+							: __( 'Switch to vertical layout', 'ohmylms' ) }
+					</Button>
+					{ ! expanded && toolbarActions }
 				</div>
 			) }
 		</section>
 	);
+	return expanded && previewQuestion
+		? createElement(
+				Modal,
+				{
+					title: __( 'Question editor', 'ohmylms' ),
+					className: 'ohmylms-question-stage-modal',
+					isFullScreen: true,
+					onRequestClose: () => setExpanded( false ),
+				},
+				workspace
+			)
+		: workspace;
 }

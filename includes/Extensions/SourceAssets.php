@@ -40,6 +40,7 @@ final class SourceAssets {
 			wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsLessonBlockSettings', get_block_editor_settings( array(), $context ) );
 		}
 		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsTabPreferences', TabPreferences::read() );
+		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsPlayerTemplates', \OhMyLMS\Quiz\PlayerTemplates::choices() );
 		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge( Registry::manifest(), array( 'settings' => Settings::manifest() ) ) );
 		wp_localize_script(
 			'ohmylms-extension-sdk',

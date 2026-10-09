@@ -9,6 +9,12 @@ defined( 'ABSPATH' ) || exit;
 /** The shipped quiz player, with an author-only, non-recording session. */
 final class PreviewPlayer {
 	public static function init() {
+		add_filter(
+			'show_admin_bar',
+			static function ( $show ) {
+				return isset( $_GET['ohmylms_quiz_preview'] ) ? false : $show;
+			}
+		);
 		add_action( 'template_redirect', array( __CLASS__, 'render' ), 1 );
 		add_action(
 			'wp_enqueue_scripts',
@@ -122,6 +128,7 @@ final class PreviewPlayer {
 			'session'   => $session,
 			'result'    => $result,
 		);
+		show_admin_bar( false );
 		?><!doctype html><html <?php language_attributes(); ?>><head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?php echo esc_html( $quiz->get_name() . ' — Preview' ); ?></title><?php wp_head(); ?></head><body <?php body_class( 'ohmylms-page ohmylms-default-quiz-preview' ); ?>>
 		<?php
 		ohmylms_get_template( 'single-lesson/quiz-form.php', array( 'ohmylms_player_preview' => $preview ) );

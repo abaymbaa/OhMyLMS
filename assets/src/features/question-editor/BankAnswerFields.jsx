@@ -196,6 +196,12 @@ export function BankAnswerFields( {
 	return (
 		<div
 			className={ `ohmylms-shared-answers ohmylms-bank-block-answers is-${ type }` }
+			style={ {
+				'--ohmylms-answer-columns': Math.min(
+					4,
+					Math.max( 1, options.length )
+				),
+			} }
 		>
 			{ type === 'fill-in-the-blank' && (
 				<p>

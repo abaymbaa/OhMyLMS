@@ -12,7 +12,9 @@ import { QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
 export function QuestionTypeChooser( { onSelect, onClose } ) {
 	const [ search, setSearch ] = useState( '' );
 	const formats = ( ids ) =>
-		QUESTION_BLOCK_TYPES.filter( ( [ id ] ) => ids.includes( id ) );
+		QUESTION_BLOCK_TYPES.filter(
+			( [ id ] ) => ids.includes( id ) && id !== 'multiple-choice'
+		);
 	const groups = [
 		[
 			__( 'Basic', 'ohmylms' ),

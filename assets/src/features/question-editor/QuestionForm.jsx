@@ -1,10 +1,12 @@
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { SelectControl } from '@wordpress/components';
+import { SelectControl, TextControl } from '@wordpress/components';
+import { isUngradedType } from './extendedModel.mjs';
 import { FormWorkspace } from './FormWorkspace';
 import { BankAnswerFields } from './BankAnswerFields';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { TemplatePanel } from './TemplatePanel';
+import { ChoiceControls } from './ChoiceControls';
 import { questionPrompt, questionPromptPatch } from './questionPrompt.mjs';
 
 /**
@@ -28,6 +30,31 @@ export function QuestionForm( {
 	onTypeChange,
 	...props
 } ) {
+	const choice = [ 'single-choice', 'multiple-choice' ].includes(
+		question.settings?.type
+	);
+	const pointsControl = createElement( TextControl, {
+		label: __( 'Points', 'ohmylms' ),
+		type: 'number',
+		min: 0,
+		step: 'any',
+		value: question.settings?.score?.value ?? 1,
+		disabled:
+			props.readOnly ||
+			isUngradedType( question.settings?.type ) ||
+			[ 'structured', 'passage' ].includes( question.settings?.type ),
+		onChange: ( marks ) =>
+			onChange( {
+				settings: {
+					...question.settings,
+					score: {
+						...question.settings?.score,
+						enabled: true,
+						value: Math.max( 0, Number( marks ) || 0 ),
+					},
+				},
+			} ),
+	} );
 	const sharedAnswers = (
 		<BankAnswerFields
 			type={ question.settings?.type }
@@ -83,8 +110,27 @@ export function QuestionForm( {
 									'Changing type resets the answer setup.',
 									'ohmylms'
 								) }
-								value={ question.settings?.type }
-								options={ types }
+								value={
+									choice
+										? 'single-choice'
+										: question.settings?.type
+								}
+								options={ types
+									.filter(
+										( item ) =>
+											item.value !== 'multiple-choice'
+									)
+									.map( ( item ) =>
+										item.value === 'single-choice'
+											? {
+													...item,
+													label: __(
+														'Multiple select',
+														'ohmylms'
+													),
+												}
+											: item
+									) }
 								disabled={ props.readOnly }
 								onChange={ ( type ) => {
 									if ( type ) {
@@ -94,9 +140,21 @@ export function QuestionForm( {
 							/>
 						</div>
 					) }
+					<div className="ohmylms-question-points-picker">
+						{ pointsControl }
+					</div>
 				</>
 			}
 			flatSettings={ false }
+			footerLeading={
+				choice ? (
+					<ChoiceControls
+						question={ question }
+						onChange={ onChange }
+						readOnly={ props.readOnly }
+					/>
+				) : null
+			}
 			compact
 			settings={
 				<>

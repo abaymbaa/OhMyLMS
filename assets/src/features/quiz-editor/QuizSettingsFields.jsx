@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { PlayerTemplatePicker } from './PlayerTemplatePicker';
 export function createQuizSettingsFields( readRuntime ) {
 	return function QuizSettingsFields( props ) {
 		const {
@@ -160,6 +161,12 @@ export function createQuizSettingsFields( readRuntime ) {
 			}, [] ),
 			(
 				<React.Fragment>
+					<PlayerTemplatePicker
+						value={ d?.player_template || 'classic' }
+						onChange={ ( template ) =>
+							x( 'player_template', template )
+						}
+					/>
 					{ React.createElement(
 						zm,
 						{
