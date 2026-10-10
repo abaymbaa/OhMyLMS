@@ -3,6 +3,8 @@ import { Button, Modal, TextControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
 import { QuestionLivePreview } from '../question-editor/QuestionLivePreview';
+import { QuizSkillsSummary } from './QuizSkills';
+import { ConnectQuestionSkill } from './QuizSkillsTab';
 import {
 	promptText,
 	questionPrompt,
@@ -52,7 +54,7 @@ const typeLabel = ( question ) =>
  * @param {Object}   props.children Active question workspace.
  * @param {()=>void} props.onBank   Open the question bank picker.
  */
-export function QuizQuestionCards( { editor, children, onBank } ) {
+export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 	const [ removing, setRemoving ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ choosingType, setChoosingType ] = useState( false );
@@ -61,11 +63,7 @@ export function QuizQuestionCards( { editor, children, onBank } ) {
 	const [ editing, setEditing ] = useState( false );
 	const [ workspaceKey, setWorkspaceKey ] = useState( 0 );
 	const [ dragged, setDragged ] = useState( null );
-	useEffect( () => {
-		if ( ! editor.loading && ! editor.questions.length ) {
-			editor.addQuestion();
-		}
-	}, [ editor ] );
+	// A new quiz starts empty; the author chooses "Create question" when ready.
 	useEffect( () => {
 		if ( editor.question?.temp ) {
 			setEditing( true );
@@ -125,7 +123,11 @@ export function QuizQuestionCards( { editor, children, onBank } ) {
 					</p>
 					{ createButton() }
 				</div>
-				<div className="ohmylms-overview-cards">
+				<QuizSkillsSummary
+						questions={ editor.questions }
+						skills={ skills }
+					/>
+					<div className="ohmylms-overview-cards">
 					{ editor.questions.map( ( question, index ) => {
 						const title =
 							overviewText( questionPrompt( question ) ) ||
@@ -231,6 +233,11 @@ export function QuizQuestionCards( { editor, children, onBank } ) {
 										) }
 									</div>
 									<div className="ohmylms-overview-card-actions">
+											<ConnectQuestionSkill
+												question={ question }
+												skills={ skills }
+												onChange={ editor.patchQuestion }
+											/>
 										<Button
 											icon="visibility"
 											label={ __(

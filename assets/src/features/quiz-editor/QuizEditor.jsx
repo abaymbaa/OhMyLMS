@@ -12,6 +12,8 @@ import { QuestionVersionBar } from '../question-bank/QuestionVersionBar';
 import { PracticeFeedbackFields } from '../question-editor/MathEditors';
 import { FormWorkspace } from '../question-editor/FormWorkspace';
 import { QuizQuestionCards } from './QuizQuestionCards';
+import { QuestionSkills, useSkillList } from './QuizSkills';
+import { QuizSkillsTab } from './QuizSkillsTab';
 
 /**
  * Named React editor; the bridge retains existing controls, routes and store.
@@ -51,6 +53,7 @@ export function createQuizEditor( readRuntime ) {
 		const [ hovered, setHovered ] = useState( false );
 		const [ pickerOpen, setPickerOpen ] = useState( false );
 		const [ view, setView ] = useState( 'questions' );
+		const skills = useSkillList();
 		useEffect( () => {
 			if ( isSettingsOpen ) {
 				setView( 'quiz' );
@@ -174,10 +177,19 @@ export function createQuizEditor( readRuntime ) {
 						onClick={ () => setView( 'questions' ) }
 					>
 						{ __( 'Questions', 'ohmylms' ) }
+						</Button>
+						<Button
+							role="tab"
+							aria-selected={ view === 'skills' }
+							onClick={ () => setView( 'skills' ) }
+						>
+							{ __( 'Skills', 'ohmylms' ) }
 					</Button>
 				</div>
 				{ editor.loading ? (
 					<Skeleton active paragraph={ { rows: 5 } } />
+				) : view === 'skills' ? (
+					<QuizSkillsTab editor={ editor } skills={ skills } />
 				) : view === 'quiz' ? (
 					<FormWorkspace
 						key={ 'quiz-' + editor.quiz?.id }
@@ -225,6 +237,7 @@ export function createQuizEditor( readRuntime ) {
 				) : (
 					<QuizQuestionCards
 						editor={ editor }
+						skills={ skills }
 						onBank={ () => setPickerOpen( true ) }
 					>
 						{ ! chapterId && (
@@ -242,6 +255,15 @@ export function createQuizEditor( readRuntime ) {
 						<QuestionCanvas
 							chapterId={ chapterId }
 							formCard
+							extraSettings={
+								! chapterId && (
+									<QuestionSkills
+										question={ editor.question }
+										skills={ skills }
+										onChange={ editor.patchQuestion }
+									/>
+								)
+							}
 							setHovered={ setHovered }
 							toolbarLeading={
 								<span className="ohmylms-question-toolbar-label">

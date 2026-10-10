@@ -129,6 +129,41 @@ class QuizController extends RestController {
 
 		register_rest_route(
 			$this->namespace,
+			'/' . $this->base . '/import/',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'import_csv' ),
+					'permission_callback' => array( $this, 'check_quiz_permission' ),
+					'args'                => array(
+						'name' => array(
+							'type'              => 'string',
+							'required'          => true,
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+						'csv'  => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/skills',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'set_skills' ),
+					'permission_callback' => array( $this, 'check_item_permission_for_edit' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/' . $this->base . '/trash-bulk/',
 			array(
 				array(
@@ -278,6 +313,41 @@ class QuizController extends RestController {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Replace the skills the quiz as a whole is connected to.
+	 *
+	 * @param WP_REST_Request $request Request with `skill_ids`.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function set_skills( $request ) {
+		$saved = \OhMyLMS\Quiz\QuizSkills::set( (int) $request['id'], (array) $request['skill_ids'] );
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+		return rest_ensure_response( array( 'skill_ids' => $saved ) );
+	}
+
+	/**
+	 * Create a draft quiz and its questions from CSV text.
+	 *
+	 * @param WP_REST_Request $request Request with `name` and `csv`.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function import_csv( $request ) {
+		$quiz_id = \OhMyLMS\Quiz\CsvImport::import( (string) $request['name'], (string) $request['csv'] );
+		if ( is_wp_error( $quiz_id ) ) {
+			return $quiz_id;
+		}
+		$response = rest_ensure_response(
+			array(
+				'id'     => $quiz_id,
+				'status' => 'success',
+			)
+		);
+		$response->set_status( 201 );
+		return $response;
 	}
 
 	/**
@@ -537,6 +607,15 @@ class QuizController extends RestController {
 		try {
 			$quiz_id = $this->save_quiz( $request );
 
+			// The data store always inserts new quizzes as published; honor a requested draft.
+			if ( 'draft' === ( $request['status'] ?? '' ) ) {
+				wp_update_post(
+					array(
+						'ID'          => $quiz_id,
+						'post_status' => 'draft',
+					)
+				);
+			}
 			$post = get_post( $quiz_id );
 			/**
 			 * Fires after a Quiz is inserted via the REST API.
@@ -1048,6 +1127,7 @@ class QuizController extends RestController {
 			'id'                    => $quiz->get_id(),
 			'name'                  => $quiz->get_name(),
 			'type'                  => 'quiz',
+			'skill_ids'             => \OhMyLMS\Quiz\QuizSkills::get( $quiz->get_id() ),
 			'description'           => $quiz->get_description(),
 			'preview_url'           => \OhMyLMS\Assessment\PreviewPlayer::url( $quiz->get_id() ),
 			'slug'                  => $quiz->get_slug(),

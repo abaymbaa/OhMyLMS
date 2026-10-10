@@ -444,6 +444,7 @@ export function createQuestionCanvas( readRuntime ) {
 					toolbarActions={ props.toolbarActions }
 					toolbarLeading={ props.toolbarLeading }
 					settings={ props.settings }
+						extraSettings={ props.extraSettings }
 					outline={ props.outline }
 					beforeContent={
 						<React.Fragment>

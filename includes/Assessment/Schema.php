@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
  * compatibility anchor: new records are sidecars keyed by existing IDs.
  */
 final class Schema {
-	const VERSION = '2';
+	const VERSION = '4';
 	const OPTION  = 'ohmylms_assessment_schema';
 
 	public static function table( $name ) {
@@ -25,6 +25,10 @@ final class Schema {
 			'qb_grants'            => 'bank_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, permission varchar(20) NOT NULL, granted_by bigint unsigned NOT NULL, created_at datetime NOT NULL, UNIQUE KEY grant_key (bank_id,user_id,permission), KEY user_scope (user_id,permission)',
 			// Stable identity and indexed bank attributes for each question post.
 			'qb_questions'         => "question_id bigint unsigned NOT NULL, uuid char(36) NOT NULL, bank_id bigint unsigned NOT NULL DEFAULT 0, family_id varchar(64) NOT NULL DEFAULT '', status varchar(20) NOT NULL DEFAULT 'draft', difficulty varchar(20) NOT NULL DEFAULT 'standard', source varchar(100) NOT NULL DEFAULT '', secure tinyint NOT NULL DEFAULT 0, type varchar(60) NOT NULL DEFAULT '', author_id bigint unsigned NOT NULL DEFAULT 0, current_version_id bigint unsigned NOT NULL DEFAULT 0, approved_version_id bigint unsigned NOT NULL DEFAULT 0, latest_version_no int unsigned NOT NULL DEFAULT 0, updated_at datetime NOT NULL, UNIQUE KEY question_id (question_id), UNIQUE KEY uuid (uuid), KEY bank_status (bank_id,status), KEY family (family_id), KEY difficulty (difficulty), KEY type (type)",
+			// Current question-to-skill connections (one row per question, skill and part); the draft skill map in post meta stays the source of truth and this table is kept in step with it.
+			'question_skills'      => "question_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, part_id varchar(40) NOT NULL DEFAULT 'p1', role varchar(20) NOT NULL DEFAULT 'primary', UNIQUE KEY connection (question_id,term_id,part_id), KEY skill (term_id,role)",
+			// Skills a quiz as a whole is meant to cover (its questions keep their own mapping in question_skills).
+			'quiz_skills'          => 'quiz_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, UNIQUE KEY connection (quiz_id,term_id), KEY skill (term_id)',
 			// Immutable content snapshots.
 			'qb_question_versions' => "question_id bigint unsigned NOT NULL, question_uuid char(36) NOT NULL, version_no int unsigned NOT NULL, content_hash char(64) NOT NULL, type varchar(60) NOT NULL, schema_version smallint unsigned NOT NULL DEFAULT 1, grader_version varchar(20) NOT NULL DEFAULT '1', title text NOT NULL, body longtext NOT NULL, settings longtext NOT NULL, options longtext NOT NULL, media longtext NOT NULL, extension longtext NOT NULL, parts longtext NOT NULL, is_migration_snapshot tinyint NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY question_version (question_id,version_no), KEY question_uuid (question_uuid), KEY content (question_id,content_hash)",
 			// Skills assessed by each part of a version, frozen with the version.
@@ -69,6 +73,7 @@ final class Schema {
 			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) !== $table ) {
 				return false; }
 		}
+		\OhMyLMS\QuestionBank\SkillMap::backfill();
 		update_option( self::OPTION, self::VERSION, false );
 		do_action( 'ohmylms_assessment_schema_installed', self::VERSION );
 		return true;

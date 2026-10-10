@@ -4,7 +4,6 @@ import { useMenuHighlight } from '../menuHighlight';
 import { HubContext } from './context';
 import { HUB_TABS } from './hubRoutes.mjs';
 import { MovableTabs } from '../navigation/MovableTabs';
-
 const tabLabels = () => ( {
 	courses: __( 'Courses', 'ohmylms' ),
 	lessons: __( 'Lessons', 'ohmylms' ),

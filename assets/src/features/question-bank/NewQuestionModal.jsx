@@ -86,7 +86,8 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 			title={ __( 'New question', 'ohmylms' ) }
 			onRequestClose={ onClose }
 			size="large"
-			className="ohmylms-question-block-modal"
+			isFullScreen
+			className="ohmylms-question-block-modal ohmylms-question-stage-modal"
 		>
 			<div className="ohmylms-new-question">
 				{ error && (
@@ -95,6 +96,7 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 					</Notice>
 				) }
 				<QuestionForm
+					useModal={ false }
 					key={ questionWorkspaceKey( 'new', draft.type ) }
 					question={ {
 						...draftToPayload( draft ),

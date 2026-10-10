@@ -140,6 +140,7 @@ function FormDescription( {
  * @param root0.flatSettings
  * @param root0.workspaceLabel
  * @param root0.footerLeading
+ * @param root0.useModal
  */
 export function FormWorkspace( {
 	document,
@@ -156,6 +157,7 @@ export function FormWorkspace( {
 	toolbarLeading,
 	toolbarEnd,
 	footerLeading,
+	useModal = true,
 	hideTitle = false,
 	contentLabel,
 
@@ -298,7 +300,7 @@ export function FormWorkspace( {
 			) }
 		</section>
 	);
-	return expanded && previewQuestion
+	return expanded && previewQuestion && useModal
 		? createElement(
 				Modal,
 				{

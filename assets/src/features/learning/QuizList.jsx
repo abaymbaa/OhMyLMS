@@ -1,5 +1,9 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import {
+	QuizImportButton,
+	useAddQuiz,
+} from '../content-hub/QuizActions';
 export function createQuizList( readRuntime ) {
 	return function QuizList() {
 		const {
@@ -35,6 +39,7 @@ export function createQuizList( readRuntime ) {
 			yZ,
 			z: Notifications,
 		} = readRuntime();
+		const addQuiz = useAddQuiz();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			t = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getNotificationMessage();
@@ -454,7 +459,11 @@ export function createQuizList( readRuntime ) {
 					<Controls.ContainerWP>
 						<YG
 							title={ ( 0, I18n.__ )( 'All Quizzes', 'ohmylms' ) }
-						/>
+							showAddButton={ ! 0 }
+							addButtonConfig={ addQuiz }
+						>
+							<QuizImportButton />
+						</YG>
 						<Ea
 							isBorderless={ ! 0 }
 							minHeight={ 'calc(100vh - 200px)' }

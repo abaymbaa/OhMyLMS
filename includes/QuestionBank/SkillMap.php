@@ -80,7 +80,41 @@ final class SkillMap {
 		foreach ( $map as $roles ) {
 			$terms = array_merge( $terms, array( $roles['primary'] ), $roles['supporting'] ); }
 		wp_set_object_terms( (int) $question_id, array_values( array_unique( array_filter( $terms ) ) ), Taxonomy::NAME );
+		self::sync_table( $question_id, $map );
 		return $map;
+	}
+
+	/** Replace the question's rows in the question-to-skill connection table. */
+	public static function sync_table( $question_id, array $map ) {
+		global $wpdb;
+		$table = Schema::table( 'question_skills' );
+		$wpdb->delete( $table, array( 'question_id' => (int) $question_id ), array( '%d' ) );
+		foreach ( $map as $part => $roles ) {
+			$rows = $roles['primary'] ? array( array( $roles['primary'], 'primary' ) ) : array();
+			foreach ( $roles['supporting'] as $term_id ) {
+				$rows[] = array( $term_id, 'supporting' ); }
+			foreach ( $rows as [$term_id, $role] ) {
+				$wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO $table (question_id, term_id, part_id, role) VALUES (%d, %d, %s, %s)", (int) $question_id, $term_id, $part, $role ) );
+			}
+		}
+	}
+
+	/** Fill the connection table from the skill maps saved before it existed. */
+	public static function backfill() {
+		global $wpdb;
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = %s", self::META ) );
+		foreach ( $rows as $row ) {
+			$map = maybe_unserialize( $row->meta_value );
+			if ( is_array( $map ) ) {
+				self::sync_table( (int) $row->post_id, self::normalize( $map ) );
+			}
+		}
+	}
+
+	/** Skills connected to a question: list of ['term_id','part_id','role']. */
+	public static function connections( $question_id ) {
+		global $wpdb;
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT term_id, part_id, role FROM ' . Schema::table( 'question_skills' ) . ' WHERE question_id=%d ORDER BY part_id, role, term_id', (int) $question_id ), ARRAY_A );
 	}
 
 	/** Freeze the mapping for a newly captured version. */

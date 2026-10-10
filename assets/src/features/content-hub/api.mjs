@@ -75,5 +75,17 @@ export const createContent = ( type, name, fetch = request ) =>
 		method: 'POST',
 		data: { name, status: 'draft' },
 	} );
-export const editPath = ( type, id ) =>
+/**
+ * A new draft quiz with its questions, made from CSV text.
+ * @param name
+ * @param csv
+ * @param fetch
+ */
+export const importQuiz = ( name, csv, fetch = request ) =>
+	fetch( {
+		path: `${ base }/quiz/import/`,
+		method: 'POST',
+		data: { name, csv },
+	} );
+export const editPath =( type, id ) =>
 	`/${ { lesson: 'lesson-edit', quiz: 'quiz-edit', assignment: 'assignment-edit' }[ type ] }/${ id }`;

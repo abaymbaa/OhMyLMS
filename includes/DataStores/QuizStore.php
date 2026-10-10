@@ -281,6 +281,7 @@ class QuizStore extends DataStore {
 						'pinned_version_id' => is_array( $pins ) ? (int) ( $pins[ $question_obj->get_id() ] ?? 0 ) : 0,
 						'readonly'          => ! \OhMyLMS\QuestionBank\AccessPolicy::can_edit_question( $question_obj->get_id() ),
 						'usage_count'       => count( \OhMyLMS\QuestionBank\Usage::quizzes( $question_obj->get_id() ) ),
+						'skill_map'         => (object) \OhMyLMS\QuestionBank\SkillMap::current( $question_obj->get_id() ),
 					);
 				}
 			}
