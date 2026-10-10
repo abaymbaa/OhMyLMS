@@ -3,6 +3,7 @@ import { isExtendedType } from '../question-editor/extendedModel.mjs';
 import { createElement, Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { describeExpected, setPartMark, structuredRows } from './model.mjs';
+import { MathDisplay } from '../math/MathDisplay';
 
 /**
  * Report view for numerical, structured and other extension question types: the learner's
@@ -29,6 +30,25 @@ export function MathAnswerResult( {
 	const type = data?.settings?.type;
 	const given = data?.given_answer;
 	const response = () => {
+		if ( type === 'expression' ) {
+			return (
+				<MathDisplay
+					source={ Object.values( given || {} )[ 0 ] || '' }
+				/>
+			);
+		}
+		if ( type === 'multi-blank' ) {
+			return Object.entries( given || {} ).map( ( [ id, value ] ) => (
+				<div key={ id }>
+					{ id }:{ ' ' }
+					{ data.settings?.blanks?.[ id ]?.kind === 'expression' ? (
+						<MathDisplay source={ String( value ) } />
+					) : (
+						String( value )
+					) }
+				</div>
+			) );
+		}
 		if ( isExtendedType( type ) ) {
 			return (
 				<ExtendedResponse
@@ -154,7 +174,13 @@ export function MathAnswerResult( {
 						</div>
 						<p>
 							<strong>{ __( 'Expected:', 'ohmylms' ) }</strong>{ ' ' }
-							{ describeExpected( data ) }
+							{ type === 'expression' ? (
+								<MathDisplay
+									source={ data.settings?.answer || '' }
+								/>
+							) : (
+								describeExpected( data )
+							) }
 						</p>
 					</Fragment>
 				) }

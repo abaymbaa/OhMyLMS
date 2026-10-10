@@ -1,7 +1,14 @@
-import { createElement, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	Fragment,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { moveOption } from './model.mjs';
+import { EquationAction } from '../math/MathInput';
 
 /**
  * Shared single/multiple-choice editor, retaining the existing option control.
@@ -122,25 +129,33 @@ export function ChoiceAnswerFields( {
 	return (
 		<div className={ `ohmylms-options-list ohmylms-${ type }-choice` }>
 			{ ordering.I( options ).map( ( option, index ) => (
-				<Option
-					className={ `ohmylms-quiz-option-item ohmylms-quiz-option-item-${ index }` }
-					key={ option.id }
-					option={ option }
-					index={ index }
-					type={ type }
-					isInputFocused={ focused }
-					showError={ hasValidationErrors }
-					onDragStart={ startDrag }
-					onDragOver={ ( event ) => event.preventDefault() }
-					onDrop={ drop }
-					onDragEnd={ endDrag }
-					onTextChange={ changeAnswer }
-					onCheckboxChange={ changeCorrect }
-					onRemoveOption={ removeOption }
-					onAddOption={ addOption }
-					onInputFocus={ () => setFocused( true ) }
-					onInputBlur={ () => setFocused( false ) }
-				/>
+				<Fragment key={ option.id }>
+					<Option
+						className={ `ohmylms-quiz-option-item ohmylms-quiz-option-item-${ index }` }
+						key={ option.id }
+						option={ option }
+						index={ index }
+						type={ type }
+						isInputFocused={ focused }
+						showError={ hasValidationErrors }
+						onDragStart={ startDrag }
+						onDragOver={ ( event ) => event.preventDefault() }
+						onDrop={ drop }
+						onDragEnd={ endDrag }
+						onTextChange={ changeAnswer }
+						onCheckboxChange={ changeCorrect }
+						onRemoveOption={ removeOption }
+						onAddOption={ addOption }
+						onInputFocus={ () => setFocused( true ) }
+						onInputBlur={ () => setFocused( false ) }
+					/>
+					<EquationAction
+						value={ option.answer || '' }
+						onChange={ ( answer ) =>
+							changeAnswer( option.id, answer )
+						}
+					/>
+				</Fragment>
 			) ) }
 			{ error && <p className="ohmylms-option-error-msg">{ error }</p> }
 			{ hasValidationErrors &&

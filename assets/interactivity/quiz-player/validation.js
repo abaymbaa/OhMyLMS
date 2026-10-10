@@ -32,7 +32,7 @@ export function validate( root, context, currentOnly = false, isAnswered ) {
 		}
 		const box = questionBoxes( root )[ first - 1 ];
 		box.querySelector(
-			'input:not([type=hidden]),textarea,select'
+			'math-field:not([read-only]),input:not([type=hidden]),textarea,select'
 		)?.focus();
 	}
 	return ! first;

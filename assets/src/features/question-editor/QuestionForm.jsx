@@ -8,6 +8,7 @@ import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { TemplatePanel } from './TemplatePanel';
 import { ChoiceControls } from './ChoiceControls';
 import { questionPrompt, questionPromptPatch } from './questionPrompt.mjs';
+import { MathVariables } from '../math/MathInput';
 
 /**
  * The question form shared by quiz authoring and standalone skill/bank authoring.
@@ -65,108 +66,115 @@ export function QuestionForm( {
 		/>
 	);
 	return (
-		<FormWorkspace
-			document={ {
-				...question,
-				description: questionPrompt( question ),
-			} }
-			titleLabel={ __( 'Question title', 'ohmylms' ) }
-			titlePlaceholder={ __( 'Type your question here …', 'ohmylms' ) }
-			workspaceLabel={ __( 'Question form editor', 'ohmylms' ) }
-			onTitleChange={ ( name ) => onChange( { name } ) }
-			onContentChange={ ( description ) =>
-				onChange( questionPromptPatch( question, description ) )
-			}
-			previewQuestion={ question }
-			questionBlockContent={
-				<>
-					<div className="ohmylms-response-heading">
-						<h3>
-							{ types?.find(
-								( option ) =>
-									option.value === question.settings?.type
-							)?.label || __( 'Answers', 'ohmylms' ) }
-						</h3>
-						<span>{ __( 'Answer setup', 'ohmylms' ) }</span>
-					</div>
-					{ answers || sharedAnswers }
-					<TemplatePanel
-						question={ question }
-						onChange={ onChange }
-						readOnly={ props.readOnly }
-					/>
-				</>
-			}
-			{ ...props }
-			hideTitle
-			contentLabel={ __( 'Question', 'ohmylms' ) }
-			toolbarEnd={
-				<>
-					{ types && (
-						<div className="ohmylms-question-type-picker">
-							<SelectControl
-								label={ __( 'Question type', 'ohmylms' ) }
-								help={ __(
-									'Changing type resets the answer setup.',
-									'ohmylms'
-								) }
-								value={
-									choice
-										? 'single-choice'
-										: question.settings?.type
-								}
-								options={ types
-									.filter(
-										( item ) =>
-											item.value !== 'multiple-choice'
-									)
-									.map( ( item ) =>
-										item.value === 'single-choice'
-											? {
-													...item,
-													label: __(
-														'Multiple select',
-														'ohmylms'
-													),
-												}
-											: item
-									) }
-								disabled={ props.readOnly }
-								onChange={ ( type ) => {
-									if ( type ) {
-										onTypeChange( type );
-									}
-								} }
-							/>
+		<MathVariables.Provider
+			value={ question.settings?.template?.variables || [] }
+		>
+			<FormWorkspace
+				document={ {
+					...question,
+					description: questionPrompt( question ),
+				} }
+				titleLabel={ __( 'Question title', 'ohmylms' ) }
+				titlePlaceholder={ __(
+					'Type your question here …',
+					'ohmylms'
+				) }
+				workspaceLabel={ __( 'Question form editor', 'ohmylms' ) }
+				onTitleChange={ ( name ) => onChange( { name } ) }
+				onContentChange={ ( description ) =>
+					onChange( questionPromptPatch( question, description ) )
+				}
+				previewQuestion={ question }
+				questionBlockContent={
+					<>
+						<div className="ohmylms-response-heading">
+							<h3>
+								{ types?.find(
+									( option ) =>
+										option.value === question.settings?.type
+								)?.label || __( 'Answers', 'ohmylms' ) }
+							</h3>
+							<span>{ __( 'Answer setup', 'ohmylms' ) }</span>
 						</div>
-					) }
-					<div className="ohmylms-question-points-picker">
-						{ pointsControl }
-					</div>
-				</>
-			}
-			flatSettings={ false }
-			footerLeading={
-				choice ? (
-					<ChoiceControls
-						question={ question }
-						onChange={ onChange }
-						readOnly={ props.readOnly }
-					/>
-				) : null
-			}
-			compact
-			settings={
-				<>
-					<QuestionOptionsBar
-						question={ question }
-						onChange={ onChange }
-						types={ types }
-						onTypeChange={ onTypeChange }
-					/>
-					{ extraSettings }
-				</>
-			}
-		/>
+						{ answers || sharedAnswers }
+						<TemplatePanel
+							question={ question }
+							onChange={ onChange }
+							readOnly={ props.readOnly }
+						/>
+					</>
+				}
+				{ ...props }
+				hideTitle
+				contentLabel={ __( 'Question', 'ohmylms' ) }
+				toolbarEnd={
+					<>
+						{ types && (
+							<div className="ohmylms-question-type-picker">
+								<SelectControl
+									label={ __( 'Question type', 'ohmylms' ) }
+									help={ __(
+										'Changing type resets the answer setup.',
+										'ohmylms'
+									) }
+									value={
+										choice
+											? 'single-choice'
+											: question.settings?.type
+									}
+									options={ types
+										.filter(
+											( item ) =>
+												item.value !== 'multiple-choice'
+										)
+										.map( ( item ) =>
+											item.value === 'single-choice'
+												? {
+														...item,
+														label: __(
+															'Multiple select',
+															'ohmylms'
+														),
+													}
+												: item
+										) }
+									disabled={ props.readOnly }
+									onChange={ ( type ) => {
+										if ( type ) {
+											onTypeChange( type );
+										}
+									} }
+								/>
+							</div>
+						) }
+						<div className="ohmylms-question-points-picker">
+							{ pointsControl }
+						</div>
+					</>
+				}
+				flatSettings={ false }
+				footerLeading={
+					choice ? (
+						<ChoiceControls
+							question={ question }
+							onChange={ onChange }
+							readOnly={ props.readOnly }
+						/>
+					) : null
+				}
+				compact
+				settings={
+					<>
+						<QuestionOptionsBar
+							question={ question }
+							onChange={ onChange }
+							types={ types }
+							onTypeChange={ onTypeChange }
+						/>
+						{ extraSettings }
+					</>
+				}
+			/>
+		</MathVariables.Provider>
 	);
 }

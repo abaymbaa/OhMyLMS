@@ -26,6 +26,9 @@ final class Grader {
 			return new \WP_Error( 'quiz_type_unversioned', __( 'This question type cannot grade frozen question versions.', 'ohmylms' ), array( 'status' => 409 ) );
 		}
 		$answer = self::sanitize( $answer );
+		if ( MathLive::enabled() && ! Interactive::supported_input( $snapshot->get_type(), $answer, $snapshot->get_settings() ) ) {
+			return new \WP_Error( 'quiz_expression_unsupported', __( 'Unsupported math expression. Use numbers, single-letter variables, fractions, roots, powers, supported functions or one equation.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
 		if ( ! call_user_func( $definition['validate'], $answer, $snapshot ) ) {
 			return new \WP_Error( 'quiz_answer', __( 'Invalid answer format.', 'ohmylms' ), array( 'status' => 400 ) );
 		}

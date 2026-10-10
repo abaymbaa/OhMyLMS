@@ -17,6 +17,7 @@ import {
 	templateIssues,
 	variableDefaults,
 } from './templateModel.mjs';
+import { FormulaControl } from '../math/FormulaControl';
 
 const request = ( options ) => window.wp.apiFetch( options );
 
@@ -28,16 +29,14 @@ const plain = ( html ) =>
 		.trim();
 
 /** The example's wording: the question text where it carries the question, else the title. */
-export const exampleText = ( sample ) =>
-	plain( sample.body ) || sample.title;
+export const exampleText = ( sample ) => plain( sample.body ) || sample.title;
 
 /** A number field that stores a number, or nothing while empty. */
 const number = ( value, onChange, extra = {} ) => ( {
 	type: 'number',
 	step: 'any',
 	value: value ?? '',
-	onChange: ( text ) =>
-		onChange( text === '' ? undefined : Number( text ) ),
+	onChange: ( text ) => onChange( text === '' ? undefined : Number( text ) ),
 	...extra,
 } );
 
@@ -52,9 +51,18 @@ const number = ( value, onChange, extra = {} ) => ( {
  * @param root0.label
  * @param root0.help
  */
-function ParsedField( { value, format, parse, onChange, multiline, label, help } ) {
+function ParsedField( {
+	value,
+	format,
+	parse,
+	onChange,
+	multiline,
+	label,
+	help,
+} ) {
 	const [ text, setText ] = useState( () => format( value ) );
-	const shown = format( parse( text ) ) === format( value ) ? text : format( value );
+	const shown =
+		format( parse( text ) ) === format( value ) ? text : format( value );
 	const Control = multiline ? TextareaControl : TextControl;
 	return (
 		<Control
@@ -82,6 +90,7 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 	const template = settings.template;
 	const [ preview, setPreview ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
+	const [ sampleCount, setSampleCount ] = useState( 5 );
 	const save = ( next ) =>
 		onChange( {
 			settings: next
@@ -121,7 +130,9 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 	const rules = template.set || [];
 	const setRule = ( index, fields ) =>
 		patch( {
-			set: rules.map( ( r, i ) => ( i === index ? { ...r, ...fields } : r ) ),
+			set: rules.map( ( r, i ) =>
+				i === index ? { ...r, ...fields } : r
+			),
 		} );
 	const issues = templateIssues( template );
 	const suggestions = setPathSuggestions( settings.type );
@@ -138,14 +149,16 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						description: question.description || '',
 						settings,
 						questions: question.questions || [],
-						count: 5,
+						count: sampleCount,
 					},
 				} )
 			);
 		} catch ( error ) {
 			setPreview( {
 				valid: false,
-				message: error?.message || __( 'Could not build examples.', 'ohmylms' ),
+				message:
+					error?.message ||
+					__( 'Could not build examples.', 'ohmylms' ),
 				samples: [],
 			} );
 		}
@@ -170,65 +183,119 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						value={ variable.name || '' }
 						disabled={ readOnly }
 						onChange={ ( name ) =>
-							setVariable( index, { name: name.toLowerCase().slice( -1 ) } )
+							setVariable( index, {
+								name: name.toLowerCase().slice( -1 ),
+							} )
 						}
 					/>
 					<SelectControl
 						label={ __( 'Kind', 'ohmylms' ) }
 						value={ variable.type }
 						disabled={ readOnly }
-						options={ VARIABLE_TYPES.map( ( [ value, label ] ) => ( {
-							value,
-							label: __( label, 'ohmylms' ),
-						} ) ) }
+						options={ VARIABLE_TYPES.map(
+							( [ value, label ] ) => ( {
+								value,
+								label: __( label, 'ohmylms' ),
+							} )
+						) }
 						onChange={ ( type ) =>
-							setVariable( index, variableDefaults( type, variable.name ) )
+							setVariable(
+								index,
+								variableDefaults( type, variable.name )
+							)
 						}
 					/>
 					{ [ 'int', 'decimal' ].includes( variable.type ) && (
 						<Fragment>
 							<TextControl
 								label={ __( 'From', 'ohmylms' ) }
-								{ ...number( variable.min, ( min ) => setVariable( index, { min } ) ) }
+								{ ...number( variable.min, ( min ) =>
+									setVariable( index, { min } )
+								) }
 							/>
 							<TextControl
 								label={ __( 'To', 'ohmylms' ) }
-								{ ...number( variable.max, ( max ) => setVariable( index, { max } ) ) }
+								{ ...number( variable.max, ( max ) =>
+									setVariable( index, { max } )
+								) }
 							/>
 						</Fragment>
 					) }
 					{ variable.type === 'int' && (
-						<TextControl
-							label={ __( 'Step', 'ohmylms' ) }
-							{ ...number( variable.step, ( step ) => setVariable( index, { step } ), { min: 1, step: 1 } ) }
-						/>
+						<Fragment>
+							<TextControl
+								label={ __( 'Step', 'ohmylms' ) }
+								{ ...number(
+									variable.step,
+									( step ) => setVariable( index, { step } ),
+									{ min: 1, step: 1 }
+								) }
+							/>
+							<ParsedField
+								label={ __(
+									'Excluded values (comma separated)',
+									'ohmylms'
+								) }
+								value={ variable.exclude || [] }
+								format={ ( list ) => list.join( ', ' ) }
+								parse={ ( text ) =>
+									text
+										.split( ',' )
+										.filter( ( item ) => item.trim() )
+										.map( Number )
+										.filter( Number.isFinite )
+								}
+								onChange={ ( exclude ) =>
+									setVariable( index, { exclude } )
+								}
+							/>
+						</Fragment>
 					) }
 					{ variable.type === 'decimal' && (
 						<TextControl
 							label={ __( 'Decimal places', 'ohmylms' ) }
-							{ ...number( variable.places, ( places ) => setVariable( index, { places } ), { min: 0, max: 6, step: 1 } ) }
+							{ ...number(
+								variable.places,
+								( places ) => setVariable( index, { places } ),
+								{ min: 0, max: 6, step: 1 }
+							) }
 						/>
 					) }
 					{ variable.type === 'choice' && (
 						<ParsedField
-							label={ __( 'Options (separated by commas)', 'ohmylms' ) }
+							label={ __(
+								'Options (separated by commas)',
+								'ohmylms'
+							) }
 							value={ variable.values }
 							format={ ( list ) => ( list || [] ).join( ', ' ) }
 							parse={ parseValues }
-							onChange={ ( values ) => setVariable( index, { values } ) }
+							onChange={ ( values ) =>
+								setVariable( index, { values } )
+							}
 						/>
 					) }
 					{ variable.type === 'expr' && (
 						<Fragment>
-							<TextControl
+							<FormulaControl
 								label={ __( 'Formula', 'ohmylms' ) }
-								help={ __( 'Uses the letters above it, e.g. a*b or gcd(a,b).', 'ohmylms' ) }
+								help={ __(
+									'Uses the letters above it, e.g. a*b or gcd(a,b).',
+									'ohmylms'
+								) }
 								value={ variable.expr || '' }
-								onChange={ ( expr ) => setVariable( index, { expr } ) }
+								onChange={ ( expr ) =>
+									setVariable( index, { expr } )
+								}
 							/>
 							<TextControl
 								label={ __( 'Round to places', 'ohmylms' ) }
-								{ ...number( variable.places, ( places ) => setVariable( index, { places } ), { min: 0, max: 9, step: 1 } ) }
+								{ ...number(
+									variable.places,
+									( places ) =>
+										setVariable( index, { places } ),
+									{ min: 0, max: 9, step: 1 }
+								) }
 							/>
 						</Fragment>
 					) }
@@ -237,7 +304,11 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						variant="tertiary"
 						disabled={ readOnly || variables.length <= 1 }
 						onClick={ () =>
-							patch( { variables: variables.filter( ( _, i ) => i !== index ) } )
+							patch( {
+								variables: variables.filter(
+									( _, i ) => i !== index
+								),
+							} )
 						}
 					>
 						{ __( 'Remove', 'ohmylms' ) }
@@ -251,7 +322,10 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 					patch( {
 						variables: [
 							...variables,
-							variableDefaults( 'int', nextVariableName( variables ) ),
+							variableDefaults(
+								'int',
+								nextVariableName( variables )
+							),
 						],
 					} )
 				}
@@ -285,7 +359,7 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						value={ rule.path || '' }
 						onChange={ ( path ) => setRule( index, { path } ) }
 					/>
-					<TextControl
+					<FormulaControl
 						label={ __( 'Formula', 'ohmylms' ) }
 						value={ rule.expr || '' }
 						onChange={ ( expr ) => setRule( index, { expr } ) }
@@ -293,7 +367,11 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 					<Button
 						isDestructive
 						variant="tertiary"
-						onClick={ () => patch( { set: rules.filter( ( _, i ) => i !== index ) } ) }
+						onClick={ () =>
+							patch( {
+								set: rules.filter( ( _, i ) => i !== index ),
+							} )
+						}
 					>
 						{ __( 'Remove', 'ohmylms' ) }
 					</Button>
@@ -308,7 +386,12 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 				variant="secondary"
 				disabled={ readOnly }
 				onClick={ () =>
-					patch( { set: [ ...rules, { path: suggestions[ 0 ] || '', expr: '' } ] } )
+					patch( {
+						set: [
+							...rules,
+							{ path: suggestions[ 0 ] || '', expr: '' },
+						],
+					} )
 				}
 			>
 				{ __( 'Add a computed answer', 'ohmylms' ) }
@@ -321,8 +404,25 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 					) }
 				</Notice>
 			) }
+			<TextControl
+				label={ __( 'Number of examples', 'ohmylms' ) }
+				type="number"
+				min={ 1 }
+				max={ 8 }
+				value={ sampleCount }
+				onChange={ ( count ) =>
+					setSampleCount(
+						Math.max( 1, Math.min( 8, Number( count ) || 1 ) )
+					)
+				}
+			/>
 			<p>
-				<Button variant="primary" isBusy={ busy } disabled={ busy } onClick={ showExamples }>
+				<Button
+					variant="primary"
+					isBusy={ busy }
+					disabled={ busy }
+					onClick={ showExamples }
+				>
 					{ __( 'Show examples', 'ohmylms' ) }
 				</Button>{ ' ' }
 				<Button
@@ -339,9 +439,15 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 			</p>
 			{ preview && (
 				<div className="ohmylms-template-preview" aria-live="polite">
-					<Notice status={ preview.valid ? 'success' : 'error' } isDismissible={ false }>
+					<Notice
+						status={ preview.valid ? 'success' : 'error' }
+						isDismissible={ false }
+					>
 						{ preview.valid
-							? __( 'This template works: every example below is a valid question.', 'ohmylms' )
+							? __(
+									'This template works: every example below is a valid question.',
+									'ohmylms'
+								)
 							: preview.message }
 					</Notice>
 					<ol>
@@ -351,13 +457,22 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 								{ sample.expected !== '' && (
 									<span>
 										{ ' — ' }
-										{ sprintf( __( 'answer: %s', 'ohmylms' ), sample.expected ) }
+										{ sprintf(
+											__( 'answer: %s', 'ohmylms' ),
+											sample.expected
+										) }
 									</span>
 								) }
 								{ sample.errors?.length > 0 && (
 									<em>
 										{ ' ' }
-										{ sprintf( __( '(cannot work out: %s)', 'ohmylms' ), sample.errors.join( ', ' ) ) }
+										{ sprintf(
+											__(
+												'(cannot work out: %s)',
+												'ohmylms'
+											),
+											sample.errors.join( ', ' )
+										) }
 									</em>
 								) }
 							</li>

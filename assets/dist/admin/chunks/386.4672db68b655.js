@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkohmylmsExtensionSdk=self.webpackChunkohmylmsExtensionSdk||[]).push([[386],{8386(e,n,s){s.d(n,{inspectFormula:()=>l});const t=new(s(6098).oZ);function l(e){if(e.length>2e3)return{valid:!1,latex:""};const n=t.parse(e,{canonical:!1});return{valid:n.isValid,latex:n.latex}}}}]);
+//# sourceMappingURL=386.4672db68b655.js.map

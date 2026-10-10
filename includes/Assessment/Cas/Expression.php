@@ -32,6 +32,9 @@ final class Expression {
 	/** ASCII-math from what a learner typed, pasted or composed (Unicode, LaTeX). */
 	public static function normalize( $input ) {
 		$text = is_scalar( $input ) ? (string) $input : '';
+		if ( 2000 < strlen( $text ) ) {
+			return '';
+		}
 		$text = str_replace(
 			array( "\u{2212}", "\u{2013}", "\u{00D7}", "\u{00B7}", "\u{22C5}", "\u{00F7}", "\u{03C0}", "\u{00B2}", "\u{00B3}", "\u{00A0}" ),
 			array( '-', '-', '*', '*', '*', '/', 'pi', '^2', '^3', ' ' ),
@@ -39,7 +42,7 @@ final class Expression {
 		);
 		// Square root sign: √9, √(x+1), √x.
 		$text = preg_replace( '/\x{221A}\s*(\(|[0-9.]+|[a-z])/iu', 'sqrt$1', $text );
-		if ( strpos( $text, '\\' ) !== false ) {
+		if ( false !== strpos( $text, '\\' ) || false !== strpos( $text, '{' ) ) {
 			$text = self::latex( $text );
 		}
 		return trim( preg_replace( '/\s+/', ' ', $text ) );
@@ -47,10 +50,11 @@ final class Expression {
 
 	/** The LaTeX subset a math keyboard emits, converted to ASCII-math. */
 	private static function latex( $text ) {
-		$text = preg_replace( '/\\\\(left|right|displaystyle|,|;|!|quad|qquad)\s*/', '', $text );
+		$text = preg_replace( '/\\\\(?:(?:left|right|displaystyle|quad|qquad)\b|[,;!])\s*/', '', $text );
 		$text = preg_replace( '/\\\\(cdot|times|ast)\b/', '*', $text );
 		$text = preg_replace( '/\\\\div\b/', '/', $text );
 		$text = preg_replace( '/\\\\pi\b/', 'pi', $text );
+		$text = preg_replace( '/\\\\(?:lvert|rvert|vert)\b/', '|', $text );
 		$text = preg_replace( '/\\\\(sin|cos|tan|ln|log|exp|arcsin|arccos|arctan)\b/', '$1', $text );
 		$text = str_replace( array( 'arcsin', 'arccos', 'arctan' ), array( 'asin', 'acos', 'atan' ), $text );
 		// \frac{a}{b}, \sqrt{a}, \sqrt[n]{a}: innermost first, so nesting resolves in a few passes.
@@ -60,13 +64,20 @@ final class Expression {
 			$text   = preg_replace( '/\\\\sqrt\s*\[([^\]{}]*)\]\s*\{([^{}]*)\}/', '(($2)^(1/($1)))', $text );
 			$text   = preg_replace( '/\\\\sqrt\s*\{([^{}]*)\}/', 'sqrt($1)', $text );
 			$text   = preg_replace( '/\^\s*\{([^{}]*)\}/', '^($1)', $text );
-			$text   = preg_replace( '/\\\\operatorname\s*\{([^{}]*)\}/', '$1', $text );
-			$text   = preg_replace( '/\\\\(?:mathrm|text)\s*\{([^{}]*)\}/', '$1', $text );
+			$text   = preg_replace_callback(
+				'/\\\\(?:operatorname|mathrm|text)\s*\{([^{}]*)\}/',
+				static function ( $match ) {
+					$word = trim( $match[1] );
+					return in_array( $word, self::FUNCTIONS, true ) || in_array( $word, array( 'pi', 'e' ), true ) || preg_match( '/^[a-zA-Z]$/', $word ) ? $word : $match[0];
+				},
+				$text
+			);
 			if ( $text === $before ) {
 				break; }
 		}
 		$text = str_replace( array( '{', '}' ), array( '(', ')' ), $text );
-		return str_replace( '\\', '', $text );
+		// Unknown commands must remain unparseable, never become variable products.
+		return $text;
 	}
 
 	/* ---------- Parsing ---------- */

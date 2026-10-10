@@ -1,7 +1,7 @@
 const path=require('node:path');
 const DependencyExtractionWebpackPlugin=require('@wordpress/dependency-extraction-webpack-plugin');
 module.exports={
- entry:{'extensions':path.resolve(__dirname,'assets/src/extensions/index.jsx'),'schools':path.resolve(__dirname,'assets/src/features/schools/index.jsx')},
+ entry:{'extensions':path.resolve(__dirname,'assets/src/extensions/index.jsx'),'schools':path.resolve(__dirname,'assets/src/features/schools/index.jsx'),'math-runtime':path.resolve(__dirname,'assets/src/features/math/runtime.mjs')},
  output:{path:path.resolve(__dirname,'build/sdk'),filename:'[name].js',chunkFilename:'chunks/[name].[contenthash:12].js',publicPath:'auto',uniqueName:'ohmylmsExtensionSdk',clean:false},
  devtool:'source-map',
  resolve:{extensions:['.js','.jsx','.mjs']},

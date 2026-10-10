@@ -24,6 +24,7 @@ import {
 } from './VisualEditors';
 import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { moveOption } from './model.mjs';
+import { EquationAction } from '../math/MathInput';
 
 /**
  * Private answer controls used by the question block; they save through the assessment writer.
@@ -305,6 +306,14 @@ export function BankAnswerFields( {
 							patchOption( index, { answer } )
 						}
 					/>
+					{ type !== 'true-false' && (
+						<EquationAction
+							value={ option.answer || '' }
+							onChange={ ( answer ) =>
+								patchOption( index, { answer } )
+							}
+						/>
+					) }
 					{ type !== 'true-false' && (
 						<MediaUpload
 							allowedTypes={ [ 'image' ] }

@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
 import { QuestionLivePreview } from './QuestionLivePreview';
+import { EquationAction } from '../math/MathInput';
+import { loadMath, mathEnabled } from '../math/loader.mjs';
 
 /**
  * Small rich-text field that preserves existing HTML without a block editor.
@@ -26,10 +28,36 @@ function FormDescription( {
 	label = __( 'Description / instructions', 'ohmylms' ),
 } ) {
 	const field = useRef( null );
+	const serialize = ( node ) =>
+		window.OhMyLMSMath
+			? window.OhMyLMSMath.authorContent( node )
+			: node.innerHTML;
 	useLayoutEffect( () => {
-		if ( field.current && field.current.innerHTML !== ( value || '' ) ) {
+		const content =
+			field.current &&
+			( window.OhMyLMSMath
+				? window.OhMyLMSMath.authorContent( field.current )
+				: field.current.innerHTML );
+		if ( field.current && content !== ( value || '' ) ) {
 			field.current.innerHTML = value || '';
 		}
+		let disposed = false;
+		if (
+			field.current &&
+			mathEnabled() &&
+			( value || '' ).includes( '[[ohmylms-math:' )
+		) {
+			loadMath()
+				.then( ( runtime ) => {
+					if ( ! disposed && field.current ) {
+						runtime.hydrateAuthor( field.current );
+					}
+				} )
+				.catch( () => {} );
+		}
+		return () => {
+			disposed = true;
+		};
 	}, [ value ] );
 	if ( readOnly ) {
 		return <RawHTML>{ value || '' }</RawHTML>;
@@ -37,7 +65,7 @@ function FormDescription( {
 	const format = ( command ) => {
 		field.current.focus();
 		document.execCommand( command, false );
-		onChange( field.current.innerHTML );
+		onChange( serialize( field.current ) );
 	};
 	return (
 		<div className="ohmylms-form-description">
@@ -87,7 +115,7 @@ function FormDescription( {
 						node.src = image.url;
 						node.alt = image.alt || '';
 						field.current.appendChild( node );
-						onChange( field.current.innerHTML );
+						onChange( serialize( field.current ) );
 					} }
 					render={ ( { open } ) => (
 						<Button
@@ -110,9 +138,10 @@ function FormDescription( {
 				contentEditable
 				suppressContentEditableWarning
 				onInput={ ( event ) =>
-					onChange( event.currentTarget.innerHTML )
+					onChange( serialize( event.currentTarget ) )
 				}
 			/>
+			<EquationAction value={ value } html onChange={ onChange } />
 		</div>
 	);
 }

@@ -1,5 +1,6 @@
 import { createPlayerState } from './state.js';
 import { validate } from './validation.js';
+import { loadMath, mathEnabled } from '../../src/features/math/loader.mjs';
 /**
  * Construct the player against a runtime; registration belongs to index.js.
  * @param root0
@@ -209,6 +210,15 @@ export function createQuizPlayer( {
 					return;
 				}
 				const deadline = Date.now() + c.remaining * 1000;
+				if (
+					mathEnabled() &&
+					( root.querySelector( '.ohmylms-expression-input' ) ||
+						root.textContent.includes( '[[ohmylms-math:' ) )
+				) {
+					loadMath()
+						.then( ( runtime ) => runtime.renderContent( root ) )
+						.catch( () => {} );
+				}
 				let timer;
 				const scopedExpire = withScope( () => expire() );
 				if ( c.timed ) {

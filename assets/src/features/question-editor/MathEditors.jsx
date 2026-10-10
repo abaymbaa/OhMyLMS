@@ -1,5 +1,6 @@
 import { createElement, Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { EquationTextControl } from '../math/MathInput';
 import {
 	Button,
 	CheckboxControl,
@@ -278,7 +279,7 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 					'ohmylms'
 				) }
 			</summary>
-			<TextareaControl
+			<EquationTextControl
 				label={ __(
 					'Hint (using it marks the answer as assisted)',
 					'ohmylms'
@@ -288,7 +289,7 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 					onChange( { settings: { ...settings, hint } } )
 				}
 			/>
-			<TextareaControl
+			<EquationTextControl
 				label={ __( 'Explanation shown after answering', 'ohmylms' ) }
 				value={ settings.explanation || '' }
 				onChange={ ( explanation ) =>

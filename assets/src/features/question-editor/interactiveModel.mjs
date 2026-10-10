@@ -28,7 +28,12 @@ const MARKER = /\{([a-z0-9_-]{1,20})\}/gi;
  */
 export function markerIds( text ) {
 	const found = [];
-	for ( const match of String( text || '' ).matchAll( MARKER ) ) {
+	for ( const match of String( text || '' )
+		.replace(
+			/\[\[ohmylms-math:latex:(?:inline|display)\]\][\s\S]{1,2000}?\[\[\/ohmylms-math\]\]/g,
+			''
+		)
+		.matchAll( MARKER ) ) {
 		if ( ! found.includes( match[ 1 ] ) ) {
 			found.push( match[ 1 ] );
 		}
@@ -156,9 +161,7 @@ export function syncSlots( text, slots = [] ) {
  */
 export function blankIds( settings ) {
 	if ( settings.layout === 'table' ) {
-		return markerIds(
-			( settings.rows || [] ).flat().join( ' ' )
-		);
+		return markerIds( ( settings.rows || [] ).flat().join( ' ' ) );
 	}
 	return markerIds( settings.text );
 }
@@ -170,7 +173,10 @@ export function blankIds( settings ) {
 export function syncBlanks( settings ) {
 	const blanks = {};
 	for ( const id of blankIds( settings ) ) {
-		blanks[ id ] = settings.blanks?.[ id ] || { kind: 'text', accepted: [] };
+		blanks[ id ] = settings.blanks?.[ id ] || {
+			kind: 'text',
+			accepted: [],
+		};
 	}
 	return blanks;
 }
@@ -202,7 +208,9 @@ export function removeBucket( settings, bucketId ) {
 		}
 	}
 	return {
-		buckets: settings.buckets.filter( ( bucket ) => bucket.id !== bucketId ),
+		buckets: settings.buckets.filter(
+			( bucket ) => bucket.id !== bucketId
+		),
 		key,
 	};
 }
@@ -283,8 +291,7 @@ export function interactiveIssues( type, settings = {} ) {
 		if (
 			! items.length ||
 			items.some(
-				( item ) =>
-					! ( item.text || '' ).trim() && ! item.image_url
+				( item ) => ! ( item.text || '' ).trim() && ! item.image_url
 			)
 		) {
 			issues.push( 'items' );
@@ -311,13 +318,13 @@ export function interactiveIssues( type, settings = {} ) {
 				spec.kind === 'expression'
 					? String( spec.answer || '' ).trim() !== ''
 					: spec.kind === 'numerical'
-					? [ spec.answer, ...( spec.answers || [] ) ].some(
-							( value ) =>
-								value !== undefined &&
-								value !== '' &&
-								Number.isFinite( Number( value ) )
-						)
-					: ( spec.accepted || [] ).some( ( a ) => a.trim() );
+						? [ spec.answer, ...( spec.answers || [] ) ].some(
+								( value ) =>
+									value !== undefined &&
+									value !== '' &&
+									Number.isFinite( Number( value ) )
+							)
+						: ( spec.accepted || [] ).some( ( a ) => a.trim() );
 			if ( ! answered ) {
 				issues.push( 'answers' );
 				break;
@@ -478,12 +485,7 @@ export function visualIssues( type, s ) {
 	}
 	if ( type === 'grid-build' ) {
 		const c = s.constraints || {};
-		if (
-			! c.area &&
-			! c.perimeter &&
-			! c.rectangle &&
-			! c.connected
-		) {
+		if ( ! c.area && ! c.perimeter && ! c.rectangle && ! c.connected ) {
 			issues.push( 'conditions' );
 		}
 		if ( c.area > ( s.rows || 0 ) * ( s.cols || 0 ) ) {

@@ -43,6 +43,7 @@ const scope = {
 	TextControl: 'text',
 	CheckboxControl: 'check',
 	MediaUpload: 'media',
+	EquationAction: 'equation-action',
 	NumericalEditor: 'numerical',
 	StructuredEditor: 'structured',
 	DropdownBlanksEditor: 'dropdown-blanks',

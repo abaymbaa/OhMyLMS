@@ -48,6 +48,12 @@ check( abs( $v( '\sqrt{9}+\sqrt[3]{8}' ) - 5.0 ) < 1e-9, 'LaTeX roots' );
 check( $v( '2\cdot x^{2}', array( 'x' => 3.0 ) ) === 18.0, 'LaTeX cdot and braced exponent' );
 check( $v( '\left(x+1\right)\left(x-1\right)', array( 'x' => 3.0 ) ) === 8.0, 'LaTeX left/right brackets' );
 // Rejected input: never a fatal, never evaluated as PHP.
+check( $v( 'x^{12}', array( 'x' => 2.0 ) ) === 4096.0, 'MathLive braced power without commands' );
+check( $v( '\\frac{\\sqrt{x^{2}+1}}{\\frac{1}{2}}', array( 'x' => 0.0 ) ) === 2.0, 'MathLive nested root, power and fraction' );
+check( $v( '\\left\\lvert -3\\right\\rvert' ) === 3.0, 'MathLive absolute value delimiters' );
+foreach ( array( '\\unknown{x}', '\\leftarrow', '\\sum_{n=1}^{2}n', '\\int x', '\\placeholder[omlvar0]{a}', str_repeat( '\\quad ', 1000 ) . '1' ) as $unsupported ) {
+	check( E::parse( $unsupported ) === null, 'Unsupported MathLive notation rejected' );
+}
 foreach ( array( '', '   ', '2+', '(2+3', '2+3)', '*3', '2**3', 'system("ls")', '$x', 'x;y', '1 2 +', '<script>', 'x = = 2', str_repeat( '1+', 200 ) . '1', str_repeat( '(', 60 ) . '1' . str_repeat( ')', 60 ), str_repeat( 'x', 300 ) ) as $bad ) {
 	check( E::parse( $bad ) === null, 'rejects ' . substr( $bad, 0, 30 ) );
 }

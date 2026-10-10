@@ -30,6 +30,7 @@ final class Interactive {
 
 	/** Marker IDs in the order they appear. */
 	public static function markers( $text ) {
+		$text = preg_replace( '~' . MathLive::MARKER . '~', '', (string) $text );
 		preg_match_all( self::MARKER, (string) $text, $found );
 		return array_values( array_unique( $found[1] ) );
 	}
@@ -246,6 +247,7 @@ final class Interactive {
 		if ( ! function_exists( 'wp_enqueue_script' ) ) {
 			return; }
 		self::register_assets();
+		MathLive::enqueue_loader();
 		wp_enqueue_script( 'ohmylms-interactive' );
 		wp_enqueue_script( 'ohmylms-interactive-visual' );
 		wp_enqueue_script( 'ohmylms-extended-questions', plugins_url( 'assets/interactivity/extended-questions.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/extended-questions.js' ), true );
@@ -269,10 +271,10 @@ final class Interactive {
 	 * @param callable $field Receives the marker ID and echoes a control.
 	 */
 	public static function render_marked( $text, callable $field ) {
-		$parts = preg_split( self::MARKER, (string) $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+		$parts = preg_split( '~(' . MathLive::MARKER . '|\{[a-z0-9_-]{1,20}\})~i', (string) $text, -1, PREG_SPLIT_DELIM_CAPTURE );
 		foreach ( $parts as $index => $part ) {
-			if ( $index % 2 ) {
-				call_user_func( $field, $part );
+			if ( $index % 2 && '{' === substr( $part, 0, 1 ) ) {
+				call_user_func( $field, substr( $part, 1, -1 ) );
 			} else {
 				echo esc_html( $part );
 			}
@@ -314,6 +316,34 @@ final class Interactive {
 				return (string) $value; }
 		}
 		return '';
+	}
+
+	/**
+	 * Reject unsupported learner notation without inspecting or disclosing the answer key.
+	 *
+	 * @param string $type Question type.
+	 * @param mixed  $answer Learner answer.
+	 * @param array  $settings Frozen settings.
+	 * @return bool Whether nonempty expression fields use supported notation.
+	 */
+	public static function supported_input( $type, $answer, array $settings ) {
+		$answer = (array) $answer;
+		$fields = array();
+		if ( 'expression' === $type ) {
+			$fields[] = self::typed( (array) $answer );
+		} elseif ( 'multi-blank' === $type ) {
+			foreach ( (array) ( $settings['blanks'] ?? array() ) as $id => $spec ) {
+				if ( 'expression' === ( $spec['kind'] ?? '' ) ) {
+					$fields[] = $answer[ $id ] ?? '';
+				}
+			}
+		}
+		foreach ( $fields as $field ) {
+			if ( ! is_scalar( $field ) || ( '' !== trim( (string) $field ) && null === Expression::parse( $field ) ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static function grade_expression( array $answer, array $settings ) {

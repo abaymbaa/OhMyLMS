@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { VisualPreview } from './VisualEditors';
+import { MathInput } from '../math/MathInput';
 import { listToNumbers, numbersToList } from '../question-bank/model.mjs';
 import {
 	blankIds,
@@ -134,7 +135,7 @@ function FormSelect( { value, onChange } ) {
 export function ExpressionEditor( { value, onChange } ) {
 	return (
 		<div className="ohmylms-interactive-editor">
-			<TextControl
+			<MathInput
 				label={ __( 'Correct answer', 'ohmylms' ) }
 				help={ __(
 					'Write it as you would type it: 2(x+3), x^2-1, 3/4, sqrt(x), sin(x). Equations such as 2x+5=11 are also supported.',
@@ -147,21 +148,43 @@ export function ExpressionEditor( { value, onChange } ) {
 				value={ value.form }
 				onChange={ ( form ) => onChange( { form } ) }
 			/>
-			<ParsedField
-				multiline
-				label={ __(
-					'Other accepted answers (one per line, optional)',
-					'ohmylms'
-				) }
-				help={ __(
-					'Only needed when two answers are both right but not equivalent, such as x=2 or x=-2.',
-					'ohmylms'
-				) }
-				value={ value.alternatives }
-				format={ joinLines }
-				parse={ lines }
-				onChange={ ( alternatives ) => onChange( { alternatives } ) }
-			/>
+			{ ( value.alternatives || [] ).map( ( answer, index ) => (
+				<div key={ index }>
+					<MathInput
+						label={ __( 'Alternative answer', 'ohmylms' ) }
+						value={ answer }
+						onChange={ ( next ) =>
+							onChange( {
+								alternatives: value.alternatives.map(
+									( item, i ) => ( i === index ? next : item )
+								),
+							} )
+						}
+					/>
+					<Button
+						variant="tertiary"
+						onClick={ () =>
+							onChange( {
+								alternatives: value.alternatives.filter(
+									( _, i ) => i !== index
+								),
+							} )
+						}
+					>
+						{ __( 'Remove alternative', 'ohmylms' ) }
+					</Button>
+				</div>
+			) ) }
+			<Button
+				variant="secondary"
+				onClick={ () =>
+					onChange( {
+						alternatives: [ ...( value.alternatives || [] ), '' ],
+					} )
+				}
+			>
+				{ __( 'Add alternative answer', 'ohmylms' ) }
+			</Button>
 		</div>
 	);
 }
@@ -559,7 +582,7 @@ export function MultiBlankEditor( { value, onChange } ) {
 							</Fragment>
 						) : spec.kind === 'expression' ? (
 							<Fragment>
-								<TextControl
+								<MathInput
 									label={ __(
 										'Correct expression',
 										'ohmylms'
@@ -676,10 +699,14 @@ export function InteractivePreview( { type, settings = {} } ) {
 	}
 	const parts = ( text, field ) =>
 		String( text || '' )
-			.split( /\{([a-z0-9_-]{1,20})\}/gi )
+			.split(
+				/(\[\[ohmylms-math:latex:(?:inline|display)\]\][\s\S]{1,2000}?\[\[\/ohmylms-math\]\]|\{[a-z0-9_-]{1,20}\})/gi
+			)
 			.map( ( part, index ) =>
-				index % 2 ? (
-					<Fragment key={ index }>{ field( part ) }</Fragment>
+				index % 2 && part.startsWith( '{' ) ? (
+					<Fragment key={ index }>
+						{ field( part.slice( 1, -1 ) ) }
+					</Fragment>
 				) : (
 					<Fragment key={ index }>{ part }</Fragment>
 				)
@@ -724,6 +751,11 @@ export function InteractivePreview( { type, settings = {} } ) {
 		const input = ( id ) => (
 			<input
 				type="text"
+				className={
+					settings.blanks?.[ id ]?.kind === 'expression'
+						? 'ohmylms-expression-input'
+						: undefined
+				}
 				size={ 6 }
 				aria-label={ sprintf( __( 'Blank %s', 'ohmylms' ), id ) }
 			/>

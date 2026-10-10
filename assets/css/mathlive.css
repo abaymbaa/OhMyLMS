@@ -1,0 +1,49 @@
+.ohmylms-math-input {
+	display: block;
+	min-width: 8em;
+	max-width: 100%;
+	margin-bottom: 8px;
+}
+
+.ohmylms-author-equation {
+	display: inline-block;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.ohmylms-author-equation .ohmylms-math-input {
+	display: inline-block;
+	margin: 0;
+}
+
+.ohmylms-author-equation.is-display {
+	display: block;
+	margin: 8px 0;
+}
+
+.ohmylms-math-fallback {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
+.ohmylms-math-display {
+	border: 0;
+	background: transparent;
+	pointer-events: none;
+}
+
+.ohmylms-math-display.is-display {
+	display: block;
+	margin: 8px auto;
+	text-align: center;
+}
+
+.ohmylms-math-input::part(menu-toggle),
+.ohmylms-math-display::part(menu-toggle),
+.ohmylms-math-display::part(virtual-keyboard-toggle) {
+	display: none;
+}

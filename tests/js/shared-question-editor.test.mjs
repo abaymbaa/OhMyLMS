@@ -8,6 +8,8 @@ import {
 	emptyDraft,
 } from '../../assets/src/features/question-bank/model.mjs';
 const scope = {
+	Fragment: 'fragment',
+	EquationAction: 'equation-action',
 	createElement: ( type, props, ...children ) => ( {
 		type,
 		props,
@@ -24,7 +26,7 @@ const source = fs
 		'assets/src/features/question-editor/ChoiceOptionsEditor.jsx',
 		'utf8'
 	)
-	.replace( /^import .*;$/gm, '' )
+	.replace( /^import [\s\S]*?;$/gm, '' )
 	.replace( /export /g, '' );
 const { code } = transformSync( source, {
 	configFile: false,
@@ -50,7 +52,7 @@ function render( type ) {
 			saved = rows;
 		},
 	} );
-	return { row: tree.children[ 0 ][ 1 ], saved: () => saved };
+	return { row: tree.children[ 0 ][ 1 ].children[ 0 ], saved: () => saved };
 }
 test( 'the shared quiz choice editor preserves option metadata and single-choice correctness', () => {
 	const view = render( 'single' );

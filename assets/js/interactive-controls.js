@@ -11,14 +11,18 @@
 ( function () {
 	'use strict';
 
-	var MARKER = /\{([a-z0-9_-]{1,20})\}/gi;
+	var MARKER =
+		/\[\[ohmylms-math:latex:(?:inline|display)\]\][\s\S]{1,2000}?\[\[\/ohmylms-math\]\]|\{([a-z0-9_-]{1,20})\}/gi;
 
 	function el( tag, attrs, children ) {
 		var node = document.createElement( tag );
 		Object.keys( attrs || {} ).forEach( function ( name ) {
 			if ( name === 'text' ) {
 				node.textContent = attrs[ name ];
-			} else if ( attrs[ name ] !== null && attrs[ name ] !== undefined ) {
+			} else if (
+				attrs[ name ] !== null &&
+				attrs[ name ] !== undefined
+			) {
 				node.setAttribute( name, attrs[ name ] );
 			}
 		} );
@@ -43,7 +47,9 @@
 			parent.appendChild(
 				document.createTextNode( text.slice( last, match.index ) )
 			);
-			var control = field( match[ 1 ] );
+			var control = match[ 1 ]
+				? field( match[ 1 ] )
+				: document.createTextNode( match[ 0 ] );
 			if ( control ) {
 				parent.appendChild( control );
 			}
@@ -71,7 +77,8 @@
 			function ( node ) {
 				return {
 					id: node.getAttribute( 'data-item' ),
-					text: node.querySelector( '.ohmylms-cat-label' ).textContent,
+					text: node.querySelector( '.ohmylms-cat-label' )
+						.textContent,
 					image: node.querySelector( 'img' ),
 					select: node.querySelector( 'select' ),
 				};
@@ -142,7 +149,10 @@
 			} );
 			if ( item.image ) {
 				button.appendChild(
-					el( 'img', { src: item.image.getAttribute( 'src' ), alt: '' } )
+					el( 'img', {
+						src: item.image.getAttribute( 'src' ),
+						alt: '',
+					} )
 				);
 			}
 			button.appendChild( document.createTextNode( item.text ) );
@@ -194,9 +204,15 @@
 		if ( ! answer || ! bank ) {
 			return;
 		}
-		var tiles = Array.prototype.map.call( bank.children, function ( button ) {
-			return { text: button.getAttribute( 'data-tile' ), button: button };
-		} );
+		var tiles = Array.prototype.map.call(
+			bank.children,
+			function ( button ) {
+				return {
+					text: button.getAttribute( 'data-tile' ),
+					button: button,
+				};
+			}
+		);
 		var placed = [];
 
 		function sync( silent ) {
@@ -225,7 +241,8 @@
 						name: name,
 						value: tile.text,
 						'data-tile-answer': '1',
-						'data-question-id': root.getAttribute( 'data-question-id' ),
+						'data-question-id':
+							root.getAttribute( 'data-question-id' ),
 					} )
 				);
 			} );
@@ -290,7 +307,8 @@
 				if ( start === null ) {
 					start = end = value.length;
 				}
-				input.value = value.slice( 0, start ) + key[ 1 ] + value.slice( end );
+				input.value =
+					value.slice( 0, start ) + key[ 1 ] + value.slice( end );
 				var caret = start + key[ 1 ].length - ( key[ 2 ] || 0 );
 				input.focus();
 				input.setSelectionRange( caret, caret );
@@ -368,7 +386,9 @@
 			} else if ( widgets[ type ] ) {
 				var config = {};
 				try {
-					config = JSON.parse( root.getAttribute( 'data-config' ) || '{}' );
+					config = JSON.parse(
+						root.getAttribute( 'data-config' ) || '{}'
+					);
 				} catch ( error ) {
 					return;
 				}
@@ -390,7 +410,9 @@
 		} );
 		select.appendChild( el( 'option', { value: '', text: '…' } ) );
 		choices.forEach( function ( choice ) {
-			select.appendChild( el( 'option', { value: choice, text: choice } ) );
+			select.appendChild(
+				el( 'option', { value: choice, text: choice } )
+			);
 		} );
 		return select;
 	}
@@ -400,7 +422,9 @@
 			type: 'text',
 			class:
 				'ohmylms-text-input ohmylms-blank-input' +
-				( field.kind === 'expression' ? ' ohmylms-expression-input' : '' ),
+				( field.kind === 'expression'
+					? ' ohmylms-expression-input'
+					: '' ),
 			autocomplete: 'off',
 			size: '6',
 			inputmode: field.kind === 'numerical' ? 'decimal' : 'text',
@@ -443,22 +467,18 @@
 				var table = el( 'table', { class: 'ohmylms-blank-table' } );
 				if ( ( settings.columns || [] ).length ) {
 					table.appendChild(
-						el(
-							'thead',
-							{},
-							[
-								el(
-									'tr',
-									{},
-									settings.columns.map( function ( column ) {
-										return el( 'th', {
-											scope: 'col',
-											text: column,
-										} );
-									} )
-								),
-							]
-						)
+						el( 'thead', {}, [
+							el(
+								'tr',
+								{},
+								settings.columns.map( function ( column ) {
+									return el( 'th', {
+										scope: 'col',
+										text: column,
+									} );
+								} )
+							),
+						] )
 					);
 				}
 				var body = el( 'tbody' );
@@ -492,16 +512,26 @@
 					);
 				} );
 				var label = el( 'label', {}, [
-					el( 'span', { class: 'ohmylms-cat-label', text: item.text } ),
+					el( 'span', {
+						class: 'ohmylms-cat-label',
+						text: item.text,
+					} ),
 					select,
 				] );
 				list.appendChild(
-					el( 'li', { class: 'ohmylms-cat-item', 'data-item': item.id }, [
-						item.image_url
-							? el( 'img', { src: item.image_url, alt: item.text } )
-							: null,
-						label,
-					] )
+					el(
+						'li',
+						{ class: 'ohmylms-cat-item', 'data-item': item.id },
+						[
+							item.image_url
+								? el( 'img', {
+										src: item.image_url,
+										alt: item.text,
+									} )
+								: null,
+							label,
+						]
+					)
 				);
 			} );
 			var data = el( 'script', {
@@ -531,7 +561,8 @@
 				root.appendChild(
 					el( 'p', {
 						class: 'ohmylms-expression-form',
-						text: 'Write your answer in ' + settings.form + ' form.',
+						text:
+							'Write your answer in ' + settings.form + ' form.',
 					} )
 				);
 			}
@@ -582,7 +613,8 @@
 			container.querySelectorAll( '[data-answer-key]' ),
 			function ( field ) {
 				if ( field.value !== '' ) {
-					answer[ field.getAttribute( 'data-answer-key' ) ] = field.value;
+					answer[ field.getAttribute( 'data-answer-key' ) ] =
+						field.value;
 				}
 			}
 		);
@@ -621,4 +653,4 @@
 	} else {
 		start();
 	}
-}() );
+} )();

@@ -48,6 +48,7 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 	);
 	return (
 		<section
+			key={ JSON.stringify( question ) }
 			className="ohmylms-question-live-preview"
 			aria-label={ __( 'Question preview', 'ohmylms' ) }
 		>

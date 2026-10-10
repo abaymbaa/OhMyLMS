@@ -1,11 +1,8 @@
 import { isUngradedType } from './extendedModel.mjs';
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import {
-	TextControl,
-	TextareaControl,
-	ToggleControl,
-} from '@wordpress/components';
+import { EquationTextControl } from '../math/MathInput';
+import { TextControl, ToggleControl } from '@wordpress/components';
 
 export function QuestionOptionsBar( { question, onChange } ) {
 	const settings = question.settings || {};
@@ -51,14 +48,14 @@ export function QuestionOptionsBar( { question, onChange } ) {
 				/>
 			</div>
 			<div className="ohmylms-question-options-feedback">
-				<TextareaControl
+				<EquationTextControl
 					label={ __( 'Hint', 'ohmylms' ) }
 					rows={ 2 }
 					value={ settings.hint || '' }
 					onChange={ ( hint ) => set( { hint } ) }
 					__nextHasNoMarginBottom
 				/>
-				<TextareaControl
+				<EquationTextControl
 					label={ __( 'Explanation', 'ohmylms' ) }
 					rows={ 2 }
 					value={ settings.explanation || '' }
