@@ -3,7 +3,7 @@ import { Button, Modal, TextControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
 import { QuestionLivePreview } from '../question-editor/QuestionLivePreview';
-import { QuizSkillsSummary } from './QuizSkills';
+import { QuizSkillsSummary, matchesSkillFilter } from './QuizSkills';
 import { ConnectQuestionSkill } from './QuizSkillsTab';
 import {
 	promptText,
@@ -60,6 +60,7 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 	const [ choosingType, setChoosingType ] = useState( false );
 	const [ preview, setPreview ] = useState( null );
 	const [ search, setSearch ] = useState( '' );
+	const [ skillFilter, setSkillFilter ] = useState( null );
 	const [ editing, setEditing ] = useState( false );
 	const [ workspaceKey, setWorkspaceKey ] = useState( 0 );
 	const [ dragged, setDragged ] = useState( null );
@@ -126,9 +127,14 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 				<QuizSkillsSummary
 						questions={ editor.questions }
 						skills={ skills }
+						selected={ skillFilter }
+						onSelect={ setSkillFilter }
 					/>
 					<div className="ohmylms-overview-cards">
 					{ editor.questions.map( ( question, index ) => {
+						if ( ! matchesSkillFilter( question, skillFilter ) ) {
+							return null;
+						}
 						const title =
 							overviewText( questionPrompt( question ) ) ||
 							__( 'Untitled question', 'ohmylms' );

@@ -18,6 +18,9 @@ import {
  * @param root0.disabled
  * @param root0.onChange
  */
+const skillLabel = ( skill ) =>
+	`${ '— '.repeat( skill.depth ) }${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`;
+
 export function SkillMapEditor( {
 	skills,
 	value,
@@ -54,7 +57,7 @@ export function SkillMapEditor( {
 								},
 								...options.map( ( skill ) => ( {
 									value: String( skill.id ),
-									label: `${ '— '.repeat( skill.depth ) }${ skill.name }`,
+									label: skillLabel( skill ),
 								} ) ),
 							] }
 							onChange={ ( skillId ) =>
@@ -77,7 +80,7 @@ export function SkillMapEditor( {
 								.map( ( skill ) => (
 									<CheckboxControl
 										key={ skill.id }
-										label={ `${ '— '.repeat( skill.depth ) }${ skill.name }` }
+										label={ skillLabel( skill ) }
 										checked={ roles.supporting.includes(
 											skill.id
 										) }

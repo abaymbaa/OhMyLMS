@@ -98,8 +98,16 @@ export function QuestionSkills( { question, skills, onChange } ) {
  * @param root0.questions
  * @param root0.skills
  */
-export function QuizSkillsSummary( { questions, skills } ) {
-	const names = new Map( skills.map( ( skill ) => [ skill.id, skill.name ] ) );
+export function QuizSkillsSummary( {
+	questions,
+	skills,
+	selected = null,
+	onSelect = () => {},
+} ) {
+	const names = new Map( skills.map( ( skill ) => [
+			skill.id,
+			`${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`,
+		] ) );
 	const counts = new Map();
 	for ( const question of questions ) {
 		for ( const id of new Set( mapSkillIds( question.skill_map ) ) ) {
@@ -130,13 +138,26 @@ export function QuizSkillsSummary( { questions, skills } ) {
 				) }
 			</strong>
 			{ [ ...counts ].map( ( [ id, count ] ) => (
-				<span key={ id } className="ohmylms-quiz-skill-chip">
+				<button
+					type="button"
+					key={ id }
+					className={ `ohmylms-quiz-skill-chip${ selected === id ? ' is-selected' : '' }` }
+					aria-pressed={ selected === id }
+					onClick={ () => onSelect( selected === id ? null : id ) }
+				>
 					{ names.get( id ) || `#${ id }` }
 					{ count > 1 ? ` ×${ count }` : '' }
-				</span>
+				</button>
 			) ) }
 			{ unmapped > 0 && (
-				<span className="ohmylms-quiz-skill-chip is-missing">
+				<button
+					type="button"
+					className={ `ohmylms-quiz-skill-chip is-missing${ selected === 'none' ? ' is-selected' : '' }` }
+					aria-pressed={ selected === 'none' }
+					onClick={ () =>
+						onSelect( selected === 'none' ? null : 'none' )
+					}
+				>
 					{ sprintf(
 						/* translators: %d: number of questions. */ _n(
 							'%d question has no skill',
@@ -146,8 +167,21 @@ export function QuizSkillsSummary( { questions, skills } ) {
 						),
 						unmapped
 					) }
-				</span>
+				</button>
 			) }
 		</div>
 	);
+}
+
+/**
+ * Does the question belong under the chosen skill chip? `none` means no skill at all.
+ * @param question
+ * @param selected
+ */
+export function matchesSkillFilter( question, selected ) {
+	if ( null === selected ) {
+		return true;
+	}
+	const ids = mapSkillIds( question.skill_map ).filter( Boolean );
+	return 'none' === selected ? ! ids.length : ids.includes( selected );
 }
