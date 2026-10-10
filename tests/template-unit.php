@@ -206,4 +206,13 @@ for ( $i = 0; $i < 12; $i++ ) {
 }
 check( $repeat === 0, 'practice avoids repeating numbers it already gave' );
 check( T::fresh_seed( array(), array() ) > 0 && T::seed_from( 'x' ) === T::seed_from( 'x' ) && T::seed_from( 'x' ) !== T::seed_from( 'y' ), 'seeds' );
+$math_token = '\left\lbrace\left\lbrace a\right\rbrace\right\rbrace';
+$math_marker = '[[ohmylms-math:latex:inline]]' . $math_token . '[[/ohmylms-math]]';
+$math_errors = array();
+check( T::substitute( $math_marker, array( 'a' => -6.5 ), $math_errors ) === '[[ohmylms-math:latex:inline]]-6.5[[/ohmylms-math]]', 'saved MathLive literal double braces resolve inside marked equations' );
+check( T::substitute( $math_token, array( 'a' => -6.5 ), $math_errors ) === $math_token, 'unmarked literal LaTeX is unchanged' );
+check( T::substitute( '[[ohmylms-math:latex:display]]\frac{\{\{a*b\}\}}{\sqrt{x^2+1}}[[/ohmylms-math]]', array( 'a' => 3, 'b' => 4 ), $math_errors ) === '[[ohmylms-math:latex:display]]\frac{12}{\sqrt{x^2+1}}[[/ohmylms-math]]', 'nested equations retain fractions and roots around tokens' );
+$unknown_math_errors = array();
+T::substitute( $math_marker, array(), $unknown_math_errors );
+check( ! empty( $unknown_math_errors ), 'unknown equation variables are reported instead of silently displayed' );
 echo "$checks template unit checks passed.\n";

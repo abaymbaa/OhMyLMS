@@ -11,13 +11,12 @@ export const EXTENDED_TYPES = [
 	[ 'poll', 'Poll' ],
 	[ 'word-cloud', 'Word cloud' ],
 	[ 'discussion-board', 'Discussion board' ],
-	[ 'slide', 'Slide' ],
 	[ 'interactive-video', 'Interactive video' ],
 ];
 export const isExtendedType = ( type ) =>
 	EXTENDED_TYPES.some( ( [ id ] ) => id === type );
 export const isUngradedType = ( type ) =>
-	[ 'poll', 'word-cloud', 'slide' ].includes( type );
+	[ 'poll', 'word-cloud' ].includes( type );
 /**
  * Initial examples use the same settings shapes as the frozen server writer.
  * @param type

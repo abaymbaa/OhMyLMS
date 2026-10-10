@@ -22,6 +22,25 @@ test('visual labels preserve plain contracts, newlines, literal HTML and equatio
 });
 test.beforeEach(async ({page})=>{page.on('pageerror',error=>console.log('PAGE ERROR:',error.stack));page.on('console',message=>{if(message.type()==='error')console.log('CONSOLE ERROR:',message.text());});});
 
+test('typing randomized variables into MathLive preserves canonical tokens on reopen', async ({page}) => {
+ await page.goto('/fixture');
+ await page.evaluate(() => {
+  const editor = document.createElement('div'); editor.id = 'typed-variable'; editor.contentEditable = 'true'; document.body.append(editor);
+  window.OhMyLMSMath.insertAuthor(editor, '');
+ });
+ const field = page.locator('#typed-variable math-field');
+ await field.click();
+ for (const key of ['{', '{', 'a', '}', '}']) await field.press(key);
+ const saved = await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#typed-variable'), false));
+ expect(saved).toContain('{{a}}');
+ expect(saved).not.toContain('lbrace');
+ await page.evaluate(source => {
+  const editor = document.querySelector('#typed-variable'); editor.textContent = source; window.OhMyLMSMath.hydrateAuthor(editor);
+ }, saved);
+ expect(await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#typed-variable'), false))).toBe(saved);
+ expect(await field.evaluate(node => node.getPrompts())).toEqual(['omlvar0']);
+});
+
 test('real expression template synchronizes native POST, renders markers and grades on PHP', async ({page}) => {
  const requests=[]; page.on('request',request=>requests.push(request.url()));
  await page.goto('/fixture');

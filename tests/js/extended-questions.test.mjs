@@ -60,7 +60,7 @@ test( 'learner configuration never contains extended grading keys or teacher not
 } );
 
 test( 'unscored formats reset marks and extended formats do not create legacy answer rows', () => {
-	for ( const type of [ 'poll', 'word-cloud', 'slide' ] ) {
+	for ( const type of [ 'poll', 'word-cloud' ] ) {
 		const patch = questionTypePatch(
 			{ settings: { score: { value: 5 } } },
 			type

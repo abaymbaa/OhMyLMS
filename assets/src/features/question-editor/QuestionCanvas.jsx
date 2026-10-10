@@ -424,6 +424,9 @@ export function createQuestionCanvas( readRuntime ) {
 							return;
 						}
 						const patch = questionTypePatch( m, type );
+						if ( patch.description !== undefined ) {
+							s.updateQuestionData( x, { description: patch.description } );
+						}
 						if ( patch.name ) {
 							s.updateQuestionData( x, { name: patch.name } );
 						}

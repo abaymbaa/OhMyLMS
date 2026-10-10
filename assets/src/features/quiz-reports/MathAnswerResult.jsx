@@ -30,6 +30,16 @@ export function MathAnswerResult( {
 	const type = data?.settings?.type;
 	const given = data?.given_answer;
 	const response = () => {
+		if ( type === 'dropdown-blanks' ) {
+			return Object.entries( given || {} ).map( ( [ id, value ] ) => (
+				<div key={ id }>
+					{ id }:{ ' ' }
+					{ Array.isArray( value )
+						? value.join( ', ' )
+						: String( value ) }
+				</div>
+			) );
+		}
 		if ( type === 'expression' ) {
 			return (
 				<MathDisplay

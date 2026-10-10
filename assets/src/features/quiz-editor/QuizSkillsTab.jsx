@@ -85,7 +85,7 @@ export function ConnectQuestionSkill( {
 			</Button>
 		);
 	}
-	const part = ( question.settings?.parts || [ { id: 'p1' } ] )[ 0 ].id;
+	const part = question.settings?.parts?.[ 0 ]?.id || 'p1';
 	const confirm = async ( picked ) => {
 		setOpen( false );
 		const previous = question.skill_map || {};

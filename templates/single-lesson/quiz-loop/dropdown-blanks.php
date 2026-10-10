@@ -13,10 +13,12 @@ use OhMyLMS\Assessment\Interactive;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$settings = Interactive::learner_settings( 'dropdown-blanks', $question );
-$slots    = array();
+$settings       = Interactive::learner_settings( 'dropdown-blanks', $question );
+$slots          = array();
+$multiple_slots = array();
 foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
-	$slots[ (string) $slot['id'] ] = (array) ( $slot['choices'] ?? array() );
+	$slots[ (string) $slot['id'] ]          = (array) ( $slot['choices'] ?? array() );
+	$multiple_slots[ (string) $slot['id'] ] = ! empty( $slot['multiple'] );
 }
 Interactive::enqueue();
 ?>
@@ -25,13 +27,20 @@ Interactive::enqueue();
 		<?php
 		Interactive::render_marked(
 			$settings['text'] ?? '',
-			static function ( $id ) use ( $slots, $attempt, $question ) {
+			static function ( $id ) use ( $slots, $multiple_slots, $attempt, $question ) {
 				if ( ! isset( $slots[ $id ] ) ) {
 					return; }
 				$field_id = 'ohmylms-dd-' . (int) $attempt['id'] . '-' . (int) $question['id'] . '-' . $id;
 				?>
-				<select id="<?php echo esc_attr( $field_id ); ?>" class="ohmylms-inline-select" data-answer-key="<?php echo esc_attr( $id ); ?>" data-question-id="<?php echo esc_attr( $question['id'] ); ?>" name="<?php echo esc_attr( Interactive::field_name( $attempt, $question, $id ) ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: blank number */ __( 'Choice %s', 'ohmylms' ), $id ) ); ?>">
-					<option value=""><?php esc_html_e( 'Choose…', 'ohmylms' ); ?></option>
+				<select 
+				<?php
+				if ( $multiple_slots[ $id ] ) {
+					echo 'multiple'; }
+				?>
+				id="<?php echo esc_attr( $field_id ); ?>" class="ohmylms-inline-select" data-answer-key="<?php echo esc_attr( $id ); ?>" data-question-id="<?php echo esc_attr( $question['id'] ); ?>" name="<?php echo esc_attr( Interactive::field_name( $attempt, $question, $id ) . ( $multiple_slots[ $id ] ? '[]' : '' ) ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: blank number */ __( 'Choice %s', 'ohmylms' ), $id ) ); ?>">
+					<?php if ( ! $multiple_slots[ $id ] ) { ?>
+						<option value=""><?php esc_html_e( 'Choose…', 'ohmylms' ); ?></option>
+					<?php } ?>
 					<?php foreach ( $slots[ $id ] as $choice ) { ?>
 						<option value="<?php echo esc_attr( $choice ); ?>"><?php echo esc_html( $choice ); ?></option>
 					<?php } ?>

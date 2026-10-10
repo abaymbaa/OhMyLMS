@@ -161,7 +161,10 @@ final class QuestionTypes {
 					'render'            => static function ( $question, $attempt ) use ( $type ) {
 						ohmylms_get_template( 'single-lesson/quiz-loop/' . ( \OhMyLMS\Assessment\Visual::handles( $type ) ? 'visual' : $type ) . '.php', compact( 'question', 'attempt' ) ); },
 					// Keyed by slot / item / blank ID, or an ordered list of tiles; values are scalars.
-					'validate'          => static function ( $answer ) {
+					'validate'          => static function ( $answer ) use ( $type ) {
+						if ( 'dropdown-blanks' === $type ) {
+							return \OhMyLMS\Assessment\Interactive::validate_dropdown_response( $answer );
+						}
 						return is_array( $answer ) && count( $answer ) <= 200 && ! array_filter(
 							$answer,
 							static function ( $v ) {

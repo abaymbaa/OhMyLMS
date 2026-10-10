@@ -128,6 +128,47 @@
 	box-shadow: inset 0 0 0 1px #218044;
 }
 
+.ohmylms-question-authoring .ohmylms-rich-content-control {
+	flex: 1 1 180px;
+	min-width: 0;
+	width: 100%;
+	color: #1d2327;
+}
+
+.ohmylms-question-authoring .is-matching .ohmylms-rich-content-control {
+	flex-basis: 100%;
+}
+
+.ohmylms-question-authoring .ohmylms-form-response-fields .ohmylms-rich-content-control .ohmylms-prompt-label {
+	display: block;
+	margin-bottom: 4px;
+	color: #1d2327;
+}
+
+.ohmylms-question-authoring .ohmylms-rich-content-control > [role="textbox"] {
+	box-sizing: border-box;
+	min-height: 48px;
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	color: #1d2327;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-question-authoring .ohmylms-rich-content-control > [role="textbox"]:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 1px;
+}
+
+.ohmylms-question-authoring .ohmylms-rich-content-control > [role="textbox"]:empty::before {
+	color: #646970;
+	content: attr(data-placeholder);
+	pointer-events: none;
+}
+
 .ohmylms-question-authoring .ohmylms-shared-answer-correct {
 	width: 24px;
 	height: 24px;

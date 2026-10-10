@@ -34,6 +34,7 @@ import { RichContentControl } from '../math/RichContentControl';
  * @param root0.settings
  * @param root0.onChange
  * @param root0.prompt
+ * @param root0.mainStatement
  */
 export function BankAnswerFields( {
 	type,
@@ -41,12 +42,14 @@ export function BankAnswerFields( {
 	settings,
 	onChange,
 	prompt = '',
+	mainStatement = false,
 } ) {
 	const dragged = useRef( null );
 	if ( isExtendedType( type ) ) {
 		return (
 			<ExtendedEditor
 				type={ type }
+				mainStatement={ mainStatement }
 				value={ settings }
 				onChange={ ( patch ) =>
 					onChange( { settings: { ...settings, ...patch } } )
@@ -108,6 +111,7 @@ export function BankAnswerFields( {
 	}[ type ];
 	if ( interactive ) {
 		return createElement( interactive, {
+			mainStatement,
 			value: settings,
 			onChange: ( patch ) =>
 				onChange( { settings: { ...settings, ...patch } } ),

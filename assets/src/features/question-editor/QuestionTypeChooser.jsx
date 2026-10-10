@@ -73,7 +73,7 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 		],
 		[
 			__( 'Content and multimedia', 'ohmylms' ),
-			formats( [ 'passage', 'slide', 'interactive-video' ] ),
+			formats( [ 'passage', 'interactive-video' ] ),
 		],
 	];
 	const matches = ( [ , label ] ) =>

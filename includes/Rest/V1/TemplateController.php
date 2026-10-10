@@ -40,6 +40,40 @@ class TemplateController extends RestController {
 		$options  = is_array( $request['questions'] ) ? array_values( array_filter( $request['questions'], 'is_array' ) ) : array();
 		$title    = (string) ( $request['name'] ?? '' );
 		$body     = (string) ( $request['description'] ?? '' );
+		// This author-only response renders one draft without storing or grading it.
+		if ( rest_sanitize_boolean( $request['render'] ?? false ) && Template::has( $settings ) ) {
+			$validation = Template::validate( $settings, $title, $body, $options );
+			if ( true !== $validation ) {
+				return rest_ensure_response(
+					array(
+						'valid'    => false,
+						'message'  => $validation,
+						'question' => null,
+					)
+				);
+			}
+			$seed     = absint( $request['seed'] ?? Template::new_seed() );
+			$example  = Template::apply( $title, $body, $settings, $options, $seed );
+			$valid    = $example['ok'] && ! $example['errors'];
+			$question = array(
+				'name'        => $example['title'],
+				'description' => $example['body'],
+				'settings'    => $example['settings'],
+				'questions'   => $example['options'],
+			);
+			return rest_ensure_response(
+				array(
+					'valid'    => $valid,
+					'message'  => $valid ? '' : __( 'Could not generate this question. Check the random number ranges, conditions and variable names.', 'ohmylms' ),
+					'question' => $valid ? map_deep(
+						$question,
+						static function ( $value ) {
+							return is_string( $value ) ? wp_kses_post( $value ) : $value;
+						}
+					) : null,
+				)
+			);
+		}
 		if ( ! Template::has( $settings ) ) {
 			return rest_ensure_response(
 				array(

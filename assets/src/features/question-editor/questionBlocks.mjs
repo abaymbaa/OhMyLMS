@@ -5,7 +5,12 @@ import {
 	extendedDefaults,
 } from './extendedModel.mjs';
 export const QUESTION_BLOCK_PREFIX = 'ohmylms/question-';
-import { promptText } from './questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+	questionPromptPatch,
+	statementKey,
+} from './questionPrompt.mjs';
 import {
 	interactiveDefaults,
 	interactiveIssues,
@@ -68,6 +73,9 @@ export function questionTypePatch( question, type, seed = Date.now() ) {
 	}
 	const settings = {
 		type,
+		...( question.settings?.template
+			? { template: { ...question.settings.template, set: [] } }
+			: {} ),
 		...( type === 'fill-in-the-blank' ? { blank_mode: 'drag' } : {} ),
 		score: question.settings?.score || { enabled: true, value: 1 },
 		...Object.fromEntries(
@@ -88,9 +96,6 @@ export function questionTypePatch( question, type, seed = Date.now() ) {
 		Object.assign( settings, extendedDefaults( type ) );
 		if ( isUngradedType( type ) ) {
 			settings.score = { enabled: true, value: 0 };
-		}
-		if ( type === 'slide' ) {
-			settings.required = false;
 		}
 	}
 	const count = [
@@ -134,9 +139,19 @@ export function questionTypePatch( question, type, seed = Date.now() ) {
 			? {
 					name:
 						type === 'fill-in-the-blank'
-							? promptText( question.description )
+							? promptText(
+									statementKey( question )
+										? questionPrompt( question )
+										: question.description
+								)
 							: `Question ${ question.order_number || 1 }`,
 				}
+			: {} ),
+		...( statementKey( question )
+			? questionPromptPatch(
+					{ ...question, settings },
+					questionPrompt( question )
+				)
 			: {} ),
 	};
 }

@@ -402,13 +402,15 @@
 
 	/* ---------- Practice runner support ---------- */
 
-	function selectFor( id, choices ) {
+	function selectFor( id, choices, multiple ) {
 		var select = el( 'select', {
 			class: 'ohmylms-inline-select',
 			'data-answer-key': id,
 			'aria-label': id,
 		} );
-		select.appendChild( el( 'option', { value: '', text: '…' } ) );
+		select.multiple = !! multiple;
+		if ( ! multiple )
+			select.appendChild( el( 'option', { value: '', text: '…' } ) );
 		choices.forEach( function ( choice ) {
 			select.appendChild(
 				el( 'option', { value: choice, text: choice } )
@@ -451,11 +453,17 @@
 		if ( type === 'dropdown-blanks' ) {
 			var choices = {};
 			( settings.slots || [] ).forEach( function ( slot ) {
-				choices[ slot.id ] = slot.choices || [];
+				choices[ slot.id ] = slot;
 			} );
 			var sentence = el( 'p', { class: 'ohmylms-dropdown-sentence' } );
 			marked( sentence, settings.text || '', function ( id ) {
-				return choices[ id ] ? selectFor( id, choices[ id ] ) : null;
+				return choices[ id ]
+					? selectFor(
+							id,
+							choices[ id ].choices || [],
+							choices[ id ].multiple
+						)
+					: null;
 			} );
 			root.appendChild( sentence );
 		} else if ( type === 'multi-blank' ) {
@@ -612,6 +620,13 @@
 		Array.prototype.forEach.call(
 			container.querySelectorAll( '[data-answer-key]' ),
 			function ( field ) {
+				if ( field.tagName === 'SELECT' && field.multiple ) {
+					answer[ field.getAttribute( 'data-answer-key' ) ] =
+						Array.from( field.selectedOptions, function ( option ) {
+							return option.value;
+						} );
+					return;
+				}
 				if ( field.value !== '' ) {
 					answer[ field.getAttribute( 'data-answer-key' ) ] =
 						field.value;

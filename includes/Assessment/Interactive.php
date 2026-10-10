@@ -31,6 +31,7 @@ final class Interactive {
 	/** Marker IDs in the order they appear. */
 	public static function markers( $text ) {
 		$text = preg_replace( '~' . MathLive::MARKER . '~', '', (string) $text );
+		$text = preg_replace( '/\{\{[^{}]{1,240}\}\}/', '', $text );
 		preg_match_all( self::MARKER, (string) $text, $found );
 		return array_values( array_unique( $found[1] ) );
 	}
@@ -88,8 +89,9 @@ final class Interactive {
 				foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
 					$id              = preg_replace( '/[^a-z0-9_-]/i', '', (string) ( $slot['id'] ?? '' ) );
 					$view['slots'][] = array(
-						'id'      => $id,
-						'choices' => self::shuffled( array_values( array_map( 'strval', (array) ( $slot['choices'] ?? array() ) ) ), $seed . '|' . $id ),
+						'id'       => $id,
+						'choices'  => self::shuffled( array_values( array_map( 'strval', (array) ( $slot['choices'] ?? array() ) ) ), $seed . '|' . $id ),
+						'multiple' => ! empty( $slot['multiple'] ),
 					);
 				}
 				break;
@@ -133,7 +135,7 @@ final class Interactive {
 				}
 				$view['fields'] = array();
 				foreach ( self::blank_ids( $settings ) as $id ) {
-					$spec                   = (array) ( $settings['blanks'][ $id ] ?? array() );
+					$spec                  = (array) ( $settings['blanks'][ $id ] ?? array() );
 					$view['fields'][ $id ] = array(
 						'kind' => in_array( $spec['kind'] ?? '', array( 'numerical', 'expression' ), true ) ? $spec['kind'] : 'text',
 						'unit' => (string) ( $spec['unit'] ?? '' ),
@@ -160,7 +162,7 @@ final class Interactive {
 			case 'dropdown-blanks':
 				return array_map(
 					static function ( $slot ) {
-						return '{' . ( $slot['id'] ?? '' ) . '} = ' . ( $slot['answer'] ?? '' );
+						return '{' . ( $slot['id'] ?? '' ) . '} = ' . implode( ', ', self::dropdown_answers( $slot ) );
 					},
 					array_values( (array) ( $settings['slots'] ?? array() ) )
 				);
@@ -197,7 +199,7 @@ final class Interactive {
 		switch ( $type ) {
 			case 'dropdown-blanks':
 				foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
-					if ( isset( $slot['answer'] ) ) {
+					if ( isset( $slot['answer'] ) || isset( $slot['answers'] ) ) {
 						return true; }
 				}
 				return false;
@@ -221,6 +223,7 @@ final class Interactive {
 		$settings = (array) ( $question['settings'] ?? array() );
 		if ( self::has_key( $type, $settings ) ) {
 			$private = array(
+				'dropdown-blanks'  => array( 'dropdown_grading_version', 'partial_credit' ),
 				'categorize'       => array( 'key' ),
 				'multi-blank'      => array( 'blanks' ),
 				'build-expression' => array( 'correct', 'distractors', 'alternatives' ),
@@ -304,6 +307,30 @@ final class Interactive {
 		return self::result( array( false ), false );
 	}
 
+	/**
+	 * Validate bounded scalar or selection-list responses for dropdowns.
+	 *
+	 * @param mixed $answer Learner response.
+	 * @return bool Whether the response shape is supported.
+	 */
+	public static function validate_dropdown_response( $answer ) {
+		if ( ! is_array( $answer ) || count( $answer ) > 200 ) {
+			return false;
+		}
+		foreach ( $answer as $input ) {
+			$values = is_array( $input ) ? $input : array( $input );
+			if ( count( $values ) > 200 ) {
+				return false;
+			}
+			foreach ( $values as $value ) {
+				if ( ! is_scalar( $value ) || strlen( (string) $value ) > 2000 ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	/** A form name the engine knows; anything else means no requirement. */
 	private static function form( $form ) {
 		return in_array( $form, Expression::FORMS, true ) ? $form : 'any';
@@ -381,6 +408,9 @@ final class Interactive {
 	}
 
 	private static function grade_dropdown( array $answer, array $settings ) {
+		if ( 2 === ( $settings['dropdown_grading_version'] ?? null ) ) {
+			return self::grade_weighted_dropdown( $answer, $settings );
+		}
 		$items = array();
 		foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
 			$id    = (string) ( $slot['id'] ?? '' );
@@ -391,6 +421,68 @@ final class Interactive {
 				&& self::same_text( $input, $slot['answer'] ?? null );
 		}
 		return self::result( $items, ! empty( $settings['partial_credit'] ) );
+	}
+
+	/**
+	 * Read legacy or multiple correct choices from private settings.
+	 *
+	 * @param array $slot Dropdown settings.
+	 * @return array Correct choices.
+	 */
+	private static function dropdown_answers( array $slot ) {
+		return isset( $slot['answers'] ) ? (array) $slot['answers'] : array( $slot['answer'] ?? '' );
+	}
+
+	/**
+	 * Grade bounded multiple selections with frozen per-dropdown points.
+	 *
+	 * @param array $answer   Learner selections.
+	 * @param array $settings Frozen teacher settings.
+	 * @return array Grade fraction and dropdown correctness.
+	 */
+	private static function grade_weighted_dropdown( array $answer, array $settings ) {
+		$total  = 0.0;
+		$earned = 0.0;
+		$items  = array();
+		foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
+			$id       = (string) $slot['id'];
+			$points   = max( 0.0, (float) ( $slot['points'] ?? 0 ) );
+			$total   += $points;
+			$input    = $answer[ $id ] ?? array();
+			$selected = is_scalar( $input ) ? array( (string) $input ) : $input;
+			$expected = self::dropdown_answers( $slot );
+			$fraction = 0.0;
+			if ( is_array( $selected ) && count( $selected ) <= 200 && ! array_filter(
+				$selected,
+				static function ( $choice ) {
+					return ! is_string( $choice ); }
+			) ) {
+				$selected = array_unique( $selected );
+				$valid    = ! array_diff( $selected, (array) $slot['choices'] ) && ( ! empty( $slot['multiple'] ) || count( $selected ) <= 1 );
+				$correct  = array_filter(
+					$selected,
+					static function ( $choice ) use ( $expected ) {
+						foreach ( $expected as $accepted ) {
+							if ( self::same_text( $choice, $accepted ) ) {
+								return true;
+							}
+						}
+						return false;
+					}
+				);
+				if ( $valid && $correct && count( $correct ) === count( $selected ) ) {
+					$fraction = in_array( $slot['grading'] ?? 'equal', array( 'any', 'no-wrong' ), true ) ? 1.0 : count( $correct ) / max( 1, count( $expected ) );
+				}
+			}
+			$earned      += $points * $fraction;
+			$items[ $id ] = 1.0 <= $fraction;
+		}
+		return array(
+			'correct'  => ! empty( $items ) && ! in_array( false, $items, true ),
+			'fraction' => $total > 0 ? min( 1.0, $earned / $total ) : 0.0,
+			'manual'   => false,
+			'items'    => $items,
+		);
 	}
 
 	private static function grade_categorize( array $answer, array $settings ) {
@@ -406,9 +498,9 @@ final class Interactive {
 	private static function grade_multi_blank( array $answer, array $settings ) {
 		$items = array();
 		foreach ( self::blank_ids( $settings ) as $id ) {
-			$spec         = (array) ( $settings['blanks'][ $id ] ?? array() );
-			$input        = $answer[ $id ] ?? '';
-			$present      = is_scalar( $input ) && trim( (string) $input ) !== '';
+			$spec    = (array) ( $settings['blanks'][ $id ] ?? array() );
+			$input   = $answer[ $id ] ?? '';
+			$present = is_scalar( $input ) && trim( (string) $input ) !== '';
 			if ( ! $present ) {
 				$items[ $id ] = false;
 			} elseif ( ( $spec['kind'] ?? 'text' ) === 'numerical' ) {
@@ -449,6 +541,9 @@ final class Interactive {
 			return Visual::validate_settings( $type, $settings ); }
 		switch ( $type ) {
 			case 'dropdown-blanks':
+				if ( isset( $settings['dropdown_grading_version'] ) && 2 !== $settings['dropdown_grading_version'] ) {
+					return __( 'Unsupported dropdown grading version.', 'ohmylms' );
+				}
 				$slots = (array) ( $settings['slots'] ?? array() );
 				$ids   = self::markers( $settings['text'] ?? '' );
 				if ( ! $slots || ! $ids ) {
@@ -462,8 +557,22 @@ final class Interactive {
 					$seen[ $id ] = true;
 					if ( count( $choices ) < 2 || count( array_unique( array_map( 'mb_strtolower', $choices ) ) ) !== count( $choices ) || in_array( '', $choices, true ) ) {
 						return __( 'Each dropdown needs at least two different, non-empty choices.', 'ohmylms' ); }
-					if ( ! in_array( (string) ( $slot['answer'] ?? '' ), $choices, true ) ) {
+					$answers = self::dropdown_answers( $slot );
+					if ( ! $answers || count( $answers ) > 200 || array_filter(
+						$answers,
+						static function ( $choice ) {
+							return ! is_string( $choice ); }
+					) || count( $answers ) !== count( array_unique( $answers ) ) || array_diff( $answers, $choices ) ) {
 						return __( 'Each dropdown answer must be one of its choices.', 'ohmylms' ); }
+					if ( 2 === ( $settings['dropdown_grading_version'] ?? null ) && ( ! isset( $slot['points'] ) || ! is_numeric( $slot['points'] ) || ! is_finite( (float) $slot['points'] ) || $slot['points'] < 0 || ! in_array( $slot['grading'] ?? '', array( 'equal', 'any', 'no-wrong' ), true ) || ( count( $answers ) > 1 && empty( $slot['multiple'] ) ) ) ) {
+						return __( 'Set non-negative dropdown points and a supported grading mode. Multiple correct answers require multiple selections.', 'ohmylms' );
+					}
+				}
+				if ( 2 === ( $settings['dropdown_grading_version'] ?? null ) ) {
+					$total = array_sum( array_column( $slots, 'points' ) );
+					if ( ! is_finite( (float) $total ) || ! is_numeric( $settings['score']['value'] ?? null ) || ! is_finite( (float) $settings['score']['value'] ) || abs( $total - (float) $settings['score']['value'] ) > 0.000001 ) {
+						return __( 'Question points must equal the sum of its dropdown points.', 'ohmylms' );
+					}
 				}
 				return count( $seen ) === count( $ids ) ? true : __( 'Every {marker} in the sentence needs a dropdown.', 'ohmylms' );
 			case 'categorize':

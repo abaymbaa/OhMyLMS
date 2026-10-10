@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { equationMarker, equationPattern, templateLatex, restoreTemplateTokens } from '../../assets/src/features/math/content.mjs';
+import { equationMarker, equationPattern, templateLatex, restoreTemplateTokens, normalizeTemplateTokens } from '../../assets/src/features/math/content.mjs';
 import { inspectFormula } from '../../assets/src/features/math/teacherCompute.mjs';
 
 test( 'explicit markers preserve LaTeX, layout and dollar prose', () => {
@@ -27,4 +27,16 @@ test( 'pinned Compute Engine provides advisory syntax without replacing source',
 	assert.equal( inspectFormula( source ).valid, true );
 	assert.equal( source, String.raw`\frac{1}{2}+\sqrt{x^2+1}` );
 	assert.equal( inspectFormula( 'x'.repeat( 2001 ) ).valid, false );
+} );
+
+test( 'typed MathLive double braces become tokens without altering other mathematics', () => {
+	const source = String.raw`\frac{\left\lbrace\left\lbrace a\right\rbrace\right\rbrace}{\sqrt{x^{2}+1}}`;
+	const canonical = String.raw`\frac{{{a}}}{\sqrt{x^{2}+1}}`;
+	assert.equal( normalizeTemplateTokens( source ), canonical );
+	assert.equal( restoreTemplateTokens( source, [] ), canonical );
+	const { latex, tokens } = templateLatex( source );
+	assert.deepEqual( tokens, [ '{{a}}' ] );
+	assert.equal( restoreTemplateTokens( latex, tokens ), canonical );
+	assert.equal( normalizeTemplateTokens( String.raw`\{\{a*b:+\}\}` ), '{{a*b:+}}' );
+	assert.equal( normalizeTemplateTokens( String.raw`\left\lbrace a\right\rbrace` ), String.raw`\left\lbrace a\right\rbrace` );
 } );

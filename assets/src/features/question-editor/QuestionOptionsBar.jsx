@@ -17,7 +17,6 @@ export function QuestionOptionsBar( { question, onChange } ) {
 			<div className="ohmylms-question-options-controls">
 				<ToggleControl
 					label={ __( 'Required', 'ohmylms' ) }
-					disabled={ settings.type === 'slide' }
 					checked={ !! settings.required }
 					onChange={ ( required ) => set( { required } ) }
 				/>

@@ -193,6 +193,24 @@ final class Template {
 
 	/** Replace {{…}} in one string; a lone placeholder with no sign becomes a number. */
 	public static function substitute( $text, array $params, array &$errors = array() ) {
+		// Older MathLive authoring stored typed double braces as literal LaTeX delimiters.
+		// Recognize them only inside explicit equation markers, leaving prose untouched.
+		if ( is_string( $text ) && false !== strpos( $text, '[[ohmylms-math:latex:' ) ) {
+			$text = preg_replace_callback(
+				'/\[\[ohmylms-math:latex:(?:inline|display)\]\]([\s\S]{1,2000}?)\[\[\/ohmylms-math\]\]/',
+				static function ( $equation ) {
+					$source = preg_replace_callback(
+						'/(?:\\\\left\s*)?\\\\(?:lbrace|\{)\s*(?:\\\\left\s*)?\\\\(?:lbrace|\{)\s*([^{}\\\\]{1,240}?)\s*(?:\\\\right\s*)?\\\\(?:rbrace|\})\s*(?:\\\\right\s*)?\\\\(?:rbrace|\})/',
+						static function ( $token ) {
+							return '{{' . trim( $token[1] ) . '}}';
+						},
+						$equation[1]
+					);
+					return str_replace( $equation[1], $source, $equation[0] );
+				},
+				$text
+			);
+		}
 		if ( ! is_string( $text ) || strpos( $text, '{{' ) === false ) {
 			return $text; }
 		if ( preg_match( '/^\{\{([^{}]+)\}\}$/', trim( $text ), $whole ) ) {
@@ -216,13 +234,23 @@ final class Template {
 		);
 	}
 
-	private static function substitute_deep( $value, array $params, array &$errors ) {
+	/**
+	 * Substitute nested content while preserving textual option contracts.
+	 *
+	 * @param mixed $value Content to resolve.
+	 * @param array $params Generated values.
+	 * @param array $errors Unresolved formulas.
+	 * @param bool  $preserve_text Keep strings as strings, including lone variables.
+	 * @return mixed
+	 */
+	private static function substitute_deep( $value, array $params, array &$errors, $preserve_text = false ) {
 		if ( is_array( $value ) ) {
 			foreach ( $value as $key => $item ) {
-				$value[ $key ] = self::substitute_deep( $item, $params, $errors ); }
+				$value[ $key ] = self::substitute_deep( $item, $params, $errors, $preserve_text ); }
 			return $value;
 		}
-		return self::substitute( $value, $params, $errors );
+		$substituted = self::substitute( $value, $params, $errors );
+		return $preserve_text && is_string( $value ) ? (string) $substituted : $substituted;
 	}
 
 	/** Assign $value at a dotted path such as "blanks.a.answer" or "parts.0.answer". */
@@ -263,10 +291,12 @@ final class Template {
 				continue; }
 			$settings = self::set_path( $settings, $rule['path'], round( $value, 9 ) );
 		}
+		$options = self::substitute_deep( $options, $params, $errors, true );
 		foreach ( $options as $index => $option ) {
-			$options[ $index ]['answer'] = (string) self::substitute( (string) ( $option['answer'] ?? '' ), $params, $errors );
+			$options[ $index ]['answer'] = (string) ( $option['answer'] ?? '' );
 			if ( isset( $option['matching_data']['label'] ) ) {
-				$options[ $index ]['matching_data']['label'] = (string) self::substitute( (string) $option['matching_data']['label'], $params, $errors ); }
+				$options[ $index ]['matching_data']['label'] = (string) $option['matching_data']['label'];
+			}
 		}
 		$title = (string) self::substitute( (string) $title, $params, $errors );
 		$body  = (string) self::substitute( (string) $body, $params, $errors );

@@ -41,6 +41,7 @@ const scope = {
 	ChoiceControls: 'choices',
 	questionPrompt: ( q ) => q.name,
 	questionPromptPatch: ( q, name ) => ( { name } ),
+	questionAnswerPatch: ( q, patch ) => patch,
 	parseInlineBlankPrompt,
 };
 const Form = new Function(
@@ -98,11 +99,16 @@ test( 'blank footer saves explicit grading flags without changing other settings
 	reopenedControl.props.onChange( true );
 	assert.equal( saved.settings.partial_credit, true );
 } );
-test( 'short answer has no layout switch or automatic partial-grade control; choice layouts stay available', () => {
+test( 'only Multi Select retains a layout switch; non-blank types have no partial-grade footer', () => {
 	for ( const [ type, visible ] of [
 		[ 'short-text', false ],
 		[ 'single-choice', true ],
-		[ 'matching', true ],
+		[ 'multiple-choice', true ],
+		[ 'true-false', false ],
+		[ 'matching', false ],
+		[ 'reorder', false ],
+		[ 'build-expression', false ],
+		[ 'number-line', false ],
 	] ) {
 		const workspace = Form( {
 			question: { name: 'Prompt', settings: { type } },

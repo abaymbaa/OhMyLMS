@@ -15,7 +15,7 @@ test( 'each question type creates the existing assessment data schema', () => {
 		assert.equal( patch.settings.type, type );
 		assert.equal(
 			patch.settings.score.value,
-			[ 'poll', 'word-cloud', 'slide' ].includes( type ) ? 0 : 1
+			[ 'poll', 'word-cloud' ].includes( type ) ? 0 : 1
 		);
 		assert.ok( Array.isArray( patch.questions ) );
 		if ( type === 'true-false' )
@@ -126,6 +126,11 @@ test( 'changing response type preserves form settings but resets type-specific a
 				type: 'numerical',
 				required: true,
 				hint: 'Try this',
+				template: {
+					variables: [ { name: 'a', type: 'int', min: 2, max: 9 } ],
+					constraints: [ 'a>2' ],
+					set: [ { path: 'answer', expr: 'a*2' } ],
+				},
 				answer: 42,
 			},
 		},
@@ -134,4 +139,9 @@ test( 'changing response type preserves form settings but resets type-specific a
 	assert.equal( patch.settings.required, true );
 	assert.equal( patch.settings.hint, 'Try this' );
 	assert.equal( patch.settings.answer, undefined );
+	assert.deepEqual( patch.settings.template.variables, [
+		{ name: 'a', type: 'int', min: 2, max: 9 },
+	] );
+	assert.deepEqual( patch.settings.template.constraints, [ 'a>2' ] );
+	assert.deepEqual( patch.settings.template.set, [] );
 } );

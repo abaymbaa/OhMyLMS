@@ -6,7 +6,12 @@ import {
 	extendedIssues,
 } from '../question-editor/extendedModel.mjs';
 /** Pure helpers for the question bank, skills and picker UIs. */
-import { promptText } from '../question-editor/questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+	questionPromptPatch,
+	statementKey,
+} from '../question-editor/questionPrompt.mjs';
 import {
 	INTERACTIVE_TYPES,
 	interactiveDefaults,
@@ -296,10 +301,16 @@ export function changeDraftType( draft, type ) {
 		...blank,
 		name: draft.settings?.question_code
 			? type === 'fill-in-the-blank'
-				? promptText( draft.description )
+				? promptText(
+						statementKey( draft )
+							? questionPrompt( draft )
+							: draft.description
+					)
 				: 'Question 1'
 			: draft.name,
-		description: draft.description,
+		description: statementKey( draft )
+			? questionPrompt( draft )
+			: draft.description,
 		marks: isUngradedType( type ) ? 0 : draft.marks,
 		settings: {
 			...blank.settings,
@@ -308,6 +319,19 @@ export function changeDraftType( draft, type ) {
 				: {} ),
 		},
 		options: keepOptions ? draft.options : blank.options,
+		...( statementKey( draft )
+			? questionPromptPatch(
+					{
+						...draft,
+						settings: {
+							...blank.settings,
+							type,
+							question_code: draft.settings?.question_code,
+						},
+					},
+					questionPrompt( draft )
+				)
+			: {} ),
 	};
 }
 
@@ -339,7 +363,7 @@ export function validateDraft( draft ) {
 		problems.push( 'name' );
 	} else if (
 		draft.settings?.question_code &&
-		! promptText( draft.description )
+		! promptText( questionPrompt( draft ) )
 	) {
 		problems.push( 'name' );
 	}

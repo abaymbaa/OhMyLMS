@@ -1,6 +1,13 @@
 import { ExtendedPreview } from './ExtendedPreview';
 import { isExtendedType } from './extendedModel.mjs';
-import { createElement, RawHTML, useRef, useState } from '@wordpress/element';
+/** @jsx createElement */
+import {
+	createElement,
+	RawHTML,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { questionPreviewModel } from './questionBlocks.mjs';
@@ -14,6 +21,73 @@ import { InteractivePreview } from './InteractiveEditors';
  * @param root0.showNote
  */
 export function QuestionLivePreview( { question, showNote = true } ) {
+	const source = JSON.stringify( question );
+	const randomized = Boolean( question.settings?.template );
+	const seed = useRef( Math.floor( Math.random() * 2147483647 ) );
+	const [ result, setResult ] = useState( null );
+	useEffect( () => {
+		if ( ! randomized ) {
+			return;
+		}
+		let disposed = false;
+		window.wp
+			.apiFetch( {
+				path: '/ohmylms/v1/question-template/preview',
+				method: 'POST',
+				data: {
+					...JSON.parse( source ),
+					render: true,
+					seed: seed.current,
+				},
+			} )
+			.then( ( response ) => {
+				if ( ! disposed ) {
+					setResult( { source, ...response } );
+				}
+			} )
+			.catch( () => {
+				if ( ! disposed ) {
+					setResult( {
+						source,
+						valid: false,
+						message: __(
+							'Could not generate the preview. Try reopening it.',
+							'ohmylms'
+						),
+					} );
+				}
+			} );
+		return () => {
+			disposed = true;
+		};
+	}, [ source, randomized ] );
+	if ( randomized && ( result?.source !== source || ! result.valid ) ) {
+		return (
+			<p role="status">
+				{ result?.source === source
+					? result.message
+					: __( 'Generating randomized preview…', 'ohmylms' ) }
+			</p>
+		);
+	}
+	return (
+		<QuestionPreviewContent
+			key={ source }
+			question={
+				randomized ? { ...question, ...result.question } : question
+			}
+			showNote={ showNote }
+		/>
+	);
+}
+
+/**
+ * Render a concrete question after server-side variable substitution.
+ * @param root0
+ * @param root0.question
+ * @param root0.showNote
+ */
+function QuestionPreviewContent( { question, showNote } ) {
 	const view = questionPreviewModel( question );
 	const group = useRef(
 		`question-preview-${ Math.random().toString( 36 ).slice( 2 ) }`
@@ -29,16 +103,21 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 			return next;
 		} );
 	const answerInput = ( label, multiline = false ) => (
-		<label className="ohmylms-preview-input">
+		<label
+			className="ohmylms-preview-input"
+			htmlFor={ `${ group.current }-${ label }` }
+		>
 			{ label }
 			{ multiline ? (
 				<textarea
+					id={ `${ group.current }-${ label }` }
 					aria-label={ label }
 					rows={ 4 }
 					placeholder={ __( 'Type your answer here …', 'ohmylms' ) }
 				/>
 			) : (
 				<input
+					id={ `${ group.current }-${ label }` }
 					aria-label={ label }
 					type="text"
 					placeholder={ __( 'Type your answer here …', 'ohmylms' ) }
@@ -71,6 +150,7 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 								<input
 									key={ index }
 									aria-label={ sprintf(
+										/* translators: %d: blank position. */
 										__( 'Blank %d', 'ohmylms' ),
 										index + 1
 									) }
@@ -110,10 +190,12 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 				<div className="ohmylms-preview-options">
 					{ view.options.map( ( option ) => (
 						<label
+							htmlFor={ `${ group.current }-${ option.id }` }
 							key={ option.id }
 							className="ohmylms-preview-choice"
 						>
 							<input
+								id={ `${ group.current }-${ option.id }` }
 								type={
 									view.type === 'multiple-choice'
 										? 'checkbox'
@@ -149,11 +231,17 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 				answerInput( __( 'Your answer', 'ohmylms' ) ) }
 			{ view.type === 'matching' &&
 				view.options.map( ( option ) => (
-					<label className="ohmylms-preview-choice" key={ option.id }>
+					<label
+						className="ohmylms-preview-choice"
+						key={ option.id }
+						htmlFor={ `${ group.current }-${ option.id }` }
+					>
 						{ option.answer ||
 							__( 'Matching item is empty', 'ohmylms' ) }
 						<select
+							id={ `${ group.current }-${ option.id }` }
 							aria-label={ sprintf(
+								/* translators: %s: matching item. */
 								__( 'Match for %s', 'ohmylms' ),
 								option.answer
 							) }
@@ -218,6 +306,7 @@ export function QuestionLivePreview( { question, showNote = true } ) {
 						<p>{ part.prompt }</p>
 						{ answerInput(
 							sprintf(
+								/* translators: %s: part label. */
 								__( 'Part %s answer', 'ohmylms' ),
 								part.label
 							),

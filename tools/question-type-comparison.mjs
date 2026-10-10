@@ -85,11 +85,6 @@ const content = QUESTION_BLOCK_TYPES.map( ( [ type, label ], index ) => {
 			},
 		];
 	}
-	if ( type === 'slide' )
-		question.description =
-			'<h2>Geometry overview</h2><p>A circle is round. A square has four equal sides.</p><img src="' +
-			base +
-			'assets/images/question-type-diagram.svg" alt="Circle and square"/>';
 	return question;
 } );
 fs.writeFileSync(

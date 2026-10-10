@@ -15,8 +15,14 @@ import { QuestionMediaUpload } from './QuestionMediaUpload';
  * @param root0.type
  * @param root0.value
  * @param root0.onChange
+ * @param root0.mainStatement
  */
-export function ExtendedEditor( { type, value, onChange } ) {
+export function ExtendedEditor( {
+	type,
+	value,
+	onChange,
+	mainStatement = false,
+} ) {
 	const [ selected, setSelected ] = useState( 0 );
 	const set = ( patch ) => onChange( patch );
 	const rows = ( key ) => value[ key ] || [];
@@ -61,14 +67,23 @@ export function ExtendedEditor( { type, value, onChange } ) {
 	if ( type === 'passage' ) {
 		return (
 			<div className="ohmylms-interactive-editor">
-				<RichContentControl
-					compact
-					html={ false }
-					label={ __( 'Reading passage', 'ohmylms' ) }
-					rows={ 6 }
-					value={ value.passage || '' }
-					onChange={ ( passage ) => set( { passage } ) }
-				/>
+				{ mainStatement ? (
+					<p>
+						{ __(
+							'Write the reading passage in the Question field above, then add its questions below.',
+							'ohmylms'
+						) }
+					</p>
+				) : (
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __( 'Reading passage', 'ohmylms' ) }
+						rows={ 6 }
+						value={ value.passage || '' }
+						onChange={ ( passage ) => set( { passage } ) }
+					/>
+				) }
 				<StructuredEditor
 					value={ value }
 					onChange={ ( patch ) =>
@@ -99,7 +114,6 @@ export function ExtendedEditor( { type, value, onChange } ) {
 			'video-response',
 			'word-cloud',
 			'discussion-board',
-			'slide',
 		].includes( type )
 	) {
 		return (
@@ -125,10 +139,6 @@ export function ExtendedEditor( { type, value, onChange } ) {
 							),
 							'discussion-board': __(
 								'Learners write a response for teacher review.',
-								'ohmylms'
-							),
-							slide: __(
-								'Content slide: no answer and no score. Add text and images to the question canvas.',
 								'ohmylms'
 							),
 						}[ type ]

@@ -11,7 +11,11 @@ import { BankAnswerFields } from './BankAnswerFields';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { TemplatePanel } from './TemplatePanel';
 import { ChoiceControls } from './ChoiceControls';
-import { questionPrompt, questionPromptPatch } from './questionPrompt.mjs';
+import {
+	questionPrompt,
+	questionPromptPatch,
+	questionAnswerPatch,
+} from './questionPrompt.mjs';
 import { MathVariables } from '../math/MathInput';
 import { parseInlineBlankPrompt } from './inlineBlanks.mjs';
 
@@ -50,6 +54,8 @@ export function QuestionForm( {
 		value: question.settings?.score?.value ?? 1,
 		disabled:
 			props.readOnly ||
+			( question.settings?.type === 'dropdown-blanks' &&
+				question.settings?.dropdown_grading_version === 2 ) ||
 			isUngradedType( question.settings?.type ) ||
 			[ 'structured', 'passage' ].includes( question.settings?.type ),
 		onChange: ( marks ) =>
@@ -70,7 +76,10 @@ export function QuestionForm( {
 			options={ question.questions || [] }
 			settings={ question.settings || {} }
 			prompt={ question.name }
-			onChange={ onChange }
+			mainStatement
+			onChange={ ( patch ) =>
+				onChange( questionAnswerPatch( question, patch ) )
+			}
 		/>
 	);
 	return (
@@ -164,13 +173,7 @@ export function QuestionForm( {
 					</>
 				}
 				flatSettings={ false }
-				showLayoutSwitch={
-					! [
-						'fill-in-the-blank',
-						'short-text',
-						'build-expression',
-					].includes( question.settings?.type )
-				}
+				showLayoutSwitch={ choice }
 				footerLeading={
 					<>
 						{ choice && (

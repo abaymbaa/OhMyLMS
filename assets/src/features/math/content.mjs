@@ -27,13 +27,25 @@ export function equationMarker( latex, mode = 'inline' ) {
 }
 
 /**
+ * Recognize double braces typed in MathLive without changing other LaTeX.
+ * @param {string} source MathLive source.
+ * @return {string} Source with canonical randomization tokens.
+ */
+export function normalizeTemplateTokens( source ) {
+	return String( source ).replace(
+		/(?:\\left\s*)?\\(?:lbrace|\{)\s*(?:\\left\s*)?\\(?:lbrace|\{)\s*([^{}\\]{1,240}?)\s*(?:\\right\s*)?\\(?:rbrace|\})\s*(?:\\right\s*)?\\(?:rbrace|\})/g,
+		( match, body ) => `{{${ body.trim() }}}`
+	);
+}
+
+/**
  * Show stored randomization tokens as locked MathLive prompts.
  * @param {string} source Original template source.
  * @return {Object} LaTeX and a reversible token map.
  */
 export function templateLatex( source ) {
 	const tokens = [];
-	const latex = String( source ).replace(
+	const latex = normalizeTemplateTokens( source ).replace(
 		/\{\{([^{}]{1,240})\}\}/g,
 		( token, body ) => {
 			const id = tokens.length;
@@ -51,7 +63,7 @@ export function templateLatex( source ) {
  * @return {string} Stored source.
  */
 export function restoreTemplateTokens( latex, tokens ) {
-	return latex.replace(
+	return normalizeTemplateTokens( latex ).replace(
 		/\\placeholder\[omlvar(\d+)\](?:\[locked\])?\{[^{}]*\}/g,
 		( match, id ) => tokens[ Number( id ) ] || match
 	);

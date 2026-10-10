@@ -4,7 +4,10 @@ import {
 } from '../question-editor/extendedModel.mjs';
 export { moveOption } from '../question-editor/model.mjs';
 import { parseInlineBlankPrompt } from '../question-editor/inlineBlanks.mjs';
-import { promptText } from '../question-editor/questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+} from '../question-editor/questionPrompt.mjs';
 /**
  * Keep saved option IDs and extension settings; remove only temporary UI IDs.
  * A temporary (unsaved or duplicated) question never sends option IDs: copied
@@ -54,7 +57,7 @@ export function canLeaveQuestion( question, validate ) {
 	if ( isExtendedType( question?.settings?.type ) ) {
 		return (
 			!! ( question.settings.question_code
-				? promptText( question.description )
+				? promptText( questionPrompt( question ) )
 				: question.name?.trim() ) &&
 			! extendedIssues( question.settings.type, question.settings )
 				.length &&

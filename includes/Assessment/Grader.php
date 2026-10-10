@@ -80,6 +80,14 @@ final class Grader {
 				array_filter(
 					$answer,
 					static function ( $value ) {
+						if ( is_array( $value ) && count( $value ) <= 200 ) {
+							return (bool) array_filter(
+								$value,
+								static function ( $selection ) {
+									return is_scalar( $selection ) && '' !== trim( (string) $selection );
+								}
+							);
+						}
 						return is_scalar( $value ) && trim( (string) $value ) !== '';
 					}
 				)

@@ -1,4 +1,5 @@
 /** Pure helpers for the interactive question types (dropdown sentence, sorting, multi-blank, tiles). */
+import { dropdownAnswers } from './dropdownModel.mjs';
 export const INTERACTIVE_TYPES = [
 	'dropdown-blanks',
 	'categorize',
@@ -33,6 +34,7 @@ export function markerIds( text ) {
 			/\[\[ohmylms-math:latex:(?:inline|display)\]\][\s\S]{1,2000}?\[\[\/ohmylms-math\]\]/g,
 			''
 		)
+		.replace( /\{\{[^{}]{1,240}\}\}/g, '' )
 		.matchAll( MARKER ) ) {
 		if ( ! found.includes( match[ 1 ] ) ) {
 			found.push( match[ 1 ] );
@@ -272,7 +274,16 @@ export function interactiveIssues( type, settings = {} ) {
 			if (
 				choices.length < 2 ||
 				choices.includes( '' ) ||
-				! choices.includes( ( slot.answer || '' ).trim() )
+				! dropdownAnswers( slot ).length ||
+				dropdownAnswers( slot ).some(
+					( answer ) => ! choices.includes( answer.trim() )
+				) ||
+				( settings.dropdown_grading_version === 2 &&
+					( ! Number.isFinite( Number( slot.points ) ) ||
+						Number( slot.points ) < 0 ||
+						! [ 'equal', 'any', 'no-wrong' ].includes(
+							slot.grading
+						) ) )
 			) {
 				issues.push( 'choices' );
 				break;

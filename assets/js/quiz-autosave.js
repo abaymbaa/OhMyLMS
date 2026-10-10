@@ -72,7 +72,15 @@
 			var key = rest.match( /^\[([^\]]*)\]/ );
 			if ( key && key[ 1 ] !== '' ) {
 				isKeyed = true;
-				keyed[ key[ 1 ] ] = field.value;
+				keyed[ key[ 1 ] ] =
+					field.tagName === 'SELECT' && field.multiple
+						? Array.from(
+								field.selectedOptions,
+								function ( option ) {
+									return option.value;
+								}
+							)
+						: field.value;
 			} else {
 				list.push( field.value );
 			}
@@ -240,7 +248,19 @@
 						);
 					} )[ 0 ];
 					if ( ! input ) return;
-					input.value = response[ definition ];
+					if ( input.tagName === 'SELECT' && input.multiple ) {
+						var selections = Array.isArray( response[ definition ] )
+							? response[ definition ]
+							: [ response[ definition ] ];
+						Array.from( input.options ).forEach(
+							function ( option ) {
+								option.selected =
+									selections.indexOf( option.value ) !== -1;
+							}
+						);
+					} else {
+						input.value = response[ definition ];
+					}
 					var box = root.querySelector(
 						'.option-drop-box[data-definition-id="' +
 							definition +

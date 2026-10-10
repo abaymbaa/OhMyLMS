@@ -14,7 +14,10 @@ import { loadQuiz, saveQuiz, removeQuestionFromQuiz } from './api.mjs';
 import { publishRevision } from '../question-bank/api.mjs';
 import { appendLinkedQuestions } from '../question-bank/model.mjs';
 import { __, sprintf } from '@wordpress/i18n';
-import { promptText } from '../question-editor/questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+} from '../question-editor/questionPrompt.mjs';
 
 export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 	const state = useSelect(
@@ -127,7 +130,7 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 					( question ) =>
 						question.readonly ||
 						( ( ! question.settings?.question_code ||
-							!! promptText( question.description ) ) &&
+							!! promptText( questionPrompt( question ) ) ) &&
 							canLeaveQuestion( question, validate ) )
 				)
 			) {

@@ -1,3 +1,5 @@
+import { dropdownAnswers } from '../question-editor/dropdownModel.mjs';
+
 /**
  * REST option IDs may be numbers or strings; result controls compare them strictly.
  * @param attempt
@@ -164,7 +166,10 @@ export function describeExpected( question ) {
 	if ( settings.type === 'dropdown-blanks' ) {
 		return (
 			( settings.slots || [] )
-				.map( ( slot ) => `{${ slot.id }} = ${ slot.answer }` )
+				.map(
+					( slot ) =>
+						`{${ slot.id }} = ${ dropdownAnswers( slot ).join( ', ' ) }`
+				)
 				.join( ', ' ) || '—'
 		);
 	}

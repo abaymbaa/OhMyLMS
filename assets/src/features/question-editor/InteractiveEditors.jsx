@@ -1,3 +1,4 @@
+/** @jsx createElement */
 import { RichContentControl } from '../math/RichContentControl';
 import { createElement, Fragment, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,6 +12,11 @@ import {
 import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { VisualPreview } from './VisualEditors';
 import { MathInput } from '../math/MathInput';
+import {
+	dropdownAnswers,
+	dropdownSettings,
+	renameDropdownChoice,
+} from './dropdownModel.mjs';
 import { listToNumbers, numbersToList } from '../question-bank/model.mjs';
 import {
 	blankIds,
@@ -72,8 +78,6 @@ function ParsedField( {
 	);
 }
 
-const lines = ( text ) => String( text ).split( '\n' );
-const joinLines = ( list ) => ( list || [] ).join( '\n' );
 const csv = ( text ) =>
 	String( text )
 		.split( ',' )
@@ -195,64 +199,211 @@ export function ExpressionEditor( { value, onChange } ) {
  * @param root0
  * @param root0.value
  * @param root0.onChange
+ * @param root0.mainStatement
  */
-export function DropdownBlanksEditor( { value, onChange } ) {
+export function DropdownBlanksEditor( {
+	value,
+	onChange,
+	mainStatement = false,
+} ) {
 	const slots = value.slots || [];
 	const setSlot = ( id, patch ) =>
-		onChange( {
-			slots: slots.map( ( slot ) =>
-				slot.id === id ? { ...slot, ...patch } : slot
-			),
-		} );
+		onChange(
+			dropdownSettings(
+				value,
+				slots.map( ( slot ) =>
+					slot.id === id ? { ...slot, ...patch } : slot
+				)
+			)
+		);
 	return (
 		<div className="ohmylms-interactive-editor">
-			<RichContentControl
-				compact
-				html={ false }
-				label={ __( 'Sentence', 'ohmylms' ) }
-				help={ __(
-					'Write {1}, {2} … where a dropdown should appear.',
-					'ohmylms'
-				) }
-				value={ value.text || '' }
-				onChange={ ( text ) =>
-					onChange( { text, slots: syncSlots( text, slots ) } )
-				}
-			/>
+			{ mainStatement ? (
+				<p>
+					{ __(
+						'Write {1}, {2} … in the Question field where a dropdown should appear.',
+						'ohmylms'
+					) }
+				</p>
+			) : (
+				<RichContentControl
+					compact
+					html={ false }
+					label={ __( 'Sentence', 'ohmylms' ) }
+					help={ __(
+						'Write {1}, {2} … where a dropdown should appear.',
+						'ohmylms'
+					) }
+					value={ value.text || '' }
+					onChange={ ( text ) =>
+						onChange( { text, slots: syncSlots( text, slots ) } )
+					}
+				/>
+			) }
 			{ slots.map( ( slot ) => (
 				<fieldset key={ slot.id } className="ohmylms-interactive-row">
 					<legend>
-						{ sprintf( __( 'Dropdown {%s}', 'ohmylms' ), slot.id ) }
+						{ sprintf(
+							/* translators: %s: dropdown marker ID. */
+							__( 'Dropdown {%s}', 'ohmylms' ),
+							slot.id
+						) }
 					</legend>
-					<ParsedField
-						multiline
-						label={ __( 'Choices (one per line)', 'ohmylms' ) }
-						value={ slot.choices }
-						format={ joinLines }
-						parse={ lines }
-						onChange={ ( choices ) =>
-							setSlot( slot.id, { choices } )
+					<div className="ohmylms-dropdown-choice-list">
+						{ ( slot.choices || [] ).map( ( choice, index ) => (
+							<div
+								className="ohmylms-dropdown-choice-row"
+								key={ index }
+							>
+								<input
+									type="checkbox"
+									aria-label={ sprintf(
+										/* translators: %d: choice position. */ __(
+											'Correct choice %d',
+											'ohmylms'
+										),
+										index + 1
+									) }
+									checked={ dropdownAnswers( slot ).includes(
+										choice
+									) }
+									onChange={ ( event ) => {
+										const answers = event.target.checked
+											? [
+													...dropdownAnswers( slot ),
+													choice,
+												]
+											: dropdownAnswers( slot ).filter(
+													( answer ) =>
+														answer !== choice
+												);
+										setSlot( slot.id, {
+											answers,
+											answer: answers[ 0 ] || '',
+											multiple:
+												answers.length > 1 ||
+												!! slot.multiple,
+										} );
+									} }
+								/>
+								<RichContentControl
+									compact
+									html={ false }
+									label={ sprintf(
+										/* translators: %d: choice position. */ __(
+											'Choice %d',
+											'ohmylms'
+										),
+										index + 1
+									) }
+									value={ choice }
+									onChange={ ( text ) =>
+										setSlot(
+											slot.id,
+											renameDropdownChoice(
+												slot,
+												index,
+												text
+											)
+										)
+									}
+								/>
+								<Button
+									variant="tertiary"
+									label={ __( 'Remove choice', 'ohmylms' ) }
+									onClick={ () => {
+										const answers = dropdownAnswers(
+											slot
+										).filter(
+											( answer ) => answer !== choice
+										);
+										setSlot( slot.id, {
+											choices: slot.choices.filter(
+												( item, position ) =>
+													position !== index
+											),
+											answers,
+											answer: answers[ 0 ] || '',
+										} );
+									} }
+								>
+									{ __( 'Remove', 'ohmylms' ) }
+								</Button>
+							</div>
+						) ) }
+						<Button
+							variant="secondary"
+							onClick={ () =>
+								setSlot( slot.id, {
+									choices: [ ...slot.choices, '' ],
+								} )
+							}
+						>
+							{ __( 'Add choice', 'ohmylms' ) }
+						</Button>
+					</div>
+					<TextControl
+						type="number"
+						min="0"
+						step="any"
+						label={ __( 'Dropdown points', 'ohmylms' ) }
+						value={
+							slot.points ??
+							Number( value.score?.value ?? 1 ) /
+								Math.max( 1, slots.length )
+						}
+						onChange={ ( points ) =>
+							setSlot( slot.id, {
+								points: Math.max( 0, Number( points ) || 0 ),
+							} )
 						}
 					/>
-					<SelectControl
-						label={ __( 'Correct choice', 'ohmylms' ) }
-						value={ slot.answer || '' }
-						options={ [
-							{ value: '', label: __( 'Choose …', 'ohmylms' ) },
-							...( slot.choices || [] )
-								.filter( ( choice ) => choice.trim() )
-								.map( ( choice ) => ( {
-									value: choice,
-									label: choice,
-								} ) ),
-						] }
-						onChange={ ( answer ) =>
-							setSlot( slot.id, { answer } )
-						}
-					/>
+					{ dropdownAnswers( slot ).length > 1 && (
+						<SelectControl
+							label={ __(
+								'Multiple correct answers',
+								'ohmylms'
+							) }
+							value={ slot.grading || 'equal' }
+							options={ [
+								{
+									value: 'equal',
+									label: __(
+										'Equal partial credit for each correct selection',
+										'ohmylms'
+									),
+								},
+								{
+									value: 'any',
+									label: __(
+										'Any correct selection earns full points',
+										'ohmylms'
+									),
+								},
+								{
+									value: 'no-wrong',
+									label: __(
+										'No wrong choice selected — full points',
+										'ohmylms'
+									),
+								},
+							] }
+							onChange={ ( grading ) =>
+								setSlot( slot.id, { grading } )
+							}
+						/>
+					) }
+					<p>
+						{ __(
+							'Tick every correct choice. At least one correct choice must be selected. Selecting an incorrect choice earns zero for this dropdown.',
+							'ohmylms'
+						) }
+					</p>
 				</fieldset>
 			) ) }
-			<PartialCredit value={ value } onChange={ onChange } />
+			{ value.dropdown_grading_version !== 2 && (
+				<PartialCredit value={ value } onChange={ onChange } />
+			) }
 		</div>
 	);
 }
@@ -427,8 +578,9 @@ const parseRows = ( text ) =>
  * @param root0
  * @param root0.value
  * @param root0.onChange
+ * @param root0.mainStatement
  */
-export function MultiBlankEditor( { value, onChange } ) {
+export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 	const table = value.layout === 'table';
 	const apply = ( patch ) => {
 		const next = { ...value, ...patch };
@@ -496,6 +648,13 @@ export function MultiBlankEditor( { value, onChange } ) {
 						onChange={ ( rows ) => apply( { rows } ) }
 					/>
 				</Fragment>
+			) : mainStatement ? (
+				<p>
+					{ __(
+						'Write {a}, {b} … in the Question field where a blank should appear.',
+						'ohmylms'
+					) }
+				</p>
 			) : (
 				<RichContentControl
 					compact
@@ -729,14 +888,17 @@ export function InteractivePreview( { type, settings = {} } ) {
 					);
 					return slot ? (
 						<select
+							multiple={ !! slot.multiple }
 							aria-label={ sprintf(
 								__( 'Choice %s', 'ohmylms' ),
 								id
 							) }
 						>
-							<option value="">
-								{ __( 'Choose…', 'ohmylms' ) }
-							</option>
+							{ ! slot.multiple && (
+								<option value="">
+									{ __( 'Choose…', 'ohmylms' ) }
+								</option>
+							) }
 							{ ( slot.choices || [] ).map( ( choice, i ) => (
 								<option key={ i }>{ choice }</option>
 							) ) }
