@@ -24,7 +24,7 @@ import {
 } from './VisualEditors';
 import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { moveOption } from './model.mjs';
-import { EquationAction } from '../math/MathInput';
+import { RichContentControl } from '../math/RichContentControl';
 
 /**
  * Private answer controls used by the question block; they save through the assessment writer.
@@ -290,25 +290,41 @@ export function BankAnswerFields( {
 							}
 						/>
 					) }
-					<TextControl
-						label={ sprintf(
-							__( 'Answer %d', 'ohmylms' ),
-							index + 1
-						) }
-						hideLabelFromVision
-						placeholder={ sprintf(
-							__( 'Option %d', 'ohmylms' ),
-							index + 1
-						) }
-						value={ option.answer || '' }
-						disabled={ type === 'true-false' }
-						onChange={ ( answer ) =>
-							patchOption( index, { answer } )
-						}
-					/>
-					{ type !== 'true-false' && (
-						<EquationAction
+					{ [
+						'single-choice',
+						'multiple-choice',
+						'matching',
+						'reorder',
+					].includes( type ) ? (
+						<RichContentControl
+							compact
+							html={ false }
+							label={ sprintf(
+								__( 'Answer %d', 'ohmylms' ),
+								index + 1
+							) }
+							placeholder={ sprintf(
+								__( 'Option %d', 'ohmylms' ),
+								index + 1
+							) }
 							value={ option.answer || '' }
+							onChange={ ( answer ) =>
+								patchOption( index, { answer } )
+							}
+						/>
+					) : (
+						<TextControl
+							label={ sprintf(
+								__( 'Answer %d', 'ohmylms' ),
+								index + 1
+							) }
+							hideLabelFromVision
+							placeholder={ sprintf(
+								__( 'Option %d', 'ohmylms' ),
+								index + 1
+							) }
+							value={ option.answer || '' }
+							disabled={ type === 'true-false' }
 							onChange={ ( answer ) =>
 								patchOption( index, { answer } )
 							}
@@ -334,7 +350,9 @@ export function BankAnswerFields( {
 						/>
 					) }
 					{ type === 'matching' && (
-						<TextControl
+						<RichContentControl
+							compact
+							html={ false }
 							label={ sprintf(
 								__( 'Match %d', 'ohmylms' ),
 								index + 1

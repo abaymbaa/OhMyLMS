@@ -1,4 +1,25 @@
 const { test, expect } = require('@playwright/test');
+
+test('visual labels preserve plain contracts, newlines, literal HTML and equations on reopen', async ({ page }) => {
+ await page.goto('/fixture');
+ const source = 'Price < 5 & tax\n[[ohmylms-math:latex:inline]]\\frac{1}{2}[[/ohmylms-math]]';
+ await page.evaluate(value => {
+  const editor = document.createElement('div'); editor.id = 'plain-label'; editor.contentEditable = 'true'; editor.textContent = value; document.body.append(editor);
+  window.OhMyLMSMath.hydrateAuthor(editor);
+ }, source);
+ expect(await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#plain-label'), false))).toBe(source);
+ await page.evaluate(() => {
+  const editor = document.querySelector('#plain-label');
+  const saved = window.OhMyLMSMath.authorContent(editor, false); editor.textContent = saved; window.OhMyLMSMath.hydrateAuthor(editor);
+ });
+ await expect(page.locator('#plain-label math-field')).toHaveCount(1);
+ expect(await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#plain-label'), false))).toBe(source);
+ const lines = await page.evaluate(() => {
+  const editor = document.createElement('div'); editor.innerHTML = 'First<div>Second<br>Third</div>';
+  return window.OhMyLMSMath.authorContent(editor, false);
+ });
+ expect(lines).toBe('First\nSecond\nThird');
+});
 test.beforeEach(async ({page})=>{page.on('pageerror',error=>console.log('PAGE ERROR:',error.stack));page.on('console',message=>{if(message.type()==='error')console.log('CONSOLE ERROR:',message.text());});});
 
 test('real expression template synchronizes native POST, renders markers and grades on PHP', async ({page}) => {
@@ -101,3 +122,37 @@ test('template runtime and dynamic loader load MathLive only once', async ({ pag
 
 
 
+
+test('rich text inserts at the caret, toggles display and removes without serializing controls', async ({ page }) => {
+ await page.goto('/fixture');
+ await page.evaluate(() => {
+  const editor = document.createElement('div'); editor.id = 'rich-author'; editor.contentEditable = 'true'; editor.setAttribute('role', 'textbox'); editor.setAttribute('aria-label', 'Prompt editor'); editor.textContent = 'Before after.'; document.body.append(editor);
+  const range = document.createRange(); range.setStart(editor.firstChild, 7); range.collapse(true);
+  window.OhMyLMSMath.insertAuthor(editor, String.raw`\frac{a}{b}`, range);
+ });
+ await expect(page.locator('#rich-author math-field')).toHaveCount(1);
+ let source = await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#rich-author')));
+ expect(source).toBe(String.raw`Before [[ohmylms-math:latex:inline]]\frac{a}{b}[[/ohmylms-math]]after.`);
+ expect(source).not.toContain('button');
+ await page.locator('#rich-author').getByRole('button', { name: 'Display equation', exact: true }).click();
+ source = await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#rich-author')));
+ expect(source).toContain('latex:display');
+ await page.locator('#rich-author math-field').click(); await page.locator('#rich-author math-field').press('Tab');
+ expect(await page.evaluate(() => document.activeElement.id)).toBe('rich-author');
+ await page.locator('#rich-author').getByRole('button', { name: 'Remove equation', exact: true }).click();
+ await expect(page.locator('#rich-author math-field')).toHaveCount(0);
+ expect(await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#rich-author')))).toBe('Before after.');
+});
+
+test('empty equation remains editable until source exists, then exits to surrounding prose', async ({ page }) => {
+ await page.goto('/fixture');
+ await page.evaluate(() => {
+  const editor = document.createElement('div'); editor.id = 'empty-author'; editor.contentEditable = 'true'; editor.setAttribute('role', 'textbox'); editor.textContent = 'Solve '; document.body.append(editor);
+  window.OhMyLMSMath.insertAuthor(editor);
+ });
+ expect(await page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#empty-author')))).toBe('Solve ');
+ await page.locator('#empty-author math-field').press('x'); await page.locator('#empty-author math-field').press('2');
+ await expect.poll(() => page.evaluate(() => window.OhMyLMSMath.authorContent(document.querySelector('#empty-author')))).toContain('latex:inline]]x2[[/ohmylms-math]]');
+ await page.locator('#empty-author math-field').press('Escape');
+ expect(await page.evaluate(() => document.activeElement.id)).toBe('empty-author');
+});

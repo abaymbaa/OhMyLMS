@@ -1,150 +1,10 @@
-import {
-	createElement,
-	useRef,
-	useLayoutEffect,
-	useState,
-	RawHTML,
-} from '@wordpress/element';
+import { createElement, useLayoutEffect, useState } from '@wordpress/element';
 import { Button, Modal, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import { QuestionMediaUpload } from './QuestionMediaUpload';
+import { RichContentControl } from '../math/RichContentControl';
 import { QuestionLivePreview } from './QuestionLivePreview';
-import { EquationAction } from '../math/MathInput';
-import { loadMath, mathEnabled } from '../math/loader.mjs';
 
-/**
- * Small rich-text field that preserves existing HTML without a block editor.
- * @param root0
- * @param root0.value
- * @param root0.onChange
- * @param root0.readOnly
- * @param root0.label
- */
-function FormDescription( {
-	value,
-	onChange,
-	readOnly,
-	label = __( 'Description / instructions', 'ohmylms' ),
-} ) {
-	const field = useRef( null );
-	const serialize = ( node ) =>
-		window.OhMyLMSMath
-			? window.OhMyLMSMath.authorContent( node )
-			: node.innerHTML;
-	useLayoutEffect( () => {
-		const content =
-			field.current &&
-			( window.OhMyLMSMath
-				? window.OhMyLMSMath.authorContent( field.current )
-				: field.current.innerHTML );
-		if ( field.current && content !== ( value || '' ) ) {
-			field.current.innerHTML = value || '';
-		}
-		let disposed = false;
-		if (
-			field.current &&
-			mathEnabled() &&
-			( value || '' ).includes( '[[ohmylms-math:' )
-		) {
-			loadMath()
-				.then( ( runtime ) => {
-					if ( ! disposed && field.current ) {
-						runtime.hydrateAuthor( field.current );
-					}
-				} )
-				.catch( () => {} );
-		}
-		return () => {
-			disposed = true;
-		};
-	}, [ value ] );
-	if ( readOnly ) {
-		return <RawHTML>{ value || '' }</RawHTML>;
-	}
-	const format = ( command ) => {
-		field.current.focus();
-		document.execCommand( command, false );
-		onChange( serialize( field.current ) );
-	};
-	return (
-		<div className="ohmylms-form-description">
-			<span className="ohmylms-prompt-label">{ label }</span>
-			<div
-				role="toolbar"
-				aria-label={ __( 'Text formatting', 'ohmylms' ) }
-			>
-				{ [
-					[ 'bold', 'Bold', 'editor-bold' ],
-					[ 'italic', 'Italic', 'editor-italic' ],
-					[ 'underline', 'Underline', 'editor-underline' ],
-					[ 'insertUnorderedList', 'Bullet list', 'editor-ul' ],
-					[ 'superscript', 'Superscript', 'editor-superscript' ],
-					[ 'subscript', 'Subscript', 'editor-subscript' ],
-				].map( ( [ command, formatLabel, icon ] ) => (
-					<Button
-						key={ command }
-						icon={
-							[ 'superscript', 'subscript' ].includes( command )
-								? undefined
-								: icon
-						}
-						label={ formatLabel }
-						onMouseDown={ ( event ) => event.preventDefault() }
-						onClick={ () => format( command ) }
-					>
-						{ 'superscript' === command && (
-							<span>
-								x<sup>2</sup>
-							</span>
-						) }
-						{ 'subscript' === command && (
-							<span>
-								x<sub>2</sub>
-							</span>
-						) }
-					</Button>
-				) ) }
-				<QuestionMediaUpload
-					allowedTypes={ [ 'image' ] }
-					onSelect={ ( image ) => {
-						if ( ! /^https?:\/\//i.test( image.url || '' ) ) {
-							return;
-						}
-						const node = document.createElement( 'img' );
-						node.src = image.url;
-						node.alt = image.alt || '';
-						field.current.appendChild( node );
-						onChange( serialize( field.current ) );
-					} }
-					render={ ( { open } ) => (
-						<Button
-							icon="format-image"
-							label={ __( 'Add question image', 'ohmylms' ) }
-							onClick={ open }
-						/>
-					) }
-				/>
-			</div>
-			<div
-				ref={ field }
-				role="textbox"
-				aria-label={ label }
-				aria-multiline="true"
-				data-placeholder={ __(
-					'Type your question here …',
-					'ohmylms'
-				) }
-				contentEditable
-				suppressContentEditableWarning
-				onInput={ ( event ) =>
-					onChange( serialize( event.currentTarget ) )
-				}
-			/>
-			<EquationAction value={ value } html onChange={ onChange } />
-		</div>
-	);
-}
 /**
  * Form authoring used by quizzes and the bank; lessons retain their Gutenberg workspace.
  * @param root0
@@ -170,6 +30,8 @@ function FormDescription( {
  * @param root0.workspaceLabel
  * @param root0.footerLeading
  * @param root0.useModal
+ * @param root0.showLayoutSwitch
+ * @param root0.showContentToolbar
  */
 export function FormWorkspace( {
 	document,
@@ -187,6 +49,8 @@ export function FormWorkspace( {
 	toolbarEnd,
 	footerLeading,
 	useModal = true,
+	showLayoutSwitch = true,
+	showContentToolbar = false,
 	hideTitle = false,
 	contentLabel,
 
@@ -207,7 +71,7 @@ export function FormWorkspace( {
 	}, [ document.id, isQuestion ] );
 	const workspace = (
 		<section
-			className={ `ohmylms-form-workspace${ previewQuestion ? ' ohmylms-question-authoring' : '' }${ expanded ? ' is-stage-editor' : '' }${ vertical ? ' is-vertical-answers' : '' }` }
+			className={ `ohmylms-form-workspace${ previewQuestion ? ' ohmylms-question-authoring' : '' }${ expanded ? ' is-stage-editor' : '' }${ vertical && showLayoutSwitch ? ' is-vertical-answers' : '' }${ ! showContentToolbar ? ' is-without-prompt-toolbar' : '' }` }
 			aria-label={ workspaceLabel }
 		>
 			<div className="ohmylms-form-workspace-actions">
@@ -275,7 +139,8 @@ export function FormWorkspace( {
 						/>
 					) }
 					{ beforeContent }
-					<FormDescription
+					<RichContentControl
+						showToolbar={ showContentToolbar }
 						value={ document.description }
 						onChange={ onContentChange }
 						readOnly={ readOnly }
@@ -315,15 +180,17 @@ export function FormWorkspace( {
 			{ previewQuestion && (
 				<div className="ohmylms-question-authoring-footer">
 					{ footerLeading }
-					<Button
-						variant="secondary"
-						icon="columns"
-						onClick={ () => setVertical( ! vertical ) }
-					>
-						{ vertical
-							? __( 'Switch to horizontal layout', 'ohmylms' )
-							: __( 'Switch to vertical layout', 'ohmylms' ) }
-					</Button>
+					{ showLayoutSwitch && (
+						<Button
+							variant="secondary"
+							icon="columns"
+							onClick={ () => setVertical( ! vertical ) }
+						>
+							{ vertical
+								? __( 'Switch to horizontal layout', 'ohmylms' )
+								: __( 'Switch to vertical layout', 'ohmylms' ) }
+						</Button>
+					) }
 					{ ! expanded && toolbarActions }
 				</div>
 			) }

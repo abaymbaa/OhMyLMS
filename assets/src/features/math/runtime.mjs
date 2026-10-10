@@ -215,9 +215,10 @@ function renderContent( root ) {
 /**
  * Serialize author equation widgets back to source markers, never custom-element HTML.
  * @param {Element} root Content editor.
+ * @param {boolean} html Whether the existing field stores HTML.
  * @return {string} Existing content model.
  */
-function authorContent( root ) {
+function authorContent( root, html = true ) {
 	const clone = root.cloneNode( true );
 	clone.querySelectorAll( '[data-ohmylms-equation]' ).forEach( ( node ) => {
 		const source =
@@ -225,18 +226,175 @@ function authorContent( root ) {
 		const mode = node.dataset.mode === 'display' ? 'display' : 'inline';
 		node.replaceWith(
 			document.createTextNode(
-				`[[ohmylms-math:latex:${ mode }]]${ source }[[/ohmylms-math]]`
+				source
+					? `[[ohmylms-math:latex:${ mode }]]${ source }[[/ohmylms-math]]`
+					: ''
 			)
 		);
 	} );
-	return clone.innerHTML;
+	if ( html ) {
+		return clone.innerHTML;
+	}
+	clone.querySelectorAll( 'br' ).forEach( ( br ) => br.replaceWith( '\n' ) );
+	clone.querySelectorAll( 'div, p, li' ).forEach( ( block ) => {
+		if ( block.previousSibling ) {
+			block.prepend( '\n' );
+		}
+	} );
+	return clone.textContent || '';
+}
+
+/**
+ * Return the text caret to either side of an author equation.
+ * @param {Element} widget Equation node.
+ * @param {boolean} before Whether to move before it.
+ */
+function authorCaret( widget, before = false ) {
+	const root = widget.parentElement.closest(
+		'[contenteditable="true"][role="textbox"]'
+	);
+	if ( ! root ) {
+		return;
+	}
+	const range = document.createRange();
+	if ( before ) {
+		range.setStartBefore( widget );
+	} else {
+		range.setStartAfter( widget );
+	}
+	range.collapse( true );
+	root.focus();
+	const selection = window.getSelection();
+	selection.removeAllRanges();
+	selection.addRange( range );
+}
+
+/**
+ * Create an author widget; controls never become stored content.
+ * @param {Element} root   Editor.
+ * @param {string}  source Original LaTeX.
+ * @param {string}  mode   Layout.
+ * @param {Object}  labels Translated control labels.
+ * @return {Element} Widget.
+ */
+function authorWidget( root, source, mode, labels ) {
+	const widget = document.createElement( 'span' );
+	widget.contentEditable = 'false';
+	widget.dataset.ohmylmsEquation = 'latex';
+	widget.dataset.source = source;
+	widget.dataset.mode = mode;
+	widget.className = `ohmylms-author-equation is-${ mode }`;
+	const input = document.createElement( 'input' );
+	input.type = 'text';
+	input.value = source;
+	input.setAttribute(
+		'aria-label',
+		root.getAttribute( 'aria-label' ) || 'Equation'
+	);
+	widget.append( input );
+	const controls = document.createElement( 'span' );
+	controls.className = 'ohmylms-author-equation-controls';
+	const toggle = document.createElement( 'button' );
+	toggle.type = 'button';
+	toggle.textContent = '↔';
+	const updateLabel = () => {
+		toggle.setAttribute(
+			'aria-label',
+			widget.dataset.mode === 'inline'
+				? labels.display || 'Display equation'
+				: labels.inline || 'Inline equation'
+		);
+		toggle.title = toggle.getAttribute( 'aria-label' );
+	};
+	updateLabel();
+	toggle.addEventListener( 'click', () => {
+		const next = widget.dataset.mode === 'inline' ? 'display' : 'inline';
+		widget.classList.replace(
+			`is-${ widget.dataset.mode }`,
+			`is-${ next }`
+		);
+		widget.dataset.mode = next;
+		updateLabel();
+		root.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+	} );
+	const remove = document.createElement( 'button' );
+	remove.type = 'button';
+	remove.textContent = '×';
+	remove.setAttribute( 'aria-label', labels.remove || 'Remove equation' );
+	remove.title = remove.getAttribute( 'aria-label' );
+	remove.addEventListener( 'click', () => {
+		authorCaret( widget, true );
+		mounted.get( input )?.();
+		widget.remove();
+		root.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+	} );
+	controls.append( toggle, remove );
+	widget.append( controls );
+	return widget;
+}
+
+/**
+ * Activate a connected author widget with navigation out to prose.
+ * @param {Element} widget Equation node.
+ */
+function mountAuthor( widget ) {
+	const input = widget.querySelector( 'input' );
+	mountInput( input );
+	const field = widget.querySelector( 'math-field' );
+	if ( field && ! widget.dataset.navigation ) {
+		widget.dataset.navigation = '1';
+		field.addEventListener( 'move-out', ( event ) => {
+			event.preventDefault();
+			authorCaret(
+				widget,
+				[ 'backward', 'upward' ].includes( event.detail.direction )
+			);
+		} );
+		field.addEventListener( 'keydown', ( event ) => {
+			if ( event.key === 'Tab' || event.key === 'Escape' ) {
+				event.preventDefault();
+				event.stopPropagation();
+				authorCaret( widget, event.shiftKey );
+			}
+		} );
+	}
+}
+
+/**
+ * Insert an editable equation at the saved text selection.
+ * @param {Element}    root      Editor.
+ * @param {string}     source    Original LaTeX, possibly empty until authored.
+ * @param {Range|null} selection Saved text selection.
+ * @param {Object}     labels    Translated controls.
+ * @return {Element} Inserted widget.
+ */
+function insertAuthor( root, source = '', selection = null, labels = {} ) {
+	const range = selection?.cloneRange() || document.createRange();
+	if ( ! selection || ! root.contains( range.commonAncestorContainer ) ) {
+		range.selectNodeContents( root );
+		range.collapse( false );
+	}
+	range.deleteContents();
+	const widget = authorWidget( root, source, 'inline', labels );
+	range.insertNode( widget );
+	mountAuthor( widget );
+	root.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+	const field = widget.querySelector( 'math-field' );
+	if ( field ) {
+		field.focus();
+		field.position = field.lastOffset;
+	} else {
+		widget.querySelector( 'input' ).focus();
+	}
+	return widget;
 }
 
 /**
  * Editable MathLive nodes in the prompt editor; original markers remain the save contract.
- * @param {Element} root Content editor.
+ * @param {Element} root   Content editor.
+ * @param {Object}  labels Translated equation control labels.
  */
-function hydrateAuthor( root ) {
+function hydrateAuthor( root, labels = {} ) {
 	const walker = document.createTreeWalker( root, NodeFilter.SHOW_TEXT );
 	const nodes = [];
 	while ( walker.nextNode() ) {
@@ -259,20 +417,7 @@ function hydrateAuthor( root ) {
 					node.textContent.slice( end, match.index )
 				)
 			);
-			const widget = document.createElement( 'span' );
-			widget.contentEditable = 'false';
-			widget.dataset.ohmylmsEquation = 'latex';
-			widget.dataset.source = match[ 2 ];
-			widget.dataset.mode = match[ 1 ];
-			widget.className = `ohmylms-author-equation is-${ match[ 1 ] }`;
-			const input = document.createElement( 'input' );
-			input.type = 'text';
-			input.value = match[ 2 ];
-			input.setAttribute(
-				'aria-label',
-				root.getAttribute( 'aria-label' ) || 'Equation'
-			);
-			widget.append( input );
+			const widget = authorWidget( root, match[ 2 ], match[ 1 ], labels );
 			fragment.append( widget );
 			end = match.index + match[ 0 ].length;
 		}
@@ -283,9 +428,7 @@ function hydrateAuthor( root ) {
 			node.replaceWith( fragment );
 		}
 	}
-	root.querySelectorAll( '[data-ohmylms-equation] input' ).forEach(
-		mountInput
-	);
+	root.querySelectorAll( '[data-ohmylms-equation]' ).forEach( mountAuthor );
 }
 
 /**
@@ -363,6 +506,7 @@ window.OhMyLMSMath = {
 	display,
 	authorContent,
 	hydrateAuthor,
+	insertAuthor,
 };
 // Server-rendered quizzes, practice regions and reviews share the same marker renderer.
 if ( window.ohmylmsMath.enabled ) {

@@ -143,6 +143,11 @@
 	border-radius: 16px 16px 0 0;
 }
 
+.ohmylms-question-authoring.is-stage-editor.is-without-prompt-toolbar
+	> .ohmylms-form-description {
+	margin-top: 0;
+}
+
 .ohmylms-question-authoring.is-stage-editor
 	.ohmylms-form-description
 	> [role="toolbar"] {
@@ -156,10 +161,21 @@
 	width: calc(100vw - 24px);
 	height: 48px;
 	margin: 0;
-	padding: 8px 16px;
+	padding: 4px 16px;
 	background: var(--ohmylms-quiz-toolbar, #fff);
 	color: var(--ohmylms-quiz-toolbar-text, #333);
+	overflow-x: auto;
+	overflow-y: hidden;
 	transform: translateX(-50%);
+}
+
+.ohmylms-rich-math-tools {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: 4px;
+	padding-left: 8px;
+	border-left: 1px solid #dcdcde;
 }
 
 .ohmylms-question-authoring.is-stage-editor .ohmylms-prompt-label {
@@ -169,10 +185,7 @@
 .ohmylms-question-authoring.is-stage-editor
 	.ohmylms-form-description
 	[role="textbox"] {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
+	display: block;
 	min-height: 215px;
 	padding: 24px;
 	border-color: var(--ohmylms-quiz-accent, #8854b7);
@@ -403,3 +416,50 @@
 	}
 }
 
+.ohmylms-question-authoring .ohmylms-blank-answer-chip,
+.ohmylms-inline-blank-preview .ohmylms-blank-drop,
+.ohmylms-inline-blank-preview .ohmylms-blank-token {
+	background: #f6f7f7;
+	color: #1d2327;
+}
+
+.ohmylms-question-authoring .ohmylms-build-expression {
+	color: #1d2327;
+}
+
+.ohmylms-question-authoring .ohmylms-build-expression .ohmylms-build-answer,
+.ohmylms-question-authoring .ohmylms-build-expression .ohmylms-build-bank {
+	border: 1px solid #8c8f94;
+	border-radius: 8px;
+	background: #f6f7f7;
+}
+
+.ohmylms-question-authoring .ohmylms-build-expression .ohmylms-tile {
+	border-color: #8c8f94;
+	background: #fff;
+	color: #1d2327;
+}
+
+.ohmylms-question-authoring .ohmylms-build-expression .ohmylms-tile.is-placed {
+	background: #e5efff;
+}
+
+.ohmylms-question-authoring .ohmylms-build-expression .ohmylms-tile:focus-visible {
+	outline: 2px solid #1d2327;
+	outline-offset: 2px;
+}
+
+.ohmylms-question-authoring.is-stage-editor .ohmylms-preview-note {
+	color: inherit;
+}
+
+.ohmylms-question-authoring .ohmylms-inline-blank-preview button.ohmylms-blank-token.is-placed:disabled {
+	border: 1px dashed #8c8f94;
+	background: transparent;
+	color: transparent;
+	opacity: 1;
+}
+
+.ohmylms-question-authoring.is-stage-editor .ohmylms-question-authoring-footer [class~="components-base-control__help"] {
+	color: inherit;
+}

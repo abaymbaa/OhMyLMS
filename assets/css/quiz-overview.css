@@ -224,3 +224,27 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+.ohmylms-quick-question-prompt {
+	margin: 24px 0;
+}
+
+.ohmylms-quick-question-prompt .ohmylms-prompt-label {
+	display: none;
+}
+
+.ohmylms-quick-question-prompt:not(:focus-within) [role="toolbar"],
+.ohmylms-quick-question-prompt:not(:focus-within) .ohmylms-equation-actions {
+	display: none;
+}
+
+.ohmylms-quiz-overview .ohmylms-quick-question-prompt [role="textbox"] {
+	min-height: 24px;
+	padding: 4px;
+	border: 0;
+	background: transparent;
+	color: #222;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.6;
+}

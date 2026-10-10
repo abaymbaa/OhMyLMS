@@ -43,7 +43,7 @@ const scope = {
 	TextControl: 'text',
 	CheckboxControl: 'check',
 	MediaUpload: 'media',
-	EquationAction: 'equation-action',
+	RichContentControl: 'rich-content',
 	NumericalEditor: 'numerical',
 	StructuredEditor: 'structured',
 	DropdownBlanksEditor: 'dropdown-blanks',
@@ -104,6 +104,12 @@ test( 'shared choice fields update correctness without losing images or option m
 	);
 	assert.equal( saved.questions[ 0 ].thumbnail_id, 12 );
 	assert.equal( saved.questions[ 0 ].extension, 'keep' );
+	const label = 'A [[ohmylms-math:latex:inline]]x^2[[/ohmylms-math]]';
+	nodes( tree, 'rich-content' )[ 0 ].props.onChange( label );
+	assert.equal( saved.questions[ 0 ].answer, label );
+	assert.equal( saved.questions[ 0 ].thumbnail_id, 12 );
+	assert.equal( saved.questions[ 0 ].extension, 'keep' );
+	assert.equal( saved.questions[ 0 ].is_correct, true );
 } );
 test( 'shared answer drag reorders and renumbers the persisted option IDs', () => {
 	const options = [

@@ -1,17 +1,25 @@
+/** @jsx createElement */
 import { createElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Notice } from '@wordpress/components';
 import { SkillPicker } from '../content-hub/SkillPicker';
 import { saveSkillMap } from '../question-bank/api.mjs';
 import { saveQuizSkills } from './api.mjs';
-import { promptText, questionPrompt } from '../question-editor/questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+} from '../question-editor/questionPrompt.mjs';
 
 const skillLabel = ( skill, id ) =>
 	skill
 		? `${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`
 		: `#${ id }`;
 
-/** Every skill a question's map points at, primary first, without repeats. */
+/**
+ * Every skill a question's map points at, primary first, without repeats.
+ * @param {Object} map Question skill map.
+ * @return {Array} Unique skill IDs.
+ */
 export const questionSkillIds = ( map ) => [
 	...new Set(
 		Object.values( map || {} )
@@ -55,8 +63,14 @@ const toSkill = ( skills, id ) => {
  * @param root0.question
  * @param root0.skills
  * @param root0.onChange
+ * @param root0.iconOnly
  */
-export function ConnectQuestionSkill( { question, skills, onChange } ) {
+export function ConnectQuestionSkill( {
+	question,
+	skills,
+	onChange,
+	iconOnly = false,
+} ) {
 	const [ open, setOpen ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	if ( question.temp ) {
@@ -67,7 +81,7 @@ export function ConnectQuestionSkill( { question, skills, onChange } ) {
 				disabled
 				label={ __( 'Save the quiz to connect skills', 'ohmylms' ) }
 			>
-				{ __( 'Connect skill', 'ohmylms' ) }
+				{ ! iconOnly && __( 'Connect skill', 'ohmylms' ) }
 			</Button>
 		);
 	}
@@ -100,9 +114,10 @@ export function ConnectQuestionSkill( { question, skills, onChange } ) {
 				icon="networking"
 				variant="tertiary"
 				disabled={ !! question.readonly }
+				label={ __( 'Connect skill', 'ohmylms' ) }
 				onClick={ () => setOpen( true ) }
 			>
-				{ __( 'Connect skill', 'ohmylms' ) }
+				{ ! iconOnly && __( 'Connect skill', 'ohmylms' ) }
 			</Button>
 			{ error && (
 				<Notice status="error" onRemove={ () => setError( '' ) }>
@@ -182,7 +197,10 @@ export function QuizSkillsTab( { editor, skills } ) {
 				<div className="ohmylms-quiz-skills">
 					{ quizSkillIds.length ? (
 						quizSkillIds.map( ( id ) => (
-							<span key={ id } className="ohmylms-quiz-skill-chip">
+							<span
+								key={ id }
+								className="ohmylms-quiz-skill-chip"
+							>
 								{ skillLabel( byId.get( id ), id ) }
 							</span>
 						) )
@@ -209,9 +227,7 @@ export function QuizSkillsTab( { editor, skills } ) {
 							key={ question.id }
 							className="ohmylms-quiz-skills-question"
 						>
-							<strong>
-								{ sprintf( '%02d', index + 1 ) }
-							</strong>
+							<strong>{ sprintf( '%02d', index + 1 ) }</strong>
 							<span className="ohmylms-quiz-skills-prompt">
 								{ promptText( questionPrompt( question ) ) ||
 									__( 'Untitled question', 'ohmylms' ) }
@@ -245,7 +261,9 @@ export function QuizSkillsTab( { editor, skills } ) {
 				<SkillPicker
 					title={ __( 'Connect skills to this quiz', 'ohmylms' ) }
 					confirmLabel={ __( 'Connect', 'ohmylms' ) }
-					initial={ quizSkillIds.map( ( id ) => toSkill( skills, id ) ) }
+					initial={ quizSkillIds.map( ( id ) =>
+						toSkill( skills, id )
+					) }
 					onConfirm={ connect }
 					onClose={ () => setOpen( false ) }
 				/>

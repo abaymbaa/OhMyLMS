@@ -1,6 +1,10 @@
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { SelectControl, TextControl } from '@wordpress/components';
+import {
+	CheckboxControl,
+	SelectControl,
+	TextControl,
+} from '@wordpress/components';
 import { isUngradedType } from './extendedModel.mjs';
 import { FormWorkspace } from './FormWorkspace';
 import { BankAnswerFields } from './BankAnswerFields';
@@ -9,6 +13,10 @@ import { TemplatePanel } from './TemplatePanel';
 import { ChoiceControls } from './ChoiceControls';
 import { questionPrompt, questionPromptPatch } from './questionPrompt.mjs';
 import { MathVariables } from '../math/MathInput';
+import { parseInlineBlankPrompt } from './inlineBlanks.mjs';
+
+// Add a type only when its prompt toolbar is explicitly requested.
+const promptToolbarTypes = new Set();
 
 /**
  * The question form shared by quiz authoring and standalone skill/bank authoring.
@@ -105,6 +113,9 @@ export function QuestionForm( {
 					</>
 				}
 				{ ...props }
+				showContentToolbar={ promptToolbarTypes.has(
+					question.settings?.type
+				) }
 				hideTitle
 				contentLabel={ __( 'Question', 'ohmylms' ) }
 				toolbarEnd={
@@ -153,14 +164,51 @@ export function QuestionForm( {
 					</>
 				}
 				flatSettings={ false }
+				showLayoutSwitch={
+					! [
+						'fill-in-the-blank',
+						'short-text',
+						'build-expression',
+					].includes( question.settings?.type )
+				}
 				footerLeading={
-					choice ? (
-						<ChoiceControls
-							question={ question }
-							onChange={ onChange }
-							readOnly={ props.readOnly }
-						/>
-					) : null
+					<>
+						{ choice && (
+							<ChoiceControls
+								question={ question }
+								onChange={ onChange }
+								readOnly={ props.readOnly }
+							/>
+						) }
+						{ question.settings?.type === 'fill-in-the-blank' && (
+							<CheckboxControl
+								label={ __(
+									'Enable partial grading',
+									'ohmylms'
+								) }
+								help={ __(
+									'Award an equal share of the points for each correct blank. When disabled, every blank must be correct.',
+									'ohmylms'
+								) }
+								checked={
+									question.settings?.partial_credit ??
+									Boolean(
+										parseInlineBlankPrompt( question.name )
+											.answers.length
+									)
+								}
+								disabled={ props.readOnly }
+								onChange={ ( partialCredit ) =>
+									onChange( {
+										settings: {
+											...question.settings,
+											partial_credit: partialCredit,
+										},
+									} )
+								}
+							/>
+						) }
+					</>
 				}
 				compact
 				settings={

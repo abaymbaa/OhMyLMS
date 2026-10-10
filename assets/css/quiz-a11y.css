@@ -39,8 +39,17 @@
 	border: 1px solid #8c8f94;
 	border-radius: 5px;
 	background: #fff;
+	color: #1d2327;
 	cursor: grab;
 	font: inherit;
+}
+
+.ohmylms-blank-token.is-placed {
+	border-style: dashed;
+	background: transparent;
+	color: transparent;
+	cursor: default;
+	opacity: 1;
 }
 
 .ohmylms-blank-token[hidden] {

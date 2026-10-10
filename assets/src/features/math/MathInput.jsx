@@ -94,13 +94,19 @@ export function MathInput( {
 
 /**
  * Insert or replace a marked equation in an existing content string.
- * @param {Object}                   props          Content properties.
- * @param {string}                   props.value    Content.
- * @param {(source: string) => void} props.onChange Save content.
- * @param {boolean}                  props.html     Whether content is HTML.
+ * @param {Object}                   props            Content properties.
+ * @param {string}                   props.value      Content.
+ * @param {(source: string) => void} props.onChange   Save content.
+ * @param {boolean}                  props.html       Whether content is HTML.
+ * @param {boolean}                  props.showInsert Whether to show the modal insertion action.
  * @return {Object|null} Toolbar.
  */
-export function EquationAction( { value = '', onChange, html = false } ) {
+export function EquationAction( {
+	value = '',
+	onChange,
+	html = false,
+	showInsert = true,
+} ) {
 	const variables = useContext( MathVariables );
 	const [ editing, setEditing ] = useState( null );
 	const [ latex, setLatex ] = useState( '' );
@@ -117,9 +123,11 @@ export function EquationAction( { value = '', onChange, html = false } ) {
 	};
 	return (
 		<div className="ohmylms-equation-actions">
-			<Button variant="secondary" onClick={ () => open() }>
-				{ __( 'Insert equation', 'ohmylms' ) }
-			</Button>
+			{ showInsert && (
+				<Button variant="secondary" onClick={ () => open() }>
+					{ __( 'Insert equation', 'ohmylms' ) }
+				</Button>
+			) }
 			{ equations.map( ( match, index ) => (
 				<Button
 					key={ match.index }

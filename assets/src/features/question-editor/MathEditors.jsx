@@ -1,6 +1,7 @@
-import { createElement, Fragment } from '@wordpress/element';
+/** @jsx createElement */
+import { createElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { EquationTextControl } from '../math/MathInput';
+import { RichContentControl } from '../math/RichContentControl';
 import {
 	Button,
 	CheckboxControl,
@@ -171,7 +172,9 @@ export function StructuredEditor( { value, onChange } ) {
 							}
 						/>
 					</div>
-					<TextareaControl
+					<RichContentControl
+						compact
+						html={ false }
 						label={ __( 'Part prompt', 'ohmylms' ) }
 						value={ part.prompt || '' }
 						onChange={ ( prompt ) => set( index, { prompt } ) }
@@ -279,7 +282,9 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 					'ohmylms'
 				) }
 			</summary>
-			<EquationTextControl
+			<RichContentControl
+				compact
+				html={ false }
 				label={ __(
 					'Hint (using it marks the answer as assisted)',
 					'ohmylms'
@@ -289,7 +294,9 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 					onChange( { settings: { ...settings, hint } } )
 				}
 			/>
-			<EquationTextControl
+			<RichContentControl
+				compact
+				html={ false }
 				label={ __( 'Explanation shown after answering', 'ohmylms' ) }
 				value={ settings.explanation || '' }
 				onChange={ ( explanation ) =>

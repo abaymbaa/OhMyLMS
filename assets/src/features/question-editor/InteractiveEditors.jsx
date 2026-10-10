@@ -1,3 +1,4 @@
+import { RichContentControl } from '../math/RichContentControl';
 import { createElement, Fragment, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
@@ -205,7 +206,9 @@ export function DropdownBlanksEditor( { value, onChange } ) {
 		} );
 	return (
 		<div className="ohmylms-interactive-editor">
-			<TextareaControl
+			<RichContentControl
+				compact
+				html={ false }
 				label={ __( 'Sentence', 'ohmylms' ) }
 				help={ __(
 					'Write {1}, {2} … where a dropdown should appear.',
@@ -281,7 +284,9 @@ export function CategorizeEditor( { value, onChange } ) {
 			<h4>{ __( 'Groups', 'ohmylms' ) }</h4>
 			{ buckets.map( ( bucket, index ) => (
 				<div key={ bucket.id } className="ohmylms-interactive-row">
-					<TextControl
+					<RichContentControl
+						compact
+						html={ false }
 						label={ sprintf(
 							__( 'Group %d', 'ohmylms' ),
 							index + 1
@@ -319,7 +324,9 @@ export function CategorizeEditor( { value, onChange } ) {
 			<h4>{ __( 'Items to sort', 'ohmylms' ) }</h4>
 			{ items.map( ( item, index ) => (
 				<div key={ item.id } className="ohmylms-interactive-row">
-					<TextControl
+					<RichContentControl
+						compact
+						html={ false }
 						label={ sprintf(
 							__( 'Item %d', 'ohmylms' ),
 							index + 1
@@ -490,7 +497,9 @@ export function MultiBlankEditor( { value, onChange } ) {
 					/>
 				</Fragment>
 			) : (
-				<TextareaControl
+				<RichContentControl
+					compact
+					html={ false }
 					label={ __( 'Text', 'ohmylms' ) }
 					help={ __(
 						'Write {a}, {b} … where a blank should appear.',

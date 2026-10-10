@@ -1,3 +1,4 @@
+/** @jsx createElement */
 import { createElement, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -26,6 +27,7 @@ export function InlineBlankPreview( { text } ) {
 							type="button"
 							className="ohmylms-blank-drop"
 							aria-label={ sprintf(
+								/* translators: %d: blank position. */
 								__( 'Blank %d', 'ohmylms' ),
 								part.index + 1
 							) }
@@ -69,28 +71,41 @@ export function InlineBlankPreview( { text } ) {
 				className="ohmylms-blank-answer-bank"
 				aria-label={ __( 'Answer bank', 'ohmylms' ) }
 			>
-				{ [ ...answers ]
-					.reverse()
-					.filter( ( answer ) => ! assigned.includes( answer.id ) )
-					.map( ( answer ) => (
-						<Button
-							key={ answer.id }
-							variant={
-								selected === answer.id ? 'primary' : 'secondary'
+				{ [ ...answers ].reverse().map( ( answer ) => (
+					<Button
+						key={ answer.id }
+						className={
+							assigned.includes( answer.id )
+								? 'ohmylms-blank-token is-placed'
+								: 'ohmylms-blank-token'
+						}
+						disabled={ assigned.includes( answer.id ) }
+						aria-hidden={ assigned.includes( answer.id ) }
+						variant={
+							selected === answer.id ? 'primary' : 'secondary'
+						}
+						aria-pressed={ selected === answer.id }
+						draggable
+						onDragStart={ ( event ) =>
+							event.dataTransfer.setData(
+								'text/plain',
+								answer.id
+							)
+						}
+						onClick={ () => setSelected( answer.id ) }
+						onDoubleClick={ () =>
+							place( answer.id, assigned.indexOf( null ) )
+						}
+						onKeyDown={ ( event ) => {
+							if ( event.key === 'Enter' ) {
+								event.preventDefault();
+								place( answer.id, assigned.indexOf( null ) );
 							}
-							aria-pressed={ selected === answer.id }
-							draggable
-							onDragStart={ ( event ) =>
-								event.dataTransfer.setData(
-									'text/plain',
-									answer.id
-								)
-							}
-							onClick={ () => setSelected( answer.id ) }
-						>
-							{ answer.text }
-						</Button>
-					) ) }
+						} }
+					>
+						{ answer.text }
+					</Button>
+				) ) }
 			</div>
 		</div>
 	);

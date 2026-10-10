@@ -1,7 +1,8 @@
+/** @jsx createElement */
 import { isUngradedType } from './extendedModel.mjs';
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { EquationTextControl } from '../math/MathInput';
+import { RichContentControl } from '../math/RichContentControl';
 import { TextControl, ToggleControl } from '@wordpress/components';
 
 export function QuestionOptionsBar( { question, onChange } ) {
@@ -48,14 +49,18 @@ export function QuestionOptionsBar( { question, onChange } ) {
 				/>
 			</div>
 			<div className="ohmylms-question-options-feedback">
-				<EquationTextControl
+				<RichContentControl
+					compact
+					html={ false }
 					label={ __( 'Hint', 'ohmylms' ) }
 					rows={ 2 }
 					value={ settings.hint || '' }
 					onChange={ ( hint ) => set( { hint } ) }
 					__nextHasNoMarginBottom
 				/>
-				<EquationTextControl
+				<RichContentControl
+					compact
+					html={ false }
 					label={ __( 'Explanation', 'ohmylms' ) }
 					rows={ 2 }
 					value={ settings.explanation || '' }

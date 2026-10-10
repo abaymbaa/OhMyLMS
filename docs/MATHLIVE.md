@@ -8,6 +8,8 @@ Expression answers, alternatives and expression blanks use a shared MathLive fie
 
 Use **Insert equation** for prompts, choices, hints and explanations. Choose inline or display layout. Prompts show editable equation fields directly; **Edit original source** in the equation dialog provides a text fallback. Storage uses the existing content string with explicit markers:
 
+The prompt formatting toolbar now inserts a MathLive equation at the text caret, with fraction, power, square-root and sine templates. Ctrl/Cmd+M inserts an empty equation; it remains editable without storing an invalid empty marker. Each equation has accessible inline/display and remove controls. Tab, Escape and MathLive's `move-out` event return the caret to surrounding prose. The existing **Preview question** action renders the current content. These controls use MathLive for both editing and display.
+
 ```
 [[ohmylms-math:latex:display]]\frac{1}{2}x={{a}}[[/ohmylms-math]]
 ```
@@ -25,7 +27,7 @@ The new `includes/Assessment/MathLive.php` follows the existing PSR-4 namespace/
 - Production source build and asset synchronization passed. Webpack warns about the 806 KiB MathLive entry and the optional approximately 3.9 MiB Compute Engine chunk.
 - CAS: 94 checks passed. Randomization/templates: 1,666 checks passed.
 - JavaScript: 339 of 340 tests passed. The unchanged `assets/js/elementor-widgets.js` fails the pre-existing recovery AST hash expectation.
-- Six MathLive browser tests passed: real PHP template/native POST/server grading; fractions, roots, powers and equations; equivalent and required forms; explicit markers and local fonts; restoration event, randomized tokens and dynamic mounts/cleanup; plain fallback and unsupported input; mobile keyboard and physical keys; direct author editing/serialization/reopen; and template/lazy-loader coexistence without duplicate script execution.
+- Eight MathLive browser tests passed: real PHP template/native POST/server grading; fractions, roots, powers and equations; equivalent and required forms; explicit markers and local fonts; restoration event, randomized tokens and dynamic mounts/cleanup; plain fallback and unsupported input; mobile keyboard and physical keys; direct author editing/serialization/reopen; template/lazy-loader coexistence without duplicate script execution; cursor insertion/layout/removal; and empty-field creation/navigation to prose. The toolbar and Ctrl+M were also verified in an isolated draft on `800.local`.
 - Local quiz 150 (**MathLive acceptance test**) was created through the admin UI. Its two randomized questions were edited, saved, duplicated and reopened. Published snapshots preserved original markers. Fixed seeds reproduced the same instances; learner payload checks and authoritative grading passed. Actual preview submissions returned **2 / 2** for equation solutions and for number-only alternatives.
 - Changed PHP syntax, source-contract checks, new math-module ESLint and scoped math CSS checks passed.
 - Repository-wide checks remain blocked by existing formatting violations (10 unrelated files), PHP standards findings across 730 files, JavaScript standards findings and CSS standards findings. No baseline or rule suppression was added.
@@ -42,3 +44,26 @@ Persistent enrolled-learner attempts and theme-specific override combinations ha
 5. On a touch device, open/dismiss the math keyboard; use Tab and physical keys. Block the runtime request and confirm the plain input can still submit. Repeat with active theme overrides and custom question extensions.
 
 No deployment or merge was performed.
+
+## Visual content editing across question types
+
+Formatting toolbars are disabled by default in all shared rich content controls, including overview quick editing, answer labels, hints and explanations. Ctrl+M (Cmd+M on macOS) inserts an editable MathLive equation at the prose caret. `QuestionForm.jsx` keeps an explicit `promptToolbarTypes` allowlist, currently empty: future toolbar requests should opt in only the requested type. Rich content and existing inline MathLive equations remain editable, with no change to saved content or grading contracts.
+
+The shared prompt editor is used by every built-in question type. Choice, matching and reorder labels, hints, explanations, structured-part prompts, reading passages, interactive sentence/blank text, category labels and video checkpoints use the same inline MathLive authoring controls. Plain-text fields continue to store plain text and explicit equation markers; pasted HTML is converted to text. Existing HTML formatting is preserved; formatting and image toolbar actions require an explicit opt-in. Numbers, tolerances, exact-match keys, variable definitions, URLs and diagram coordinates retain their specialised controls. Custom extension editors are unchanged.
+
+Acceptance: open single/multiple choice, matching, structured, dropdown blanks and a reading passage; insert a fraction in each relevant content field; edit it directly; Tab/Escape back to prose; save/reopen and preview. Confirm correct-option selections and matching pairs remain intact, and literal `<`, `&` and ordinary dollar amounts survive in plain labels.
+
+Verification for the shared visual controls: 10 targeted JavaScript tests and 9 MathLive browser tests pass; source contracts and the new shared control/runtime ESLint checks pass. The full check still stops at 10 existing formatting failures. Existing editor modules retain standards violations (camel-case callbacks, translator comments and nested expressions); none are suppressed. Live local checks covered choice labels, structured part prompts and reading passages with incomplete disposable drafts.
+### Fill-in-the-blank interaction
+
+Answer chips have explicit dark text on a light background in the authoring stage. In the learner preview and drag-mode quiz, double-click an available choice to place it in the first empty blank from left to right. Enter provides the same keyboard action. Dragging and selecting a choice followed by a blank remain available. Placed choices retain a dashed placeholder at their original bank position; clearing a filled blank restores that choice. Submission still uses the original answer fields, and repeated answer words remain separate tokens.
+
+Verification: three browser tests cover placement, duplicate tokens, drag/click/keyboard input, restored answers, submission fields, question isolation and theme contrast. Four JavaScript blank-model tests and the PHP inline-blank parsing/privacy/grading checks pass. The source build and changed JavaScript lint checks pass. The existing full-check formatting failures and deprecated `clip` property in the unchanged accessibility-input rule remain.
+### Optional partial grading for blanks
+
+Fill-in-the-blank authoring has an **Enable partial grading** checkbox in its footer. Enabled: each correct blank earns an equal share of the question points. Disabled: the question earns points only when every blank is correct. The flag is saved as `settings.partial_credit` and read by the server from the frozen question version. Older inline-brace versions without the flag retain partial credit; older separate-answer versions without the flag retain all-or-nothing grading. Neither mode accepts extra answer positions for credit. Required-answer validation remains unchanged.
+
+The layout switch is hidden for fill-in-the-blank, short-answer and Build from tiles forms, in editing and preview. Other question editors retain their layout controls. Verification includes checkbox settings round trips, legacy defaults, readonly controls, and server grading against distinct frozen versions with partial grading enabled and disabled. The remaining PHP standards findings in `includes/Extensions/QuestionTypes.php` predate these changes, including its established PSR-4 file name.
+### Quick prompt editing in quiz cards
+
+Click a question prompt in the overview to edit it in place. Ctrl+M inserts a MathLive equation without a formatting toolbar. Changes use the same canonical prompt patch and quiz autosave validation as the full editor. Double-click the prompt, or use the **Edit** button, to open the full question editor. Pinned versions remain readonly. Quick edits preserve rich content, explicit equation markers and existing grading settings.

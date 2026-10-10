@@ -1,3 +1,4 @@
+import { RichContentControl } from '../math/RichContentControl';
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { Button, Modal, TextControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -8,6 +9,7 @@ import { ConnectQuestionSkill } from './QuizSkillsTab';
 import {
 	promptText,
 	questionPrompt,
+	questionPromptPatch,
 } from '../question-editor/questionPrompt.mjs';
 import {
 	isUngradedType,
@@ -51,6 +53,7 @@ const typeLabel = ( question ) =>
  *
  * @param {Object}   props          Component properties.
  * @param {Object}   props.editor   Canonical quiz editor.
+ * @param {Array}    props.skills   Available question skills.
  * @param {Object}   props.children Active question workspace.
  * @param {()=>void} props.onBank   Open the question bank picker.
  */
@@ -125,12 +128,12 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 					{ createButton() }
 				</div>
 				<QuizSkillsSummary
-						questions={ editor.questions }
-						skills={ skills }
-						selected={ skillFilter }
-						onSelect={ setSkillFilter }
-					/>
-					<div className="ohmylms-overview-cards">
+					questions={ editor.questions }
+					skills={ skills }
+					selected={ skillFilter }
+					onSelect={ setSkillFilter }
+				/>
+				<div className="ohmylms-overview-cards">
 					{ editor.questions.map( ( question, index ) => {
 						if ( ! matchesSkillFilter( question, skillFilter ) ) {
 							return null;
@@ -239,11 +242,12 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 										) }
 									</div>
 									<div className="ohmylms-overview-card-actions">
-											<ConnectQuestionSkill
-												question={ question }
-												skills={ skills }
-												onChange={ editor.patchQuestion }
-											/>
+										<ConnectQuestionSkill
+											iconOnly
+											question={ question }
+											skills={ skills }
+											onChange={ editor.patchQuestion }
+										/>
 										<Button
 											icon="visibility"
 											label={ __(
@@ -327,20 +331,50 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 										</Button>
 									</div>
 								</header>
-								<button
-									type="button"
-									className="ohmylms-overview-prompt"
-									onClick={ () => openQuestion( question ) }
-									aria-label={ sprintf(
-										/* translators: %d: question number, count, or points. */ __(
-											'Open question %d',
-											'ohmylms'
-										),
-										index + 1
-									) }
-								>
-									{ title }
-								</button>
+								{ question.readonly ? (
+									<button
+										type="button"
+										className="ohmylms-overview-prompt"
+										onClick={ () =>
+											openQuestion( question )
+										}
+										aria-label={ sprintf(
+											/* translators: %d: question number, count, or points. */ __(
+												'Open question %d',
+												'ohmylms'
+											),
+											index + 1
+										) }
+									>
+										{ title }
+									</button>
+								) : (
+									<div className="ohmylms-quick-question-prompt">
+										<RichContentControl
+											compact
+											label={ sprintf(
+												/* translators: %d: question number. */ __(
+													'Quick edit question %d',
+													'ohmylms'
+												),
+												index + 1
+											) }
+											value={ questionPrompt( question ) }
+											onChange={ ( content ) =>
+												editor.patchQuestion(
+													question.id,
+													questionPromptPatch(
+														question,
+														content
+													)
+												)
+											}
+											onDoubleClick={ () =>
+												openQuestion( question )
+											}
+										/>
+									</div>
+								) }
 								{ question.image_src && (
 									<img
 										className="ohmylms-overview-question-image"
@@ -352,6 +386,8 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 									/>
 								) }
 								{ Boolean( question.questions?.length ) &&
+									question.settings?.type !==
+										'fill-in-the-blank' &&
 									! isInteractiveType(
 										question.settings?.type
 									) &&

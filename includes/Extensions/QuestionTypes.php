@@ -185,9 +185,11 @@ final class QuestionTypes {
 		if ( $type === 'fill-in-the-blank' && method_exists( $question, 'get_name' ) ) {
 			$parsed = \OhMyLMS\Assessment\InlineBlanks::parse( $question->get_name() );
 			if ( $parsed['answers'] ) {
-				$values = array_values( $answer );
-				$parts  = array();
-				$hits   = 0;
+				$settings       = method_exists( $question, 'get_settings' ) ? $question->get_settings() : array();
+				$partial_credit = $settings['partial_credit'] ?? true;
+				$values         = array_values( $answer );
+				$parts          = array();
+				$hits           = 0;
 				foreach ( $parsed['answers'] as $i => $expected ) {
 					$correct = isset( $values[ $i ] ) && \OhMyLMS\Assessment\InlineBlanks::matches( $values[ $i ], $expected, $question );
 					$hits   += $correct ? 1 : 0;
@@ -200,7 +202,7 @@ final class QuestionTypes {
 					$hits = 0; }
 				return array(
 					'correct'  => $hits === count( $parts ),
-					'fraction' => $hits / count( $parts ),
+					'fraction' => false === $partial_credit ? ( $hits === count( $parts ) ? 1 : 0 ) : $hits / count( $parts ),
 					'manual'   => false,
 					'blanks'   => $parts,
 				);
@@ -251,6 +253,22 @@ final class QuestionTypes {
 				return array(
 					'correct'  => 0 < count( $expected ) && $answer === $expected,
 					'fraction' => 0 < count( $expected ) ? max( 0.0, ( $hits - $misses ) / count( $expected ) ) : 0.0,
+					'manual'   => false,
+				);
+			}
+			if ( 'fill-in-the-blank' === $type && method_exists( $question, 'get_settings' ) && true === ( $question->get_settings()['partial_credit'] ?? false ) && 0 < count( $expected ) ) {
+				$hits = 0;
+				foreach ( $expected as $index => $value ) {
+					if ( isset( $answer[ $index ] ) && \OhMyLMS\Assessment\InlineBlanks::matches( $answer[ $index ], $value, $question ) ) {
+						++$hits;
+					}
+				}
+				if ( count( $answer ) > count( $expected ) ) {
+					$hits = 0;
+				}
+				return array(
+					'correct'  => $hits === count( $expected ),
+					'fraction' => $hits / count( $expected ),
 					'manual'   => false,
 				);
 			}

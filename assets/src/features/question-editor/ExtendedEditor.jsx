@@ -1,10 +1,10 @@
+import { RichContentControl } from '../math/RichContentControl';
 import { createElement, useState } from '@wordpress/element';
 import {
 	Button,
 	CheckboxControl,
 	SelectControl,
 	TextControl,
-	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { StructuredEditor } from './MathEditors';
@@ -61,7 +61,9 @@ export function ExtendedEditor( { type, value, onChange } ) {
 	if ( type === 'passage' ) {
 		return (
 			<div className="ohmylms-interactive-editor">
-				<TextareaControl
+				<RichContentControl
+					compact
+					html={ false }
 					label={ __( 'Reading passage', 'ohmylms' ) }
 					rows={ 6 }
 					value={ value.passage || '' }
@@ -316,7 +318,9 @@ export function ExtendedEditor( { type, value, onChange } ) {
 			) }
 			{ type === 'hot-text' && (
 				<>
-					<TextareaControl
+					<RichContentControl
+						compact
+						html={ false }
 						label={ __(
 							'Selectable words (one per line)',
 							'ohmylms'
@@ -362,7 +366,9 @@ export function ExtendedEditor( { type, value, onChange } ) {
 			{ type === 'match-table-grid' && (
 				<>
 					{ [ 'rows', 'columns' ].map( ( key ) => (
-						<TextareaControl
+						<RichContentControl
+							compact
+							html={ false }
 							key={ key }
 							label={
 								key === 'rows'
@@ -542,7 +548,9 @@ export function ExtendedEditor( { type, value, onChange } ) {
 				</>
 			) }
 			{ type === 'poll' && (
-				<TextareaControl
+				<RichContentControl
+					compact
+					html={ false }
 					label={ __( 'Poll choices (one per line)', 'ohmylms' ) }
 					value={ rows( 'choices' )
 						.map( ( choice ) => choice.text )
@@ -599,7 +607,9 @@ export function ExtendedEditor( { type, value, onChange } ) {
 									} )
 								}
 							/>
-							<TextControl
+							<RichContentControl
+								compact
+								html={ false }
 								label={ __( 'Checkpoint question', 'ohmylms' ) }
 								value={ checkpoint.prompt }
 								onChange={ ( prompt ) =>
