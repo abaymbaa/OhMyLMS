@@ -1,8 +1,10 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import {
+	ExportIcon,
 	QuizImportButton,
 	useAddQuiz,
+	useExportQuiz,
 } from '../content-hub/QuizActions';
 export function createQuizList( readRuntime ) {
 	return function QuizList() {
@@ -40,7 +42,11 @@ export function createQuizList( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		const addQuiz = useAddQuiz();
-		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
+		// `openNotificationWithIcon` is declared further down; it is read when an export finishes.
+		const quizExport = useExportQuiz( ( status, message ) =>
+			openNotificationWithIcon( status, message )
+		);
+		var e =( 0, WordPressData.useDispatch )( StoreModule.default ),
 			t = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getNotificationMessage();
 			}, [] ),
@@ -402,6 +408,23 @@ export function createQuizList( readRuntime ) {
 										icon: (
 											<span>
 												<pG.A />
+											</span>
+										),
+									},
+									{
+										title: ( 0, I18n.__ )(
+											'Export',
+											'ohmylms'
+										),
+										key: 'export',
+										onClick() {
+											return quizExport.exportQuiz(
+												null == t ? void 0 : t.id
+											);
+										},
+										icon: (
+											<span>
+												<ExportIcon />
 											</span>
 										),
 									},

@@ -1,3 +1,4 @@
+/** @jsx createElement */
 import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
@@ -9,7 +10,12 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { createSkill } from '../question-bank/api.mjs';
-import { searchTargets } from './api.mjs';
+import { searchTargets, loadCatalog } from './api.mjs';
+import { loadTree, loadSyllabus } from '../curriculum/api.mjs';
+import {
+	loadSkillCurriculum,
+	skillCurriculumTree,
+} from './skillCurriculum.mjs';
 
 const label = ( skill ) =>
 	`${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`;
@@ -44,6 +50,42 @@ export function SkillPicker( {
 	const [ error, setError ] = useState( '' );
 	const [ busy, setBusy ] = useState( false );
 	const latest = useRef( 0 );
+	const [ curriculum, setCurriculum ] = useState( null );
+	const [ excluded, setExcluded ] = useState( [] );
+	const [ curriculumError, setCurriculumError ] = useState( '' );
+
+	useEffect( () => {
+		let active = true;
+		setCurriculum( null );
+		setCurriculumError( '' );
+		Promise.all( [
+			loadSkillCurriculum( loadTree, loadSyllabus ),
+			courseId ? loadCatalog( courseId ) : Promise.resolve( null ),
+		] )
+			.then( ( [ data, catalog ] ) => {
+				if ( active ) {
+					setExcluded(
+						( catalog?.skills || [] ).map( ( row ) => row.term_id )
+					);
+					setCurriculum( data );
+				}
+			} )
+			.catch( ( cause ) => {
+				if ( active ) {
+					setCurriculum( { items: [], outlines: [] } );
+					setCurriculumError(
+						cause.message ||
+							__(
+								'Could not load curriculum. You can still choose skills from the library.',
+								'ohmylms'
+							)
+					);
+				}
+			} );
+		return () => {
+			active = false;
+		};
+	}, [ courseId ] );
 
 	useEffect( () => {
 		const id = ++latest.current;
@@ -115,10 +157,39 @@ export function SkillPicker( {
 	}
 
 	// Selected skills that the current search does not show stay visible, so nothing is picked blind.
+	const { tree, placed, visible } = skillCurriculumTree(
+		curriculum || {},
+		search,
+		excluded
+	);
 	const shown = new Set( ( results || [] ).map( ( row ) => row.id ) );
 	const hidden = [ ...selected.values() ].filter(
-		( skill ) => ! shown.has( skill.id )
+		( skill ) => ! shown.has( skill.id ) && ! visible.has( skill.id )
 	);
+	const skillCheckbox = ( skill, key = skill.id ) => (
+		<CheckboxControl
+			key={ key }
+			label={ label( skill ) }
+			checked={ selected.has( skill.id ) }
+			onChange={ ( checked ) => toggle( skill, checked ) }
+			__nextHasNoMarginBottom
+		/>
+	);
+	const renderBranch = ( node ) => {
+		if ( node.skill ) {
+			return skillCheckbox( node.skill, node.key );
+		}
+		return (
+			<details
+				key={ `${ search }:${ node.key }` }
+				open={ !! search }
+				className="ohmylms-skill-picker-branch"
+			>
+				<summary>{ label( node ) }</summary>
+				<div>{ node.children.map( renderBranch ) }</div>
+			</details>
+		);
+	};
 	return (
 		<Modal
 			title={ title }
@@ -130,8 +201,16 @@ export function SkillPicker( {
 					{ error }
 				</Notice>
 			) }
+			{ curriculumError && (
+				<Notice status="warning" isDismissible={ false }>
+					{ curriculumError }
+				</Notice>
+			) }
 			<TextControl
-				label={ __( 'Search skills', 'ohmylms' ) }
+				label={ __(
+					'Search curriculum, topics and skills',
+					'ohmylms'
+				) }
 				type="search"
 				value={ search }
 				onChange={ setSearch }
@@ -142,24 +221,43 @@ export function SkillPicker( {
 				role="group"
 				aria-label={ __( 'Skills', 'ohmylms' ) }
 			>
-				{ results === null && <Spinner /> }
-				{ results !== null && ! results.length && ! hidden.length && (
-					<p className="ohmylms-ext-muted">
-						{ __(
-							'No matching skills. Create one below.',
-							'ohmylms'
-						) }
-					</p>
+				{ ( results === null || curriculum === null ) && <Spinner /> }
+				{ tree.map( renderBranch ) }
+				{ results !== null &&
+					curriculum !== null &&
+					! tree.length &&
+					! results.length &&
+					! hidden.length && (
+						<p className="ohmylms-ext-muted">
+							{ __(
+								'No matching skills. Create one below.',
+								'ohmylms'
+							) }
+						</p>
+					) }
+				{ hidden.length > 0 && (
+					<div className="ohmylms-skill-picker-selected">
+						<strong>{ __( 'Selected skills', 'ohmylms' ) }</strong>
+						{ hidden.map( ( skill ) => skillCheckbox( skill ) ) }
+					</div>
 				) }
-				{ [ ...hidden, ...( results || [] ) ].map( ( skill ) => (
-					<CheckboxControl
-						key={ skill.id }
-						label={ label( skill ) }
-						checked={ selected.has( skill.id ) }
-						onChange={ ( checked ) => toggle( skill, checked ) }
-						__nextHasNoMarginBottom
-					/>
-				) ) }
+				{ ( results || [] ).some(
+					( skill ) => ! placed.has( skill.id )
+				) && (
+					<details
+						className="ohmylms-skill-picker-branch"
+						open={ !! search || ! tree.length }
+					>
+						<summary>
+							{ __( 'Other skills in the library', 'ohmylms' ) }
+						</summary>
+						<div>
+							{ ( results || [] )
+								.filter( ( skill ) => ! placed.has( skill.id ) )
+								.map( ( skill ) => skillCheckbox( skill ) ) }
+						</div>
+					</details>
+				) }
 			</div>
 			<details className="ohmylms-skill-picker-create">
 				<summary>{ __( 'Create a new skill', 'ohmylms' ) }</summary>
@@ -191,6 +289,7 @@ export function SkillPicker( {
 			<div className="ohmylms-content-hub-dialog-actions">
 				<span className="ohmylms-ext-muted" aria-live="polite">
 					{ sprintf(
+						/* translators: %d: number of selected skills. */
 						_n(
 							'%d skill selected',
 							'%d skills selected',

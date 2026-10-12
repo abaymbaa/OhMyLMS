@@ -76,16 +76,32 @@ export const createContent = ( type, name, fetch = request ) =>
 		data: { name, status: 'draft' },
 	} );
 /**
- * A new draft quiz with its questions, made from CSV text.
- * @param name
- * @param csv
+ * A new draft quiz with its questions, made from an OhMyLMS quiz file (or the older CSV layout).
+ * With `dryRun` nothing is created: the response says what the file holds, or the request fails
+ * with every problem in `error.data.errors`.
+ * @param name    Quiz name; empty keeps the name in the file.
+ * @param content File text.
  * @param fetch
+ * @param options `dryRun`, and `copyMedia` (default true).
  */
-export const importQuiz = ( name, csv, fetch = request ) =>
+export const importQuiz = ( name, content, fetch = request, options = {} ) =>
 	fetch( {
 		path: `${ base }/quiz/import/`,
 		method: 'POST',
-		data: { name, csv },
+		data: {
+			name,
+			content,
+			...( options.dryRun ? { dry_run: true } : {} ),
+			...( options.copyMedia === false ? { copy_media: false } : {} ),
+		},
 	} );
-export const editPath =( type, id ) =>
+/**
+ * A quiz and all of its questions as an OhMyLMS quiz file: filename, mime, content, summary and
+ * warnings about unfinished questions.
+ * @param id
+ * @param fetch
+ */
+export const exportQuiz = ( id, fetch = request ) =>
+	fetch( { path: `${ base }/quiz/${ id }/export` } );
+export const editPath = ( type, id ) =>
 	`/${ { lesson: 'lesson-edit', quiz: 'quiz-edit', assignment: 'assignment-edit' }[ type ] }/${ id }`;

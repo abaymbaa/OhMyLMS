@@ -226,7 +226,9 @@
 }
 
 .ohmylms-quick-question-prompt {
+	position: relative;
 	margin: 24px 0;
+	padding-bottom: 24px;
 }
 
 .ohmylms-quick-question-prompt .ohmylms-prompt-label {
@@ -247,4 +249,45 @@
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.6;
+}
+
+.ohmylms-quiz-overview .ohmylms-quick-question-prompt [role="textbox"]:focus {
+	outline: 2px solid #3858e9;
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+.ohmylms-quick-question-save-status {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	color: #50575e;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.ohmylms-quick-question-save-status[data-save-error="true"] {
+	color: #b32d2e;
+}
+
+.ohmylms-skill-picker .ohmylms-skill-picker-branch {
+	margin: 8px 0;
+}
+
+.ohmylms-skill-picker .ohmylms-skill-picker-branch > summary {
+	padding: 4px;
+	color: #1d2327;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-skill-picker .ohmylms-skill-picker-branch > div {
+	margin-left: 12px;
+	padding-left: 12px;
+	border-left: 1px solid #dcdcde;
+}
+
+.ohmylms-skill-picker .ohmylms-skill-picker-branch > summary:focus-visible {
+	outline: 2px solid #3858e9;
+	outline-offset: 1px;
 }

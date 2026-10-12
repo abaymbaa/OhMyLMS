@@ -67,6 +67,17 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 	const [ editing, setEditing ] = useState( false );
 	const [ workspaceKey, setWorkspaceKey ] = useState( 0 );
 	const [ dragged, setDragged ] = useState( null );
+	const [ quickEdited, setQuickEdited ] = useState( () => new Set() );
+	useEffect( () => {
+		setQuickEdited( new Set() );
+	}, [ editor.quizId ] );
+	const quickSaveLabel = ( question ) =>
+		( {
+			saved: __( 'Saved', 'ohmylms' ),
+			saving: __( 'Saving…', 'ohmylms' ),
+			pending: __( 'Not saved yet', 'ohmylms' ),
+			error: __( 'Changes not saved', 'ohmylms' ),
+		} )[ editor.quickEditStatus( question ) ];
 	// A new quiz starts empty; the author chooses "Create question" when ready.
 	useEffect( () => {
 		if ( editor.question?.temp ) {
@@ -360,19 +371,38 @@ export function QuizQuestionCards( { editor, skills = [], children, onBank } ) {
 												index + 1
 											) }
 											value={ questionPrompt( question ) }
-											onChange={ ( content ) =>
+											onChange={ ( content ) => {
+												setQuickEdited( ( current ) =>
+													new Set( current ).add(
+														question.id
+													)
+												);
 												editor.patchQuestion(
 													question.id,
 													questionPromptPatch(
 														question,
 														content
 													)
-												)
-											}
+												);
+											} }
 											onDoubleClick={ () =>
 												openQuestion( question )
 											}
 										/>
+										{ quickEdited.has( question.id ) && (
+											<span
+												className="ohmylms-quick-question-save-status"
+												role="status"
+												aria-live="polite"
+												data-save-error={
+													editor.quickEditStatus(
+														question
+													) === 'error'
+												}
+											>
+												{ quickSaveLabel( question ) }
+											</span>
+										) }
 									</div>
 								) }
 								{ question.image_src && (

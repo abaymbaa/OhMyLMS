@@ -323,6 +323,23 @@
 	color: #5b2fc4;
 }
 
+.ohmylms-import-preview {
+	margin: 12px 0;
+}
+
+.ohmylms-import-preview__headline {
+	margin: 0 0 8px;
+	font-weight: 600;
+}
+
+.ohmylms-import-list {
+	max-height: 220px;
+	margin: 6px 0 0 18px;
+	padding: 0;
+	overflow-y: auto;
+	list-style: disc;
+}
+
 button.ohmylms-quiz-skill-chip {
 	border: 1px solid transparent;
 	font: inherit;

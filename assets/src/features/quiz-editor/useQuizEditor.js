@@ -14,6 +14,7 @@ import { loadQuiz, saveQuiz, removeQuestionFromQuiz } from './api.mjs';
 import { publishRevision } from '../question-bank/api.mjs';
 import { appendLinkedQuestions } from '../question-bank/model.mjs';
 import { __, sprintf } from '@wordpress/i18n';
+import { promptSnapshots, quickEditStatus } from './quickEditStatus.mjs';
 import {
 	promptText,
 	questionPrompt,
@@ -47,6 +48,8 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 	const savedSnapshot = useRef( null );
 	const failedSnapshot = useRef( null );
 	const saveLatest = useRef( null );
+	const savedPrompts = useRef( new Map() );
+	const submittedPrompts = useRef( new Map() );
 	const editSnapshot = quizEditSnapshot( state.quiz, state.questions );
 	latest.current = state;
 	useEffect( () => {
@@ -55,6 +58,8 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		inFlight.current = false;
 		savedSnapshot.current = null;
 		failedSnapshot.current = null;
+		savedPrompts.current = new Map();
+		submittedPrompts.current = new Map();
 		setSaving( false );
 		if ( ! state.types.length ) {
 			registerTypes();
@@ -72,6 +77,9 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 						loaded.content || []
 					);
 					actions.setQuiz( loaded );
+					savedPrompts.current = promptSnapshots(
+						loaded.content || []
+					);
 					actions.setAllQuestions( loaded.content || [] );
 					actions.setSelectedQuestionId( loaded?.content?.[ 0 ]?.id );
 					actions.setQuestion( loaded?.content?.[ 0 ] );
@@ -144,6 +152,7 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		const submittedQuestions = state.questions;
 		const selectedId = state.question?.id;
 		inFlight.current = true;
+		submittedPrompts.current = promptSnapshots( submittedQuestions );
 		setSaving( true );
 		setError( null );
 		setSavedNotice( '' );
@@ -161,6 +170,7 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 				saved.content || []
 			);
 			failedSnapshot.current = null;
+			savedPrompts.current = promptSnapshots( saved.content || [] );
 			const questions = mergeSavedQuestions(
 				saved.content || [],
 				submittedQuestions,
@@ -335,6 +345,14 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		loading,
 		saving,
 		error,
+		quickEditStatus: ( question ) =>
+			quickEditStatus(
+				question,
+				savedPrompts.current,
+				submittedPrompts.current,
+				saving,
+				error
+			),
 		autosaveStatus: saving
 			? __( 'Saving…', 'ohmylms' )
 			: error

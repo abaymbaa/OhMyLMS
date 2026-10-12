@@ -133,19 +133,43 @@ class QuizController extends RestController {
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'import_csv' ),
+					'callback'            => array( $this, 'import_file' ),
 					'permission_callback' => array( $this, 'check_quiz_permission' ),
 					'args'                => array(
-						'name' => array(
+						'name'       => array(
 							'type'              => 'string',
-							'required'          => true,
 							'sanitize_callback' => 'sanitize_text_field',
 						),
-						'csv'  => array(
-							'type'     => 'string',
-							'required' => true,
+						// The file text. `csv` is the older name for the same thing.
+						'content'    => array( 'type' => 'string' ),
+						'csv'        => array( 'type' => 'string' ),
+						'format'     => array(
+							'type'    => 'string',
+							'enum'    => array( 'auto', 'ohmylms', 'csv' ),
+							'default' => 'auto',
+						),
+						// Check the file and report what it holds, without creating anything.
+						'dry_run'    => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+						'copy_media' => array(
+							'type'    => 'boolean',
+							'default' => true,
 						),
 					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->base . '/(?P<id>[\d]+)/export',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'export_file' ),
+					'permission_callback' => array( $this, 'check_item_permission_for_edit' ),
 				),
 			)
 		);
@@ -330,24 +354,58 @@ class QuizController extends RestController {
 	}
 
 	/**
-	 * Create a draft quiz and its questions from CSV text.
+	 * Create a draft quiz and its questions from a quiz file, or check the file (`dry_run`).
+	 *
+	 * The file is an OhMyLMS quiz file (JSON) or the older CSV layout. Nothing is created if
+	 * any question is invalid; the error then lists every problem with its question number.
+	 *
+	 * @param WP_REST_Request $request Request with `content` (or `csv`), and optionally `name`, `format`, `dry_run`, `copy_media`.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function import_file( $request ) {
+		$content = (string) ( $request['content'] ?? '' );
+		if ( '' === $content ) {
+			$content = (string) ( $request['csv'] ?? '' );
+		}
+		if ( '' === trim( $content ) ) {
+			return new WP_Error( 'ohmylms_quiz_import_empty', __( 'The file is empty.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+		$result = \OhMyLMS\Quiz\Exchange\Importer::run(
+			$content,
+			array(
+				'name'       => (string) $request['name'],
+				'format'     => empty( $request['format'] ) ? 'auto' : (string) $request['format'],
+				'dry_run'    => rest_sanitize_boolean( $request['dry_run'] ),
+				'copy_media' => null === $request['copy_media'] ? true : rest_sanitize_boolean( $request['copy_media'] ),
+			)
+		);
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		$response = rest_ensure_response( $result + array( 'status' => $result['dry_run'] ? 'ok' : 'success' ) );
+		$response->set_status( $result['dry_run'] ? 200 : 201 );
+		return $response;
+	}
+
+	/**
+	 * Older name of {@see self::import_file()}, kept for callers of the CSV-only route.
 	 *
 	 * @param WP_REST_Request $request Request with `name` and `csv`.
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function import_csv( $request ) {
-		$quiz_id = \OhMyLMS\Quiz\CsvImport::import( (string) $request['name'], (string) $request['csv'] );
-		if ( is_wp_error( $quiz_id ) ) {
-			return $quiz_id;
-		}
-		$response = rest_ensure_response(
-			array(
-				'id'     => $quiz_id,
-				'status' => 'success',
-			)
-		);
-		$response->set_status( 201 );
-		return $response;
+		return $this->import_file( $request );
+	}
+
+	/**
+	 * Download a quiz and all of its questions as an OhMyLMS quiz file.
+	 *
+	 * @param WP_REST_Request $request Request with the quiz `id`.
+	 * @return WP_Error|WP_REST_Response `filename`, `mime`, `content`, `summary`, `warnings`.
+	 */
+	public function export_file( $request ) {
+		$result = \OhMyLMS\Quiz\Exchange\Exporter::export( (int) $request['id'] );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
 	/**
