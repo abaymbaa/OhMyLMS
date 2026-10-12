@@ -22,13 +22,91 @@ import {
 	pathNames,
 	pruneState,
 	resetOverrides,
+	revealBranch,
 	searchItems,
 	siblingMove,
+	syllabusBreadcrumbs,
 	toggleOpen,
 	validateDraft,
 	validateMove,
 	withoutTopics,
 } from '../../assets/src/features/curriculum/model.mjs';
+
+test( 'collapsed branch shortcuts show each nested syllabus once with its complete path', () => {
+	const items = [
+		{ id: 1, name: 'Cambridge', parent_id: 0, position: 0 },
+		{ id: 2, name: 'IGCSE', parent_id: 1, position: 0 },
+		{ id: 3, name: 'Math', parent_id: 2, position: 0 },
+		{
+			id: 4,
+			name: '0580 Math',
+			parent_id: 3,
+			position: 1,
+			is_syllabus: true,
+		},
+		{
+			id: 5,
+			name: '0606 Math',
+			parent_id: 3,
+			position: 0,
+			is_syllabus: true,
+		},
+		{
+			id: 6,
+			name: 'Roadmap',
+			parent_id: 0,
+			position: 1,
+			is_syllabus: true,
+		},
+	];
+	const tree = buildTree( items );
+	const shortcuts = syllabusBreadcrumbs( items, tree[ 0 ].children );
+	assert.deepEqual(
+		shortcuts.map( ( entry ) => entry.item.id ),
+		[ 5, 4 ]
+	);
+	assert.deepEqual( shortcuts[ 1 ].path, [
+		'Cambridge',
+		'IGCSE',
+		'Math',
+		'0580 Math',
+	] );
+	assert.deepEqual(
+		syllabusBreadcrumbs( items, tree[ 0 ].children[ 0 ].children ),
+		shortcuts
+	);
+	const filtered = filterTree( tree, searchItems( items, '0580' ) );
+	assert.deepEqual(
+		syllabusBreadcrumbs( items, filtered[ 0 ].children ).map(
+			( entry ) => entry.item.id
+		),
+		[ 4 ]
+	);
+	assert.deepEqual( syllabusBreadcrumbs( items, [] ), [] );
+} );
+
+test( 'breadcrumb parents expand their complete branch without opening unrelated branches', () => {
+	const items = [
+		{ id: 1, parent_id: 0 },
+		{ id: 2, parent_id: 1 },
+		{ id: 3, parent_id: 2 },
+		{ id: 4, parent_id: 3 },
+		{ id: 5, parent_id: 0 },
+	];
+	const state = collapseAll();
+	const search = searchItems( items, '' );
+	const revealed = revealBranch( state, search, items, 3 );
+	for ( const id of [ 1, 2, 3 ] ) {
+		assert.equal( isOpen( revealed, search, id ), true );
+	}
+	assert.equal( isOpen( revealed, search, 4 ), false );
+	assert.equal( isOpen( revealed, search, 5 ), false );
+	assert.equal( state.expanded.size, 0 );
+	const active = { active: true, reveal: new Set(), matches: new Set() };
+	const overridden = revealBranch( state, active, items, 3 );
+	assert.equal( isOpen( overridden, active, 3 ), true );
+	assert.equal( state.overrides.size, 0 );
+} );
 
 test( 'hidden topics promote descendants without changing stored parents or losing sibling branches', () => {
 	const items = [

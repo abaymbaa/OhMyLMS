@@ -1,10 +1,16 @@
+/** @jsx createElement */
 import { createElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useCurriculum } from './context';
 import { AddItemRow } from './AddItemRow';
 import { ItemPanel } from './ItemPanel';
-import { isOpen, siblingInfo, typeLabel } from './model.mjs';
+import {
+	isOpen,
+	siblingInfo,
+	syllabusBreadcrumbs,
+	typeLabel,
+} from './model.mjs';
 import { workspacePath } from './workspace.mjs';
 
 function counts( item ) {
@@ -81,6 +87,7 @@ export function TreeNode( { node } ) {
 	const summary = counts( item );
 	const hasChildren = item.child_count > 0;
 	const adding = c.adding === item.id;
+	const shortcuts = open ? [] : syllabusBreadcrumbs( c.items, node.children );
 	return (
 		<li className="ohmylms-cur-node">
 			<div
@@ -90,6 +97,7 @@ export function TreeNode( { node } ) {
 				{ hasChildren ? (
 					<button
 						type="button"
+						id={ `ohmylms-cur-toggle-${ item.id }` }
 						className="ohmylms-cur-toggle"
 						aria-expanded={ open }
 						aria-controls={ open ? childrenId : undefined }
@@ -207,6 +215,42 @@ export function TreeNode( { node } ) {
 					</Button>
 				</span>
 			</div>
+			{ shortcuts.length > 0 && (
+				<ul
+					className="ohmylms-cur-syllabus-shortcuts"
+					aria-label={ __( 'Syllabuses in this branch', 'ohmylms' ) }
+				>
+					{ shortcuts.map( ( shortcut ) => (
+						<li key={ shortcut.item.id }>
+							<span className="ohmylms-cur-badge ohmylms-cur-syllabus-badge">
+								{ __( 'Syllabus', 'ohmylms' ) }
+							</span>
+							<span className="ohmylms-cur-syllabus-path">
+								{ shortcut.ancestors.map( ( ancestor ) => (
+									<span key={ ancestor.id }>
+										<Button
+											variant="link"
+											onClick={ () =>
+												c.actions.reveal( ancestor.id )
+											}
+										>
+											{ ancestor.name }
+										</Button>
+										<span aria-hidden="true">
+											{ ' > ' }
+										</span>
+									</span>
+								) ) }
+								<a
+									href={ `#${ workspacePath( shortcut.item.id ) }` }
+								>
+									{ shortcut.item.name }
+								</a>
+							</span>
+						</li>
+					) ) }
+				</ul>
+			) }
 			{ editing && (
 				<ItemPanel key={ item.id } id={ panelId } item={ item } />
 			) }

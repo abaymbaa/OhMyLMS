@@ -1,3 +1,4 @@
+/** @jsx createElement */
 import {
 	createElement,
 	useContext,
@@ -24,6 +25,7 @@ import {
 	filterTree,
 	pruneState,
 	resetOverrides,
+	revealBranch,
 	searchItems,
 	siblingMove,
 	toggleOpen,
@@ -133,7 +135,7 @@ export function CurriculumPage() {
 				return element.focus();
 			}
 		}
-	}, [ items ] );
+	}, [ items, view ] );
 
 	const say = ( kind, text ) =>
 		setNotice( { id: Date.now() + Math.random(), kind, text } );
@@ -201,6 +203,12 @@ export function CurriculumPage() {
 		applyItems,
 		toggle: ( id ) =>
 			setView( ( previous ) => toggleOpen( previous, search, id ) ),
+		reveal( id ) {
+			focusAfter.current = [ `ohmylms-cur-toggle-${ id }` ];
+			setView( ( previous ) =>
+				revealBranch( previous, search, visibleItems, id )
+			);
+		},
 		toggleEditor: ( id ) =>
 			setOpenId( ( current ) => ( current === id ? 0 : id ) ),
 		startAdd( parentId ) {

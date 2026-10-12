@@ -200,6 +200,48 @@ export function pathNames( items, id ) {
 }
 
 /**
+ * Syllabus shortcuts in tree order, retaining each complete curriculum path.
+ *
+ * @param {Array} items Stored curriculum items.
+ * @param {Array} tree  Hidden descendant branches, optionally filtered by search.
+ * @return {Array} Syllabus items and their breadcrumb names.
+ */
+export function syllabusBreadcrumbs( items, tree ) {
+	const byId = indexItems( items );
+	return flattenTree( tree )
+		.filter( ( node ) => node.item.is_syllabus )
+		.map( ( { item } ) => ( {
+			item,
+			ancestors: ancestorIds( items, item.id, byId )
+				.reverse()
+				.map( ( id ) => byId.get( id ) ),
+			path: [ ...pathNames( items, item.id ), item.name ],
+		} ) );
+}
+
+/**
+ * Open a breadcrumb parent and the ancestors needed to reveal it.
+ *
+ * @param {Object} state  Expansion state.
+ * @param {Object} search Current search state.
+ * @param {Array}  items  Visible curriculum items.
+ * @param {number} id     Parent to reveal.
+ * @return {Object} Updated expansion state.
+ */
+export function revealBranch( state, search, items, id ) {
+	const ids = [ ...ancestorIds( items, id ), id ];
+	const expanded = new Set( state.expanded );
+	const overrides = new Map( state.overrides );
+	for ( const parent of ids ) {
+		expanded.add( parent );
+		if ( search.active ) {
+			overrides.set( parent, true );
+		}
+	}
+	return { ...state, expanded, overrides };
+}
+
+/**
  * May an item move under a parent (0 = top level)? Mirrors the server: never under itself or
  * one of its own descendants, and never beyond the maximum depth.
  * @param items

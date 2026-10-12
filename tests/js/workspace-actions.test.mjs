@@ -25,19 +25,23 @@ function fixture( groups, failGroup = false ) {
 	const calls = [],
 		selected = [];
 	const api = Object.fromEntries(
-		[ 'addGroup', 'addSkill', 'moveSkill', 'updateSkill' ].map(
-			( method ) => [
-				method,
-				async ( ...args ) => {
-					calls.push( [ method, ...args ] );
-					return method === 'addGroup'
-						? failGroup
-							? false
-							: { group_id: 99 }
-						: {};
-				},
-			]
-		)
+		[
+			'addGroup',
+			'addSkill',
+			'moveSkill',
+			'updateSkill',
+			'deleteItem',
+		].map( ( method ) => [
+			method,
+			async ( ...args ) => {
+				calls.push( [ method, ...args ] );
+				return method === 'addGroup'
+					? failGroup
+						? false
+						: { group_id: 99 }
+					: {};
+			},
+		] )
 	);
 	const scope = {
 		api,
@@ -64,6 +68,14 @@ function fixture( groups, failGroup = false ) {
 	} );
 	return { actions, calls, selected };
 }
+
+test( 'deleting a syllabus explicitly confirms deletion of its whole structure', async () => {
+	const { actions, calls } = fixture( [] );
+	assert.equal( await actions.deleteSyllabus(), true );
+	assert.deepEqual( calls, [
+		[ 'deleteItem', 1, { children: 'delete', confirm: true } ],
+	] );
+} );
 
 test( 'adding a direct skill creates its storage container without adding it to a category chapter', async () => {
 	const { actions, calls } = fixture( [

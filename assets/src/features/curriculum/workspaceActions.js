@@ -27,6 +27,16 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 	const done = ( response ) => Boolean( response );
 
 	return {
+		async deleteSyllabus() {
+			return done(
+				await run( () =>
+					api.deleteItem( syllabusId, {
+						children: 'delete',
+						confirm: true,
+					} )
+				)
+			);
+		},
 		async reorderOutline(
 			sourceKey,
 			targetKey,

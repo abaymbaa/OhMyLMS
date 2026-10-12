@@ -48,8 +48,8 @@ test('compare three sources, map reusable skill, rename, connect content and cre
     await workspace.getByRole('button', { name: 'Connect', exact: true }).click();
     await expect(workspace.getByRole('button', { name: 'Disconnect', exact: true })).toBeVisible();
     await workspace.getByRole('button', { name: 'Add chosen skill to roadmap', exact: true }).click();
-    await expect(workspace.getByLabel('New curriculum name', { exact: true })).toHaveValue('Shared Roadmaps');
-    await workspace.getByLabel('New curriculum name', { exact: true }).fill('Shared Roadmaps ' + tag);
+    await expect(workspace.getByLabel('New curriculum name', { exact: true })).toHaveValue('Roadmap');
+    await workspace.getByLabel('New curriculum name', { exact: true }).fill('Roadmap ' + tag);
     await workspace.getByLabel('Grade or level (optional)', { exact: true }).fill('10');
     await workspace.getByRole('button', { name: 'Save as new curriculum', exact: true }).click();
     const roadmap = workspace.getByRole('link', { name: 'Open roadmap to arrange skills, add resources and publish' }); await expect(roadmap).toBeVisible();
@@ -60,7 +60,7 @@ test('compare three sources, map reusable skill, rename, connect content and cre
     await expect(workspace.locator('.ohmylms-comparison-column')).toHaveCount(3);
     await page.screenshot({ path: 'test-results/shared-skills-workspace.png', fullPage: true });
     await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub/curriculum');
-    await expect(page.locator('.ohmylms-cur-tree > li').first()).toContainText('Shared Roadmaps ' + tag);
+    await expect(page.locator('.ohmylms-cur-tree > li').first()).toContainText('Roadmap ' + tag);
     expect(problems).toEqual([]);
   } finally {
     for (const id of items) { const current = await api(page, 'GET', `curriculum/items/${id}`).catch(() => null); await api(page, 'DELETE', `curriculum/items/${id}`, { children: 'delete', confirm: true }).catch(() => null); if(current?.item?.course_id) await api(page, 'DELETE', `courses/${current.item.course_id}`).catch(() => null); }

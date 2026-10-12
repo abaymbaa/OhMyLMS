@@ -1,13 +1,16 @@
+/** @jsx createElement */
 import { createElement, Fragment, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SaveField, Tag } from './WorkspaceParts';
+import { CURRICULUM_PATH } from './workspace.mjs';
 
 /** Profile and publishing controls edited directly on the syllabus home. */
 export function SyllabusOverview() {
 	const w = useWorkspace();
 	const [ confirmPublish, setConfirmPublish ] = useState( false );
+	const [ confirmDelete, setConfirmDelete ] = useState( false );
 	const profile = w.outline.settings || {};
 	const live = w.course?.status === 'publish';
 	const fields = [
@@ -100,6 +103,71 @@ export function SyllabusOverview() {
 						: __( 'Publish syllabus', 'ohmylms' ) }
 				</Button>
 			</section>
+			<section className="ohmylms-syllabus-settings-card">
+				<h3>{ __( 'Delete syllabus', 'ohmylms' ) }</h3>
+				<Button
+					variant="primary"
+					isDestructive
+					disabled={ w.pending }
+					onClick={ () => setConfirmDelete( true ) }
+				>
+					{ __( 'Delete syllabus', 'ohmylms' ) }
+				</Button>
+			</section>
+			{ confirmDelete && (
+				<Modal
+					title={ __( 'Delete syllabus', 'ohmylms' ) }
+					onRequestClose={ () => {
+						if ( ! w.pending ) {
+							setConfirmDelete( false );
+						}
+					} }
+				>
+					{ w.notice?.kind === 'error' && (
+						<Notice status="error" isDismissible={ false }>
+							{ w.notice.text }
+						</Notice>
+					) }
+					<p>
+						{ sprintf(
+							/* translators: %s: syllabus name. */
+							__(
+								'Are you sure you want to delete “%s”?',
+								'ohmylms'
+							),
+							w.outline.syllabus.name
+						) }
+					</p>
+					<p>
+						{ __(
+							'This permanently removes the syllabus, all curriculum items beneath it, its skill groups and structure links. Reusable skills and linked courses, lessons, quizzes, question banks and exams remain in their libraries. This cannot be undone.',
+							'ohmylms'
+						) }
+					</p>
+					<div className="ohmylms-ws-course-actions">
+						<Button
+							variant="secondary"
+							disabled={ w.pending }
+							onClick={ () => setConfirmDelete( false ) }
+						>
+							{ __( 'Cancel', 'ohmylms' ) }
+						</Button>
+						<Button
+							variant="primary"
+							isDestructive
+							isBusy={ w.pending }
+							disabled={ w.pending }
+							onClick={ async () => {
+								if ( await w.actions.deleteSyllabus() ) {
+									window.location.hash = CURRICULUM_PATH;
+								}
+							} }
+						>
+							{ __( 'Delete syllabus', 'ohmylms' ) }
+						</Button>
+					</div>
+				</Modal>
+			) }
 			{ confirmPublish && (
 				<Modal
 					title={ __( 'Publish syllabus', 'ohmylms' ) }

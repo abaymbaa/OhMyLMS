@@ -11,7 +11,7 @@ import { writeComparison } from './comparison.mjs';
  * @param {string} props.subject Initial profile subject or level.
  */
 export function RoadmapBuilder( { skill, subject } ) {
-	const [ name, setName ] = useState( __( 'Shared Roadmaps', 'ohmylms' ) );
+	const [ name, setName ] = useState( __( 'Roadmap', 'ohmylms' ) );
 	const [ grade, setGrade ] = useState( '' );
 	const [ skills, setSkills ] = useState( [] );
 	const [ result, setResult ] = useState( null );

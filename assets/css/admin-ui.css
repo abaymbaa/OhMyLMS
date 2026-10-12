@@ -1208,6 +1208,33 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	background: var(--ohmylms-admin-subtle, #f4f5f7);
 }
 
+.ohmylms-cur-syllabus-shortcuts {
+	margin: 0;
+	padding: 8px 12px 12px 46px;
+	list-style: none;
+}
+
+.ohmylms-cur-syllabus-shortcuts li {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	margin: 0;
+	padding: 4px 0;
+}
+
+.ohmylms-cur-syllabus-path {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-cur-syllabus-path .components-button.is-link {
+	display: inline;
+	height: auto;
+	padding: 0;
+	font-size: inherit;
+	vertical-align: baseline;
+}
+
 .ohmylms-cur-row.is-match {
 	background: var(--ohmylms-primary-soft-color, #f6f3fd);
 	box-shadow: inset 3px 0 0 var(--ohmylms-primary-color, #6e42d3);
@@ -3421,7 +3448,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	max-width: none;
 }
 
-.ohmylms-lesson-block-document .block-editor-block-list__layout {
+.ohmylms-lesson-block-document .block-editor-block-list__layout.is-root-container {
 	min-height: 320px;
 }
 
@@ -4036,4 +4063,108 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-question-live-preview input[type="radio"]::before,
 .ohmylms-question-live-preview input[type="checkbox"]::before {
 	display: none !important;
+}
+
+/* Standalone lessons use the full admin viewport; embedded lessons retain their layout. */
+body:has(.lesson-edit .ohmylms-lesson-editor-page) {
+	overflow: hidden;
+}
+
+body:has(.lesson-edit .ohmylms-lesson-editor-page) #adminmenumain,
+body:has(.lesson-edit .ohmylms-lesson-editor-page) #wpfooter {
+	display: none;
+}
+
+body:has(.lesson-edit .ohmylms-lesson-editor-page) #wpcontent {
+	margin-left: 0;
+	padding-left: 0;
+}
+
+.app-container.lesson-edit:has(.ohmylms-lesson-editor-page) {
+	position: fixed;
+	inset: var(--wp-admin--admin-bar--height, 32px) 0 0;
+	z-index: 100;
+	background: #fff;
+}
+
+.app-container.lesson-edit:has(.ohmylms-lesson-editor-page) > .app-content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 0;
+	overflow: hidden;
+}
+
+.lesson-edit .app-content > .components-card {
+	flex-shrink: 0;
+}
+
+.lesson-edit .ohmylms-lesson-editor-page {
+	flex: 1;
+	min-height: 0 !important;
+}
+
+.lesson-edit .ohmylms-lesson-editor-page .ohmylms-lesson-block-workspace {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.lesson-edit .ohmylms-lesson-block-toolbar {
+	position: relative;
+	top: auto;
+	flex-shrink: 0;
+}
+
+.lesson-edit .ohmylms-lesson-block-body {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.lesson-edit .ohmylms-lesson-block-canvas {
+	background: #fff;
+}
+
+.lesson-edit .ohmylms-lesson-block-document {
+	min-height: 100%;
+	box-sizing: border-box;
+	box-shadow: none;
+}
+
+.lesson-edit .ohmylms-lesson-block-inspector {
+	position: static;
+	max-height: none;
+	align-self: stretch;
+}
+
+@media (min-width: 960px) {
+
+	.lesson-edit .app-content > .components-card {
+		position: absolute;
+		inset: 0 0 auto;
+		z-index: 30;
+		background: transparent;
+		border: 0;
+		box-shadow: none;
+		pointer-events: none;
+	}
+
+	.lesson-edit .app-content > .components-card button {
+		pointer-events: auto;
+	}
+
+	.lesson-edit .app-content > .components-card h4 {
+		display: none;
+	}
+
+	.lesson-edit .ohmylms-lesson-block-toolbar {
+		min-height: 68px;
+		padding-left: 128px;
+		flex-wrap: nowrap;
+	}
+
+	.lesson-edit .ohmylms-lesson-inspector-toggle {
+		margin-right: 180px;
+	}
 }
