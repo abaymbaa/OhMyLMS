@@ -1,15 +1,23 @@
+/** @jsx createElement */
 import { createElement, RawHTML, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { SVG, Path } from '@wordpress/primitives';
 import { parse, serialize, getBlockType, createBlock } from '@wordpress/blocks';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import '@wordpress/format-library';
 import {
 	BlockEditorProvider,
 	BlockList,
+	DefaultBlockAppender,
 	BlockInspector,
 	BlockTools,
 	BlockToolbar,
 	Inserter,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- WordPress exposes its native docked inserter only through this export; unavailable versions retain the standard Inserter.
+	__experimentalLibrary as InserterLibrary,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- WordPress exports its docked block tree under this name; unavailable versions retain BlockNavigationDropdown.
+	__experimentalListView as ListView,
 	WritingFlow,
 	ObserveTyping,
 	BlockNavigationDropdown,
@@ -64,6 +72,53 @@ const LESSON_BLOCKS = [
 ];
 
 /**
+ * Keep Gutenberg's native insertion point available in the lesson canvas gaps.
+ *
+ * @return {Element} Writing canvas with native block controls.
+ */
+function LessonBlockList() {
+	const { showInsertionPoint, stopTyping } =
+		useDispatch( 'core/block-editor' );
+	const isTyping = useSelect(
+		( select ) => select( 'core/block-editor' ).isTyping(),
+		[]
+	);
+	function showGapInserter( event ) {
+		const target = event.target;
+		if (
+			! target.classList.contains( 'is-root-container' ) ||
+			! target.classList.contains( 'block-editor-block-list__layout' )
+		) {
+			return;
+		}
+		const blockElements = Array.from( target.children ).filter( ( child ) =>
+			child.classList.contains( 'block-editor-block-list__block' )
+		);
+		if ( ! blockElements.length ) {
+			return;
+		}
+		const nextIndex = blockElements.findIndex(
+			( block ) => event.clientY < block.getBoundingClientRect().top
+		);
+		if ( isTyping ) {
+			stopTyping();
+		}
+		showInsertionPoint(
+			undefined,
+			nextIndex < 0 ? blockElements.length : nextIndex,
+			{ __unstableWithInserter: true }
+		);
+	}
+	return (
+		<WritingFlow onMouseMove={ showGapInserter }>
+			<ObserveTyping>
+				<BlockList renderAppender={ DefaultBlockAppender } />
+			</ObserveTyping>
+		</WritingFlow>
+	);
+}
+
+/**
  * A full lesson workspace: the inspector shares the block provider with the writing canvas.
  * @param root0
  * @param root0.document
@@ -79,6 +134,7 @@ const LESSON_BLOCKS = [
  * @param root0.beforeContent
  * @param root0.afterContent
  * @param root0.outline
+ * @param root0.dockedInserter
  * @param root0.readOnly
  * @param root0.questionType
  * @param root0.questionBlockContent
@@ -104,6 +160,7 @@ export function BlockWorkspace( {
 	beforeContent,
 	afterContent,
 	outline,
+	dockedInserter = false,
 	readOnly = false,
 	questionType,
 	questionBlockContent,
@@ -140,6 +197,10 @@ export function BlockWorkspace( {
 	const history = useRef( { past: [], future: [], changedAt: 0 } );
 	const [ , updateHistory ] = useState( 0 );
 	const [ fullscreen, setFullscreen ] = useState( false );
+	const [ showInserter, setShowInserter ] = useState( false );
+	const [ showListView, setShowListView ] = useState( false );
+	const hasDockedInserter = dockedInserter && Boolean( InserterLibrary );
+	const hasDockedListView = dockedInserter && Boolean( ListView );
 	const [ showSettings, setShowSettings ] = useState(
 		() => ! compact && window.matchMedia( '(min-width: 781px)' ).matches
 	);
@@ -151,7 +212,7 @@ export function BlockWorkspace( {
 				? questionTypes.map( questionBlockName )
 				: [] ),
 		],
-		hasFixedToolbar: true,
+		hasFixedToolbar: ! dockedInserter,
 		mediaUpload: ( options ) =>
 			uploadMedia( {
 				...options,
@@ -265,21 +326,42 @@ export function BlockWorkspace( {
 						>
 							{ ! customContent && ! readOnly && (
 								<>
-									<Inserter
-										renderToggle={ ( {
-											onToggle,
-											isOpen,
-										} ) => (
-											<Button
-												variant="primary"
-												icon="plus"
-												onClick={ onToggle }
-												aria-expanded={ isOpen }
-											>
-												{ __( 'Add block', 'ohmylms' ) }
-											</Button>
-										) }
-									/>
+									{ hasDockedInserter ? (
+										<Button
+											variant="primary"
+											icon={
+												showInserter ? 'no-alt' : 'plus'
+											}
+											aria-expanded={ showInserter }
+											onClick={ () => {
+												setShowListView( false );
+												setShowInserter(
+													! showInserter
+												);
+											} }
+										>
+											{ __( 'Add block', 'ohmylms' ) }
+										</Button>
+									) : (
+										<Inserter
+											renderToggle={ ( {
+												onToggle,
+												isOpen,
+											} ) => (
+												<Button
+													variant="primary"
+													icon="plus"
+													onClick={ onToggle }
+													aria-expanded={ isOpen }
+												>
+													{ __(
+														'Add block',
+														'ohmylms'
+													) }
+												</Button>
+											) }
+										/>
+									) }
 									<Button
 										icon="undo"
 										label={ __( 'Undo', 'ohmylms' ) }
@@ -296,8 +378,33 @@ export function BlockWorkspace( {
 										}
 										onClick={ () => undo( true ) }
 									/>
-									<BlockNavigationDropdown />
-									<BlockToolbar />
+									{ hasDockedListView ? (
+										<Button
+											icon={
+												<SVG
+													viewBox="0 0 24 24"
+													fill="currentColor"
+												>
+													<Path d="M3 6h11v1.5H3V6Zm3.5 5.5h11V13h-11v-1.5ZM21 17H10v1.5h11V17Z" />
+												</SVG>
+											}
+											label={ __(
+												'List view',
+												'ohmylms'
+											) }
+											aria-expanded={ showListView }
+											isPressed={ showListView }
+											onClick={ () => {
+												setShowInserter( false );
+												setShowListView(
+													! showListView
+												);
+											} }
+										/>
+									) : (
+										<BlockNavigationDropdown />
+									) }
+									{ ! dockedInserter && <BlockToolbar /> }
 								</>
 							) }
 							{ toolbarActions }
@@ -335,8 +442,47 @@ export function BlockWorkspace( {
 							</Button>
 						</div>
 						<div
-							className={ `ohmylms-lesson-block-body${ showSettings ? ' has-inspector' : '' }${ outline ? ' has-outline' : '' }` }
+							className={ `ohmylms-lesson-block-body${ showSettings ? ' has-inspector' : '' }${ outline ? ' has-outline' : '' }${ ( hasDockedInserter && showInserter ) || ( hasDockedListView && showListView ) ? ' has-inserter' : '' }` }
 						>
+							{ hasDockedInserter && showInserter && (
+								<aside
+									className="ohmylms-lesson-block-inserter"
+									aria-label={ __(
+										'Block inserter',
+										'ohmylms'
+									) }
+								>
+									<InserterLibrary
+										shouldFocusBlock
+										onClose={ () =>
+											setShowInserter( false )
+										}
+									/>
+								</aside>
+							) }
+							{ hasDockedListView && showListView && (
+								<aside
+									className="ohmylms-lesson-block-inserter"
+									aria-label={ __( 'List view', 'ohmylms' ) }
+								>
+									<div className="ohmylms-lesson-list-view-header">
+										<strong>
+											{ __( 'List view', 'ohmylms' ) }
+										</strong>
+										<Button
+											icon="no-alt"
+											label={ __(
+												'Close List view',
+												'ohmylms'
+											) }
+											onClick={ () =>
+												setShowListView( false )
+											}
+										/>
+									</div>
+									<ListView isExpanded showBlockMovers />
+								</aside>
+							) }
 							{ outline && (
 								<aside
 									className="ohmylms-block-outline"
@@ -372,11 +518,15 @@ export function BlockWorkspace( {
 									) : (
 										customContent || (
 											<BlockTools>
-												<WritingFlow>
-													<ObserveTyping>
-														<BlockList />
-													</ObserveTyping>
-												</WritingFlow>
+												{ dockedInserter ? (
+													<LessonBlockList />
+												) : (
+													<WritingFlow>
+														<ObserveTyping>
+															<BlockList />
+														</ObserveTyping>
+													</WritingFlow>
+												) }
 											</BlockTools>
 										)
 									) }
@@ -400,6 +550,13 @@ export function BlockWorkspace( {
 									) }
 								>
 									<TabPanel
+										initialTabName={
+											dockedInserter &&
+											! customContent &&
+											! readOnly
+												? 'block'
+												: 'lesson'
+										}
 										tabs={ [
 											{ name: 'lesson', title: label },
 											...( ! customContent && ! readOnly

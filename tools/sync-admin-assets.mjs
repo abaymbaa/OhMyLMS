@@ -4,6 +4,18 @@ import path from 'node:path';
 // Ship the same admin app and SDK used during development, including add-on settings.
 const root = path.resolve( import.meta.dirname, '..' );
 for ( const [ source, target ] of [
+	[
+		'build/sdk/native-lesson-editor.js',
+		'assets/dist/admin/native-lesson-editor.js',
+	],
+	[
+		'build/sdk/native-lesson-editor.js.map',
+		'assets/dist/admin/native-lesson-editor.js.map',
+	],
+	[
+		'build/sdk/native-lesson-editor.asset.php',
+		'assets/dist/admin/native-lesson-editor.asset.php',
+	],
 	[ 'build/sdk/math-runtime.js', 'assets/dist/admin/math-runtime.js' ],
 	[
 		'build/sdk/math-runtime.js.map',

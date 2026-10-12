@@ -1,7 +1,35 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
+/** @jsx createElement */
 import { createElement } from '@wordpress/element';
+import { NativeLessonRoute } from './NativeLessonRoute';
 export function createLessonEditor( readRuntime ) {
+	const LegacyLessonEditor = createLegacyLessonEditor( readRuntime );
 	return function LessonEditor( props ) {
+		const { y: WordPressData, T: StoreModule } = readRuntime();
+		const id = WordPressData.useSelect(
+			( select ) =>
+				props.id || select( StoreModule.default ).geSelectedLessonId(),
+			[ props.id ]
+		);
+		const { setLesson, getLessonByChapterId } = WordPressData.useDispatch(
+			StoreModule.default
+		);
+		return id ? (
+			<NativeLessonRoute
+				{ ...props }
+				id={ id }
+				onLessonLoaded={ setLesson }
+				refreshChapter={ getLessonByChapterId }
+				legacyEditor={ LegacyLessonEditor }
+			/>
+		) : (
+			<LegacyLessonEditor { ...props } />
+		);
+	};
+}
+
+function createLegacyLessonEditor( readRuntime ) {
+	return function LegacyLessonEditor( props ) {
 		const {
 			$r,
 			Br,

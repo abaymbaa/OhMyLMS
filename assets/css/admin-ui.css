@@ -3275,7 +3275,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-lesson-block-body.has-inspector {
-	grid-template-columns: minmax(0, 1fr) 300px;
+	grid-template-columns: minmax(0, 1fr) var(--ohmylms-inspector-width, 300px);
 }
 
 .ohmylms-lesson-block-body.has-outline {
@@ -3450,6 +3450,14 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-lesson-block-document .block-editor-block-list__layout.is-root-container {
 	min-height: 320px;
+}
+
+.lesson-edit .ohmylms-lesson-block-document .is-root-container {
+	padding-block: 24px;
+}
+
+.lesson-edit .ohmylms-lesson-block-document .is-root-container > .wp-block {
+	margin-block: 24px;
 }
 
 .ohmylms-lesson-block-inspector {
@@ -4117,6 +4125,7 @@ body:has(.lesson-edit .ohmylms-lesson-editor-page) #wpcontent {
 }
 
 .lesson-edit .ohmylms-lesson-block-body {
+	--ohmylms-inspector-width: 260px;
 	flex: 1;
 	min-height: 0;
 	overflow: hidden;
@@ -4136,6 +4145,58 @@ body:has(.lesson-edit .ohmylms-lesson-editor-page) #wpcontent {
 	position: static;
 	max-height: none;
 	align-self: stretch;
+	font-size: 13px;
+}
+
+.lesson-edit .ohmylms-lesson-document-settings h3,
+.lesson-edit .ohmylms-lesson-document-settings h4,
+.lesson-edit .ohmylms-lesson-document-settings label {
+	font-size: 14px !important;
+	line-height: 1.5;
+}
+
+.lesson-edit .ohmylms-lesson-block-inspector .components-button {
+	font-size: 13px;
+}
+
+.ohmylms-lesson-block-body.has-inserter {
+	grid-template-columns: 350px minmax(0, 1fr);
+}
+
+.ohmylms-lesson-block-body.has-inserter.has-inspector {
+	grid-template-columns: 350px minmax(0, 1fr) var(--ohmylms-inspector-width, 300px);
+}
+
+.ohmylms-lesson-block-inserter {
+	min-width: 0;
+	overflow: auto;
+	border-right: 1px solid #e0e3e8;
+	background: #fff;
+}
+
+.ohmylms-lesson-block-inserter .block-editor-tabbed-sidebar {
+	width: 100%;
+}
+
+.ohmylms-lesson-list-view-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 16px;
+	border-bottom: 1px solid #e0e3e8;
+	font-size: 13px;
+}
+
+@media (max-width: 780px) {
+
+	.ohmylms-lesson-block-body.has-inserter,
+	.ohmylms-lesson-block-body.has-inserter.has-inspector {
+		grid-template-columns: minmax(160px, 35%) minmax(0, 1fr);
+	}
+
+	.has-inserter .ohmylms-lesson-block-inspector {
+		grid-column: 1 / -1;
+	}
 }
 
 @media (min-width: 960px) {
