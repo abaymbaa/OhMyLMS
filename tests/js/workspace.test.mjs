@@ -389,7 +389,7 @@ test( 'outline drops reject other parents, different kinds, the syllabus root, a
 	);
 } );
 
-test( 'all legacy skill groups flatten into topic skills without changing stored placements', () => {
+test( 'all syllabuses expose skill groups while preserving placements and cross-group moves', () => {
 	const tree = buildOutline( {
 		contents: [
 			{ id: 1, name: 'S', depth: 0, groups: [] },
@@ -411,11 +411,11 @@ test( 'all legacy skill groups flatten into topic skills without changing stored
 	} );
 	assert.deepEqual(
 		children.map( ( child ) => child.kind ),
-		[ 'skill', 'skill', 'skill' ]
+		[ 'group', 'group', 'group' ]
 	);
 	assert.deepEqual( displayCounts( tree.root ), {
 		topics: 1,
-		chapters: 0,
+		chapters: 3,
 		skills: 3,
 	} );
 	assert.equal(

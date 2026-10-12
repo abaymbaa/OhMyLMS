@@ -18,6 +18,7 @@ import {
 } from './WorkspaceParts';
 import {
 	displayCounts,
+	chaptersOf,
 	outlineDropPosition,
 	pathTo,
 	topicLabel,
@@ -56,6 +57,7 @@ export function TopicPane( { node } ) {
 		( child ) => child.kind === 'skill'
 	);
 	const topics = topicsOf( node );
+	const groups = chaptersOf( node );
 	const endDrag = () => {
 		setDragged( '' );
 		setDropTarget( null );
@@ -284,6 +286,15 @@ export function TopicPane( { node } ) {
 							disabled={ w.pending }
 							items={ [
 								{
+									key: 'chapter',
+									title: __( 'Skill group', 'ohmylms' ),
+									info: __(
+										'A group of related learning objectives',
+										'ohmylms'
+									),
+									onClick: () => setAdding( 'chapter' ),
+								},
+								{
 									key: 'topic',
 									title: __( 'Topic', 'ohmylms' ),
 									info: __(
@@ -304,6 +315,20 @@ export function TopicPane( { node } ) {
 							] }
 						/>
 					</div>
+					{ adding === 'chapter' && (
+						<QuickAdd
+							nameLabel={ __( 'Skill group name', 'ohmylms' ) }
+							codeLabel={ __( 'Code', 'ohmylms' ) }
+							submitLabel={ __( 'Add skill group', 'ohmylms' ) }
+							pending={ w.pending }
+							onAdd={ ( data ) =>
+								w.actions.addChapter( node.id, data, {
+									open: false,
+								} )
+							}
+							onCancel={ () => setAdding( '' ) }
+						/>
+					) }
 					{ adding === 'skill' && (
 						<QuickAdd
 							nameLabel={ __( 'Skill name', 'ohmylms' ) }
@@ -338,8 +363,30 @@ export function TopicPane( { node } ) {
 							onCancel={ () => setAdding( '' ) }
 						/>
 					) }
-					{ skills.length + topics.length > 0 ? (
+					{ skills.length + topics.length + groups.length > 0 ? (
 						<ul className="ohmylms-ws-rows">
+							{ groups.map( ( child ) => (
+								<Row
+									key={ child.key }
+									kind="chapter"
+									title={
+										child.group.code
+											? `${ child.group.code } · ${ child.group.name }`
+											: child.group.name
+									}
+									tag={ __( 'Skill group', 'ohmylms' ) }
+									meta={ sprintf(
+										_n(
+											'%d skill',
+											'%d skills',
+											child.children.length,
+											'ohmylms'
+										),
+										child.children.length
+									) }
+									onOpen={ () => w.select( child.key ) }
+								/>
+							) ) }
 							{ topics.map( ( child ) => {
 								const counts = displayCounts(
 									child,

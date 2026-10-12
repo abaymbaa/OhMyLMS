@@ -53,6 +53,7 @@ class Api {
 			\OhMyLMS\Rest\V1\SyllabusController::class,
 			\OhMyLMS\Rest\V1\CourseOrganizationController::class,
 			\OhMyLMS\Rest\V1\SkillMappingController::class,
+			\OhMyLMS\Rest\V1\ComparisonController::class,
 			\OhMyLMS\Rest\V1\TrackController::class,
 			\OhMyLMS\Rest\V1\MyTracksController::class,
 			\OhMyLMS\Rest\V1\PreviewController::class,

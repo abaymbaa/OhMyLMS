@@ -155,6 +155,8 @@ final class Taxonomy {
 			'id'              => (int) $term->term_id,
 			'uuid'            => self::uuid( $term->term_id ),
 			'name'            => self::plain( $term->name ),
+			'objective'       => Objectives::get( $term ),
+			'translations'    => Translations::get( $term->term_id ),
 			'slug'            => $term->slug,
 			'code'            => (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ),
 			'description'     => self::plain( $term->description ),

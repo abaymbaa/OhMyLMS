@@ -73,9 +73,9 @@ final class Abilities {
 						// Exposed only on the explicitly configured LMS server, not the adapter's default discovery server.
 						'mcp'          => array( 'public' => false ),
 						'annotations'  => array(
-							'readonly'    => true,
-							'destructive' => false,
-							'idempotent'  => true,
+							'readonly'    => $tool['readonly'] ?? true,
+							'destructive' => $tool['destructive'] ?? false,
+							'idempotent'  => $tool['idempotent'] ?? true,
 						),
 					),
 				)
@@ -91,7 +91,13 @@ final class Abilities {
 				return new \WP_Error( 'ohmylms_ability_invalid_input', 'Invalid argument type.' );
 			}
 		}
-		$request = new \WP_REST_Request( 'GET', '/ohmylms/v1' . str_replace( '{id}', (string) ( $args['id'] ?? '' ), $tool['route'] ) );
+		$method  = $tool['method'] ?? 'GET';
+		$route = str_replace( array( '{id}', '{student_id}' ), array( (string) ( $args['id'] ?? '' ), (string) ( $args['student_id'] ?? '' ) ), $tool['route'] );
+		$request = new \WP_REST_Request( $method, '/ohmylms/v1' . $route );
+		if ( 'GET' !== $method ) {
+			$request->set_header( 'Content-Type', 'application/json' );
+			$request->set_body( wp_json_encode( $args ) );
+		}
 		if ( $tool['list'] ) {
 			$request->set_query_params(
 				array_merge(

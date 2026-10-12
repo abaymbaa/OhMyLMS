@@ -6,7 +6,7 @@ It is an OhMyLMS format, not an industry standard. IMS QTI (the 1EdTech standard
 
 ## Using it
 
-- **Export:** Content Hub → Quizzes → the `…` menu on a quiz row → **Export**. The browser downloads `<quiz name>.ohmylms.json`. It holds every answer key, so only people who can edit the quiz may export it.
+- **Export:** Content Hub → Quizzes → the `…` menu on a quiz row → **Export**, or the **Export** button in the quiz editor's header. The browser downloads `<quiz name>.ohmylms.json`. It holds every answer key, so only people who can edit the quiz may export it. The editor button saves your latest edits first (the same way Publish does), then exports; if the save fails or the current question is incomplete, nothing is exported and the editor shows why.
 - **Import:** Content Hub → Quizzes → **Import**. Choosing a file checks it at once and shows what it holds (questions, points, types, randomized questions) or every problem with its question number. Nothing is created until the file is clean and you press Import.
 - **Download an example file** in the dialog gives a small valid file (a choice question, a fill-in-the-blank and a randomized question). To learn the shape of any other question type, build one in the editor and export it.
 

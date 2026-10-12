@@ -1,0 +1,54 @@
+.ohmylms-comparison {
+	padding: 24px;
+}
+
+.ohmylms-comparison .ohmylms-comparison-selectors,
+.ohmylms-comparison .ohmylms-comparison-pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.ohmylms-comparison .ohmylms-comparison-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr) minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
+	overflow-x: auto;
+	max-height: calc(100vh - 300px);
+	min-height: 480px;
+}
+
+.ohmylms-comparison .ohmylms-comparison-column,
+.ohmylms-comparison .ohmylms-comparison-center {
+	min-width: 0;
+	padding: 20px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	overflow-wrap: anywhere;
+	max-height: calc(100vh - 320px);
+	overflow-y: auto;
+}
+
+.ohmylms-comparison .ohmylms-comparison-objective {
+	padding: 16px 0;
+	border-top: 1px solid #dcdcde;
+}
+
+@media (max-width: 1100px) {
+
+	.ohmylms-comparison .ohmylms-comparison-grid {
+		display: flex;
+		flex-direction: column;
+		max-height: none;
+	}
+
+	.ohmylms-comparison .ohmylms-comparison-column,
+	.ohmylms-comparison .ohmylms-comparison-center {
+		width: 100%;
+		max-height: none;
+	}
+}

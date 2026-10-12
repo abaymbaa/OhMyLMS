@@ -20,6 +20,7 @@ class WP_Error {
 }
 require dirname(__DIR__, 2) . '/includes/MCP/Server.php';
 require dirname(__DIR__, 2) . '/includes/MCP/Abilities.php';
+require dirname(__DIR__, 2) . '/includes/MCP/ComparisonTools.php';
 use OhMyLMS\MCP\Server;
 use OhMyLMS\MCP\Abilities;
 function mcp_addon_check($condition, $message) { if (!$condition) throw new RuntimeException($message); }
@@ -39,7 +40,11 @@ mcp_addon_check(Server::enabled() && Server::manifest([])['mcp']['is_enable'] ==
 Server::register_server($adapter);
 mcp_addon_check($adapter->calls === 1, 'Enabled add-on creates a server.');
 Abilities::register();
-mcp_addon_check(count($GLOBALS['mcp_abilities']) === 9, 'Enabled MCP exposes its nine read-only abilities.');
+mcp_addon_check(count($GLOBALS['mcp_abilities']) === 22, 'Enabled MCP preserves nine content reads and adds thirteen explicit shared-skill, roadmap and audit abilities.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/list-courses']['meta']['annotations']['readonly'], 'Existing content tools remain read-only.');
+mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-skill-mapping']['meta']['annotations']['readonly'], 'Mapping writes are accurately annotated.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/remove-skill-mapping']['meta']['annotations']['destructive'], 'Mapping removals are accurately annotated.');
+mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/create-shared-skill-roadmap']['meta']['annotations']['idempotent'], 'Roadmap creation is not presented as idempotent.');
 $permission = $GLOBALS['mcp_abilities']['ohmylms/list-courses']['permission_callback'];
 mcp_addon_check($permission(), 'Enabled administrator can use an ability.');
 $GLOBALS['mcp_integrations']['mcp']['is_enable'] = 0;

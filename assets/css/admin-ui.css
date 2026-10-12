@@ -2093,6 +2093,100 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	flex-shrink: 0;
 }
 
+.ohmylms-ws-objective-editor {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ohmylms-ws-objective-columns {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.ohmylms-ws-language-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.ohmylms-ws-language-buttons .components-button,
+.ohmylms-ws-objective-draft-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.ohmylms-ws-objective-resize {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 8px 0;
+	font-size: 12px;
+}
+
+.ohmylms-ws-objective-resize input {
+	flex: 1;
+	min-width: 0;
+	cursor: ns-resize;
+}
+
+.ohmylms-ws-objective-column {
+	min-width: 0;
+}
+
+.ohmylms-ws-objective-frame {
+	position: relative;
+}
+
+.ohmylms-ws-objective-frame .ohmylms-ws-objective-translate.components-button {
+	position: absolute;
+	right: 8px;
+	top: calc(var(--ws-objective-height, 240px) - 18px);
+	max-width: calc(100% - 16px);
+	height: 30px;
+	padding: 4px 8px;
+	font-size: 12px;
+}
+
+.ohmylms-ws-field textarea.ohmylms-ws-objective {
+	width: 100%;
+	min-height: 140px;
+	padding: 10px 12px;
+	border: 1px solid var(--ws-border);
+	border-radius: 4px;
+	background: var(--ohmylms-admin-surface, #fff);
+	color: inherit;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	resize: vertical;
+}
+
+.ohmylms-ws-objective-columns textarea.ohmylms-ws-objective {
+	height: var(--ws-objective-height, 240px);
+	min-height: 160px;
+	padding-bottom: 48px;
+	resize: none;
+}
+
+
+.ohmylms-ws-field textarea.ohmylms-ws-objective:focus {
+	border-color: var(--ws-primary);
+	outline: 2px solid var(--ws-primary);
+	outline-offset: 1px;
+}
+
+@media (max-width: 782px) {
+
+	.ohmylms-ws-objective-columns {
+		grid-template-columns: 1fr;
+	}
+}
+
 .ohmylms-ws-field {
 	display: flex;
 	flex-direction: column;
@@ -2138,6 +2232,23 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-ws-title:hover {
 	border-bottom-color: var(--ws-border);
+}
+
+.ohmylms-ws-field textarea.ohmylms-ws-title {
+	min-height: 120px;
+	padding: 10px 12px;
+	border: 1px solid var(--ws-border);
+	border-radius: 4px;
+	font-size: 22px;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	resize: vertical;
+}
+
+.ohmylms-ws-field textarea.ohmylms-ws-title:focus {
+	border-color: var(--ws-primary);
+	outline: 2px solid var(--ws-primary);
+	outline-offset: 1px;
 }
 
 .ohmylms-ws-title:focus {

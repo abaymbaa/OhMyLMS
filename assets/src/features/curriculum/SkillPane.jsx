@@ -1,11 +1,13 @@
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { SkillObjectiveFields } from './SkillObjectiveFields';
+import { skillText, skillPatch } from './skillTranslations.mjs';
 import { SelectControl } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
 import { SkillCategoryChoices } from './SkillCategoryChoices';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
-import { validateSkill } from './syllabus.mjs';
+import { validateSkill, groupLabel } from './syllabus.mjs';
 import { Breadcrumb, MESSAGES, RowMenu, SaveField } from './WorkspaceParts';
 import { pathTo, stepAmongSiblings, topicLabel } from './workspace.mjs';
 import { categoryAppearance } from './categoryAppearance.mjs';
@@ -18,6 +20,9 @@ import { categoryAppearance } from './categoryAppearance.mjs';
 export function SkillPane( { node } ) {
 	const w = useWorkspace();
 	const skill = node.skill;
+	const language = w.skillLanguage;
+	const saveText = ( field, text ) =>
+		w.actions.saveSkill( skill, skillPatch( language, field, text ) );
 	const groupId = node.groupId;
 	const parent = w.tree.index.get( node.parentKey );
 	const appearance = categoryAppearance(
@@ -75,33 +80,23 @@ export function SkillPane( { node } ) {
 		<div className="ohmylms-ws-pane">
 			<Breadcrumb
 				nodes={ pathTo( w.tree.index, node.key ).filter(
-					( entry ) => entry.kind !== 'group'
+					( entry ) => entry && entry.kind !== 'skill'
 				) }
-				labelOf={ ( entry ) =>
-					entry.kind === 'skill'
-						? skill.name
-						: entry.depth === 0
-							? entry.content.name
-							: topicLabel( entry.content )
-				}
+				labelOf={ ( entry ) => {
+					if ( entry.kind === 'group' ) {
+						return groupLabel( entry.group );
+					}
+					return entry.depth === 0
+						? entry.content.name
+						: topicLabel( entry.content );
+				} }
 				onSelect={ w.select }
 			/>
 			<header className="ohmylms-ws-pane-head">
 				<div className="ohmylms-ws-pane-title">
-					<SaveField
-						id={ `ohmylms-ws-skill-name-${ skill.term_id }` }
-						label={ __( 'Skill', 'ohmylms' ) }
-						hideLabel
-						value={ skill.name }
-						placeholder={ __(
-							'Enter the learning objective',
-							'ohmylms'
-						) }
-						inputClassName="ohmylms-ws-title"
-						validate={ ( text ) => check( text, 'name' ) }
-						onSave={ ( text ) =>
-							w.actions.saveSkill( skill, { name: text.trim() } )
-						}
+					<SkillObjectiveFields
+						key={ skill.term_id }
+						skill={ skill }
 					/>
 					<RowMenu
 						label={ __( 'Skill actions', 'ohmylms' ) }
@@ -187,19 +182,26 @@ export function SkillPane( { node } ) {
 						__nextHasNoMarginBottom
 					/>
 				</div>
-				<SaveField
-					id={ `ohmylms-ws-skill-notes-${ skill.term_id }` }
-					label={ __( 'Notes or examples', 'ohmylms' ) }
-					hideLabel
-					multiline
-					value={ skill.description }
-					placeholder={ __( 'Add notes or examples …', 'ohmylms' ) }
-					inputClassName="ohmylms-ws-description"
-					validate={ ( text ) => check( text, 'description' ) }
-					onSave={ ( text ) =>
-						w.actions.saveSkill( skill, { description: text } )
-					}
-				/>
+				<details>
+					<summary>
+						{ __( 'Notes and original definition', 'ohmylms' ) }
+					</summary>
+					<SaveField
+						id={ `ohmylms-ws-skill-notes-${ skill.term_id }` }
+						label={ __( 'Notes or examples', 'ohmylms' ) }
+						hideLabel
+						multiline
+						key={ `${ skill.term_id }:${ language }:description` }
+						value={ skillText( skill, language, 'description' ) }
+						placeholder={ __(
+							'Add notes or examples …',
+							'ohmylms'
+						) }
+						inputClassName="ohmylms-ws-description"
+						validate={ ( text ) => check( text, 'description' ) }
+						onSave={ ( text ) => saveText( 'description', text ) }
+					/>
+				</details>
 				<SkillCategoryChoices
 					settings={ w.outline.settings }
 					selected={ appearance.category }

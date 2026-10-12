@@ -1,6 +1,6 @@
-# Shared mathematics skills and syllabus mapping
+# Shared skills, general roadmaps and syllabus mapping
 
-Status: implementation plan; no feature implementation authorized yet.
+Status: implementation authorized and the first reusable implementation is in place. See [SHARED-SKILLS.md](SHARED-SKILLS.md) for the shipped workflow, API, MCP tools, validation and remaining limitations. This original phased plan is retained as context; the current implementation supports multiple sources and any subject, grade or level.
 
 ## Intended result
 

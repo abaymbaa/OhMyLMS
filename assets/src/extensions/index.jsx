@@ -232,6 +232,15 @@ const publicApi = {
 			),
 			// The syllabus editor is a full page opened from the Curriculum tab, like the course editor.
 			{
+				path: '/content-hub/curriculum/compare',
+				element: withContentHubMenu(
+					extensionPage( {
+						id: 'syllabus-comparison',
+						render: curriculumComponents.ComparisonWorkspace,
+					} )
+				),
+			},
+			{
 				path: SYLLABUS_ROUTE,
 				element: withContentHubMenu(
 					extensionPage( {

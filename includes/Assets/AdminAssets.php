@@ -61,6 +61,14 @@ class AdminAssets extends Assets {
 	public function get_styles() {
 		$suffix = '';
 		$styles = array(
+			'ohmylms-syllabus-comparison' => array(
+				'src' => self::get_asset_url( 'assets/css/syllabus-comparison.css' ),
+				'deps' => '',
+				'version' => OHMYLMS_VERSION,
+				'media' => 'all',
+				'has_rtl' => false,
+				'screens' => array( 'toplevel_page_ohmylms' ),
+			),
 			'ohmylms-main'     => array(
 				'src'     => self::get_asset_url( 'assets/dist/css/admin/ohmylms.css' ),
 				'deps'    => '',

@@ -28,7 +28,9 @@ OhMyLMS only adds authentication, connection settings, and WordPress empty-respo
 5. Revoke tokens from the same settings page when no longer needed.
 
 Tokens run as their issuing administrator, who must retain `manage_options` and `edit_posts`.
-They grant **read-only access to course drafts and quiz answer keys**. They are for trusted
+They grant **read-only access to course drafts and quiz answer keys**, plus explicit shared-skill,
+syllabus-mapping, roadmap and resource-connection writes, and administrator study-plan audits.
+They are for trusted
 administrator assistants, not students. Provider names label independently revocable credentials;
 they do not restrict which HTTP client can use a credential. LMS REST permission callbacks still
 run on every tool call. No API keys for model providers are stored by WordPress.
@@ -42,9 +44,33 @@ run on every tool call. No API keys for model providers are stored by WordPress.
 | `get_course_chapters` | Required positive integer course `id` |
 
 List results include pagination totals when supplied by the LMS. Results over 256 KiB return
-an actionable tool error. Writes, payments, student records, credentials, arbitrary REST routes,
-and arbitrary database queries are not exposed. Site plugins can observe completed tool calls with
+an actionable tool error. Payments, credentials, arbitrary REST routes and arbitrary database queries
+are not exposed. Course, lesson, quiz and question content tools remain read-only. Shared-skill tools
+add only their specific administrator writes and progress audits. Site plugins can observe completed tool calls with
 `ohmylms_mcp_tool_called($user_id, $tool_name, $is_error)`; arguments, results, and tokens are not logged.
+
+Shared-skill tools are subject/curriculum independent:
+
+| Tool | Arguments |
+| --- | --- |
+| `list_syllabuses` | None; returns source IDs, versions and profile selections |
+| `list_syllabus_objectives` | `id`; optional `page`, `search`, `topic`, `category`, `status`, `shared_id` |
+| `list_shared_skills` | Optional `subject`, `page`, `search` |
+| `get_shared_skill` | `id`; returns affected objectives and revision |
+| `save_shared_skill` | `name`; optional `id` (0 creates), `subject`, `description`, `topic`; existing edits require `expected_revision` |
+| `save_skill_mapping` | `specific_id`, `shared_id`, `relation`, `expected_revision`; optional `note` |
+| `remove_skill_mapping` | `specific_id`, `shared_id`, `expected_revision` |
+| `list_shared_skill_content` | `id`; optional `kind`, `page`, `search`, `search_targets` (0 or 1) |
+| `connect_shared_skill_content` | `id`, `content_id`, `linked` (boolean) |
+| `create_shared_skill_roadmap` | `name`, ordered unique `skill_ids`; optional `subject`, `grade` |
+| `configure_subject_syllabuses` | `subject` (profile/study-plan label), `syllabus_ids` (up to ten) |
+| `audit_my_study_plans` | None; authenticated account only |
+| `audit_student_study_plans` | `student_id`; administrator only |
+
+Mapping creation sends an empty `expected_revision`; editing/removing sends the current revision
+from `list_syllabus_objectives`. Read a shared skill's impact before changing its scope. Related
+links do not pool evidence or automatically inherit content. Roadmaps reuse shared IDs and start as
+drafts. Profile configuration neither publishes nor enrolls a course. See [shared skills](SHARED-SKILLS.md).
 
 ## WordPress abilities
 
@@ -52,7 +78,7 @@ Each tool is backed by an ability in the `ohmylms` category, for example
 `ohmylms/list-courses`, `ohmylms/get-course`, and `ohmylms/get-course-chapters`.
 Ability IDs replace underscores with hyphens. MCP tool names remain unchanged, preserving
 existing client allowlists. Each ability declares input/output schemas, administrator permissions,
-and read-only/idempotent annotations. Native abilities can also be executed through PHP or the
+and accurate read/write, destructive and idempotent annotations. Native abilities can also be executed through PHP or the
 authenticated WordPress Abilities REST API. They are excluded from the adapter's default discovery
 server and explicitly registered on the dedicated LMS server.
 

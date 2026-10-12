@@ -140,7 +140,7 @@ export const setupComponents = lazyFactories(
 );
 
 export const curriculumComponents = lazyComponents(
-	[ 'CurriculumPage', 'SyllabusPage' ],
+	[ 'CurriculumPage', 'SyllabusPage', 'ComparisonWorkspace' ],
 	() =>
 		import( /* webpackChunkName: "curriculum" */ '../features/curriculum' ),
 	'curriculumComponents'

@@ -400,6 +400,21 @@ final class Progress {
 		return $combined;
 	}
 
+	/**
+	 * Read syllabus objectives and shared mastery without track membership or writes.
+	 *
+	 * @param int   $student Current learner ID, validated by the caller.
+	 * @param array $term_ids Syllabus objective IDs.
+	 * @return array
+	 */
+	public static function for_objectives( $student, array $term_ids ) {
+		$entries = self::skill_entries( (int) $student, $term_ids, array(), array() );
+		return array(
+			'direct' => $entries,
+			'shared' => self::combined( (int) $student, $term_ids, $entries ),
+		);
+	}
+
 	/** Full progress view of one track for one learner. */
 	public static function for_track( array $track, $student ) {
 		$student   = (int) $student;

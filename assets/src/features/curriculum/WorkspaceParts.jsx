@@ -17,6 +17,7 @@ export const MESSAGES = {
  * @param root0.label
  * @param root0.value
  * @param root0.onSave
+ * @param root0.onDraftChange
  * @param root0.validate
  * @param root0.multiline
  * @param root0.hideLabel
@@ -32,6 +33,7 @@ export function SaveField( {
 	label,
 	value,
 	onSave,
+	onDraftChange,
 	validate,
 	multiline = false,
 	hideLabel = false,
@@ -112,7 +114,10 @@ export function SaveField( {
 				onFocus={ () => {
 					editing.current = true;
 				} }
-				onChange={ ( event ) => setDraft( event.target.value ) }
+				onChange={ ( event ) => {
+					setDraft( event.target.value );
+					onDraftChange?.( event.target.value );
+				} }
 				onBlur={ commit }
 				onKeyDown={ ( event ) => {
 					if ( event.key === 'Enter' && ! multiline ) {
@@ -120,6 +125,7 @@ export function SaveField( {
 						event.currentTarget.blur();
 					} else if ( event.key === 'Escape' ) {
 						cancelled.current = true;
+						onDraftChange?.( value ?? '' );
 						event.currentTarget.blur();
 					}
 				} }

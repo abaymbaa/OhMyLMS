@@ -255,7 +255,7 @@ export const chaptersOf = ( node ) =>
 	( node?.children || [] ).filter( ( child ) => child.kind === 'group' );
 
 /**
- * Skill groups stay in storage for existing course links, while topics display one flat list.
+ * Recognize legacy category groups without changing their identity or placement.
  * @param group
  * @param settings
  */
@@ -273,10 +273,7 @@ export const isCategoryGroup = ( group, settings ) =>
 				.trim()
 				.toLowerCase()
 	);
-export const visibleChildren = ( node, settings ) =>
-	( node?.children || [] ).flatMap( ( child ) =>
-		child.kind === 'group' ? child.children : [ child ]
-	);
+export const visibleChildren = ( node ) => node?.children || [];
 
 /**
  * Opening a syllabus starts on its home overview.

@@ -12,6 +12,7 @@ import * as api from './api.mjs';
 import { WorkspaceContext } from './context';
 import { ImportDialog } from './ImportDialog';
 import { SkillPane } from './SkillPane';
+import { ChapterPane } from './ChapterPane';
 import { TopicPane } from './TopicPane';
 import { outlineCsv, templateCsv } from './csv.mjs';
 import { download } from './download.mjs';
@@ -49,6 +50,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const { outline, tree } = ws;
 	const course = outline?.course ?? null;
 	const courseCatalog = useCourseCatalog( course?.id || 0, ws.revision );
+	const [ skillLanguage, setSkillLanguage ] = useState( 'original' );
 	const [ selected, setSelected ] = useState( '' );
 	const [ open, setOpen ] = useState( () => new Set() );
 	const [ collapsed, setCollapsed ] = useState( false );
@@ -75,9 +77,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const resolved = tree.root
 		? resolveKey( tree, selected, remembered.current )
 		: '';
-	const resolvedNode = tree.index.get( resolved );
-	const active =
-		resolvedNode?.kind === 'group' ? resolvedNode.parentKey : resolved;
+	const active = resolved;
 	useEffect( () => {
 		// A node that is deleted falls back to the one it sat in.
 		remembered.current =
@@ -154,6 +154,8 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const name = outline.syllabus.name;
 	const shownCounts = displayCounts( tree.root, outline.settings );
 	const value = {
+		skillLanguage,
+		setSkillLanguage,
 		syllabusId,
 		outline,
 		items: ws.items,
@@ -274,6 +276,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 				</header>
 				<div className="ohmylms-ws-body">
 					<WorkspaceSidebar
+						language={ skillLanguage }
 						tree={ tree }
 						selected={ active }
 						open={ open }
@@ -293,7 +296,15 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						onCloseAll={ () =>
 							setOpen( new Set( [ tree.root.key ] ) )
 						}
-						onAddSkill={ actions.addSkillInTopic }
+						onAddSkill={ ( itemId, data ) => {
+							if ( node.kind === 'group' ) {
+								return actions.addSkill( node.id, data );
+							}
+							if ( node.kind === 'skill' ) {
+								return actions.addSkill( node.groupId, data );
+							}
+							return actions.addSkillInTopic( itemId, data );
+						} }
 						onAddTopic={ ( itemId, data ) =>
 							actions.addTopic( itemId, data, { open: false } )
 						}
@@ -319,6 +330,9 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						</div>
 						{ node.kind === 'content' && (
 							<TopicPane key={ node.key } node={ node } />
+						) }
+						{ node.kind === 'group' && (
+							<ChapterPane key={ node.key } node={ node } />
 						) }
 						{ node.kind === 'skill' && (
 							<SkillPane key={ node.key } node={ node } />

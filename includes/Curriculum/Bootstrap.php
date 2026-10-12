@@ -16,6 +16,8 @@ final class Bootstrap {
 		add_action( 'delete_term', array( __CLASS__, 'term_deleted' ), 10, 3 );
 		add_action( 'deleted_user', array( Follows::class, 'remove_user' ) );
 		\OhMyLMS\Tracks\Frontend::init();
+		SubjectProgress::init();
+		add_action( 'init', array( SharedContent::class, 'register' ), 11 );
 		Directory::init();
 	}
 

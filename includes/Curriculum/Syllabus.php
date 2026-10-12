@@ -179,8 +179,10 @@ final class Syllabus {
 			$skills_of[ (int) $placement['group_id'] ][] = array(
 				'term_id'           => (int) $term->term_id,
 				'name'              => self::text( $term->name ),
+				'objective'         => \OhMyLMS\Skills\Objectives::get( $term ),
 				'code'              => (string) get_term_meta( $term->term_id, self::CODE_META, true ),
 				'category'          => (string) get_term_meta( $term->term_id, self::CATEGORY_META, true ),
+				'translations'      => \OhMyLMS\Skills\Translations::get( $term->term_id ),
 				'category_assigned' => metadata_exists( 'term', $term->term_id, self::CATEGORY_META ),
 				'description'       => self::text( $term->description ),
 			);
@@ -518,6 +520,13 @@ final class Syllabus {
 
 	private static function clean_skill( array $data, $partial ) {
 		$fields = array();
+		if ( array_key_exists( 'objective', $data ) ) {
+			$objective = \OhMyLMS\Skills\Objectives::normalize( $data['objective'] );
+			if ( is_wp_error( $objective ) ) {
+				return $objective;
+			}
+			$fields['objective'] = $objective;
+		}
 		if ( array_key_exists( 'category', $data ) ) {
 			$category = SyllabusRows::line( $data['category'] );
 			if ( mb_strlen( $category ) > 60 ) {
@@ -543,6 +552,13 @@ final class Syllabus {
 			if ( mb_strlen( $description ) > SyllabusRows::DESCRIPTION_LIMIT ) {
 				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'Notes can have at most %d characters.', 'ohmylms' ), SyllabusRows::DESCRIPTION_LIMIT ) ); }
 			$fields['description'] = $description;
+		}
+		if ( array_key_exists( 'translations', $data ) ) {
+			$translations = \OhMyLMS\Skills\Translations::normalize( $data['translations'] );
+			if ( is_wp_error( $translations ) ) {
+				return $translations;
+			}
+			$fields['translations'] = $translations;
 		}
 		return $fields;
 	}
@@ -621,6 +637,18 @@ final class Syllabus {
 				$created = self::create_term( $root, $fields['name'], $fields['code'], $fields['description'], $fields['category'] ?? '' );
 				if ( is_wp_error( $created ) ) {
 					return $created; }
+				if ( isset( $fields['translations'] ) ) {
+					$saved = \OhMyLMS\Skills\Translations::save( $created['term_id'], $fields['translations'] );
+					if ( is_wp_error( $saved ) ) {
+						return $saved;
+					}
+				}
+				if ( isset( $fields['objective'] ) ) {
+					$saved = \OhMyLMS\Skills\Objectives::save( $created['term_id'], $fields['objective'] );
+					if ( is_wp_error( $saved ) ) {
+						return $saved;
+					}
+				}
 				self::place_skill( (int) $group['id'], $created['term_id'], $position );
 				return $created;
 			}
@@ -684,6 +712,15 @@ final class Syllabus {
 			update_term_meta( $term_id, self::CODE_META, mb_substr( $fields['code'], 0, SyllabusRows::SKILL_CODE_LIMIT ) ); }
 		if ( isset( $fields['category'] ) ) {
 			update_term_meta( $term_id, self::CATEGORY_META, $fields['category'] ); }
+		if ( isset( $fields['objective'] ) ) {
+			$saved = \OhMyLMS\Skills\Objectives::save( $term_id, $fields['objective'] );
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
+			}
+		}
+		if ( isset( $fields['translations'] ) ) {
+			return \OhMyLMS\Skills\Translations::save( $term_id, $fields['translations'] );
+		}
 		return true;
 	}
 

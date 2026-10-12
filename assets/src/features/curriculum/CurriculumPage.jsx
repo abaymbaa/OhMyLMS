@@ -370,6 +370,17 @@ export function CurriculumPage() {
 				</Button>
 			}
 		>
+			<p>
+				<Button
+					variant="secondary"
+					href="#/content-hub/curriculum/compare"
+				>
+					{ __(
+						'Compare syllabuses and map shared skills',
+						'ohmylms'
+					) }
+				</Button>
+			</p>
 			<div className="ohmylms-cur-status">
 				{ notice && (
 					<Notice

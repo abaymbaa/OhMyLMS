@@ -11,16 +11,20 @@ import {
 	visibleChildren,
 } from './workspace.mjs';
 import { groupLabel, skillLabel } from './syllabus.mjs';
+import { skillText } from './skillTranslations.mjs';
 import { categoryAppearance } from './categoryAppearance.mjs';
 
-function label( node ) {
+function label( node, language ) {
 	if ( node.kind === 'content' ) {
 		return topicLabel( node.content );
 	}
 	if ( node.kind === 'group' ) {
 		return groupLabel( node.group );
 	}
-	return skillLabel( node.skill );
+	return skillLabel( {
+		...node.skill,
+		name: skillText( node.skill, language ),
+	} );
 }
 
 /**
@@ -36,7 +40,9 @@ function label( node ) {
 function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 	const isOpen = open.has( node.key );
 	const nested = visibleChildren( node, drag.settings ).length > 0;
-	const kind = node.kind === 'content' ? 'topic' : 'skill';
+	const kind = { content: 'topic', group: 'chapter', skill: 'skill' }[
+		node.kind
+	];
 	const total = node.kind === 'group' ? node.children.length : 0;
 	const appearance =
 		node.kind === 'skill'
@@ -65,7 +71,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 							'Reorder %s. Use Alt and arrow keys to move.',
 							'ohmylms'
 						),
-						label( node )
+						label( node, drag.language )
 					) }
 					title={ __(
 						'Drag to reorder; Alt + Up/Down also works',
@@ -86,7 +92,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 							isOpen
 								? __( 'Collapse %s', 'ohmylms' )
 								: __( 'Expand %s', 'ohmylms' ),
-							label( node )
+							label( node, drag.language )
 						) }
 						onClick={ () => onToggle( node.key ) }
 					>
@@ -118,7 +124,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 						color={ appearance?.color }
 					/>
 					<span className="ohmylms-ws-node-label">
-						{ label( node ) }
+						{ label( node, drag.language ) }
 					</span>
 					{ counts && (
 						<span className="ohmylms-ws-node-count">
@@ -189,6 +195,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
  * @param root0.onAddSkill
  * @param root0.onAddTopic
  * @param root0.onReorder
+ * @param root0.language
  * @param root0.settings
  * @param root0.collapsed
  * @param root0.onCollapse
@@ -206,6 +213,7 @@ export function WorkspaceSidebar( {
 	onAddTopic,
 	onReorder,
 	settings,
+	language,
 	collapsed,
 	onCollapse,
 	pending,
@@ -218,6 +226,7 @@ export function WorkspaceSidebar( {
 		setTarget( null );
 	};
 	const drag = {
+		language,
 		pending,
 		target,
 		tree,

@@ -1,0 +1,277 @@
+<?php // phpcs:ignore WordPress.Files.FileName -- PSR-4 namespace/class filename required by the existing Composer autoloader.
+/**
+ * Manual syllabus comparison endpoints.
+ *
+ * @package OhMyLMS
+ */
+
+namespace OhMyLMS\Rest\V1;
+
+use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Curriculum\Access;
+use OhMyLMS\Curriculum\Comparison;
+use OhMyLMS\Curriculum\SkillMappings;
+use WP_REST_Request;
+
+defined( 'ABSPATH' ) || exit;
+
+/** Administrator writes; learner reads are always for the current account. */
+class ComparisonController extends RestController {
+
+	/** Register the additive comparison API. */
+	public function register_routes() {
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/audit/(?P<student_id>\d+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'student_audit' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/audit',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'progress' ),
+				'permission_callback' => array( Access::class, 'learner' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/roadmaps',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'create_roadmap' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/shared-skills/(?P<id>\d+)/content',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( $this, 'content' ),
+					'permission_callback' => array( Access::class, 'admin' ),
+				),
+				array(
+					'methods'             => 'PUT',
+					'callback'            => array( $this, 'link_content' ),
+					'permission_callback' => array( Access::class, 'admin' ),
+				),
+			)
+		);
+		foreach ( array(
+			'/syllabus-comparison/syllabuses'             => array( 'GET', 'syllabuses' ),
+			'/syllabus-comparison/configuration'          => array( 'PUT', 'configure' ),
+			'/syllabus-comparison/objectives/(?P<id>\d+)' => array( 'GET', 'objectives' ),
+			'/syllabus-comparison/shared-skills'          => array( 'GET', 'shared_skills' ),
+			'/syllabus-comparison/shared-skills/(?P<id>\d+)' => array( 'GET', 'shared_skill' ),
+			'/syllabus-comparison/shared-skills/save'     => array( 'POST', 'save_shared' ),
+			'/syllabus-comparison/mapping'                => array( 'PUT', 'save_mapping' ),
+			'/syllabus-comparison/mapping/remove'         => array( 'POST', 'remove_mapping' ),
+		) as $route => $handler ) {
+			register_rest_route(
+				$this->namespace,
+				$route,
+				array(
+					'methods'             => $handler[0],
+					'callback'            => array( $this, $handler[1] ),
+					'permission_callback' => array( Access::class, 'admin' ),
+				)
+			);
+		}
+		register_rest_route(
+			$this->namespace,
+			'/me/subject-skills',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'progress' ),
+				'permission_callback' => array( Access::class, 'learner' ),
+			)
+		);
+	}
+
+	/**
+	 * Create a general draft roadmap from ordered shared IDs.
+	 *
+	 * @param WP_REST_Request $request Roadmap fields.
+	 * @return mixed
+	 */
+	public function create_roadmap( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\Roadmaps::create( $request->get_params() ) );
+	}
+	/**
+	 * Read a shared content page.
+	 *
+	 * @param WP_REST_Request $request Content filters.
+	 * @return mixed
+	 */
+	public function content( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\SharedContent::listing( absint( $request['id'] ), $request->get_params() ) );
+	}
+
+	/**
+	 * Connect reusable content without replacing any other links.
+	 *
+	 * @param WP_REST_Request $request Content connection.
+	 * @return mixed
+	 */
+	public function link_content( WP_REST_Request $request ) {
+		if ( ! $request->has_param( 'linked' ) || ! is_bool( $request['linked'] ) ) {
+			return Access::error( 'ohmylms_content_invalid', __( 'Explicitly choose whether to connect or disconnect the content.', 'ohmylms' ) );
+		}
+		return rest_ensure_response( \OhMyLMS\Curriculum\SharedContent::link( absint( $request['id'] ), absint( $request['content_id'] ), rest_sanitize_boolean( $request['linked'] ) ) );
+	}
+
+	/** Return selectors and the explicitly configured learner sources. */
+	public function syllabuses() {
+		return rest_ensure_response(
+			array(
+				'items'    => Comparison::syllabuses(),
+				'selected' => (array) get_option( Comparison::OPTION, array() ),
+			)
+		);
+	}
+
+	/**
+	 * Designate reviewed profile sources without publishing any course.
+	 *
+	 * @param WP_REST_Request $request Syllabus IDs.
+	 * @return mixed
+	 */
+	public function configure( WP_REST_Request $request ) {
+		$ids     = $request->get_param( 'syllabus_ids' );
+		$subject = sanitize_text_field( (string) $request->get_param( 'subject' ) );
+		if ( '' === $subject || mb_strlen( $subject ) > 100 ) {
+			return Access::error( 'ohmylms_subject_invalid', __( 'Enter a subject up to 100 characters.', 'ohmylms' ) );
+		}
+		if ( ! is_array( $ids ) || count( $ids ) > 10 ) {
+			return Access::error( 'ohmylms_comparison_invalid', __( 'Choose up to ten syllabuses or roadmaps.', 'ohmylms' ) );
+		}
+		$ids = array_values( array_unique( array_map( 'absint', $ids ) ) );
+		foreach ( $ids as $id ) {
+			if ( ! \OhMyLMS\Curriculum\Syllabus::is_syllabus( $id ) ) {
+				return Access::error( 'ohmylms_comparison_invalid', __( 'Choose existing syllabuses.', 'ohmylms' ) );
+			}
+		}
+		$saved = \OhMyLMS\Curriculum\Items::exclusive(
+			static function () use ( $subject, $ids ) {
+				$config             = (array) get_option( Comparison::OPTION, array() );
+				$config[ $subject ] = $ids;
+				update_option( Comparison::OPTION, $config, false );
+				return true;
+			}
+		);
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+		return $this->syllabuses();
+	}
+
+	/**
+	 * Read one bounded objective page.
+	 *
+	 * @param WP_REST_Request $request Filters.
+	 * @return mixed
+	 */
+	public function objectives( WP_REST_Request $request ) {
+		return rest_ensure_response( Comparison::page( (int) $request['id'], $request->get_params() ) );
+	}
+
+	/**
+	 * Read shared skills.
+	 *
+	 * @param WP_REST_Request $request Search and paging.
+	 * @return mixed
+	 */
+	public function shared_skills( WP_REST_Request $request ) {
+		return rest_ensure_response( Comparison::shared_skills( $request->get_params() ) );
+	}
+
+	/**
+	 * Read a skill and all affected objectives.
+	 *
+	 * @param WP_REST_Request $request Skill ID.
+	 * @return mixed
+	 */
+	public function shared_skill( WP_REST_Request $request ) {
+		$skill = Comparison::shared_skill( (int) $request['id'] );
+		return $skill ? rest_ensure_response( $skill ) : Access::error( 'ohmylms_shared_missing', __( 'Shared skill not found.', 'ohmylms' ), 404 );
+	}
+
+	/**
+	 * Save a stable shared skill.
+	 *
+	 * @param WP_REST_Request $request Skill fields.
+	 * @return mixed
+	 */
+	public function save_shared( WP_REST_Request $request ) {
+		return rest_ensure_response( Comparison::save_shared( absint( $request['id'] ), $request->get_params() ) );
+	}
+
+	/**
+	 * Save one explicit mapping after checking its current revision.
+	 *
+	 * @param WP_REST_Request $request Mapping and expected revision.
+	 * @return mixed
+	 */
+	public function save_mapping( WP_REST_Request $request ) {
+		if ( ! $request->has_param( 'expected_revision' ) || ! Comparison::shared_skill( absint( $request['shared_id'] ) ) ) {
+			return Access::error( 'ohmylms_comparison_invalid', __( 'Choose a shared skill and reload the current mapping.', 'ohmylms' ) );
+		}
+		return rest_ensure_response( SkillMappings::save( absint( $request['specific_id'] ), absint( $request['shared_id'] ), (string) $request['relation'], (string) $request['note'], (string) $request['expected_revision'] ) );
+	}
+
+	/**
+	 * Remove a mapping under the same lock as mapping saves.
+	 *
+	 * @param WP_REST_Request $request Mapping and expected revision.
+	 * @return mixed
+	 */
+	public function remove_mapping( WP_REST_Request $request ) {
+		global $wpdb;
+		$lock = SkillMappings::LOCK . '-' . md5( $wpdb->prefix );
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) ) {
+			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 );
+		}
+		try {
+			$mappings = SkillMappings::for_skill( absint( $request['specific_id'] ) );
+			foreach ( $mappings['maps_to'] as $mapping ) {
+				$shared_id        = absint( $request['shared_id'] );
+				$expected         = (string) $request['expected_revision'];
+				$current_revision = Comparison::revision( array( $mapping['relation'], $mapping['note'] ) );
+				if ( $shared_id === (int) $mapping['shared_id'] && $expected === $current_revision ) {
+					if ( ! SkillMappings::remove( $mapping['specific_id'], $mapping['shared_id'] ) ) {
+						return Access::error( 'ohmylms_mapping_failed', __( 'The mapping could not be removed.', 'ohmylms' ), 500 );
+					}
+					return rest_ensure_response( array( 'removed' => true ) );
+				}
+			}
+			return Access::error( 'ohmylms_mapping_stale', __( 'This mapping changed. Reload before removing it.', 'ohmylms' ), 409 );
+		} finally {
+			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
+		}
+	}
+
+	/**
+	 * Audit a specified account for curriculum administrators only.
+	 *
+	 * @param WP_REST_Request $request Learner ID.
+	 * @return mixed
+	 */
+	public function student_audit( WP_REST_Request $request ) {
+		$id = absint( $request['student_id'] );
+		if ( ! get_user_by( 'id', $id ) ) {
+			return Access::error( 'ohmylms_student_missing', __( 'Student not found.', 'ohmylms' ), 404 );
+		}
+		return rest_ensure_response( \OhMyLMS\Curriculum\SubjectProgress::all_progress( $id ) );
+	}
+
+	/** Read the signed-in learner's progress; a student_id parameter is ignored. */
+	public function progress() {
+		return rest_ensure_response( \OhMyLMS\Curriculum\SubjectProgress::all_progress( get_current_user_id() ) );
+	}
+}

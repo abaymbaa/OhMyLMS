@@ -5,6 +5,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Tooltip } from '@wordpress/components';
 import { useQuizEditor } from './useQuizEditor';
 import { loadQuiz } from './api.mjs';
 import { BankPicker } from '../question-bank/BankPicker';
@@ -14,6 +15,8 @@ import { FormWorkspace } from '../question-editor/FormWorkspace';
 import { QuizQuestionCards } from './QuizQuestionCards';
 import { QuestionSkills, useSkillList } from './QuizSkills';
 import { QuizSkillsTab } from './QuizSkillsTab';
+import { ExportIcon, useExportQuiz } from '../content-hub/QuizActions';
+import { BankIcon } from './QuizHeaderIcons';
 
 /**
  * Named React editor; the bridge retains existing controls, routes and store.
@@ -54,6 +57,7 @@ export function createQuizEditor( readRuntime ) {
 		const [ pickerOpen, setPickerOpen ] = useState( false );
 		const [ view, setView ] = useState( 'questions' );
 		const skills = useSkillList();
+		const quizExport = useExportQuiz( openNotificationWithIcon );
 		useEffect( () => {
 			if ( isSettingsOpen ) {
 				setView( 'quiz' );
@@ -73,6 +77,13 @@ export function createQuizEditor( readRuntime ) {
 		}, [ editor.notice ] );
 		function openSettings() {
 			setView( 'quiz' );
+		}
+		/** The file holds the saved quiz, so save first (as Publish does) and export only if that worked. */
+		async function handleExport() {
+			if ( ! editor.quiz?.id || ! ( await editor.save() ) ) {
+				return;
+			}
+			await quizExport.exportQuiz( editor.quiz.id );
 		}
 		async function handleDuplicated( copy, originalId ) {
 			const fresh = await loadQuiz( editor.quiz.id );
@@ -94,42 +105,67 @@ export function createQuizEditor( readRuntime ) {
 						className="ohmylms-quiz-header"
 						rightContent={
 							<Fragment>
-								<Button
-									variant="secondary"
-									onClick={ () =>
-										navigate( `/quiz-report/${ route.id }` )
-									}
-									icon={ <ResultIcon /> }
+								<Tooltip text={ __( 'Result', 'ohmylms' ) }>
+									<Button
+										variant="secondary"
+										onClick={ () =>
+											navigate( `/quiz-report/${ route.id }` )
+										}
+										icon={ <ResultIcon /> }
+										aria-label={ __( 'Result', 'ohmylms' ) }
+									/>
+								</Tooltip>
+								<Tooltip
+									text={ __( 'Preview saved quiz', 'ohmylms' ) }
 								>
-									{ __( 'Result', 'ohmylms' ) }
-								</Button>
-								<Button
-									variant="secondary"
-									onClick={ () =>
-										window.open(
-											editor.quiz.preview_url,
-											'_blank'
-										)
-									}
-									disabled={
-										editor.loading ||
-										! editor.quiz?.preview_url
-									}
-									title={ __(
-										'Preview saved quiz',
+									<Button
+										variant="secondary"
+										onClick={ () =>
+											window.open(
+												editor.quiz.preview_url,
+												'_blank'
+											)
+										}
+										disabled={
+											editor.loading ||
+											! editor.quiz?.preview_url
+										}
+										icon={ <PreviewIcon /> }
+										aria-label={ __(
+											'Preview saved quiz',
+											'ohmylms'
+										) }
+									/>
+								</Tooltip>
+								<Tooltip
+									text={ __(
+										'Export quiz (saves, then downloads a file)',
 										'ohmylms'
 									) }
-									icon={ <PreviewIcon /> }
 								>
-									{ __( 'Preview', 'ohmylms' ) }
-								</Button>
-								<Button
-									variant="secondary"
-									onClick={ () => setPickerOpen( true ) }
-									disabled={ ! editor.quiz?.id }
-								>
-									{ __( 'Add from bank', 'ohmylms' ) }
-								</Button>
+									<Button
+										variant="secondary"
+										onClick={ handleExport }
+										isBusy={ quizExport.busyId > 0 }
+										disabled={
+											editor.loading ||
+											editor.saving ||
+											quizExport.busyId > 0 ||
+											! editor.quiz?.id
+										}
+										icon={ <ExportIcon /> }
+										aria-label={ __( 'Export quiz', 'ohmylms' ) }
+									/>
+								</Tooltip>
+								<Tooltip text={ __( 'Add from bank', 'ohmylms' ) }>
+									<Button
+										variant="secondary"
+										onClick={ () => setPickerOpen( true ) }
+										disabled={ ! editor.quiz?.id }
+										icon={ <BankIcon /> }
+										aria-label={ __( 'Add from bank', 'ohmylms' ) }
+									/>
+								</Tooltip>
 								<Button
 									variant="primary"
 									onClick={ editor.save }

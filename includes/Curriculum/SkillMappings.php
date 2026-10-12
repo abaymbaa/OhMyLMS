@@ -73,8 +73,17 @@ final class SkillMappings {
 		return $rows ?: array();
 	}
 
-	/** Create or update one mapping. @return array|\WP_Error */
-	public static function save( $specific_id, $shared_id, $relation = 'equivalent', $note = '' ) {
+	/**
+	 * Create or update one mapping under the shared mapping lock.
+	 *
+	 * @param int         $specific_id Source skill ID.
+	 * @param int         $shared_id Shared target ID.
+	 * @param string      $relation Equivalent or related.
+	 * @param string      $note Scope and version differences.
+	 * @param string|null $expected_revision Current pair revision; null preserves legacy callers.
+	 * @return array|\WP_Error
+	 */
+	public static function save( $specific_id, $shared_id, $relation = 'equivalent', $note = '', $expected_revision = null ) {
 		global $wpdb;
 		$specific_id = (int) $specific_id;
 		$shared_id   = (int) $shared_id;
@@ -86,6 +95,9 @@ final class SkillMappings {
 			return Access::error( 'ohmylms_mapping_invalid', __( 'Notes can have at most 1000 characters.', 'ohmylms' ) ); }
 		if ( $specific_id === $shared_id ) {
 			return Access::error( 'ohmylms_mapping_invalid', __( 'A skill cannot be mapped to itself.', 'ohmylms' ) ); }
+		if ( metadata_exists( 'term', $specific_id, Comparison::SUBJECT_META ) ) {
+			return Access::error( 'ohmylms_mapping_chain', __( 'A reusable shared skill cannot point to another shared skill. Map a source syllabus objective instead.', 'ohmylms' ), 409 );
+		}
 		foreach ( array( $specific_id, $shared_id ) as $term_id ) {
 			if ( $term_id <= 0 || ! term_exists( $term_id, Taxonomy::NAME ) ) {
 				return Access::error( 'ohmylms_mapping_invalid', __( 'Both skills must exist.', 'ohmylms' ), 404 ); }
@@ -95,6 +107,13 @@ final class SkillMappings {
 			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 ); }
 		try {
 			$table = self::table();
+			if ( null !== $expected_revision ) {
+				$current  = $wpdb->get_row( $wpdb->prepare( 'SELECT relation, note FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ), ARRAY_A );
+				$revision = $current ? Comparison::revision( array( $current['relation'], (string) $current['note'] ) ) : '';
+				if ( $expected_revision !== $revision ) {
+					return Access::error( 'ohmylms_mapping_stale', __( 'This mapping changed. Reload before saving.', 'ohmylms' ), 409 );
+				}
+			}
 			if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE shared_term_id=%d LIMIT 1", $specific_id ) ) ) {
 				return Access::error( 'ohmylms_mapping_chain', __( 'This skill is already the shared skill for other skills. A skill cannot be both, so evidence is never combined through two steps.', 'ohmylms' ), 409 );
 			}
@@ -138,14 +157,14 @@ final class SkillMappings {
 
 	public static function remove( $specific_id, $shared_id ) {
 		global $wpdb;
-		$wpdb->delete(
+		$result = $wpdb->delete(
 			self::table(),
 			array(
 				'specific_term_id' => (int) $specific_id,
 				'shared_term_id'   => (int) $shared_id,
 			)
 		);
-		return true;
+		return false !== $result;
 	}
 
 	/** Drop mappings of a deleted skill. */

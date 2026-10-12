@@ -21,6 +21,15 @@ class SkillController extends RestController {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
+			'/skills/(?P<id>[\d]+)/translate',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'translate' ),
+				'permission_callback' => array( $this, 'author_permission' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/skills',
 			array(
 				array(
@@ -94,6 +103,19 @@ class SkillController extends RestController {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Return a draft using the configured provider, without writing skill data.
+	 *
+	 * @param WP_REST_Request $request Translation source and target locale.
+	 * @return \WP_REST_Response|WP_Error
+	 */
+	public function translate( WP_REST_Request $request ) {
+		if ( ! term_exists( (int) $request['id'], Taxonomy::NAME ) ) {
+			return new WP_Error( 'ohmylms_skill_missing', __( 'Skill not found.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		return rest_ensure_response( \OhMyLMS\Skills\Translations::preview( $request['locale'], $request['source'] ) );
 	}
 
 	public function author_permission( $request = null ) {
@@ -191,6 +213,26 @@ class SkillController extends RestController {
 	}
 
 	private function apply_meta( $id, WP_REST_Request $request ) {
+		if ( isset( $request['objective'] ) ) {
+			$objective = \OhMyLMS\Skills\Objectives::normalize( $request['objective'] );
+			if ( is_wp_error( $objective ) ) {
+				return $objective;
+			}
+			$saved = \OhMyLMS\Skills\Objectives::save( $id, $objective );
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
+			}
+		}
+		if ( isset( $request['translations'] ) ) {
+			$translations = \OhMyLMS\Skills\Translations::normalize( $request['translations'] );
+			if ( is_wp_error( $translations ) ) {
+				return $translations;
+			}
+			$saved = \OhMyLMS\Skills\Translations::save( $id, $translations );
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
+			}
+		}
 		if ( isset( $request['public_practice'] ) && (bool) get_term_meta( $id, '_ohmylms_public_practice', true ) !== rest_sanitize_boolean( $request['public_practice'] ) ) {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return AccessPolicy::denied( __( 'Only an administrator can make a practice pool public.', 'ohmylms' ) ); }

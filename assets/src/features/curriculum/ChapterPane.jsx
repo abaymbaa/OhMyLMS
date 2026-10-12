@@ -1,4 +1,5 @@
 import { createElement, useState } from '@wordpress/element';
+import { skillText } from './skillTranslations.mjs';
 import { categoryAppearance } from './categoryAppearance.mjs';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
@@ -85,7 +86,7 @@ export function ChapterPane( { node } ) {
 			onClick: () => w.actions.stepSkill( group.id, child.id, 1 ),
 		},
 		{
-			title: __( 'Take out of this chapter', 'ohmylms' ),
+			title: __( 'Take out of this skill group', 'ohmylms' ),
 			onClick: () => w.actions.removeSkill( group.id, child.id ),
 		},
 	];
@@ -108,10 +109,13 @@ export function ChapterPane( { node } ) {
 					<KindIcon kind="chapter" />
 					<SaveField
 						id={ `ohmylms-ws-chapter-name-${ group.id }` }
-						label={ __( 'Chapter name', 'ohmylms' ) }
+						label={ __( 'Skill group name', 'ohmylms' ) }
 						hideLabel
 						value={ group.name }
-						placeholder={ __( 'Enter chapter name', 'ohmylms' ) }
+						placeholder={ __(
+							'Enter skill group name',
+							'ohmylms'
+						) }
 						inputClassName="ohmylms-ws-title"
 						validate={ ( text ) => check( text, 'name' ) }
 						onSave={ ( text ) =>
@@ -121,7 +125,7 @@ export function ChapterPane( { node } ) {
 						}
 					/>
 					<RowMenu
-						label={ __( 'Chapter actions', 'ohmylms' ) }
+						label={ __( 'Skill group actions', 'ohmylms' ) }
 						disabled={ w.pending }
 						controls={ [
 							{
@@ -137,7 +141,7 @@ export function ChapterPane( { node } ) {
 									w.actions.stepChapter( group, 1 ),
 							},
 							{
-								title: __( 'Delete chapter…', 'ohmylms' ),
+								title: __( 'Delete skill group…', 'ohmylms' ),
 								onClick: () => setConfirming( true ),
 							},
 						] }
@@ -289,8 +293,27 @@ export function ChapterPane( { node } ) {
 									kind="skill"
 									icon={ appearance.icon }
 									iconColor={ appearance.color }
-									title={ child.skill.name }
-									notes={ child.skill.description }
+									title={ skillText(
+										child.skill,
+										w.skillLanguage
+									) }
+									notes={
+										skillText(
+											child.skill,
+											w.skillLanguage,
+											'name'
+										) !==
+										skillText(
+											child.skill,
+											w.skillLanguage
+										)
+											? skillText(
+													child.skill,
+													w.skillLanguage,
+													'name'
+												)
+											: undefined
+									}
 									tag={ child.skill.code || undefined }
 									tagTone="code"
 									status={
