@@ -40,14 +40,19 @@ Statement IDs are UUIDv5 of the event, scoped by a per-site random ID. Replaying
 
 | LRS answer | Meaning | What happens |
 |---|---|---|
-| 2xx, 409 | delivered (409: LRS already has it) | marked sent |
+| 2xx | accepted | each statement is sent only if the LRS lists its ID in the answer (see below) |
+| 409 | LRS already has it | marked sent |
 | network error, 408, 429, 5xx | try again | backoff 1, 2, 4 ... minutes (max 1 hour); failed after 10 tries |
 | 401, 403, 404, 405, 3xx | connection is wrong | whole queue pauses 15 minutes, no attempts used |
 | other 4xx | LRS refused this content | batch is split to find the bad statement; it fails, the rest are sent |
 
+**A success status is not proof of delivery.** A real LRS (Veracity, lrs.io) rejects a single invalid statement with 400, but for a *batch* it stores the valid statements, drops the invalid one, and answers 200 listing only the IDs it stored. So after a 2xx, a statement whose ID is not in the list is looked up (`GET /statements?statementId=`): stored means delivered (this is what a replay looks like), not stored means it is sent on its own so the LRS's real error is kept and the row fails with it, and an unclear answer means retry later. If the LRS lists nothing at all (for example an empty 204), the success is trusted.
+
 Redirects are never followed, so credentials cannot travel to another host. Rows whose learner or content no longer exists are skipped with a reason. Sent and skipped rows are pruned after the retention period (default 14 days); failed rows after 90.
 
 The screen shows counts, last success, last problem and recent failures, with **Test connection**, **Send queued now** and **Retry failed**.
+
+**Test connection** reads the LRS `about` resource and then posts an empty list of statements. The second step matters: LRSs commonly answer `about` without checking the key, so `about` alone says "connected" even with a wrong secret. An empty POST needs the same write permission as sending and stores nothing. If an LRS refuses an empty request, the test reports the address as working and the key as not yet checked.
 
 ## Configuration
 
@@ -68,7 +73,21 @@ php tests/xapi-unit.php                                              # pure: UUI
 php tests/php/assessment-integration.php xapi                        # isolated test site: hooks, real attempt and regrade, fake LRS, failures
 ```
 
-The integration suite fakes the LRS through `pre_http_request`. The test site's isolation plugin blocks all HTTP at `PHP_INT_MAX`, so the fake registers at the same priority and answers only for `lrs.example.test`.
+The integration suite fakes the LRS through `pre_http_request`. The test site's isolation plugin blocks all HTTP at `PHP_INT_MAX`, so the fake registers at the same priority and answers only for `lrs.example.test`. The fake models real behaviour as well as the spec, including an LRS that drops an invalid statement from a batch and answers 200.
+
+### Live smoke test against a real LRS
+
+A fake only knows what its author assumed, so there is also a manual suite for a real LRS. Use a throwaway LRS (a free account on lrs.io or SCORM Cloud is enough) and never a production site:
+
+```
+OHMYLMS_TEST_CREDENTIALS=/path/test-credentials.json \
+OHMYLMS_LRS_CREDENTIALS=/path/lrs.json \
+php tests/php/assessment-integration.php xapi-live
+```
+
+`lrs.json` is `{ "endpoint": "https://…/xapi", "key": "…", "secret": "…" }`; the key needs write and read permission. The suite runs the whole flow with fake users on the isolated test site, opens a pass-through for the LRS host only, reads every statement back by ID and compares it with what was sent, then tries a replay, a batch with an invalid statement, a wrong secret and a wrong URL. Statements stay in the LRS afterwards; clear them from its admin.
+
+First run against Veracity (lrs.io), 2026-10-13: all 11 statements of a quiz flow were stored exactly as sent, a replay did not duplicate, queries by learner worked, and the two defects described above (silently dropped statements, and a "Connected" test with a wrong secret) were found and fixed.
 
 ## Coding standards
 
