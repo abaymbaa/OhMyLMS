@@ -75,8 +75,6 @@ class BlocksManager {
 			new CheckoutBlock();
 			new DashboardGutenbergBlock();
 			new ProfileGutenbergBlock();
-			new MyCoursesGutenbergBlock();
-			new \OhMyLMS\Blocks\Blocks\CourseListBlock();
 			\OhMyLMS\Blocks\Blocks\BuyNowBlock::register();
 		if ( class_exists( '\OhMyLMS\Blocks\Blocks\OfferButtonBlock' ) ) {
 			\OhMyLMS\Blocks\Blocks\OfferButtonBlock::register();
@@ -92,12 +90,10 @@ class BlocksManager {
 	 */
 	private function include_blocks() {
 		require_once OHMYLMS_PATH . '/includes/Blocks/CheckoutBlock.php';
-		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/CourseListBlock.php';
 		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/BuyNowBlock.php';
 		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/OfferButtonBlock.php';
 		require_once OHMYLMS_PATH . '/includes/Blocks/DashboardGutenbergBlock.php';
 		require_once OHMYLMS_PATH . '/includes/Blocks/ProfileGutenbergBlock.php';
-		require_once OHMYLMS_PATH . '/includes/Blocks/MyCoursesGutenbergBlock.php';
 		require_once OHMYLMS_PATH . '/includes/Blocks/Blocks/MembershipListBlock.php';
 	}
 
@@ -220,24 +216,6 @@ class BlocksManager {
 			true
 		);
 
-		// My Courses block
-		wp_enqueue_script(
-			'ohmylms-my-courses-block',
-			OHMYLMS_URL . "/assets/blocks/js/my-courses{$suffix}.js",
-			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			OHMYLMS_VERSION,
-			true
-		);
-
-		// Course List block
-		wp_enqueue_script(
-			'ohmylms-course-list-block',
-			OHMYLMS_URL . "/assets/blocks/js/course-list{$suffix}.js",
-			array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render' ),
-			OHMYLMS_VERSION,
-			true
-		);
-
 		// Buy Now block
 		wp_enqueue_script(
 			'ohmylms-buy-now-block',
@@ -285,10 +263,8 @@ class BlocksManager {
 	public function enqueue_frontend_assets() {
 		$ohmylms_blocks = array(
 			'ohmylms/dashboard',
-			'ohmylms/my-courses',
 			'ohmylms/checkout',
 			'ohmylms/profile',
-			'ohmylms/course-list',
 			'ohmylms/buy-now',
 			'ohmylms/offer-button',
 			'ohmylms/membership-list',

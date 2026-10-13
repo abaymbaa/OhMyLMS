@@ -22,6 +22,7 @@ import {
 	validateTopic,
 	workspacePath,
 	outlineDropPosition,
+	outlineDropDestination,
 	visibleChildren,
 	displayCounts,
 } from '../../assets/src/features/curriculum/workspace.mjs';
@@ -364,7 +365,7 @@ test( 'drop positions account for removing the source before insertion in either
 	);
 } );
 
-test( 'outline drops reject other parents, different kinds, the syllabus root, and missing nodes', () => {
+test( 'outline drops reject cycles, different kinds, moving the syllabus root, and missing nodes', () => {
 	const tree = buildOutline( outline );
 	assert.equal(
 		outlineDropPosition( tree, contentKey( 2 ), contentKey( 3 ) ),
@@ -372,7 +373,7 @@ test( 'outline drops reject other parents, different kinds, the syllabus root, a
 	);
 	assert.equal(
 		outlineDropPosition( tree, groupKey( 9 ), groupKey( 10 ) ),
-		null
+		0
 	);
 	assert.equal(
 		outlineDropPosition( tree, groupKey( 9 ), contentKey( 2 ) ),
@@ -385,6 +386,90 @@ test( 'outline drops reject other parents, different kinds, the syllabus root, a
 	assert.equal( outlineDropPosition( tree, 'gone', contentKey( 2 ) ), null );
 	assert.equal(
 		outlineDropPosition( tree, contentKey( 2 ), contentKey( 2 ) ),
+		null
+	);
+} );
+
+test( 'folders can leave their parent, enter another topic, or move to the syllabus root', () => {
+	const tree = buildOutline( outline );
+	assert.deepEqual(
+		outlineDropDestination( tree, contentKey( 3 ), contentKey( 2 ), true ),
+		{ parentKey: contentKey( 1 ), position: 1 }
+	);
+	assert.deepEqual(
+		outlineDropDestination(
+			tree,
+			contentKey( 3 ),
+			contentKey( 1 ),
+			'inside'
+		),
+		{ parentKey: contentKey( 1 ), position: 2 }
+	);
+	assert.deepEqual(
+		outlineDropDestination(
+			tree,
+			contentKey( 3 ),
+			contentKey( 4 ),
+			'inside'
+		),
+		{ parentKey: contentKey( 4 ), position: 0 }
+	);
+	assert.deepEqual(
+		outlineDropDestination(
+			tree,
+			groupKey( 10 ),
+			contentKey( 1 ),
+			'inside'
+		),
+		{ parentKey: contentKey( 1 ), position: 1 }
+	);
+	assert.deepEqual(
+		outlineDropDestination( tree, groupKey( 10 ), groupKey( 12 ), true ),
+		{ parentKey: contentKey( 3 ), position: 1 }
+	);
+	assert.equal(
+		outlineDropDestination(
+			tree,
+			contentKey( 2 ),
+			contentKey( 3 ),
+			'inside'
+		),
+		null
+	);
+	assert.equal(
+		outlineDropDestination(
+			tree,
+			contentKey( 3 ),
+			groupKey( 10 ),
+			'inside'
+		),
+		null
+	);
+	assert.equal(
+		outlineDropDestination(
+			tree,
+			skillKey( 10, 100 ),
+			contentKey( 1 ),
+			'inside'
+		),
+		null
+	);
+	assert.equal(
+		outlineDropDestination(
+			tree,
+			skillKey( 10, 100 ),
+			skillKey( 9, 90 ),
+			true
+		),
+		null
+	);
+	assert.equal(
+		outlineDropDestination(
+			tree,
+			contentKey( 4 ),
+			contentKey( 1 ),
+			'inside'
+		),
 		null
 	);
 } );

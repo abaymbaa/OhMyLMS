@@ -7,7 +7,6 @@
     'school-dashboard': 'OhMyLMS School Dashboard',
     'teacher-dashboard': 'OhMyLMS Teacher Dashboard',
     'parent-dashboard': 'OhMyLMS Parent Dashboard',
-    'student-assignments': 'OhMyLMS Student Assignments',
   };
   Object.entries(names).forEach(([name, title]) => {
     wp.blocks.registerBlockType('ohmylms/' + name, {

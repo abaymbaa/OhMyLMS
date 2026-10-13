@@ -136,20 +136,52 @@ export function outlineDropPosition(
 	targetKey,
 	after = false
 ) {
+	return (
+		outlineDropDestination( tree, sourceKey, targetKey, after )?.position ??
+		null
+	);
+}
+
+/**
+ * Resolve a sibling drop or a folder drop into a topic, including the syllabus root.
+ * @param tree
+ * @param sourceKey
+ * @param targetKey
+ * @param after
+ */
+export function outlineDropDestination(
+	tree,
+	sourceKey,
+	targetKey,
+	after = false
+) {
 	const source = tree.index.get( sourceKey ),
 		target = tree.index.get( targetKey );
+	if ( ! source || ! target || source === target || ! source.parentKey ) {
+		return null;
+	}
+	const targetParent =
+		after === 'inside' ? target : tree.index.get( target.parentKey );
+	if ( ! targetParent ) {
+		return null;
+	}
+	if ( after === 'inside' ) {
+		if ( source.kind === 'skill' || target.kind !== 'content' ) {
+			return null;
+		}
+	} else if ( source.kind !== target.kind ) {
+		return null;
+	}
 	if (
-		! source ||
-		! target ||
-		source === target ||
-		! source.parentKey ||
-		source.kind !== target.kind
+		source.kind === 'content' &&
+		pathTo( tree.index, targetParent.key ).some(
+			( node ) => node.key === sourceKey
+		)
 	) {
 		return null;
 	}
-	const sourceParent = tree.index.get( source.parentKey ),
-		targetParent = tree.index.get( target.parentKey );
 	if ( source.kind === 'skill' ) {
+		const sourceParent = tree.index.get( source.parentKey );
 		if ( sourceParent.parentKey !== targetParent.parentKey ) {
 			return null;
 		}
@@ -165,22 +197,24 @@ export function outlineDropPosition(
 					( child ) => child.key === sourceKey
 				)
 			? null
-			: position;
+			: { parentKey: targetParent.key, position };
 	}
-	if ( source.parentKey !== target.parentKey ) {
+	if ( targetParent.kind !== 'content' ) {
 		return null;
 	}
-	const siblings = tree.index
-		.get( source.parentKey )
-		.children.filter( ( child ) => child.kind === source.kind );
+	const siblings = targetParent.children.filter(
+		( child ) => child.kind === source.kind
+	);
 	const remaining = siblings.filter( ( child ) => child.key !== sourceKey );
 	const position =
-		remaining.findIndex( ( child ) => child.key === targetKey ) +
-		( after ? 1 : 0 );
-	return position ===
-		siblings.findIndex( ( child ) => child.key === sourceKey )
+		after === 'inside'
+			? remaining.length
+			: remaining.findIndex( ( child ) => child.key === targetKey ) +
+				( after ? 1 : 0 );
+	return source.parentKey === targetParent.key &&
+		position === siblings.findIndex( ( child ) => child.key === sourceKey )
 		? null
-		: position;
+		: { parentKey: targetParent.key, position };
 }
 
 /**

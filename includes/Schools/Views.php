@@ -43,16 +43,19 @@ final class Views {
 	public static function blocks() {
 		wp_register_script( 'ohmylms-school-blocks', plugins_url( 'assets/schools/blocks.js', OHMYLMS_FILE ), array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-i18n' ), filemtime( OHMYLMS_DIR . '/assets/schools/blocks.js' ), true );
 		foreach ( array( 'student-registration', 'teacher-registration', 'parent-registration', 'sign-in', 'school-dashboard', 'teacher-dashboard', 'parent-dashboard', 'student-assignments' ) as $kind ) {
-			register_block_type(
-				'ohmylms/' . $kind,
-				array(
-					'api_version'     => 2,
-					'editor_script'   => 'ohmylms-school-blocks',
-					'render_callback' => function () use ( $kind ) {
-						return self::render( $kind );
-					},
-				)
-			);
+			// Assignments remain available through the portal and shortcode, without an editor block.
+			if ( 'student-assignments' !== $kind ) {
+				register_block_type(
+					'ohmylms/' . $kind,
+					array(
+						'api_version'     => 2,
+						'editor_script'   => 'ohmylms-school-blocks',
+						'render_callback' => function () use ( $kind ) {
+							return self::render( $kind );
+						},
+					)
+				);
+			}
 			add_shortcode(
 				'ohmylms_' . str_replace( '-', '_', $kind ),
 				function () use ( $kind ) {

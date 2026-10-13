@@ -39,6 +39,20 @@ const outputRoot = path.resolve(
 		)
 );
 const hashes = {};
+// Retired block assets must not survive rebuilds in an existing output directory.
+for ( const retired of manifest.retiredAssets || [] ) {
+	for ( const suffix of [ '', '.map' ] ) {
+		const destination = path.resolve( outputRoot, retired + suffix );
+		if ( ! destination.startsWith( outputRoot + path.sep ) ) {
+			throw new Error(
+				`Retired asset outside build directory: ${ retired }`
+			);
+		}
+		if ( fs.existsSync( destination ) ) {
+			fs.unlinkSync( destination );
+		}
+	}
+}
 for ( const asset of manifest.assets ) {
 	const destination = path.join( outputRoot, asset.output );
 	fs.mkdirSync( path.dirname( destination ), { recursive: true } );

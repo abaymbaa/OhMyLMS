@@ -55,7 +55,7 @@ class MembershipListBlock {
 		// All plugin CSS is scoped under `.ohmylms-page` on <body>. That class is
 		// normally added by ohmylms_body_class() via ohmylms_is_membership_plan_shortcode(),
 		// but force it here too so the block renders styled even if that detection
-		// path is bypassed (matches CourseListBlock::render_block()).
+		// path is bypassed when block attributes supply the display settings.
 		add_filter(
 			'body_class',
 			function ( $classes ) {

@@ -95,7 +95,7 @@ function is_ohmylms_profile_shortcode() {
  * @since 1.0.0
  */
 function is_ohmylms_my_courses_shortcode() {
-	return ohmylms_post_content_has_shortcode( 'ohmylms_my_courses' ) || ohmylms_page_has_my_courses_block();
+	return ohmylms_post_content_has_shortcode( 'ohmylms_my_courses' );
 }
 
 /**
@@ -326,25 +326,15 @@ function ohmylms_page_has_course_list_widget( $page_id = 0 ) {
 }
 
 /**
- * Check if a page has the OhMyLMS course list Gutenberg block.
+ * Compatibility helper for the removed Course List Gutenberg block.
  *
  * @param int $page_id The page ID to check. If not provided, uses current page.
- * @return bool True if the page has the course list block, false otherwise.
+ * @return bool Always false; the block is no longer registered.
  * @since 1.0.0
  */
 function ohmylms_page_has_course_list_block( $page_id = 0 ) {
-	// If no page ID provided, get current page ID
-	if ( ! $page_id ) {
-		$page_id = get_the_ID();
-	}
-
-	// Check if block editor functions are available
-	if ( ! function_exists( 'has_block' ) ) {
-		return false;
-	}
-
-	// Check if the page has the course list block
-	return has_block( 'ohmylms/course-list', $page_id );
+	// Compatibility for add-ons calling this public helper after the block's removal.
+	return false;
 }
 
 /**
@@ -392,25 +382,15 @@ function ohmylms_page_has_profile_block( $page_id = 0 ) {
 }
 
 /**
- * Check if a page has the OhMyLMS my courses Gutenberg block.
+ * Compatibility helper for the removed My Courses Gutenberg block.
  *
  * @param int $page_id The page ID to check. If not provided, uses current page.
- * @return bool True if the page has the my courses block, false otherwise.
+ * @return bool Always false; the block is no longer registered.
  * @since 1.2.5
  */
 function ohmylms_page_has_my_courses_block( $page_id = 0 ) {
-	// If no page ID provided, get current page ID
-	if ( ! $page_id ) {
-		$page_id = get_the_ID();
-	}
-
-	// Check if block editor functions are available
-	if ( ! function_exists( 'has_block' ) ) {
-		return false;
-	}
-
-	// Check if the page has the my courses block
-	return has_block( 'ohmylms/my-courses', $page_id );
+	// Compatibility for add-ons calling this public helper after the block's removal.
+	return false;
 }
 
 // === BRICKS ELEMENT DETECTION FUNCTIONS ===
@@ -529,10 +509,9 @@ function ohmylms_is_courses_page() {
 }
 
 function ohmylms_is_course_list_shortcode() {
-	// Check for shortcode, Elementor widget, Gutenberg block, Bricks element, or WPBakery element
+	// Check for shortcode, Elementor widget, Bricks element, or WPBakery element.
 	return ohmylms_post_content_has_shortcode( 'ohmylms_course_list' ) ||
 			ohmylms_page_has_course_list_widget() ||
-			ohmylms_page_has_course_list_block() ||
 			ohmylms_page_has_course_list_bricks_element() ||
 			ohmylms_page_has_course_list_wpbakery_element();
 }

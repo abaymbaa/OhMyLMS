@@ -15,11 +15,12 @@ const source = fs
 	)
 	.replace( /import[\s\S]*?from ['"][^'"]+['"];\s*/g, '' )
 	.replace( 'export function', 'function' );
-function fixture( groups, failGroup = false ) {
+function fixture( groups, failGroup = false, contents = [] ) {
 	const tree = workspace.buildOutline( {
 		contents: [
 			{ id: 1, name: 'S', depth: 0, groups: [] },
 			{ id: 2, parent_id: 1, name: 'T', depth: 1, groups },
+			...contents,
 		],
 	} );
 	const calls = [],
@@ -29,6 +30,8 @@ function fixture( groups, failGroup = false ) {
 			'addGroup',
 			'addSkill',
 			'moveSkill',
+			'moveItem',
+			'moveGroup',
 			'updateSkill',
 			'deleteItem',
 		].map( ( method ) => [
@@ -68,6 +71,25 @@ function fixture( groups, failGroup = false ) {
 	} );
 	return { actions, calls, selected };
 }
+
+test( 'moving a nested topic out sends the new parent and position to the item API', async () => {
+	const { actions, calls } = fixture( [], false, [
+		{ id: 3, parent_id: 2, name: 'Nested', depth: 2, groups: [] },
+	] );
+	assert.equal( await actions.reorderOutline( 'c:3', 'c:2', true ), true );
+	assert.deepEqual( calls, [ [ 'moveItem', 3, 1, 1 ] ] );
+} );
+
+test( 'moving a skill group out preserves the group and uses the destination topic', async () => {
+	const { actions, calls } = fixture( [
+		{ id: 5, name: 'Group', skills: [] },
+	] );
+	assert.equal(
+		await actions.reorderOutline( 'g:5', 'c:1', 'inside' ),
+		true
+	);
+	assert.deepEqual( calls, [ [ 'moveGroup', 1, 5, 1, 0 ] ] );
+} );
 
 test( 'deleting a syllabus explicitly confirms deletion of its whole structure', async () => {
 	const { actions, calls } = fixture( [] );

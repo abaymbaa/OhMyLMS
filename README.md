@@ -6,6 +6,7 @@ WordPress LMS with editable React feature modules and a reproducible source buil
 - [Build and local setup](docs/DEVELOPMENT.md): commands, isolated testing and source-asset activation.
 - [Extension SDK](docs/EXTENSIONS.md): supported extension points.
 - [Quiz Player block](docs/QUIZ-PLAYER-BLOCK.md): embed existing quizzes in lessons, pages and posts.
+- [Block cleanup](docs/BLOCK-CLEANUP.md): retired editor blocks and existing-content compatibility.
 - [Content Hub](docs/CONTENT-HUB.md): one place for courses (grades, exams and subjects built from chapters and skills), the lesson library and the skill library. Skills are a core feature.
 - [Curriculum and Learning Tracks](docs/CURRICULUM-TRACKS.md): curriculum structures (which replace course categories), Learning Tracks (which replace course tags), shared-skill mappings and the learner dashboard.
 - [Syllabuses](docs/SYLLABUS.md): turn any curriculum item into a syllabus with skill groups and skills, and import it from a CSV file.

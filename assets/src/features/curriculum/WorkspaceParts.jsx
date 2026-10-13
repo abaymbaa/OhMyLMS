@@ -261,13 +261,28 @@ const ICONS = {
 };
 
 export function KindIcon( { kind, icon, color } ) {
+	if ( kind === 'topic' || kind === 'chapter' ) {
+		return (
+			<svg
+				className={ `ohmylms-ws-kind is-${ kind }` }
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.75"
+				strokeLinejoin="round"
+				aria-hidden="true"
+				focusable="false"
+			>
+				<path d="M3 7V5a1 1 0 0 1 1-1h5l2 3h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z" />
+				<path d="M3 8h18" />
+			</svg>
+		);
+	}
 	return (
 		<Dashicon
-			icon={
-				kind === 'topic' || kind === 'chapter'
-					? 'category'
-					: icon || ICONS[ kind ] || 'marker'
-			}
+			icon={ icon || ICONS[ kind ] || 'marker' }
 			className={ `ohmylms-ws-kind is-${ kind }` }
 			style={ color ? { color } : undefined }
 			aria-hidden="true"
