@@ -19,8 +19,13 @@ Edit the JSX files here, then run `npm run build` from the plugin directory.
 ## Runtime integration
 
 Built-in text, audio and video lessons now open the native WordPress post editor.
-`NativeLessonRoute.jsx` redirects old standalone hash URLs and offers a new-tab link
-from course dialogs. Custom lesson-editor extensions retain their existing editor.
+Course and syllabus links open the native editor directly. `NativeLessonRoute.jsx`
+redirects old lesson hash URLs for bookmark compatibility. The stored `text`
+type is displayed as Block lesson; its identifier stays compatible with existing lessons.
+Custom lesson-editor extensions retain their existing editor.
+The retired embedded block workspace and its custom fullscreen/inspector styles
+have been removed. `LessonContent.jsx` preserves the extension hook and the shared
+rich-text/media fallback used by custom lesson types; built-in lessons bypass it.
 `NativeLessonSettings.jsx` adds LMS panels using Gutenberg SlotFills; it does not
 replace the editor canvas, toolbar, inserter, list view or WordPress editor CSS.
 The Block inspector opens by default. The return route is stored per lesson in tab
@@ -54,8 +59,8 @@ The existing PHP backend, WordPress data store, media library, common controls,
 styles and entitlement checks remain in use. Some extracted logic retains transpiled
 helpers provided by that runtime; these are editable JSX modules, not a standalone app.
 
-LessonContent also retains the custom lesson-editor extension hook. Do not overwrite
-it by rerunning the one-time extraction script. Recovered files are the parity baseline;
+LessonContent also retains the custom lesson-editor extension hook. The one-time
+component extraction scripts have been retired. Recovered files are the parity baseline;
 make ongoing edits in this directory instead.
 
 Source builds are used when OHMYLMS_SOURCE_ASSETS is enabled. Building alone does not
@@ -68,6 +73,6 @@ change that site configuration.
 - `npm run build`
 - `npm run test:browser -- tests/browser/learning.spec.cjs`
 
-Browser tests use OHMYLMS_TEST_CREDENTIALS and the isolated WordPress test server. They
-serve workspace bundles, check all three lists, save and reload real lesson/assignment
-fixtures, verify custom lesson rendering, and check grading with a mocked report API.
+Browser tests use OHMYLMS_TEST_CREDENTIALS and the isolated WordPress test server.
+The learning suite checks lists, assignment saves and grading. Native lesson saves
+are covered separately by `lesson-block-editor.spec.cjs`.

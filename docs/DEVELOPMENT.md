@@ -108,7 +108,7 @@ Every extension route gets the gutter even without the component.
 
 ## Block-based Text lessons and the future quiz/question engine
 
-Status: an embedded standalone WordPress block editor for Text lessons was tried and rolled back (the editing experience was not what was wanted). Text lessons use the original lesson editor again. Any future custom blocks must be added to that editor, or a new editor approach agreed first. Video and audio lessons are unchanged: the media is played directly from the lesson page. Video/audio lesson design will be discussed separately.
+Current editor: built-in Block lessons (stored as `text`), audio and video lessons open the native WordPress post editor. Course and syllabus links navigate directly to it; old lesson hash routes redirect for bookmark compatibility. The retired embedded Gutenberg workspace, its lesson-only styles and localized settings have been removed. Shared rich-text components remain for assignments and custom lesson types. Add future lesson blocks through native WordPress block registration. See `assets/src/features/learning/README.md` for integration and validation details.
 
 - Instructors author. Students only view and interact.
 - Lessons render through `the_content()`. Lesson navigation uses full page loads today.
@@ -140,7 +140,7 @@ Build these into the question bank / exam builder, not into the Text lesson edit
 
 ## Interactive items in the lesson editor's "/" menu
 
-The Text lesson editor's slash menu is a fixed list in a recovered module (`0-66427.js`). `tools/slash-adapters.mjs` patches the slash extension (`0-70181.js`) so the menu also reads `window.ohmylms.extensions.slashGroups()`: commands registered with `registerSlashCommand(id, {label, description, aliases, iconName, action(editor)})` appear in an "Interactive" group (`iconName` is any Lucide icon name; unknown names show no icon).
+The legacy rich-text editor's slash menu is a fixed list in a recovered module (`0-66427.js`). `tools/slash-adapters.mjs` patches the slash extension (`0-70181.js`) so the menu also reads `window.ohmylms.extensions.slashGroups()`: commands registered with `registerSlashCommand(id, {label, description, aliases, iconName, action(editor)})` appear in an "Interactive" group (`iconName` is any Lucide icon name; unknown names show no icon).
 
 Interactive content is stored as a shortcode, e.g. `[ohmylms_activity type="reveal" prompt="..." answer="..."]`, and rendered by PHP (`ohmylms_register_activity`, see `includes/Extensions/Activities.php`). Behaviour uses the WordPress Interactivity API (`assets/extensions/reveal.js`, a script module). Only the shortcode is saved, so content filtering never strips markup. Plain shortcode attributes cannot contain double quotes; use a `data='{...}'` JSON attribute for richer data.
 

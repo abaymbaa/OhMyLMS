@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { transformSync } from '@babel/core';
 import { courseEditPath } from '../../assets/src/features/content-hub/hubRoutes.mjs';
-import { withEditorReturn } from '../../assets/src/features/content-hub/editorNavigation.mjs';
+import {
+	withEditorReturn,
+	lessonEditorHref,
+} from '../../assets/src/features/content-hub/editorNavigation.mjs';
 
 const createElement = ( type, props, ...children ) => ( {
 	type,
@@ -37,6 +40,7 @@ const scope = {
 	TextControl,
 	courseEditPath,
 	withEditorReturn,
+	lessonEditorHref,
 	editPath: ( type, id ) => `/${ type }-edit/${ id }`,
 };
 const { code } = transformSync(
@@ -138,6 +142,27 @@ const actions = Object.fromEntries(
 		record( name ),
 	] )
 );
+
+test( 'a syllabus lesson title links directly to Gutenberg without a hash redirect', () => {
+	const returnTo = '/content-hub/curriculum/syllabus/24?node=c%3A10';
+	const lesson = expand(
+		createElement( AttachmentItem, {
+			item: item( {
+				native_editor_url:
+					'https://example.test/wp-admin/post.php?post=5&action=edit',
+			} ),
+			skills,
+			actions,
+			returnTo,
+		} )
+	);
+	const [ link ] = find( lesson, ( node ) => node.type === 'a' );
+	const url = new URL( link.props.href );
+	assert.equal( url.pathname, '/wp-admin/post.php' );
+	assert.equal( url.hash, '' );
+	assert.equal( url.searchParams.get( 'post' ), '5' );
+	assert.equal( url.searchParams.get( 'ohmylms_return' ), returnTo );
+} );
 
 test( 'Attachments say whether they are published, required, graded and used elsewhere', () => {
 	const quiz = expand(

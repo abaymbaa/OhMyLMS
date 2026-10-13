@@ -11,15 +11,12 @@ export function createLessonEditor( readRuntime ) {
 				props.id || select( StoreModule.default ).geSelectedLessonId(),
 			[ props.id ]
 		);
-		const { setLesson, getLessonByChapterId } = WordPressData.useDispatch(
-			StoreModule.default
-		);
+		const { setLesson } = WordPressData.useDispatch( StoreModule.default );
 		return id ? (
 			<NativeLessonRoute
 				{ ...props }
 				id={ id }
 				onLessonLoaded={ setLesson }
-				refreshChapter={ getLessonByChapterId }
 				legacyEditor={ LegacyLessonEditor }
 			/>
 		) : (
@@ -279,7 +276,6 @@ function createLegacyLessonEditor( readRuntime ) {
 								settings={
 									<React.Fragment>
 										<LessonSettings
-											embedded
 											setOpenModal={ setOpenModal }
 											lesson={ u }
 											chapterId={ chapterId }

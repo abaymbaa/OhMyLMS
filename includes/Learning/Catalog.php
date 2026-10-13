@@ -252,6 +252,7 @@ final class Catalog {
 				'id'           => $item['id'],
 				'type'         => $item['type'],
 				'content_id'   => (int) $item['content_id'],
+				'native_editor_url' => $valid && 'lesson' === $item['type'] ? NativeLessonEditor::edit_url( $post->ID ) : '',
 				'title'        => $valid ? self::title( $post->ID ) : __( 'Unavailable content', 'ohmylms' ),
 				'status'       => $valid ? $post->post_status : 'missing',
 				'required'     => ! empty( $item['required'] ),
@@ -520,6 +521,7 @@ final class Catalog {
 				'title'    => self::title( $id ),
 				'status'   => $post->post_status,
 				'type'     => $lesson ? $lesson->get_type() : 'text',
+				'native_editor_url' => NativeLessonEditor::edit_url( $id ),
 				'modified' => get_post_modified_time( 'c', true, $post ),
 				'skills'   => $skills[ $id ] ?? array(),
 				'courses'  => array_map(

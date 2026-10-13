@@ -35,12 +35,21 @@ for ( const [ source, target ] of [
 ] ) {
 	fs.copyFileSync( path.join( root, source ), path.join( root, target ) );
 }
+// Remove outdated hashed SDK chunks before syncing the current build.
+const sourceChunks = path.join( root, 'build/sdk/chunks' );
+const targetChunks = path.join( root, 'assets/dist/admin/chunks' );
+const currentChunks = new Set( fs.readdirSync( sourceChunks ) );
+for ( const entry of fs.readdirSync( targetChunks, { withFileTypes: true } ) ) {
+	if (
+		entry.isFile() &&
+		/^[\w-]+\.[a-f0-9]{12}\.js(?:\.map)?$/.test( entry.name ) &&
+		! currentChunks.has( entry.name )
+	) {
+		fs.unlinkSync( path.join( targetChunks, entry.name ) );
+	}
+}
 // Async imports resolve relative to extensions.js in both shipped and opt-in builds.
-fs.cpSync(
-	path.join( root, 'build/sdk/chunks' ),
-	path.join( root, 'assets/dist/admin/chunks' ),
-	{ recursive: true }
-);
+fs.cpSync( sourceChunks, targetChunks, { recursive: true } );
 console.log( 'Updated shipped admin app and extension SDK.' );
 fs.mkdirSync( path.join( root, 'assets/dist/mathlive' ), { recursive: true } );
 fs.cpSync(

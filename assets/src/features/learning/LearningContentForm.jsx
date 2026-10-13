@@ -101,49 +101,47 @@ export function createLearningContentForm( readRuntime ) {
 						onExternalUploadComplete={ _ }
 					/>
 				) }
-				{ ! props.mediaOnly && (
-					<React.Fragment>
-						<Controls.SpacerWP marginBottom={ 4 } />
-						<div
-							className={
-								'ohmylms-title-input-wrapper ohmylms-course-title'
-							}
-						>
-							<Controls.InputWP
-								type={ 'text' }
-								value={ Ge(
-									'Untitled' !== titleValue ? titleValue : ''
-								) }
-								onChange={ onInputChange }
-								placeholder={ titlePlaceholder }
-								name={ titleName }
-								autoFocus={ ! 0 }
-								style={ {
-									fontSize: 26,
-									fontWeight: '500',
-									border: 'none',
-									background: 'transparent',
-									padding: 0,
-									textAlign: 'left',
-									lineHeight: 1.2,
-									boxShadow: 'none',
-								} }
-							/>
-						</div>
-						{ React.createElement( ne, {
-							onContentChange( e ) {
-								onContentChange( e );
-							},
-							placeholder: descriptionPlaceholder,
-							content,
-							commandsConfig: E,
-							showAddButton: R,
-							showTextAlign: C,
-							autofocus: O,
-							editorFor,
-						} ) }
-					</React.Fragment>
-				) }
+				<React.Fragment>
+					<Controls.SpacerWP marginBottom={ 4 } />
+					<div
+						className={
+							'ohmylms-title-input-wrapper ohmylms-course-title'
+						}
+					>
+						<Controls.InputWP
+							type={ 'text' }
+							value={ Ge(
+								'Untitled' !== titleValue ? titleValue : ''
+							) }
+							onChange={ onInputChange }
+							placeholder={ titlePlaceholder }
+							name={ titleName }
+							autoFocus={ ! 0 }
+							style={ {
+								fontSize: 26,
+								fontWeight: '500',
+								border: 'none',
+								background: 'transparent',
+								padding: 0,
+								textAlign: 'left',
+								lineHeight: 1.2,
+								boxShadow: 'none',
+							} }
+						/>
+					</div>
+					{ React.createElement( ne, {
+						onContentChange( e ) {
+							onContentChange( e );
+						},
+						placeholder: descriptionPlaceholder,
+						content,
+						commandsConfig: E,
+						showAddButton: R,
+						showTextAlign: C,
+						autofocus: O,
+						editorFor,
+					} ) }
+				</React.Fragment>
 			</div>
 		);
 	};

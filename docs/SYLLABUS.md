@@ -71,7 +71,7 @@ Every syllabus has one real course (an ordinary course post), so it is listed in
 
 ## Skills own their lessons and questions
 
-The lesson editor is a Gutenberg block workspace with a wide writing canvas. **Add block** inserts headings, paragraphs, lists, images and other lesson content. Its **Lesson** sidebar tab holds visibility, preview access, media, drip settings, resources and inline question checks; **Block** holds the selected block's settings. **Settings** hides the sidebar for more writing room. **Save** persists the blocks and lesson settings together, and **Back** returns to the syllabus skill when opened there.
+Lessons open directly in the native WordPress block editor. Its inserter adds headings, paragraphs, lists, images and other lesson content. The **Lesson** sidebar holds LMS preview access, media, drip settings, resources and inline question checks; **Block** holds the selected block's settings. WordPress saves block content and lesson settings together. **Back to Content Hub** returns to the selected syllabus chapter or skill. The old embedded editor and its custom fullscreen layout have been removed.
 
 A skill is a library skill, so what teaches and tests it belongs to the **skill**, not to one syllabus or course. In a skill's pane, **What this skill owns** shows:
 

@@ -18,13 +18,13 @@ import {
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import {
 	duplicateLesson,
-	editPath,
 	listLessons,
 	setLessonSkills,
 	trashLessons,
 } from './api.mjs';
 import { courseEditPath } from './hubRoutes.mjs';
 import { SkillPicker } from './SkillPicker';
+import { lessonEditorHref } from './editorNavigation.mjs';
 
 const statusOptions = () => [
 	{ label: __( 'All statuses', 'ohmylms' ), value: '' },
@@ -260,7 +260,10 @@ export function LessonsPage() {
 										</td>
 										<td>
 											<a
-												href={ `#${ editPath( 'lesson', item.id ) }` }
+												href={ lessonEditorHref(
+													item,
+													'/content-hub/lessons'
+												) }
 											>
 												{ item.title ||
 													`#${ item.id }` }
@@ -331,7 +334,10 @@ export function LessonsPage() {
 										<td>{ formatDate( item.modified ) }</td>
 										<td>
 											<a
-												href={ `#${ editPath( 'lesson', item.id ) }` }
+												href={ lessonEditorHref(
+													item,
+													'/content-hub/lessons'
+												) }
 											>
 												{ __( 'Edit', 'ohmylms' ) }
 											</a>

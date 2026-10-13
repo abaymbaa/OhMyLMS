@@ -173,6 +173,32 @@ export function adaptApplication( ast ) {
 					)
 				)
 					return;
+				const blockLesson = first.elements.find(
+					( element ) =>
+						t.isObjectExpression( element ) &&
+						element.properties.some(
+							( property ) =>
+								property.key?.name === 'lessonType' &&
+								property.value?.value === 'text'
+						)
+				);
+				for ( const [ key, label ] of [
+					[ 'title', 'Block lesson' ],
+					[
+						'description',
+						'Create content with the WordPress block editor',
+					],
+				] ) {
+					const property = blockLesson.properties.find(
+						( item ) => item.key?.name === key
+					);
+					if ( ! t.isCallExpression( property?.value ) ) {
+						throw new Error(
+							`Lesson picker adapter drift: ${ key }`
+						);
+					}
+					property.value.arguments[ 0 ] = t.stringLiteral( label );
+				}
 				n.callee.object = t.callExpression(
 					t.memberExpression( text, t.identifier( 'concat' ) ),
 					[

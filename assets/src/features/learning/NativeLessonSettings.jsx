@@ -277,7 +277,10 @@ function LessonSettings() {
 					label={ __( 'Lesson type', 'ohmylms' ) }
 					value={ lessonType }
 					options={ [
-						{ value: 'text', label: __( 'Text', 'ohmylms' ) },
+						{
+							value: 'text',
+							label: __( 'Block lesson', 'ohmylms' ),
+						},
 						{ value: 'video', label: __( 'Video', 'ohmylms' ) },
 						{ value: 'audio', label: __( 'Audio', 'ohmylms' ) },
 					] }

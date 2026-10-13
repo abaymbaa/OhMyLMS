@@ -330,6 +330,7 @@ class SkillController extends RestController {
 					$rows[] = array(
 						'id'    => (int) $post->ID,
 						'title' => get_the_title( $post ) ?: '#' . $post->ID,
+						'native_editor_url' => \OhMyLMS\Learning\NativeLessonEditor::edit_url( $post->ID ),
 					); }
 			}
 			return rest_ensure_response( $rows );

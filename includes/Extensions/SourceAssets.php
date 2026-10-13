@@ -33,12 +33,6 @@ final class SourceAssets {
 			return; }
 		$asset = require $asset_file;
 		wp_enqueue_script( 'ohmylms-extension-sdk', plugins_url( $directory . '/extensions.js', OHMYLMS_FILE ), $asset['dependencies'], $asset['version'], true );
-		if ( is_admin() && isset( $_GET['page'] ) && $_GET['page'] === 'ohmylms' ) {
-			wp_enqueue_style( 'wp-edit-blocks' );
-			wp_enqueue_style( 'wp-format-library' );
-			$context = new \WP_Block_Editor_Context( array( 'name' => 'ohmylms/lesson' ) );
-			wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsLessonBlockSettings', get_block_editor_settings( array(), $context ) );
-		}
 		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsTabPreferences', TabPreferences::read() );
 		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsPlayerTemplates', \OhMyLMS\Quiz\PlayerTemplates::choices() );
 		wp_localize_script( 'ohmylms-extension-sdk', 'ohmylmsExtensionManifest', array_merge( Registry::manifest(), array( 'settings' => Settings::manifest() ) ) );

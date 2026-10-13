@@ -1,8 +1,7 @@
 /** @jsx createElement */
 import { createElement, useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { Button, Notice, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { Notice, Spinner } from '@wordpress/components';
 import { editorBackPath } from '../content-hub/editorNavigation.mjs';
 
 /**
@@ -18,8 +17,6 @@ export function NativeLessonRoute( props ) {
 		legacyEditor: LegacyEditor,
 		onLessonLoaded,
 		setLocalData,
-		refreshChapter,
-		setOpenModal,
 	} = props;
 	const [ lesson, setLesson ] = useState( null );
 	const [ error, setError ] = useState( '' );
@@ -33,7 +30,7 @@ export function NativeLessonRoute( props ) {
 				setLesson( data );
 				onLessonLoaded?.( data );
 				setLocalData?.( { description: data.description || '' } );
-				if ( data.native_editor_url && ! chapterId ) {
+				if ( data.native_editor_url ) {
 					const url = new URL(
 						data.native_editor_url,
 						window.location.href
@@ -42,7 +39,9 @@ export function NativeLessonRoute( props ) {
 						'ohmylms_return',
 						editorBackPath(
 							window.location.hash,
-							'/content-hub/lessons'
+							chapterId
+								? window.location.hash.slice( 1 )
+								: '/content-hub/lessons'
 						)
 					);
 					window.location.replace( url.href );
@@ -66,34 +65,5 @@ export function NativeLessonRoute( props ) {
 	if ( ! lesson.native_editor_url ) {
 		return <LegacyEditor { ...props } />;
 	}
-	const url = new URL( lesson.native_editor_url, window.location.href );
-	url.searchParams.set( 'ohmylms_return', window.location.hash.slice( 1 ) );
-	return (
-		<div>
-			<p>
-				{ __(
-					'Edit this lesson with the WordPress block editor.',
-					'ohmylms'
-				) }
-			</p>
-			<Button
-				variant="primary"
-				href={ url.href }
-				onClick={ () => {
-					if ( chapterId && refreshChapter ) {
-						window.addEventListener(
-							'focus',
-							() => refreshChapter( chapterId ),
-							{ once: true }
-						);
-					}
-					setOpenModal?.( false );
-				} }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				{ __( 'Open lesson editor', 'ohmylms' ) }
-			</Button>
-		</div>
-	);
+	return <Spinner />;
 }

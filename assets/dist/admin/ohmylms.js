@@ -2552,9 +2552,9 @@
               key: 1,
               lessonType: "text",
               icon: React.createElement(ce, null),
-              title: (0, b.__)("Text", "ohmylms"),
+              title: (0, b.__)("Block lesson", "ohmylms"),
               type: "lesson",
-              description: (0, b.__)("Create text-based content with links and images", "ohmylms"),
+              description: (0, b.__)("Create content with the WordPress block editor", "ohmylms"),
               onClick: function () {
                 return o("text");
               }

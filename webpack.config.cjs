@@ -2,7 +2,7 @@ const path=require('node:path');
 const DependencyExtractionWebpackPlugin=require('@wordpress/dependency-extraction-webpack-plugin');
 module.exports={
  entry:{'extensions':path.resolve(__dirname,'assets/src/extensions/index.jsx'),'schools':path.resolve(__dirname,'assets/src/features/schools/index.jsx'),'math-runtime':path.resolve(__dirname,'assets/src/features/math/runtime.mjs'),'native-lesson-editor':path.resolve(__dirname,'assets/src/features/learning/NativeLessonSettings.jsx')},
- output:{path:path.resolve(__dirname,'build/sdk'),filename:'[name].js',chunkFilename:'chunks/[name].[contenthash:12].js',publicPath:'auto',uniqueName:'ohmylmsExtensionSdk',clean:false},
+ output:{path:path.resolve(__dirname,'build/sdk'),filename:'[name].js',chunkFilename:'chunks/[name].[contenthash:12].js',publicPath:'auto',uniqueName:'ohmylmsExtensionSdk',clean:true},
  devtool:'source-map',
  resolve:{extensions:['.js','.jsx','.mjs']},
  module:{rules:[{test:/\.[cm]?jsx?$/,exclude:/node_modules/,use:{loader:'babel-loader',options:{presets:[['@babel/preset-react',{runtime:'classic',pragma:'createElement'}]]}}}]},

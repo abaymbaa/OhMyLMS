@@ -3,7 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { courseEditPath } from './hubRoutes.mjs';
 import { editPath } from './api.mjs';
-import { withEditorReturn } from './editorNavigation.mjs';
+import { withEditorReturn, lessonEditorHref } from './editorNavigation.mjs';
 
 const typeLabel = ( type ) =>
 	( {
@@ -31,7 +31,14 @@ export function AttachmentItem( { item, skills, actions, returnTo } ) {
 			</span>
 			<a
 				className="ohmylms-catalog-item-title"
-				href={ `#${ withEditorReturn( editPath( item.type, item.content_id ), returnTo ) }` }
+				href={
+					item.type === 'lesson'
+						? lessonEditorHref(
+								{ ...item, id: item.content_id },
+								returnTo
+							)
+						: `#${ withEditorReturn( editPath( item.type, item.content_id ), returnTo ) }`
+				}
 			>
 				{ item.title }
 			</a>

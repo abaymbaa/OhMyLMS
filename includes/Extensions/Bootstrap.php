@@ -14,7 +14,7 @@ final class Bootstrap {
 				'lesson',
 				$type,
 				array(
-					'label'  => ucfirst( $type ),
+					'label'  => 'text' === $type ? __( 'Block lesson', 'ohmylms' ) : ucfirst( $type ),
 					'render' => static function () {
 											the_content(); },
 					'editor' => array( 'format' => 'wordpress-content' ),

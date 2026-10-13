@@ -234,11 +234,26 @@ final class NativeLessonEditor {
 	 */
 	public static function legacy_response( $response, $post ) {
 		$data = $response->get_data();
-		if ( in_array( ! empty( $data['type'] ) ? $data['type'] : 'text', array( 'text', 'audio', 'video' ), true ) && current_user_can( 'edit_post', $post->ID ) ) {
-			$data['native_editor_url'] = get_edit_post_link( $post->ID, 'raw' );
+		$url  = self::edit_url( $post->ID );
+		if ( $url ) {
+			$data['native_editor_url'] = $url;
 			$response->set_data( $data );
 		}
 		return $response;
+	}
+
+	/**
+	 * Expose direct editor links only for editable built-in lessons.
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @return string Native editor URL, or an empty string for custom lessons.
+	 */
+	public static function edit_url( $lesson_id ) {
+		$type = get_post_meta( $lesson_id, '_type', true ) ?: 'text';
+		if ( 'ohmylms-lesson' !== get_post_type( $lesson_id ) || ! in_array( $type, array( 'text', 'audio', 'video' ), true ) || ! current_user_can( 'edit_post', $lesson_id ) ) {
+			return '';
+		}
+		return (string) get_edit_post_link( $lesson_id, 'raw' );
 	}
 
 	/** Enqueue only the settings extension on native lesson screens. */

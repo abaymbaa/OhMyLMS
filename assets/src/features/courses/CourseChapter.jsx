@@ -1,5 +1,6 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { nativeLessonHref } from '../content-hub/editorNavigation.mjs';
 export function createCourseChapter( readRuntime ) {
 	return function CourseChapter( props ) {
 		const {
@@ -230,8 +231,23 @@ export function createCourseChapter( readRuntime ) {
 										case 2:
 											( ( o = e.v ) &&
 												( D( ! 1 ),
-												H( ! 0 ),
-												R.setSelectedLessonId( o ) ),
+												[
+													'text',
+													'audio',
+													'video',
+												].includes( n )
+													? window.location.assign(
+															nativeLessonHref(
+																o,
+																window.location.hash.slice(
+																	1
+																)
+															)
+														)
+													: ( H( ! 0 ),
+														R.setSelectedLessonId(
+															o
+														) ) ),
 												( e.n = 4 ) );
 											break;
 										case 3:
@@ -384,6 +400,19 @@ export function createCourseChapter( readRuntime ) {
 										D( ! 0 ) );
 								},
 								handleLessonEdit( e, t, n ) {
+									if (
+										[ 'text', 'audio', 'video' ].includes(
+											t
+										)
+									) {
+										window.location.assign(
+											nativeLessonHref(
+												e,
+												window.location.hash.slice( 1 )
+											)
+										);
+										return;
+									}
 									'quiz' === t
 										? ( R.setSelectedQuizId( e ),
 											R.setIsOpenQuizBuilder( ! 0 ) )

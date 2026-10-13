@@ -11,7 +11,10 @@ import {
 import { NewQuestionModal } from '../question-bank/NewQuestionModal';
 import { createContent } from '../content-hub/api.mjs';
 import { useWorkspace } from './context';
-import { withEditorReturn } from '../content-hub/editorNavigation.mjs';
+import {
+	withEditorReturn,
+	lessonEditorHref,
+} from '../content-hub/editorNavigation.mjs';
 import { skillLessonCreator } from './skillLessonCreation.mjs';
 import * as api from './api.mjs';
 import { editPath } from './workspace.mjs';
@@ -418,9 +421,7 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 						{ lessons.rows.map( ( row ) => (
 							<li key={ row.id }>
 								<KindIcon kind="lesson" />
-								<a
-									href={ `#${ withEditorReturn( editPath( 'lesson', row.id ), returnTo ) }` }
-								>
+								<a href={ lessonEditorHref( row, returnTo ) }>
 									{ row.title }
 								</a>
 								<Button
@@ -562,9 +563,8 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 					onClose={ () => setPicking( '' ) }
 					onCreated={ ( lesson ) => {
 						setVersion( ( value ) => value + 1 );
-						window.location.hash = withEditorReturn(
-							editPath( 'lesson', lesson.id ),
-							returnTo
+						window.location.assign(
+							lessonEditorHref( lesson, returnTo )
 						);
 					} }
 					onChoose={ ( row ) =>

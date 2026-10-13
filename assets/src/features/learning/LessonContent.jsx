@@ -1,7 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
-import { LessonBlockWorkspace } from './LessonBlockWorkspace';
-function createBuiltinLessonContent( readRuntime ) {
+// Built-in lessons bypass this form; retain it for custom lesson extensions.
+function createLegacyLessonContent( readRuntime ) {
 	return function LessonContent( props ) {
 		const { Pr: LearningContentForm, React, b: I18n } = readRuntime();
 		var t,
@@ -13,16 +13,9 @@ function createBuiltinLessonContent( readRuntime ) {
 			chapterId = props.chapterId,
 			onExternalUploadComplete = props.onExternalUploadComplete;
 		return (
-			<LessonBlockWorkspace
-				key={ lesson?.id }
-				lesson={ lesson || {} }
-				onTitleChange={ handleInputChange }
-				onContentChange={ handleEditorContentChange }
-				settings={ props.settings }
-				customContent={ props.customContent }
-				media={
+			<React.Fragment>
+				{ props.customContent || (
 					<LearningContentForm
-						mediaOnly
 						titleValue={
 							null !==
 								( t =
@@ -95,16 +88,17 @@ function createBuiltinLessonContent( readRuntime ) {
 						autofocus={ ! 1 }
 						editorFor={ 'lesson' }
 					/>
-				}
-			/>
+				) }
+				{ props.settings }
+			</React.Fragment>
 		);
 	};
 }
 
 export function createLessonContent( readRuntime ) {
-	const BuiltinLessonContent = createBuiltinLessonContent( readRuntime );
+	const LegacyLessonContent = createLegacyLessonContent( readRuntime );
 	return function LessonContent( props ) {
-		return createElement( BuiltinLessonContent, {
+		return createElement( LegacyLessonContent, {
 			...props,
 			customContent: window.ohmylms.extensions.lessonEditor(
 				props,
