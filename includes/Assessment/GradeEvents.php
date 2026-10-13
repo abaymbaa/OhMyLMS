@@ -61,6 +61,15 @@ final class GradeEvents {
 		) ) {
 			throw new \RuntimeException( 'Evidence outbox write failed' );
 		}
+		/**
+		 * Fires inside the grading transaction, after the grade event and its evidence outbox row
+		 * are written. Listeners must be cheap and must not throw: an exception here would roll
+		 * back the grade.
+		 *
+		 * @param int   $id  Grade event ID.
+		 * @param array $row The stored event.
+		 */
+		do_action( 'ohmylms_grade_event_recorded', $id, $row );
 		return $id;
 	}
 
