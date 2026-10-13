@@ -95,45 +95,116 @@ final class LrsClient {
 	/**
 	 * Send statements in one request.
 	 *
+	 * A success also carries "stored": the statement IDs the LRS says it stored, or null when
+	 * it did not say. A 200 alone does not prove delivery: a real LRS was seen to store the valid
+	 * statements of a batch, drop the invalid one, and answer 200 with only the stored IDs.
+	 *
 	 * @param array[] $statements Statements.
-	 * @return array See interpret().
+	 * @return array See interpret(), plus stored (string[]|null) on success.
 	 */
 	public static function post( array $statements ) {
 		$request = self::request( 'POST', 'statements', wp_json_encode( array_values( $statements ), JSON_UNESCAPED_UNICODE ) );
 		if ( isset( $request['result'] ) ) {
 			return $request['result'];
 		}
+		$result = self::interpret( $request['code'], $request['body'] );
+		if ( 'ok' === $result['class'] ) {
+			// A 409 means "already stored", which says nothing about the other statements, so it is never trusted as a list.
+			$result['stored'] = 409 === $result['status'] ? null : self::stored_ids( $request['raw'] );
+		}
 
-		return self::interpret( $request['code'], $request['body'] );
+		return $result;
 	}
 
 	/**
-	 * Check the connection with the LRS "about" resource.
+	 * The statement IDs an LRS reports having stored, from the body of a successful POST.
+	 *
+	 * @param string $body Response body.
+	 * @return string[]|null Lower-case IDs, or null when the body is not a list of IDs (for
+	 *                       example an empty 204), in which case delivery cannot be verified.
+	 */
+	public static function stored_ids( $body ) {
+		$ids = json_decode( (string) $body, true );
+		if ( ! is_array( $ids ) ) {
+			return null;
+		}
+		$stored = array();
+		foreach ( $ids as $id ) {
+			if ( ! Uuid::is_valid( $id ) ) {
+				return null;
+			}
+			$stored[] = strtolower( $id );
+		}
+
+		return $stored;
+	}
+
+	/**
+	 * Whether the LRS has a statement.
+	 *
+	 * @param string $statement_id Statement UUID.
+	 * @return bool|null True if stored, false if the LRS says it has no such statement, null when
+	 *                   the answer is unclear (network trouble, an unexpected status).
+	 */
+	public static function exists( $statement_id ) {
+		$request = self::request( 'GET', 'statements?statementId=' . rawurlencode( $statement_id ) );
+		if ( isset( $request['result'] ) || 0 === $request['code'] ) {
+			return null;
+		}
+		if ( 200 === $request['code'] ) {
+			return true;
+		}
+
+		return 404 === $request['code'] ? false : null;
+	}
+
+	/**
+	 * Check the connection and the credentials.
+	 *
+	 * The "about" resource only proves the address is right: LRSs commonly answer it without
+	 * checking the key, so it cannot be the whole test. The credentials are checked by posting an
+	 * empty list of statements, which needs the same write permission as sending and stores nothing.
 	 *
 	 * @return array ok (bool), message.
 	 */
 	public static function test() {
-		$request = self::request( 'GET', 'about' );
-		if ( isset( $request['result'] ) ) {
+		$about = self::request( 'GET', 'about' );
+		if ( isset( $about['result'] ) ) {
 			return array(
 				'ok'      => false,
-				'message' => $request['result']['message'],
+				'message' => $about['result']['message'],
 			);
 		}
-		$outcome = self::interpret( $request['code'], $request['body'] );
+		$outcome = self::interpret( $about['code'], $about['body'] );
 		if ( 'ok' !== $outcome['class'] ) {
 			return array(
 				'ok'      => false,
 				'message' => $outcome['message'],
 			);
 		}
-		$about    = json_decode( $request['body'], true );
-		$versions = is_array( $about ) && ! empty( $about['version'] ) ? implode( ', ', (array) $about['version'] ) : '';
+		$info     = json_decode( $about['body'], true );
+		$versions = is_array( $info ) && ! empty( $info['version'] ) ? implode( ', ', (array) $info['version'] ) : '';
+		/* translators: %s: xAPI versions the LRS reports, or empty. */
+		$supports = '' !== $versions ? ' ' . sprintf( __( 'The LRS supports xAPI %s.', 'ohmylms' ), $versions ) : '';
+
+		$check = self::post( array() );
+		if ( 'ok' === $check['class'] ) {
+			return array(
+				'ok'      => true,
+				'message' => __( 'Connected, and the key is accepted for sending.', 'ohmylms' ) . $supports,
+			);
+		}
+		if ( 'reject' === $check['class'] ) {
+			// The LRS refused an empty request for a reason other than the credentials, so they are unproven, not wrong.
+			return array(
+				'ok'      => true,
+				'message' => __( 'Connected. This LRS does not accept an empty test request, so the key could not be checked; it will be checked when the first statement is sent.', 'ohmylms' ) . $supports,
+			);
+		}
 
 		return array(
-			'ok'      => true,
-			/* translators: %s: xAPI versions the LRS reports. */
-			'message' => '' !== $versions ? sprintf( __( 'Connected. The LRS supports xAPI %s.', 'ohmylms' ), $versions ) : __( 'Connected.', 'ohmylms' ),
+			'ok'      => false,
+			'message' => $check['message'],
 		);
 	}
 
@@ -173,13 +244,16 @@ final class LrsClient {
 			return array(
 				'code' => 0,
 				'body' => $response->get_error_message(),
+				'raw'  => '',
 			);
 		}
 		$text = wp_remote_retrieve_body( $response );
 
 		return array(
 			'code' => (int) wp_remote_retrieve_response_code( $response ),
+			// A short plain-text excerpt for messages, and the untouched body for parsing.
 			'body' => 'GET' === $method ? $text : substr( trim( wp_strip_all_tags( $text ) ), 0, 300 ),
+			'raw'  => $text,
 		);
 	}
 }

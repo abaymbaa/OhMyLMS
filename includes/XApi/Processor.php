@@ -125,16 +125,9 @@ final class Processor {
 	 */
 	private static function deliver( array $batch ) {
 		$result = LrsClient::post( wp_list_pluck( $batch, 'statement' ) );
-		$ids    = array_map( 'absint', wp_list_pluck( wp_list_pluck( $batch, 'row' ), 'id' ) );
 		switch ( $result['class'] ) {
 			case 'ok':
-				Outbox::mark_sent( $ids );
-				self::health( array( 'last_error' => '' ) );
-
-				return array(
-					'sent' => count( $ids ),
-					'hold' => false,
-				);
+				return self::settle_accepted( $batch, $result );
 			case 'retry':
 				foreach ( $batch as $item ) {
 					Outbox::retry( $item['row'], $result['message'] );
@@ -154,8 +147,9 @@ final class Processor {
 					'hold' => true,
 				);
 		}
-		// Rejected. An xAPI request is all-or-nothing, so one bad statement rejects its whole
-		// batch. Send the statements one at a time to find it and still deliver the rest.
+		// Rejected. By the xAPI specification a request is all-or-nothing, so one bad statement
+		// rejects its whole batch. Send the statements one at a time to find it and still deliver
+		// the rest. Some LRSs instead drop the bad statement and answer 200; settle_accepted() covers that.
 		if ( count( $batch ) > 1 ) {
 			$sent = 0;
 			foreach ( $batch as $item ) {
@@ -179,6 +173,75 @@ final class Processor {
 
 		return array(
 			'sent' => 0,
+			'hold' => false,
+		);
+	}
+
+	/**
+	 * Settle a batch the LRS answered with success.
+	 *
+	 * A success status is not proof that every statement was stored: a real LRS was seen to
+	 * store the valid statements of a batch, drop the invalid one, and answer 200 with only the
+	 * IDs it stored. So only statements the LRS echoes back are marked sent. Any other is looked
+	 * up: already stored means delivered (a replay); not stored is sent on its own to get the
+	 * LRS's real error and fail with it, instead of being lost while marked sent.
+	 *
+	 * @param array[] $batch  Items with row and statement.
+	 * @param array   $result LrsClient::post() result with a "stored" list (or null when the LRS gave none).
+	 * @return array sent (int), hold (bool).
+	 */
+	private static function settle_accepted( array $batch, array $result ) {
+		$stored = isset( $result['stored'] ) ? $result['stored'] : null;
+		if ( null === $stored ) {
+			// The LRS listed nothing (for example an empty 204), so there is nothing to check against.
+			Outbox::mark_sent( array_map( 'absint', wp_list_pluck( wp_list_pluck( $batch, 'row' ), 'id' ) ) );
+			self::health( array( 'last_error' => '' ) );
+
+			return array(
+				'sent' => count( $batch ),
+				'hold' => false,
+			);
+		}
+		$confirmed   = array();
+		$unconfirmed = array();
+		foreach ( $batch as $item ) {
+			// Compare on the statement's own ID: that is what the LRS saw and echoes back.
+			if ( in_array( strtolower( (string) $item['statement']['id'] ), $stored, true ) ) {
+				$confirmed[] = (int) $item['row']['id'];
+			} else {
+				$unconfirmed[] = $item;
+			}
+		}
+		Outbox::mark_sent( $confirmed );
+		$sent = count( $confirmed );
+
+		foreach ( $unconfirmed as $item ) {
+			$exists = LrsClient::exists( (string) $item['statement']['id'] );
+			if ( true === $exists ) {
+				Outbox::mark_sent( array( (int) $item['row']['id'] ) );
+				++$sent;
+			} elseif ( false === $exists && count( $batch ) > 1 ) {
+				$single = self::deliver( array( $item ) );
+				$sent  += $single['sent'];
+				if ( $single['hold'] ) {
+					return array(
+						'sent' => $sent,
+						'hold' => true,
+					);
+				}
+			} elseif ( false === $exists ) {
+				Outbox::fail( $item['row']['id'], __( 'The LRS answered success but did not store this statement.', 'ohmylms' ) );
+				self::health( array( 'last_error' => __( 'The LRS answered success but did not store a statement.', 'ohmylms' ) ) );
+			} else {
+				Outbox::retry( $item['row'], __( 'Could not confirm that the LRS stored this statement.', 'ohmylms' ) );
+			}
+		}
+		if ( ! $unconfirmed ) {
+			self::health( array( 'last_error' => '' ) );
+		}
+
+		return array(
+			'sent' => $sent,
 			'hold' => false,
 		);
 	}

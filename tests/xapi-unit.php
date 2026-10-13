@@ -230,6 +230,15 @@ check( 'timeout' === LrsClient::interpret( 0, 'timeout' )['message'], 'transport
 check( false !== strpos( LrsClient::interpret( 400, 'bad verb' )['message'], 'bad verb' ), 'rejections explain themselves' );
 check( '' === LrsClient::interpret( 200 )['message'], 'success has no message' );
 
+// Which statements an LRS says it stored (a 200 alone is not proof: a real LRS drops invalid ones from a batch).
+$one = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
+$two = '11111111-2222-4333-8444-555555555555';
+check( array( $one, $two ) === LrsClient::stored_ids( wp_json_encode( array( $one, strtoupper( $two ) ) ) ), 'stored IDs are listed, lower-cased' );
+check( array() === LrsClient::stored_ids( '[]' ), 'an empty list means "stored nothing", not "unknown"' );
+foreach ( array( '', 'not json', '{"a":1}', '["not-a-uuid"]', '[1,2]', '"x"', 'null', '[["nested"]]' ) as $odd ) {
+	check( null === LrsClient::stored_ids( $odd ), "an unreadable body is unknown, not a list: $odd" );
+}
+
 // Outbox retry timing: 1, 2, 4 ... minutes, capped at an hour.
 check( array( 60, 120, 240, 480, 960, 1920, 3600, 3600 ) === array_map( array( Outbox::class, 'backoff_seconds' ), range( 1, 8 ) ), 'backoff doubles then caps' );
 check( 3600 === Outbox::backoff_seconds( 500 ) && 60 === Outbox::backoff_seconds( 0 ), 'backoff is safe at the extremes' );

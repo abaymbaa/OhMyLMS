@@ -53,12 +53,31 @@ add_filter('pre_http_request', static function ($pre, $args, $url) use (&$lrs) {
     if (strpos($url, 'https://lrs.example.test/') !== 0) { return $pre; }
     $statements = json_decode($args['body'] ?? '[]', true) ?: [];
     $lrs['requests'][] = ['url' => $url, 'method' => $args['method'], 'headers' => $args['headers'], 'redirection' => $args['redirection'], 'statements' => $statements];
-    $code = ['ok' => 200, 'conflict' => 409, 'down' => 503, 'denied' => 401, 'missing' => 404, 'redirect' => 302][$lrs['mode']] ?? 200;
+    // Asking whether the LRS has a statement: GET /statements?statementId=...
+    if ($args['method'] === 'GET' && strpos($url, 'statementId=') !== false) {
+        parse_str((string) wp_parse_url($url, PHP_URL_QUERY), $query);
+        $id = $query['statementId'] ?? '';
+        $code = ['unclear' => 500, 'drops' => $id === $lrs['bad_id'] ? 404 : 200][$lrs['mode']] ?? 200;
+        return ['headers' => [], 'body' => $code === 200 ? wp_json_encode(['id' => $id]) : 'No.', 'response' => ['code' => $code, 'message' => ''], 'cookies' => [], 'filename' => null];
+    }
+    $code = ['ok' => 200, 'conflict' => 409, 'down' => 503, 'denied' => 401, 'missing' => 404, 'redirect' => 302, 'empty204' => 204, 'auth_required' => 401][$lrs['mode']] ?? 200;
+    $is_about = substr($url, -6) === '/about';
+    if ($lrs['mode'] === 'auth_required' && $is_about) { $code = 200; }   // /about answers without checking the key, as real LRSs do
+    if ($lrs['mode'] === 'no_empty' && !$statements && !$is_about) { $code = 400; }   // an LRS that refuses an empty POST
     if ($lrs['mode'] === 'picky') {
+        // A conformant LRS: one invalid statement rejects the whole request.
         $code = 200;
         foreach ($statements as $statement) { if ($statement['id'] === $lrs['bad_id']) { $code = 400; } }
     }
-    $body = $code === 200 ? wp_json_encode(array_column($statements, 'id')) : 'No.';
+    $ids = array_column($statements, 'id');
+    if ($lrs['mode'] === 'drops') {
+        // Seen on a real LRS: in a batch it stores the valid statements, drops the invalid one, answers 200
+        // with only the stored IDs; the invalid statement on its own is rejected with 400.
+        if (count($statements) === 1 && $ids[0] === $lrs['bad_id']) { $code = 400; }
+        $ids = array_values(array_diff($ids, [$lrs['bad_id']]));
+    }
+    if (in_array($lrs['mode'], ['echo_none', 'unclear'], true)) { $ids = []; }   // 200, but the list says nothing was stored
+    $body = $code === 200 ? wp_json_encode($ids) : ($code === 400 ? 'Schema violation in statement 0' : ($code === 204 ? '' : 'No.'));
     if (substr($url, -6) === '/about') { $body = '{"version":["1.0.3"]}'; }
     return ['headers' => [], 'body' => $body, 'response' => ['code' => $code, 'message' => ''], 'cookies' => [], 'filename' => null];
 }, PHP_INT_MAX, 3);
@@ -315,6 +334,46 @@ $states = $wpdb->get_col($wpdb->prepare("SELECT status FROM $outbox WHERE studen
 ok($delivered === 2 && $states === ['sent', 'failed', 'sent'], "Bad statement isolation: delivered $delivered, states " . implode(',', $states));
 ok(count($lrs['requests']) === 4 && count($lrs['requests'][0]['statements']) === 3, 'Expected one batch then three single requests: ' . count($lrs['requests']));
 
+// A 200 is not proof of delivery. A real LRS stores the valid statements of a batch, DROPS the invalid
+// one, and answers 200 listing only what it stored. That statement must not be marked sent.
+$status_of_event = static function ($course) use ($wpdb, $outbox, $retry_student) {
+    return $wpdb->get_row($wpdb->prepare("SELECT status, tries, last_error FROM $outbox WHERE statement_uuid=%s", Uuid::v5(Settings::site_id(), 'course-completed:' . $retry_student . ':' . $course)), ARRAY_A);
+};
+$d1 = $fresh_course(); $d_bad = $fresh_course(); $d2 = $fresh_course();
+foreach ([$d1, $d_bad, $d2] as $c) { do_action('ohmylms_course_completed', $retry_student, $c, 0); }
+$reset_lrs('drops');
+$lrs['bad_id'] = Uuid::v5(Settings::site_id(), 'course-completed:' . $retry_student . ':' . $d_bad);
+$delivered = Processor::process();
+$dropped = $status_of_event($d_bad);
+ok($delivered === 2 && $status_of_event($d1)['status'] === 'sent' && $status_of_event($d2)['status'] === 'sent', "A lenient LRS: the two stored statements should be sent (delivered $delivered)");
+ok($dropped['status'] === 'failed', 'A statement the LRS silently dropped was marked ' . $dropped['status'] . ', not failed: ' . wp_json_encode($dropped));
+ok(strpos($dropped['last_error'], 'Schema violation') !== false, 'The LRS\'s real reason should be kept: ' . $dropped['last_error']);
+ok(count($lrs['requests']) === 3 && $lrs['requests'][1]['method'] === 'GET' && count($lrs['requests'][2]['statements']) === 1, 'Expected the batch, a "do you have it" check, then the lone statement: ' . count($lrs['requests']));
+
+// 200 with an empty list, but the LRS does have the statement (what a replay can look like): delivered.
+$e1 = $fresh_course(); $e2 = $fresh_course();
+foreach ([$e1, $e2] as $c) { do_action('ohmylms_course_completed', $retry_student, $c, 0); }
+$reset_lrs('echo_none');
+ok(Processor::process() === 2 && $status_of_event($e1)['status'] === 'sent' && $status_of_event($e2)['status'] === 'sent', 'Statements the LRS already has were not treated as delivered');
+ok(count($lrs['requests']) === 3, 'Expected one POST and one check per statement: ' . count($lrs['requests']));
+
+// 200 with an empty list and the check itself fails: unknown, so retry later, never "sent" and never "failed".
+$u1 = $fresh_course();
+do_action('ohmylms_course_completed', $retry_student, $u1, 0);
+$reset_lrs('unclear');
+ok(Processor::process() === 0, 'An unconfirmed statement was counted as delivered');
+$unclear = $status_of_event($u1);
+ok($unclear['status'] === 'pending' && (int) $unclear['tries'] === 1 && strpos($unclear['last_error'], 'confirm') !== false, 'An unconfirmed statement should wait and retry: ' . wp_json_encode($unclear));
+$make_due($retry_student);
+$reset_lrs();
+ok(Processor::process() === 1 && $status_of_event($u1)['status'] === 'sent', 'The unconfirmed statement was not delivered once the LRS recovered');
+
+// An LRS that lists nothing at all (204): nothing to check against, so trust the success as before.
+$n1 = $fresh_course(); $n2 = $fresh_course();
+foreach ([$n1, $n2] as $c) { do_action('ohmylms_course_completed', $retry_student, $c, 0); }
+$reset_lrs('empty204');
+ok(Processor::process() === 2 && count($lrs['requests']) === 1, 'A 204 should deliver the batch without extra requests: ' . count($lrs['requests']));
+
 // A conflict means the LRS already has it.
 $c = $fresh_course();
 do_action('ohmylms_course_completed', $retry_student, $c, 0);
@@ -349,9 +408,18 @@ ok((int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $outbox WHERE stude
 $reset_lrs();
 $test = \OhMyLMS\XApi\LrsClient::test();
 ok($test['ok'] && strpos($test['message'], '1.0.3') !== false && substr($lrs['requests'][0]['url'], -6) === '/about', 'Connection test wrong: ' . wp_json_encode($test));
+ok(strpos($test['message'], 'key is accepted') !== false && count($lrs['requests']) === 2 && $lrs['requests'][1]['method'] === 'POST' && $lrs['requests'][1]['statements'] === [], 'The test should also check the key with an empty POST: ' . wp_json_encode($test));
 $reset_lrs('denied');
 $test = \OhMyLMS\XApi\LrsClient::test();
 ok(!$test['ok'] && $test['message'] !== '', 'A refused connection test should explain itself');
+// The "about" resource answers without checking the key (as real LRSs do), so a wrong key must still be caught.
+$reset_lrs('auth_required');
+$test = \OhMyLMS\XApi\LrsClient::test();
+ok(!$test['ok'] && strpos($test['message'], 'key and secret') !== false && strpos($test['message'], 'Connected') === false, 'A wrong key must not report "Connected": ' . wp_json_encode($test));
+// An LRS that refuses an empty request: the address works, the key is unproven rather than wrong.
+$reset_lrs('no_empty');
+$test = \OhMyLMS\XApi\LrsClient::test();
+ok($test['ok'] && strpos($test['message'], 'could not be checked') !== false, 'An LRS that refuses an empty POST should say the key is unchecked: ' . wp_json_encode($test));
 $reset_lrs();
 
 require_once ABSPATH . 'wp-admin/includes/template.php';
