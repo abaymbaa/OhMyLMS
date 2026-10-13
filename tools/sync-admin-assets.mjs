@@ -5,6 +5,18 @@ import path from 'node:path';
 const root = path.resolve( import.meta.dirname, '..' );
 for ( const [ source, target ] of [
 	[
+		'build/sdk/quiz-player-block.js',
+		'assets/dist/admin/quiz-player-block.js',
+	],
+	[
+		'build/sdk/quiz-player-block.js.map',
+		'assets/dist/admin/quiz-player-block.js.map',
+	],
+	[
+		'build/sdk/quiz-player-block.asset.php',
+		'assets/dist/admin/quiz-player-block.asset.php',
+	],
+	[
 		'build/sdk/native-lesson-editor.js',
 		'assets/dist/admin/native-lesson-editor.js',
 	],

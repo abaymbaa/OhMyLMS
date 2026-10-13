@@ -35,7 +35,7 @@ final class Interactivity {
 			$path         = 'assets/interactivity/' . $file . '.js';
 			$dependencies = apply_filters(
 				'ohmylms_interactivity_module_dependencies',
-				$id === 'interactivity' ? array() : array( '@wordpress/interactivity', 'ohmylms/interactivity' ),
+				$id === 'interactivity' ? array() : array_merge( array( '@wordpress/interactivity', 'ohmylms/interactivity' ), 'quiz' === $id ? array( array( 'id' => '@wordpress/interactivity-router', 'import' => 'dynamic' ) ) : array() ),
 				'ohmylms/' . $id
 			);
 			wp_register_script_module(
@@ -129,6 +129,9 @@ final class Interactivity {
 				return in_array( $name, preg_split( '/\s+/', $class ), true );
 			};
 			if ( $tags->get_tag() === 'SECTION' && $has( 'ohmylms-quiz' ) ) {
+				if ( ! empty( $context['inlineEndpoint'] ) ) {
+					$tags->set_attribute( 'data-wp-key', 'attempt-' . $context['attemptId'] );
+				}
 				$tags->set_attribute( 'data-wp-interactive', 'ohmylms/quiz' );
 				$tags->set_attribute( 'data-wp-context', wp_json_encode( $context ) );
 				$tags->set_attribute( 'data-wp-init', 'callbacks.mount' );

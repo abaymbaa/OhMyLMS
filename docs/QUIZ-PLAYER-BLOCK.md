@@ -1,0 +1,17 @@
+# Quiz Player block
+
+Insert **OhMyLMS Quiz Player** from the WordPress block inserter in a Block lesson, page or post. Search for an existing quiz and select it. The native player grows with its content; no iframe height is needed. Previously saved quiz IDs remain compatible, and old height attributes are accepted but ignored.
+
+**Open instructor preview** opens the existing instructor preview in a separate tab without creating a learner attempt. Draft quizzes can be previewed, but must be published before learners can play them. Preview Exit returns to the quiz editor in that tab; it cannot replace the lesson's block with admin content.
+
+On the frontend, the block renders the shared quiz player directly using WordPress's Interactivity API. Learners sign in and must satisfy the quiz's existing course enrollment, sequencing and access requirements. Associate the quiz with a course before using it; placing the block on an ordinary page does not grant access to an otherwise restricted quiz. Attempt limits, grading, feedback release and time limits retain their existing behavior. Start, submit, exit and expiry use authenticated REST requests and refresh router regions on the current page without changing the lesson URL. A refresh failure can be retried without repeating the mutation.
+
+Each player has its own region and local context. Different quizzes keep independent selections and navigation. Repeated blocks for the same quiz share that learner's existing attempt by design. Autosave mounts for each active player, including players inserted after Start, and cleans up after removal.
+
+Pages containing this block send no-cache headers and set `DONOTCACHEPAGE`. Exclude quiz pages from any external/CDN full-page cache that ignores WordPress's cache controls, because attempt content and nonces are personalized. Region refreshes also refresh other router regions on the page; custom layouts must support WordPress client navigation and scope controls to their own player.
+
+The picker endpoint returns metadata only and requires author permissions. Private and draft quizzes require quiz edit permission. The player does not put answers or grading keys in block attributes.
+
+`OhMyLMS\Blocks\QuizPlayerBlock` and `includes/Blocks/QuizPlayerBlock.php` follow the plugin's existing PSR-4 mapping. This is the narrow compatibility exception to WordPress class filename conventions; renaming the file would break autoloading.
+
+Checks: `node --test tests/js/quiz-player.test.mjs tests/js/quiz-inline.test.mjs` and `php tests/php/quiz-player-block.php`. The isolated browser fixture is `php -S 127.0.0.1:8111 tests/fixtures/quiz-inline.php`, then open `/fixture`. It uses real block markup, templates and the installed WordPress Interactivity API with engine doubles, so it creates no database learner records. Verified: Start, required-answer validation, Submit, inline results, restarting, two players preserving selections, and scoped Exit. Production grading remains delegated to `Submission`.

@@ -35,6 +35,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Practice\Dashboard::init();
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Learning\NativeLessonEditor::init();
+\OhMyLMS\Blocks\QuizPlayerBlock::init();
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();
 \OhMyLMS\Schools\Bootstrap::init();

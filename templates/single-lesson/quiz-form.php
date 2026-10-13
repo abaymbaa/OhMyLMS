@@ -150,6 +150,7 @@ if ( $attempt_context ) {
 		)
 	);
 	?>
+	<p role="alert" class="ohmylms-inline-error" data-wp-text="context.error" data-wp-bind--hidden="!context.error" hidden></p>
 
 	<div class="ohmylms-quiz-alert" >
 		<div class="quiz-alert-inner">

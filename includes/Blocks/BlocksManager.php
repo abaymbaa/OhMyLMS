@@ -156,6 +156,9 @@ class BlocksManager {
 			OHMYLMS_VERSION,
 			true
 		);
+		// The editor uses a separate handle, so the frontend print hook does not localize it.
+		$frontend_assets = new \OhMyLMS\Assets\FrontendAssets();
+		wp_localize_script( 'ohmylms-frontend-editor', 'ohmylms_frontend_params', $frontend_assets->get_script_data( 'ohmylms-frontend' ) );
 
 		// Enqueue block editor styles
 		wp_enqueue_style(

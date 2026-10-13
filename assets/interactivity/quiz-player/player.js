@@ -20,6 +20,7 @@ export function createQuizPlayer( {
 	isAnswered,
 	emit,
 	expire,
+	inlineSubmit,
 } ) {
 	const roots = new WeakMap();
 	const rootOf = () =>
@@ -104,8 +105,11 @@ export function createQuizPlayer( {
 					event.preventDefault();
 					return;
 				}
-				// Native form POST retains the existing nonce, enrollment, grading and redirect checks.
 				c.submitting = true;
+				if ( c.inlineEndpoint ) {
+					event.preventDefault();
+					inlineSubmit( event.target, exit ? 'exit' : 'submit' );
+				}
 			} ),
 			answerChanged: withSyncEvent( ( event ) => {
 				event.stopPropagation();
@@ -167,6 +171,10 @@ export function createQuizPlayer( {
 				const form = root
 					.querySelector( '.ohmylms-quiz-form' )
 					.closest( 'form' );
+				if ( c.inlineEndpoint ) {
+					yield inlineSubmit( form, 'timeout' );
+					return;
+				}
 				if ( c.preview ) {
 					HTMLFormElement.prototype.submit.call( form );
 					return;
@@ -191,7 +199,7 @@ export function createQuizPlayer( {
 						throw new Error( c.submissionError );
 					}
 					emit( root, 'quiz-expired', { quizId: c.quizId } );
-					window.location.assign( result.data.url );
+					window.location.assign( c.returnUrl || result.data.url );
 				} catch {
 					c.error = c.submissionError;
 					c.submitting = false;

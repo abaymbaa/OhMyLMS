@@ -2,6 +2,45 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createQuizPlayer } from '../../assets/interactivity/quiz-player/player.js';
 
+test( 'expiry preserves embedded navigation and retains standalone redirects', async ( t ) => {
+	const destinations = [];
+	t.mock.method( globalThis, 'fetch', async () => ( {
+		ok: true,
+		json: async () => ( { success: true, data: { url: '/quiz/results' } } ),
+	} ) );
+	const originalFormData = globalThis.FormData;
+	const originalWindow = globalThis.window;
+	globalThis.FormData = class extends URLSearchParams {};
+	globalThis.window = { location: { assign: ( url ) => destinations.push( url ) } };
+	t.after( () => {
+		globalThis.FormData = originalFormData;
+		if ( originalWindow === undefined ) {
+			delete globalThis.window;
+		} else {
+			globalThis.window = originalWindow;
+		}
+	} );
+	for ( const returnUrl of [ '/?ohmylms_quiz_embed=7', undefined ] ) {
+		const context = { quizId: 7, returnUrl, ajaxUrl: '/ajax', attemptId: 12 };
+		const root = { querySelector: () => ( { closest: () => undefined } ) };
+		const player = createQuizPlayer( {
+			getContext: () => context,
+			getElement: () => ( { ref: { closest: () => root } } ),
+			withSyncEvent: ( callback ) => callback,
+			withScope: ( callback ) => callback,
+			emit: () => true,
+			isAnswered: () => true,
+		} );
+		const expiry = player.actions.expire();
+		let step = expiry.next();
+		while ( ! step.done ) {
+			step = expiry.next( await step.value );
+		}
+		assert.equal( context.submitting, true );
+	}
+	assert.deepEqual( destinations, [ '/?ohmylms_quiz_embed=7', '/quiz/results' ] );
+} );
+
 function fixture( overrides = {} ) {
 	const context = {
 		quizId: 7,
@@ -12,6 +51,7 @@ function fixture( overrides = {} ) {
 		...overrides,
 	};
 	const events = [];
+	const inlineCalls = [];
 	const boxes = [ true, false ].map( ( answered ) => ( {
 		answered,
 		focused: false,
@@ -42,6 +82,10 @@ function fixture( overrides = {} ) {
 		expire: () => {
 			context.expired = true;
 		},
+		inlineSubmit: ( form, operation ) => {
+			inlineCalls.push( { form, operation } );
+			return Promise.resolve();
+		},
 	} );
 	const event = {
 		prevented: false,
@@ -51,8 +95,32 @@ function fixture( overrides = {} ) {
 		stopPropagation() {},
 		target: { querySelector: () => ( { value: 'normal-submit' } ) },
 	};
-	return { context, boxes, player, event, events };
+	return { context, boxes, player, event, events, inlineCalls, root };
 }
+
+test( 'inline submit preserves validation and exit uses the inline engine transport', () => {
+	const { boxes, player, event, inlineCalls } = fixture( { inlineEndpoint: '/attempt' } );
+	player.actions.submit( event );
+	assert.equal( inlineCalls.length, 0 );
+	boxes[ 1 ].answered = true;
+	player.actions.submit( event );
+	assert.equal( inlineCalls[ 0 ].operation, 'submit' );
+	assert.equal( event.prevented, true );
+	const exited = fixture( { inlineEndpoint: '/attempt' } );
+	exited.event.target.querySelector = () => ( { value: 'ohmylms-quiz-exit-submission' } );
+	exited.player.actions.submit( exited.event );
+	assert.equal( exited.inlineCalls[ 0 ].operation, 'exit' );
+} );
+
+test( 'inline expiry uses the same transport without a page redirect', async () => {
+	const { player, root, inlineCalls } = fixture( { inlineEndpoint: '/attempt' } );
+	const form = {};
+	root.querySelector = () => ( { closest: () => form } );
+	const expiry = player.actions.expire();
+	await expiry.next().value;
+	assert.equal( expiry.next().done, true );
+	assert.deepEqual( inlineCalls, [ { form, operation: 'timeout' } ] );
+} );
 
 test( 'player navigation validates only the current page and honors cancellation', () => {
 	const { context, boxes, player, event, events } = fixture();
