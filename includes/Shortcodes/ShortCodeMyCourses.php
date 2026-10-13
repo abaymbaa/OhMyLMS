@@ -154,7 +154,7 @@ class ShortCodeMyCourses {
 	}
 
 	/**
-	 * Output custom styles for the my courses block
+	 * Output custom styles for the My Courses shortcode.
 	 *
 	 * @param string $unique_id Unique identifier for this instance
 	 * @param array  $args Shortcode attributes

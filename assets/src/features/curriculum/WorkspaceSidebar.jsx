@@ -54,10 +54,20 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 			: null;
 	const counts =
 		node.kind === 'content' ? displayCounts( node, drag.settings ) : null;
+	let dropClass = '';
+	if ( drag.target?.key === node.key ) {
+		if ( drag.target.after === 'inside' ) {
+			dropClass = ' is-drop-inside';
+		} else {
+			dropClass = drag.target.after
+				? ' is-drop-after'
+				: ' is-drop-before';
+		}
+	}
 	return (
 		<li className={ `ohmylms-ws-node is-${ kind }` }>
 			<div
-				className={ `ohmylms-ws-node-line${ selected === node.key ? ' is-selected' : '' }${ drag.target?.key === node.key ? ( drag.target.after ? ' is-drop-after' : ' is-drop-before' ) : '' }` }
+				className={ `ohmylms-ws-node-line${ selected === node.key ? ' is-selected' : '' }${ dropClass }` }
 				onDragOver={ ( event ) => drag.over( event, node ) }
 				onDrop={ ( event ) => drag.drop( event, node ) }
 			>
@@ -74,7 +84,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 						label( node, drag.language )
 					) }
 					title={ __(
-						'Drag to reorder; Alt + Up/Down also works',
+						'Drag to move; Alt + Up/Down reorders, Alt + Left moves folders out',
 						'ohmylms'
 					) }
 					onDragStart={ ( event ) => drag.start( event, node ) }
@@ -111,6 +121,9 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 				<button
 					type="button"
 					className="ohmylms-ws-node-main"
+					draggable={ node.kind !== 'skill' && ! drag.pending }
+					onDragStart={ ( event ) => drag.start( event, node ) }
+					onDragEnd={ drag.end }
 					aria-current={ selected === node.key ? 'true' : undefined }
 					onClick={ () => onSelect( node.key ) }
 				>
@@ -225,6 +238,22 @@ export function WorkspaceSidebar( {
 		setDragged( '' );
 		setTarget( null );
 	};
+	const dropPlacement = ( event, node ) => {
+		if ( node === tree.root ) {
+			return 'inside';
+		}
+		const box = event.currentTarget.getBoundingClientRect();
+		const fraction = ( event.clientY - box.top ) / box.height;
+		if (
+			node.kind === 'content' &&
+			tree.index.get( dragged )?.kind !== 'skill' &&
+			fraction > 0.25 &&
+			fraction < 0.75
+		) {
+			return 'inside';
+		}
+		return fraction > 0.5;
+	};
 	const drag = {
 		language,
 		pending,
@@ -242,8 +271,8 @@ export function WorkspaceSidebar( {
 			setDragged( node.key );
 		},
 		over( event, node ) {
-			const box = event.currentTarget.getBoundingClientRect();
-			const after = event.clientY > box.top + box.height / 2;
+			event.stopPropagation();
+			const after = dropPlacement( event, node );
 			if (
 				pending ||
 				outlineDropPosition( tree, dragged, node.key, after ) === null
@@ -259,8 +288,7 @@ export function WorkspaceSidebar( {
 		drop( event, node ) {
 			event.preventDefault();
 			event.stopPropagation();
-			const box = event.currentTarget.getBoundingClientRect();
-			const after = event.clientY > box.top + box.height / 2;
+			const after = dropPlacement( event, node );
 			if (
 				! pending &&
 				outlineDropPosition( tree, dragged, node.key, after ) !== null
@@ -274,12 +302,22 @@ export function WorkspaceSidebar( {
 			if (
 				pending ||
 				! event.altKey ||
-				! [ 'ArrowUp', 'ArrowDown' ].includes( event.key )
+				! [ 'ArrowUp', 'ArrowDown', 'ArrowLeft' ].includes( event.key )
 			) {
 				return;
 			}
 			event.preventDefault();
 			const parent = tree.index.get( node.parentKey );
+			if ( event.key === 'ArrowLeft' ) {
+				if ( node.kind !== 'skill' && parent?.parentKey ) {
+					onReorder(
+						node.key,
+						node.kind === 'content' ? parent.key : parent.parentKey,
+						node.kind === 'content' ? true : 'inside'
+					);
+				}
+				return;
+			}
 			const siblings =
 				node.kind === 'skill'
 					? visibleChildren(
@@ -359,6 +397,10 @@ export function WorkspaceSidebar( {
 					<button
 						type="button"
 						onClick={ () => onSelect( tree.root.key ) }
+						onDragOver={ ( event ) =>
+							drag.over( event, tree.root )
+						}
+						onDrop={ ( event ) => drag.drop( event, tree.root ) }
 						aria-label={ __( 'Syllabus home', 'ohmylms' ) }
 						title={ __( 'Syllabus home', 'ohmylms' ) }
 					>
@@ -428,7 +470,37 @@ export function WorkspaceSidebar( {
 				</button>
 			</div>
 			{ ! collapsed && (
-				<div className="ohmylms-ws-side-body">
+				<div
+					className="ohmylms-ws-side-body"
+					onDragOver={ ( event ) => drag.over( event, tree.root ) }
+					onDrop={ ( event ) => drag.drop( event, tree.root ) }
+				>
+					{ dragged &&
+						tree.index.get( dragged )?.kind !== 'skill' && (
+							<button
+								type="button"
+								className={ `ohmylms-ws-root-drop${ target?.key === tree.root.key ? ' is-drop-inside' : '' }` }
+								onDragOver={ ( event ) =>
+									drag.over( event, tree.root )
+								}
+								onDrop={ ( event ) =>
+									drag.drop( event, tree.root )
+								}
+								onClick={ () => {
+									onReorder(
+										dragged,
+										tree.root.key,
+										'inside'
+									);
+									endDrag();
+								} }
+							>
+								{ __(
+									'Move to syllabus top level',
+									'ohmylms'
+								) }
+							</button>
+						) }
 					{ adding && (
 						<QuickAdd
 							key={ adding }

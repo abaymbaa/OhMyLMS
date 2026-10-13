@@ -3,7 +3,25 @@ import path from 'node:path';
 
 // Ship the same admin app and SDK used during development, including add-on settings.
 const root = path.resolve( import.meta.dirname, '..' );
+const manifest = JSON.parse(
+	fs.readFileSync( path.join( root, 'assets/src/manifest.json' ), 'utf8' )
+);
+for ( const retired of manifest.retiredAssets || [] ) {
+	for ( const suffix of [ '', '.map' ] ) {
+		const target = path.resolve( root, retired + suffix );
+		if ( ! target.startsWith( root + path.sep ) ) {
+			throw new Error(
+				`Retired asset outside plugin directory: ${ retired }`
+			);
+		}
+		if ( fs.existsSync( target ) ) {
+			fs.unlinkSync( target );
+		}
+	}
+}
 for ( const [ source, target ] of [
+	[ 'build/assets/js/blocks.js', 'assets/js/blocks.js' ],
+	[ 'build/assets/js/blocks.js.map', 'assets/js/blocks.js.map' ],
 	[
 		'build/sdk/quiz-player-block.js',
 		'assets/dist/admin/quiz-player-block.js',

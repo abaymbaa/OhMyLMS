@@ -7,7 +7,7 @@ import {
 	groupKey,
 	skillKey,
 	stepAmongSiblings,
-	outlineDropPosition,
+	outlineDropDestination,
 } from './workspace.mjs';
 
 /**
@@ -43,29 +43,28 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 			after,
 			{ selectMoved = true } = {}
 		) {
-			const position = outlineDropPosition(
+			const destination = outlineDropDestination(
 				tree,
 				sourceKey,
 				targetKey,
 				after
 			);
-			if ( position === null ) {
+			if ( destination === null ) {
 				return false;
 			}
 			const node = tree.index.get( sourceKey );
 			const parent = tree.index.get( node.parentKey );
-			const targetParent = tree.index.get(
-				tree.index.get( targetKey ).parentKey
-			);
+			const targetParent = tree.index.get( destination.parentKey );
+			const { position } = destination;
 			const move =
 				node.kind === 'content'
-					? () => api.moveItem( node.id, parent.id, position )
+					? () => api.moveItem( node.id, targetParent.id, position )
 					: node.kind === 'group'
 						? () =>
 								api.moveGroup(
 									syllabusId,
 									node.id,
-									parent.id,
+									targetParent.id,
 									position
 								)
 						: async () => {

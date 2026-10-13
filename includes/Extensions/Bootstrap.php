@@ -37,39 +37,6 @@ final class Bootstrap {
 			100
 		);
 		add_shortcode( 'ohmylms_activity', array( __CLASS__, 'activity' ) );
-		register_block_type(
-			'ohmylms/activity',
-			array(
-				'api_version'     => 2,
-				'attributes'      => array(
-					'type' => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'data' => array(
-						'type'    => 'string',
-						'default' => '{}',
-					),
-				),
-				'render_callback' => array( __CLASS__, 'activity' ),
-			)
-		);
-		add_action(
-			'enqueue_block_editor_assets',
-			static function () {
-				wp_enqueue_script( 'ohmylms-activity-editor', plugins_url( 'assets/extensions/activity-editor.js', OHMYLMS_FILE ), array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor' ), OHMYLMS_VERSION, true );
-				wp_localize_script(
-					'ohmylms-activity-editor',
-					'ohmylmsActivities',
-					array_map(
-						static function ( $d ) {
-							return array( 'label' => $d['label'] );
-						},
-						Registry::all( 'activity' )
-					)
-				);
-			}
-		);
 		add_action(
 			'rest_api_init',
 			static function () {
