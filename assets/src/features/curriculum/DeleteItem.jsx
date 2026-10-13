@@ -129,8 +129,8 @@ export function DeleteItem( { item, dependents } ) {
 					<li>
 						{ sprintf(
 							_n(
-								'%d skill group will be deleted. The skills in it stay in the skill library.',
-								'%d skill groups will be deleted. The skills in them stay in the skill library.',
+								'%d folder will be deleted. The skills in it stay in the skill library.',
+								'%d folders will be deleted. The skills in them stay in the skill library.',
 								groups,
 								'ohmylms'
 							),

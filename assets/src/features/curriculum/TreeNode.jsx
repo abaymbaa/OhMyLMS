@@ -50,7 +50,7 @@ function counts( item ) {
 	if ( groups ) {
 		parts.push(
 			sprintf(
-				_n( '%d skill group', '%d skill groups', groups, 'ohmylms' ),
+				_n( '%d folder', '%d folders', groups, 'ohmylms' ),
 				groups
 			)
 		);

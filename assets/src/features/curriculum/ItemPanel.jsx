@@ -129,7 +129,7 @@ export function ItemPanel( { id, item } ) {
 					disabled={ c.pending }
 					onChange={ toggleSyllabus }
 					help={ __(
-						'Any item can be a syllabus, whatever its type. A syllabus is also a course: its chapters are skill groups and its skills are the course’s skills. It is edited in its own editor, opened by its name. This saves at once.',
+						'Any item can be a syllabus, whatever its type. A syllabus is also a course: its folders are folders and its skills are the course’s skills. It is edited in its own editor, opened by its name. This saves at once.',
 						'ohmylms'
 					) }
 					__nextHasNoMarginBottom

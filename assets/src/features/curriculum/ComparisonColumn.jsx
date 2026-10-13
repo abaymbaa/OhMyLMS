@@ -101,11 +101,11 @@ export function ComparisonColumn( {
 				onChange={ ( value ) => filter( 'search', value ) }
 			/>
 			<SelectControl
-				label={ __( 'Topic', 'ohmylms' ) }
+				label={ __( 'Folder', 'ohmylms' ) }
 				value={ filters.topic }
 				onChange={ ( value ) => filter( 'topic', value ) }
 				options={ [
-					{ value: '', label: __( 'All topics', 'ohmylms' ) },
+					{ value: '', label: __( 'All folders', 'ohmylms' ) },
 					...Object.entries( data?.topics || {} ).map(
 						( [ value, label ] ) => ( { value, label } )
 					),

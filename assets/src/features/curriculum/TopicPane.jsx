@@ -30,8 +30,13 @@ import {
 const countsLine = ( counts ) =>
 	[
 		sprintf(
-			_n( '%d topic', '%d topics', counts.topics, 'ohmylms' ),
-			counts.topics
+			_n(
+				'%d folder',
+				'%d folders',
+				counts.topics + counts.chapters,
+				'ohmylms'
+			),
+			counts.topics + counts.chapters
 		),
 		sprintf(
 			_n( '%d skill', '%d skills', counts.skills, 'ohmylms' ),
@@ -132,7 +137,7 @@ export function TopicPane( { node } ) {
 		( key, trim = true ) =>
 		( text ) =>
 			w.actions.saveTopic( item, { [ key ]: trim ? text.trim() : text } );
-	const noun = root ? __( 'syllabus', 'ohmylms' ) : __( 'topic', 'ohmylms' );
+	const noun = root ? __( 'syllabus', 'ohmylms' ) : __( 'folder', 'ohmylms' );
 
 	const topicControls = ( child ) => {
 		const info = siblingInfo( w.items, child.id );
@@ -154,7 +159,7 @@ export function TopicPane( { node } ) {
 				onClick: () => w.actions.stepTopic( entry, 1 ),
 			},
 			{
-				title: __( 'Delete topic…', 'ohmylms' ),
+				title: __( 'Delete folder…', 'ohmylms' ),
 				onClick: () =>
 					setConfirm( {
 						kind: 'topic',
@@ -178,7 +183,7 @@ export function TopicPane( { node } ) {
 					onClick: () => w.actions.stepTopic( item, 1 ),
 				},
 				{
-					title: __( 'Delete topic…', 'ohmylms' ),
+					title: __( 'Delete folder…', 'ohmylms' ),
 					onClick: () =>
 						setConfirm( {
 							kind: 'topic',
@@ -208,14 +213,14 @@ export function TopicPane( { node } ) {
 						label={
 							root
 								? __( 'Syllabus name', 'ohmylms' )
-								: __( 'Topic name', 'ohmylms' )
+								: __( 'Folder name', 'ohmylms' )
 						}
 						hideLabel
 						value={ item.name }
 						placeholder={
 							root
 								? __( 'Enter syllabus name', 'ohmylms' )
-								: __( 'Enter topic name', 'ohmylms' )
+								: __( 'Enter folder name', 'ohmylms' )
 						}
 						inputClassName={
 							root
@@ -227,7 +232,7 @@ export function TopicPane( { node } ) {
 					/>
 					{ headerMenu && (
 						<RowMenu
-							label={ __( 'Topic actions', 'ohmylms' ) }
+							label={ __( 'Folder actions', 'ohmylms' ) }
 							controls={ headerMenu }
 							disabled={ w.pending }
 						/>
@@ -286,19 +291,10 @@ export function TopicPane( { node } ) {
 							disabled={ w.pending }
 							items={ [
 								{
-									key: 'chapter',
-									title: __( 'Skill group', 'ohmylms' ),
-									info: __(
-										'A group of related learning objectives',
-										'ohmylms'
-									),
-									onClick: () => setAdding( 'chapter' ),
-								},
-								{
 									key: 'topic',
-									title: __( 'Topic', 'ohmylms' ),
+									title: __( 'Folder', 'ohmylms' ),
 									info: __(
-										'A topic containing skills and nested topics',
+										'A folder containing skills and nested folders',
 										'ohmylms'
 									),
 									onClick: () => setAdding( 'topic' ),
@@ -315,20 +311,6 @@ export function TopicPane( { node } ) {
 							] }
 						/>
 					</div>
-					{ adding === 'chapter' && (
-						<QuickAdd
-							nameLabel={ __( 'Skill group name', 'ohmylms' ) }
-							codeLabel={ __( 'Code', 'ohmylms' ) }
-							submitLabel={ __( 'Add skill group', 'ohmylms' ) }
-							pending={ w.pending }
-							onAdd={ ( data ) =>
-								w.actions.addChapter( node.id, data, {
-									open: false,
-								} )
-							}
-							onCancel={ () => setAdding( '' ) }
-						/>
-					) }
 					{ adding === 'skill' && (
 						<QuickAdd
 							nameLabel={ __( 'Skill name', 'ohmylms' ) }
@@ -347,9 +329,9 @@ export function TopicPane( { node } ) {
 					) }
 					{ adding === 'topic' && (
 						<QuickAdd
-							nameLabel={ __( 'Topic name', 'ohmylms' ) }
+							nameLabel={ __( 'Folder name', 'ohmylms' ) }
 							codeLabel={ __( 'Code', 'ohmylms' ) }
-							submitLabel={ __( 'Add topic', 'ohmylms' ) }
+							submitLabel={ __( 'Add folder', 'ohmylms' ) }
 							pending={ w.pending }
 							help={ __(
 								'Press Enter to add it and start the next one.',
@@ -374,7 +356,7 @@ export function TopicPane( { node } ) {
 											? `${ child.group.code } · ${ child.group.name }`
 											: child.group.name
 									}
-									tag={ __( 'Skill group', 'ohmylms' ) }
+									tag={ __( 'Folder', 'ohmylms' ) }
 									meta={ sprintf(
 										_n(
 											'%d skill',
@@ -398,7 +380,7 @@ export function TopicPane( { node } ) {
 										kind="topic"
 										icon={ child.content.icon }
 										title={ topicLabel( child.content ) }
-										tag={ __( 'Topic', 'ohmylms' ) }
+										tag={ __( 'Folder', 'ohmylms' ) }
 										meta={ [
 											sprintf(
 												_n(
@@ -411,12 +393,13 @@ export function TopicPane( { node } ) {
 											),
 											sprintf(
 												_n(
-													'%d topic',
-													'%d topics',
-													counts.topics,
+													'%d folder',
+													'%d folders',
+													counts.topics +
+														counts.chapters,
 													'ohmylms'
 												),
-												counts.topics
+												counts.topics + counts.chapters
 											),
 										].join( ' · ' ) }
 										onOpen={ () => w.select( child.key ) }
@@ -471,11 +454,11 @@ export function TopicPane( { node } ) {
 							<p className="ohmylms-ext-muted ohmylms-ws-empty">
 								{ root
 									? __(
-											'Nothing is in this syllabus yet. Add a topic or a skill, or import a CSV file.',
+											'Nothing is in this syllabus yet. Add a folder or a skill, or import a CSV file.',
 											'ohmylms'
 										)
 									: __(
-											'Nothing is in this topic yet. Add a skill or a nested topic.',
+											'Nothing is in this folder yet. Add a skill or a nested folder.',
 											'ohmylms'
 										) }
 							</p>

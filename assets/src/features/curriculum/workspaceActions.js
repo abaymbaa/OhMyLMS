@@ -189,7 +189,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					} ),
 				( result ) =>
 					sprintf(
-						__( 'Added topic “%s”.', 'ohmylms' ),
+						__( 'Added folder “%s”.', 'ohmylms' ),
 						result.item.name
 					),
 				{ refresh: true }
@@ -248,8 +248,8 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					( result ) =>
 						sprintf(
 							_n(
-								'Deleted “%1$s” and %2$d topic under it.',
-								'Deleted “%1$s” and %2$d topics under it.',
+								'Deleted “%1$s” and %2$d folder under it.',
+								'Deleted “%1$s” and %2$d folders under it.',
 								Math.max(
 									0,
 									( result.deleted || [] ).length - 1
@@ -269,7 +269,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 			const response = await run(
 				() =>
 					api.addGroup( syllabusId, { name, code, item_id: itemId } ),
-				__( 'Chapter added.', 'ohmylms' )
+				__( 'Folder added.', 'ohmylms' )
 			);
 			if ( open && response?.group_id ) {
 				select( groupKey( response.group_id ) );
@@ -287,7 +287,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 			return done(
 				await run(
 					() => api.moveGroup( syllabusId, group.id, itemId ),
-					__( 'Chapter moved.', 'ohmylms' )
+					__( 'Folder moved.', 'ohmylms' )
 				)
 			);
 		},
@@ -321,7 +321,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 							group.skills.length > 0
 						),
 					__(
-						'Chapter deleted. Its skills stay in the skill library.',
+						'Folder deleted. Its skills stay in the skill library.',
 						'ohmylms'
 					)
 				)
@@ -408,7 +408,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 				await run(
 					() => api.removeSkill( syllabusId, groupId, termId ),
 					__(
-						'Skill taken out of the chapter. It stays in the skill library.',
+						'Skill taken out of the folder. It stays in the skill library.',
 						'ohmylms'
 					)
 				)

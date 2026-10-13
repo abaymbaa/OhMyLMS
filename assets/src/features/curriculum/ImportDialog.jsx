@@ -29,10 +29,10 @@ const ROLE_LABELS = () =>
 		ROLES.map( ( role ) => [
 			role.id,
 			{
-				content_code: __( 'Content code', 'ohmylms' ),
-				content: __( 'Content (topic or chapter)', 'ohmylms' ),
-				group_code: __( 'Skill group code', 'ohmylms' ),
-				group: __( 'Skill group name', 'ohmylms' ),
+				content_code: __( 'Folder path code', 'ohmylms' ),
+				content: __( 'Folder path', 'ohmylms' ),
+				group_code: __( 'Skill folder code', 'ohmylms' ),
+				group: __( 'Skill folder name', 'ohmylms' ),
 				skill_code: __( 'Skill code', 'ohmylms' ),
 				skill: __( 'Skill', 'ohmylms' ),
 				description: __( 'Notes', 'ohmylms' ),
@@ -43,7 +43,7 @@ const ROLE_LABELS = () =>
 
 const ROW_TITLES = () => ( {
 	contents: __( 'Contents', 'ohmylms' ),
-	groups: __( 'Skill groups', 'ohmylms' ),
+	groups: __( 'Folders', 'ohmylms' ),
 	skills: __( 'Skills', 'ohmylms' ),
 } );
 
@@ -265,7 +265,7 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 					<div className="ohmylms-syl-step">
 						<p>
 							{ __(
-								'Choose a CSV file with one skill per row: its content (topic or chapter), skill group and skill, each with an optional code. You will check which column is which before anything is saved, and an import never deletes anything.',
+								'Choose a CSV file with one skill per row: its content (folder or folder), folder and skill, each with an optional code. You will check which column is which before anything is saved, and an import never deletes anything.',
 								'ohmylms'
 							) }
 						</p>
@@ -512,7 +512,7 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 						{ report.valid && (
 							<p className="ohmylms-ext-muted">
 								{ __(
-									'Skills are added to the skill library under this syllabus. Existing contents, skill groups and skills are matched by code, or by name when there is no code, and are never deleted.',
+									'Skills are added to the skill library under this syllabus. Existing contents, folders and skills are matched by code, or by name when there is no code, and are never deleted.',
 									'ohmylms'
 								) }
 							</p>

@@ -7,6 +7,7 @@ import {
 	MenuGroup,
 	MenuItem,
 } from '@wordpress/components';
+import { KindIcon } from './WorkspaceParts';
 
 const ICONS = {
 	skill: 'awards',
@@ -75,9 +76,16 @@ export function AddContentMenu( {
 								className={ `ohmylms-ws-content-icon is-${ item.key }` }
 								aria-hidden="true"
 							>
-								<Dashicon
-									icon={ ICONS[ item.key ] || 'plus-alt2' }
-								/>
+								{ item.key === 'topic' ||
+								item.key === 'chapter' ? (
+									<KindIcon kind={ item.key } />
+								) : (
+									<Dashicon
+										icon={
+											ICONS[ item.key ] || 'plus-alt2'
+										}
+									/>
+								) }
 							</span>
 							<span className="ohmylms-ws-content-copy">
 								<span className="ohmylms-ws-content-title">

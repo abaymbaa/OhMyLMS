@@ -35,7 +35,10 @@ import { hashQuery } from '../content-hub/hubRoutes.mjs';
 function countsLine( totals ) {
 	const { contents, skills } = totalsParts( totals );
 	return [
-		sprintf( _n( '%d topic', '%d topics', contents, 'ohmylms' ), contents ),
+		sprintf(
+			_n( '%d folder', '%d folders', contents, 'ohmylms' ),
+			contents
+		),
 		sprintf( _n( '%d skill', '%d skills', skills, 'ohmylms' ), skills ),
 	].join( ' · ' );
 }
@@ -211,7 +214,8 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						<p>
 							{ __( 'Syllabus', 'ohmylms' ) } ·{ ' ' }
 							{ countsLine( {
-								contents: shownCounts.topics,
+								contents:
+									shownCounts.topics + shownCounts.chapters,
 								skills: shownCounts.skills,
 							} ) }
 							{ course &&

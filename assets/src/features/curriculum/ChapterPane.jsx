@@ -86,7 +86,7 @@ export function ChapterPane( { node } ) {
 			onClick: () => w.actions.stepSkill( group.id, child.id, 1 ),
 		},
 		{
-			title: __( 'Take out of this skill group', 'ohmylms' ),
+			title: __( 'Take out of this folder', 'ohmylms' ),
 			onClick: () => w.actions.removeSkill( group.id, child.id ),
 		},
 	];
@@ -109,13 +109,10 @@ export function ChapterPane( { node } ) {
 					<KindIcon kind="chapter" />
 					<SaveField
 						id={ `ohmylms-ws-chapter-name-${ group.id }` }
-						label={ __( 'Skill group name', 'ohmylms' ) }
+						label={ __( 'Folder name', 'ohmylms' ) }
 						hideLabel
 						value={ group.name }
-						placeholder={ __(
-							'Enter skill group name',
-							'ohmylms'
-						) }
+						placeholder={ __( 'Enter folder name', 'ohmylms' ) }
 						inputClassName="ohmylms-ws-title"
 						validate={ ( text ) => check( text, 'name' ) }
 						onSave={ ( text ) =>
@@ -125,7 +122,7 @@ export function ChapterPane( { node } ) {
 						}
 					/>
 					<RowMenu
-						label={ __( 'Skill group actions', 'ohmylms' ) }
+						label={ __( 'Folder actions', 'ohmylms' ) }
 						disabled={ w.pending }
 						controls={ [
 							{
@@ -141,7 +138,7 @@ export function ChapterPane( { node } ) {
 									w.actions.stepChapter( group, 1 ),
 							},
 							{
-								title: __( 'Delete skill group…', 'ohmylms' ),
+								title: __( 'Delete folder…', 'ohmylms' ),
 								onClick: () => setConfirming( true ),
 							},
 						] }
@@ -188,7 +185,7 @@ export function ChapterPane( { node } ) {
 					hideLabel
 					multiline
 					value={ group.description }
-					placeholder={ __( 'Add chapter description …', 'ohmylms' ) }
+					placeholder={ __( 'Add folder description …', 'ohmylms' ) }
 					inputClassName="ohmylms-ws-description"
 					validate={ ( text ) =>
 						text.length > 2000 ? MESSAGES[ 'too-long' ]() : ''
@@ -207,7 +204,7 @@ export function ChapterPane( { node } ) {
 					<h3>{ __( 'Skills', 'ohmylms' ) }</h3>
 					<div className="ohmylms-ws-content-tools">
 						<AddContentMenu
-							label={ __( 'Add to this chapter', 'ohmylms' ) }
+							label={ __( 'Add to this folder', 'ohmylms' ) }
 							disabled={ w.pending }
 							items={ [
 								{
@@ -243,7 +240,7 @@ export function ChapterPane( { node } ) {
 												'ohmylms'
 											)
 										: __(
-												'For the whole chapter, in the course',
+												'For the whole folder, in the course',
 												'ohmylms'
 											),
 									onClick: openAttach,
@@ -372,7 +369,7 @@ export function ChapterPane( { node } ) {
 					adding === '' && (
 						<p className="ohmylms-ext-muted ohmylms-ws-empty">
 							{ __(
-								'No skills in this chapter yet. Use Add Content to add the first one.',
+								'No skills in this folder yet. Use Add Content to add the first one.',
 								'ohmylms'
 							) }
 						</p>
@@ -383,7 +380,7 @@ export function ChapterPane( { node } ) {
 			<section
 				className="ohmylms-ws-content"
 				aria-label={ __(
-					'Lessons, quizzes and assignments of this chapter',
+					'Lessons, quizzes and assignments of this folder',
 					'ohmylms'
 				) }
 			>
@@ -403,7 +400,7 @@ export function ChapterPane( { node } ) {
 				{ catalog && ! chapterId && (
 					<p className="ohmylms-ext-muted">
 						{ __(
-							'The course has no chapter for this one yet. Use “Update course from syllabus” on the syllabus page.',
+							'The course has no folder for this one yet. Use “Update course from syllabus” on the syllabus page.',
 							'ohmylms'
 						) }
 					</p>
@@ -411,7 +408,7 @@ export function ChapterPane( { node } ) {
 				{ ready && ! attached.length && (
 					<p className="ohmylms-ext-muted">
 						{ __(
-							'Nothing is attached to the whole chapter. Use Add Content to attach a lesson, a quiz or an assignment, for learners of the course.',
+							'Nothing is attached to the whole folder. Use Add Content to attach a lesson, a quiz or an assignment, for learners of the course.',
 							'ohmylms'
 						) }
 					</p>

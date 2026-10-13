@@ -15,8 +15,8 @@ export function IconPicker( {
 	const label =
 		customLabel ||
 		( kind === 'topic'
-			? __( 'Topic icon', 'ohmylms' )
-			: __( 'Chapter icon', 'ohmylms' ) );
+			? __( 'Folder icon', 'ohmylms' )
+			: __( 'Folder icon', 'ohmylms' ) );
 	return (
 		<Dropdown
 			className="ohmylms-ws-icon-picker"

@@ -124,7 +124,7 @@ export function SkillPane( { node } ) {
 							},
 							{
 								title: __(
-									'Take out of this topic',
+									'Take out of this folder',
 									'ohmylms'
 								),
 								onClick: async () => {
@@ -157,7 +157,7 @@ export function SkillPane( { node } ) {
 						}
 					/>
 					<SelectControl
-						label={ __( 'Topic', 'ohmylms' ) }
+						label={ __( 'Folder', 'ohmylms' ) }
 						value={ parent.parentKey }
 						options={ [
 							...[ ...w.tree.index.values() ]
@@ -213,7 +213,7 @@ export function SkillPane( { node } ) {
 				<p className="ohmylms-ext-muted">
 					{ sprintf(
 						__(
-							'Skills are shared. Taking “%s” out of this topic keeps it in the skill library.',
+							'Skills are shared. Taking “%s” out of this folder keeps it in the skill library.',
 							'ohmylms'
 						),
 						skill.name

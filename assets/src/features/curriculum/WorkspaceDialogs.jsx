@@ -64,8 +64,8 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 						<RadioControl
 							label={ sprintf(
 								_n(
-									'This topic has %d sub-topic.',
-									'This topic has %d sub-topics.',
+									'This folder has %d folder.',
+									'This folder has %d folders.',
 									info.children,
 									'ohmylms'
 								),
@@ -76,7 +76,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 								{
 									value: 'promote',
 									label: __(
-										'Move its sub-topics up one level and delete only this topic',
+										'Move its folders up one level and delete only this folder',
 										'ohmylms'
 									),
 								},
@@ -84,8 +84,8 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 									value: 'delete',
 									label: sprintf(
 										_n(
-											'Delete this topic and everything under it (%d topic in total)',
-											'Delete this topic and everything under it (%d topics in total)',
+											'Delete this folder and everything under it (%d folder in total)',
+											'Delete this folder and everything under it (%d folders in total)',
 											info.descendants + 1,
 											'ohmylms'
 										),
@@ -99,7 +99,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 					<ul className="ohmylms-cur-delete-effects">
 						<li>
 							{ __(
-								'Skills in the deleted topic stay in the skill library, with their lessons and questions.',
+								'Skills in the deleted folder stay in the skill library, with their lessons and questions.',
 								'ohmylms'
 							) }
 						</li>
@@ -135,7 +135,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 						} )
 					}
 				>
-					{ __( 'Delete topic', 'ohmylms' ) }
+					{ __( 'Delete folder', 'ohmylms' ) }
 				</Button>
 			</div>
 		</Modal>
@@ -165,14 +165,14 @@ export function DeleteChapterDialog( { group, pending, onConfirm, onClose } ) {
 				{ skills
 					? sprintf(
 							_n(
-								'This chapter holds %d skill. The skill stays in the skill library, with its lessons and questions, but leaves this syllabus and its course.',
-								'This chapter holds %d skills. The skills stay in the skill library, with their lessons and questions, but leave this syllabus and its course.',
+								'This folder holds %d skill. The skill stays in the skill library, with its lessons and questions, but leaves this syllabus and its course.',
+								'This folder holds %d skills. The skills stay in the skill library, with their lessons and questions, but leave this syllabus and its course.',
 								skills,
 								'ohmylms'
 							),
 							skills
 						)
-					: __( 'This chapter is empty.', 'ohmylms' ) }
+					: __( 'This folder is empty.', 'ohmylms' ) }
 			</p>
 			<div className="ohmylms-content-hub-dialog-actions">
 				<Button variant="tertiary" onClick={ onClose }>
@@ -185,7 +185,7 @@ export function DeleteChapterDialog( { group, pending, onConfirm, onClose } ) {
 					disabled={ pending }
 					onClick={ onConfirm }
 				>
-					{ __( 'Delete chapter', 'ohmylms' ) }
+					{ __( 'Delete folder', 'ohmylms' ) }
 				</Button>
 			</div>
 		</Modal>

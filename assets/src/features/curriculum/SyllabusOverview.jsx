@@ -140,7 +140,7 @@ export function SyllabusOverview() {
 					</p>
 					<p>
 						{ __(
-							'This permanently removes the syllabus, all curriculum items beneath it, its skill groups and structure links. Reusable skills and linked courses, lessons, quizzes, question banks and exams remain in their libraries. This cannot be undone.',
+							'This permanently removes the syllabus, all curriculum items beneath it, its folders and structure links. Reusable skills and linked courses, lessons, quizzes, question banks and exams remain in their libraries. This cannot be undone.',
 							'ohmylms'
 						) }
 					</p>

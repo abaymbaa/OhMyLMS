@@ -12,7 +12,7 @@ import { workspacePath } from './workspace.mjs';
 export function SyllabusSummary( { item } ) {
 	const { groups = 0, skills = 0 } = item.syllabus || {};
 	const size = [
-		sprintf( _n( '%d chapter', '%d chapters', groups, 'ohmylms' ), groups ),
+		sprintf( _n( '%d folder', '%d folders', groups, 'ohmylms' ), groups ),
 		sprintf( _n( '%d skill', '%d skills', skills, 'ohmylms' ), skills ),
 		item.course_id ? __( 'also a course', 'ohmylms' ) : '',
 	]
@@ -28,7 +28,7 @@ export function SyllabusSummary( { item } ) {
 				<p className="ohmylms-ext-muted">{ size }</p>
 				<p className="ohmylms-ext-muted">
 					{ __(
-						'Its topics, chapters and skills are edited in the syllabus editor, where the lessons, quizzes and questions that belong to them are too.',
+						'Its folders, folders and skills are edited in the syllabus editor, where the lessons, quizzes and questions that belong to them are too.',
 						'ohmylms'
 					) }
 				</p>

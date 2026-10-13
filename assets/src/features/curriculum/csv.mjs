@@ -12,10 +12,10 @@
  */
 
 export const ROLES = [
-	{ id: 'content_code', label: 'Content code', hint: 'e.g. 1 or 11.1' },
-	{ id: 'content', label: 'Content (topic or chapter)', hint: 'e.g. Number' },
-	{ id: 'group_code', label: 'Skill group code', hint: 'e.g. C1.1' },
-	{ id: 'group', label: 'Skill group name', hint: 'e.g. Types of number' },
+	{ id: 'content_code', label: 'Folder path code', hint: 'e.g. 1 or 11.1' },
+	{ id: 'content', label: 'Folder path', hint: 'e.g. Number' },
+	{ id: 'group_code', label: 'Skill folder code', hint: 'e.g. C1.1' },
+	{ id: 'group', label: 'Skill folder name', hint: 'e.g. Types of number' },
 	{ id: 'skill_code', label: 'Skill code', hint: 'e.g. C1.1.1' },
 	{ id: 'skill', label: 'Skill', hint: 'the learning objective' },
 	{ id: 'description', label: 'Notes', hint: 'notes or examples' },
@@ -31,6 +31,8 @@ export const CSV_HEADER = ROLE_IDS;
 /** Words in a header that point to a role. Whole normalized headers are tried before partial matches. */
 const ALIASES = {
 	content_code: [
+		'folder path code',
+		'folder code',
 		'content code',
 		'chapter code',
 		'topic code',
@@ -46,6 +48,9 @@ const ALIASES = {
 		'topic number',
 	],
 	content: [
+		'folder path',
+		'folder',
+		'folder name',
 		'content',
 		'chapter',
 		'topic',
@@ -59,6 +64,7 @@ const ALIASES = {
 		'unit name',
 	],
 	group_code: [
+		'skill folder code',
 		'group code',
 		'skill group code',
 		'section code',
@@ -72,6 +78,8 @@ const ALIASES = {
 		'sub topic code',
 	],
 	group: [
+		'skill folder',
+		'skill folder name',
 		'group',
 		'skill group',
 		'group name',

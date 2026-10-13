@@ -153,12 +153,12 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 								),
 								sprintf(
 									_n(
-										'%d topic',
-										'%d topics',
-										counts.topics,
+										'%d folder',
+										'%d folders',
+										counts.topics + counts.chapters,
 										'ohmylms'
 									),
-									counts.topics
+									counts.topics + counts.chapters
 								),
 							].join( ' · ' ) }
 						</span>
@@ -375,9 +375,9 @@ export function WorkspaceSidebar( {
 					items={ [
 						{
 							key: 'topic',
-							title: __( 'Topic', 'ohmylms' ),
+							title: __( 'Folder', 'ohmylms' ),
 							info: __(
-								'A topic containing skills and nested topics',
+								'A folder containing skills and nested folders',
 								'ohmylms'
 							),
 							onClick: () => setAdding( 'topic' ),
@@ -386,7 +386,7 @@ export function WorkspaceSidebar( {
 							key: 'skill',
 							title: __( 'Skill', 'ohmylms' ),
 							info: __(
-								'A learning objective in this topic',
+								'A learning objective in this folder',
 								'ohmylms'
 							),
 							onClick: () => setAdding( 'skill' ),
@@ -430,12 +430,12 @@ export function WorkspaceSidebar( {
 						<span>
 							{ sprintf(
 								_n(
-									'%d Topic',
-									'%d Topics',
-									counts.topics,
+									'%d Folder',
+									'%d Folders',
+									counts.topics + counts.chapters,
 									'ohmylms'
 								),
-								counts.topics
+								counts.topics + counts.chapters
 							) }
 						</span>
 						<span>
@@ -506,13 +506,13 @@ export function WorkspaceSidebar( {
 							key={ adding }
 							nameLabel={
 								adding === 'topic'
-									? __( 'Topic name', 'ohmylms' )
+									? __( 'Folder name', 'ohmylms' )
 									: __( 'Skill name', 'ohmylms' )
 							}
 							codeLabel={ __( 'Code', 'ohmylms' ) }
 							submitLabel={
 								adding === 'topic'
-									? __( 'Add topic', 'ohmylms' )
+									? __( 'Add folder', 'ohmylms' )
 									: __( 'Add skill', 'ohmylms' )
 							}
 
@@ -532,7 +532,7 @@ export function WorkspaceSidebar( {
 
 					<ul
 						className="ohmylms-ws-tree"
-						aria-label={ __( 'Topics and skills', 'ohmylms' ) }
+						aria-label={ __( 'Folders and skills', 'ohmylms' ) }
 					>
 						{ visibleChildren( tree.root, settings ).map(
 							( node ) => (
@@ -551,7 +551,7 @@ export function WorkspaceSidebar( {
 					{ ! tree.root.children.length && (
 						<p className="ohmylms-ext-muted ohmylms-ws-side-empty">
 							{ __(
-								'No topics or skills yet. Use Add, or import a CSV file.',
+								'No folders or skills yet. Use Add, or import a CSV file.',
 								'ohmylms'
 							) }
 						</p>
