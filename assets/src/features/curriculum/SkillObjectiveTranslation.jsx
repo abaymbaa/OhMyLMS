@@ -49,7 +49,7 @@ export function SkillObjectiveTranslation( {
 					source: {
 						name: skillText( skill, source, 'name' ),
 						objective: sourceObjective,
-						description: skillText( skill, source, 'description' ),
+						description: '',
 					},
 				},
 			} );

@@ -255,7 +255,6 @@ test( 'the template parses back to the layout the importer reads', () => {
 		'group',
 		'skill_code',
 		'skill',
-		'description',
 		'category',
 	] );
 	const rows = buildRows( parsed.records, guessRoles( parsed.records[ 0 ] ) );
@@ -327,7 +326,7 @@ const outline = {
 	],
 };
 
-test( 'an export writes content paths, codes and notes, and importing it reads the same thing back', () => {
+test( 'an export preserves paths, codes and categories without legacy skill notes', () => {
 	const text = outlineCsv( outline );
 	const parsed = parseCsv( text );
 	assert.deepEqual( parsed.records[ 0 ], [
@@ -337,7 +336,6 @@ test( 'an export writes content paths, codes and notes, and importing it reads t
 		'group',
 		'skill_code',
 		'skill',
-		'description',
 		'category',
 	] );
 	const rows = buildRows( parsed.records, guessRoles( parsed.records[ 0 ] ), {
@@ -347,7 +345,9 @@ test( 'an export writes content paths, codes and notes, and importing it reads t
 	assert.equal( skill.content, 'Paper 1 > 1 Number' );
 	assert.equal( skill.content_code, 'N' );
 	assert.equal( skill.skill, 'Identify "natural" numbers' );
-	assert.equal( skill.description, 'e.g. six, billion\nand more' );
+	assert.equal( skill.description, '' );
+	assert.ok( ! text.includes( 'e.g. six, billion' ) );
+	assert.ok( parsed.records.every( ( record ) => record.length === 7 ) );
 	assert.equal( skill.category, 'Advanced' );
 	assert.equal(
 		rows.find( ( row ) => row.skill === 'Use a > 0 and D < 0' ).group,

@@ -26,7 +26,8 @@ export const ROLES = [
 	},
 ];
 export const ROLE_IDS = ROLES.map( ( role ) => role.id );
-export const CSV_HEADER = ROLE_IDS;
+// Retain the legacy notes import role for older files; new files omit notes.
+export const CSV_HEADER = ROLE_IDS.filter( ( role ) => role !== 'description' );
 
 /** Words in a header that point to a role. Whole normalized headers are tried before partial matches. */
 const ALIASES = {
@@ -468,7 +469,6 @@ export function templateCsv() {
 			'Types of number',
 			'C1.1.1',
 			'Identify and use natural numbers',
-			'e.g. convert between numbers and words',
 			'Core',
 		],
 		[
@@ -478,7 +478,6 @@ export function templateCsv() {
 			'Types of number',
 			'C1.1.2',
 			'Identify and use prime numbers',
-			'',
 			'Core',
 		],
 		[
@@ -488,7 +487,6 @@ export function templateCsv() {
 			'Sets',
 			'C1.2.1',
 			'Use set language and Venn diagrams',
-			'',
 			'Core',
 		],
 		[
@@ -498,7 +496,6 @@ export function templateCsv() {
 			'Algebraic manipulation',
 			'C2.1.1',
 			'Simplify expressions',
-			'',
 			'Core',
 		],
 	] );
@@ -528,7 +525,7 @@ export function outlineCsv( outline ) {
 		const path = content.id === rootId ? '' : pathOf( content );
 		const code = content.id === rootId ? '' : content.code;
 		if ( ! content.groups.length && content.id !== rootId ) {
-			records.push( [ code, path, '', '', '', '', '', '' ] );
+			records.push( [ code, path, '', '', '', '', '' ] );
 		}
 		for ( const group of content.groups ) {
 			if ( ! group.skills.length ) {
@@ -537,7 +534,6 @@ export function outlineCsv( outline ) {
 					path,
 					group.code,
 					group.name,
-					'',
 					'',
 					'',
 					'',
@@ -551,7 +547,6 @@ export function outlineCsv( outline ) {
 					group.name,
 					skill.code,
 					skill.name,
-					skill.description,
 					skill.category || '',
 				] );
 			}

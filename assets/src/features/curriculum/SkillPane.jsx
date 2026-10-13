@@ -1,7 +1,6 @@
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SkillObjectiveFields } from './SkillObjectiveFields';
-import { skillText, skillPatch } from './skillTranslations.mjs';
 import { SelectControl } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
@@ -20,9 +19,6 @@ import { categoryAppearance } from './categoryAppearance.mjs';
 export function SkillPane( { node } ) {
 	const w = useWorkspace();
 	const skill = node.skill;
-	const language = w.skillLanguage;
-	const saveText = ( field, text ) =>
-		w.actions.saveSkill( skill, skillPatch( language, field, text ) );
 	const groupId = node.groupId;
 	const parent = w.tree.index.get( node.parentKey );
 	const appearance = categoryAppearance(
@@ -182,26 +178,6 @@ export function SkillPane( { node } ) {
 						__nextHasNoMarginBottom
 					/>
 				</div>
-				<details>
-					<summary>
-						{ __( 'Notes and original definition', 'ohmylms' ) }
-					</summary>
-					<SaveField
-						id={ `ohmylms-ws-skill-notes-${ skill.term_id }` }
-						label={ __( 'Notes or examples', 'ohmylms' ) }
-						hideLabel
-						multiline
-						key={ `${ skill.term_id }:${ language }:description` }
-						value={ skillText( skill, language, 'description' ) }
-						placeholder={ __(
-							'Add notes or examples …',
-							'ohmylms'
-						) }
-						inputClassName="ohmylms-ws-description"
-						validate={ ( text ) => check( text, 'description' ) }
-						onSave={ ( text ) => saveText( 'description', text ) }
-					/>
-				</details>
 				<SkillCategoryChoices
 					settings={ w.outline.settings }
 					selected={ appearance.category }
