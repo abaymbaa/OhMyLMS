@@ -38,6 +38,7 @@ export function ComparisonWorkspace() {
 
 function ComparisonEditor( { roadmapId } ) {
 	const gridRef = useRef( null );
+	const [ saveTarget, setSaveTarget ] = useState( null );
 	const [ roadmap, setRoadmap ] = useState( null );
 	const [ roadmapDirty, setRoadmapDirty ] = useState( false );
 	const [ visibility, setVisibility ] = useState( 'shared' );
@@ -243,6 +244,16 @@ function ComparisonEditor( { roadmapId } ) {
 			__( 'You have unsaved edits to a shared skill.', 'ohmylms' )
 		);
 	}
+	if (
+		roadmapDirty ||
+		( roadmap &&
+			JSON.stringify( sources ) !==
+				JSON.stringify( roadmap.syllabus_ids ) )
+	) {
+		unsavedReasons.push(
+			__( 'You have unsaved Roadmap changes.', 'ohmylms' )
+		);
+	}
 	const hasUnsavedWork = unsavedReasons.length > 0;
 	useEffect( () => {
 		if ( ! hasUnsavedWork ) {
@@ -254,6 +265,22 @@ function ComparisonEditor( { roadmapId } ) {
 			cancelLeaveRef.current?.focus();
 		}
 	}, [ leaving ] );
+	let saveStatus = __( 'Roadmap saved', 'ohmylms' );
+	if (
+		roadmapDirty ||
+		( roadmap &&
+			JSON.stringify( sources ) !==
+				JSON.stringify( roadmap.syllabus_ids ) )
+	) {
+		saveStatus = __( 'Unsaved Roadmap changes', 'ohmylms' );
+	}
+	if ( dirty || selected.length ) {
+		saveStatus = __(
+			'Save or clear skill edits and mapping proposals before saving the Roadmap.',
+			'ohmylms'
+		);
+	}
+
 	function discardAndLeave() {
 		// Forget this page's drafts so they are not restored on the next visit. Only the
 		// skill editor that is open (and therefore reported as unsaved) is cleared.
@@ -323,11 +350,20 @@ function ComparisonEditor( { roadmapId } ) {
 						</div>
 					</Notice>
 				) }
-				<h1>
-					{ roadmapId
-						? roadmap?.name || __( 'Roadmap', 'ohmylms' )
-						: __( 'Shared skills', 'ohmylms' ) }
-				</h1>
+				<div className="ohmylms-roadmap-heading">
+					<h1>
+						{ roadmapId
+							? roadmap?.name || __( 'Roadmap', 'ohmylms' )
+							: __( 'Shared skills', 'ohmylms' ) }
+					</h1>
+					{ roadmapId > 0 && (
+						<div
+							ref={ setSaveTarget }
+							className="ohmylms-roadmap-save"
+						/>
+					) }
+					{ roadmap && <span role="status">{ saveStatus }</span> }
+				</div>
 				{ roadmapId > 0 && (
 					<h2>
 						{ __(
@@ -404,35 +440,6 @@ function ComparisonEditor( { roadmapId } ) {
 					onClick={ () => setSources( [ ...sources, 0 ] ) }
 				>
 					{ __( 'Add syllabus or roadmap', 'ohmylms' ) }
-				</Button>
-				<Button
-					variant="secondary"
-					disabled={
-						busy ||
-						! subject.trim() ||
-						! sources.length ||
-						sources.some( ( id ) => ! id ) ||
-						new Set( sources ).size !== sources.length
-					}
-					onClick={ () =>
-						run(
-							() =>
-								writeComparison(
-									'configuration',
-									{ subject, syllabus_ids: sources },
-									'PUT'
-								),
-							__(
-								'These syllabuses are selected for subject profiles. Only published syllabuses appear to learners.',
-								'ohmylms'
-							)
-						)
-					}
-				>
-					{ __(
-						'Use these syllabuses in subject profiles',
-						'ohmylms'
-					) }
 				</Button>
 			</div>
 			{ roadmapId > 0 && (
@@ -624,6 +631,7 @@ function ComparisonEditor( { roadmapId } ) {
 									key={ roadmap.id }
 									roadmap={ roadmap }
 									onDirty={ setRoadmapDirty }
+									saveTarget={ saveTarget }
 									onBusyChange={ setBusy }
 									initialSkills={ roadmap.skills }
 									syllabusIds={ sources }

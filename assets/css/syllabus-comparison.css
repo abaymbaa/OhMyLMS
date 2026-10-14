@@ -360,3 +360,19 @@
 		max-height: none;
 	}
 }
+
+.ohmylms-comparison .ohmylms-roadmap-heading,
+.ohmylms-comparison .ohmylms-roadmap-save {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.ohmylms-comparison .ohmylms-roadmap-heading {
+	margin: 12px 0;
+}
+
+.ohmylms-comparison .ohmylms-roadmap-heading h1 {
+	margin: 0;
+}

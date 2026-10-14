@@ -1,5 +1,10 @@
 /** @jsx createElement */
-import { createElement, useEffect, useState } from '@wordpress/element';
+import {
+	createElement,
+	createPortal,
+	useEffect,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, SelectControl, TextControl } from '@wordpress/components';
 import { writeComparison } from './comparison.mjs';
@@ -15,6 +20,7 @@ import { writeComparison } from './comparison.mjs';
  * @param {Object}   props.roadmap       Existing roadmap state.
  * @param {boolean}  props.disabled      Disable saving while other changes are pending.
  * @param {Function} props.onDirty       Report unsaved roadmap changes.
+ * @param {Element}  props.saveTarget    Header container for the save controls.
  * @param {Function} props.onBusyChange  Report an active save.
  */
 export function RoadmapBuilder( {
@@ -27,6 +33,7 @@ export function RoadmapBuilder( {
 	disabled = false,
 	onDirty,
 	onBusyChange,
+	saveTarget,
 } ) {
 	const [ name, setName ] = useState(
 		roadmap?.name || __( 'Roadmap', 'ohmylms' )
@@ -118,6 +125,32 @@ export function RoadmapBuilder( {
 			onBusyChange?.( false );
 		}
 	}
+	const saveControls = (
+		<>
+			{ error && <p role="alert">{ error }</p> }
+			<Button
+				variant="primary"
+				isBusy={ busy }
+				disabled={
+					busy ||
+					disabled ||
+					! name.trim() ||
+					( ! roadmap && ! skills.length ) ||
+					( roadmap &&
+						( ! syllabusIds.length ||
+							syllabusIds.some( ( id ) => ! id ) ||
+							new Set( syllabusIds ).size !==
+								syllabusIds.length ) ) ||
+					skills.length > 200
+				}
+				onClick={ create }
+			>
+				{ roadmap
+					? __( 'Save Roadmap', 'ohmylms' )
+					: __( 'Save as new curriculum', 'ohmylms' ) }
+			</Button>
+		</>
+	);
 	return (
 		<section>
 			<h3>
@@ -289,28 +322,9 @@ export function RoadmapBuilder( {
 					</li>
 				) ) }
 			</ol>
-			{ error && <p role="alert">{ error }</p> }
-			<Button
-				variant="primary"
-				isBusy={ busy }
-				disabled={
-					busy ||
-					disabled ||
-					! name.trim() ||
-					( ! roadmap && ! skills.length ) ||
-					( roadmap &&
-						( ! syllabusIds.length ||
-							syllabusIds.some( ( id ) => ! id ) ||
-							new Set( syllabusIds ).size !==
-								syllabusIds.length ) ) ||
-					skills.length > 200
-				}
-				onClick={ create }
-			>
-				{ roadmap
-					? __( 'Save Roadmap', 'ohmylms' )
-					: __( 'Save as new curriculum', 'ohmylms' ) }
-			</Button>
+			{ saveTarget
+				? createPortal( saveControls, saveTarget )
+				: saveControls }
 			{ result && ! roadmap && (
 				<p role="status">
 					{ __(
