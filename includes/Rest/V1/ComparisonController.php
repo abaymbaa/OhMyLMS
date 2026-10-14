@@ -22,6 +22,58 @@ class ComparisonController extends RestController {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
+			'/syllabus-comparison/mapping-groups/remove',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'remove_mapping_group' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/mapping-groups',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_mapping_groups' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/mapping-groups/(?P<uuid>[a-f0-9-]{36})',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'mapping_group' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/roadmaps/(?P<id>\d+)',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( $this, 'get_roadmap' ),
+					'permission_callback' => array( Access::class, 'admin' ),
+				),
+				array(
+					'methods'             => 'PUT',
+					'callback'            => array( $this, 'save_roadmap' ),
+					'permission_callback' => array( Access::class, 'admin' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/syllabus-comparison/roadmaps/preview',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'preview_roadmap' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/syllabus-comparison/audit/(?P<student_id>\d+)',
 			array(
 				'methods'             => 'GET',
@@ -102,6 +154,36 @@ class ComparisonController extends RestController {
 	 */
 	public function create_roadmap( WP_REST_Request $request ) {
 		return rest_ensure_response( \OhMyLMS\Curriculum\Roadmaps::create( $request->get_params() ) );
+	}
+
+	/**
+	 * Read a roadmap editor's saved state.
+	 *
+	 * @param WP_REST_Request $request Roadmap ID.
+	 * @return mixed
+	 */
+	public function get_roadmap( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\Roadmaps::get( (int) $request['id'] ) );
+	}
+
+	/**
+	 * Save roadmap details and steps.
+	 *
+	 * @param WP_REST_Request $request Roadmap fields.
+	 * @return mixed
+	 */
+	public function save_roadmap( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\Roadmaps::save( (int) $request['id'], $request->get_params() ) );
+	}
+
+	/**
+	 * Preview shared skills from selected syllabuses without changing storage.
+	 *
+	 * @param WP_REST_Request $request Source syllabus IDs.
+	 * @return mixed
+	 */
+	public function preview_roadmap( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\Roadmaps::preview( $request['syllabus_ids'] ) );
 	}
 	/**
 	 * Read a shared content page.
@@ -226,6 +308,79 @@ class ComparisonController extends RestController {
 	}
 
 	/**
+	 * Save combined requirements atomically.
+	 *
+	 * @param WP_REST_Request $request Source groups, target and notes.
+	 * @return mixed
+	 */
+	public function save_mapping_groups( WP_REST_Request $request ) {
+		if ( ! is_array( $request['groups'] ) || ! is_int( $request['shared_id'] ) || ! is_string( $request['note'] ?? '' ) ) {
+			return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose source groups and a shared skill.', 'ohmylms' ) );
+		}
+		return rest_ensure_response( SkillMappings::save_groups( $request['groups'], $request['shared_id'], $request['note'] ?? '', (string) ( $request['relation'] ?? 'combined' ) ) );
+	}
+
+	/**
+	 * Read all required objectives of one combined group.
+	 *
+	 * @param WP_REST_Request $request Group UUID.
+	 * @return mixed
+	 */
+	public function mapping_group( WP_REST_Request $request ) {
+		return rest_ensure_response( SkillMappings::group( (string) $request['uuid'] ) );
+	}
+
+	/**
+	 * Remove all current links in one combined group, with revision checks.
+	 *
+	 * @param WP_REST_Request $request Group UUID and pair revisions.
+	 * @return mixed
+	 */
+	public function remove_mapping_group( WP_REST_Request $request ) {
+		global $wpdb;
+		$uuid  = $request['uuid'];
+		$pairs = $request['pairs'];
+		if ( ! is_string( $uuid ) || ! preg_match( '/^[a-f0-9-]{36}$/D', $uuid ) || ! is_array( $pairs ) || count( $pairs ) > 200 ) {
+			return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose a combined group with current pair revisions.', 'ohmylms' ) );
+		}
+		$lock = SkillMappings::LOCK . '-' . md5( $wpdb->prefix );
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) ) {
+			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 );
+		}
+		try {
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . SkillMappings::table() . ' WHERE group_uuid=%s', $uuid ), ARRAY_A );
+			if ( ! $rows || count( $rows ) !== count( $pairs ) ) {
+				return Access::error( 'ohmylms_mapping_stale', __( 'This group changed. Reload it before removing it.', 'ohmylms' ), 409 );
+			}
+			foreach ( $rows as $row ) {
+				$matches = array_values(
+					array_filter(
+						$pairs,
+						static function ( $pair ) use ( $row ) {
+							return is_array( $pair ) && ( $pair['specific_id'] ?? null ) === (int) $row['specific_term_id'] && ( $pair['expected_revision'] ?? null ) === SkillMappings::revision( $row );
+						}
+					)
+				);
+				if ( 1 !== count( $matches ) ) {
+					return Access::error( 'ohmylms_mapping_stale', __( 'This group changed. Reload it before removing it.', 'ohmylms' ), 409 );
+				}
+			}
+			\OhMyLMS\Utility\Transaction::run(
+				static function () use ( $wpdb, $uuid ) {
+					if ( false === $wpdb->delete( SkillMappings::table(), array( 'group_uuid' => $uuid ) ) || false === $wpdb->delete( \OhMyLMS\Curriculum\Schema::table( 'skill_mapping_groups' ), array( 'uuid' => $uuid ) ) ) {
+						throw new \RuntimeException( 'Combined coverage could not be removed.' );
+					}
+				}
+			);
+			return rest_ensure_response( array( 'removed' => true ) );
+		} catch ( \Throwable $error ) {
+			return Access::error( 'ohmylms_mapping_failed', __( 'Combined coverage could not be removed. Nothing was changed.', 'ohmylms' ), 500 );
+		} finally {
+			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
+		}
+	}
+
+	/**
 	 * Remove a mapping under the same lock as mapping saves.
 	 *
 	 * @param WP_REST_Request $request Mapping and expected revision.
@@ -242,8 +397,11 @@ class ComparisonController extends RestController {
 			foreach ( $mappings['maps_to'] as $mapping ) {
 				$shared_id        = absint( $request['shared_id'] );
 				$expected         = (string) $request['expected_revision'];
-				$current_revision = Comparison::revision( array( $mapping['relation'], $mapping['note'] ) );
+				$current_revision = SkillMappings::revision( $mapping );
 				if ( $shared_id === (int) $mapping['shared_id'] && $expected === $current_revision ) {
+					if ( ! empty( $mapping['group_uuid'] ) ) {
+						return Access::error( 'ohmylms_mapping_group_invalid', __( 'Remove combined coverage as a group.', 'ohmylms' ), 409 );
+					}
 					if ( ! SkillMappings::remove( $mapping['specific_id'], $mapping['shared_id'] ) ) {
 						return Access::error( 'ohmylms_mapping_failed', __( 'The mapping could not be removed.', 'ohmylms' ), 500 );
 					}

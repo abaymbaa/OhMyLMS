@@ -93,6 +93,18 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   the approved version with a signed, per-render token and never affect completion.
 - **Guests** answer on public lesson pages with a pseudonymous credential (stored hashed);
   results stay server-side and are attached only by an authenticated, one-time claim.
+- **Answer review.** The quiz setting `show_correct_answers` (off by default; "Show Correct
+  Answers On Results Page" on the quiz introduction tab) adds a "Review your answers" section
+  to the quiz page for the learner's most recent submitted attempt: verdict, marks, their
+  answer, the correct answer and the explanation (`Quiz\AnswerReview`,
+  `templates/single-lesson/quiz-review.php`, overridable in a theme). It never shows more than
+  the quiz allows: the older `hide_answers` setting still wins (and disables the new switch in
+  the editor), an attempt still in progress is never reviewed, and an exam whose results are
+  not released yet (`feedback_release`) stays hidden. Versioned attempts show the questions as
+  frozen into the attempt; attempts from before versioning use the question as it is now.
+  The setting is read from the current quiz, not the frozen revision, so changing it applies to
+  past attempts too. Types without a readable key (long text, structured and the extended
+  types) show the learner's answer and verdict but no correct answer.
 
 ## REST API (ohmylms/v1)
 

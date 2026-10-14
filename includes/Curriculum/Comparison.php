@@ -16,6 +16,7 @@ final class Comparison {
 
 	const SUBJECT_META = '_ohmylms_shared_subject';
 	const TOPIC_META   = '_ohmylms_shared_topic';
+	const ROADMAP_META = '_ohmylms_shared_created_for_roadmap';
 	const OPTION       = 'ohmylms_subject_syllabuses';
 
 	/**
@@ -59,6 +60,7 @@ final class Comparison {
 						$rows[ $id ] = $skill + array( 'memberships' => array() );
 					}
 					$rows[ $id ]['memberships'][] = array(
+						'group_id' => (int) $group['id'],
 						'topic_id' => $content['id'],
 						'topic'    => $content['name'],
 						'group'    => $group['name'],
@@ -116,6 +118,39 @@ final class Comparison {
 		if ( empty( $params['subject'] ) ) {
 			unset( $args['meta_value'] );
 		}
+		if ( ! empty( $params['roadmap_id'] ) ) {
+			$roadmap = Roadmaps::get( absint( $params['roadmap_id'] ) );
+			if ( is_wp_error( $roadmap ) ) {
+				return array(
+					'items' => array(),
+					'total' => 0,
+				);
+			}
+			$preview = Roadmaps::preview( $roadmap['syllabus_ids'] );
+			$ids     = array_column( $roadmap['skills'], 'id' );
+			$created = get_terms(
+				array(
+					'taxonomy'   => Taxonomy::NAME,
+					'hide_empty' => false,
+					'fields'     => 'ids',
+					'meta_key'   => self::ROADMAP_META,
+					'meta_value' => $roadmap['id'],
+				)
+			);
+			if ( is_array( $created ) ) {
+				$ids = array_merge( $ids, array_map( 'intval', $created ) );
+			}
+			if ( ! is_wp_error( $preview ) ) {
+				$ids = array_merge( $ids, array_column( $preview['skills'], 'id' ) );
+			}
+			if ( ! $ids ) {
+				return array(
+					'items' => array(),
+					'total' => 0,
+				);
+			}
+			$args['include'] = array_values( array_unique( $ids ) );
+		}
 		$total = wp_count_terms( $args );
 		$terms = get_terms(
 			$args + array(
@@ -142,6 +177,14 @@ final class Comparison {
 	 */
 	public static function save_shared( $id, array $data ) {
 		global $wpdb;
+		$roadmap_id = absint( $data['roadmap_id'] ?? 0 );
+		if ( ! $id && $roadmap_id ) {
+			$roadmap = Roadmaps::get( $roadmap_id );
+			if ( is_wp_error( $roadmap ) ) {
+				return $roadmap;
+			}
+		}
+		$creating    = ! $id;
 		$name        = sanitize_text_field( $data['name'] ?? '' );
 		$description = sanitize_textarea_field( $data['description'] ?? '' );
 		$topic       = sanitize_text_field( $data['topic'] ?? '' );
@@ -186,6 +229,9 @@ final class Comparison {
 			$id = (int) $result['term_id'];
 			update_term_meta( $id, self::SUBJECT_META, $subject );
 			update_term_meta( $id, self::TOPIC_META, $topic );
+			if ( $creating && $roadmap_id ) {
+				update_term_meta( $id, self::ROADMAP_META, $roadmap_id );
+			}
 			return self::shared_skill( $id );
 		} finally {
 			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
@@ -251,8 +297,9 @@ final class Comparison {
 					'code' => (string) get_term_meta( $shared_id, Syllabus::CODE_META, true ),
 				) : null,
 				'relation'    => $mapping['relation'],
+				'group_uuid'  => $mapping['group_uuid'] ?? '',
 				'note'        => (string) $mapping['note'],
-				'revision'    => self::revision( array( $mapping['relation'], (string) $mapping['note'] ) ),
+				'revision'    => SkillMappings::revision( $mapping ),
 			);
 		}
 		return array_values( $by_id );
@@ -271,10 +318,12 @@ final class Comparison {
 			return $rows;
 		}
 		$topics = array();
+		$groups = array();
 		$rows   = self::attach_mappings( $rows );
 		foreach ( $rows as &$row ) {
 			foreach ( $row['memberships'] as $membership ) {
 				$topics[ $membership['topic_id'] ] = $membership['topic'];
+				$groups[ $membership['group_id'] ] = $membership['group'];
 			}
 		}
 		unset( $row );
@@ -288,6 +337,7 @@ final class Comparison {
 					$status    = $row['is_shared'] ? 'shared' : ( in_array( 'equivalent', $relations, true ) ? 'equivalent' : ( $relations ? 'related_only' : 'unmapped' ) );
 					return ( '' === $search || false !== mb_strpos( mb_strtolower( implode( ' ', array( $row['name'], $row['code'], $row['objective'], $row['description'] ) ) ), $search ) )
 					&& ( empty( $params['topic'] ) || in_array( (int) $params['topic'], array_column( $row['memberships'], 'topic_id' ), true ) )
+						&& ( empty( $params['group'] ) || in_array( (int) $params['group'], array_column( $row['memberships'], 'group_id' ), true ) )
 					&& ( empty( $params['category'] ) || $params['category'] === $row['category'] )
 					&& ( empty( $params['status'] ) || $params['status'] === $status )
 					&& ( empty( $params['shared_id'] ) || in_array( (int) $params['shared_id'], array_column( $row['maps_to'], 'shared_id' ), true ) );
@@ -299,6 +349,7 @@ final class Comparison {
 			'settings' => SyllabusSettings::get( $id ),
 			'path'     => Items::path_names( $id, false ),
 			'topics'   => $topics,
+			'groups'   => $groups,
 			'coverage' => $coverage,
 			'total'    => count( $filtered ),
 			'items'    => array_slice( $filtered, ( max( 1, (int) ( $params['page'] ?? 1 ) ) - 1 ) * 30, 30 ),

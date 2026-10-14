@@ -1,0 +1,73 @@
+/*
+ * Answer review on the quiz result screen. The verdict is always written out in text;
+ * the colored edge only reinforces it.
+ */
+.ohmylms-answer-review {
+	margin-top: 32px;
+}
+
+.ohmylms-answer-review-intro {
+	margin: 0 0 16px;
+	color: #50575e;
+}
+
+.ohmylms-answer-review-list {
+	display: grid;
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style-position: inside;
+}
+
+.ohmylms-answer-review-item {
+	padding: 16px 20px;
+	border: 1px solid #dcdcde;
+	border-inline-start: 4px solid #8c8f94;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.ohmylms-answer-review-item.is-correct {
+	border-inline-start-color: #1a7f37;
+}
+
+.ohmylms-answer-review-item.is-partial {
+	border-inline-start-color: #b26200;
+}
+
+.ohmylms-answer-review-item.is-incorrect {
+	border-inline-start-color: #c62828;
+}
+
+.ohmylms-answer-review-question {
+	display: inline;
+	font-weight: 600;
+}
+
+.ohmylms-answer-review-question p {
+	display: inline;
+}
+
+.ohmylms-answer-review-verdict {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	margin: 8px 0;
+}
+
+.ohmylms-answer-review-marks {
+	color: #50575e;
+}
+
+.ohmylms-answer-review h3 {
+	margin: 12px 0 4px;
+	font-size: 0.875rem;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: #50575e;
+}
+
+.ohmylms-answer-review ul {
+	margin: 0;
+	padding-inline-start: 20px;
+}

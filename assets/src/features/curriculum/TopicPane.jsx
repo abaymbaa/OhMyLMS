@@ -434,7 +434,6 @@ export function TopicPane( { node } ) {
 										icon={ appearance.icon }
 										iconColor={ appearance.color }
 										title={ child.skill.name }
-										notes={ child.skill.description }
 										tag={
 											appearance.category ||
 											child.skill.code ||

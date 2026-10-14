@@ -14,6 +14,7 @@ import { AddItemRow } from './AddItemRow';
 import { CurriculumContext } from './context';
 import { HubContext } from '../content-hub/context';
 import { TreeNode } from './TreeNode';
+import { writeComparison } from './comparison.mjs';
 import * as api from './api.mjs';
 import {
 	buildTree,
@@ -61,6 +62,11 @@ function writeStored( ids ) {
  */
 export function CurriculumPage() {
 	const [ data, setData ] = useState( null );
+	const [ creatingRoadmap, setCreatingRoadmap ] = useState( false );
+	const [ roadmapName, setRoadmapName ] = useState( '' );
+	const [ roadmapSources, setRoadmapSources ] = useState( [] );
+	const [ savingRoadmap, setSavingRoadmap ] = useState( false );
+	const [ roadmapError, setRoadmapError ] = useState( '' );
 	const [ loadError, setLoadError ] = useState( '' );
 	const [ view, setView ] = useState( () => createViewState( readStored() ) );
 	const [ query, setQuery ] = useState( '' );
@@ -349,6 +355,18 @@ export function CurriculumPage() {
 	};
 
 	const context = {
+		roadmapSelection: creatingRoadmap
+			? {
+					ids: roadmapSources,
+					busy: savingRoadmap,
+					toggle: ( id, checked ) =>
+						setRoadmapSources( ( current ) =>
+							checked
+								? [ ...current, id ]
+								: current.filter( ( source ) => source !== id )
+						),
+				}
+			: null,
 		items,
 		types: data?.types || [],
 		maxDepth: data?.maxDepth || DEFAULT_MAX_DEPTH,
@@ -381,14 +399,72 @@ export function CurriculumPage() {
 			<p>
 				<Button
 					variant="secondary"
-					href="#/content-hub/curriculum/compare"
+					disabled={ savingRoadmap }
+					onClick={ () => {
+						setCreatingRoadmap( ! creatingRoadmap );
+						setView( expandAll( items ) );
+					} }
+					aria-expanded={ creatingRoadmap }
 				>
-					{ __(
-						'Compare syllabuses and map shared skills',
-						'ohmylms'
-					) }
+					{ creatingRoadmap
+						? __( 'Close Roadmap builder', 'ohmylms' )
+						: __( 'Create Roadmap', 'ohmylms' ) }
 				</Button>
 			</p>
+			{ creatingRoadmap && (
+				<AdminCard>
+					<p>
+						{ __(
+							'Check the syllabuses in the tree below, enter a name, then save. You can create shared skills and mappings in the Roadmap editor.',
+							'ohmylms'
+						) }
+					</p>
+					<TextControl
+						label={ __( 'New Roadmap name', 'ohmylms' ) }
+						value={ roadmapName }
+						onChange={ setRoadmapName }
+						disabled={ savingRoadmap }
+						maxLength={ 190 }
+					/>
+					<p>
+						{ sprintf(
+							/* translators: %d: selected syllabus count. */
+							__( '%d syllabuses selected', 'ohmylms' ),
+							roadmapSources.length
+						) }
+					</p>
+					{ roadmapError && <p role="alert">{ roadmapError }</p> }
+					<Button
+						variant="primary"
+						isBusy={ savingRoadmap }
+						disabled={
+							savingRoadmap ||
+							! roadmapName.trim() ||
+							! roadmapSources.length
+						}
+						onClick={ async () => {
+							setSavingRoadmap( true );
+							setRoadmapError( '' );
+							try {
+								const response = await writeComparison(
+									'roadmaps',
+									{
+										name: roadmapName,
+										syllabus_ids: roadmapSources,
+									}
+								);
+								window.location.hash = `/content-hub/curriculum/compare?roadmap=${ response.syllabus.id }`;
+							} catch ( cause ) {
+								setRoadmapError( cause.message );
+							} finally {
+								setSavingRoadmap( false );
+							}
+						} }
+					>
+						{ __( 'Save Roadmap', 'ohmylms' ) }
+					</Button>
+				</AdminCard>
+			) }
 			<div className="ohmylms-cur-status">
 				{ notice && (
 					<Notice

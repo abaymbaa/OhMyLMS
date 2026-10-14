@@ -13,7 +13,7 @@ final class Schema {
 	// 2: items can be syllabuses (is_syllabus, skill_root_id) and syllabuses hold skill groups of skills.
 	// 3: a syllabus is also a course (course_id).
 	// 4: curriculum topics and syllabus chapters have editable icons.
-	const VERSION = '4';
+	const VERSION = '5';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
 	public static function table( $name ) {
@@ -35,7 +35,8 @@ final class Schema {
 			// Curriculum membership of courses, skills, question banks and quizzes/exams (many to many).
 			'curriculum_links'      => 'item_id bigint unsigned NOT NULL, object_type varchar(20) NOT NULL, object_id bigint unsigned NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY link (item_id,object_type,object_id), KEY object (object_type,object_id)',
 			// Explicit, directional links from a curriculum-specific skill to a shared skill.
-			'skill_mappings'        => "specific_term_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, relation varchar(20) NOT NULL DEFAULT 'equivalent', note text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY mapping (specific_term_id,shared_term_id), KEY shared (shared_term_id)",
+			'skill_mappings'        => "specific_term_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, relation varchar(20) NOT NULL DEFAULT 'equivalent', group_uuid char(36) NOT NULL DEFAULT '', note text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY mapping (specific_term_id,shared_term_id), KEY shared (shared_term_id)",
+			'skill_mapping_groups'  => 'uuid char(36) NOT NULL, source_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, member_ids text NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY shared (shared_term_id)',
 			// Learning Tracks: named groupings of courses and curriculum items.
 			'tracks'                => "uuid char(36) NOT NULL, title varchar(190) NOT NULL, description text NULL, status varchar(20) NOT NULL DEFAULT 'draft', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, published_at datetime NULL, UNIQUE KEY uuid (uuid), KEY status_position (status,position)",
 			'track_items'           => 'track_id bigint unsigned NOT NULL, item_type varchar(20) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY member (track_id,item_type,item_id), KEY track_position (track_id,position), KEY object (item_type,item_id)',

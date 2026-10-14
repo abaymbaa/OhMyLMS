@@ -2,6 +2,7 @@
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Skills\Taxonomy;
+use OhMyLMS\Utility\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  *  - the note records how the requirements, difficulty or syllabus versions differ.
  */
 final class SkillMappings {
-	const RELATIONS = array( 'equivalent', 'related' );
+	const RELATIONS = array( 'equivalent', 'broader', 'narrower', 'related', 'combined' );
 	const LOCK      = 'ohmylms-skill-mappings';
 
 	public static function table() {
@@ -43,6 +44,7 @@ final class SkillMappings {
 				'code' => $shared['code'],
 			) : null,
 			'relation'    => $row['relation'],
+			'group_uuid'  => $row['group_uuid'] ?? '',
 			'note'        => (string) $row['note'],
 			'updated_at'  => $row['updated_at'],
 		);
@@ -81,16 +83,21 @@ final class SkillMappings {
 	 * @param string      $relation Equivalent or related.
 	 * @param string      $note Scope and version differences.
 	 * @param string|null $expected_revision Current pair revision; null preserves legacy callers.
+	 * @param string      $group_uuid Internal combined group identity.
+	 * @param bool        $allow_group_edit Internal atomic group edit.
 	 * @return array|\WP_Error
 	 */
-	public static function save( $specific_id, $shared_id, $relation = 'equivalent', $note = '', $expected_revision = null ) {
+	public static function save( $specific_id, $shared_id, $relation = 'equivalent', $note = '', $expected_revision = null, $group_uuid = '', $allow_group_edit = false ) {
 		global $wpdb;
 		$specific_id = (int) $specific_id;
 		$shared_id   = (int) $shared_id;
 		$relation    = sanitize_key( (string) $relation );
 		$note        = sanitize_textarea_field( (string) $note );
 		if ( ! in_array( $relation, self::RELATIONS, true ) ) {
-			return Access::error( 'ohmylms_mapping_invalid', __( 'Choose an equivalent or related mapping.', 'ohmylms' ) ); }
+			return Access::error( 'ohmylms_mapping_invalid', __( 'Choose a supported mapping relationship.', 'ohmylms' ) ); }
+		if ( 'combined' === $relation && ! $group_uuid ) {
+			return Access::error( 'ohmylms_mapping_invalid', __( 'Save combined coverage as a group of at least two objectives from one syllabus.', 'ohmylms' ) );
+		}
 		if ( mb_strlen( $note ) > 1000 ) {
 			return Access::error( 'ohmylms_mapping_invalid', __( 'Notes can have at most 1000 characters.', 'ohmylms' ) ); }
 		if ( $specific_id === $shared_id ) {
@@ -106,10 +113,13 @@ final class SkillMappings {
 		if ( (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) !== '1' ) {
 			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 ); }
 		try {
-			$table = self::table();
+			$table   = self::table();
+			$current = $wpdb->get_row( $wpdb->prepare( 'SELECT relation, note, group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ), ARRAY_A );
+			if ( ! empty( $current['group_uuid'] ) && ! $allow_group_edit ) {
+				return Access::error( 'ohmylms_mapping_group_invalid', __( 'Edit combined coverage as a complete group.', 'ohmylms' ), 409 );
+			}
 			if ( null !== $expected_revision ) {
-				$current  = $wpdb->get_row( $wpdb->prepare( 'SELECT relation, note FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ), ARRAY_A );
-				$revision = $current ? Comparison::revision( array( $current['relation'], (string) $current['note'] ) ) : '';
+				$revision = $current ? self::revision( $current ) : '';
 				if ( $expected_revision !== $revision ) {
 					return Access::error( 'ohmylms_mapping_stale', __( 'This mapping changed. Reload before saving.', 'ohmylms' ), 409 );
 				}
@@ -127,6 +137,7 @@ final class SkillMappings {
 					$table,
 					array(
 						'relation'   => $relation,
+						'group_uuid' => $group_uuid,
 						'note'       => $note,
 						'updated_at' => $now,
 					),
@@ -139,6 +150,7 @@ final class SkillMappings {
 						'specific_term_id' => $specific_id,
 						'shared_term_id'   => $shared_id,
 						'relation'         => $relation,
+						'group_uuid'       => $group_uuid,
 						'note'             => $note,
 						'created_by'       => get_current_user_id(),
 						'created_at'       => $now,
@@ -157,6 +169,10 @@ final class SkillMappings {
 
 	public static function remove( $specific_id, $shared_id ) {
 		global $wpdb;
+		$group_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ) );
+		if ( $group_uuid ) {
+			return false;
+		}
 		$result = $wpdb->delete(
 			self::table(),
 			array(
@@ -174,5 +190,140 @@ final class SkillMappings {
 			return; }
 		$wpdb->delete( self::table(), array( 'specific_term_id' => (int) $term_id ) );
 		$wpdb->delete( self::table(), array( 'shared_term_id' => (int) $term_id ) );
+		$wpdb->delete( Schema::table( 'skill_mapping_groups' ), array( 'shared_term_id' => (int) $term_id ) );
+	}
+
+	/**
+	 * Pair revision, preserving revisions for existing ungrouped mappings.
+	 *
+	 * @param array $row Mapping fields.
+	 * @return string
+	 */
+	public static function revision( array $row ) {
+		$value = array( $row['relation'], (string) $row['note'] );
+		if ( ! empty( $row['group_uuid'] ) ) {
+			$value[] = $row['group_uuid'];
+		}
+		return Comparison::revision( $value );
+	}
+
+	/**
+	 * Read a combined requirement and its source objectives.
+	 *
+	 * @param string $uuid Group UUID.
+	 * @return array|\WP_Error
+	 */
+	public static function group( $uuid ) {
+		global $wpdb;
+		$group = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'skill_mapping_groups' ) . ' WHERE uuid=%s', $uuid ), ARRAY_A );
+		if ( ! $group ) {
+			return Access::error( 'ohmylms_mapping_group_missing', __( 'Combined coverage group not found.', 'ohmylms' ), 404 );
+		}
+		$ids  = json_decode( $group['member_ids'], true );
+		$rows = Comparison::objectives( (int) $group['source_id'] );
+		if ( is_wp_error( $rows ) ) {
+			return $rows;
+		}
+		$rows = array_values(
+			array_filter(
+				Comparison::attach_mappings( $rows ),
+				static function ( $row ) use ( $ids ) {
+					return in_array( $row['term_id'], $ids, true );
+				}
+			)
+		);
+		return array(
+			'uuid'         => $uuid,
+			'source_id'    => (int) $group['source_id'],
+			'shared_id'    => (int) $group['shared_term_id'],
+			'required_ids' => $ids,
+			'items'        => $rows,
+		);
+	}
+
+	/**
+	 * Atomically save explicit combined coverage, grouped by source syllabus.
+	 * Combined links are descriptive and never pool mastery evidence.
+	 *
+	 * @param array  $groups Source IDs and revision-bearing mapping pairs.
+	 * @param int    $shared_id Shared target.
+	 * @param string $note Scope differences.
+	 * @return array|\WP_Error
+	 */
+	public static function save_groups( array $groups, $shared_id, $note, $relation = 'combined' ) {
+		global $wpdb;
+		if ( ! in_array( $relation, self::RELATIONS, true ) || ! $groups || count( $groups ) > 10 || ! Comparison::shared_skill( $shared_id ) ) {
+			return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose a shared skill and up to ten source groups.', 'ohmylms' ) );
+		}
+		$seen = array();
+		foreach ( $groups as $group ) {
+			if ( ! is_array( $group ) || ! is_int( $group['source_id'] ?? null ) || ! is_array( $group['pairs'] ?? null ) || count( $group['pairs'] ) < 2 || count( $group['pairs'] ) > 200 ) {
+				return Access::error( 'ohmylms_mapping_group_invalid', __( 'Combined coverage requires two or more objectives from each selected syllabus.', 'ohmylms' ) );
+			}
+			$rows = Comparison::objectives( $group['source_id'] );
+			if ( is_wp_error( $rows ) ) {
+				return $rows;
+			}
+			$ids = array_column( $rows, 'term_id' );
+			foreach ( $group['pairs'] as $pair ) {
+				if ( ! is_array( $pair ) || ! is_int( $pair['specific_id'] ?? null ) || ! is_string( $pair['expected_revision'] ?? null ) || ! in_array( $pair['specific_id'], $ids, true ) || in_array( $pair['specific_id'], $seen, true ) ) {
+					return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose distinct objectives belonging to their source syllabus, with current revisions.', 'ohmylms' ) );
+				}
+				$seen[] = $pair['specific_id'];
+			}
+		}
+		$lock = self::LOCK . '-' . md5( $wpdb->prefix );
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) ) {
+			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 );
+		}
+		$failure = null;
+		try {
+			foreach ( $seen as $specific_id ) {
+				$current_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ) );
+				if ( $current_uuid ) {
+					$members = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT specific_term_id FROM ' . self::table() . ' WHERE group_uuid=%s', $current_uuid ) ) );
+					if ( array_diff( $members, $seen ) ) {
+						return Access::error( 'ohmylms_mapping_group_invalid', __( 'Include every member of the existing combined group before changing it.', 'ohmylms' ), 409 );
+					}
+				}
+			}
+			return Transaction::run(
+				static function () use ( $wpdb, $groups, $shared_id, $note, $relation, &$failure ) {
+					$result = array();
+					foreach ( $groups as $group ) {
+						$uuid = 'combined' === $relation ? wp_generate_uuid4() : '';
+						if ( $uuid && false === $wpdb->insert(
+							Schema::table( 'skill_mapping_groups' ),
+							array(
+								'uuid'           => $uuid,
+								'source_id'      => $group['source_id'],
+								'shared_term_id' => $shared_id,
+								'member_ids'     => wp_json_encode( array_column( $group['pairs'], 'specific_id' ) ),
+								'created_by'     => get_current_user_id(),
+								'created_at'     => current_time( 'mysql', true ),
+							)
+						) ) {
+							throw new \RuntimeException( 'Combined coverage could not be saved.' );
+						}
+						foreach ( $group['pairs'] as $pair ) {
+							$saved = self::save( $pair['specific_id'], $shared_id, $relation, $note, $pair['expected_revision'], $uuid, true );
+							if ( is_wp_error( $saved ) ) {
+								$failure = $saved;
+								throw new \RuntimeException( 'Combined mapping rejected.' );
+							}
+							$result[] = $saved;
+						}
+					}
+					return $result;
+				}
+			);
+		} catch ( \Throwable $error ) {
+			if ( $failure ) {
+				return $failure;
+			}
+			return Access::error( 'ohmylms_mapping_failed', __( 'Combined coverage could not be saved. Nothing was changed.', 'ohmylms' ), 500 );
+		} finally {
+			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
+		}
 	}
 }

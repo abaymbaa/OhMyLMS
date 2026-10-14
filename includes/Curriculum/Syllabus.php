@@ -219,14 +219,15 @@ final class Syllabus {
 			);
 		}
 		return array(
-			'syllabus'   => Items::describe( $item ),
-			'contents'   => $contents,
-			'totals'     => array(
+			'syllabus'        => Items::describe( $item ),
+			'roadmap_sources' => $item['course_id'] ? array_filter( (array) get_post_meta( $item['course_id'], Roadmaps::SOURCES_META, true ) ) : array(),
+			'contents'        => $contents,
+			'totals'          => array(
 				'contents' => count( $contents ) - 1,
 				'groups'   => count( $groups ),
 				'skills'   => $skills_total,
 			),
-			'root_skill' => (int) $item['skill_root_id'],
+			'root_skill'      => (int) $item['skill_root_id'],
 		);
 	}
 

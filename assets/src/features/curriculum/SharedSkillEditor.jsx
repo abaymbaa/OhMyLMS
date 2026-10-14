@@ -17,13 +17,20 @@ import { SharedContentEditor } from './SharedContentEditor';
 
 /**
  * Stable shared skill editor with the affected objectives visible before saving.
- * @param {Object} props         Editor props.
- * @param {Object} props.skill   Current skill, or null for creation.
+ * @param {Object} props           Editor props.
+ * @param {Object} props.skill     Current skill, or null for creation.
  * @param          props.subject
- * @param          props.onSaved Save callback.
- * @param          props.onDirty Dirty state callback.
+ * @param          props.onSaved   Save callback.
+ * @param          props.onDirty   Dirty state callback.
+ * @param          props.roadmapId
  */
-export function SharedSkillEditor( { skill, subject, onSaved, onDirty } ) {
+export function SharedSkillEditor( {
+	skill,
+	subject,
+	onSaved,
+	onDirty,
+	roadmapId = 0,
+} ) {
 	const draftKey = `skill-${ skill?.id || 0 }`;
 	const [ draft, setDraft ] = useState( () => readLocalDraft( draftKey ) );
 	const [ name, setName ] = useState( draft.name ?? skill?.name ?? '' );
@@ -57,6 +64,7 @@ export function SharedSkillEditor( { skill, subject, onSaved, onDirty } ) {
 		try {
 			const response = await writeComparison( 'shared-skills/save', {
 				id: skill?.id || 0,
+				roadmap_id: roadmapId,
 				subject,
 				name,
 				description,
@@ -152,14 +160,16 @@ export function SharedSkillEditor( { skill, subject, onSaved, onDirty } ) {
 
 /**
  * Search and page shared skills without loading the full catalogue.
- * @param {Object}  props          Picker props.
- * @param {Object}  props.skill    Current skill.
+ * @param {Object}  props           Picker props.
+ * @param {number}  props.roadmapId Limit the library to this Roadmap and its sources.
+ * @param {Object}  props.skill     Current skill.
  * @param           props.subject
- * @param           props.onChoose Selection callback.
- * @param {number}  props.revision Reload counter.
- * @param {boolean} props.disabled Disable selection.
+ * @param           props.onChoose  Selection callback.
+ * @param {number}  props.revision  Reload counter.
+ * @param {boolean} props.disabled  Disable selection.
  */
 export function SharedSkillPicker( {
+	roadmapId = 0,
 	skill,
 	subject,
 	onChoose,
@@ -174,7 +184,12 @@ export function SharedSkillPicker( {
 		let current = true;
 		const timer = setTimeout(
 			() =>
-				readComparison( 'shared-skills', { search, page, subject } )
+				readComparison( 'shared-skills', {
+					search,
+					page,
+					subject,
+					...( roadmapId ? { roadmap_id: roadmapId } : {} ),
+				} )
 					.then( ( response ) => {
 						if ( current ) {
 							setData( response );
@@ -188,7 +203,7 @@ export function SharedSkillPicker( {
 			current = false;
 			clearTimeout( timer );
 		};
-	}, [ search, page, revision, subject ] );
+	}, [ search, page, revision, subject, roadmapId ] );
 	return (
 		<div>
 			<TextControl

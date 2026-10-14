@@ -76,6 +76,7 @@ final class ComparisonTools {
 						'minimum' => 0,
 					),
 					'subject'           => $text,
+					'roadmap_id'        => $id,
 					'name'              => array(
 						'type'      => 'string',
 						'maxLength' => 190,
@@ -92,11 +93,11 @@ final class ComparisonTools {
 			'save_skill_mapping'           => array(
 				'PUT',
 				'/mapping',
-				'Save one explicitly reviewed mapping. Equivalent pools evidence once per answer; related adds no evidence. No course completion changes. New pairs use empty expected_revision; edits use the revision from list_syllabus_objectives.',
+				'Save one explicitly reviewed mapping. Only Equivalent pools evidence. Broader means the source covers more than the shared skill; narrower means it covers less. Related is descriptive. Combined coverage uses save_combined_skill_mapping. New pairs use empty expected_revision; edits use current objective revisions.',
 				$mapping + array(
 					'relation' => array(
 						'type' => 'string',
-						'enum' => array( 'equivalent', 'related' ),
+						'enum' => array( 'equivalent', 'broader', 'narrower', 'related' ),
 					),
 					'note'     => array(
 						'type'      => 'string',
@@ -171,6 +172,46 @@ final class ComparisonTools {
 				),
 			),
 			array( 'name', 'skill_ids' ),
+		);
+		$definitions['save_combined_skill_mapping']  = array(
+			'POST',
+			'/mapping-groups',
+			'Save reviewed objectives required together, grouped by syllabus. Descriptive coverage only: no evidence pooling or inferred mastery. Every source group requires at least two distinct objectives with current pair revisions.',
+			array(
+				'shared_id' => $id,
+				'note'      => array(
+					'type'      => 'string',
+					'maxLength' => 1000,
+				),
+				'groups'    => array(
+					'type'     => 'array',
+					'minItems' => 1,
+					'maxItems' => 10,
+					'items'    => array(
+						'type'                 => 'object',
+						'additionalProperties' => false,
+						'required'             => array( 'source_id', 'pairs' ),
+						'properties'           => array(
+							'source_id' => $id,
+							'pairs'     => array(
+								'type'     => 'array',
+								'minItems' => 2,
+								'maxItems' => 200,
+								'items'    => array(
+									'type'                 => 'object',
+									'additionalProperties' => false,
+									'required'             => array( 'specific_id', 'expected_revision' ),
+									'properties'           => array(
+										'specific_id' => $id,
+										'expected_revision' => $revision,
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+			array( 'shared_id', 'groups' ),
 		);
 		$definitions['audit_my_study_plans']         = array( 'GET', '/audit', 'Read authenticated account study plans: shared mastery, direct syllabus progress, coverage and unassessed/developing objective IDs. Another student account cannot be requested.', array(), array() );
 		$definitions['audit_student_study_plans']    = array( 'GET', '/audit/{student_id}', 'Administrator-only audit of a learner study plan: shared mastery, direct syllabus progress, coverage and unassessed/developing requirements. Returns no answer bodies or assessment keys.', array( 'student_id' => $id ), array( 'student_id' ) );

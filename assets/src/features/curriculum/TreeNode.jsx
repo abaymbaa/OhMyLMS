@@ -94,6 +94,28 @@ export function TreeNode( { node } ) {
 				className={ `ohmylms-cur-row${ editing ? ' is-editing' : '' }${ c.search.matches.has( item.id ) ? ' is-match' : '' }` }
 				style={ { '--ohmylms-cur-depth': node.depth } }
 			>
+				{ c.roadmapSelection && item.is_syllabus && (
+					<input
+						type="checkbox"
+						aria-label={ sprintf(
+							/* translators: %s: syllabus name. */
+							__( 'Include %s in Roadmap', 'ohmylms' ),
+							item.name
+						) }
+						checked={ c.roadmapSelection.ids.includes( item.id ) }
+						disabled={
+							c.roadmapSelection.busy ||
+							( c.roadmapSelection.ids.length >= 10 &&
+								! c.roadmapSelection.ids.includes( item.id ) )
+						}
+						onChange={ ( event ) =>
+							c.roadmapSelection.toggle(
+								item.id,
+								event.target.checked
+							)
+						}
+					/>
+				) }
 				{ hasChildren ? (
 					<button
 						type="button"
@@ -132,7 +154,11 @@ export function TreeNode( { node } ) {
 					// A syllabus is edited in its own full-page workspace; its name opens it.
 					<a
 						className="ohmylms-cur-name ohmylms-cur-name-link"
-						href={ `#${ workspacePath( item.id ) }` }
+						href={
+							item.item_type === 'roadmap'
+								? `#/content-hub/curriculum/compare?roadmap=${ item.id }`
+								: `#${ workspacePath( item.id ) }`
+						}
 						title={ __( 'Open the syllabus editor', 'ohmylms' ) }
 					>
 						{ item.name }
@@ -162,7 +188,11 @@ export function TreeNode( { node } ) {
 								: __( 'Edit %s', 'ohmylms' ),
 							item.name
 						) }
-						onClick={ () => c.actions.toggleEditor( item.id ) }
+						onClick={ () =>
+							item.item_type === 'roadmap'
+								? ( window.location.hash = `/content-hub/curriculum/compare?roadmap=${ item.id }` )
+								: c.actions.toggleEditor( item.id )
+						}
 					>
 						{ editing
 							? __( 'Close', 'ohmylms' )

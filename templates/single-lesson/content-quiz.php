@@ -141,5 +141,16 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 
 
 		</div>
+
+		<?php
+		// Only quizzes that switched on "Show correct answers" reveal the answers, and only after submission.
+		$review_attempt = \OhMyLMS\Quiz\AnswerReview::latest_submitted( (array) $quiz_attempts );
+		if ( $review_attempt && \OhMyLMS\Quiz\AnswerReview::can_review( $quiz->get_settings(), $review_attempt ) ) {
+			ohmylms_get_template(
+				'single-lesson/quiz-review.php',
+				array( 'entries' => \OhMyLMS\Quiz\AnswerReview::for_attempt( $review_attempt['quiz_attempt_id'] ) )
+			);
+		}
+		?>
 	</div>
 <?php endwhile; // end of the loop. ?>

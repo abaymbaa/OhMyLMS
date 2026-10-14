@@ -49,6 +49,7 @@ export function SkillObjectiveTranslation( {
 					source: {
 						name: skillText( skill, source, 'name' ),
 						objective: sourceObjective,
+						// The translation endpoint retains its legacy description contract.
 						description: '',
 					},
 				},

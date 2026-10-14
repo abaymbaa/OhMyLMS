@@ -65,6 +65,7 @@ export function createQuizSettingsFields( readRuntime ) {
 			R = [
 				'time_limit',
 				'hide_answers',
+				'show_correct_answers',
 				'move_to_next_section',
 				'randomize_questions',
 				'allow_attempts',
@@ -531,6 +532,42 @@ export function createQuizSettingsFields( readRuntime ) {
 									return x( 'hide_answers', e );
 								} }
 								className={ 'ohmylms-hide-answers-switch' }
+							/>
+						</div>
+					) }
+					{ React.createElement(
+						zm,
+						{
+							title: ( 0, I18n.__ )(
+								'Show Correct Answers On Results Page',
+								'ohmylms'
+							),
+							description: ( 0, I18n.__ )(
+								'After submitting, students see their answers next to the correct answers and any explanation. Off by default. Unavailable while “Hide Answers On Results Page” is on.',
+								'ohmylms'
+							),
+							className:
+								'ohmylms-quiz-show-correct-answers-settings',
+						},
+						<div
+							style={ {
+								display: 'inline-block',
+								opacity: 1,
+								cursor: 'pointer',
+							} }
+						>
+							<Bt.A
+								checked={
+									!! d?.show_correct_answers &&
+									! d?.hide_answers
+								}
+								disabled={ !! d?.hide_answers }
+								onChange={ function ( e ) {
+									return x( 'show_correct_answers', e );
+								} }
+								className={
+									'ohmylms-show-correct-answers-switch'
+								}
 							/>
 						</div>
 					) }
