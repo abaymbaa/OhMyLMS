@@ -126,7 +126,7 @@ function ohmylms_get_account_menu_items() {
 	// Check if payment gateways support add new payment methods.
 	// if ( isset( $items['payment-methods'] ) ) {
 	// $support_payment_methods = false;
-	// foreach ( \CodeRex\Ecommerce\ecommerce()->payment_gateways->get_available_payment_gateways() as $gateway ) {
+	// foreach ( \OhMyLMS\Commerce\ecommerce()->payment_gateways->get_available_payment_gateways() as $gateway ) {
 	// if ( $gateway->supports( 'add_payment_method' ) || $gateway->supports( 'tokenization' ) ) {
 	// $support_payment_methods = true;
 	// break;

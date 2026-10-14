@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Data;
+namespace OhMyLMS\Commerce\Data;
 
 class OrderRefund extends Order {
 
@@ -169,7 +169,7 @@ class OrderRefund extends Order {
 	/**
 	 * Cancel the student enrollment for the given order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return void
 	 * @since 1.0.0
 	 */

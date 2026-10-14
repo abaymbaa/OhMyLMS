@@ -180,11 +180,11 @@ class FrontendAssets extends Assets {
 	private static function get_gateway_required_checkout_fields() {
 		$map = array();
 
-		if ( ! function_exists( 'CodeRex\Ecommerce\ecommerce' ) ) {
+		if ( ! function_exists( 'OhMyLMS\Commerce\ecommerce' ) ) {
 			return $map;
 		}
 
-		$gateways = \CodeRex\Ecommerce\ecommerce()->gateways();
+		$gateways = \OhMyLMS\Commerce\ecommerce()->gateways();
 		if ( ! $gateways || ! method_exists( $gateways, 'get_available_payment_gateways' ) ) {
 			return $map;
 		}

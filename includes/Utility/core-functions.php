@@ -1,6 +1,6 @@
 <?php
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 /**
  * Get other templates passing attributes and including the file.
@@ -671,7 +671,7 @@ function ohmylms_decode_unicode_sequences( $str ) {
  * @since 1.0.0
  * @return bool
  */
-function if_theme_support_available() {
+function ohmylms_if_theme_support_available() {
 	$supported_theme = array(
 		'twentytwentyone',
 		'twentytwentytwo',

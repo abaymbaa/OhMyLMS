@@ -1,10 +1,10 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
-use CodeRex\Ecommerce\Data\OrderItem;
-use CodeRex\Ecommerce\Data\OrderItemCoupon;
-use CodeRex\Ecommerce\Data\OrderItemCourse;
+use OhMyLMS\Commerce\Data\OrderItem;
+use OhMyLMS\Commerce\Data\OrderItemCoupon;
+use OhMyLMS\Commerce\Data\OrderItemCourse;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,14 +39,14 @@ class SubscriptionManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object for which the subscription is created.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object for which the subscription is created.
 	 * @param int                           $membership_id The ID of the membership plan post.
 	 * @param array                         $gateway_meta Optional. Metadata from the payment gateway.
 	 *                                                    Expected keys: 'customer_id', 'payment_method_token'.
 	 * @return int|\WP_Error The new subscription post ID on success, or \WP_Error on failure.
 	 */
 	public static function create_subscription( $order, $membership_id, $gateway_meta = array() ) {
-		if ( ! $order instanceof \CodeRex\Ecommerce\Data\Order ) {
+		if ( ! $order instanceof \OhMyLMS\Commerce\Data\Order ) {
 			return new \WP_Error( 'invalid_order_object', __( 'Invalid order object provided for subscription creation.', 'ohmylms' ) );
 		}
 		$membership_id = absint( $membership_id );
@@ -412,7 +412,7 @@ class SubscriptionManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object for which the subscription is created.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object for which the subscription is created.
 	 * @param $membership
 	 * @return array An associative array with 'start_date', 'trial_end_date', 'next_payment_date', and 'end_date'.
 	 */
@@ -572,7 +572,7 @@ class SubscriptionManager {
 	 */
 	public static function process_subscription_renewal( $subscription_id ) {
 		$subscription_id = absint( $subscription_id );
-		$subscription    = ecommerce_get_subscription( $subscription_id );
+		$subscription    = ohmylms_ecommerce_get_subscription( $subscription_id );
 		// Validate subscription existence and post type.
 		if ( ! $subscription || self::POST_TYPE !== get_post_field( 'post_type', $subscription_id ) ) {
 			return;
@@ -623,7 +623,7 @@ class SubscriptionManager {
 			return;
 		}
 
-		$original_order = ecommerce_get_order( $original_order_id );
+		$original_order = ohmylms_ecommerce_get_order( $original_order_id );
 		if ( ! $original_order ) {
 			self::add_subscription_note( $subscription_id, sprintf( __( 'Original order #%d not found. Cannot process renewal.', 'ohmylms' ), $original_order_id ) );
 			self::mark_subscription_on_hold( $subscription_id );
@@ -633,7 +633,7 @@ class SubscriptionManager {
 		// Determine renewal amount.
 		$amount_to_charge = (float) get_post_meta( $subscription_id, '_recurring_amount', true );
 
-		$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $amount_to_charge ) );
+		$tax_amount       = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $amount_to_charge ) );
 		$amount_to_charge = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $amount_to_charge;
 		if ( $amount_to_charge <= 0 ) {
 			$amount_to_charge = (float) get_post_meta( $membership_id, '_regular_price', true );
@@ -657,7 +657,7 @@ class SubscriptionManager {
 		$gateway = $available_gateways[ $gateway_id ];
 		// Create renewal order.
 		try {
-			$renewal_order = new \CodeRex\Ecommerce\Data\Order();
+			$renewal_order = new \OhMyLMS\Commerce\Data\Order();
 			$renewal_order->set_tax_amount( $tax_amount['tax_amount'] );
 			$renewal_order->set_tax_rate( $original_order->get_tax_rate() );
 

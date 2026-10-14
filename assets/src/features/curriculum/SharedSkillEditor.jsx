@@ -22,6 +22,7 @@ import { SharedContentEditor } from './SharedContentEditor';
  * @param          props.subject
  * @param          props.onSaved   Save callback.
  * @param          props.onDirty   Dirty state callback.
+ * @param          props.onBusy    Optional save-in-progress callback.
  * @param          props.roadmapId
  */
 export function SharedSkillEditor( {
@@ -29,6 +30,7 @@ export function SharedSkillEditor( {
 	subject,
 	onSaved,
 	onDirty,
+	onBusy,
 	roadmapId = 0,
 } ) {
 	const draftKey = `skill-${ skill?.id || 0 }`;
@@ -60,6 +62,7 @@ export function SharedSkillEditor( {
 	}, [ name, description, topic, skill, onDirty, draftKey, draft.revision ] );
 	async function save() {
 		setBusy( true );
+		onBusy?.( true );
 		setError( '' );
 		try {
 			const response = await writeComparison( 'shared-skills/save', {
@@ -78,6 +81,7 @@ export function SharedSkillEditor( {
 			setError( cause.message );
 		} finally {
 			setBusy( false );
+			onBusy?.( false );
 		}
 	}
 	return (

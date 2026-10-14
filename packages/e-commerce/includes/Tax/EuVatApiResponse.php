@@ -1,6 +1,6 @@
 <?php
 
-class EuVatApiResponse {
+class OhMyLMS_EU_VAT_API_Response {
 
 	const NO_VAT_NUMBER                  = 1;
 	const NO_COUNTRY_CODE                = 2;

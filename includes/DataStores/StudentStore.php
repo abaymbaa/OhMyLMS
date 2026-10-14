@@ -312,11 +312,11 @@ class StudentStore extends DataStore {
 				$membership = ohmylms_get_membership( $data['membership_id'] );
 				if ( $membership ) {
 					if ( ! empty( $data['order_id'] ) ) {
-						$order = ecommerce_get_order( $data['order_id'] );
+						$order = ohmylms_ecommerce_get_order( $data['order_id'] );
 						if ( $order ) {
 							$subscription_id = get_post_meta( $data['order_id'], '_subscription_id', true );
 							if ( $subscription_id ) {
-								$subscription = ecommerce_get_subscription( $subscription_id );
+								$subscription = ohmylms_ecommerce_get_subscription( $subscription_id );
 								if ( $subscription ) {
 									$membership->subscription = $subscription;
 								}
@@ -1260,7 +1260,7 @@ class StudentStore extends DataStore {
 		$query         = new \WP_Query( $args );
 		$total_revenue = 0;
 		foreach ( $query->posts as $order_id ) {
-			$order          = new \CodeRex\Ecommerce\Data\Order( $order_id );
+			$order          = new \OhMyLMS\Commerce\Data\Order( $order_id );
 			$total_revenue += floatval( $order->get_total() );
 		}
 		if ( 'view' === $context ) {

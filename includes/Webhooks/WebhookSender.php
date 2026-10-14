@@ -115,7 +115,7 @@ class WebhookSender {
 
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
-			$order    = function_exists( 'ecommerce_get_order' ) ? ecommerce_get_order( $order_id ) : null;
+			$order    = function_exists( 'ohmylms_ecommerce_get_order' ) ? ohmylms_ecommerce_get_order( $order_id ) : null;
 		}
 
 		if ( ! is_object( $order ) ) {

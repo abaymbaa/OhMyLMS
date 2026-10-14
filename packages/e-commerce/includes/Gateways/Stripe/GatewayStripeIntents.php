@@ -1,11 +1,11 @@
 <?php
 
 
-use CodeRex\Ecommerce\Abstracts\PaymentGateway;
-use CodeRex\Ecommerce\Gateways\Stripe\StripeApi;
-use CodeRex\Ecommerce\Gateways\Stripe\Helper;
-use CodeRex\Ecommerce\Gateways\Stripe\StripeCustomer;
-use function CodeRex\Ecommerce\ecommerce;
+use OhMyLMS\Commerce\Abstracts\PaymentGateway;
+use OhMyLMS\Commerce\Gateways\Stripe\StripeApi;
+use OhMyLMS\Commerce\Gateways\Stripe\Helper;
+use OhMyLMS\Commerce\Gateways\Stripe\StripeCustomer;
+use function OhMyLMS\Commerce\ecommerce;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	wp_die(); // Exit if accessed directly.
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since TBD
  */
-class GatewayStripeIntents extends PaymentGateway {
+class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 
 	const META_INTENT_ID_TEMP      = '_stripe_intent_id_temp';
 	const META_PAYMENT_INTENT_ID   = '_stripe_payment_intent_id';
@@ -366,7 +366,7 @@ class GatewayStripeIntents extends PaymentGateway {
 			);
 		}
 
-		$order      = ecommerce_get_order( $order_id );
+		$order      = ohmylms_ecommerce_get_order( $order_id );
 		$validation = $this->validate_order_data( $order );
 		if ( $validation !== true ) {
 			return $validation;
@@ -488,7 +488,7 @@ class GatewayStripeIntents extends PaymentGateway {
 			}
 
 			if ( $order_id ) {
-				$order = ecommerce_get_order( $order_id );
+				$order = ohmylms_ecommerce_get_order( $order_id );
 				if ( $order ) {
 					// Check for failed redirect status
 					if ( isset( $_GET['redirect_status'] ) && $_GET['redirect_status'] === 'failed' ) {
@@ -715,7 +715,7 @@ class GatewayStripeIntents extends PaymentGateway {
 				throw new \Exception( __( 'Invalid order ID provided.', 'ohmylms' ) );
 			}
 
-			$order = ecommerce_get_order( $order_id );
+			$order = ohmylms_ecommerce_get_order( $order_id );
 			if ( ! $order ) {
 				throw new \Exception( __( 'Order not found.', 'ohmylms' ) );
 			}
@@ -936,9 +936,9 @@ class GatewayStripeIntents extends PaymentGateway {
 	 * @return bool
 	 */
 	private function validate_required_classes() {
-		return function_exists( 'ecommerce_get_order' ) &&
-				class_exists( 'CodeRex\Ecommerce\Gateways\Stripe\Helper' ) &&
-				class_exists( 'CodeRex\Ecommerce\Gateways\Stripe\StripeApi' );
+		return function_exists( 'ohmylms_ecommerce_get_order' ) &&
+				class_exists( 'OhMyLMS\Commerce\Gateways\Stripe\Helper' ) &&
+				class_exists( 'OhMyLMS\Commerce\Gateways\Stripe\StripeApi' );
 	}
 
 
@@ -976,8 +976,8 @@ class GatewayStripeIntents extends PaymentGateway {
 			$subscription_id   = absint( $subscription_id );
 			$student_id        = absint( $student_id );
 
-			$original_order = ecommerce_get_order( $original_order_id );
-			$renewal_order  = ecommerce_get_order( $renewal_order_id );
+			$original_order = ohmylms_ecommerce_get_order( $original_order_id );
+			$renewal_order  = ohmylms_ecommerce_get_order( $renewal_order_id );
 			if ( ! $original_order ) {
 				return array(
 					'result'  => 'failure',

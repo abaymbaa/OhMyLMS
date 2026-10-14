@@ -190,7 +190,7 @@ class DashboardController extends RestController {
 				$total_net_earning              += $line_total;
 				$graph_data[ $date_key ]['net'] += $line_total;
 
-				$order = ecommerce_get_order( $result['order_id'] );
+				$order = ohmylms_ecommerce_get_order( $result['order_id'] );
 
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
@@ -300,7 +300,7 @@ class DashboardController extends RestController {
 				$amount = floatval( $row['order_total'] );
 
 				if ( $row['post_status'] === 'ohmylms-completed' ) {
-					$order    = ecommerce_get_order( $row['order_id'] );
+					$order    = ohmylms_ecommerce_get_order( $row['order_id'] );
 					$earning += $amount;
 					$net     += $amount;
 

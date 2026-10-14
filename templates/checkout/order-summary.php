@@ -22,8 +22,8 @@ if ( isset( $_GET['membership_id'] ) ) {
 	$title         = get_the_title( $membership_id );
 	$total         = MembershipHelper::get_plan_price( $membership_id );
 } else {
-	$cart_items = \CodeRex\Ecommerce\ecommerce()->cart->get_cart_contents();
-	$total      = \CodeRex\Ecommerce\ecommerce()->cart->get_total( $cart_items );
+	$cart_items = \OhMyLMS\Commerce\ecommerce()->cart->get_cart_contents();
+	$total      = \OhMyLMS\Commerce\ecommerce()->cart->get_total( $cart_items );
 }
 ?>
 <h2><?php _e( 'Order Summary', 'ohmylms' ); ?></h2>

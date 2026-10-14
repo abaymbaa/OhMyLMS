@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Abstracts;
+namespace OhMyLMS\Commerce\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 

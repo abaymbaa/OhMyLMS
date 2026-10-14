@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Gateways;
+namespace OhMyLMS\Commerce\Gateways;
 
 use OhMyLMS\Abstracts\SettingsPage;
 
@@ -51,10 +51,10 @@ class Gateways extends SettingsPage {
 	 */
 	public function init() {
 		$load_gateways = array(
-			'GatewayOffline',
-			'GatewayStripeIntents',
+			'OhMyLMS_Gateway_Offline',
+			'OhMyLMS_Gateway_Stripe_Intents',
 			'GatewayPaypal',
-			\CodeRex\Ecommerce\Gateways\QPay\GatewayQPay::class,
+			\OhMyLMS\Commerce\Gateways\QPay\GatewayQPay::class,
 		);
 
 		$load_gateways = apply_filters( 'ohmylms_payment_gateways', $load_gateways );

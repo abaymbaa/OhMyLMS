@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeRex\Ecommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
-use CodeRex\Ecommerce\Abstracts\Data;
+use OhMyLMS\Commerce\Abstracts\Data;
 
 class OrderItemCouponStore extends OrderItemStore {
 

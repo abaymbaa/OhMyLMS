@@ -2,7 +2,7 @@
 namespace OhMyLMS\Bricks\Elements;
 
 use OhMyLMS\Shortcodes\ShortCodeCheckout;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 use Bricks\Element;
 
 if ( ! defined( 'ABSPATH' ) ) {

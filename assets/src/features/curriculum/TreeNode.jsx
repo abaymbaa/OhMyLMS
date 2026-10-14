@@ -154,11 +154,7 @@ export function TreeNode( { node } ) {
 					// A syllabus is edited in its own full-page workspace; its name opens it.
 					<a
 						className="ohmylms-cur-name ohmylms-cur-name-link"
-						href={
-							item.item_type === 'roadmap'
-								? `#/content-hub/curriculum/compare?roadmap=${ item.id }`
-								: `#${ workspacePath( item.id ) }`
-						}
+						href={ `#${ workspacePath( item.id ) }` }
 						title={ __( 'Open the syllabus editor', 'ohmylms' ) }
 					>
 						{ item.name }
@@ -190,7 +186,9 @@ export function TreeNode( { node } ) {
 						) }
 						onClick={ () =>
 							item.item_type === 'roadmap'
-								? ( window.location.hash = `/content-hub/curriculum/compare?roadmap=${ item.id }` )
+								? ( window.location.hash = workspacePath(
+										item.id
+									) )
 								: c.actions.toggleEditor( item.id )
 						}
 					>

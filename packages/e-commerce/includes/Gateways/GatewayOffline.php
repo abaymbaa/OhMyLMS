@@ -1,8 +1,8 @@
 <?php
 
-use CodeRex\Ecommerce\Abstracts\PaymentGateway;
+use OhMyLMS\Commerce\Abstracts\PaymentGateway;
 
-class GatewayOffline extends PaymentGateway {
+class OhMyLMS_Gateway_Offline extends PaymentGateway {
 
 	public $testmode;
 	public $subscription_support;
@@ -92,7 +92,7 @@ class GatewayOffline extends PaymentGateway {
 	 * @since 1.0.0
 	 */
 	public function process_payment( $order_id, $is_subscription = false ) {
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( $this->testmode ) {
 			$order->payment_complete();
 		} else {

@@ -7,10 +7,10 @@
  *
  * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \CodeRex\Ecommerce\Checkout $checkout
+ * @global \OhMyLMS\Commerce\Checkout $checkout
  */
 
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
 defined( 'ABSPATH' ) || exit;
 $total_savings = 0;
@@ -27,10 +27,10 @@ $total_savings = 0;
 
 		<tbody>
 			<?php
-				$cart_items       = \CodeRex\Ecommerce\ecommerce()->cart->get_cart();
+				$cart_items       = \OhMyLMS\Commerce\ecommerce()->cart->get_cart();
 				$_course          = null;
 				$by_point         = false;
-				$is_including_tax = \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax();
+				$is_including_tax = \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax();
 			foreach ( $cart_items as $cart_item_key => $cart_item ) {
 				$by_point = isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point';
 				$_course  = $cart_item['data'];
@@ -110,7 +110,7 @@ $total_savings = 0;
 				<td>
 					<?php
 					if ( ! $by_point ) {
-						$cart_subtotal = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'subtotal' );
+						$cart_subtotal = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'subtotal' );
 						echo apply_filters( 'ohmylms_checkout_cart_subtotal', ohmylms_price( $cart_subtotal ), $cart_subtotal, $_course );
 					} else {
 						echo $_course->get_purchase_point() . ' Pts';
@@ -120,7 +120,7 @@ $total_savings = 0;
 			</tr>
 
 			<?php
-			foreach ( \CodeRex\Ecommerce\ecommerce()->cart->get_coupons() as $code => $coupon ) :
+			foreach ( \OhMyLMS\Commerce\ecommerce()->cart->get_coupons() as $code => $coupon ) :
 				if ( ! $coupon->get_code() ) {
 					continue; // Skip if the coupon code is not valid.
 				}
@@ -136,7 +136,7 @@ $total_savings = 0;
 			<?php endforeach; ?>
 
 			<?php
-			if ( \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' ) && ! $by_point && ! $is_including_tax ) {
+			if ( \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' ) && ! $by_point && ! $is_including_tax ) {
 
 				?>
 				<tr class="cart-tax">
@@ -144,14 +144,14 @@ $total_savings = 0;
 						<?php echo TaxService::get_instance()->get_tax_label(); ?>
 						<span class="cart-tax-span">
 							<?php
-							$tax_rate = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'tax_rate' );
+							$tax_rate = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'tax_rate' );
 							echo $tax_rate . '%';
 							?>
 						</span>
 					</th>
 					<td>
 						<?php
-						$tax_amount = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' );
+						$tax_amount = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' );
 						echo apply_filters( 'ohmylms_checkout_order_total', ohmylms_price( $tax_amount ), $tax_amount, $_course );
 						?>
 					</td>
@@ -162,13 +162,13 @@ $total_savings = 0;
 				<th>
 					<?php esc_html_e( 'Total', 'ohmylms' ); ?>
 					<?php if ( $is_including_tax ) : ?>
-						<span class="total-savings"><?php printf( '( Including tax : %s )', ohmylms_price( \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' ) ) ); ?></span>
+						<span class="total-savings"><?php printf( '( Including tax : %s )', ohmylms_price( \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'tax_amount' ) ) ); ?></span>
 					<?php endif; ?>
 				</th>
 				<td>
 					<?php
 					if ( ! $by_point ) {
-						$total = \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'total' );
+						$total = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'total' );
 						echo apply_filters( 'ohmylms_checkout_order_total', ohmylms_price( $total ), $total, $_course );
 					} else {
 						echo $_course->get_purchase_point() . ' Pts';

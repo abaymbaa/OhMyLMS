@@ -1,13 +1,13 @@
 <?php
 
-namespace CodeRex\Ecommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
 class OrderRefundStore extends OrderStore {
 
 	/**
 	 * Update the post meta for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderRefund $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\OrderRefund $order The order object.
 	 */
 	protected function update_post_meta( &$order ) {
 		parent::update_post_meta( $order );
@@ -35,8 +35,8 @@ class OrderRefundStore extends OrderStore {
 	/**
 	 * Cancel the student enrollment for a given refund and order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
-	 * @param \CodeRex\Ecommerce\Data\Order       $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
+	 * @param \OhMyLMS\Commerce\Data\Order       $order The order object.
 	 *
 	 * @since 1.0.0
 	 */

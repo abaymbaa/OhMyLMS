@@ -1,11 +1,11 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
-use CodeRex\Ecommerce\Factory\OrderFactory;
-use CodeRex\Ecommerce\Factory\SubscriptionFactory;
-use CodeRex\Ecommerce\Gateways\Gateways;
-use CodeRex\Ecommerce\Rest\Api;
+use OhMyLMS\Commerce\Factory\OrderFactory;
+use OhMyLMS\Commerce\Factory\SubscriptionFactory;
+use OhMyLMS\Commerce\Gateways\Gateways;
+use OhMyLMS\Commerce\Rest\Api;
 
 defined( 'ABSPATH' ) || exit;
 

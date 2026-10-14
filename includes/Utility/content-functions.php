@@ -177,7 +177,7 @@ function ohmylms_format_file_size( $size ) {
 }
 
 
-function crator_lms_get_question_ans_by_question_id( $question_id ) {
+function ohmylms_get_question_ans_by_question_id( $question_id ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'ohmylms_question_answers'; // Replace 'your_table_name' with the actual table name
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace CodeRex\Ecommerce\Rest\V1;
+namespace OhMyLMS\Commerce\Rest\V1;
 
-use CodeRex\Ecommerce\Abstracts\RestController;
-use CodeRex\Ecommerce\Data\Coupon;
-use CodeRex\Ecommerce\EcommerceDateTime;
+use OhMyLMS\Commerce\Abstracts\RestController;
+use OhMyLMS\Commerce\Data\Coupon;
+use OhMyLMS\Commerce\EcommerceDateTime;
 
 class CouponController extends RestController {
 
@@ -297,7 +297,7 @@ class CouponController extends RestController {
 	 * Prepare a coupon item for the database.
 	 *
 	 * @param \WP_REST_Request $request The REST request object containing the coupon data.
-	 * @return \CodeRex\Ecommerce\Data\Coupon|\WP_Error The coupon object or a WP_Error object on failure.
+	 * @return \OhMyLMS\Commerce\Data\Coupon|\WP_Error The coupon object or a WP_Error object on failure.
 	 *
 	 * @since 1.0.0
 	 */
@@ -313,9 +313,9 @@ class CouponController extends RestController {
 			if ( ! is_null( $value ) ) {
 				switch ( $key ) {
 					case 'code':
-						$coupon_code  = ecommerce_format_coupon_code( $value );
+						$coupon_code  = ohmylms_ecommerce_format_coupon_code( $value );
 						$id           = $coupon->get_id() ? $coupon->get_id() : 0;
-						$id_from_code = ecommerce_get_coupon_id_by_code( $coupon_code, $id );
+						$id_from_code = ohmylms_ecommerce_get_coupon_id_by_code( $coupon_code, $id );
 
 						if ( $id_from_code ) {
 							return new \WP_Error( 'ohmylms_rest_coupon_code_already_exists', __( 'The coupon code already exists', 'ohmylms' ), array( 'status' => 400 ) );

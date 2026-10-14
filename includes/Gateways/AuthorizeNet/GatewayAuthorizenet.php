@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use CodeRex\Ecommerce\Abstracts\PaymentGateway;
+use OhMyLMS\Commerce\Abstracts\PaymentGateway;
 use OhMyLMS\Gateways\AuthorizeNet\AuthorizeNetAPI;
 
 /**
@@ -319,8 +319,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 	public function process_payment( $order_id, $is_subscription = false ) {
 
 		// Retrieve the order.
-		$order = ecommerce_get_order( $order_id ); // Adjusted to use assumed global.
-		// Or use a generic function if available: $order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id ); // Adjusted to use assumed global.
+		// Or use a generic function if available: $order = ohmylms_ecommerce_get_order( $order_id );
 
 		if ( ! $order ) {
 			return array(
@@ -582,7 +582,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	public function process_subscription_payment( $order_id, $membership_id = 0 ) {
 		global $ohmylms_ecommerce; // Assuming this global object provides LMS order functionality.
 
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			return array(
 				'result'  => 'failure',
@@ -809,7 +809,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		global $ohmylms_ecommerce; // Assuming this global object provides LMS order functionality.
 
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 
 		if ( ! $order ) {
 			return false;
@@ -936,7 +936,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 	 */
 	public function refund_and_cancel_subscription( $lms_subscription_id, $order_id, $amount = null, $reason = '' ) {
 		global $ohmylms_ecommerce;
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 
 		if ( ! $order ) {
 			return false;
@@ -1099,8 +1099,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 		$amount            = floatval( $amount );
 
 		// Get orders
-		$original_order = ecommerce_get_order( $original_order_id );
-		$renewal_order  = ecommerce_get_order( $renewal_order_id );
+		$original_order = ohmylms_ecommerce_get_order( $original_order_id );
+		$renewal_order  = ohmylms_ecommerce_get_order( $renewal_order_id );
 
 		if ( ! $original_order ) {
 			return array(

@@ -381,8 +381,8 @@ export function createCouponList( readRuntime ) {
 				try {
 					const saved = await l()( {
 						path: coupon.id
-							? '/cx-ecommerce/v1/coupons/' + coupon.id
-							: '/cx-ecommerce/v1/coupons',
+							? '/ohmylms-commerce/v1/coupons/' + coupon.id
+							: '/ohmylms-commerce/v1/coupons',
 						method: coupon.id ? 'PUT' : 'POST',
 						data: coupon,
 					} );
@@ -432,7 +432,7 @@ export function createCouponList( readRuntime ) {
 											return (
 												( e.p = 0 ),
 												( n =
-													'/cx-ecommerce/v1/coupons/'.concat(
+													'/ohmylms-commerce/v1/coupons/'.concat(
 														t.id,
 														'/status'
 													) ),
@@ -515,7 +515,7 @@ export function createCouponList( readRuntime ) {
 				M( true );
 				try {
 					const response = await l()( {
-						path: lN.addQueryArgs( '/cx-ecommerce/v1/coupons', {
+						path: lN.addQueryArgs( '/ohmylms-commerce/v1/coupons', {
 							offset: 6 * ( B - 1 ),
 							page: B,
 							per_page: 6,
@@ -565,7 +565,7 @@ export function createCouponList( readRuntime ) {
 												( t = i ? [ i ] : zre( s ) ),
 												( e.n = 2 ),
 												l()( {
-													path: 'cx-ecommerce/v1/coupons/',
+													path: 'ohmylms-commerce/v1/coupons/',
 													method: 'DELETE',
 													data: {
 														ids: t,

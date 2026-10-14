@@ -6,13 +6,13 @@
  *
  * @package   OhMyLMSPro
  * @version  1.0.0
- * @global \CodeRex\Ecommerce\Data\Subscription $subscription
+ * @global \OhMyLMS\Commerce\Data\Subscription $subscription
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 global $wpdb;
 $post_ids = $wpdb->get_col(
 	$wpdb->prepare(
@@ -34,8 +34,8 @@ if ( empty( $post_ids ) ) {
 	</h2>
 	<?php
 	foreach ( $post_ids as $post_id ) {
-		$subscription = ecommerce_get_subscription( $post_id );
-		if ( ! isset( $subscription ) || ! $subscription instanceof \CodeRex\Ecommerce\Data\Subscription ) {
+		$subscription = ohmylms_ecommerce_get_subscription( $post_id );
+		if ( ! isset( $subscription ) || ! $subscription instanceof \OhMyLMS\Commerce\Data\Subscription ) {
 			continue;
 		}
 		$membership = ohmylms_get_membership( $subscription->get_membership_id() );
@@ -44,11 +44,11 @@ if ( empty( $post_ids ) ) {
 		}
 		$name           = $membership->get_name() ? $membership->get_name() : '';
 		$order_id       = $subscription->get_original_order_id();
-		$original_order = ecommerce_get_order( $order_id );
+		$original_order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $original_order ) {
 			continue;
 		}
-		$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+		$tax_amount       = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $original_order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
 		$recurring_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 
 		$price          = $membership->get_regular_price();
@@ -61,7 +61,7 @@ if ( empty( $post_ids ) ) {
 			if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
 				$tax_rate = $stored_totals['tax_rate'];
 				// Now calculate tax based on the discounted total.
-				$tax_data = \TaxCalculator::get_instance()->calculate_tax(
+				$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax(
 					$tax_rate,
 					array(
 						'total' => $price,

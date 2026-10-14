@@ -8,6 +8,6 @@
  * @throws \Exception
  * @since 1.0.0
  */
-function ecommerce_get_membership( $membership_id ) {
+function ohmylms_ecommerce_get_membership( $membership_id ) {
 	return ohmylms()->membership_factory->get_membership( $membership_id );
 }

@@ -1,5 +1,5 @@
 <?php
-namespace CodeRex\Ecommerce\Gateways\QPay;
+namespace OhMyLMS\Commerce\Gateways\QPay;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -67,7 +67,7 @@ class PaymentService {
 		return self::locked(
 			$order_id,
 			function () use ( $order_id, $gateway, $verify ) {
-				$order = ecommerce_get_order( $order_id );
+				$order = ohmylms_ecommerce_get_order( $order_id );
 				if ( ! $order || 'ohmylms-order' !== get_post_type( $order_id ) || 'qpay' !== $order->get_payment_method() ) {
 					return new \WP_Error( 'qpay_order', __( 'QPay order not found.', 'ohmylms' ) );
 				}

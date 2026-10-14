@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <?php
-$cart_items = \CodeRex\Ecommerce\ecommerce()->cart->get_cart();
+$cart_items = \OhMyLMS\Commerce\ecommerce()->cart->get_cart();
 foreach ( $cart_items as $cart_item_key => $cart_item ) {
 	if ( isset( $cart_item['type'] ) && $cart_item['type'] === 'ohmylms-membership' ) {
 		?>

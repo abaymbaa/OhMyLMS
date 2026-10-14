@@ -116405,7 +116405,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/orders", t),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/orders", t),
                       parse: !1
                     });
                   case 1:
@@ -116440,7 +116440,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/orders/".concat(t)),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/orders/".concat(t)),
                       parse: !1
                     });
                   case 1:
@@ -116463,7 +116463,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/orders/".concat(t.id)),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/orders/".concat(t.id)),
                       method: "POST",
                       data: t,
                       parse: !1
@@ -116488,7 +116488,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/orders/".concat(t.id, "/refunds")),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/orders/".concat(t.id, "/refunds")),
                       method: "POST",
                       data: {
                         amount: n.amount,
@@ -116517,7 +116517,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/orders/".concat(n.id, "/notes")),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/orders/".concat(n.id, "/notes")),
                       method: "POST",
                       data: {
                         note: t
@@ -116542,7 +116542,7 @@
                 for (;;) switch (e.p = e.n) {
                   case 0:
                     return e.p = 0, e.n = 1, pe()({
-                      path: "/cx-ecommerce/v1/orders/".concat(t),
+                      path: "/ohmylms-commerce/v1/orders/".concat(t),
                       method: "DELETE"
                     });
                   case 1:
@@ -116565,7 +116565,7 @@
                 for (;;) switch (e.p = e.n) {
                   case 0:
                     return e.p = 0, e.n = 1, pe()({
-                      path: "/cx-ecommerce/v1/orders/trash-bulk",
+                      path: "/ohmylms-commerce/v1/orders/trash-bulk",
                       method: "DELETE",
                       data: {
                         order_ids: t
@@ -121989,7 +121989,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/subscriptions", t),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/subscriptions", t),
                       parse: !1
                     });
                   case 1:
@@ -122024,7 +122024,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/subscriptions/".concat(t)),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/subscriptions/".concat(t)),
                       parse: !1
                     });
                   case 1:
@@ -122047,7 +122047,7 @@
                 for (;;) switch (e.n) {
                   case 0:
                     return e.n = 1, pe()({
-                      path: (0, Sn.addQueryArgs)("/cx-ecommerce/v1/subscriptions/".concat(t.id)),
+                      path: (0, Sn.addQueryArgs)("/ohmylms-commerce/v1/subscriptions/".concat(t.id)),
                       method: "POST",
                       data: t,
                       parse: !1

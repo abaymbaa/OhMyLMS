@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeRex\Ecommerce\Factory;
+namespace OhMyLMS\Commerce\Factory;
 
-use CodeRex\Ecommerce\Data\OrderItemCourse;
+use OhMyLMS\Commerce\Data\OrderItemCourse;
 
 class OrderItemCourseFactory {
 

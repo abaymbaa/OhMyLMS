@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Data;
+namespace OhMyLMS\Commerce\Data;
 
 class OrderItemMembership extends OrderItem {
 

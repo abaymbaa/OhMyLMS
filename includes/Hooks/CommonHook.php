@@ -1834,7 +1834,7 @@ class CommonHook extends HookHandler {
 			}
 		}
 
-		\CodeRex\Ecommerce\ecommerce()->cart->add_to_cart( $course_id, 1 );
+		\OhMyLMS\Commerce\ecommerce()->cart->add_to_cart( $course_id, 1 );
 
 		if ( $from_url_param ) {
 			wp_safe_redirect( remove_query_arg( 'ohmylms_add_to_cart' ) );

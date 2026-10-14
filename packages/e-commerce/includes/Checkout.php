@@ -1,16 +1,16 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
-use CodeRex\Ecommerce\Data\OrderItemCoupon;
-use CodeRex\Ecommerce\Data\OrderItemCourse;
+use OhMyLMS\Commerce\Data\OrderItemCoupon;
+use OhMyLMS\Commerce\Data\OrderItemCourse;
 use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 use OhMyLMS\Data\Student;
 use OhMyLMS\Membership\MembershipHelper;
 use OhMyLMS\user\UserHelper;
 use OhMyLMS\user\UserRepository;
-use CodeRex\Ecommerce\Data\Order;
-use CodeRex\Ecommerce\SubscriptionManager;
+use OhMyLMS\Commerce\Data\Order;
+use OhMyLMS\Commerce\SubscriptionManager;
 
 class Checkout {
 
@@ -240,7 +240,7 @@ class Checkout {
 		}
 
 		// Only add VAT number field if tax is enabled
-		if ( \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->is_tax_enabled() ) {
+		if ( \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->is_tax_enabled() ) {
 			$vat_label = get_option( 'ohmylms_vat_number_label', __( 'VAT Number', 'ohmylms' ) );
 
 			$fields['vat_number'] = array(
@@ -405,7 +405,7 @@ class Checkout {
 
 			if ( 0 === ohmylmse_notice_count( 'error' ) ) {
 				$order_id = $this->create_order( $posted_data );
-				$order    = ecommerce_get_order( $order_id );
+				$order    = ohmylms_ecommerce_get_order( $order_id );
 				if ( ! $order_id ) {
 					$message = __( 'Failed to create order.', 'ohmylms' );
 					ohmylmse_add_notice( $message, 'error', array() );
@@ -430,7 +430,7 @@ class Checkout {
 
 				if ( ! $maybe_by_point && $order->needs_payment() ) {
 					$result = $this->process_order_payment( $order_id, $posted_data );
-					$order  = ecommerce_get_order( $order_id );
+					$order  = ohmylms_ecommerce_get_order( $order_id );
 				} else {
 					$result = $this->process_order_without_payment( $order );
 					if ( $maybe_by_point ) {
@@ -511,7 +511,7 @@ class Checkout {
 				// If payment was successful, and it's a membership, create the subscription
 				// Only for confirmed payments, not for pending/awaiting redirects
 				if ( $payment_confirmed ) {
-					if ( ! empty( $posted_data['membership_id'] ) && class_exists( 'CodeRex\Ecommerce\SubscriptionManager' ) ) {
+					if ( ! empty( $posted_data['membership_id'] ) && class_exists( 'OhMyLMS\Commerce\SubscriptionManager' ) ) {
 						$membership = ohmylms_get_membership( $posted_data['membership_id'] );
 						if ( $membership && 'one_time' !== $membership->get_subscription_period() ) {
 							$gateway_meta_data = isset( $result['gateway_meta'] ) && is_array( $result['gateway_meta'] ) ? $result['gateway_meta'] : array();
@@ -537,7 +537,7 @@ class Checkout {
 					update_post_meta( $order_id, '_qpay_checkout_ready', 1 );
 					// Finish an early verified callback even if the buyer closes the browser.
 					// This reads local verification only and never polls QPay's API.
-					\CodeRex\Ecommerce\Gateways\QPay\PaymentService::settle(
+					\OhMyLMS\Commerce\Gateways\QPay\PaymentService::settle(
 						$order_id,
 						ecommerce()->gateways()->get_payment_gateways()['qpay']
 					);
@@ -828,7 +828,7 @@ class Checkout {
 	 * normally-optional field - phone being the common case - must be filled in when
 	 * that gateway is chosen. A field the admin has hidden cannot be enforced.
 	 *
-	 * @param \CodeRex\Ecommerce\Abstracts\PaymentGateway $gateway The chosen gateway.
+	 * @param \OhMyLMS\Commerce\Abstracts\PaymentGateway $gateway The chosen gateway.
 	 * @param array                                       $data    Posted checkout data.
 	 * @param \WP_Error                                   $errors  Error bag.
 	 * @return void
@@ -1175,7 +1175,7 @@ class Checkout {
 			/**
 			 * Fires before the order is created during checkout.
 			 *
-			 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+			 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 			 * @param array $data The posted checkout data.
 			 *
 			 * @since 1.0.0
@@ -1192,7 +1192,7 @@ class Checkout {
 			/**
 			 * Fires after the order is created during checkout.
 			 *
-			 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+			 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 			 * @param array $data The posted checkout data.
 			 *
 			 * @since 1.0.0
@@ -1223,7 +1223,7 @@ class Checkout {
 		$membership_table  = $wpdb->prefix . 'ohmylms_user_membership';
 		$student_id        = get_current_user_id();
 		$cart_items        = ecommerce()->cart->get_cart_contents();
-		$order             = ecommerce_get_order( $order_id );
+		$order             = ohmylms_ecommerce_get_order( $order_id );
 		$enrollment_status = 'pending' === $order->get_status() || 'processing' === $order->get_status() ? 'pending' : 'enrolled';
 		$item_id           = 0;
 
@@ -1429,7 +1429,7 @@ class Checkout {
 	 *
 	 * This function sets various data from the cart to the order object.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -1450,8 +1450,8 @@ class Checkout {
 	 *
 	 * This function iterates over the cart items and creates corresponding line items in the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
-	 * @param \CodeRex\Ecommerce\Cart       $cart The cart object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Cart       $cart The cart object.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -1568,7 +1568,7 @@ class Checkout {
 	 *
 	 * This function marks the order as complete and empties the cart.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -1609,8 +1609,8 @@ class Checkout {
 			 *
 			 * This function iterates over the cart coupons and creates corresponding coupon lines in the order.
 			 *
-			 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
-			 * @param \CodeRex\Ecommerce\Cart       $cart The cart object.
+			 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
+			 * @param \OhMyLMS\Commerce\Cart       $cart The cart object.
 			 * @return void
 			 *
 			 * @since 1.0.0

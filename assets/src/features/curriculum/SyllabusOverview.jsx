@@ -5,6 +5,7 @@ import { Button, Modal, Notice } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SaveField, Tag } from './WorkspaceParts';
 import { CURRICULUM_PATH } from './workspace.mjs';
+import { RoadmapSources } from './RoadmapSources';
 
 /** Profile and publishing controls edited directly on the syllabus home. */
 export function SyllabusOverview() {
@@ -41,6 +42,7 @@ export function SyllabusOverview() {
 	];
 	return (
 		<Fragment>
+			{ w.outline.syllabus.item_type === 'roadmap' && <RoadmapSources /> }
 			<section className="ohmylms-syllabus-settings-card">
 				<h3>{ __( 'Syllabus profile', 'ohmylms' ) }</h3>
 				<div className="ohmylms-ws-meta">

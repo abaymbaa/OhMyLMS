@@ -3,7 +3,7 @@ namespace OhMyLMS\Admin\Pages;
 
 use OhMyLMS\Abstracts\SettingsPage;
 use Gateways\Gateways;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 

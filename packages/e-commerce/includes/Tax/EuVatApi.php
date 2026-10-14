@@ -1,8 +1,8 @@
 <?php
 
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
-class EuVatApi {
+class OhMyLMS_EU_VAT_API {
 
 	const API_URL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
@@ -15,24 +15,24 @@ class EuVatApi {
 	 * @return  EUVATAPIResponse
 	 */
 	public static function check_vat( $vat_number, $country_code ) {
-		$result = new EuVatApiResponse( $vat_number, $country_code );
+		$result = new OhMyLMS_EU_VAT_API_Response( $vat_number, $country_code );
 
 		if ( ! $vat_number ) {
-			$result->error = EuVatApiResponse::NO_VAT_NUMBER;
+			$result->error = OhMyLMS_EU_VAT_API_Response::NO_VAT_NUMBER;
 
 			return $result;
 		}
 
 		if ( ! $country_code ) {
 
-			$result->error = EuVatApiResponse::NO_COUNTRY_CODE;
+			$result->error = OhMyLMS_EU_VAT_API_Response::NO_COUNTRY_CODE;
 
 			return $result;
 		}
 
 		// Check country is in the EU.
 		if ( ! in_array( $country_code, self::get_eu_countries(), true ) ) {
-			$result->error = EuVatApiResponse::INVALID_COUNTRY_CODE;
+			$result->error = OhMyLMS_EU_VAT_API_Response::INVALID_COUNTRY_CODE;
 
 			return $result;
 		}
@@ -46,7 +46,7 @@ class EuVatApi {
 
 		// If prefix is a valid VAT prefix but doesn't match selected country, return an error.
 		if ( $vat_prefix_for_country !== $vat_number_prefix ) {
-			$result->error = EuVatApiResponse::VAT_NUMBER_INVALID_FOR_COUNTRY;
+			$result->error = OhMyLMS_EU_VAT_API_Response::VAT_NUMBER_INVALID_FOR_COUNTRY;
 
 			return $result;
 		}
@@ -60,7 +60,7 @@ class EuVatApi {
 
 		// Catch all for invalid VAT number if no error set.
 		if ( ! $result->is_valid() && empty( $result->error ) ) {
-			$result->error = EuVatApiResponse::INVALID_VAT_NUMBER;
+			$result->error = OhMyLMS_EU_VAT_API_Response::INVALID_VAT_NUMBER;
 		}
 
 		return $result;
@@ -69,12 +69,12 @@ class EuVatApi {
 	/**
 	 * Makes a request to the VIES API
 	 *
-	 * @param EuVatApiResponse $result
+	 * @param OhMyLMS_EU_VAT_API_Response $result
 	 * @param string           $vat_number
 	 * @param string           $country_code
 	 * @param string           $vat_prefix_for_country
 	 *
-	 * @return EuVatApiResponse
+	 * @return OhMyLMS_EU_VAT_API_Response
 	 */
 	private static function vies_request( $result, $vat_number, $country_code, $vat_prefix_for_country ) {
 		try {
@@ -123,9 +123,9 @@ class EuVatApi {
 
 		// Translate common errors.
 		if ( 'MS_UNAVAILABLE' === $result->error ) {
-			$result->error = EuVatApiResponse::API_ERROR;
+			$result->error = OhMyLMS_EU_VAT_API_Response::API_ERROR;
 		} elseif ( 'INVALID_INPUT' === $result->error ) {
-			$result->error = EuVatApiResponse::INVALID_INPUT;
+			$result->error = OhMyLMS_EU_VAT_API_Response::INVALID_INPUT;
 		}
 
 		return $result;

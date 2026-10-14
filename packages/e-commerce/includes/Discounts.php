@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 class Discounts {
 
@@ -172,7 +172,7 @@ class Discounts {
 	 */
 	private function validate_coupon( $coupon, $items_to_apply ) {
 
-		if ( ! $coupon instanceof \CodeRex\Ecommerce\Data\Coupon ) {
+		if ( ! $coupon instanceof \OhMyLMS\Commerce\Data\Coupon ) {
 			return false;
 		}
 

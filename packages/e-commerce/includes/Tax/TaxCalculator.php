@@ -1,8 +1,8 @@
 <?php
 
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit();
  *
  * @since 1.0.0
  */
-class TaxCalculator {
+class OhMyLMS_Tax_Calculator {
 
 	/**
 	 * Instance of this class
@@ -111,4 +111,4 @@ class TaxCalculator {
 }
 
 // Initialize the tax calculator
-TaxCalculator::get_instance();
+OhMyLMS_Tax_Calculator::get_instance();

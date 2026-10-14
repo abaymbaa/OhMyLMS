@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit();
 
-$cart               = \CodeRex\Ecommerce\ecommerce()->cart->get_cart();
+$cart               = \OhMyLMS\Commerce\ecommerce()->cart->get_cart();
 $has_membership     = false;
 $by_point           = false;
 $is_recurring_daily = false;
@@ -37,7 +37,7 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 ?>
 	<div id="ohmylms-payment" class="ohmylms-checkout-payment">
 
-		<?php if ( ! $by_point && \CodeRex\Ecommerce\ecommerce()->cart->needs_payment() ) : ?>
+		<?php if ( ! $by_point && \OhMyLMS\Commerce\ecommerce()->cart->needs_payment() ) : ?>
 			<div class="ohmylms-payment-method-wrapper">
 				<h3 class="ohmylms-checkout-title">
 					<?php esc_html_e( 'Payment Information', 'ohmylms' ); ?>

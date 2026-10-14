@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\Data;
+namespace OhMyLMS\Commerce\Data;
 
-use CodeRex\Ecommerce\Abstracts\Data;
-use CodeRex\Ecommerce\DataStores;
+use OhMyLMS\Commerce\Abstracts\Data;
+use OhMyLMS\Commerce\DataStores;
 
 class Coupon extends Data {
 
@@ -39,7 +39,7 @@ class Coupon extends Data {
 		if ( is_int( $data ) ) {
 			$this->set_id( $data );
 		} elseif ( is_string( $data ) ) {
-			$id = ecommerce_get_coupon_id_by_code( $data );
+			$id = ohmylms_ecommerce_get_coupon_id_by_code( $data );
 			if ( ! $id ) {
 				$this->set_id( $data );
 			} else {

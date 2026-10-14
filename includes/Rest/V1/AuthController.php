@@ -140,8 +140,8 @@ class AuthController extends RestController {
 
 		// Re-run the guest->user session merge now, in this request, so the
 		// cart isn't left behind waiting for the next page load's init hook.
-		if ( function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
-			\CodeRex\Ecommerce\ecommerce()->session->init_session_cookie();
+		if ( function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
+			\OhMyLMS\Commerce\ecommerce()->session->init_session_cookie();
 		}
 
 		wp_safe_redirect( $redirect_to !== '' ? $redirect_to : $this->dashboard_url() );

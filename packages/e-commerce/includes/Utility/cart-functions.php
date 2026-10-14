@@ -8,21 +8,21 @@ if ( ! function_exists( 'apply_filters' ) ) {
  * Clears the cart session when called.
  */
 function ohmylms_empty_cart() {
-	if ( ! isset( \CodeRex\Ecommerce\ecommerce()->cart ) || '' === \CodeRex\Ecommerce\ecommerce()->cart ) {
-		\CodeRex\Ecommerce\ecommerce()->cart = new \CodeRex\Ecommerce\Cart();
+	if ( ! isset( \OhMyLMS\Commerce\ecommerce()->cart ) || '' === \OhMyLMS\Commerce\ecommerce()->cart ) {
+		\OhMyLMS\Commerce\ecommerce()->cart = new \OhMyLMS\Commerce\Cart();
 	}
-	\CodeRex\Ecommerce\ecommerce()->cart->empty_cart( false );
+	\OhMyLMS\Commerce\ecommerce()->cart->empty_cart( false );
 }
 
 
 function ohmylmse_cart_totals_subtotal_html() {
-	echo \CodeRex\Ecommerce\ecommerce()->cart->get_cart_subtotal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo \OhMyLMS\Commerce\ecommerce()->cart->get_cart_subtotal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**
  * Outputs or returns the label for a given coupon.
  *
- * @param \CodeRex\Ecommerce\Data\Coupon|string $coupon Coupon object or coupon code.
+ * @param \OhMyLMS\Commerce\Data\Coupon|string $coupon Coupon object or coupon code.
  * @param bool                                  $echo Whether to echo the label or return it. Default true.
  * @return string|null The coupon label if $echo is false, otherwise null.
  *
@@ -30,7 +30,7 @@ function ohmylmse_cart_totals_subtotal_html() {
  */
 function ohmylmse_cart_totals_coupon_label( $coupon, $echo = true ) {
 	if ( is_string( $coupon ) ) {
-		$coupon = new \CodeRex\Ecommerce\Data\Coupon( $coupon );
+		$coupon = new \OhMyLMS\Commerce\Data\Coupon( $coupon );
 	}
 
 	if ( ! $coupon->get_code() ) {
@@ -52,17 +52,17 @@ function ohmylmse_cart_totals_coupon_label( $coupon, $echo = true ) {
 /**
  * Outputs the HTML for a given coupon.
  *
- * @param \CodeRex\Ecommerce\Data\Coupon|string $coupon Coupon object or coupon code.
+ * @param \OhMyLMS\Commerce\Data\Coupon|string $coupon Coupon object or coupon code.
  * @return void
  *
  * @since 1.0.0
  */
 function ohmylmse_cart_totals_coupon_html( $coupon ) {
 	if ( is_string( $coupon ) ) {
-		$coupon = new \CodeRex\Ecommerce\Data\Coupon( $coupon );
+		$coupon = new \OhMyLMS\Commerce\Data\Coupon( $coupon );
 	}
 
-	$amount               = \CodeRex\Ecommerce\ecommerce()->cart->get_coupon_discount_amount( $coupon->get_code() );
+	$amount               = \OhMyLMS\Commerce\ecommerce()->cart->get_coupon_discount_amount( $coupon->get_code() );
 	$discount_amount_html = '-' . ohmylms_price( $amount );
 	$coupon_html          = $discount_amount_html;
 
@@ -75,7 +75,7 @@ function ohmylmse_cart_totals_coupon_html( $coupon ) {
  * @since 1.0.0
  */
 function ohmylmse_cart_totals_order_total_html() {
-	$value = '<strong>' . \CodeRex\Ecommerce\ecommerce()->cart->get_totals_by_key( 'total' ) . '</strong> ';
+	$value = '<strong>' . \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'total' ) . '</strong> ';
 	$value = apply_filters( 'ohmylmse_cart_totals_order_total_html', ohmylms_price( $value ), );
 	echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }

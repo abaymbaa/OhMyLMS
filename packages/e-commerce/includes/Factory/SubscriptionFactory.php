@@ -1,7 +1,7 @@
 <?php
-namespace CodeRex\Ecommerce\Factory;
+namespace OhMyLMS\Commerce\Factory;
 
-use CodeRex\Ecommerce\Data\Subscription;
+use OhMyLMS\Commerce\Data\Subscription;
 
 class SubscriptionFactory {
 	/**

@@ -1,11 +1,11 @@
 <?php
 
-namespace CodeRex\Ecommerce\Rest;
+namespace OhMyLMS\Commerce\Rest;
 
-use CodeRex\Ecommerce\Rest\V1\CouponController;
-use CodeRex\Ecommerce\Rest\V1\OrderRefundController;
-use CodeRex\Ecommerce\Rest\V1\OrdersController;
-use CodeRex\Ecommerce\Rest\V1\SubscriptionController;
+use OhMyLMS\Commerce\Rest\V1\CouponController;
+use OhMyLMS\Commerce\Rest\V1\OrderRefundController;
+use OhMyLMS\Commerce\Rest\V1\OrdersController;
+use OhMyLMS\Commerce\Rest\V1\SubscriptionController;
 
 class Api {
 
@@ -52,6 +52,10 @@ class Api {
 		foreach ( $this->class_map as $controller_class ) {
 			$controller_instance = new $controller_class();
 			$controller_instance->register_routes();
+			if ( ! defined( 'CRLMS_FILE' ) && ! class_exists( 'CreatorLms', false ) ) {
+				$legacy_controller = new $controller_class();
+				$legacy_controller->register_legacy_routes();
+			}
 		}
 	}
 }

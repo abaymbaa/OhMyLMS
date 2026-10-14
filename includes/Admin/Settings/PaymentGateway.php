@@ -40,7 +40,7 @@ class PaymentGateway extends Settings {
 	 * @since 1.0.0
 	 */
 	public function get_settings() {
-		$gateways = \CodeRex\Ecommerce\ecommerce()->gateways()->get_payment_gateway_settings();
+		$gateways = \OhMyLMS\Commerce\ecommerce()->gateways()->get_payment_gateway_settings();
 
 		foreach ( $gateways as $gateway ) {
 			$gateway_id   = $gateway['id'];

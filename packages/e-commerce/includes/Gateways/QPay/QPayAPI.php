@@ -1,5 +1,5 @@
 <?php
-namespace CodeRex\Ecommerce\Gateways\QPay;
+namespace OhMyLMS\Commerce\Gateways\QPay;
 
 defined( 'ABSPATH' ) || exit;
 

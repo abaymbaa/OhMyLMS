@@ -9,7 +9,7 @@
  * @link https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/includes/class-wc-datetime.php
  */
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 use DateTime;
 use DateTimeZone;

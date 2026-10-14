@@ -1,13 +1,13 @@
 <?php
 
-namespace CodeRex\Ecommerce\Data;
+namespace OhMyLMS\Commerce\Data;
 
-use CodeRex\Ecommerce\Abstracts\Data;
-use CodeRex\Ecommerce\DataStores;
-use CodeRex\Ecommerce\EcommerceDateTime;
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Abstracts\Data;
+use OhMyLMS\Commerce\DataStores;
+use OhMyLMS\Commerce\EcommerceDateTime;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 class Order extends Data {
 
@@ -320,7 +320,7 @@ class Order extends Data {
 	public function get_checkout_redirect_url() {
 		$checkout_page_id   = get_option( 'ohmylms_checkout_page_id' );
 		$checkout_page_url  = get_permalink( $checkout_page_id );
-		$order_received_url = ecommerce_get_endpoint_url( 'ohmylms-order-received', $this->get_id(), $checkout_page_url );
+		$order_received_url = ohmylms_ecommerce_get_endpoint_url( 'ohmylms-order-received', $this->get_id(), $checkout_page_url );
 		$order_received_url = add_query_arg( 'key', $this->get_order_key(), $order_received_url );
 		return $order_received_url;
 	}
@@ -1110,14 +1110,14 @@ class Order extends Data {
 	 *
 	 * This function determines the key to use for storing items in the order based on the type of the item.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The item to get the key for.
+	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The item to get the key for.
 	 * @return string The key for the items array.
 	 * @since 1.0.0
 	 */
 	protected function get_items_key( $item ) {
-		if ( is_a( $item, 'CodeRex\Ecommerce\Data\OrderItemCourse' ) ) {
+		if ( is_a( $item, 'OhMyLMS\Commerce\Data\OrderItemCourse' ) ) {
 			return 'line_items';
-		} elseif ( is_a( $item, 'CodeRex\Ecommerce\Data\OrderItemCoupon' ) ) {
+		} elseif ( is_a( $item, 'OhMyLMS\Commerce\Data\OrderItemCoupon' ) ) {
 			return 'coupon_lines';
 		}
 		return '';
@@ -1129,7 +1129,7 @@ class Order extends Data {
 	 * This function adds an item to the order by generating a temporary ID if the item does not have one.
 	 * It ensures that existing items are loaded before appending the new item.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The item to add to the order.
+	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The item to add to the order.
 	 * @return bool True if the item was successfully added, false otherwise.
 	 * @since 1.0.0
 	 */
@@ -1384,7 +1384,7 @@ class Order extends Data {
 	 *
 	 * This function retrieves the formatted line subtotal for the specified order item.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The order item to get the subtotal for.
+	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The order item to get the subtotal for.
 	 * @param string                            $tax_display The tax display mode. Default is an empty string.
 	 * @return string The formatted line subtotal.
 	 *
@@ -1399,7 +1399,7 @@ class Order extends Data {
 	 *
 	 * This function calculates the line subtotal for the specified order item.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderItem $item The order item to calculate the subtotal for.
+	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The order item to calculate the subtotal for.
 	 * @param bool                              $inc_tax Whether to include tax in the subtotal calculation. Default is false.
 	 * @param bool                              $round Whether to round the subtotal. Default is true.
 	 * @return float The line subtotal for the order item.
@@ -1458,7 +1458,7 @@ class Order extends Data {
 	protected function add_order_items_totals_total_row( &$total_rows ) {
 		$tax_amount                = $this->get_tax_amount();
 		$total_rows['order_total'] = array(
-			'label' => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ? esc_html( sprintf( 'Total ( Including tax : %s )', number_format( $tax_amount, 2 ) ) ) : __( 'Total:', 'ohmylms' ),
+			'label' => \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ? esc_html( sprintf( 'Total ( Including tax : %s )', number_format( $tax_amount, 2 ) ) ) : __( 'Total:', 'ohmylms' ),
 			'value' => ohmylms_price( $this->get_formatted_order_total(), array( 'currency' => $this->get_currency() ) ),
 		);
 	}
@@ -1625,7 +1625,7 @@ class Order extends Data {
 			'type'    => '',
 		);
 
-		remove_filter( 'comments_clauses', array( 'CodeRex\Ecommerce\Comments', 'exclude_order_comments' ) );
+		remove_filter( 'comments_clauses', array( 'OhMyLMS\Commerce\Comments', 'exclude_order_comments' ) );
 
 		$comments = get_comments( $args );
 
@@ -1637,7 +1637,7 @@ class Order extends Data {
 			$notes[]                  = $comment;
 		}
 
-		add_filter( 'comments_clauses', array( 'CodeRex\Ecommerce\Comments', 'exclude_order_comments' ) );
+		add_filter( 'comments_clauses', array( 'OhMyLMS\Commerce\Comments', 'exclude_order_comments' ) );
 
 		return $notes;
 	}

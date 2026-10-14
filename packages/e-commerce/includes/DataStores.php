@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -46,13 +46,13 @@ class DataStores {
 	 * @since 1.0.0
 	 */
 	private $stores = array(
-		'order'             => 'CodeRex\Ecommerce\DataStore\OrderStore',
-		'order-item'        => 'CodeRex\Ecommerce\DataStore\OrderItemStore',
-		'order-item-course' => 'CodeRex\Ecommerce\DataStore\OrderItemCourseStore',
-		'order-item-coupon' => 'CodeRex\Ecommerce\DataStore\OrderItemCouponStore',
-		'coupon'            => 'CodeRex\Ecommerce\DataStore\CouponStore',
-		'order_refund'      => 'CodeRex\Ecommerce\DataStore\OrderRefundStore',
-		'subscription'      => 'CodeRex\Ecommerce\DataStore\SubscriptionStore',
+		'order'             => 'OhMyLMS\Commerce\DataStore\OrderStore',
+		'order-item'        => 'OhMyLMS\Commerce\DataStore\OrderItemStore',
+		'order-item-course' => 'OhMyLMS\Commerce\DataStore\OrderItemCourseStore',
+		'order-item-coupon' => 'OhMyLMS\Commerce\DataStore\OrderItemCouponStore',
+		'coupon'            => 'OhMyLMS\Commerce\DataStore\CouponStore',
+		'order_refund'      => 'OhMyLMS\Commerce\DataStore\OrderRefundStore',
+		'subscription'      => 'OhMyLMS\Commerce\DataStore\SubscriptionStore',
 	);
 
 

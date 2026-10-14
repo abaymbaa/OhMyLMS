@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit();
 			<?php
 			if ( count( $student_orders->orders ) > 0 ) {
 				foreach ( $student_orders->orders as $student_order ) {
-					$order        = ecommerce_get_order( $student_order );
+					$order        = ohmylms_ecommerce_get_order( $student_order );
 					$item_count   = $order->get_item_count() - $order->get_item_count_refunded();
 					$items        = $order->get_items();
 					$purchased_by = get_post_meta( $order->get_id(), '_purchased_by', true );
@@ -105,7 +105,7 @@ defined( 'ABSPATH' ) || exit();
 
 							<div class="dashboard-table-td status">
 								<span class="status-tag <?php echo $order->get_status(); ?>">
-								<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
+								<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 								</span>
 							</div>
 

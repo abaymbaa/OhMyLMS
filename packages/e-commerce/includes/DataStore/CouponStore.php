@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
 use OhMyLMS\Abstracts\Data;
 use OhMyLMS\Abstracts\DataStore;
@@ -10,7 +10,7 @@ class CouponStore extends DataStore {
 	/**
 	 * Create a new coupon.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Coupon $coupon The coupon object.
+	 * @param \OhMyLMS\Commerce\Data\Coupon $coupon The coupon object.
 	 */
 	public function create( &$coupon ) {
 		if ( ! $coupon->get_date_created( 'edit' ) ) {
@@ -49,7 +49,7 @@ class CouponStore extends DataStore {
 		$coupon_id   = $coupon->get_id();
 		$post_object = get_post( $coupon->get_id() );
 		if ( ! $post_object || 'ohmylms_coupon' !== $post_object->post_type ) {
-			\CodeRex\Ecommerce\ecommerce()->session->set( 'applied_coupons', array() );
+			\OhMyLMS\Commerce\ecommerce()->session->set( 'applied_coupons', array() );
 			return false;
 		}
 
@@ -135,7 +135,7 @@ class CouponStore extends DataStore {
 			array(
 				'post_type'      => 'ohmylms_coupon',
 				'post_status'    => 'publish',
-				'title'          => ecommerce_format_coupon_code( $code ),
+				'title'          => ohmylms_ecommerce_format_coupon_code( $code ),
 				'fields'         => 'ids',
 				'posts_per_page' => -1,
 				'orderby'        => 'date',
@@ -146,7 +146,7 @@ class CouponStore extends DataStore {
 	/**
 	 * Update post meta data for the given coupon.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Coupon $coupon The coupon object to update.
+	 * @param \OhMyLMS\Commerce\Data\Coupon $coupon The coupon object to update.
 	 * @param bool                           $force Whether to force the update.
 	 *
 	 * @since 1.0.0

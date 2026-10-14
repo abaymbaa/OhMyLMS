@@ -3,7 +3,7 @@
 namespace OhMyLMS;
 
 use OhMyLMS\Data\Student;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -72,7 +72,7 @@ class FormHandler {
 		$user->display_name = $display_name;
 
 		if ( is_email( $display_name ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Display name cannot be changed to email address due to privacy concern.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Display name cannot be changed to email address due to privacy concern.', 'ohmylms' ), 'error' );
 		}
 
 		$required_fields = array(
@@ -85,7 +85,7 @@ class FormHandler {
 		foreach ( $required_fields as $field_key => $field_name ) {
 			if ( empty( $_POST[ $field_key ] ) ) {
 				/* translators: %s: Field name. */
-				\CodeRex\Ecommerce\ohmylmse_add_notice( sprintf( __( '%s is a required field.', 'ohmylms' ), '<strong>' . esc_html( $field_name ) . '</strong>' ), 'error', array( 'id' => $field_key ) );
+				\OhMyLMS\Commerce\ohmylmse_add_notice( sprintf( __( '%s is a required field.', 'ohmylms' ), '<strong>' . esc_html( $field_name ) . '</strong>' ), 'error', array( 'id' => $field_key ) );
 			}
 		}
 
@@ -93,28 +93,28 @@ class FormHandler {
 		if ( $email ) {
 			$email = sanitize_email( $email );
 			if ( ! is_email( $email ) ) {
-				\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please provide a valid email address.', 'ohmylms' ), 'error' );
+				\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Please provide a valid email address.', 'ohmylms' ), 'error' );
 			} elseif ( email_exists( $email ) && $email !== $current_user->user_email ) {
-				\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'This email address is already registered.', 'ohmylms' ), 'error' );
+				\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'This email address is already registered.', 'ohmylms' ), 'error' );
 			}
 			$user->user_email = $email;
 		}
 
 		// handle password
 		if ( ! empty( $pass_current ) && empty( $pass1 ) && empty( $pass2 ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please fill out all password fields.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Please fill out all password fields.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && empty( $pass_current ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please enter your current password.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Please enter your current password.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && empty( $pass2 ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Please re-enter your password.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Please re-enter your password.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'New passwords do not match.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'New passwords do not match.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		} elseif ( ! empty( $pass1 ) && ! wp_check_password( $pass_current, $current_user->user_pass, $current_user->ID ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Your current password is incorrect.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Your current password is incorrect.', 'ohmylms' ), 'error' );
 			$save_pass = false;
 		}
 
@@ -122,7 +122,7 @@ class FormHandler {
 			$user->user_pass = $pass1;
 		}
 
-		if ( \CodeRex\Ecommerce\ohmylmse_notice_count( 'error' ) === 0 ) {
+		if ( \OhMyLMS\Commerce\ohmylmse_notice_count( 'error' ) === 0 ) {
 			wp_update_user( $user );
 			$student = new Student( $user->ID );
 			$student->set_email( $email );
@@ -140,7 +140,7 @@ class FormHandler {
 
 			$student->save();
 
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
 
 			// Check if redirect_to parameter is set (for shortcode usage).
 			$redirect_url = ! empty( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
@@ -192,7 +192,7 @@ class FormHandler {
 		$notification_direct_messages    = ! empty( $_POST['notification_direct_messages'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_direct_messages'] ) ) : 'off';
 		$notification_new_course_content = ! empty( $_POST['notification_new_course_content'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_new_course_content'] ) ) : 'off';
 		$notification_comments_replies   = ! empty( $_POST['notification_comments_replies'] ) ? ohmylms_clean( wp_unslash( $_POST['notification_comments_replies'] ) ) : 'off';
-		if ( \CodeRex\Ecommerce\ohmylmse_notice_count( 'error' ) === 0 ) {
+		if ( \OhMyLMS\Commerce\ohmylmse_notice_count( 'error' ) === 0 ) {
 			$student = new Student( $user_id );
 			$student->set_notification_chapter( $notification_chapter );
 			$student->set_notification_direct_messages( $notification_direct_messages );
@@ -200,7 +200,7 @@ class FormHandler {
 			$student->set_notification_comments_replies( $notification_comments_replies );
 
 			$student->save();
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Notification settings saved successfully.', 'ohmylms' ) );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Notification settings saved successfully.', 'ohmylms' ) );
 			wp_safe_redirect( ohmylms_get_endpoint_url( 'notification', '', ohmylms_get_page_permalink( 'student_profile' ) ) );
 			exit;
 		}
@@ -240,7 +240,7 @@ class FormHandler {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		if ( empty( $_FILES['ohmylms-submission-file'] ) || $_FILES['ohmylms-submission-file']['error'] === UPLOAD_ERR_NO_FILE ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'No file was uploaded.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'No file was uploaded.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
@@ -273,7 +273,7 @@ class FormHandler {
 
 		if ( ! $uploaded_file || isset( $uploaded_file['error'] ) ) {
 			$error_message = isset( $uploaded_file['error'] ) ? $uploaded_file['error'] : __( 'File upload failed.', 'ohmylms' );
-			\CodeRex\Ecommerce\ohmylmse_add_notice( $error_message, 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( $error_message, 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
@@ -282,13 +282,13 @@ class FormHandler {
 		$file_size = ohmylms_format_file_size( $file_size );
 
 		if ( $assignment->get_enable_file_size_limit() && $assignment->get_max_file_size_limit() < $file_size ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'File size is too large.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'File size is too large.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
 
 		if ( $assignment->get_number_of_files() <= count( $assignment->get_submission( $student->get_id() ) ) ) {
-			\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'You have reached the maximum number of files allowed.', 'ohmylms' ), 'error' );
+			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'You have reached the maximum number of files allowed.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
 		}
@@ -300,7 +300,7 @@ class FormHandler {
 
 		$assignment->submit_file_submission( $student->get_id(), $course_id, $submit_data );
 
-		\CodeRex\Ecommerce\ohmylmse_add_notice( __( 'Assignment submitted successfully.', 'ohmylms' ) );
+		\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Assignment submitted successfully.', 'ohmylms' ) );
 		wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 		exit;
 	}

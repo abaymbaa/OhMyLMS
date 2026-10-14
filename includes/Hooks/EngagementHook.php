@@ -312,7 +312,7 @@ class EngagementHook {
 	public function after_enrolled_student( $order ) {
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
-			$order    = ecommerce_get_order( $order_id );
+			$order    = ohmylms_ecommerce_get_order( $order_id );
 		}
 
 		if ( ! is_object( $order ) ) {
@@ -356,7 +356,7 @@ class EngagementHook {
 	public function after_create_order( $order ) {
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
-			$order    = ecommerce_get_order( $order_id );
+			$order    = ohmylms_ecommerce_get_order( $order_id );
 		}
 
 		if ( ! is_object( $order ) ) {

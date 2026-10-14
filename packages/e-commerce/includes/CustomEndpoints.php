@@ -1,5 +1,5 @@
 <?php
-namespace CodeRex\ECommerce;
+namespace OhMyLMS\Commerce;
 
 /**
  * Class CustomEndpoints

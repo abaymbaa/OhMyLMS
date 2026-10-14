@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeRex\Ecommerce\Includes\Tax;
+namespace OhMyLMS\Commerce\Includes\Tax;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit();
 

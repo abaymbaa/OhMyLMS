@@ -281,7 +281,7 @@ final class OhMyLMS {
 	 */
 	public function __get( $key ) {
 		if ( in_array( $key, array( 'payment_gateways' ), true ) ) {
-			return \CodeRex\Ecommerce\ecommerce()->$key();
+			return \OhMyLMS\Commerce\ecommerce()->$key();
 			// return $this->$key();
 		}
 	}
@@ -708,7 +708,7 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function include_theme_support() {
-		if ( if_theme_support_available() ) {
+		if ( ohmylms_if_theme_support_available() ) {
 			switch ( get_template() ) {
 				case 'twentytwentyone':
 					$theme_support = new \OhMyLMS\ThemeSupport\TwentyTwentyOne();

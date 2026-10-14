@@ -1,11 +1,11 @@
 <?php
 
-namespace CodeRex\Ecommerce\Rest\V1;
+namespace OhMyLMS\Commerce\Rest\V1;
 
-use CodeRex\Ecommerce\Abstracts\RestController;
-use CodeRex\Ecommerce\Data\Subscription;
-use function CodeRex\Ecommerce\ecommerce;
-use CodeRex\Ecommerce\SubscriptionManager;
+use OhMyLMS\Commerce\Abstracts\RestController;
+use OhMyLMS\Commerce\Data\Subscription;
+use function OhMyLMS\Commerce\ecommerce;
+use OhMyLMS\Commerce\SubscriptionManager;
 
 
 class SubscriptionController extends RestController {
@@ -320,7 +320,7 @@ class SubscriptionController extends RestController {
 	 */
 	protected function prepare_item_for_database( $request ) {
 		$id           = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
-		$subscription = new \CodeRex\Ecommerce\Data\Subscription( $id );
+		$subscription = new \OhMyLMS\Commerce\Data\Subscription( $id );
 		$data_keys    = array(
 			'student_id',
 			'membership_id',
@@ -517,10 +517,10 @@ class SubscriptionController extends RestController {
 	 */
 	public function update_item( $request ) {
 		$post_id               = (int) $request['id'];
-		$previous_subscription = function_exists( 'ecommerce_get_subscription' ) ? ecommerce_get_subscription( $post_id ) : null;
+		$previous_subscription = function_exists( 'ohmylms_ecommerce_get_subscription' ) ? ohmylms_ecommerce_get_subscription( $post_id ) : null;
 		$get_previous_status   = $previous_subscription ? $previous_subscription->get_status() : null;
 		$subscription_id       = $this->update_subscription( $request );
-		$current_subscription  = ecommerce_get_subscription( $post_id );
+		$current_subscription  = ohmylms_ecommerce_get_subscription( $post_id );
 
 		$post = get_post( $subscription_id );
 		$this->update_additional_fields_for_object( $post, $request );
@@ -538,7 +538,7 @@ class SubscriptionController extends RestController {
 				$get_current_status,
 				wp_get_current_user()->display_name
 			);
-			\CodeRex\Ecommerce\SubscriptionManager::add_subscription_note( $post_id, $note );
+			\OhMyLMS\Commerce\SubscriptionManager::add_subscription_note( $post_id, $note );
 			// // Add a comment as a note (type 'subscription_note')
 			// wp_insert_comment( array(
 			// 'comment_post_ID'      => $post_id,
@@ -650,11 +650,11 @@ class SubscriptionController extends RestController {
 
 		$student_id      = $subscription->get_student_id();
 		$order_id        = $subscription->get_original_order_id();
-		$order           = \ecommerce_get_order( $order_id );
+		$order           = \ohmylms_ecommerce_get_order( $order_id );
 		$membership_id   = $subscription->get_membership_id();
 		$membership_name = get_the_title( $membership_id );
 
-		$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+		$tax_amount       = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
 		$recurring_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 
 		$data = array(
@@ -674,7 +674,7 @@ class SubscriptionController extends RestController {
 			'recurring_amount'           => $recurring_amount,
 			'status'                     => $subscription->get_status(),
 			'related_orders'             => $subscription->get_related_orders(),
-			'subscription_notes'         => ecommerce_get_subscription_notes(
+			'subscription_notes'         => ohmylms_ecommerce_get_subscription_notes(
 				array(
 					'subscription_id' => $subscription->get_id(),
 				)
@@ -746,7 +746,7 @@ class SubscriptionController extends RestController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$subscription = ecommerce_get_subscription( $item->ID );
+		$subscription = ohmylms_ecommerce_get_subscription( $item->ID );
 		$data         = $this->get_subscription_data( $subscription );
 		$response     = rest_ensure_response( $data );
 		// Optionally add links, filters, etc. here as needed.

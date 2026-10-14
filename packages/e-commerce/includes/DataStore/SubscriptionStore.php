@@ -1,7 +1,7 @@
 <?php
-namespace CodeRex\ECommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
-use CodeRex\Ecommerce\Abstracts\DataStore;
+use OhMyLMS\Commerce\Abstracts\DataStore;
 
 class SubscriptionStore extends DataStore {
 	public function create( &$subscription ) {
@@ -42,7 +42,7 @@ class SubscriptionStore extends DataStore {
 	 * This method retrieves the status of the order and ensures it is in the correct format.
 	 * If the status is not set, it applies a default status.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return string The post status for the order.
 	 *
 	 * @since 1.0.0
@@ -87,7 +87,7 @@ class SubscriptionStore extends DataStore {
 	/**
 	 * Update subscription post meta data.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Subscription $subscription The subscription object to update.
+	 * @param \OhMyLMS\Commerce\Data\Subscription $subscription The subscription object to update.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$subscription ) {
@@ -122,7 +122,7 @@ class SubscriptionStore extends DataStore {
 	 *
 	 * This method retrieves all related orders for a given subscription, including renewal orders and the parent order.
 	 * It returns an array of related orders with their IDs, statuses, totals, relationships, and dates.
-	 * * @param \CodeRex\Ecommerce\Data\Subscription|int $subscription The subscription object or ID to get related orders for.
+	 * * @param \OhMyLMS\Commerce\Data\Subscription|int $subscription The subscription object or ID to get related orders for.
 	 * * @return array An array of related orders, each containing 'id', 'status', 'total', 'relationship', and 'date'.
 	 * * @since 1.0.0
 	 */
@@ -150,7 +150,7 @@ class SubscriptionStore extends DataStore {
 
 		if ( $renewal_orders ) {
 			foreach ( $renewal_orders as $renewal ) {
-				$order = function_exists( 'ecommerce_get_order' ) ? ecommerce_get_order( $renewal->ID ) : null;
+				$order = function_exists( 'ohmylms_ecommerce_get_order' ) ? ohmylms_ecommerce_get_order( $renewal->ID ) : null;
 				if ( $order ) {
 					$related[] = array(
 						'id'           => (int) $renewal->ID,
@@ -165,7 +165,7 @@ class SubscriptionStore extends DataStore {
 
 		$parent_order_id = (int) get_post_field( 'post_parent', $subscription_id );
 		if ( $parent_order_id ) {
-			$order = function_exists( 'ecommerce_get_order' ) ? ecommerce_get_order( $parent_order_id ) : null;
+			$order = function_exists( 'ohmylms_ecommerce_get_order' ) ? ohmylms_ecommerce_get_order( $parent_order_id ) : null;
 			if ( $order ) {
 				$related[] = array(
 					'id'           => $parent_order_id,

@@ -9,7 +9,7 @@
  */
 
 defined( 'ABSPATH' ) || exit();
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 ?>
 
@@ -51,7 +51,7 @@ use function CodeRex\Ecommerce\ecommerce;
 				$enrolled_membership    = 0;
 				$showing_membership_ids = array();
 				foreach ( $student_orders->orders as $student_order ) {
-					$order = ecommerce_get_order( $student_order );
+					$order = ohmylms_ecommerce_get_order( $student_order );
 
 					$item_count = $order->get_item_count() - $order->get_item_count_refunded();
 					$items      = $order->get_items();
@@ -67,7 +67,7 @@ use function CodeRex\Ecommerce\ecommerce;
 					$post_ids = ! empty( $post_ids ) ? (array) $post_ids : array();
 					if ( ! empty( $post_ids ) ) {
 						foreach ( $post_ids as $subscription_id ) {
-							$subscription = ecommerce_get_subscription( $subscription_id );
+							$subscription = ohmylms_ecommerce_get_subscription( $subscription_id );
 							if ( ! $subscription ) {
 								continue;
 							}
@@ -96,7 +96,7 @@ use function CodeRex\Ecommerce\ecommerce;
 									if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
 										$tax_rate = $stored_totals['tax_rate'];
 										// Now calculate tax based on the discounted total.
-										$tax_data = \TaxCalculator::get_instance()->calculate_tax(
+										$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax(
 											$tax_rate,
 											array(
 												'total' => $price,
@@ -157,7 +157,7 @@ use function CodeRex\Ecommerce\ecommerce;
 										foreach ( $items as $item ) {
 											if ( $item->get_course_id() == $membership_id ) {
 												$item_total     = $item->get_total();
-												$tax_amount     = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
+												$tax_amount     = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
 												$total_with_tax = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $item_total;
 												echo ohmylms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
 												break;
@@ -165,7 +165,7 @@ use function CodeRex\Ecommerce\ecommerce;
 										}
 									} else {
 										// For recurring payments, show recurring amount with period
-										$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+										$tax_amount       = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
 										$recurring_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 										echo ohmylms_price( $recurring_amount ) . '/' . $subscription->get_billing_period();
 									}
@@ -297,7 +297,7 @@ use function CodeRex\Ecommerce\ecommerce;
 									<?php
 									// For one-time payments, show the total amount with tax
 									$item_total     = $item->get_total();
-									$tax_amount     = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
+									$tax_amount     = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_total ) );
 									$total_with_tax = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $item_total;
 									echo ohmylms_price( $total_with_tax ) . '/' . __( 'One Time', 'ohmylms' );
 									?>
@@ -393,7 +393,7 @@ use function CodeRex\Ecommerce\ecommerce;
 				$membership_count = 0;
 
 				foreach ( $student_orders->orders as $student_order ) {
-					$order      = ecommerce_get_order( $student_order );
+					$order      = ohmylms_ecommerce_get_order( $student_order );
 					$item_count = $order->get_item_count() - $order->get_item_count_refunded();
 					$items      = $order->get_items();
 					foreach ( $items as $item ) {
@@ -441,7 +441,7 @@ use function CodeRex\Ecommerce\ecommerce;
 
 										<div class="dashboard-table-td status">
 											<span class="status-tag <?php echo $order->get_status(); ?>">
-											<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
+											<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 											</span>
 										</div>
 
@@ -466,7 +466,7 @@ use function CodeRex\Ecommerce\ecommerce;
 
 											<div class="dashboard-table-td status" data-title="Status: ">
 												<span class="status-tag <?php echo $order->get_status(); ?>">
-												<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
+												<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 												</span>
 											</div>
 										</div>

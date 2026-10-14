@@ -4,12 +4,12 @@
  * Get subscription.
  *
  * @param int $subscription_id Subscription ID.
- * @return \CodeRex\Ecommerce\Data\Subscription Subscription object.
+ * @return \OhMyLMS\Commerce\Data\Subscription Subscription object.
  *
  * @since 1.0.0
  */
-function ecommerce_get_subscription( $subscription_id ) {
-	return \CodeRex\Ecommerce\ecommerce()->subscription_factory->get_subscription( $subscription_id );
+function ohmylms_ecommerce_get_subscription( $subscription_id ) {
+	return \OhMyLMS\Commerce\ecommerce()->subscription_factory->get_subscription( $subscription_id );
 }
 
 /**
@@ -20,7 +20,7 @@ function ecommerce_get_subscription( $subscription_id ) {
  *
  * @since 1.0.0
  */
-function ecommerce_get_subscription_notes( $args ) {
+function ohmylms_ecommerce_get_subscription_notes( $args ) {
 	$key_mapping = array(
 		'limit'           => 'number',
 		'subscription_id' => 'post_id',
@@ -70,14 +70,14 @@ function ecommerce_get_subscription_notes( $args ) {
 	// Does not support 'count' or 'fields'.
 	unset( $args['count'], $args['fields'] );
 
-	remove_filter( 'comments_clauses', array( 'CodeRex\\Ecommerce\\Comments', 'exclude_order_comments' ), 10, 1 );
+	remove_filter( 'comments_clauses', array( 'OhMyLMS\\Commerce\\Comments', 'exclude_order_comments' ), 10, 1 );
 
-	remove_filter( 'comments_clauses', array( 'CodeRex\\Ecommerce\\Comments', 'exclude_subscription_comments' ), 10, 1 );
+	remove_filter( 'comments_clauses', array( 'OhMyLMS\\Commerce\\Comments', 'exclude_subscription_comments' ), 10, 1 );
 
 	$notes = get_comments( $args );
 
-	add_filter( 'comments_clauses', array( 'CodeRex\\Ecommerce\\Comments', 'exclude_subscription_comments' ), 10, 1 );
-	return array_filter( array_map( 'ecommerce_get_subscription_note', $notes ) );
+	add_filter( 'comments_clauses', array( 'OhMyLMS\\Commerce\\Comments', 'exclude_subscription_comments' ), 10, 1 );
+	return array_filter( array_map( 'ohmylms_ecommerce_get_subscription_note', $notes ) );
 }
 
 /**
@@ -86,7 +86,7 @@ function ecommerce_get_subscription_notes( $args ) {
  * @param int|WP_Comment $data Comment ID or WP_Comment object.
  * @return object|null Subscription note object or null if not found.
  */
-function ecommerce_get_subscription_note( $data ) {
+function ohmylms_ecommerce_get_subscription_note( $data ) {
 	if ( is_numeric( $data ) ) {
 		$data = get_comment( $data );
 	}
@@ -97,7 +97,7 @@ function ecommerce_get_subscription_note( $data ) {
 
 	return (object) array(
 		'id'            => (int) $data->comment_ID,
-		'date_created'  => ecommerce_string_to_datetime( $data->comment_date ),
+		'date_created'  => ohmylms_ecommerce_string_to_datetime( $data->comment_date ),
 		'content'       => $data->comment_content,
 		'customer_note' => (bool) get_comment_meta( $data->comment_ID, 'is_customer_note', true ),
 		'added_by'      => __( 'OhMyLMS', 'ohmylms' ) === $data->comment_author ? 'system' : $data->comment_author,
@@ -112,7 +112,7 @@ function ecommerce_get_subscription_note( $data ) {
  *
  * @since 1.0.0
  */
-function ecommerce_get_subscription_info( $membership_id ) {
+function ohmylms_ecommerce_get_subscription_info( $membership_id ) {
 	$subscription_length = get_post_meta( $membership_id, '_subscription_length', true );
 	if ( ! is_array( $subscription_length ) || empty( $subscription_length['period'] ) ) {
 		return array(

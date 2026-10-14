@@ -1,12 +1,12 @@
 <?php
 
-namespace CodeRex\Ecommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
-use CodeRex\Ecommerce\Abstracts\DataStore;
-use CodeRex\Ecommerce\Data\OrderItemCoupon;
-use CodeRex\Ecommerce\Data\OrderItemCourse;
+use OhMyLMS\Commerce\Abstracts\DataStore;
+use OhMyLMS\Commerce\Data\OrderItemCoupon;
+use OhMyLMS\Commerce\Data\OrderItemCourse;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +18,7 @@ class OrderStore extends DataStore {
 	 *
 	 * This function generates a new order key if it is not already set.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to create.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to create.
 	 * @since 1.0.0
 	 */
 	public function create( &$order ) {
@@ -65,7 +65,7 @@ class OrderStore extends DataStore {
 	 *
 	 * This function retrieves the order data from the database and sets it to the order object.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to read data into.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read data into.
 	 * @throws \Exception If the order is invalid.
 	 * @since 1.0.0
 	 */
@@ -95,7 +95,7 @@ class OrderStore extends DataStore {
 	/**
 	 * Update an order in the database.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to update.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to update.
 	 *
 	 * @since 1.0.0
 	 */
@@ -146,7 +146,7 @@ class OrderStore extends DataStore {
 	/**
 	 * Read additional order data from the database and set it to the order object.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to read data into.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read data into.
 	 * @since 1.0.0
 	 */
 	protected function read_order_data( &$order, $post_object ) {
@@ -182,7 +182,7 @@ class OrderStore extends DataStore {
 	/**
 	 * Update order post meta data.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to update.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to update.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$order ) {
@@ -243,7 +243,7 @@ class OrderStore extends DataStore {
 	 * This method retrieves the status of the order and ensures it is in the correct format.
 	 * If the status is not set, it applies a default status.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return string The post status for the order.
 	 *
 	 * @since 1.0.0
@@ -272,7 +272,7 @@ class OrderStore extends DataStore {
 	 * This function calculates the total amount refunded for a given order by summing up the refund amounts
 	 * from the database.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return float The total refunded amount.
 	 *
 	 * @since 1.0.0
@@ -298,7 +298,7 @@ class OrderStore extends DataStore {
 	/**
 	 * Read items of a specific type from the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object to read items from.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read items from.
 	 * @param string                        $type The type of items to read.
 	 * @return array The items of the specified type.
 	 *
@@ -370,7 +370,7 @@ class OrderStore extends DataStore {
 		}
 		$orders = array();
 		foreach ( $query->posts as $post ) {
-			$order = ecommerce_get_order( $post );
+			$order = ohmylms_ecommerce_get_order( $post );
 			if ( false === $order ) {
 				continue;
 			}
@@ -398,7 +398,7 @@ class OrderStore extends DataStore {
 	 *
 	 * This function retrieves child orders and renewal orders related to the specified order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID to get related orders for.
+	 * @param \OhMyLMS\Commerce\Data\Order|int $order The order object or ID to get related orders for.
 	 * @return array An array of related orders, each containing ID, type, date, status, total, and relationship.
 	 * @since 1.0.0
 	 */
@@ -417,7 +417,7 @@ class OrderStore extends DataStore {
 		);
 		if ( $_subscription ) {
 			$subscription_id = (int) $_subscription->ID;
-			$subscription    = ecommerce_get_subscription( $subscription_id );
+			$subscription    = ohmylms_ecommerce_get_subscription( $subscription_id );
 			$renewal_orders  = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT p.ID, p.post_type, p.post_date, p.post_status FROM {$wpdb->posts} p
@@ -430,7 +430,7 @@ class OrderStore extends DataStore {
 			);
 
 			foreach ( $renewal_orders as $renewal ) {
-				$order     = ecommerce_get_order( $renewal->ID );
+				$order     = ohmylms_ecommerce_get_order( $renewal->ID );
 				$related[] = array(
 					'id'           => (int) $renewal->ID,
 					'status'       => ucfirst( $order->get_status() ),
@@ -456,13 +456,13 @@ class OrderStore extends DataStore {
 	 *
 	 * This function checks if the order has a related subscription renewal ID.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID to check.
+	 * @param \OhMyLMS\Commerce\Data\Order|int $order The order object or ID to check.
 	 * @return bool True if the order is a renewal order, false otherwise.
 	 * @since 1.0.0
 	 */
 	public function is_renewal_order( $order ) {
-		if ( ! is_a( $order, 'CodeRex\Ecommerce\Data\Order' ) ) {
-			$order = ecommerce_get_order( $order );
+		if ( ! is_a( $order, 'OhMyLMS\Commerce\Data\Order' ) ) {
+			$order = ohmylms_ecommerce_get_order( $order );
 		}
 		$order_id                = $order->get_id();
 		$related_subscription_id = get_post_meta( $order_id, '_subscription_renewal_id', true );
@@ -477,13 +477,13 @@ class OrderStore extends DataStore {
 	 *
 	 * This function checks if the order has child subscriptions.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID to check.
+	 * @param \OhMyLMS\Commerce\Data\Order|int $order The order object or ID to check.
 	 * @return bool True if the order is a parent order, false otherwise.
 	 * @since 1.0.0
 	 */
 	public function is_parent_order( $order ) {
-		if ( ! is_a( $order, 'CodeRex\Ecommerce\Data\Order' ) ) {
-			$order = ecommerce_get_order( $order );
+		if ( ! is_a( $order, 'OhMyLMS\Commerce\Data\Order' ) ) {
+			$order = ohmylms_ecommerce_get_order( $order );
 		}
 		$is_parent_order = new \WP_Query(
 			array(
@@ -502,14 +502,14 @@ class OrderStore extends DataStore {
 	 *
 	 * This method provides a dedicated way to update order status with proper hooks.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order|int $order The order object or ID.
+	 * @param \OhMyLMS\Commerce\Data\Order|int $order The order object or ID.
 	 * @param string                            $new_status The new status to set.
 	 * @param string                            $note Optional note for the status change.
 	 * @since 1.0.0
 	 */
 	public function update_order_status( $order, $new_status, $note = '' ) {
-		if ( ! is_a( $order, 'CodeRex\Ecommerce\Data\Order' ) ) {
-			$order = ecommerce_get_order( $order );
+		if ( ! is_a( $order, 'OhMyLMS\Commerce\Data\Order' ) ) {
+			$order = ohmylms_ecommerce_get_order( $order );
 		}
 
 		if ( ! $order ) {

@@ -1,6 +1,6 @@
 <?php
 require dirname(__DIR__).'/vendor/autoload.php';
-function crator_lms_get_question_ans_by_question_id($id){return array_values(array_filter($GLOBALS['options'],function($o){return !empty($o['is_correct']);}));}
+function ohmylms_get_question_ans_by_question_id($id){return array_values(array_filter($GLOBALS['options'],function($o){return !empty($o['is_correct']);}));}
 function check($condition,$message){if(!$condition)throw new RuntimeException($message);}
 $GLOBALS['options']=[['id'=>1,'answer'=>'A','is_correct'=>1],['id'=>2,'answer'=>'B','is_correct'=>1]];
 $q=new class {function get_id(){return 1;} function get_questions(){return $GLOBALS['options'];}};

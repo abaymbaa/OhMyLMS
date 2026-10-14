@@ -1,6 +1,6 @@
 <?php
 
-use CodeRex\Ecommerce\EcommerceDateTime;
+use OhMyLMS\Commerce\EcommerceDateTime;
 
 /**
  * Prepare a date response for the REST API.
@@ -13,7 +13,7 @@ use CodeRex\Ecommerce\EcommerceDateTime;
  *
  * @since 1.0.0
  */
-function ecommerce_rest_prepare_date_response( $date, $utc = true ) {
+function ohmylms_ecommerce_rest_prepare_date_response( $date, $utc = true ) {
 	if ( is_numeric( $date ) ) {
 		$date = new EcommerceDateTime( "@$date", new DateTimeZone( 'UTC' ) );
 		$date->setTimezone( new \DateTimeZone( ohmylms_timezone_string() ) );

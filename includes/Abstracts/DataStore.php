@@ -72,7 +72,7 @@ abstract class DataStore {
 	/**
 	 * Update post meta data for the given chapter.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Chapter $chapter The chapter object to update.
+	 * @param \OhMyLMS\Commerce\Data\Chapter $chapter The chapter object to update.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$chapter ) {

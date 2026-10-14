@@ -1,3 +1,4 @@
+/** @jsx createElement */
 import {
 	createElement,
 	useCallback,
@@ -31,15 +32,22 @@ import {
 import { useCourseCatalog } from './useCourseCatalog';
 import { useSyllabusWorkspace } from './useSyllabusWorkspace';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
+import { SkillStudio } from './SkillStudio';
+import { StudioGroupEditor } from './StudioGroupEditor';
 
 function countsLine( totals ) {
 	const { contents, skills } = totalsParts( totals );
 	return [
 		sprintf(
+			/* translators: %d: number of folders in the syllabus. */
 			_n( '%d folder', '%d folders', contents, 'ohmylms' ),
 			contents
 		),
-		sprintf( _n( '%d skill', '%d skills', skills, 'ohmylms' ), skills ),
+		sprintf(
+			/* translators: %d: number of skills in the syllabus. */
+			_n( '%d skill', '%d skills', skills, 'ohmylms' ),
+			skills
+		),
 	].join( ' · ' );
 }
 
@@ -58,6 +66,16 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const [ open, setOpen ] = useState( () => new Set() );
 	const [ collapsed, setCollapsed ] = useState( false );
 	const [ importing, setImporting ] = useState( false );
+	const [ studioOpen, setStudioOpen ] = useState( false );
+	const [ groupMapping, setGroupMapping ] = useState( null );
+	const [ sourceState, setSourceState ] = useState( {
+		dirty: false,
+		busy: false,
+	} );
+	const onSourceState = useCallback(
+		( dirty, busy ) => setSourceState( { dirty, busy } ),
+		[]
+	);
 	const remembered = useRef( '' );
 	const started = useRef( false );
 	const main = useRef( null );
@@ -170,6 +188,10 @@ export function SyllabusWorkspace( { syllabusId } ) {
 		actions,
 		course,
 		courseCatalog,
+		reload: ws.reload,
+		revision: ws.revision,
+		say: ws.say,
+		onSourceState,
 		saveSettings: ( data ) =>
 			ws.run(
 				() => api.saveSyllabusSettings( syllabusId, data ),
@@ -204,6 +226,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 								href={ `#/content-hub/curriculum/syllabus/${ syllabusId }` }
 								onClick={ () => select( tree.root.key ) }
 								aria-label={ sprintf(
+									/* translators: %s: syllabus name. */
 									__( 'Open %s syllabus home', 'ohmylms' ),
 									name
 								) }
@@ -230,6 +253,19 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						>
 							{ __( 'Skills', 'ohmylms' ) }
 						</Button>
+						{ outline.syllabus.item_type === 'roadmap' && (
+							<Button
+								variant="secondary"
+								disabled={
+									ws.pending ||
+									sourceState.dirty ||
+									sourceState.busy
+								}
+								onClick={ () => setStudioOpen( true ) }
+							>
+								{ __( 'Open visual editor', 'ohmylms' ) }
+							</Button>
+						) }
 						<Button
 							variant="secondary"
 							disabled={ ws.pending }
@@ -354,6 +390,30 @@ export function SyllabusWorkspace( { syllabusId } ) {
 								__( 'Syllabus imported.', 'ohmylms' )
 							);
 						} }
+					/>
+				) }
+				{ studioOpen && (
+					<SkillStudio
+						roadmapId={ syllabusId }
+						subject={ outline.settings.subject || 'Mathematics' }
+						initialSkill={
+							node.kind === 'skill'
+								? { id: node.id, name: node.skill.name }
+								: null
+						}
+						sources={ outline.roadmap_sources }
+						onClose={ () => setStudioOpen( false ) }
+						onChanged={ ws.reload }
+						onEditGroup={ ( row, mapping ) =>
+							setGroupMapping( mapping )
+						}
+					/>
+				) }
+				{ groupMapping && (
+					<StudioGroupEditor
+						mapping={ groupMapping }
+						onClose={ () => setGroupMapping( null ) }
+						onChanged={ ws.reload }
 					/>
 				) }
 			</div>

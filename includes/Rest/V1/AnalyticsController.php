@@ -262,7 +262,7 @@ class AnalyticsController extends RestController {
 			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning += $line_total;
 
-				$order = ecommerce_get_order( $result['order_id'] );
+				$order = ohmylms_ecommerce_get_order( $result['order_id'] );
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id          = $single_refund->ID;
 					$total_refund      += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
@@ -390,7 +390,7 @@ class AnalyticsController extends RestController {
 
 				$graph_data[ $date_key ]['net'] += $line_total;
 
-				$order = ecommerce_get_order( $result['order_id'] );
+				$order = ohmylms_ecommerce_get_order( $result['order_id'] );
 				foreach ( $order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
 					$graph_data[ $date_key ]['refund'] += ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
@@ -561,7 +561,7 @@ class AnalyticsController extends RestController {
 			if ( $result['order_status'] === 'ohmylms-completed' ) {
 				$total_net_earning              += $amount;
 				$graph_data[ $date_key ]['net'] += $amount;
-				$single_order                    = ecommerce_get_order( $result['order_id'] );
+				$single_order                    = ohmylms_ecommerce_get_order( $result['order_id'] );
 
 				foreach ( $single_order->get_refunds() as $single_refund ) {
 					$refund_id                          = $single_refund->ID;
@@ -850,7 +850,7 @@ class AnalyticsController extends RestController {
 
 		foreach ( $query->posts as $post ) {
 			$order_id = $post->ID;
-			$order    = ecommerce_get_order( $order_id );
+			$order    = ohmylms_ecommerce_get_order( $order_id );
 			if ( ! $order ) {
 				continue;
 			}

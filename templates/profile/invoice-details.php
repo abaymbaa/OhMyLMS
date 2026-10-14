@@ -39,7 +39,7 @@ $order_date = $date->format( 'F d, Y' );
 					<li class="invoice-student-name"><?php echo "{$order->get_student_name()} ( {$order->get_email()} )"; ?></li>
 					<li class="invoice-payment">
 						<span class="status-tag <?php echo $order->get_status(); ?>">
-							<?php echo esc_html( ecommerce_get_order_status_name( $order->get_status() ) ); ?>
+							<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 						</span>
 					</li>
 				</ul>

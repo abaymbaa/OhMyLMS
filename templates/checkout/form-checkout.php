@@ -6,7 +6,7 @@
  *
  * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \CodeRex\Ecommerce\Checkout $checkout
+ * @global \OhMyLMS\Commerce\Checkout $checkout
  */
 
 defined( 'ABSPATH' ) || exit();
@@ -46,7 +46,7 @@ do_action( 'ohmylms_before_checkout_form_start', $checkout );
 						 *
 						 * @since 1.0.0
 						 * @hook ohmylms_checkout_contact
-						 * @param \CodeRex\Ecommerce\Checkout $checkout The checkout instance.
+						 * @param \OhMyLMS\Commerce\Checkout $checkout The checkout instance.
 						 * @return void
 						 */
 						do_action( 'ohmylms_checkout_contact' );
@@ -65,7 +65,7 @@ do_action( 'ohmylms_before_checkout_form_start', $checkout );
 						 *
 						 * @since 1.0.0
 						 * @hook ohmylms_checkout_before_billing
-						 * @param \CodeRex\Ecommerce\Checkout $checkout The checkout instance.
+						 * @param \OhMyLMS\Commerce\Checkout $checkout The checkout instance.
 						 * @return void
 						 */
 						do_action( 'ohmylms_checkout_before_billing' );

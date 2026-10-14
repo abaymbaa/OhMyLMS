@@ -1,10 +1,10 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 use AmpProject\Validator\Spec\Tag\P;
-use CodeRex\Ecommerce\Data\Coupon;
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Data\Coupon;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -692,7 +692,7 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	public function has_discount( $coupon_code = '' ) {
-		return $coupon_code ? in_array( ecommerce_format_coupon_code( $coupon_code ), $this->applied_coupons, true ) : count( $this->applied_coupons ) > 0;
+		return $coupon_code ? in_array( ohmylms_ecommerce_format_coupon_code( $coupon_code ), $this->applied_coupons, true ) : count( $this->applied_coupons ) > 0;
 	}
 
 	/**
@@ -704,7 +704,7 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	public function apply_coupon( $coupon_code ) {
-		$coupon_code = ecommerce_format_coupon_code( $coupon_code );
+		$coupon_code = ohmylms_ecommerce_format_coupon_code( $coupon_code );
 
 		// Get the coupon.
 		$the_coupon = new Coupon( $coupon_code );
@@ -789,7 +789,7 @@ class Cart {
 			$response['message']  = __( 'Use one coupon at a time', 'ohmylms' );
 		}
 
-		if ( ! $coupon instanceof \CodeRex\Ecommerce\Data\Coupon ) {
+		if ( ! $coupon instanceof \OhMyLMS\Commerce\Data\Coupon ) {
 			$response['validity'] = false;
 			$response['message']  = __( 'Invalid coupon', 'ohmylms' );
 		}
@@ -871,8 +871,8 @@ class Cart {
 	 * @since 1.0.0
 	 */
 	public function remove_coupon( $coupon_code ) {
-		$coupon_code = ecommerce_format_coupon_code( $coupon_code );
-		$position    = array_search( $coupon_code, array_map( 'ecommerce_format_coupon_code', $this->get_applied_coupons() ), true );
+		$coupon_code = ohmylms_ecommerce_format_coupon_code( $coupon_code );
+		$position    = array_search( $coupon_code, array_map( 'ohmylms_ecommerce_format_coupon_code', $this->get_applied_coupons() ), true );
 		if ( false !== $position ) {
 			unset( $this->applied_coupons[ $position ] );
 		}
@@ -909,7 +909,7 @@ class Cart {
 
 					if ( ! TaxService::get_instance()->is_vat_validation_disabled() ) {
 
-						$response = \EuVatApi::check_vat( $vat_number, $country );
+						$response = \OhMyLMS_EU_VAT_API::check_vat( $vat_number, $country );
 						if ( ! $response->is_valid() ) {
 							// Invalid VAT number - continue with regular tax calculation.
 							// Don't apply reverse charge for invalid VAT numbers.
@@ -938,7 +938,7 @@ class Cart {
 			}
 			$this->calculate_totals();
 			// Calculate tax based on the tax rate.
-			$tax_data = \TaxCalculator::get_instance()->calculate_tax( $tax_rate, $this->totals );
+			$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $tax_rate, $this->totals );
 
 			$this->totals['total']      = $tax_data['total'];
 			$this->totals['tax_amount'] = $tax_data['tax_amount'];
@@ -985,7 +985,7 @@ class Cart {
 			$this->calculate_totals();
 
 			// Now calculate tax based on the discounted total.
-			$tax_data = \TaxCalculator::get_instance()->calculate_tax( $tax_rate, $this->totals );
+			$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $tax_rate, $this->totals );
 
 			if ( TaxService::get_instance()->prices_include_tax() ) {
 				$this->totals['total'] = $this->totals['total'];

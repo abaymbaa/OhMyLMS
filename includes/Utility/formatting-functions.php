@@ -325,7 +325,7 @@ function ohmylms_format_datetime( $date, $format = '' ) {
 			$date_format = 'F j, Y';
 		}
 	}
-	if ( ! is_a( $date, 'CodeRex\Ecommerce\EcommerceDateTime' ) ) {
+	if ( ! is_a( $date, 'OhMyLMS\Commerce\EcommerceDateTime' ) ) {
 		return '';
 	}
 	return $date->date_i18n( $date_format );

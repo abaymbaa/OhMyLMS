@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Gateways\Stripe;
+namespace OhMyLMS\Commerce\Gateways\Stripe;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -160,7 +160,7 @@ class StripeApi {
 			// You might want to include more details like error type or code if available.
 			// For example: $error_message .= " (Type: {$decoded_body->error->type}, Code: {$decoded_body->error->code})";
 			// throw new \Exception( 'Stripe API Error: ' . $error_message );
-			// For now, we will return the decoded body with the error, GatewayStripeIntents will check for ->error
+			// For now, we will return the decoded body with the error, OhMyLMS_Gateway_Stripe_Intents will check for ->error
 		}
 
 		if ( $with_headers ) {

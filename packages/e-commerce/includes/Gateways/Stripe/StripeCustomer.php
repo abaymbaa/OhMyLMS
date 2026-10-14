@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce\Gateways\Stripe;
+namespace OhMyLMS\Commerce\Gateways\Stripe;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

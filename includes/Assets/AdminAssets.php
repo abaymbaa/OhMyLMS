@@ -5,7 +5,7 @@ namespace OhMyLMS\Assets;
 use OhMyLMS\Abstracts\Assets;
 use OhMyLMS\Membership\MembershipHelper;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 class AdminAssets extends Assets {
 
@@ -61,6 +61,14 @@ class AdminAssets extends Assets {
 	public function get_styles() {
 		$suffix = '';
 		$styles = array(
+			'ohmylms-skill-studio' => array(
+				'src'     => self::get_asset_url( 'assets/css/skill-studio.css' ),
+				'deps'    => array( 'wp-components' ),
+				'version' => OHMYLMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/css/skill-studio.css' ),
+				'media'   => 'all',
+				'has_rtl' => false,
+				'screens' => array( 'toplevel_page_ohmylms' ),
+			),
 			'ohmylms-syllabus-comparison' => array(
 				'src' => self::get_asset_url( 'assets/css/syllabus-comparison.css' ),
 				'deps' => '',

@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 // Extract data from membership object
 $subscription = isset( $memebership->subscription ) ? $memebership->subscription : null;
 $order        = isset( $memebership->order ) ? $memebership->order : null;
@@ -17,7 +17,7 @@ if ( ! $order ) {
 $recurring_amount = 0;
 
 if ( ! $is_one_time ) {
-	$tax_amount       = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
+	$tax_amount       = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $subscription->get_recurring_amount() ) );
 	$recurring_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $subscription->get_recurring_amount();
 }
 
@@ -51,7 +51,7 @@ if ( ! $is_one_time ) {
 	if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
 		$tax_rate = $stored_totals['tax_rate'];
 		// Now calculate tax based on the discounted total.
-		$tax_data = \TaxCalculator::get_instance()->calculate_tax(
+		$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax(
 			$tax_rate,
 			array(
 				'total' => $price,

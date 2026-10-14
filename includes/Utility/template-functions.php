@@ -1,7 +1,7 @@
 <?php
 
-use CodeRex\Ecommerce\Checkout;
-use function CodeRex\Ecommerce\ecommerce;
+use OhMyLMS\Commerce\Checkout;
+use function OhMyLMS\Commerce\ecommerce;
 /**
  * Add custom body classes for OhMyLMS pages.
  *
@@ -152,16 +152,16 @@ function ohmylms_student_details() {
  * @see 1.0.0
  */
 function ohmylms_checkout_payment() {
-	if ( \CodeRex\Ecommerce\ecommerce()->cart->needs_payment() ) {
-		$available_gateways = \CodeRex\Ecommerce\ecommerce()->gateways()->get_available_payment_gateways();
-		\CodeRex\Ecommerce\ecommerce()->gateways()->set_current_gateway( $available_gateways );
+	if ( \OhMyLMS\Commerce\ecommerce()->cart->needs_payment() ) {
+		$available_gateways = \OhMyLMS\Commerce\ecommerce()->gateways()->get_available_payment_gateways();
+		\OhMyLMS\Commerce\ecommerce()->gateways()->set_current_gateway( $available_gateways );
 	} else {
 		$available_gateways = array();
 	}
 	ohmylms_get_template(
 		'checkout/payment.php',
 		array(
-			'checkout'           => \CodeRex\Ecommerce\ecommerce()->checkout(),
+			'checkout'           => \OhMyLMS\Commerce\ecommerce()->checkout(),
 			'available_gateways' => $available_gateways,
 			'order_button_text'  => apply_filters( 'ohmylms_order_button_text', __( 'Complete Checkout', 'ohmylms' ) ),
 		)
@@ -178,7 +178,7 @@ function ohmylms_mobile_place_order() {
 	ohmylms_get_template(
 		'checkout/mobile-place-order-button.php',
 		array(
-			'checkout'          => \CodeRex\Ecommerce\ecommerce()->checkout(),
+			'checkout'          => \OhMyLMS\Commerce\ecommerce()->checkout(),
 			'order_button_text' => apply_filters( 'ohmylms_order_button_text', __( 'Complete Checkout', 'ohmylms' ) ),
 		)
 	);
@@ -1737,7 +1737,7 @@ if ( ! function_exists( 'ohmylms_checkout_login_form' ) ) {
 		ohmylms_get_template(
 			'checkout/form-login.php',
 			array(
-				'checkout' => \CodeRex\Ecommerce\ecommerce()->checkout(),
+				'checkout' => \OhMyLMS\Commerce\ecommerce()->checkout(),
 			)
 		);
 	}
@@ -1756,7 +1756,7 @@ if ( ! function_exists( 'ohmylms_checkout_signup_form' ) ) {
 		ohmylms_get_template(
 			'checkout/form-signup.php',
 			array(
-				'checkout' => \CodeRex\Ecommerce\ecommerce()->checkout(),
+				'checkout' => \OhMyLMS\Commerce\ecommerce()->checkout(),
 			)
 		);
 	}
@@ -1889,7 +1889,7 @@ if ( ! function_exists( 'ohmylms_show_all_notices' ) ) {
 	 */
 	function ohmylms_show_all_notices() {
 		echo '<div class="ohmylms-notices-wrapper">';
-		\CodeRex\Ecommerce\ohmylmse_print_notices();
+		\OhMyLMS\Commerce\ohmylmse_print_notices();
 		echo '</div>';
 	}
 }

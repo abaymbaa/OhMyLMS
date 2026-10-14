@@ -6,7 +6,7 @@
  *
  * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \CodeRex\Ecommerce\Checkout $checkout
+ * @global \OhMyLMS\Commerce\Checkout $checkout
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -26,8 +26,8 @@ defined( 'ABSPATH' ) || exit;
 				$membership_id = sanitize_text_field( $_GET['membership_id'] );
 				$total         = MembershipHelper::get_plan_price( $membership_id );
 			} else {
-				$cart_items = \CodeRex\Ecommerce\ecommerce()->cart->get_cart_contents();
-				$total      = \CodeRex\Ecommerce\ecommerce()->cart->get_total( $cart_items );
+				$cart_items = \OhMyLMS\Commerce\ecommerce()->cart->get_cart_contents();
+				$total      = \OhMyLMS\Commerce\ecommerce()->cart->get_total( $cart_items );
 			}
 			echo ohmylms_price( $total );
 			?>

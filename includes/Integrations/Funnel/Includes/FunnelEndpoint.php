@@ -2,9 +2,9 @@
 
 namespace OhMyLMS\Integrations\Funnel\Includes;
 
-use CodeRex\Ecommerce\SubscriptionManager;
+use OhMyLMS\Commerce\SubscriptionManager;
 
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 /**
  * FunnelEndpoint Class
@@ -337,7 +337,7 @@ class FunnelEndpoint {
 			$offer_page_url = get_permalink( $step_data['offer_page_id'] );
 
 			if ( $offer_page_url ) {
-				$order          = ecommerce_get_order( $order_id );
+				$order          = ohmylms_ecommerce_get_order( $order_id );
 				$payment_method = $order->get_payment_method();
 
 				// Initialize query arguments.
@@ -371,7 +371,7 @@ class FunnelEndpoint {
 	 */
 	private function process_upsell_downsell_purchase( $order_id, $step_data ) {
 		// Get the original order
-		$original_order = ecommerce_get_order( $order_id );
+		$original_order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $original_order ) {
 			return new \WP_Error( 'invalid_order', __( 'Original order not found.', 'ohmylms' ) );
 		}
@@ -537,7 +537,7 @@ class FunnelEndpoint {
 		// Add the new tax amount to the existing tax amount.
 		$this->new_tax_amount = $current_tax_amount + $tax_amount;
 
-		if ( ! \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ) {
+		if ( ! \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax() ) {
 			// If prices include tax, add tax to the price.
 			$price += $tax_amount;
 		}
@@ -561,7 +561,7 @@ class FunnelEndpoint {
 		// Create appropriate order item based on offer type
 		$signup_fee = method_exists( $product, 'get_sign_up_fee' ) ? floatval( $product->get_sign_up_fee() ) : 0;
 		if ( $offer_type === 'course' ) {
-			$item = new \CodeRex\Ecommerce\Data\OrderItemCourse();
+			$item = new \OhMyLMS\Commerce\Data\OrderItemCourse();
 
 			$item->set_props(
 				array(
@@ -574,8 +574,8 @@ class FunnelEndpoint {
 			);
 		} elseif ( $offer_type === 'membership' ) {
 			// Check if OrderItemMembership class exists, otherwise use generic order item
-			if ( class_exists( '\CodeRex\Ecommerce\Data\OrderItemMembership' ) ) {
-				$item = new \CodeRex\Ecommerce\Data\OrderItemMembership();
+			if ( class_exists( '\OhMyLMS\Commerce\Data\OrderItemMembership' ) ) {
+				$item = new \OhMyLMS\Commerce\Data\OrderItemMembership();
 				$item->set_props(
 					array(
 						'name'      => $product->get_name(),
@@ -586,9 +586,9 @@ class FunnelEndpoint {
 					)
 				);
 			} else {
-				$item = new \CodeRex\Ecommerce\Data\OrderItemMembership();
+				$item = new \OhMyLMS\Commerce\Data\OrderItemMembership();
 				// Fallback to generic order item
-				$item = new \CodeRex\Ecommerce\Data\OrderItem();
+				$item = new \OhMyLMS\Commerce\Data\OrderItem();
 				$item->set_props(
 					array(
 						'name'     => $product->get_name(),
@@ -793,14 +793,14 @@ class FunnelEndpoint {
 	 */
 	private function get_gateway_return_url( $order_id ) {
 		// Get order object
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			$order_id = absint( get_query_var( 'order-pay' ) );
 			if ( 0 < $order_id ) {
-				$order = ecommerce_get_order( $order_id );
+				$order = ohmylms_ecommerce_get_order( $order_id );
 			}
 		}
-		if ( ! $order || ! is_a( $order, '\CodeRex\Ecommerce\Data\Order' ) ) {
+		if ( ! $order || ! is_a( $order, '\OhMyLMS\Commerce\Data\Order' ) ) {
 			return '';
 		}
 		return $order->get_checkout_redirect_url();

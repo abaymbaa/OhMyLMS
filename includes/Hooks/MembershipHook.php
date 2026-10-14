@@ -8,7 +8,7 @@
 namespace OhMyLMS\Hooks;
 
 use OhMyLMS\Data\Membership;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 class MembershipHook {
 
 	public function register_hooks() {
@@ -115,7 +115,7 @@ class MembershipHook {
 		if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
 			$tax_rate = $stored_totals['tax_rate'];
 			// Now calculate tax based on the discounted total.
-			$tax_data = \TaxCalculator::get_instance()->calculate_tax(
+			$tax_data = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax(
 				$tax_rate,
 				array(
 					'total' => $price,
@@ -171,7 +171,7 @@ class MembershipHook {
 		}
 		$order_id       = $order->get_id();
 		$subscripton_id = get_post_meta( $order_id, '_subscription_id', true );
-		$subscription   = ecommerce_get_subscription( $subscripton_id );
+		$subscription   = ohmylms_ecommerce_get_subscription( $subscripton_id );
 		if ( ! $subscription ) {
 			return $thankyou_text;
 		}
@@ -201,7 +201,7 @@ class MembershipHook {
 		}
 		$order_id       = $order->get_id();
 		$subscripton_id = get_post_meta( $order_id, '_subscription_id', true );
-		$subscription   = ecommerce_get_subscription( $subscripton_id );
+		$subscription   = ohmylms_ecommerce_get_subscription( $subscripton_id );
 		if ( ! $subscription ) {
 			return;
 		}

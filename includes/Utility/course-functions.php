@@ -176,7 +176,7 @@ function ohmylms_course_ids_for_group( $slug ) {
  *
  * @return array An array of best selling courses.
  */
-function get_best_selling_course_ids( $category = null ) {
+function ohmylms_get_best_selling_course_ids( $category = null ) {
 	global $wpdb;
 	$group = ohmylms_course_ids_for_group( $category );
 	if ( array() === $group ) {
@@ -222,7 +222,7 @@ function get_best_selling_course_ids( $category = null ) {
  *
  * @return array An array of top rated courses.
  */
-function get_top_rated_course_ids( $category = null ) {
+function ohmylms_get_top_rated_course_ids( $category = null ) {
 	global $wpdb;
 	$group = ohmylms_course_ids_for_group( $category );
 	if ( array() === $group ) {
@@ -267,7 +267,7 @@ function get_top_rated_course_ids( $category = null ) {
  *
  * @return array An array of top reviewed courses.
  */
-function get_top_reviewed_course_ids( $category = null ) {
+function ohmylms_get_top_reviewed_course_ids( $category = null ) {
 	global $wpdb;
 	$group = ohmylms_course_ids_for_group( $category );
 	if ( array() === $group ) {
@@ -310,7 +310,7 @@ function get_top_reviewed_course_ids( $category = null ) {
  *
  * @return array The array of free courses.
  */
-function get_free_course_ids( $category = null ) {
+function ohmylms_get_free_course_ids( $category = null ) {
 	global $wpdb;
 	$group = ohmylms_course_ids_for_group( $category );
 	if ( array() === $group ) {
@@ -349,7 +349,7 @@ function get_free_course_ids( $category = null ) {
  *
  * @return array The list of paid courses.
  */
-function get_paid_course_ids( $category = null ) {
+function ohmylms_get_paid_course_ids( $category = null ) {
 	global $wpdb;
 	$group = ohmylms_course_ids_for_group( $category );
 	if ( array() === $group ) {
@@ -389,7 +389,7 @@ function get_paid_course_ids( $category = null ) {
  *
  * @return array The list of recent course IDs.
  */
-function get_recent_course_ids( $category = null ) {
+function ohmylms_get_recent_course_ids( $category = null ) {
 	global $wpdb;
 
 	$group = ohmylms_course_ids_for_group( $category );

@@ -6,9 +6,9 @@
  *
  * @package OhMyLMS\Templates
  * @version  1.0.0
- * @global \CodeRex\Ecommerce\Checkout $checkout
+ * @global \OhMyLMS\Commerce\Checkout $checkout
  *
- * @var \CodeRex\Ecommerce\Data\Order $order
+ * @var \OhMyLMS\Commerce\Data\Order $order
  * @var \OhMyLMS\Data\Student $student
  */
 

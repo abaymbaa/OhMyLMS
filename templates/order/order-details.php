@@ -7,7 +7,7 @@
  * @package OhMyLMS\Templates
  * @version  1.0.0
  *
- * @var \CodeRex\Ecommerce\Data\Order $order Order object.
+ * @var \OhMyLMS\Commerce\Data\Order $order Order object.
  */
 
 defined( 'ABSPATH' ) || exit();
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit();
 		$items            = $order->get_items();
 		$maybe_by_point   = get_post_meta( $order->get_id(), '_purchased_by', true );
 		$points           = get_post_meta( $order->get_id(), '_purchased_point', true );
-		$is_including_tax = CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax();
+		$is_including_tax = OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax();
 		foreach ( $items as $item ) {
 			$course    = $item->get_course();
 			$is_course = true;

@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\Rest\V1;
+namespace OhMyLMS\Commerce\Rest\V1;
 
-use CodeRex\Ecommerce\Abstracts\RestController;
-use CodeRex\Ecommerce\Data\OrderRefund;
+use OhMyLMS\Commerce\Abstracts\RestController;
+use OhMyLMS\Commerce\Data\OrderRefund;
 
 /**
  * Order Refund Controller class.
@@ -79,7 +79,7 @@ class OrderRefundController extends RestController {
 		}
 
 		// Create the refund.
-		$refund = ecommerce_create_refund(
+		$refund = ohmylms_ecommerce_create_refund(
 			array(
 				'order_id'          => $order_data->ID,
 				'amount'            => $request['amount'],
@@ -128,7 +128,7 @@ class OrderRefundController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$order = ecommerce_get_order( (int) $request['order_id'] );
+		$order = ohmylms_ecommerce_get_order( (int) $request['order_id'] );
 
 		if ( ! $order ) {
 			return new \WP_Error( 'ohmylms_rest_invalid_order_id', __( 'Invalid order ID.', 'ohmylms' ), 404 );
@@ -142,7 +142,7 @@ class OrderRefundController extends RestController {
 
 		$data = array(
 			'id'           => $refund->get_id(),
-			'date_created' => ecommerce_rest_prepare_date_response( $refund->get_date_created() ),
+			'date_created' => ohmylms_ecommerce_rest_prepare_date_response( $refund->get_date_created() ),
 			'amount'       => ohmylms_format_decimal( $refund->get_amount(), ohmylms_get_price_decimals() ),
 			'reason'       => $refund->get_reason(),
 		);
@@ -160,7 +160,7 @@ class OrderRefundController extends RestController {
 	/**
 	 * Prepare links for the refund object.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
+	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
 	 * @param \WP_REST_Request                    $request The request object.
 	 * @return array Links for the given refund.
 	 */

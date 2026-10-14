@@ -2,9 +2,9 @@
 
 namespace OhMyLMS\Shortcodes;
 
-use CodeRex\Ecommerce\DataStores;
+use OhMyLMS\Commerce\DataStores;
 use OhMyLMS\Data\Student;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -178,7 +178,7 @@ class ShortCodeMyProfile {
 		if ( ! $order_id ) {
 			return;
 		}
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		ohmylms_get_template(
 			'profile/invoice-details.php',
 			array(

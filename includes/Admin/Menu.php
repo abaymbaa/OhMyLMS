@@ -212,7 +212,7 @@ class Menu {
 	 */
 	public function save_settings(): void {
 		global $ohmylms_current_tab, $ohmylms_current_section, $ohmylms_current_page;
-		if ( is_crlm_admin_page() ) {
+		if ( ohmylms_is_admin_page() ) {
 			$ohmylms_current_section = empty( $_GET['section'] ) ? '' : sanitize_title( wp_unslash( $_GET['section'] ) ); // WPCS: input var okay, CSRF ok.
 			$ohmylms_current_tab     = empty( $_GET['tab'] ) ? 'general' : sanitize_title( wp_unslash( $_GET['tab'] ) ); // WPCS: input var okay, CSRF ok.
 			$ohmylms_current_page    = empty( $_GET['page'] ) ? 'ohmylms-settings' : sanitize_title( wp_unslash( $_GET['page'] ) ); // WPCS: input var okay, CSRF ok.

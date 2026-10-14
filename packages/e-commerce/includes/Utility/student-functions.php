@@ -45,7 +45,7 @@ function ohmylms_create_new_student( $email, $username = '', $password = '', $ar
 
 	// Handle username creation.
 	if ( empty( $username ) ) {
-		$username = creatot_lms_create_new_student_username( $email, $args );
+		$username = ohmylms_create_new_student_username( $email, $args );
 	}
 	$username = sanitize_user( $username );
 	if ( empty( $username ) || ! validate_username( $username ) ) {
@@ -101,7 +101,7 @@ function ohmylms_create_new_student( $email, $username = '', $password = '', $ar
  * @since 1.0.0
  * @since 1.0.0
  */
-function creatot_lms_create_new_student_username( $email, $new_user_args = array(), $suffix = '' ) {
+function ohmylms_create_new_student_username( $email, $new_user_args = array(), $suffix = '' ) {
 	$username_parts = array();
 
 	if ( isset( $new_user_args['first_name'] ) ) {
@@ -156,13 +156,13 @@ function creatot_lms_create_new_student_username( $email, $new_user_args = array
 		$new_args               = array();
 		$new_args['first_name'] = 'woo_user_' . zeroise( wp_rand( 0, 9999 ), 4 );
 
-		return creatot_lms_create_new_student_username( $email, $new_args, $suffix );
+		return ohmylms_create_new_student_username( $email, $new_args, $suffix );
 	}
 
 	if ( username_exists( $username ) ) {
 		// Generate something unique to append to the username in case of a conflict with another user.
 		$suffix = '-' . zeroise( wp_rand( 0, 9999 ), 4 );
-		return creatot_lms_create_new_student_username( $email, $new_user_args, $suffix );
+		return ohmylms_create_new_student_username( $email, $new_user_args, $suffix );
 	}
 	return $username;
 }

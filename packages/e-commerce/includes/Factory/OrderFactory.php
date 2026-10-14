@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\Factory;
+namespace OhMyLMS\Commerce\Factory;
 
-use CodeRex\Ecommerce\Data\Order;
-use CodeRex\Ecommerce\Data\OrderRefund;
+use OhMyLMS\Commerce\Data\Order;
+use OhMyLMS\Commerce\Data\OrderRefund;
 
 class OrderFactory {
 

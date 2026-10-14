@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +21,7 @@ class CartSession {
 	 * @throws \Exception
 	 */
 	public function __construct( $cart ) {
-		if ( ! is_a( $cart, 'CodeRex\Ecommerce\Cart' ) ) {
+		if ( ! is_a( $cart, 'OhMyLMS\Commerce\Cart' ) ) {
 			throw new \Exception( 'A valid Cart object is required' );
 		}
 

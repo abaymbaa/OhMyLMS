@@ -1,6 +1,6 @@
 <?php
 
-use CodeRex\Ecommerce\Abstracts\PaymentGateway;
+use OhMyLMS\Commerce\Abstracts\PaymentGateway;
 use OhMyLMS\Gateways\Paypal\PaypalAPI;
 use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 
@@ -338,7 +338,7 @@ class GatewayPaypal extends PaymentGateway {
 			return new \WP_Error( 'paypal_not_completed', __( 'PayPal order is not completed.', 'ohmylms' ) );
 		}
 
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			return new \WP_Error( 'paypal_unknown_order', __( 'Order not found.', 'ohmylms' ) );
 		}
@@ -431,7 +431,7 @@ class GatewayPaypal extends PaymentGateway {
 			update_post_meta( $order_id, '_paypal_fee', $paypal_fee );
 			update_post_meta( $order_id, '_net_amount', $net_amount );
 
-			$renewal_order = ecommerce_get_order( $order_id );
+			$renewal_order = ohmylms_ecommerce_get_order( $order_id );
 			$renewal_order->payment_complete( $transaction_id );
 
 			return array(
@@ -502,12 +502,12 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Prepares the data for creating a PayPal order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array
 	 * @since 1.0.0
 	 */
 	public function prepare_data( $order_id, $renewal_order_id = 0, $is_subscription = false ) {
-		$order          = ecommerce_get_order( $order_id );
+		$order          = ohmylms_ecommerce_get_order( $order_id );
 		$items          = $order->get_items();
 		$amount         = $this->get_amount_data( $order );
 		$cart_discount  = $order->get_cart_discount();
@@ -539,7 +539,7 @@ class GatewayPaypal extends PaymentGateway {
 				$amount_after_discount = $item_data['original_amount'] - $item_discount;
 
 				// Now apply tax to the discounted amount
-				$tax_amount   = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $amount_after_discount ) );
+				$tax_amount   = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $amount_after_discount ) );
 				$final_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $amount_after_discount;
 
 				$filtered_items[] = array(
@@ -554,7 +554,7 @@ class GatewayPaypal extends PaymentGateway {
 		} else {
 			// No discount, apply tax to original amounts
 			foreach ( $items_data as $item_data ) {
-				$tax_amount   = \TaxCalculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_data['original_amount'] ) );
+				$tax_amount   = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_data['original_amount'] ) );
 				$final_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $item_data['original_amount'];
 
 				$filtered_items[] = array(
@@ -697,7 +697,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Retrieves the amount data for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -777,7 +777,7 @@ class GatewayPaypal extends PaymentGateway {
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		try {
-			$order = ecommerce_get_order( $order_id );
+			$order = ohmylms_ecommerce_get_order( $order_id );
 			if ( ! $this->can_refund_order( $order ) ) {
 				return new \WP_Error( 'error', __( 'Refund failed.', 'ohmylms' ) );
 			}
@@ -799,7 +799,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Checks if the order can be refunded.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -813,7 +813,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * @param string                        $capture_id
 	 * @param float|null                    $amount
 	 * @param string                        $reason
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -840,7 +840,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get payment gateway meta data for display on order details.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array
 	 */
 	public function get_payment_gateway_meta( $order ) {
@@ -870,7 +870,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get the transaction URL for this gateway.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return string
 	 */
 	public function get_transaction_url( $order ) {
@@ -886,7 +886,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get shipping information for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -961,7 +961,7 @@ class GatewayPaypal extends PaymentGateway {
 		update_post_meta( $order_id, '_net_amount', $net_amount );
 
 		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
-		$order            = ecommerce_get_order( $order_id );
+		$order            = ohmylms_ecommerce_get_order( $order_id );
 		if ( $order ) {
 			$order->payment_complete( $transaction_id );
 			$wpdb->update(
@@ -979,7 +979,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Check for funnel configuration and build funnel URL if needed.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return string|null Funnel URL or null if no funnel configured.
 	 * @since 1.0.0
 	 */
@@ -1019,7 +1019,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Store funnel session data if funnel is configured for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -1071,9 +1071,9 @@ class GatewayPaypal extends PaymentGateway {
 			'created_at'   => time(),
 		);
 		// Store in session
-		if ( function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
-				\CodeRex\Ecommerce\ecommerce()->session->set( 'funnel_data', $funnel_session_data );
-				\CodeRex\Ecommerce\ecommerce()->session->save_data();
+		if ( function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
+				\OhMyLMS\Commerce\ecommerce()->session->set( 'funnel_data', $funnel_session_data );
+				\OhMyLMS\Commerce\ecommerce()->session->save_data();
 		}
 		// Also store as order meta as a backup in case session is lost
 		update_post_meta( $order_id, '_funnel_session_data', $funnel_session_data );

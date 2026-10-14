@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\DataStore;
+namespace OhMyLMS\Commerce\DataStore;
 
-use CodeRex\Ecommerce\Abstracts\Data;
-use CodeRex\Ecommerce\Abstracts\DataStore;
+use OhMyLMS\Commerce\Abstracts\Data;
+use OhMyLMS\Commerce\Abstracts\DataStore;
 
 class OrderItemStore extends DataStore {
 

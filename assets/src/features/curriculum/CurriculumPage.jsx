@@ -453,7 +453,7 @@ export function CurriculumPage() {
 										syllabus_ids: roadmapSources,
 									}
 								);
-								window.location.hash = `/content-hub/curriculum/compare?roadmap=${ response.syllabus.id }`;
+								window.location.hash = `/content-hub/curriculum/syllabus/${ response.syllabus.id }`;
 							} catch ( cause ) {
 								setRoadmapError( cause.message );
 							} finally {

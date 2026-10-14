@@ -1,11 +1,11 @@
 <?php
 
-namespace CodeRex\Ecommerce\Rest\V1;
+namespace OhMyLMS\Commerce\Rest\V1;
 
-use CodeRex\Ecommerce\Abstracts\RestController;
-use CodeRex\Ecommerce\Data\Order;
-use CodeRex\Ecommerce\Data\OrderRefund;
-use function CodeRex\Ecommerce\ecommerce;
+use OhMyLMS\Commerce\Abstracts\RestController;
+use OhMyLMS\Commerce\Data\Order;
+use OhMyLMS\Commerce\Data\OrderRefund;
+use function OhMyLMS\Commerce\ecommerce;
 
 class OrdersController extends RestController {
 
@@ -362,7 +362,7 @@ class OrdersController extends RestController {
 
 		$response_data = $this->prepare_item_for_response( $post, $request );
 		$data          = $response_data->get_data();
-		$order         = ecommerce_get_order( $post );
+		$order         = ohmylms_ecommerce_get_order( $post );
 		// get the line items
 		foreach ( $order->get_items() as $item_id => $item ) {
 			$item_meta            = array(
@@ -424,10 +424,10 @@ class OrdersController extends RestController {
 			if ( empty( $post_id ) ) {
 				return new \WP_Error( 'ohmylms_rest_ohmylms-order_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
-			$previous_order      = ecommerce_get_order( $post_id );
+			$previous_order      = ohmylms_ecommerce_get_order( $post_id );
 			$get_previous_status = $previous_order->get_status();
 			$order_id            = $this->update_order( $request );
-			$current_order       = ecommerce_get_order( $order_id );
+			$current_order       = ohmylms_ecommerce_get_order( $order_id );
 
 			if ( is_wp_error( $order_id ) ) {
 				return $order_id;
@@ -593,7 +593,7 @@ class OrdersController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function create_note( $request ) {
-		$order = ecommerce_get_order( (int) $request['id'] );
+		$order = ohmylms_ecommerce_get_order( (int) $request['id'] );
 
 		// Create the note.
 		$note_id = $order->add_order_note( $request['note'] );
@@ -624,7 +624,7 @@ class OrdersController extends RestController {
 		$total_orders  = count( $order_ids );
 		$total_revenue = 0;
 		foreach ( $order_ids as $order_id ) {
-			$order          = new \CodeRex\Ecommerce\Data\Order( $order_id );
+			$order          = new \OhMyLMS\Commerce\Data\Order( $order_id );
 			$total_revenue += floatval( $order->get_total() );
 		}
 		$average_order_value = $total_orders > 0 ? $total_revenue / $total_orders : 0;
@@ -642,7 +642,7 @@ class OrdersController extends RestController {
 	 * This method prepares the order item data from the request for insertion into the database.
 	 *
 	 * @param \WP_REST_Request $request The REST request object containing the order data.
-	 * @return \CodeRex\Ecommerce\Data\Order The prepared order object.
+	 * @return \OhMyLMS\Commerce\Data\Order The prepared order object.
 	 *
 	 * @since 1.0.0
 	 */
@@ -739,7 +739,7 @@ class OrdersController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
-		$order    = ecommerce_get_order( $post );
+		$order    = ohmylms_ecommerce_get_order( $post );
 		$data     = $this->get_order_data( $order );
 		$response = rest_ensure_response( $data );
 		$response->add_links( $this->prepare_links( $order, $request ) );
@@ -749,7 +749,7 @@ class OrdersController extends RestController {
 	/**
 	 * Retrieve the data for a specific order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return array The array containing order data.
 	 *
 	 * @since 1.0.0
@@ -795,10 +795,10 @@ class OrdersController extends RestController {
 			'purchased_by'         => $purchased_by ? $purchased_by : 'currency',
 			'payment_method_title' => $payment_method_title ? $payment_method_title : 'N/A',
 			'transaction_id'       => $transaction_id,
-			'date_completed'       => ecommerce_rest_prepare_date_response( $order->get_date_completed(), false ),
-			'date_paid'            => ecommerce_rest_prepare_date_response( $order->get_date_paid(), false ),
+			'date_completed'       => ohmylms_ecommerce_rest_prepare_date_response( $order->get_date_completed(), false ),
+			'date_paid'            => ohmylms_ecommerce_rest_prepare_date_response( $order->get_date_paid(), false ),
 			'cart_hash'            => $order->get_cart_hash(),
-			'order_notes'          => ecommerce_get_order_notes(
+			'order_notes'          => ohmylms_ecommerce_get_order_notes(
 				array(
 					'order_id' => $order->get_id(),
 				)
@@ -815,7 +815,7 @@ class OrdersController extends RestController {
 			'is_normal_order'      => ! $order->is_renewal_order() && ! $order->is_parent_order(),
 			'tax_amount'           => ohmylms_format_decimal( $order->get_tax_amount(), ohmylms_get_price_decimals() ),
 			'tax_rate'             => $order->get_tax_rate(),
-			'is_included_tax'      => \CodeRex\Ecommerce\Includes\Tax\TaxService::get_instance()->prices_include_tax(),
+			'is_included_tax'      => \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax(),
 		);
 		if ( $transaction_id ) {
 			if ( isset( $payment_gateways[ $payment_method ] ) ) {
@@ -834,7 +834,7 @@ class OrdersController extends RestController {
 	 *
 	 * This method generates the self and collection links for the order item.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @param \WP_REST_Request              $request The REST request object.
 	 * @return array The array containing the links for the order item.
 	 *

@@ -3,7 +3,7 @@
 namespace OhMyLMS\Shortcodes;
 
 use OhMyLMS\Data\Student;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -659,7 +659,7 @@ class ShortCodeCheckout {
 		$order_key = empty( $_GET['key'] ) ? '' : wp_unslash( $_GET['key'] ); // WPCS: input var ok, CSRF ok.
 
 		if ( $order_id > 0 ) {
-			$order = ecommerce_get_order( $order_id );
+			$order = ohmylms_ecommerce_get_order( $order_id );
 			if ( ( ! hash_equals( $order->get_order_key(), $order_key ) ) ) {
 				$order = false;
 			}

@@ -1,16 +1,16 @@
 <?php
 
-namespace CodeRex\Ecommerce\Data;
+namespace OhMyLMS\Commerce\Data;
 
-use CodeRex\Ecommerce\Abstracts\Data;
-use CodeRex\Ecommerce\DataStores;
+use OhMyLMS\Commerce\Abstracts\Data;
+use OhMyLMS\Commerce\DataStores;
 
 /**
  * Class OrderItem
  *
  * Represents an order item in the e-commerce system.
  *
- * @package CodeRex\Ecommerce\Data
+ * @package OhMyLMS\Commerce\Data
  * @since 1.0.0
  */
 class OrderItem extends Data {
@@ -19,7 +19,7 @@ class OrderItem extends Data {
 	 *
 	 * Represents an order item for a course.
 	 *
-	 * @package CodeRex\Ecommerce\Data
+	 * @package OhMyLMS\Commerce\Data
 	 */
 	protected array $data = array(
 		'order_id'  => 0,

@@ -211,18 +211,18 @@ try {
     ok(Placement::item_options()["c$physics"] === '— Physics ' . $tag && isset(Placement::track_options()["t$t_pub"]) && !isset(Placement::track_options()["t$t_draft"]), 'Builder pickers: tree-ordered items, published tracks');
 
     // ---- Course lists by slug (carousel, popup and AJAX filters) ---------------------------------
-    foreach (['get_recent_course_ids', 'get_best_selling_course_ids', 'get_top_rated_course_ids', 'get_top_reviewed_course_ids', 'get_free_course_ids', 'get_paid_course_ids'] as $function) {
+    foreach (['ohmylms_get_recent_course_ids', 'ohmylms_get_best_selling_course_ids', 'ohmylms_get_top_rated_course_ids', 'ohmylms_get_top_reviewed_course_ids', 'ohmylms_get_free_course_ids', 'ohmylms_get_paid_course_ids'] as $function) {
         foreach ([null, 'all', "c$science", "t$t_pub", 'legacy-slug'] as $group) {
             $wpdb->last_error = ''; $found = $function($group);
             ok(is_array($found) && $wpdb->last_error === '', "$function(" . wp_json_encode($group) . ') failed: ' . $wpdb->last_error);
         }
     }
-    $recent = array_map('intval', get_recent_course_ids("c$science"));
+    $recent = array_map('intval', ohmylms_get_recent_course_ids("c$science"));
     ok(in_array($c_physics, $recent, true) && in_array($c_chemistry, $recent, true) && !in_array($c_arts, $recent, true) && !in_array($c_draft, $recent, true), 'Recent courses of a curriculum item (published only)');
-    ok(same(array_intersect(array_map('intval', get_recent_course_ids("t$t_pub")), [$c_physics, $c_arts, $c_chemistry]), [$c_physics, $c_arts]) && get_recent_course_ids('legacy-slug') === [] && get_recent_course_ids("c$unused") === [], 'Recent courses of a track; unknown slugs and empty items list none');
-    ok(in_array($c_plain, array_map('intval', get_recent_course_ids('all'))) && in_array($c_physics, array_map('intval', get_recent_course_ids(null))), 'No group lists every published course');
+    ok(same(array_intersect(array_map('intval', ohmylms_get_recent_course_ids("t$t_pub")), [$c_physics, $c_arts, $c_chemistry]), [$c_physics, $c_arts]) && ohmylms_get_recent_course_ids('legacy-slug') === [] && ohmylms_get_recent_course_ids("c$unused") === [], 'Recent courses of a track; unknown slugs and empty items list none');
+    ok(in_array($c_plain, array_map('intval', ohmylms_get_recent_course_ids('all'))) && in_array($c_physics, array_map('intval', ohmylms_get_recent_course_ids(null))), 'No group lists every published course');
     update_post_meta($c_physics, '_price_type', 'free'); update_post_meta($c_chemistry, '_price_type', 'paid'); update_post_meta($c_arts, '_price_type', 'free');
-    $free = array_map('intval', get_free_course_ids("c$science")); $paid = array_map('intval', get_paid_course_ids("c$science"));
+    $free = array_map('intval', ohmylms_get_free_course_ids("c$science")); $paid = array_map('intval', ohmylms_get_paid_course_ids("c$science"));
     ok(in_array($c_physics, $free, true) && !in_array($c_chemistry, $free, true) && !in_array($c_arts, $free, true) && in_array($c_chemistry, $paid, true) && !in_array($c_physics, $paid, true), 'Free and paid lists stay within the selected item');
     ok(ohmylms_course_ids_for_group(null) === null && ohmylms_course_ids_for_group('all') === null && ohmylms_course_ids_for_group('') === null && ohmylms_course_ids_for_group('nope') === [] && same(ohmylms_course_ids_for_group("c$arts"), [$c_arts]) && same(ohmylms_course_ids_for_group("t$t_pub"), [$c_physics, $c_arts]), 'Group slugs resolve to course IDs');
 

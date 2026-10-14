@@ -17,8 +17,8 @@ class OrderHooks extends HookHandler {
 	/**
 	 * Cancel student enrollment when an order is refunded.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\OrderRefund $refund The refund object.
-	 * @param \CodeRex\Ecommerce\Data\Order       $order  The order object.
+	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
+	 * @param \OhMyLMS\Commerce\Data\Order       $order  The order object.
 	 *
 	 * @since 1.0.0
 	 */
@@ -57,9 +57,9 @@ class OrderHooks extends HookHandler {
 
 			if ( $subscription_id ) {
 				$subscription_id = absint( $subscription_id );
-				$subscription    = ecommerce_get_subscription( $subscription_id );
+				$subscription    = ohmylms_ecommerce_get_subscription( $subscription_id );
 				if ( $subscription ) {
-					\CodeRex\Ecommerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
+					\OhMyLMS\Commerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
 				}
 			}
 		} catch ( \Exception $e ) {
@@ -105,14 +105,14 @@ class OrderHooks extends HookHandler {
 		$subscription_id = $subscription_id ? $subscription_id : get_post_meta( $order_id, '_subscription_renewal_id', true );
 		if ( $subscription_id ) {
 			$subscription_id = absint( $subscription_id );
-			$subscription    = ecommerce_get_subscription( $subscription_id );
+			$subscription    = ohmylms_ecommerce_get_subscription( $subscription_id );
 
 			// Validate subscription existence and post type.
 			if ( ! $subscription ) {
 				return;
 			}
 			// Mark the subscription as cancelled.
-			\CodeRex\Ecommerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
+			\OhMyLMS\Commerce\SubscriptionManager::mark_subscription_cancelled( $subscription_id );
 		}
 	}
 
@@ -126,7 +126,7 @@ class OrderHooks extends HookHandler {
 	 */ public function after_payment_completed( $order ) {
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
-			$order    = ecommerce_get_order( $order_id );
+			$order    = ohmylms_ecommerce_get_order( $order_id );
 		}
 
 		if ( ! is_object( $order ) ) {

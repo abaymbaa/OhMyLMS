@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\Abstracts;
+namespace OhMyLMS\Commerce\Abstracts;
 
-use CodeRex\Ecommerce\DataException;
-use CodeRex\Ecommerce\EcommerceDateTime;
+use OhMyLMS\Commerce\DataException;
+use OhMyLMS\Commerce\EcommerceDateTime;
 
 abstract class Data {
 
@@ -90,7 +90,7 @@ abstract class Data {
 		 * @param DataStores $data_store The data store handling object data.
 		 * @since 1.0.0
 		 */
-		do_action( ECOMMERCE_MODULE_PREFIX . '_before_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( OHMYLMS_ECOMMERCE_MODULE_PREFIX . '_before_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		// If the object already has an ID, update it, otherwise, create a new entry.
 		if ( $this->get_id() ) {
@@ -106,7 +106,7 @@ abstract class Data {
 		 * @param DataStores $data_store The data store handling object data.
 		 * @since 1.0.0
 		 */
-		do_action( ECOMMERCE_MODULE_PREFIX . '_after_' . $this->object_type . '_object_save', $this, $this->data_store );
+		do_action( OHMYLMS_ECOMMERCE_MODULE_PREFIX . '_after_' . $this->object_type . '_object_save', $this, $this->data_store );
 
 		return $this->get_id();
 	}
@@ -264,7 +264,7 @@ abstract class Data {
 				$this->set_prop( $prop, null );
 				return;
 			}
-			if ( is_a( $value, 'CodeRex\Ecommerce\EcommerceDateTime' ) ) {
+			if ( is_a( $value, 'OhMyLMS\Commerce\EcommerceDateTime' ) ) {
 				$datetime = $value;
 			} elseif ( is_numeric( $value ) ) {
 
@@ -273,17 +273,17 @@ abstract class Data {
 			} else {
 				// Strings are defined in local WP timezone. Convert to UTC.
 				if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $value, $date_bits ) ) {
-					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : ecommerce_timezone_offset();
+					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : ohmylms_ecommerce_timezone_offset();
 					$timestamp = gmmktime( $date_bits[4], $date_bits[5], $date_bits[6], $date_bits[2], $date_bits[3], $date_bits[1] ) - $offset;
 				} else {
-					$timestamp = ecommerce_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', ecommerce_string_to_timestamp( $value ) ) ) );
+					$timestamp = ohmylms_ecommerce_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', ohmylms_ecommerce_string_to_timestamp( $value ) ) ) );
 				}
 				$datetime = new EcommerceDateTime( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
 			}
 			if ( get_option( 'timezone_string' ) ) {
-				$datetime->setTimezone( new \DateTimeZone( \ecommerce_timezone_string() ) );
+				$datetime->setTimezone( new \DateTimeZone( \ohmylms_ecommerce_timezone_string() ) );
 			} else {
-				$datetime->set_utc_offset( \ecommerce_timezone_string() );
+				$datetime->set_utc_offset( \ohmylms_ecommerce_timezone_string() );
 			}
 			$this->set_prop( $prop, $datetime );
 		} catch ( \Exception $e ) {} // @codingStandardsIgnoreLine.

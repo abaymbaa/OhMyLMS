@@ -1,8 +1,8 @@
 <?php
-namespace CodeRex\Ecommerce\Gateways\QPay;
+namespace OhMyLMS\Commerce\Gateways\QPay;
 
-use CodeRex\Ecommerce\Abstracts\PaymentGateway;
-use function CodeRex\Ecommerce\ecommerce;
+use OhMyLMS\Commerce\Abstracts\PaymentGateway;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -211,7 +211,7 @@ class GatewayQPay extends PaymentGateway {
 		return PaymentService::locked(
 			$order_id,
 			function () use ( $order_id, $is_subscription ) {
-				$order = ecommerce_get_order( $order_id );
+				$order = ohmylms_ecommerce_get_order( $order_id );
 				if ( ! $this->eligible_order( $order, $is_subscription ) ) {
 					return new \WP_Error( 'qpay_eligibility', __( 'QPay is available only for configured, one-time MNT purchases.', 'ohmylms' ) );
 				}
@@ -312,7 +312,7 @@ class GatewayQPay extends PaymentGateway {
 	private function ajax_order() {
 		check_ajax_referer( 'ohmylms_qpay_check_payment_nonce', 'nonce' );
 		$id    = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
-		$order = ecommerce_get_order( $id );
+		$order = ohmylms_ecommerce_get_order( $id );
 		$token = isset( $_POST['payment_token'] ) && is_string( $_POST['payment_token'] ) ? wp_unslash( $_POST['payment_token'] ) : '';
 		if ( ! $this->can_read_order( $order, $token ) ) {
 			wp_send_json_error( array( 'message' => __( 'You cannot access this payment.', 'ohmylms' ) ), 403 );
@@ -354,7 +354,7 @@ class GatewayQPay extends PaymentGateway {
 
 	private function clear_paid_cart( $id, $result ) {
 		if ( ! is_wp_error( $result ) && 'paid' === ( $result['status'] ?? '' ) && ecommerce()->cart ) {
-			$order = ecommerce_get_order( $id );
+			$order = ohmylms_ecommerce_get_order( $id );
 			if ( $order && $order->get_cart_hash() === ecommerce()->cart->get_cart_hash() ) {
 				ohmylms_empty_cart();
 			}

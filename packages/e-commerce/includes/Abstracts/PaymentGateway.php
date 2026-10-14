@@ -1,9 +1,9 @@
 <?php
 
-namespace CodeRex\Ecommerce\Abstracts;
+namespace OhMyLMS\Commerce\Abstracts;
 
 use OhMyLMS\Abstracts\SettingsApi;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -222,7 +222,7 @@ abstract class PaymentGateway extends SettingsApi {
 
 		// Gets order total from "pay for order" page.
 		if ( 0 < $order_id ) {
-			$order = ecommerce_get_order( $order_id );
+			$order = ohmylms_ecommerce_get_order( $order_id );
 			if ( $order ) {
 				$total = (float) $order->get_total();
 			}
@@ -238,7 +238,7 @@ abstract class PaymentGateway extends SettingsApi {
 	/**
 	 * Get the return URL for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order|null $order The order object. Default is null.
+	 * @param \OhMyLMS\Commerce\Data\Order|null $order The order object. Default is null.
 	 * @return string The return URL.
 	 * @since 1.0.0
 	 */
@@ -246,10 +246,10 @@ abstract class PaymentGateway extends SettingsApi {
 		if ( ! $order ) {
 			$order_id = absint( get_query_var( 'order-pay' ) );
 			if ( 0 < $order_id ) {
-				$order = ecommerce_get_order( $order_id );
+				$order = ohmylms_ecommerce_get_order( $order_id );
 			}
 		}
-		if ( ! $order || ! is_a( $order, '\CodeRex\Ecommerce\Data\Order' ) ) {
+		if ( ! $order || ! is_a( $order, '\OhMyLMS\Commerce\Data\Order' ) ) {
 			return '';
 		}
 		$return_url = $order->get_checkout_redirect_url();
@@ -294,7 +294,7 @@ abstract class PaymentGateway extends SettingsApi {
 	/**
 	 * Get the transaction URL for the order.
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return string The transaction URL.
 	 * @since 1.0.0
 	 */
@@ -334,7 +334,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * Get payment gateway meta data for the order.
 	 * This method can be overridden by payment gateways to provide additional meta data
 	 *
-	 * @param \CodeRex\Ecommerce\Data\Order $order The order object.
+	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
 	 * @return array An associative array of meta data to be saved with the order.
 	 * @since 1.0.0
 	 */

@@ -32,7 +32,7 @@ class FunnelManager {
 			return false;
 		}
 
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			return false;
 		}
@@ -108,7 +108,7 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	private function is_supported_payment_method( $order_id ) {
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			return false;
 		}
@@ -147,11 +147,11 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	private function get_order_courses( $order_id ) {
-		if ( ! function_exists( 'ecommerce_get_order' ) ) {
+		if ( ! function_exists( 'ohmylms_ecommerce_get_order' ) ) {
 			return array();
 		}
 
-		$order = ecommerce_get_order( $order_id );
+		$order = ohmylms_ecommerce_get_order( $order_id );
 		if ( ! $order ) {
 			return array();
 		}
@@ -197,12 +197,12 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	private function store_funnel_session( $data ) {
-		if ( ! function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
+		if ( ! function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
 			return;
 		}
 
-		\CodeRex\Ecommerce\ecommerce()->session->set( 'funnel_data', $data );
-		\CodeRex\Ecommerce\ecommerce()->session->save_data();
+		\OhMyLMS\Commerce\ecommerce()->session->set( 'funnel_data', $data );
+		\OhMyLMS\Commerce\ecommerce()->session->save_data();
 	}
 
 	/**
@@ -233,11 +233,11 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	public static function get_funnel_session() {
-		if ( ! function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
+		if ( ! function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
 			return null;
 		}
 
-		$session_data = \CodeRex\Ecommerce\ecommerce()->session->get( 'funnel_data' );
+		$session_data = \OhMyLMS\Commerce\ecommerce()->session->get( 'funnel_data' );
 		return $session_data;
 	}
 
@@ -248,12 +248,12 @@ class FunnelManager {
 	 * @since 1.0.0
 	 */
 	public static function clear_funnel_session() {
-		if ( ! function_exists( '\CodeRex\Ecommerce\ecommerce' ) ) {
+		if ( ! function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
 			return;
 		}
 
-		\CodeRex\Ecommerce\ecommerce()->session->set( 'funnel_data', null );
-		\CodeRex\Ecommerce\ecommerce()->session->save_data();
+		\OhMyLMS\Commerce\ecommerce()->session->set( 'funnel_data', null );
+		\OhMyLMS\Commerce\ecommerce()->session->save_data();
 	}
 
 	/**

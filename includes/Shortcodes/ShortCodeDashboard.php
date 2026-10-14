@@ -8,9 +8,9 @@
 
 namespace OhMyLMS\Shortcodes;
 
-use CodeRex\Ecommerce\DataStores;
+use OhMyLMS\Commerce\DataStores;
 use OhMyLMS\Data\Student;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 

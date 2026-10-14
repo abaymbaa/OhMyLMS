@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeRex\Ecommerce;
+namespace OhMyLMS\Commerce;
 
 /**
  * E-Commerce module Data Exception Class

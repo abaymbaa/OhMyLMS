@@ -3,7 +3,7 @@
 namespace OhMyLMS\Emails\StudentsEmail;
 
 use OhMyLMS\Emails\Emails;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 class ConfirmEnrollment {
 
@@ -41,7 +41,7 @@ class ConfirmEnrollment {
 
 		if ( ! is_object( $order ) ) {
 			$order_id = absint( $order );
-			$order    = ecommerce_get_order( $order_id );
+			$order    = ohmylms_ecommerce_get_order( $order_id );
 		}
 
 		if ( ! is_object( $order ) ) {

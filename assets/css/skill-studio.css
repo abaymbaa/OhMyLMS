@@ -1,0 +1,398 @@
+.ohmylms-skill-studio[class~="components-modal__frame"][role="dialog"] {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	max-width: none;
+	height: 100vh;
+
+	/* Override the existing admin-wide 90% modal height for this full-screen editor. */
+	max-height: 100vh !important;
+	margin: 0;
+	border-radius: 0;
+}
+
+.ohmylms-skill-studio [class~="components-modal__content"] {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	margin: 0;
+	padding: 72px 0 0;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio [class~="components-modal__children-container"] {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.ohmylms-skill-studio [class~="components-modal__header"] {
+	margin: 0;
+	padding: 0 20px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-toolbar,
+.ohmylms-skill-studio .ohmylms-studio-actions,
+.ohmylms-skill-studio .ohmylms-studio-canvas-toolbar,
+.ohmylms-skill-studio .ohmylms-studio-canvas-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-toolbar {
+	justify-content: space-between;
+	padding: 12px 20px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-workspace {
+	display: grid;
+	flex: 1;
+	grid-template-columns: 240px minmax(0, 1fr) 320px;
+	min-height: 0;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-library,
+.ohmylms-skill-studio .ohmylms-studio-inspector {
+	min-width: 0;
+	padding: 20px;
+	background: #fff;
+	overflow-y: auto;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-library {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	border-right: 1px solid #dcdcde;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-inspector {
+	border-left: 1px solid #dcdcde;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-main {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	background: #f6f7f7;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-main h2 {
+	margin: 0;
+	padding: 20px;
+	font-size: 18px;
+	line-height: 1.4;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-results {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	margin: 16px 0;
+	overflow-y: auto;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-result,
+.ohmylms-skill-studio .ohmylms-studio-connection {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	width: 100%;
+	height: auto;
+	min-height: 56px;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	text-align: left;
+	white-space: normal;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-result[aria-pressed="true"] {
+	border-color: var(--wp-admin-theme-color, #3858e9);
+	background: #f0f0f1;
+}
+
+/* Native library cards retain their shape independently of admin component button styles. */
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-library button.ohmylms-studio-result {
+	flex-shrink: 0;
+	min-height: min-content;
+	border: 1px solid #c3c4c7;
+	border-radius: 10px;
+	background: #fff;
+	font: inherit;
+	line-height: 1.4;
+	box-shadow: 0 1px 3px rgb(0 0 0 / 5%);
+	cursor: pointer;
+}
+
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-library button.ohmylms-studio-result[aria-pressed="true"] {
+	border-color: var(--wp-admin-theme-color, #3858e9);
+	background: #f0f0f1;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-result:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+	outline-offset: -3px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-result:disabled {
+	opacity: 0.55;
+	cursor: default;
+}
+
+/* Keep editable card text readable over the legacy admin tertiary-button palette. */
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-workspace button.ohmylms-studio-result,
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-workspace button.ohmylms-studio-node-title,
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-workspace button.ohmylms-studio-connection {
+	color: #1d2327 !important;
+}
+
+/* Preserve node text insets over the admin's tertiary-button padding reset. */
+.ohmylms-skill-studio[role="dialog"] .ohmylms-studio-workspace button.ohmylms-studio-node-title {
+	padding: 12px 14px !important;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-connection {
+	margin: 8px 0;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-result small,
+.ohmylms-skill-studio .ohmylms-studio-connection small,
+.ohmylms-skill-studio .ohmylms-studio-coverage small {
+	display: block;
+	margin-top: 6px;
+	color: #50575e;
+	font-size: 12px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-canvas {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-canvas-toolbar,
+.ohmylms-skill-studio .ohmylms-studio-canvas-footer {
+	padding: 12px 20px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-canvas-footer {
+	justify-content: space-between;
+	color: #50575e;
+	font-size: 12px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-stage {
+	position: relative;
+	flex: 1;
+	min-height: 220px;
+	background-image: radial-gradient(#c3c4c7 1px, transparent 1px);
+	background-size: 20px 20px;
+	touch-action: none;
+	cursor: grab;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-world {
+	position: absolute;
+	inset: 0;
+	transform-origin: 0 0;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-lines {
+	position: absolute;
+	z-index: 1;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	overflow: visible;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge {
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge-hit {
+	fill: none;
+	stroke: transparent;
+	stroke-width: 20px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge-line {
+	fill: none;
+	stroke: #646970;
+	stroke-width: 2px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge.is-pending .ohmylms-studio-edge-line {
+	stroke: var(--wp-admin-theme-color, #3858e9);
+	stroke-dasharray: 6 4;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge.is-combined .ohmylms-studio-edge-line {
+	stroke: #6e35a4;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge-label rect {
+	fill: #fff;
+	stroke: #c3c4c7;
+	stroke-width: 1px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge-label text {
+	fill: #1d2327;
+	font-size: 11px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge.is-pending .ohmylms-studio-edge-label rect {
+	stroke: var(--wp-admin-theme-color, #3858e9);
+	stroke-dasharray: 3 2;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge.is-combined .ohmylms-studio-edge-label rect {
+	stroke: #6e35a4;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node {
+	position: absolute;
+	width: 190px;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 3px 8px rgb(0 0 0 / 8%);
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node.is-shared {
+	background: #f0f0f1;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node.is-selected {
+	outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node-handle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	max-height: 42px;
+	padding: 8px;
+	border: 0;
+	border-bottom: 1px solid #dcdcde;
+	background: #f6f7f7;
+	color: #50575e;
+	font-size: 11px;
+	text-align: left;
+	touch-action: none;
+	cursor: grab;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node-title {
+	justify-content: flex-start;
+	width: 100%;
+	height: auto;
+	min-height: 66px;
+	padding: 10px;
+	color: #1d2327;
+	text-align: left;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-stage:active,
+.ohmylms-skill-studio .ohmylms-studio-node-handle:active {
+	cursor: grabbing;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node-title span {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-node-relation {
+	display: block;
+	padding: 0 14px 10px;
+	color: #50575e;
+	font-size: 11px;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-impact {
+	padding: 12px;
+	border-left: 3px solid var(--wp-admin-theme-color, #3858e9);
+	background: #f6f7f7;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-coverage {
+	padding: 20px;
+	overflow-x: auto;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-coverage table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-coverage th,
+.ohmylms-skill-studio .ohmylms-studio-coverage td {
+	padding: 12px 8px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+@media (max-width: 1100px) {
+
+	.ohmylms-skill-studio .ohmylms-studio-workspace {
+		grid-template-columns: 200px minmax(0, 1fr) 260px;
+	}
+}
+
+@media (max-width: 780px) {
+
+	.ohmylms-skill-studio [class~="components-modal__content"] {
+		overflow: auto;
+	}
+
+	.ohmylms-skill-studio .ohmylms-studio-workspace {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-skill-studio .ohmylms-studio-library,
+	.ohmylms-skill-studio .ohmylms-studio-inspector {
+		border: 0;
+		overflow: visible;
+	}
+
+	.ohmylms-skill-studio .ohmylms-studio-library {
+		display: block;
+	}
+
+	.ohmylms-skill-studio .ohmylms-studio-results {
+		max-height: 300px;
+	}
+}
+
+.ohmylms-ws .ohmylms-roadmap-source-list {
+	max-height: 260px;
+	overflow-y: auto;
+	padding: 8px 0;
+}
+

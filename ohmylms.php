@@ -8,19 +8,20 @@
  * Text Domain: ohmylms
  * Requires at least: 6.8
  * Requires PHP: 7.4
+ *
+ * @package OhMyLMS
  */
+
 defined( 'ABSPATH' ) || exit;
-$ohmylms_active = array_merge( (array) get_option( 'active_plugins', array() ), array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
-if ( array_intersect( array( 'creatorlms/creatorlms.php', 'creatorlms-pro/creatorlms-pro.php' ), $ohmylms_active ) || defined( 'OHMYLMS_FILE' ) ) {
+if ( defined( 'OHMYLMS_FILE' ) ) {
 	add_action(
 		'admin_notices',
 		function () {
-			echo '<div class="notice notice-error"><p>OhMyLMS is paused because another copy of it, CreatorLMS or CreatorLMS Pro is active. Deactivate the other plugin before activating OhMyLMS.</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'OhMyLMS is paused because another copy of OhMyLMS is active.', 'ohmylms' ) . '</p></div>';
 		}
 	);
 	return;
 }
-unset( $ohmylms_active );
 define( 'OHMYLMS_FILE', __FILE__ );
 define( 'OHMYLMS_DIR', __DIR__ );
 define( 'OHMYLMS_VERSION', '1.2.20' );
@@ -43,8 +44,14 @@ if ( ! class_exists( 'ActionScheduler', false ) ) {
 require_once __DIR__ . '/includes/Packages.php';
 require_once __DIR__ . '/includes/OhMyLMS.php';
 require_once __DIR__ . '/includes/cl-functions.php';
+/**
+ * Get the main OhMyLMS instance.
+ *
+ * @return OhMyLMS
+ */
 function ohmylms() {
-	return OhMyLMS::instance(); }
+	return OhMyLMS::instance();
+}
 $GLOBALS['ohmylms'] = ohmylms();
 register_activation_hook( __FILE__, array( 'OhMyLMS\\Install', 'install' ) );
 register_deactivation_hook(

@@ -58,7 +58,7 @@ function ohmylms_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 	}
 
 	// Map endpoint to options.
-	$query_vars = \CodeRex\Ecommerce\ecommerce()->query->get_query_vars();
+	$query_vars = \OhMyLMS\Commerce\ecommerce()->query->get_query_vars();
 	$endpoint   = ! empty( $query_vars[ $endpoint ] ) ? $query_vars[ $endpoint ] : $endpoint;
 	$value      = ( get_option( 'ohmylms_myprofile_edit_address_endpoint', 'edit-address' ) === $endpoint ) ? ohmylms_edit_address_i18n( $value ) : $value;
 

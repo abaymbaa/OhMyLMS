@@ -16,6 +16,7 @@ const pick = ( response ) => ( {
 	root_skill: response.root_skill,
 	course: response.course ?? null,
 	settings: response.settings ?? {},
+	roadmap_sources: response.roadmap_sources ?? [],
 } );
 
 /**

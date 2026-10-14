@@ -22,6 +22,15 @@ class ComparisonController extends RestController {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
+			'/syllabus-comparison/mapping/reconnect',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'reconnect_mapping' ),
+				'permission_callback' => array( Access::class, 'admin' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/syllabus-comparison/mapping-groups/remove',
 			array(
 				'methods'             => 'POST',
@@ -305,6 +314,16 @@ class ComparisonController extends RestController {
 			return Access::error( 'ohmylms_comparison_invalid', __( 'Choose a shared skill and reload the current mapping.', 'ohmylms' ) );
 		}
 		return rest_ensure_response( SkillMappings::save( absint( $request['specific_id'] ), absint( $request['shared_id'] ), (string) $request['relation'], (string) $request['note'], (string) $request['expected_revision'] ) );
+	}
+
+	/**
+	 * Replace an individual mapping endpoint in one guarded update.
+	 *
+	 * @param WP_REST_Request $request Reconnection fields and expected revision.
+	 * @return mixed
+	 */
+	public function reconnect_mapping( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\MappingReconnect::save( $request->get_params() ) );
 	}
 
 	/**

@@ -2,13 +2,13 @@
 
 namespace OhMyLMS;
 
-use CodeRex\Ecommerce\Checkout;
-use CodeRex\Ecommerce\Includes\Tax\TaxService;
+use OhMyLMS\Commerce\Checkout;
+use OhMyLMS\Commerce\Includes\Tax\TaxService;
 use OhMyLMS\Data\Student;
 use OhMyLMS\User\UserHelper;
 use OhMyLMS\User\UserValidator;
-use function CodeRex\Ecommerce\ohmylmse_print_notices;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ohmylmse_print_notices;
+use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -265,8 +265,8 @@ class Ajax {
 				$validation_error = new \WP_Error();
 
 				if ( $validation_error->get_error_code() ) {
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $validation_error->get_error_message(), 'error', array() );
-					\CodeRex\Ecommerce\ohmylmse_print_notices( true );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $validation_error->get_error_message(), 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_print_notices( true );
 					throw new \Exception( '<strong>' . __( 'Error:', 'ohmylms' ) . '</strong> ' . $validation_error->get_error_message() );
 				}
 
@@ -292,8 +292,8 @@ class Ajax {
 				$user_id = wp_insert_user( $user_data );
 
 				if ( is_wp_error( $user_id ) ) {
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $user_id->get_error_message(), 'error', array() );
-					\CodeRex\Ecommerce\ohmylmse_print_notices( true );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $user_id->get_error_message(), 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_print_notices( true );
 					throw new \Exception( $user_id->get_error_message() );
 				}
 
@@ -335,7 +335,7 @@ class Ajax {
 				$redirect_url = $pending_redirect ?: ohmylms_get_dashboard_url();
 
 				if ( is_wp_error( $user ) ) {
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $user->get_error_message(), 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $user->get_error_message(), 'error', array() );
 				} else {
 					if ( \OhMyLMS\Services\EmailVerificationService::is_required() ) {
 						$response = array(
@@ -383,15 +383,15 @@ class Ajax {
 				$validation_error = new \WP_Error();
 
 				if ( $validation_error->get_error_code() ) {
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $validation_error->get_error_message(), 'error', array() );
-					\CodeRex\Ecommerce\ohmylmse_print_notices( true );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $validation_error->get_error_message(), 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_print_notices( true );
 					throw new \Exception( '<strong>' . __( 'Error:', 'ohmylms' ) . '</strong> ' . $validation_error->get_error_message() );
 				}
 
 				if ( empty( $creds['user_login'] ) ) {
 					$message = __( 'Username is required.', 'ohmylms' );
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $message, 'error', array() );
-					\CodeRex\Ecommerce\ohmylmse_print_notices( true );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $message, 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_print_notices( true );
 					throw new \Exception( '<strong>' . __( 'Error:', 'ohmylms' ) . '</strong> ' . __( 'Username is required.', 'ohmylms' ) );
 				}
 
@@ -425,8 +425,8 @@ class Ajax {
 				}
 
 				if ( is_wp_error( $user ) ) {
-					\CodeRex\Ecommerce\ohmylmse_add_notice( $user->get_error_message(), 'error', array() );
-					\CodeRex\Ecommerce\ohmylmse_print_notices( true );
+					\OhMyLMS\Commerce\ohmylmse_add_notice( $user->get_error_message(), 'error', array() );
+					\OhMyLMS\Commerce\ohmylmse_print_notices( true );
 					throw new \Exception( $user->get_error_message() );
 				} else {
 					$response = array(
@@ -438,9 +438,9 @@ class Ajax {
 					wp_send_json( $response );
 				}
 			} catch ( \Exception $e ) {
-				\CodeRex\Ecommerce\ohmylmse_add_notice( strip_tags( $e->getMessage() ), 'error', array() );
+				\OhMyLMS\Commerce\ohmylmse_add_notice( strip_tags( $e->getMessage() ), 'error', array() );
 				do_action( 'ohmylms_login_failed' );
-				$messages = \CodeRex\Ecommerce\ohmylmse_print_notices( true );
+				$messages = \OhMyLMS\Commerce\ohmylmse_print_notices( true );
 				$response = array(
 					'status'  => 'error',
 					'message' => isset( $messages ) ? $messages : '',
@@ -810,7 +810,7 @@ class Ajax {
 		check_ajax_referer( 'apply-coupon', 'security' );
 		$coupon_code   = ohmylms_clean( wp_unslash( $_POST['coupon_code'] ) );
 		$cart          = ecommerce()->cart;
-		$maybe_applied = $cart->apply_coupon( ecommerce_format_coupon_code( $coupon_code ) );
+		$maybe_applied = $cart->apply_coupon( ohmylms_ecommerce_format_coupon_code( $coupon_code ) );
 		if ( ! $maybe_applied ) {
 			wp_send_json_error(
 				array(
@@ -851,7 +851,7 @@ class Ajax {
 		check_ajax_referer( 'remove-coupon', 'security' );
 		$coupon_code = ohmylms_clean( wp_unslash( $_POST['coupon_code'] ) );
 		$cart        = ecommerce()->cart;
-		$cart->remove_coupon( ecommerce_format_coupon_code( $coupon_code ) );
+		$cart->remove_coupon( ohmylms_ecommerce_format_coupon_code( $coupon_code ) );
 		ob_start();
 		$checkout = new Checkout();
 		ohmylms_get_template(
@@ -1346,7 +1346,7 @@ class Ajax {
 		$subscription_id = absint( $_POST['subscription_id'] );
 		$membership_id   = absint( $_POST['membership_id'] );
 		$order_id        = absint( $_POST['order_id'] );
-		$subscription    = ecommerce_get_subscription( $subscription_id );
+		$subscription    = ohmylms_ecommerce_get_subscription( $subscription_id );
 		$membership      = ohmylms_get_membership( $membership_id );
 		$student_id      = absint( $_POST['student_id'] );
 		$membership->cancel_enrollment( $student_id, $order_id );
@@ -1358,12 +1358,12 @@ class Ajax {
 		if ( $user_id ) {
 			$user = get_user_by( 'id', $user_id );
 			if ( $user && $user->exists() ) {
-				\CodeRex\Ecommerce\SubscriptionManager::add_subscription_note( $subscription_id, sprintf( __( 'Subscription cancelled by %s.', 'ohmylms' ), $user->display_name ) );
+				\OhMyLMS\Commerce\SubscriptionManager::add_subscription_note( $subscription_id, sprintf( __( 'Subscription cancelled by %s.', 'ohmylms' ), $user->display_name ) );
 			} else {
-				\CodeRex\Ecommerce\SubscriptionManager::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
+				\OhMyLMS\Commerce\SubscriptionManager::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
 			}
 		} else {
-			\CodeRex\Ecommerce\SubscriptionManager::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
+			\OhMyLMS\Commerce\SubscriptionManager::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
 		}
 		wp_send_json_success( array( 'message' => __( 'Cancel membership successfully.', 'ohmylms' ) ) );
 	}

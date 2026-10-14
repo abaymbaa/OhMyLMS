@@ -3,7 +3,7 @@
 namespace OhMyLMS\Emails\StudentsEmail;
 
 use OhMyLMS\Emails\Emails;
-use function CodeRex\Ecommerce\ecommerce;
+use function OhMyLMS\Commerce\ecommerce;
 
 class CompleteCourse {
 
@@ -87,7 +87,7 @@ class CompleteCourse {
 			ob_start();
 			ohmylms_get_template( 'emails/email-styles' );
 			$styles    = ob_get_clean();
-			$order     = ecommerce_get_order( $order_id );
+			$order     = ohmylms_ecommerce_get_order( $order_id );
 			$html_body = Emails::replace_merge_tags( $html_body, $order, $course );
 
 			$sender_name  = $email_settings['ohmylms_email_sender_name'];
