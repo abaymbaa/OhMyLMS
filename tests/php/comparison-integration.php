@@ -91,7 +91,7 @@ try {
     ok( 200 === call_api('POST','mapping-groups/remove',array('uuid'=>$uuid,'pairs'=>$current_pairs))->get_status(), 'combined group removal preserves objectives and evidence' );
     $group_payload['groups'][0]['pairs']=array_map(static function($id){return array('specific_id'=>$id,'expected_revision'=>'');},$extras);
     $recreated=call_api('POST','mapping-groups',$group_payload)->get_data();
-    $group_payload['relation']='broader'; $group_payload['groups'][0]['pairs']=array_map(static function($row){return array('specific_id'=>$row['specific_id'],'expected_revision'=>SkillMappings::revision($row));},$recreated);
+    $group_payload['relation']='broader'; $group_payload['groups'][0]['pairs']=array_map(static function($row){return array('specific_id'=>$row['specific_id'],'expected_revision'=>$row['revision']);},$recreated);
     ok( 200 === call_api('POST','mapping-groups',$group_payload)->get_status(), 'complete group may be changed atomically to descriptive individual links' );
     foreach($extras as $id){ok('broader'===SkillMappings::for_skill($id)['maps_to'][0]['relation'],'whole group conversion updates every member'); SkillMappings::remove($id,$science['id']);}
     $current = Comparison::shared_skill( $shared['id'] );

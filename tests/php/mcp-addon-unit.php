@@ -40,7 +40,8 @@ mcp_addon_check(Server::enabled() && Server::manifest([])['mcp']['is_enable'] ==
 Server::register_server($adapter);
 mcp_addon_check($adapter->calls === 1, 'Enabled add-on creates a server.');
 Abilities::register();
-mcp_addon_check(count($GLOBALS['mcp_abilities']) === 22, 'Enabled MCP preserves nine content reads and adds thirteen explicit shared-skill, roadmap and audit abilities.');
+mcp_addon_check(count($GLOBALS['mcp_abilities']) === 23, 'Enabled MCP preserves nine content reads and adds fourteen explicit shared-skill, roadmap, grouped-mapping and audit abilities.');
+mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-combined-skill-mapping']['meta']['annotations']['readonly'], 'Combined coverage tool is explicitly a write.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/list-courses']['meta']['annotations']['readonly'], 'Existing content tools remain read-only.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-skill-mapping']['meta']['annotations']['readonly'], 'Mapping writes are accurately annotated.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/remove-skill-mapping']['meta']['annotations']['destructive'], 'Mapping removals are accurately annotated.');

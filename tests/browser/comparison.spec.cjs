@@ -180,6 +180,7 @@ test('create a roadmap before mapping and then save shared steps in its comparis
     await workspace.getByRole('button', { name: 'Save proposed mappings', exact: true }).click();
     await expect(sourceColumn.locator('.is-connected.is-combined')).toHaveCount(2);
     await expect(workspace.locator('.ohmylms-mapping-connections path.is-combined:not(.is-pending)')).toHaveCount(1);
+    await workspace.screenshot({ path: 'test-results/matching-connections.png' });
     await sourceColumn.getByRole('button', { name: new RegExp('New shared equation ' + tag + '.*Required together') }).first().click();
     await expect(workspace.getByText('2 selected objectives', { exact: true })).toBeVisible();
     await workspace.getByRole('button', { name: 'Remove combined group', exact: true }).click();

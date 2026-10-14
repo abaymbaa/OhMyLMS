@@ -125,6 +125,9 @@ export function MappingConnections( { gridRef, sharedId, revision } ) {
 			subtree: true,
 			attributes: true,
 			attributeFilter: [
+				'hidden',
+				'open',
+				'class',
 				'data-connection-shared',
 				'data-connection-relation',
 				'data-connection-pending',

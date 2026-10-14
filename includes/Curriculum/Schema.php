@@ -13,6 +13,7 @@ final class Schema {
 	// 2: items can be syllabuses (is_syllabus, skill_root_id) and syllabuses hold skill groups of skills.
 	// 3: a syllabus is also a course (course_id).
 	// 4: curriculum topics and syllabus chapters have editable icons.
+	// 5: combined coverage groups retain explicit required membership.
 	const VERSION = '5';
 	const OPTION  = 'ohmylms_curriculum_schema';
 

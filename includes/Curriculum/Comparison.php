@@ -177,6 +177,9 @@ final class Comparison {
 	 */
 	public static function save_shared( $id, array $data ) {
 		global $wpdb;
+		if ( isset( $data['roadmap_id'] ) && ! is_int( $data['roadmap_id'] ) ) {
+			return Access::error( 'ohmylms_shared_invalid', __( 'Roadmap IDs must be integers.', 'ohmylms' ) );
+		}
 		$roadmap_id = absint( $data['roadmap_id'] ?? 0 );
 		if ( ! $id && $roadmap_id ) {
 			$roadmap = Roadmaps::get( $roadmap_id );

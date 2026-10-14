@@ -317,7 +317,25 @@ class ComparisonController extends RestController {
 		if ( ! is_array( $request['groups'] ) || ! is_int( $request['shared_id'] ) || ! is_string( $request['note'] ?? '' ) ) {
 			return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose source groups and a shared skill.', 'ohmylms' ) );
 		}
-		return rest_ensure_response( SkillMappings::save_groups( $request['groups'], $request['shared_id'], $request['note'] ?? '', (string) ( $request['relation'] ?? 'combined' ) ) );
+		$result = SkillMappings::save_groups( $request['groups'], $request['shared_id'], $request['note'] ?? '', (string) ( $request['relation'] ?? 'combined' ) );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		return rest_ensure_response(
+			array_map(
+				static function ( $row ) {
+					return array(
+						'id'          => $row['id'],
+						'specific_id' => $row['specific_id'],
+						'shared_id'   => $row['shared_id'],
+						'relation'    => $row['relation'],
+						'group_uuid'  => $row['group_uuid'],
+						'revision'    => SkillMappings::revision( $row ),
+					);
+				},
+				$result
+			)
+		);
 	}
 
 	/**
@@ -348,7 +366,7 @@ class ComparisonController extends RestController {
 			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 );
 		}
 		try {
-			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . SkillMappings::table() . ' WHERE group_uuid=%s', $uuid ), ARRAY_A );
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE group_uuid=%s', SkillMappings::table(), $uuid ), ARRAY_A );
 			if ( ! $rows || count( $rows ) !== count( $pairs ) ) {
 				return Access::error( 'ohmylms_mapping_stale', __( 'This group changed. Reload it before removing it.', 'ohmylms' ), 409 );
 			}

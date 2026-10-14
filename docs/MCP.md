@@ -57,8 +57,9 @@ Shared-skill tools are subject/curriculum independent:
 | `list_syllabus_objectives` | `id`; optional `page`, `search`, `topic`, `category`, `status`, `shared_id` |
 | `list_shared_skills` | Optional `subject`, `page`, `search` |
 | `get_shared_skill` | `id`; returns affected objectives and revision |
-| `save_shared_skill` | `name`; optional `id` (0 creates), `subject`, `description`, `topic`; existing edits require `expected_revision` |
+| `save_shared_skill` | `name`; optional `id` (0 creates), `subject`, `description`, `topic`, `roadmap_id` (creation library association); existing edits require `expected_revision` |
 | `save_skill_mapping` | `specific_id`, `shared_id`, `relation`, `expected_revision`; optional `note` |
+| `save_combined_skill_mapping` | `shared_id`, `groups` of `{source_id, pairs: [{specific_id, expected_revision}]}`; optional `note`. At least two objectives per source group; descriptive coverage only. |
 | `remove_skill_mapping` | `specific_id`, `shared_id`, `expected_revision` |
 | `list_shared_skill_content` | `id`; optional `kind`, `page`, `search`, `search_targets` (0 or 1) |
 | `connect_shared_skill_content` | `id`, `content_id`, `linked` (boolean) |
@@ -71,6 +72,8 @@ Mapping creation sends an empty `expected_revision`; editing/removing sends the 
 from `list_syllabus_objectives`. Read a shared skill's impact before changing its scope. Related
 links do not pool evidence or automatically inherit content. Roadmaps reuse shared IDs and start as
 drafts. Profile configuration neither publishes nor enrolls a course. See [shared skills](SHARED-SKILLS.md).
+
+Single-pair relationships are `equivalent`, `broader` (source covers more), `narrower` (source covers less), and `related`. Only `equivalent` pools evidence. Combined groups store required membership and use the separate grouped tool; they neither infer mastery nor pool evidence. Individual editing tools reject members of combined groups so group integrity is preserved.
 
 ## WordPress abilities
 

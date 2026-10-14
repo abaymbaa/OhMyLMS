@@ -812,7 +812,7 @@ function ComparisonEditor( { roadmapId } ) {
 										setRemoving( null );
 									},
 									__(
-										'Mappings saved. Shared mastery now uses the equivalent links.',
+										'Mappings saved. Only equivalent links pool evidence.',
 										'ohmylms'
 									)
 								)

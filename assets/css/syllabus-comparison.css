@@ -203,6 +203,7 @@
 
 .ohmylms-comparison .ohmylms-shared-skill-row[aria-pressed="true"] {
 	border-radius: 4px;
+	color: #4e2b91;
 	background: #f0edff;
 	font-weight: 600;
 }

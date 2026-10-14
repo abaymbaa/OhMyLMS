@@ -114,7 +114,7 @@ final class SkillMappings {
 			return Access::error( 'ohmylms_mapping_busy', __( 'Another mapping change is being saved. Try again.', 'ohmylms' ), 409 ); }
 		try {
 			$table   = self::table();
-			$current = $wpdb->get_row( $wpdb->prepare( 'SELECT relation, note, group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ), ARRAY_A );
+			$current = $wpdb->get_row( $wpdb->prepare( 'SELECT relation, note, group_uuid FROM %i WHERE specific_term_id=%d AND shared_term_id=%d', self::table(), $specific_id, $shared_id ), ARRAY_A );
 			if ( ! empty( $current['group_uuid'] ) && ! $allow_group_edit ) {
 				return Access::error( 'ohmylms_mapping_group_invalid', __( 'Edit combined coverage as a complete group.', 'ohmylms' ), 409 );
 			}
@@ -169,7 +169,7 @@ final class SkillMappings {
 
 	public static function remove( $specific_id, $shared_id ) {
 		global $wpdb;
-		$group_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ) );
+		$group_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM %i WHERE specific_term_id=%d AND shared_term_id=%d', self::table(), $specific_id, $shared_id ) );
 		if ( $group_uuid ) {
 			return false;
 		}
@@ -215,7 +215,7 @@ final class SkillMappings {
 	 */
 	public static function group( $uuid ) {
 		global $wpdb;
-		$group = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'skill_mapping_groups' ) . ' WHERE uuid=%s', $uuid ), ARRAY_A );
+		$group = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE uuid=%s', Schema::table( 'skill_mapping_groups' ), $uuid ), ARRAY_A );
 		if ( ! $group ) {
 			return Access::error( 'ohmylms_mapping_group_missing', __( 'Combined coverage group not found.', 'ohmylms' ), 404 );
 		}
@@ -248,6 +248,7 @@ final class SkillMappings {
 	 * @param array  $groups Source IDs and revision-bearing mapping pairs.
 	 * @param int    $shared_id Shared target.
 	 * @param string $note Scope differences.
+	 * @param string $relation New relationship for the complete group.
 	 * @return array|\WP_Error
 	 */
 	public static function save_groups( array $groups, $shared_id, $note, $relation = 'combined' ) {
@@ -270,6 +271,9 @@ final class SkillMappings {
 					return Access::error( 'ohmylms_mapping_group_invalid', __( 'Choose distinct objectives belonging to their source syllabus, with current revisions.', 'ohmylms' ) );
 				}
 				$seen[] = $pair['specific_id'];
+				if ( count( $seen ) > 200 ) {
+					return Access::error( 'ohmylms_mapping_group_invalid', __( 'Save at most 200 objectives in one combined batch.', 'ohmylms' ) );
+				}
 			}
 		}
 		$lock = self::LOCK . '-' . md5( $wpdb->prefix );
@@ -279,9 +283,9 @@ final class SkillMappings {
 		$failure = null;
 		try {
 			foreach ( $seen as $specific_id ) {
-				$current_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM ' . self::table() . ' WHERE specific_term_id=%d AND shared_term_id=%d', $specific_id, $shared_id ) );
+				$current_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM %i WHERE specific_term_id=%d AND shared_term_id=%d', self::table(), $specific_id, $shared_id ) );
 				if ( $current_uuid ) {
-					$members = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT specific_term_id FROM ' . self::table() . ' WHERE group_uuid=%s', $current_uuid ) ) );
+					$members = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT specific_term_id FROM %i WHERE group_uuid=%s', self::table(), $current_uuid ) ) );
 					if ( array_diff( $members, $seen ) ) {
 						return Access::error( 'ohmylms_mapping_group_invalid', __( 'Include every member of the existing combined group before changing it.', 'ohmylms' ), 409 );
 					}
