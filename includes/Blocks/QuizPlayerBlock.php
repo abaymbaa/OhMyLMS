@@ -105,7 +105,7 @@ final class QuizPlayerBlock {
 			return '<p>' . esc_html__( 'This quiz is unavailable.', 'ohmylms' ) . '</p>';
 		}
 		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/quiz' );
-		\OhMyLMS\Quiz\PlayerTemplates::enqueue( 'classic' );
+		\OhMyLMS\Quiz\PlayerTemplates::enqueue( \OhMyLMS\Quiz\PlayerTemplates::DEFAULT_TEMPLATE );
 		// Loaded up front: the review appears after a submit refreshes only this region, which cannot add stylesheets.
 		wp_enqueue_style( 'ohmylms-answer-review', plugins_url( 'assets/css/answer-review.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 		\OhMyLMS\Assessment\Delivery::require_script();

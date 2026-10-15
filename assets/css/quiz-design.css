@@ -136,3 +136,24 @@
 	border: 0;
 }
 
+
+.ohmylms-player-template-choice.is-playful .ohmylms-player-template-swatch {
+	border: 2px solid #e5e5e5;
+	background: #fff;
+}
+
+.ohmylms-player-template-choice.is-playful i {
+	border: 2px solid #e5e5e5;
+	border-bottom-width: 4px;
+	background: #fff;
+}
+
+.ohmylms-player-template-choice.is-playful i:nth-child(1) {
+	border-color: #84d8ff;
+	background: #ddf4ff;
+}
+
+.ohmylms-player-template-choice.is-playful i:nth-child(4) {
+	border-color: #58a700;
+	background: #58cc02;
+}

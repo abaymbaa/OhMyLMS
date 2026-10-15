@@ -163,7 +163,7 @@ export function createQuizSettingsFields( readRuntime ) {
 			(
 				<React.Fragment>
 					<PlayerTemplatePicker
-						value={ d?.player_template || 'classic' }
+						value={ d?.player_template || 'playful' }
 						onChange={ ( template ) =>
 							x( 'player_template', template )
 						}

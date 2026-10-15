@@ -29,9 +29,11 @@ function player_template_check( $condition, $message ) {
 	++$checks;
 }
 
-player_template_check( array( 'classic', 'paper', 'focus' ) === array_column( PlayerTemplates::choices(), 'value' ), 'Built-in choices' );
+player_template_check( array( 'playful', 'classic', 'paper', 'focus' ) === array_column( PlayerTemplates::choices(), 'value' ), 'Built-in choices' );
+player_template_check( 'playful' === PlayerTemplates::DEFAULT_TEMPLATE && 'playful' === PlayerTemplates::resolve( null ), 'Playful is the default design' );
+player_template_check( 'classic' === PlayerTemplates::resolve( 'classic' ), 'A quiz that chose Classic keeps it' );
 foreach ( array( '../../evil', '<script>', array(), null, 7, 'missing' ) as $unsafe ) {
-	player_template_check( 'classic' === PlayerTemplates::resolve( $unsafe ), 'Unsafe or unregistered design must fall back' );
+	player_template_check( 'playful' === PlayerTemplates::resolve( $unsafe ), 'Unsafe or unregistered design must fall back' );
 }
 $registration = static function ( $templates ) {
 	$templates['school-blue'] = array(
@@ -46,8 +48,8 @@ $registration = static function ( $templates ) {
 add_filter( 'ohmylms_quiz_player_templates', $registration );
 player_template_check( 'school-blue' === PlayerTemplates::resolve( 'school-blue' ), 'Extensions can register choices' );
 $choices = PlayerTemplates::choices();
-player_template_check( 4 === count( $choices ), 'Malformed definitions are excluded' );
-player_template_check( 'School' === $choices[3]['label'] && ! isset( $choices[3]['stylesheet'] ), 'Public choices sanitize labels and omit implementation' );
+player_template_check( 5 === count( $choices ), 'Malformed definitions are excluded' );
+player_template_check( 'School' === $choices[4]['label'] && ! isset( $choices[4]['stylesheet'] ), 'Public choices sanitize labels and omit implementation' );
 wp_register_style( 'school-player', false, array(), '1' );
 PlayerTemplates::enqueue( 'school-blue' );
 player_template_check( wp_style_is( 'school-player', 'enqueued' ), 'Extension stylesheet is enqueued' );

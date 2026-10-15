@@ -306,6 +306,383 @@
 	--player-answer-4: #30384b;
 }
 
+/*
+ * Playful: the default design. White stage, bright green primary actions, blue selection and
+ * chunky buttons with a solid shadow edge. The colors follow a green / blue / red / orange /
+ * yellow palette; every value is a variable so a theme can change them.
+ */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful {
+	--playful-green: #58cc02;
+	--playful-green-edge: #58a700;
+	--playful-green-soft: #d7ffb8;
+	--playful-blue: #1cb0f6;
+	--playful-blue-edge: #1899d6;
+	--playful-blue-soft: #ddf4ff;
+	--playful-blue-line: #84d8ff;
+	--playful-red: #ff4b4b;
+	--playful-red-edge: #ea2b2b;
+	--playful-red-soft: #ffdfe0;
+	--playful-orange: #ff9600;
+	--playful-yellow: #ffc800;
+	--playful-ink: #4b4b4b;
+	--playful-muted: #afafaf;
+	--playful-line: #e5e5e5;
+	--playful-snow: #f7f7f7;
+	--player-stage: #fff;
+	--player-canvas: #fff;
+	--player-toolbar: #fff;
+	--player-toolbar-text: var(--playful-ink);
+	--player-grid: none;
+	--player-card-gradient: none;
+	--player-prompt: transparent;
+	--player-text: var(--playful-ink);
+	--player-accent: var(--playful-green);
+	--player-answer-1: #fff;
+	--player-answer-2: #fff;
+	--player-answer-3: #fff;
+	--player-answer-4: #fff;
+	font-family: var(--ohmylms-font-family, "Nunito", "DIN Round Pro", "Segoe UI", system-ui, sans-serif);
+	font-weight: 700;
+}
+
+/* Top bar: close button, title and a thick progress pill. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-header {
+	border-bottom: 2px solid var(--playful-line);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .header-title {
+	font-size: 17px;
+	font-weight: 800;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .quiz-page-close {
+	border: 0;
+	border-radius: 12px;
+	color: var(--playful-muted);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .quiz-page-close:hover {
+	background: var(--playful-snow);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-player-progress {
+	color: var(--playful-muted);
+	font-weight: 800;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-player-track {
+	height: 16px;
+	border-radius: 999px;
+	background: var(--playful-line);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-player-track span {
+	position: relative;
+	border-radius: 999px;
+	background: var(--playful-green);
+}
+
+/* A soft highlight along the top of the bar, as on a glossy pill. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-player-track span::after {
+	content: "";
+	position: absolute;
+	top: 4px;
+	right: 8px;
+	left: 8px;
+	height: 4px;
+	border-radius: 999px;
+	background: #ffffff55;
+}
+
+/* Questions sit on the page, not in a box. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .ohmylms-quiz-form-wrapper {
+	padding: 8px 0;
+	border-radius: 0;
+	background: transparent;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .quiz-box-header {
+	align-items: center;
+	padding: 0 0 8px;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .question-number {
+	padding: 4px 12px;
+	border: 2px solid var(--playful-blue-line);
+	border-radius: 999px;
+	background: var(--playful-blue-soft);
+	color: var(--playful-blue-edge);
+	font-size: 13px;
+	font-weight: 800;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-player-marks {
+	color: var(--playful-orange);
+	font-size: 14px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .question-box {
+	align-items: flex-start;
+	min-height: 0;
+	padding: 8px 4px 16px;
+	border: 0;
+	border-radius: 0;
+	text-align: left;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .question-box
+	:is(.the-question, .ohmylms-question-block-content, p, h1, h2, h3) {
+	font-size: clamp(21px, 2.4vw, 28px);
+	font-weight: 800;
+	line-height: 1.35;
+}
+
+/* Answer choices: white rows with a thick bottom edge; blue when picked. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .quiz-checkbox-radio-options {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+	gap: 12px;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .quiz-checkbox-radio-options
+	.option-box {
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	gap: 14px;
+	min-height: 68px;
+	padding: 14px 18px;
+	border: 2px solid var(--playful-line);
+	border-bottom-width: 4px;
+	border-radius: 16px;
+	background: #fff;
+	color: var(--playful-ink);
+	text-align: left;
+	transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .quiz-checkbox-radio-options
+	.single-option:hover
+	.option-box {
+	background: var(--playful-snow);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .single-option
+	input:checked
+	+ .option-box {
+	border-color: var(--playful-blue-line);
+	background: var(--playful-blue-soft);
+	box-shadow: none;
+	color: var(--playful-blue-edge);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .single-option
+	input:focus-visible
+	+ .option-box {
+	outline: 3px solid var(--playful-blue);
+	outline-offset: 2px;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .option-title {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+	font-size: 19px;
+	font-weight: 800;
+}
+
+/* The picked marker becomes a round badge in front of the answer. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .checked-check {
+	position: static;
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border: 2px solid var(--playful-line);
+	background: #fff;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	.ohmylms-quiz-form .single-option
+	input:checked
+	+ .option-box
+	.checked-check {
+	border-color: var(--playful-blue);
+	background: var(--playful-blue);
+}
+
+/* Typed answers and the other question types. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	:is(input[type="text"], input[type="number"], textarea, select, .ohmylms-text-input) {
+	padding: 14px 16px;
+	border: 2px solid var(--playful-line);
+	border-radius: 14px;
+	background: var(--playful-snow);
+	box-shadow: none;
+	color: var(--playful-ink);
+	font: inherit;
+	font-weight: 700;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	:is(input[type="text"], input[type="number"], textarea, select, .ohmylms-text-input):focus {
+	border-color: var(--playful-blue-line);
+	background: #fff;
+	outline: 0;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+	:is(
+		.ohmylms-extended-question,
+		.quiz-reorder-options,
+		.quiz-matching-options,
+		.ohmylms-interactive-question,
+		.quiz-textarea-options
+	) {
+	border: 2px solid var(--playful-line);
+	border-radius: 16px;
+	background: #fff;
+	color: var(--playful-ink);
+}
+
+/* Footer: a clean bar with a line above it, as on a lesson screen. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-footer {
+	border-top: 2px solid var(--playful-line);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-footer .skiptop-next {
+	color: var(--playful-muted);
+	font-weight: 800;
+	text-decoration: none;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* Buttons: green and chunky; the secondary one is white with a blue label. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button {
+	min-height: 50px;
+	padding: 12px 32px;
+	border: 0;
+	border-radius: 16px;
+	background: var(--playful-green);
+	box-shadow: 0 4px 0 var(--playful-green-edge);
+	color: #fff;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	transition: filter 0.12s ease, transform 0.06s ease, box-shadow 0.06s ease;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button:hover:not(:disabled) {
+	filter: brightness(1.06);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button:active:not(:disabled) {
+	box-shadow: 0 0 0 var(--playful-green-edge);
+	transform: translateY(4px);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button.outline {
+	border: 2px solid var(--playful-line);
+	background: #fff;
+	box-shadow: 0 4px 0 var(--playful-line);
+	color: var(--playful-blue);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button.outline:active:not(:disabled) {
+	box-shadow: 0 0 0 var(--playful-line);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button:disabled {
+	background: var(--playful-line);
+	box-shadow: none;
+	color: var(--playful-muted);
+	cursor: not-allowed;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-button:focus-visible {
+	outline: 3px solid var(--playful-blue);
+	outline-offset: 3px;
+}
+
+/* Timer, messages and the result card. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-timer {
+	border-bottom: 2px solid var(--playful-line);
+	background: #fff;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-timer .clock {
+	color: var(--playful-orange);
+	font-weight: 800;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-timer .progress-outer {
+	border-radius: 999px;
+	background: var(--playful-line);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-timer .progress-inner {
+	border-radius: 999px;
+	background: var(--playful-orange);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-result {
+	border: 2px solid var(--playful-line);
+	border-radius: 20px;
+	color: var(--playful-ink);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .required-question,
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-timeup-text {
+	padding: 8px 14px;
+	border-radius: 12px;
+	background: var(--playful-red-soft);
+	color: var(--playful-red-edge);
+	font-weight: 800;
+}
+
+/* Reordering and matching: chunky white chips, soft dashed drop zones. */
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful :is(.reorder-option, .matching-reorder-option, .matching-option) {
+	padding: 12px 16px;
+	border: 2px solid var(--playful-line);
+	border-bottom-width: 4px;
+	border-radius: 14px;
+	background: #fff;
+	color: var(--playful-ink);
+	font-size: 17px;
+	font-weight: 800;
+	cursor: grab;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful :is(.reorder-option, .matching-reorder-option, .matching-option):hover {
+	background: var(--playful-snow);
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful :is(.reorder-option, .matching-reorder-option, .matching-option):focus-visible {
+	outline: 3px solid var(--playful-blue);
+	outline-offset: 2px;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .option-drop-box {
+	border: 2px dashed var(--playful-line);
+	border-radius: 14px;
+	background: var(--playful-snow);
+	color: var(--playful-muted);
+	font-weight: 800;
+}
+
+:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .option-drop-box:is(.is-over, .dragover, :hover) {
+	border-color: var(--playful-blue-line);
+	background: var(--playful-blue-soft);
+}
+
 @media (max-width: 700px) {
 
 	:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz[data-player-template] .ohmylms-quiz-form .quiz-checkbox-radio-options {
@@ -325,3 +702,22 @@
 }
 
 
+
+/* Phones: answers stack as a single list, like a lesson screen. */
+@media (max-width: 700px) {
+
+	:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .quiz-checkbox-radio-options {
+		grid-template-columns: 1fr;
+	}
+
+	:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful
+		.ohmylms-quiz-form .quiz-checkbox-radio-options
+		.option-box {
+		min-height: 60px;
+	}
+
+	:is(body.ohmylms-page, .ohmylms-inline-quiz) .ohmylms-quiz.ohmylms-player-template-playful .ohmylms-quiz-form .question-box {
+		min-height: 0;
+		padding: 8px 4px 12px;
+	}
+}

@@ -12,6 +12,9 @@ defined( 'ABSPATH' ) || exit;
 /** Registered designs share forms, grading, timing and navigation. */
 final class PlayerTemplates {
 
+	/** Design used when a quiz has not chosen one. */
+	const DEFAULT_TEMPLATE = 'playful';
+
 	/**
 	 * Return safe presentation definitions, including extension registrations.
 	 *
@@ -19,6 +22,10 @@ final class PlayerTemplates {
 	 */
 	public static function all() {
 		$defaults   = array(
+			'playful' => array(
+				'label'       => __( 'Playful', 'ohmylms' ),
+				'description' => __( 'A bright white stage with green and blue answers and chunky buttons. The default design.', 'ohmylms' ),
+			),
 			'classic' => array(
 				'label'       => __( 'Classic', 'ohmylms' ),
 				'description' => __( 'Dark question stage and colorful answer cards.', 'ohmylms' ),
@@ -54,7 +61,7 @@ final class PlayerTemplates {
 	 * @return string
 	 */
 	public static function resolve( $selected ) {
-		return is_string( $selected ) && isset( self::all()[ $selected ] ) ? $selected : 'classic';
+		return is_string( $selected ) && isset( self::all()[ $selected ] ) ? $selected : self::DEFAULT_TEMPLATE;
 	}
 
 	/**
