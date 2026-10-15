@@ -116,6 +116,22 @@ final class Service {
 		self::audit( $id, 'school_created', $id );
 		return array( 'id' => $id );
 	}
+	public static function update_school( $school, $data ) {
+		Access::require_access( Access::school( $school ) );
+		$name = self::text( $data['name'] ?? '' );
+		$zone = self::text( $data['timezone'] ?? 'UTC', 80 );
+		self::need( $name && in_array( $zone, timezone_identifiers_list(), true ), 'Provide a school name and a valid timezone.' );
+		self::update(
+			'schools',
+			array(
+				'name'     => $name,
+				'timezone' => $zone,
+			),
+			array( 'id' => $school )
+		);
+		self::audit( $school, 'school_updated', $school );
+		return array( 'success' => true );
+	}
 	public static function years( $school ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school, array( 'school_admin', 'teacher' ) ) );

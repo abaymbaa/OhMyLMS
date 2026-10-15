@@ -34,6 +34,7 @@ $hub_icons = array(
 	'school-overview' => 'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
 	'school-classes'  => 'M3 5h18v12H3zM8 21h8M12 17v4',
 	'school-people'   => 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M17 4a4 4 0 0 1 0 7M22 21v-2a4 4 0 0 0-3-4',
+	'school-settings' => 'M4 7h16M4 17h16M8 4v6M16 14v6',
 	'school-invites'  => 'M4 4h16v16H4zM4 8l8 6 8-6',
 	'family'          => 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M17 4a4 4 0 0 1 0 7M22 21v-2a4 4 0 0 0-3-4',
 	'progress'        => 'M4 20V10M10 20V4M16 20v-8M22 20H2',

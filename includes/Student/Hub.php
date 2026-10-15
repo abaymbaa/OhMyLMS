@@ -575,12 +575,13 @@ final class Hub {
 			if ( ! SchoolWorkspace::available() ) {
 				return '<p>' . esc_html__( 'The school workspace is not available for this account.', 'ohmylms' ) . '</p>';
 			}
-			$config['tabs']                      = array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'account' );
+			$config['tabs']                      = array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'school-settings', 'account' );
 			$config['title']                     = __( 'School workspace', 'ohmylms' );
 			$config['labels']['school-overview'] = __( 'Overview', 'ohmylms' );
 			$config['labels']['school-classes']  = __( 'Classes', 'ohmylms' );
 			$config['labels']['school-people']   = __( 'People', 'ohmylms' );
 			$config['labels']['school-invites']  = __( 'Invitations', 'ohmylms' );
+			$config['labels']['school-settings'] = __( 'School settings', 'ohmylms' );
 			$section                             = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'school-overview';
 			$views                               = 'account' === $section ? self::views( $section ) : array();
 			$view                                = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );

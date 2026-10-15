@@ -59,6 +59,13 @@ final class SchoolActions {
 		Access::require_access( SchoolWorkspace::available() );
 		$school_id = absint( $school_id );
 		switch ( $operation ) {
+			case 'update_school':
+				Service::update_school( $school_id, $data );
+				return array( 'message' => __( 'School details saved.', 'ohmylms' ) );
+			case 'remove_member':
+				Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm removing this person from the school.' );
+				Service::remove_member( $school_id, absint( $data['member_id'] ?? 0 ) );
+				return array( 'message' => __( 'Person removed from the school. Their account and history were kept.', 'ohmylms' ) );
 			case 'create_year':
 				Service::create_year( $school_id, $data );
 				return array( 'message' => __( 'Academic year created.', 'ohmylms' ) );
@@ -107,13 +114,13 @@ final class SchoolActions {
 		check_admin_referer( self::ACTION . '_' . $operation );
 		$school_id = isset( $_POST['school_id'] ) ? absint( $_POST['school_id'] ) : 0;
 		$section   = isset( $_POST['return_section'] ) && is_string( $_POST['return_section'] ) ? sanitize_key( wp_unslash( $_POST['return_section'] ) ) : 'school-overview';
-		$section   = in_array( $section, array( 'school-overview', 'school-classes', 'school-people', 'school-invites' ), true ) ? $section : 'school-overview';
+		$section   = in_array( $section, array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'school-settings' ), true ) ? $section : 'school-overview';
 		try {
 			if ( 'POST' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 				throw new \RuntimeException( 'Invalid request.', 400 );
 			}
 			$data = array();
-			foreach ( array( 'name', 'timezone', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm' ) as $key ) {
+			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm' ) as $key ) {
 				$data[ $key ] = isset( $_POST[ $key ] ) && is_string( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			}
 			$flash = self::apply( $operation, $school_id, $data );

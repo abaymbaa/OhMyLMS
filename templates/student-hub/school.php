@@ -173,7 +173,16 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 			<?php else : ?>
 				<ul class="oml-hub-commerce-list">
 					<?php foreach ( $school_roster as $school_person ) : ?>
-						<li><div><strong><?php echo esc_html( $school_person['display_name'] ); ?></strong><p class="oml-hub-family-meta"><span class="oml-hub-chip"><?php echo esc_html( $school_labels[ $school_person['role'] ] ?? $school_person['role'] ); ?></span><?php echo ! empty( $school_person['external_student_id'] ) ? ' ' . esc_html( $school_person['external_student_id'] ) : ''; ?></p></div></li>
+						<li><div><strong><?php echo esc_html( $school_person['display_name'] ); ?></strong><p class="oml-hub-family-meta"><span class="oml-hub-chip"><?php echo esc_html( $school_labels[ $school_person['role'] ] ?? $school_person['role'] ); ?></span><?php echo ! empty( $school_person['external_student_id'] ) ? ' ' . esc_html( $school_person['external_student_id'] ) : ''; ?></p></div>
+							<?php if ( get_current_user_id() !== (int) $school_person['user_id'] ) : ?>
+								<form method="post" action="<?php echo esc_url( $school_post ); ?>" class="oml-hub-family-actions">
+									<?php SchoolActions::fields( 'remove_member', $school_id, 'school-people' ); ?>
+									<input type="hidden" name="member_id" value="<?php echo esc_attr( $school_person['id'] ); ?>">
+									<label class="oml-hub-family-confirm"><input type="checkbox" name="confirm" value="yes" required> <?php esc_html_e( 'Confirm removal', 'ohmylms' ); ?></label>
+									<button type="submit" class="oml-hub-pill oml-hub-pill-danger"><?php esc_html_e( 'Remove', 'ohmylms' ); ?></button>
+								</form>
+							<?php endif; ?>
+						</li>
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>
@@ -301,6 +310,22 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>
+		</section>
+	<?php elseif ( 'school-settings' === $section ) : ?>
+		<section class="oml-hub-card oml-hub-settings-card">
+			<h2><?php esc_html_e( 'School settings', 'ohmylms' ); ?></h2>
+			<form method="post" action="<?php echo esc_url( $school_post ); ?>" autocomplete="off">
+				<?php SchoolActions::fields( 'update_school', $school_id, 'school-settings' ); ?>
+				<div class="oml-hub-field"><label for="ssn-name"><?php esc_html_e( 'School name', 'ohmylms' ); ?></label><input id="ssn-name" name="name" type="text" required maxlength="190" value="<?php echo esc_attr( $school['name'] ); ?>"></div>
+				<div class="oml-hub-field"><label for="ssn-zone"><?php esc_html_e( 'Time zone', 'ohmylms' ); ?></label>
+					<select id="ssn-zone" name="timezone">
+						<?php foreach ( timezone_identifiers_list() as $school_zone ) : ?>
+							<option value="<?php echo esc_attr( $school_zone ); ?>" <?php selected( $school['timezone'], $school_zone ); ?>><?php echo esc_html( $school_zone ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Save changes', 'ohmylms' ); ?></button></p>
+			</form>
 		</section>
 	<?php endif; ?>
 </div>
