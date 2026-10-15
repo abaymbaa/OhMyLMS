@@ -32,7 +32,10 @@ const scope = {
 		children,
 	} ),
 	Fragment: 'fragment',
-	useState: ( value ) => [ value, () => {} ],
+	useState: ( value ) => [
+		typeof value === 'function' ? value() : value,
+		() => {},
+	],
 	useEffect: () => {},
 	__: ( text ) => text,
 	_n: ( one, many, count ) => ( count === 1 ? one : many ),

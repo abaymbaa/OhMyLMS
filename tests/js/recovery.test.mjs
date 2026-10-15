@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from '@babel/parser';
 import traverseModule from '@babel/traverse';
+import { stringLiteral } from '@babel/types';
 import crypto from 'node:crypto';
 const root = path.resolve( import.meta.dirname, '../..' );
 const manifest = JSON.parse(
@@ -28,6 +29,13 @@ const canonical = ( text ) => {
 	const traverse = traverseModule.default || traverseModule;
 	// Babel adds braces to disambiguate nested if/else statements when printing.
 	traverse( ast, {
+		// Formatters may quote or unquote ordinary object property names.
+		// Computed keys still evaluate expressions and must remain distinct.
+		'ObjectProperty|ObjectMethod'( p ) {
+			if ( ! p.node.computed && p.node.key.type === 'Identifier' ) {
+				p.node.key = stringLiteral( p.node.key.name );
+			}
+		},
 		BlockStatement( p ) {
 			if (
 				p.parentPath.isIfStatement() &&
@@ -61,6 +69,20 @@ const canonical = ( text ) => {
 		)
 		.digest( 'hex' );
 };
+test( 'asset comparison ignores property-key quoting while preserving values and computed keys', () => {
+	assert.equal(
+		canonical( '({ name: 1 })' ),
+		canonical( '({ "name": 1 })' )
+	);
+	assert.notEqual(
+		canonical( '({ name: 1 })' ),
+		canonical( '({ name: 2 })' )
+	);
+	assert.notEqual(
+		canonical( '({ name: 1 })' ),
+		canonical( '({ [name]: 1 })' )
+	);
+} );
 test( 'reassembled assets preserve shipped AST outside the authored admin app', () => {
 	// The shipped admin app now includes the authored SDK adapters, rather than the recovered baseline.
 	for ( const asset of manifest.assets.filter(
