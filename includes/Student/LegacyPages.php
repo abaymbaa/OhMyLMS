@@ -214,13 +214,17 @@ final class LegacyPages {
 	 * @return string
 	 */
 	public static function admin_target( $view, array $query ) {
-		if ( ! in_array( $view, array( '', 'school-dashboard' ), true ) || ! is_user_logged_in() || ! current_user_can( 'read' ) || \OhMyLMS\Schools\ViewAs::session() ) {
+		if ( ! in_array( $view, array( '', 'school-dashboard' ), true ) || ! is_user_logged_in() || \OhMyLMS\Schools\ViewAs::session() ) {
 			return '';
 		}
 		foreach ( array( 'ohmylms_invite', 'ohmylms_school_file' ) as $keep ) {
 			if ( isset( $query[ $keep ] ) ) {
 				return '';
 			}
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			// School staff use the school workspace, never the WordPress dashboard.
+			return SchoolWorkspace::available() ? SchoolWorkspace::url( 'school-overview', '', ! empty( $query['school'] ) ? absint( $query['school'] ) : 0 ) : '';
 		}
 		$args = array( 'page' => 'ohmylms-schools' );
 		foreach ( array( 'school', 'class' ) as $key ) {
@@ -263,7 +267,7 @@ final class LegacyPages {
 					$values[ $key ] = sanitize_key( wp_unslash( (string) $_GET[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
 				}
 			}
-			$target = self::admin_target( $view, $query + $values );
+			$target = self::admin_target( $view, array_merge( $query, $values ) );
 		}
 		if ( ! $target && ! is_user_logged_in() && Hub::base_url() ) {
 			$target = Hub::base_url();

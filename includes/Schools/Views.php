@@ -66,6 +66,14 @@ final class Views {
 		add_action( 'template_redirect', array( self::class, 'portal' ) );
 	}
 	public static function redirect_management() {
+		if ( ( $_GET['page'] ?? '' ) === 'ohmylms-schools' && ! current_user_can( 'manage_options' ) ) {
+			// Non-administrators never use the WordPress dashboard for school work.
+			$workspace = \OhMyLMS\Student\SchoolWorkspace::available() ? \OhMyLMS\Student\SchoolWorkspace::url() : \OhMyLMS\Student\Hub::base_url();
+			if ( $workspace ) {
+				wp_safe_redirect( $workspace );
+				exit;
+			}
+		}
 		if ( ( $_GET['page'] ?? '' ) !== 'ohmylms-schools' || ! current_user_can( 'manage_options' ) || isset( $_GET['school'] ) || isset( $_GET['class'] ) ) {
 			return; }
 		$tab = sanitize_key( $_GET['tab'] ?? 'schools' );
