@@ -543,7 +543,7 @@ export function createQuizSettingsFields( readRuntime ) {
 								'ohmylms'
 							),
 							description: ( 0, I18n.__ )(
-								'After submitting, students see their answers next to the correct answers and any explanation. Off by default. Unavailable while “Hide Answers On Results Page” is on.',
+								'After submitting, students see their answers next to the correct answers and any explanation. On by default; turn it off to keep the answers private. Unavailable while “Hide Answers On Results Page” is on.',
 								'ohmylms'
 							),
 							className:
@@ -558,7 +558,7 @@ export function createQuizSettingsFields( readRuntime ) {
 						>
 							<Bt.A
 								checked={
-									!! d?.show_correct_answers &&
+									( d?.show_correct_answers ?? true ) &&
 									! d?.hide_answers
 								}
 								disabled={ !! d?.hide_answers }

@@ -10,11 +10,17 @@ use OhMyLMS\Quiz\Submission;
 global $wpdb;
 ok(Schema::ready(), 'Assessment schema not installed');
 
-// The switch is opt-in, and the older "hide answers" switch still wins.
-ok(!AnswerReview::enabled([]), 'Answers are shown without the switch');
+// Answers are shown unless the quiz turns the switch off, and the older "hide answers" switch still wins.
+ok(AnswerReview::enabled([]), 'Answers are hidden for a quiz that never set the switch');
+ok(AnswerReview::enabled(['show_correct_answers' => null]), 'A missing value did not use the default');
+ok(AnswerReview::enabled(['hide_answers' => false]), 'A quiz with other settings lost the default');
 ok(AnswerReview::enabled(['show_correct_answers' => true]), 'The switch has no effect');
 ok(AnswerReview::enabled(['show_correct_answers' => '1', 'hide_answers' => false]), 'A stored "1" does not count as on');
+ok(!AnswerReview::enabled(['show_correct_answers' => false]), 'Turning the switch off did not hide the answers');
+ok(!AnswerReview::enabled(['show_correct_answers' => '0']), 'A stored "0" counted as on');
+ok(!AnswerReview::enabled(['show_correct_answers' => '']), 'An empty stored value counted as on');
 ok(!AnswerReview::enabled(['show_correct_answers' => 'false']), 'A stored "false" counted as on');
+ok(!AnswerReview::enabled(['hide_answers' => true]), 'Hide answers did not hide a quiz that never set the switch');
 ok(!AnswerReview::enabled(['show_correct_answers' => true, 'hide_answers' => true]), 'Hide answers did not win over the switch');
 
 // Outcome, and which attempt is reviewed: the one asked for if it may be reviewed, otherwise the newest.
@@ -84,6 +90,7 @@ $settings = ohmylms_get_quiz($quiz_id)->get_settings();
 $row = ['quiz_attempt_id' => $attempt, 'status' => 'in-review'];
 ok(AnswerReview::can_review($settings, $row), 'A submitted attempt cannot be reviewed');
 ok(!AnswerReview::can_review(['show_correct_answers' => false], $row), 'Review is shown with the switch off');
+ok(AnswerReview::can_review([], $row), 'Review is hidden for a quiz that never set the switch');
 ok(!AnswerReview::can_review($settings + ['hide_answers' => true], $row), 'Review is shown with hide answers on');
 
 $by = $entries_for();

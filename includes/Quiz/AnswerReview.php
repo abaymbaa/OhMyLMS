@@ -25,10 +25,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Lets a learner see, after submitting, what they answered next to the correct answer.
  *
- * It is opt-in per quiz (the "Show correct answers" switch on the quiz introduction tab)
- * and never reveals more than the quiz allows: the older "Hide Answers On Results Page"
- * switch still wins, a submitted attempt is required, and exam attempts stay hidden until
- * their results are released. Versioned attempts are reviewed against the questions frozen
+ * It is on unless a quiz turns it off (the "Show correct answers" switch on the quiz
+ * introduction tab) and never reveals more than the quiz allows: the older "Hide Answers On
+ * Results Page" switch still wins, a submitted attempt is required, and exam attempts stay
+ * hidden until their results are released. Versioned attempts are reviewed against the questions frozen
  * into the attempt; older attempts use the question as it is now.
  */
 final class AnswerReview {
@@ -45,13 +45,18 @@ final class AnswerReview {
 	const EPSILON = 0.00005;
 
 	/**
-	 * Has the quiz asked for answers to be shown on the result screen?
+	 * Are answers shown on the result screen of this quiz?
+	 *
+	 * A quiz that never set the switch shows them, so learners see what they got wrong. A
+	 * quiz that switched it off, and the older "Hide Answers On Results Page" switch, keep
+	 * them hidden.
 	 *
 	 * @param array $settings Quiz settings.
 	 * @return bool
 	 */
 	public static function enabled( array $settings ) {
-		return rest_sanitize_boolean( $settings[ self::SETTING ] ?? false ) && ! rest_sanitize_boolean( $settings['hide_answers'] ?? false );
+		$chosen = isset( $settings[ self::SETTING ] ) ? rest_sanitize_boolean( $settings[ self::SETTING ] ) : true;
+		return $chosen && ! rest_sanitize_boolean( $settings['hide_answers'] ?? false );
 	}
 
 	/**
