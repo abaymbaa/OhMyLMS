@@ -31,6 +31,7 @@ final class Interactivity {
 			'questions'     => 'questions',
 			'tabs'          => 'tabs',
 			'curriculum'    => 'curriculum',
+			'bundles'       => 'bundles',
 		) as $id => $file ) {
 			$path         = 'assets/interactivity/' . $file . '.js';
 			$dependencies = apply_filters(

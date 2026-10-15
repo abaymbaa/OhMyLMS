@@ -9,8 +9,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * The learner's bundle dashboard: followed bundles with per-course and per-syllabus progress,
  * skill strengths and gaps, next practice and combined skill views, plus suggested bundles to
- * add. Rendered on the server (all output escaped); a small script only calls the follow and
- * unfollow endpoints and swaps in the section they return.
+ * add. Rendered on the server (all output escaped); an Interactivity API module (ohmylms/bundles) only calls the
+ * follow and unfollow endpoints and swaps in the section they return.
  */
 final class Frontend {
 	private static $printed = false;
@@ -37,16 +37,17 @@ final class Frontend {
 
 	public static function enqueue() {
 		wp_enqueue_style( 'ohmylms-learning-bundles', plugins_url( 'assets/css/learning-bundles.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
-		wp_enqueue_script( 'ohmylms-learning-bundles', plugins_url( 'assets/js/learning-bundles.js', OHMYLMS_FILE ), array(), OHMYLMS_VERSION, true );
-		wp_localize_script(
-			'ohmylms-learning-bundles',
-			'ohmylmsBundles',
+		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/bundles' );
+		wp_interactivity_state(
+			'ohmylms/bundles',
 			array(
-				'root'    => esc_url_raw( rest_url( 'ohmylms/v1/' ) ),
-				'nonce'   => wp_create_nonce( 'wp_rest' ),
-				'added'   => __( 'Added to your dashboard.', 'ohmylms' ),
-				'removed' => __( 'Removed from your dashboard.', 'ohmylms' ),
-				'error'   => __( 'Could not update your dashboard. Please try again.', 'ohmylms' ),
+				'root'     => esc_url_raw( rest_url( 'ohmylms/v1/' ) ),
+				'nonce'    => wp_create_nonce( 'wp_rest' ),
+				'messages' => array(
+					'added'   => __( 'Added to your dashboard.', 'ohmylms' ),
+					'removed' => __( 'Removed from your dashboard.', 'ohmylms' ),
+					'error'   => __( 'Could not update your dashboard. Please try again.', 'ohmylms' ),
+				),
 			)
 		);
 	}
@@ -65,10 +66,11 @@ final class Frontend {
 		self::enqueue();
 		ob_start();
 		?>
+		<div class="ohmylms-bundles-root" data-wp-interactive="ohmylms/bundles" data-wp-on--click="actions.click">
+		<p class="ohmylms-bundles-status" role="status" aria-live="polite" data-wp-text="state.status"></p>
 		<section class="ohmylms-bundles" id="ohmylms-bundles" aria-labelledby="ohmylms-bundles-title" tabindex="-1">
 			<h2 id="ohmylms-bundles-title" class="my-courses-title"><?php esc_html_e( 'My course bundles', 'ohmylms' ); ?></h2>
 			<p class="ohmylms-bundles-note"><?php esc_html_e( 'Adding a bundle puts it on this dashboard. It does not enrol you in any course or change what you can open. Course progress and skill levels are shown separately: a skill level never completes a course.', 'ohmylms' ); ?></p>
-			<p class="ohmylms-bundles-status" role="status" aria-live="polite"></p>
 			<?php if ( ! $followed ) { ?>
 				<p><?php esc_html_e( 'You have not added any course bundles yet.', 'ohmylms' ); ?></p>
 			<?php } ?>
@@ -98,6 +100,7 @@ final class Frontend {
 				</ul>
 			<?php } ?>
 		</section>
+		</div>
 		<?php
 		return ob_get_clean();
 	}

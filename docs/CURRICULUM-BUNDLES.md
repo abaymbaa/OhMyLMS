@@ -103,7 +103,7 @@ Hook: `do_action('ohmylms_lms_student_dashboard_sections')` fires at the end of 
 - PHP: `includes/Curriculum/` (Schema, Tree, Items, Links, SkillMappings, Access, Bootstrap, and `Placement`, the one place that knows how courses sit in the curriculum and bundles), `includes/Bundles/` (Bundles, Follows, Progress, Combined, Frontend), controllers `CurriculumController`, `CourseOrganizationController`, `SkillMappingController`, `BundleController`, `MyBundlesController` in `includes/Rest/V1/`. `CategoryController` and `TagController` are now read-only compatibility views. Public lists use `ohmylms_course_ids_for_group()` in `includes/Utility/course-functions.php`.
 - Admin UI: `assets/src/features/curriculum/` and `assets/src/features/bundles/`, registered through `registerCurriculumPages` and lazy chunks in `assets/src/extensions/lazyFeatures.js`; styles in `assets/css/admin-ui.css`.
 - Course editor Organize tab: `assets/src/features/courses/CourseOrganization.jsx` and `organization.mjs`. Membership plan picker: `assets/src/features/memberships/MembershipCourses.jsx` and `CurriculumMindmap.jsx`. Old category and tag screens: `assets/src/features/taxonomies/` is kept for reference but its routes are replaced in `assets/src/extensions/index.jsx`.
-- Learner UI: server-rendered by `Bundles\Frontend`, with `assets/js/learning-bundles.js` and `assets/css/learning-bundles.css`.
+- Learner UI: server-rendered by `Bundles\Frontend`, with the `ohmylms/bundles` Interactivity API module (`assets/interactivity/bundles.js`) and `assets/css/learning-bundles.css`.
 
 ## Validation
 

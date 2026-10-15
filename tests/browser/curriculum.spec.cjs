@@ -262,7 +262,7 @@ test('learner finds, adds and removes a bundle; following does not enrol or gran
   await login(page, state.login, state.password);
   // On the real student dashboard the section sits beneath the standard statistics, exactly once.
   await page.goto(state.dashboard_url);
-  await expect(page.getByText('Enrolled Courses', { exact: true })).toBeVisible();
+  await expect(page.getByText('Enrolled courses', { exact: true })).toBeVisible();
   await expect(page.locator('#ohmylms-bundles')).toHaveCount(1);
   await expect(page.locator('#ohmylms-bundles').getByRole('heading', { name: 'My course bundles' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('learner-dashboard-page.png'), fullPage: true });
@@ -273,7 +273,7 @@ test('learner finds, adds and removes a bundle; following does not enrol or gran
   const suggestion = section.locator('.ohmylms-bundles-suggested li', { hasText: bundle });
   await expect(suggestion.getByText('Includes 1 course you are enrolled in.')).toBeVisible();
   // The learner cannot reach administration.
-  const denied = await page.evaluate(async () => { const c = window.ohmylmsBundles; const get = (path) => fetch(c.root + path, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return [await get('curriculum/tree'), await get('bundles'), await get('skill-mappings')]; });
+  const denied = await page.evaluate(async () => { const c = JSON.parse(document.getElementById('wp-script-module-data-@wordpress/interactivity').textContent).state['ohmylms/bundles']; const get = (path) => fetch(c.root + path, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return [await get('curriculum/tree'), await get('bundles'), await get('skill-mappings')]; });
   expect(denied).toEqual([403, 403, 403]);
 
   // Add it: keyboard operable, announced, focus returns to the section.
@@ -302,7 +302,7 @@ test('learner finds, adds and removes a bundle; following does not enrol or gran
   expect(await followed.innerText()).not.toMatch(/\d\s?%/);
   await expect(followed.getByText('Course completed')).toHaveCount(0);
   // Following changed neither enrollment nor access.
-  const access = await page.evaluate(async ({ other, enrolled }) => { const c = window.ohmylmsBundles; const get = (id) => fetch(`${c.root}courses/${id}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return { other: await get(other), enrolled: await get(enrolled) }; }, { other: state.other_course, enrolled: state.enrolled_course });
+  const access = await page.evaluate(async ({ other, enrolled }) => { const c = JSON.parse(document.getElementById('wp-script-module-data-@wordpress/interactivity').textContent).state['ohmylms/bundles']; const get = (id) => fetch(`${c.root}courses/${id}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return { other: await get(other), enrolled: await get(enrolled) }; }, { other: state.other_course, enrolled: state.enrolled_course });
   expect(access.other).toBe(403);
   expect(access.enrolled).not.toBe(403);
   await page.screenshot({ path: testInfo.outputPath('learner-desktop.png'), fullPage: true });
@@ -318,7 +318,7 @@ test('learner finds, adds and removes a bundle; following does not enrol or gran
   await page.locator('#ohmylms-bundles').getByRole('button', { name: `Remove ${bundle} from my dashboard` }).click();
   await expect(page.locator('#ohmylms-bundles').getByRole('article', { name: bundle })).toHaveCount(0);
   await expect(page.locator('#ohmylms-bundles .ohmylms-bundles-suggested li', { hasText: bundle })).toBeVisible();
-  const still = await page.evaluate(async (enrolled) => { const c = window.ohmylmsBundles; return fetch(`${c.root}courses/${enrolled}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); }, state.enrolled_course);
+  const still = await page.evaluate(async (enrolled) => { const c = JSON.parse(document.getElementById('wp-script-module-data-@wordpress/interactivity').textContent).state['ohmylms/bundles']; return fetch(`${c.root}courses/${enrolled}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); }, state.enrolled_course);
   expect(still).not.toBe(403);
   expect(problems).toEqual([]);
 });
