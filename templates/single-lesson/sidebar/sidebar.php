@@ -10,7 +10,11 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
+}
+
+if ( \OhMyLMS\Student\PlayerContext::active() ) {
+	return;
 }
 
 if ( get_post_type() === 'ohmylms-lesson' ) {

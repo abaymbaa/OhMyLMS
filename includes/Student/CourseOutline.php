@@ -199,18 +199,19 @@ final class CourseOutline {
 			$complete = $enrolled && $student && (bool) $student->maybe_completed( $content );
 		}
 		if ( $enrolled ) {
-			$url = ! empty( $item['url'] ) ? $item['url'] : $course->get_content_link( $content );
+			$url = ! empty( $item['url'] ) ? $item['url'] : ohmylms_get_pretty_content_permalink( $content );
 		} else {
 			$url = self::course_page( $course->get_id() );
 		}
 		return array(
-			'kind'     => in_array( $type, array( 'quiz', 'assignment' ), true ) ? $type : 'lesson',
-			'name'     => get_the_title( $content ),
-			'complete' => $complete,
-			'required' => ! empty( $item['required'] ),
-			'level'    => null,
-			'label'    => '',
-			'url'      => $url,
+			'content_id' => $content,
+			'kind'       => in_array( $type, array( 'quiz', 'assignment' ), true ) ? $type : 'lesson',
+			'name'       => get_the_title( $content ),
+			'complete'   => $complete,
+			'required'   => ! empty( $item['required'] ),
+			'level'      => null,
+			'label'      => '',
+			'url'        => $url,
 		);
 	}
 
