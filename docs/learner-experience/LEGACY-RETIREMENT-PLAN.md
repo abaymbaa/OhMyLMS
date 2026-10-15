@@ -106,3 +106,33 @@ in `CONTINUE-LEARNER-HUB.md`.
    removes retired definitions from it. A probe confirms only the three retired keys are
    dropped. Calling the REST restore itself was avoided because it would also recreate
    other missing default pages on the live site.
+
+## Step 5 findings: the school portal is not a legacy page (October 16, 2026)
+
+Inspection of `assets/src/features/schools/index.jsx` (about 2,300 lines) and
+`Schools/Views.php` shows the portal's `school-dashboard` is the full school
+administration product, not a retired learner page. It covers schools, academic years,
+classes, staff and roster management, roster import, invitations for every role
+(including activation), grading, skill reports and managed students. The same app also
+runs inside wp-admin (`admin-management`, `Views.php:99`) and the Account Hub's
+People/Classes/Schools tabs. Rebuilding that in the hub would be a large new product, so
+the earlier idea of giving administration a hub home is **withdrawn**.
+
+Revised direction:
+
+1. **Keep the portal app as "School administration"** for school admins and platform
+   admins (and keep the wp-admin host). Do not retire its route; `PeopleDirectory.jsx` and
+   View-as depend on it.
+2. **Retire only the learner-facing portal surfaces**: `parent-dashboard` and
+   `student-assignments` (done), the teacher dashboard (done), and then sign-in and
+   registration.
+3. **Registration is the open policy question.** The hub chooser only creates parent
+   accounts. The portal also offers student and teacher self-registration through the same
+   `Controller::signup()`. Before redirecting those views and blocks, decide whether
+   student and teacher self-registration should exist. If yes, add them to the hub chooser
+   (the handler already accepts the role); if no, disable them first (a school-level
+   policy switch) and then retire the blocks.
+4. After 3, point `loginUrl`/`logoutUrl` in the portal config at the hub and keep a
+   redirect for the old registration URLs.
+
+Needs from you: whether student and teacher self-registration should remain.
