@@ -1403,6 +1403,6 @@ URLs dropped non-administrators into the WordPress dashboard; they now go to the
 sent to the Account Hub. (2) The forwarded `school` id was replaced by a presence flag (`1`);
 the real id is now kept. Probes still pass (school workspace 35, redirects 12, chooser 17).
 The school fixture and the added `ohmylms_school_admin` role were removed; the test teacher
-account (ID 404) and its credentials file remain until the user asks to delete them.
+account (ID 404) and its credentials file were deleted afterwards (verified).
 Not tested live: a second account accepting a school teacher invitation as a non-admin.
 
