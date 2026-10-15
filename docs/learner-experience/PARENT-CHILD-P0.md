@@ -1,7 +1,17 @@
 # Parent and child: P0 implementation contract
 
 Source audit: October 16, 2026. This records implementation decisions and remaining
-reference gaps; it does not claim parent/child UI or new tables are implemented.
+reference gaps.
+
+**Status as of October 16, 2026:** the contract below has been implemented through P1, P2 and
+P3a-P3d: role chooser and parent sign-up, school-linked read-only child overview, and the
+independent family schema (`ohmylms_family_schema`, tables `ohmylms_family_links`,
+`_invitations`, `_audit`) with managed children, setup links, existing-learner invitations,
+learning choices and revocation. Differences from this contract: family operations use
+`admin-post` forms rather than a `/ohmylms/v1/family` REST namespace, and the hub password minimum was
+reconciled to 12-128. Not yet done: home-learning reports (P6) and the unobserved reference screens.
+See "Current state: start here" in the continuation ledger. The "No migrations or parent UI have
+run" line near the end is historical.
 Read with [the screen specification](learner-hub-development.md) and the
 [continuation ledger](../../CONTINUE-LEARNER-HUB.md).
 
@@ -47,7 +57,7 @@ parent dashboard as a verified Khan Academy replica.
 
 Use additive, independently versioned `Family` services and tables. Do not modify
 the meaning of `school_id`, and do not use zero as a school-permission wildcard.
-These are planned schema names, not installed tables:
+These schema names are now installed (version 1, with an added `kind` column on invitations):
 
 - `ohmylms_family_links`: ID, guardian user ID, learner user ID, explicit scope
   `home_learning`, status `pending|active|revoked`, approval actor/time, approval

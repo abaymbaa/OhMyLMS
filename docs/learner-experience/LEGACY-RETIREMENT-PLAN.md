@@ -1,7 +1,8 @@
 # Legacy retirement: inventory and proposal
 
-Inventory taken October 16, 2026 against http://800.local and the plugin source. Nothing
-below has been changed by this document. Rules from the user: retire old pages and
+Inventory taken October 16, 2026 against http://800.local and the plugin source. Status: the
+retire-now steps and the later decision to drop the front-end portal are done (see the status
+sections at the end); this section is the original inventory. Rules from the user: retire old pages and
 shortcodes only as replacements are verified; preserve custom content and working
 redirects.
 

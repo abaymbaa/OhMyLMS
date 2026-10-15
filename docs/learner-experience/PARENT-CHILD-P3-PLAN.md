@@ -1,6 +1,10 @@
 # P3 plan: independent family links
 
-Planning only; nothing here is implemented. Refines the contract in
+Status as of October 16, 2026: **P3a-P3d are implemented and verified** (schema and service,
+managed-child and setup-link UI, existing-learner invitations, learning choices); the defaults in
+"Decisions needed before coding" were adopted. Open: REST routes, a fresh-database migration
+run, child sign-in screens beyond the setup page, and everything under "Not in P3". Details are in
+the continuation ledger. The text below is the original plan. Refines the contract in
 [PARENT-CHILD-P0.md](PARENT-CHILD-P0.md). P1 (role chooser, parent sign-up) and P2
 (read-only school-linked child overview) are built and must keep working unchanged.
 
