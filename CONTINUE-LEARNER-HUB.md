@@ -1406,3 +1406,16 @@ The school fixture and the added `ohmylms_school_admin` role were removed; the t
 account (ID 404) and its credentials file were deleted afterwards (verified).
 Not tested live: a second account accepting a school teacher invitation as a non-admin.
 
+### School roster import (October 16, 2026)
+
+People page in the School workspace: paste a CSV (`name`, `external_student_id`, up to 200 rows), see
+a preview (new, existing, error per row; nothing imported), then "Import the new students". It uses
+`Service::import_roster()` unchanged: a commit needs a preview of the exact same CSV (a changed CSV
+is rejected), existing school IDs are skipped, and repeated IDs inside the file are errors.
+`SchoolActions` operations `import_preview` and `import_commit` (the result passes through the
+one-time flash, now kept for five minutes). Probe `test-results/school-workspace-probe.php`: 43
+checks passed (commit without preview rejected, classification, nothing imported by preview, render,
+tampered CSV rejected, two students created, other teacher denied). PHPCS clean. **Not tested in a
+browser** (the live test was skipped at the user's request; the browser session was signed out).
+The disposable test school was removed.
+

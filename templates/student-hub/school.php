@@ -218,6 +218,30 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 													"><?php esc_html_e( 'Next', 'ohmylms' ); ?></a>
 				<?php endif; ?>
 			</nav>
+			<?php if ( $school_flash && ! empty( $school_flash['import_rows'] ) ) : ?>
+				<h3><?php esc_html_e( 'Import preview', 'ohmylms' ); ?></h3>
+				<ul class="oml-hub-commerce-list">
+					<?php foreach ( $school_flash['import_rows'] as $import_row ) : ?>
+						<li><div><strong><?php echo esc_html( $import_row['name'] ?? ( '#' . $import_row['line'] ) ); ?></strong><p class="oml-hub-family-meta"><?php echo esc_html( sprintf( /* translators: 1: line number, 2: school student ID. */ __( 'Line %1$d · %2$s', 'ohmylms' ), $import_row['line'], $import_row['external_student_id'] ?? '' ) ); ?><?php echo ! empty( $import_row['error'] ) ? ' · ' . esc_html( $import_row['error'] ) : ''; ?></p></div><span class="oml-hub-chip"><?php echo esc_html( $import_row['status'] ); ?></span></li>
+					<?php endforeach; ?>
+				</ul>
+				<?php if ( ! empty( $school_flash['can_commit'] ) ) : ?>
+					<form method="post" action="<?php echo esc_url( $school_post ); ?>">
+						<?php SchoolActions::fields( 'import_commit', $school_id, 'school-people' ); ?>
+						<textarea name="csv" hidden><?php echo esc_textarea( $school_flash['csv'] ); ?></textarea>
+						<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Import the new students', 'ohmylms' ); ?></button></p>
+					</form>
+				<?php endif; ?>
+			<?php endif; ?>
+			<details>
+				<summary><?php esc_html_e( 'Import students from CSV', 'ohmylms' ); ?></summary>
+				<form method="post" action="<?php echo esc_url( $school_post ); ?>">
+					<?php SchoolActions::fields( 'import_preview', $school_id, 'school-people' ); ?>
+					<div class="oml-hub-field"><label for="si-csv"><?php esc_html_e( 'Paste up to 200 students (columns: name, external_student_id)', 'ohmylms' ); ?></label><textarea id="si-csv" name="csv" rows="7" required><?php echo esc_textarea( "name,external_student_id\n" ); ?></textarea></div>
+					<p class="oml-hub-family-meta"><?php esc_html_e( 'You see a preview first. Existing school IDs are skipped.', 'ohmylms' ); ?></p>
+					<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Preview import', 'ohmylms' ); ?></button></p>
+				</form>
+			</details>
 			<details>
 				<summary><?php esc_html_e( 'Add a student', 'ohmylms' ); ?></summary>
 				<form method="post" action="<?php echo esc_url( $school_post ); ?>" autocomplete="off">

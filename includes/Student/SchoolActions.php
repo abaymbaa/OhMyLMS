@@ -66,6 +66,27 @@ final class SchoolActions {
 				Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm removing this person from the school.' );
 				Service::remove_member( $school_id, absint( $data['member_id'] ?? 0 ) );
 				return array( 'message' => __( 'Person removed from the school. Their account and history were kept.', 'ohmylms' ) );
+			case 'import_preview':
+			case 'import_commit':
+				$commit = 'import_commit' === $operation;
+				$rows   = Service::import_roster(
+					$school_id,
+					array(
+						'csv'    => (string) ( $data['csv'] ?? '' ),
+						'commit' => $commit,
+					)
+				);
+				$counts = array_count_values( array_column( $rows, 'status' ) );
+				return array(
+					'message'     => $commit
+						/* translators: %d: number of students created. */
+						? sprintf( __( 'Import finished: %d students created. Existing school IDs were skipped.', 'ohmylms' ), (int) ( $counts['created'] ?? 0 ) )
+						/* translators: 1: new students, 2: existing, 3: rows with errors. */
+						: sprintf( __( 'Preview: %1$d new, %2$d already in the school, %3$d with errors. Nothing was imported yet.', 'ohmylms' ), (int) ( $counts['new'] ?? 0 ), (int) ( $counts['existing'] ?? 0 ), (int) ( $counts['error'] ?? 0 ) ),
+					'import_rows' => $rows,
+					'csv'         => $commit ? '' : (string) ( $data['csv'] ?? '' ),
+					'can_commit'  => ! $commit && ! empty( $counts['new'] ),
+				);
 			case 'create_year':
 				Service::create_year( $school_id, $data );
 				return array( 'message' => __( 'Academic year created.', 'ohmylms' ) );
@@ -123,14 +144,15 @@ final class SchoolActions {
 			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm' ) as $key ) {
 				$data[ $key ] = isset( $_POST[ $key ] ) && is_string( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			}
-			$flash = self::apply( $operation, $school_id, $data );
+			$data['csv'] = isset( $_POST['csv'] ) && is_string( $_POST['csv'] ) ? sanitize_textarea_field( wp_unslash( $_POST['csv'] ) ) : '';
+			$flash       = self::apply( $operation, $school_id, $data );
 			if ( ! empty( $flash['school_id'] ) ) {
 				$school_id = (int) $flash['school_id'];
 			}
 		} catch ( \Throwable $error ) {
 			$flash = array( 'error' => in_array( $error->getCode(), array( 400, 403, 409 ), true ) ? $error->getMessage() : __( 'Unable to complete this request.', 'ohmylms' ) );
 		}
-		set_transient( self::FLASH . get_current_user_id(), $flash, MINUTE_IN_SECONDS );
+		set_transient( self::FLASH . get_current_user_id(), $flash, 5 * MINUTE_IN_SECONDS );
 		wp_safe_redirect( SchoolWorkspace::url( $section, '', $school_id ) );
 		exit;
 	}
