@@ -1,6 +1,11 @@
 # OhMyLMS learner experience transition plan
 
-Status: **planning draft; application implementation has not started**.
+Status as of October 16, 2026: **historical planning draft. Implementation has progressed well
+beyond it.** The learner hub, teacher, parent/family and school workspaces are built and verified as
+recorded in the "Current state: start here" section of
+[CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md), which supersedes this document wherever
+they differ (including "class means a student roster", no front-end portal, and no learner-facing
+roadmaps). The checklists below were not maintained and must not be read as current progress.
 
 Last updated: October 15, 2026, Asia/Ulaanbaatar.
 
@@ -216,7 +221,7 @@ old student pages inside the learner application.
 
 ## 9. Resumable implementation slices
 
-All slices below are **not started**. Each should finish with a usable result,
+Slice status below is **historical and unmaintained** (see the status note at the top). Each should finish with a usable result,
 targeted validation, and an updated root checkpoint.
 
 ### Slice A — shared shell and design tokens

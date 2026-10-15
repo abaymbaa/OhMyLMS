@@ -2,7 +2,14 @@
 
 Updated: October 16, 2026, Asia/Ulaanbaatar.
 
-Status: implementation specification; the features below are not completion claims.
+Status as of October 16, 2026: implementation specification, partly delivered. Built and verified
+(see "Current state: start here" in [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md)): shared
+role contexts and sign-in chooser, parent sign-up, the parent workspace with school-linked children
+(P2), independent family links with managed children, invitations and learning choices (P3a to P3d),
+and the school workspace. Still planned or unobserved: the parent dashboard layout, recovery and
+personalization step two, parent reports for home learning (P6, needs activity provenance), and the
+unit/practice presentation refinements (P5). The slice list below is the original plan, not a
+progress record.
 The user requested extending the development plan and explicitly requested UI
 replication. This document adds that scope to [PLAN.md](PLAN.md). Resume from
 [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md), whose later decisions
