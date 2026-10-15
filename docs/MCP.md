@@ -28,8 +28,9 @@ OhMyLMS only adds authentication, connection settings, and WordPress empty-respo
 5. Revoke tokens from the same settings page when no longer needed.
 
 Tokens run as their issuing administrator, who must retain `manage_options` and `edit_posts`.
-They grant **read-only access to course drafts and quiz answer keys**, plus explicit shared-skill,
-syllabus-mapping, roadmap and resource-connection writes, and administrator study-plan audits.
+They grant access to course drafts and quiz answer keys, bounded lesson/question authoring,
+objective mappings and alignment-review writes, shared-skill, roadmap and resource-connection
+writes, and administrator study-plan audits.
 They are for trusted
 administrator assistants, not students. Provider names label independently revocable credentials;
 they do not restrict which HTTP client can use a credential. LMS REST permission callbacks still
@@ -52,7 +53,8 @@ The three course-objective tools use the same dedicated MCP endpoint and adminis
 
 List results include pagination totals when supplied by the LMS. Results over 256 KiB return
 an actionable tool error. Payments, credentials, arbitrary REST routes and arbitrary database queries
-are not exposed. Course, lesson, quiz and question content tools remain read-only. Shared-skill tools
+are not exposed. Course and quiz content tools remain read-only; lesson and question edits use
+the explicit authoring tools below. Shared-skill tools
 add only their specific administrator writes and progress audits. Site plugins can observe completed tool calls with
 `ohmylms_mcp_tool_called($user_id, $tool_name, $is_error)`; arguments, results, and tokens are not logged.
 
@@ -81,6 +83,66 @@ links do not pool evidence or automatically inherit content. Roadmaps reuse shar
 drafts. Profile configuration neither publishes nor enrolls a course. See [shared skills](SHARED-SKILLS.md).
 
 Single-pair relationships are `equivalent`, `broader` (source covers more), `narrower` (source covers less), and `related`. Only `equivalent` pools evidence. Combined groups store required membership and use the separate grouped tool; they neither infer mastery nor pool evidence. Individual editing tools reject members of combined groups so group integrity is preserved.
+
+## Lesson and question authoring
+
+The server exposes 34 tools, including these eight authoring and review operations. Refresh
+tool discovery or reconnect after updating; clients with tool allowlists must add their names.
+The endpoint and existing administrator token remain the same.
+
+| Tool | Arguments |
+| --- | --- |
+| `get_lesson_for_edit` | `id`; returns raw block HTML, native lesson settings, status and `revision`. |
+| `save_lesson` | Creation: `name`, optional `content`, `settings`. Editing: `id`, latest `revision`, submitted fields only; published lessons additionally require `allow_published: true`. |
+| `get_question_for_edit` | `id`; returns description, native settings, answer-option `questions`, part-level `skills`, bank `status`, WordPress `post_status`, current `version_id`, `approved_version_id` and `revision`. |
+| `save_question` | Creation: `name`; optional `description`, `settings`, answer-option `questions`, `skills`. Editing additionally requires `id` and latest `revision`. |
+| `get_lesson_objectives` | `id`; returns up to 200 explicit targets, official wording, saved reviews, mapping `revision`, `content_revision`, `review_revision` and per-target `objective_revision`. |
+| `set_lesson_objectives` | `id`, mapping `revision`, complete `mappings` list of `{syllabus_id, term_id, relation}`; relation is `teaches`, `practices` or `assesses`. |
+| `get_lesson_alignment_reviews` | `id`; returns the same mappings and review/freshness information. |
+| `save_lesson_alignment_review` | `id`, `syllabus_id`, `term_id`, current `content_revision`, `objective_revision`, `review_revision`, `status` (`aligned`, `partial`, `not_aligned`), nonempty `evidence`, and `recommendation` (may be empty). |
+
+New lessons are WordPress drafts. Question saves use the native question-bank draft writer and
+capture immutable versions without approval or quiz placement. Question-bank approval is separate
+from WordPress post status; use `status` and the version IDs to inspect it. Omitted authoring fields
+retain their existing values. Question settings and option objects preserve native/custom extension
+contracts. Supply returned option IDs when editing existing options. Native `questions: []` preserves
+existing options; it is not a deletion command. Skills use a part-ID map such as
+`{"p1":{"primary":123,"supporting":[456]}}`. These tools do not publish lessons, approve questions,
+or place content into courses/quizzes. Explicitly allowed edits of a published lesson affect live content.
+
+For an alignment workflow, discover official objectives with `list_syllabus_objectives`, read the
+lesson with `get_lesson_for_edit`, then map the chosen references with `set_lesson_objectives`.
+Read the returned official wording alongside the lesson content, assess suitability in the MCP
+client, and store the evidence using `save_lesson_alignment_review`. The server stores the caller's
+evaluation; it does not run an AI model. Reviews retain reviewer/time and content/objective hashes.
+Changed lesson content/settings or objective records mark reviews stale; achievement is unaffected.
+
+Mapping writes replace the complete explicit list; `[]` clears it and its reviews. Removed references
+lose their reviews. All submitted objectives must currently belong to the stated syllabus; unavailable
+targets must be removed before resaving. Mapping tags feed existing coverage while preserving
+pre-existing skill tags; only tags introduced by this mapping service are removed on unlinking.
+HTTP 409 means a snapshot changed: reread, reconcile, then retry with fresh tokens. Review writes
+require all three snapshot revisions and reject stale evaluations. Evidence and recommendations
+are plain text, each at most 4,000 characters. Requests are limited to 128 KiB; content/description
+fields to 100,000 characters; options to 100; mappings to 200.
+
+The matching administrator REST routes are under `/ohmylms/v1/mcp-authoring`: GET
+`/lessons/{id}`, POST `/lessons`, GET `/questions/{id}`, POST `/questions`, GET/PUT
+`/lesson-objectives/{id}` and GET/PUT `/alignment-reviews/{id}`. They use normal WordPress REST
+authentication and the same validated schemas and services. JSON bodies are required for writes.
+This extends the MCP authoring workflow; it does not add a lesson-editor review panel.
+
+The four new service/schema/controller files retain namespace-to-filename mappings required by
+the plugin's PSR-4 loader. Their two WordPress filename findings per file remain visible; changing
+those filenames requires a compatible autoloader migration. No filename rule is suppressed.
+
+Verified on 2026-10-15 against the isolated test installation: 80 combined course/MCP authoring
+checks, 119 MCP transport/authentication checks, 22 course REST checks, 23 native lesson checks,
+and MCP lifecycle/schema checks pass. The JavaScript suite reports 407 passed, one skipped and
+zero failures; PHP syntax checks pass. New authoring files have only the eight documented filename
+findings, and the new acceptance fixture passes PHPCS. Existing `Server.php`, `Api.php`, and older
+MCP test harnesses retain legacy standards findings; this update is not a repository-wide lint cleanup.
+The course fixture retains two CLI file-I/O warnings.
 
 ## WordPress abilities
 

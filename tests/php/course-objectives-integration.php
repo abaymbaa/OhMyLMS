@@ -52,13 +52,13 @@ function objectives_check( $condition, $message ) {
  * Dispatch an authenticated REST request in the isolated installation.
  *
  * @param string $method HTTP method.
- * @param int    $course Course ID.
+ * @param int    $fixture_course Course ID.
  * @param array  $data JSON body.
  * @param array  $query Query arguments.
  * @return WP_REST_Response
  */
-function objectives_api( $method, $course, $data = null, $query = array() ) {
-	$request = new WP_REST_Request( $method, '/ohmylms/v1/courses/' . $course . '/syllabus-objectives' );
+function objectives_api( $method, $fixture_course, $data = null, $query = array() ) {
+	$request = new WP_REST_Request( $method, '/ohmylms/v1/courses/' . $fixture_course . '/syllabus-objectives' );
 	$request->set_query_params( $query );
 	if ( null !== $data ) {
 		$request->set_header( 'Content-Type', 'application/json' );
@@ -181,11 +181,11 @@ try {
 			\OhMyLMS\MCP\Server::boot_adapter();
 		}
 	}
-	$course  = $state['course'];
-	$initial = objectives_api( 'GET', $course );
+	$fixture_course = $state['course'];
+	$initial        = objectives_api( 'GET', $fixture_course );
 	objectives_check( 200 === $initial->get_status() && array() === $initial->get_data()['mappings'], 'Initially empty' );
-	$before = get_post_meta( $course, CourseProgram::DRAFT, true );
-	$browse = objectives_api( 'GET', $course, null, array( 'syllabus_id' => $state['syllabus'] ) );
+	$before = get_post_meta( $fixture_course, CourseProgram::DRAFT, true );
+	$browse = objectives_api( 'GET', $fixture_course, null, array( 'syllabus_id' => $state['syllabus'] ) );
 	objectives_check( 200 === $browse->get_status() && 2 === count( $browse->get_data()['objectives'] ), 'Browse official objectives' );
 	objectives_check( ! Items::get( $state['syllabus'] )['course_id'], 'Browsing does not create a syllabus course' );
 	$mapping = array(
@@ -196,7 +196,7 @@ try {
 		'mappings' => array( $mapping, $mapping ),
 		'revision' => $initial->get_data()['revision'],
 	);
-	$saved   = objectives_api( 'PUT', $course, $body );
+	$saved   = objectives_api( 'PUT', $fixture_course, $body );
 	objectives_check( 200 === $saved->get_status(), 'Mapping saved: ' . wp_json_encode( $saved->get_data() ) );
 	$payload = $saved->get_data();
 	if ( 'mcp' === $fixture_mode ) {
@@ -207,14 +207,14 @@ try {
 		objectives_check( $read instanceof WP_Ability && $options instanceof WP_Ability && $write instanceof WP_Ability, 'Native MCP abilities registered' );
 		$mcp_targets = $read->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'per_page' => 1,
 			)
 		);
 		objectives_check( ! is_wp_error( $mcp_targets ) && 1 === $mcp_targets['total'] && $payload['revision'] === $mcp_targets['data']['revision'], 'MCP reads mappings and revision: ' . wp_json_encode( $mcp_targets ) );
 		$choices = $options->execute(
 			array(
-				'id'          => $course,
+				'id'          => $fixture_course,
 				'syllabus_id' => $state['syllabus'],
 				'per_page'    => 1,
 				'page'        => 2,
@@ -223,7 +223,7 @@ try {
 		objectives_check( ! is_wp_error( $choices ) && 2 === $choices['total'] && $state['skills'][1] === $choices['data']['objectives'][0]['term_id'], 'MCP options forward syllabus and pagination' );
 		$choices = $options->execute(
 			array(
-				'id'          => $course,
+				'id'          => $fixture_course,
 				'syllabus_id' => $state['syllabus'],
 				'search'      => 'one variable expressions',
 			)
@@ -233,7 +233,7 @@ try {
 			is_wp_error(
 				$write->execute(
 					array(
-						'id'       => $course,
+						'id'       => $fixture_course,
 						'revision' => $payload['revision'],
 						'mappings' => array(
 							array(
@@ -255,7 +255,7 @@ try {
 		);
 		$changed = $write->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'revision' => $payload['revision'],
 				'mappings' => $both,
 			)
@@ -263,7 +263,7 @@ try {
 		objectives_check( ! is_wp_error( $changed ) && 2 === $changed['total'], 'MCP writes mappings through course REST API' );
 		$stale = $write->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'revision' => $payload['revision'],
 				'mappings' => array(),
 			)
@@ -271,7 +271,7 @@ try {
 		objectives_check( is_wp_error( $stale ) && 409 === $stale->get_error_data()['status'], 'MCP rejects stale revision' );
 		$mcp_page = $read->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'page'     => 2,
 				'per_page' => 1,
 			)
@@ -279,7 +279,7 @@ try {
 		objectives_check( 2 === $mcp_page['total'] && 1 === count( $mcp_page['data']['mappings'] ) && $changed['data']['revision'] === $mcp_page['data']['revision'], 'Mapping pages share full-set revision' );
 		$removed = $write->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'revision' => $changed['data']['revision'],
 				'mappings' => array( $mapping ),
 			)
@@ -287,7 +287,7 @@ try {
 		objectives_check( ! is_wp_error( $removed ) && 1 === $removed['total'], 'MCP removes omitted references' );
 		$cleared = $write->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'revision' => $removed['data']['revision'],
 				'mappings' => array(),
 			)
@@ -295,18 +295,18 @@ try {
 		objectives_check( ! is_wp_error( $cleared ) && 0 === $cleared['total'], 'MCP can clear targets explicitly' );
 		$restored = $write->execute(
 			array(
-				'id'       => $course,
+				'id'       => $fixture_course,
 				'revision' => $cleared['data']['revision'],
 				'mappings' => array( $mapping ),
 			)
 		);
-		objectives_check( ! is_wp_error( $restored ) && get_post_meta( $course, CourseProgram::DRAFT, true ) === $before, 'MCP leaves completion draft untouched' );
+		objectives_check( ! is_wp_error( $restored ) && get_post_meta( $fixture_course, CourseProgram::DRAFT, true ) === $before, 'MCP leaves completion draft untouched' );
 		wp_set_current_user( 0 );
 		objectives_check(
-			is_wp_error( $read->execute( array( 'id' => $course ) ) ) && is_wp_error(
+			is_wp_error( $read->execute( array( 'id' => $fixture_course ) ) ) && is_wp_error(
 				$write->execute(
 					array(
-						'id'       => $course,
+						'id'       => $fixture_course,
 						'revision' => $restored['data']['revision'],
 						'mappings' => array(),
 					)
@@ -372,7 +372,7 @@ try {
 			'tools/call',
 			array(
 				'name'      => 'get_course_objectives',
-				'arguments' => array( 'id' => $course ),
+				'arguments' => array( 'id' => $fixture_course ),
 			)
 		);
 		objectives_check( isset( $called['result'] ) && empty( $called['result']['isError'] ), 'MCP transport invokes course objective read' );
@@ -381,27 +381,29 @@ try {
 			array(
 				'name'      => 'set_course_objectives',
 				'arguments' => array(
-					'id'       => $course,
+					'id'       => $fixture_course,
 					'revision' => $restored['data']['revision'],
 					'mappings' => $both,
 				),
 			)
 		);
-		objectives_check( isset( $called['result'] ) && empty( $called['result']['isError'] ) && 2 === count( CourseObjectives::references( $course ) ), 'MCP transport saves course targets' );
+		objectives_check( isset( $called['result'] ) && empty( $called['result']['isError'] ) && 2 === count( CourseObjectives::references( $fixture_course ) ), 'MCP transport saves course targets' );
+		require __DIR__ . '/fixtures/authoring-checks.php';
+		authoring_checks( $transport, $state, (int) $admin );
 		wp_set_current_user( $admin );
 		// Restore the one-target state expected by the REST acceptance checks below.
 		$write->execute(
 			array(
-				'id'       => $course,
-				'revision' => CourseObjectives::payload( $course )['revision'],
+				'id'       => $fixture_course,
+				'revision' => CourseObjectives::payload( $fixture_course )['revision'],
 				'mappings' => array( $mapping ),
 			)
 		);
 	}
 	objectives_check( 1 === count( $payload['mappings'] ), 'Duplicates collapsed' );
 	objectives_check( 2 === count( $payload['mappings'][0]['content'] ), 'Course scoped lesson and assessment connections shown' );
-	objectives_check( get_post_meta( $course, CourseProgram::DRAFT, true ) === $before, 'Learning draft untouched' );
-	objectives_check( 409 === objectives_api( 'PUT', $course, $body )->get_status(), 'Concurrent stale save rejected' );
+	objectives_check( get_post_meta( $fixture_course, CourseProgram::DRAFT, true ) === $before, 'Learning draft untouched' );
+	objectives_check( 409 === objectives_api( 'PUT', $fixture_course, $body )->get_status(), 'Concurrent stale save rejected' );
 	$body['revision'] = $payload['revision'];
 	$body['mappings'] = array(
 		array(
@@ -409,23 +411,23 @@ try {
 			'term_id'     => 999999999,
 		),
 	);
-	objectives_check( 409 === objectives_api( 'PUT', $course, $body )->get_status(), 'Foreign objective rejected' );
+	objectives_check( 409 === objectives_api( 'PUT', $fixture_course, $body )->get_status(), 'Foreign objective rejected' );
 	$body['mappings'] = array(
 		array(
 			'syllabus_id' => -1,
 			'term_id'     => $state['skills'][0],
 		),
 	);
-	objectives_check( 400 === objectives_api( 'PUT', $course, $body )->get_status(), 'Invalid IDs rejected' );
+	objectives_check( 400 === objectives_api( 'PUT', $fixture_course, $body )->get_status(), 'Invalid IDs rejected' );
 	$body['mappings'] = array_fill( 0, 201, $mapping );
-	objectives_check( 400 === objectives_api( 'PUT', $course, $body )->get_status(), 'Oversized list rejected' );
+	objectives_check( 400 === objectives_api( 'PUT', $fixture_course, $body )->get_status(), 'Oversized list rejected' );
 	wp_delete_term( $state['skills'][0], Taxonomy::NAME );
-	$missing = objectives_api( 'GET', $course )->get_data();
+	$missing = objectives_api( 'GET', $fixture_course )->get_data();
 	objectives_check( $missing['mappings'][0]['missing'], 'Deleted objective remains visible as unavailable' );
 	objectives_check(
 		200 === objectives_api(
 			'PUT',
-			$course,
+			$fixture_course,
 			array(
 				'revision' => $missing['revision'],
 				'mappings' => array(),
@@ -434,27 +436,27 @@ try {
 		'Unavailable mapping removable'
 	);
 	wp_set_current_user( 0 );
-	objectives_check( 401 === objectives_api( 'GET', $course )->get_status(), 'Guest read rejected' );
-	objectives_check( 401 === objectives_api( 'PUT', $course, $body )->get_status(), 'Guest write rejected' );
+	objectives_check( 401 === objectives_api( 'GET', $fixture_course )->get_status(), 'Guest read rejected' );
+	objectives_check( 401 === objectives_api( 'PUT', $fixture_course, $body )->get_status(), 'Guest write rejected' );
 	$author           = wp_create_user( 'obj-' . $fixture_tag, wp_generate_password( 24 ), 'obj-' . $fixture_tag . '@example.invalid' );
 	$state['users'][] = $author;
 	( new WP_User( $author ) )->set_role( 'author' );
 	wp_set_current_user( $author );
-	objectives_check( 403 === objectives_api( 'GET', $course )->get_status(), 'Other author cannot read mappings' );
+	objectives_check( 403 === objectives_api( 'GET', $fixture_course )->get_status(), 'Other author cannot read mappings' );
 	wp_set_current_user( $admin );
 	wp_update_post(
 		array(
-			'ID'          => $course,
+			'ID'          => $fixture_course,
 			'post_author' => $author,
 		)
 	);
 	wp_set_current_user( $author );
-	objectives_check( 200 === objectives_api( 'GET', $course )->get_status(), 'Course author can read mappings' );
-	$own = objectives_api( 'GET', $course )->get_data();
+	objectives_check( 200 === objectives_api( 'GET', $fixture_course )->get_status(), 'Course author can read mappings' );
+	$own = objectives_api( 'GET', $fixture_course )->get_data();
 	objectives_check(
 		200 === objectives_api(
 			'PUT',
-			$course,
+			$fixture_course,
 			array(
 				'revision' => $own['revision'],
 				'mappings' => array(

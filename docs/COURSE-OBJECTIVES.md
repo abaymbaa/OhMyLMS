@@ -20,7 +20,13 @@ Writes run under the existing curriculum lock and validate all new references be
 
 The existing dedicated MCP server now exposes `get_course_objectives`, `list_course_objective_options`, and `set_course_objectives` through WordPress Abilities. MCP access retains the existing enabled-add-on and administrator checks as well as the course API permissions. See [MCP tools](MCP.md) for argument schemas and replacement semantics. The API also accepts optional `page` and `per_page` (up to 50) for bounded mapping/option responses; option browsing accepts `search`. Without pagination arguments, the existing course editor response is unchanged. MCP defaults to 10 rows and preserves the full-set revision on every page; successful MCP writes also return a bounded first page.
 
-Content-alignment reviews remain future work. `CourseObjectiveTools.php` follows the existing namespace-to-file autoloader and retains its two visible WordPress filename findings, like the other MCP classes; no filename rule is suppressed.
+Lesson objective mappings and evidence-backed content-alignment reviews are available through the
+administrator MCP authoring tools and corresponding REST routes. Course targets still describe
+course scope; lesson mappings describe teaches/practices/assesses relationships. Saved lesson
+reviews become stale when inspected content or official wording changes. They do not infer learner
+achievement. See [authoring workflow and schemas](MCP.md#lesson-and-question-authoring).
+`CourseObjectiveTools.php` follows the existing namespace-to-file autoloader and retains its two
+visible WordPress filename findings, like the other MCP classes; no filename rule is suppressed.
 
 ## Standards and verification
 
