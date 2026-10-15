@@ -276,8 +276,26 @@ final class AnswerReview {
 	 * @return array result, earned, max, passing, percent, counts and total.
 	 */
 	public static function summary( array $entries, array $attempt, $quiz ) {
-		$basis  = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
-		$earned = round( (float) ( $attempt['total_achieved_marks'] ?? 0 ), 4 );
+		$basis = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
+		return self::summarize( $entries, (float) ( $attempt['total_achieved_marks'] ?? 0 ), $basis['max'], $basis['passing'], (string) ( $attempt['status'] ?? '' ) );
+	}
+
+	/**
+	 * Score and verdict counts from known marks, for attempts that are not stored (previews).
+	 *
+	 * @param array[] $entries Review entries.
+	 * @param float   $earned  Marks earned.
+	 * @param float   $max     Marks available.
+	 * @param float   $passing Passing mark.
+	 * @param string  $status  Attempt status ("in-review" while a teacher still has to mark).
+	 * @return array result, earned, max, passing, percent, counts and total.
+	 */
+	public static function summarize( array $entries, $earned, $max, $passing, $status ) {
+		$earned = round( (float) $earned, 4 );
+		$basis  = array(
+			'max'     => (float) $max,
+			'passing' => (float) $passing,
+		);
 		$counts = array(
 			'correct'    => 0,
 			'partial'    => 0,
@@ -291,7 +309,7 @@ final class AnswerReview {
 			}
 		}
 		return array(
-			'result'  => self::result( $earned, $basis['max'], $basis['passing'], (string) ( $attempt['status'] ?? '' ) ),
+			'result'  => self::result( $earned, $basis['max'], $basis['passing'], (string) $status ),
 			'earned'  => $earned,
 			'max'     => $basis['max'],
 			'passing' => $basis['passing'],
@@ -299,6 +317,49 @@ final class AnswerReview {
 			'counts'  => $counts,
 			'total'   => count( $entries ),
 		);
+	}
+
+	/**
+	 * Review entries for an instructor preview, where nothing is stored: each item is the
+	 * question as shown, what was answered, its grade and its marks. Editors can always see
+	 * the answers, so the quiz's switch for learners does not apply.
+	 *
+	 * @param array[] $items Each with snapshot (QuestionSnapshot), given (array), grade (array with fraction) and marks (float).
+	 * @return array[] Entries like for_attempt(), without per-part verdicts.
+	 */
+	public static function preview( array $items ) {
+		$entries = array();
+		foreach ( $items as $item ) {
+			$grade    = (array) $item['grade'];
+			$marks    = (float) $item['marks'];
+			// A question with a teacher-marked part still credits its automatically marked parts, as a stored attempt does.
+			$fraction = ! empty( $grade['pending'] ) ? (float) ( $grade['auto_fraction'] ?? 0 ) : (float) ( $grade['fraction'] ?? 0 );
+			$entry    = self::entry(
+				$item['snapshot'],
+				array(
+					'given_answer'         => (array) $item['given'],
+					'achive_mark'          => $marks * $fraction,
+					'is_correct'           => $fraction + self::EPSILON >= 1 ? 1 : 0,
+					'is_manually_reviewed' => 0,
+				),
+				$marks
+			);
+			if ( 'structured' === $entry['type'] && ! empty( $grade['parts'] ) ) {
+				$weights = Structured::weights( $item['snapshot']->get_settings() );
+				$map     = array();
+				foreach ( $grade['parts'] as $part_id => $part_fraction ) {
+					$max             = round( $marks * ( $weights[ $part_id ] ?? 0 ), 4 );
+					$map[ $part_id ] = array(
+						'max'     => $max,
+						'awarded' => null === $part_fraction ? null : $max * (float) $part_fraction,
+					);
+				}
+				$entry['parts'] = self::part_rows( $item['snapshot']->get_settings(), (array) $item['given'], $map );
+			}
+			$entry['number'] = count( $entries ) + 1;
+			$entries[]       = $entry;
+		}
+		return $entries;
 	}
 
 	/**
@@ -402,11 +463,20 @@ final class AnswerReview {
 	 * @return array[] id, label, prompt, kind, verdict, given, expected, awarded and max for each part.
 	 */
 	private static function parts( $attempt_id, array $item, $question, $row ) {
-		$settings = $question->get_settings();
-		$marks    = AttemptReport::parts( $attempt_id, $item, $question );
-		$given    = $row ? maybe_unserialize( $row['given_answer'] ) : array();
-		$given    = is_array( $given ) ? $given : array();
-		$parts    = array();
+		$given = $row ? maybe_unserialize( $row['given_answer'] ) : array();
+		return self::part_rows( $question->get_settings(), is_array( $given ) ? $given : array(), AttemptReport::parts( $attempt_id, $item, $question ) );
+	}
+
+	/**
+	 * Part verdicts from each part's given answer and its marks.
+	 *
+	 * @param array $settings Structured question settings.
+	 * @param array $given    Answers by part ID.
+	 * @param array $marks    Part ID => max, awarded (null while a teacher has to mark it).
+	 * @return array[]
+	 */
+	private static function part_rows( array $settings, array $given, array $marks ) {
+		$parts = array();
 		foreach ( Structured::parts( $settings ) as $part ) {
 			$id      = $part['id'];
 			$text    = isset( $given[ $id ] ) && is_scalar( $given[ $id ] ) ? trim( (string) $given[ $id ] ) : '';

@@ -202,7 +202,9 @@ if ( $attempt_context ) {
 		<div class="ohmylms-container" role="status">
 			<div class="ohmylms-quiz-result">
 				<h2><?php esc_html_e( 'Preview result', 'ohmylms' ); ?></h2>
-				<p><?php echo esc_html( sprintf( __( 'Score: %1$s / %2$s', 'ohmylms' ), $preview_result['earned'], $preview_result['total'] ) ); ?></p>
+				<?php if ( empty( $preview_result['entries'] ) ) { ?>
+					<p><?php echo esc_html( sprintf( __( 'Score: %1$s / %2$s', 'ohmylms' ), $preview_result['earned'], $preview_result['total'] ) ); ?></p>
+				<?php } ?>
 				<?php
 				if ( $preview_result['pending'] ) {
 					?>
@@ -211,6 +213,24 @@ if ( $attempt_context ) {
 				foreach ( $preview_result['errors'] as $error ) {
 					?>
 					<p><?php echo esc_html( $error ); ?></p><?php } ?>
+				<?php
+				if ( ! empty( $preview_result['entries'] ) ) {
+					if ( ! empty( $preview_result['hidden'] ) ) {
+						?>
+						<p class="ohmylms-answer-review-note"><?php esc_html_e( 'Learners will not see the correct answers for this quiz. You see them because you are previewing it.', 'ohmylms' ); ?></p>
+						<?php
+					}
+					ohmylms_get_template(
+						'single-lesson/quiz-review.php',
+						array(
+							'entries' => $preview_result['entries'],
+							'summary' => $preview_result['summary'],
+							'intro'   => __( 'Your preview answers next to the correct answers. Nothing is saved.', 'ohmylms' ),
+							'anchor'  => 'ohmylms-answer-review-preview',
+						)
+					);
+				}
+				?>
 				<a class="ohmylms-button" href="<?php echo esc_url( \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID() ) ); ?>"><?php esc_html_e( 'Try again', 'ohmylms' ); ?></a>
 			</div>
 		</div>

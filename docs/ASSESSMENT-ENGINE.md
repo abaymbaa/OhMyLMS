@@ -117,6 +117,10 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   Quiz Player block and its embed document, `[ohmylms_quiz]`, `[ohmylms_quiz_review]` and the
   theme helpers `ohmylms_get_quiz_player()` and `ohmylms_get_quiz_review()`. A learner's
   attempts are found whichever course they were taken in when the review is placed on its own.
+  The instructor preview (`PreviewPlayer`) shows the same review after Submit, with the answers
+  always visible to the editor and a note when learners will not see them (switch off or hide
+  answers on). Nothing is saved, and a question with a teacher-marked part credits its
+  automatically marked parts, as a stored attempt does.
 
 ## REST API (ohmylms/v1)
 

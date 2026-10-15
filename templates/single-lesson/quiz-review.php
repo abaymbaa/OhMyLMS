@@ -13,6 +13,7 @@
  * @global array[]|null $retry    Missed questions that can be practised, from \OhMyLMS\Quiz\AnswerReview::retry_items().
  * @global bool|null    $retrying Whether the practice list is open.
  * @global string|null  $anchor   Unique element ID of this review, so several quizzes can share a page.
+ * @global string|null  $intro    Sentence shown under the heading instead of the default attempt line.
  */
 
 use OhMyLMS\Assessment\Scoring;
@@ -31,6 +32,7 @@ $attempts = isset( $attempts ) && is_array( $attempts ) ? $attempts : array();
 $attempt  = isset( $attempt ) && is_array( $attempt ) ? $attempt : null;
 $retry    = isset( $retry ) && is_array( $retry ) ? $retry : array();
 $retrying = ! empty( $retrying );
+$intro    = isset( $intro ) && is_string( $intro ) ? $intro : '';
 $anchor   = isset( $anchor ) && is_string( $anchor ) && '' !== $anchor ? sanitize_html_class( $anchor ) : 'ohmylms-answer-review';
 
 wp_enqueue_style( 'ohmylms-answer-review', plugins_url( 'assets/css/answer-review.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
@@ -144,7 +146,9 @@ $stamp          = static function ( $row ) {
 	<h2 class="ohmylms-answer-review-heading" id="<?php echo esc_attr( $anchor ); ?>-title"><?php esc_html_e( 'Review your answers', 'ohmylms' ); ?></h2>
 	<p class="ohmylms-answer-review-intro">
 		<?php
-		if ( $attempt && $latest_id && (int) $attempt['quiz_attempt_id'] !== $latest_id ) {
+		if ( '' !== $intro ) {
+			echo esc_html( $intro );
+		} elseif ( $attempt && $latest_id && (int) $attempt['quiz_attempt_id'] !== $latest_id ) {
 			/* translators: %s: date and time the attempt was started */
 			echo esc_html( sprintf( __( 'This is the attempt you started on %s.', 'ohmylms' ), $stamp( $attempt ) ) );
 		} else {

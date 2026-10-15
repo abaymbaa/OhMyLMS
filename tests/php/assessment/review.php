@@ -28,6 +28,12 @@ ok(AnswerReview::result(23, 23, 50, 'completed') === 'pass', 'Full marks did not
 ok(AnswerReview::result(60, 100, 50, 'completed') === 'pass', 'Reaching the passing mark did not pass');
 ok(AnswerReview::result(1, 23, 50, 'completed') === 'fail', 'Below the passing mark did not fail');
 ok(AnswerReview::result(15, 23, 50, 'in-review') === 'review', 'A teacher-marked attempt was not awaiting review');
+// Score and verdict counts also work for an attempt that is not stored (the instructor preview).
+$entries_for_summary = [['verdict' => 'correct'], ['verdict' => 'correct'], ['verdict' => 'partial'], ['verdict' => 'incorrect'], ['verdict' => 'pending'], ['verdict' => 'unanswered']];
+$preview_summary = AnswerReview::summarize($entries_for_summary, 13.0, 23, 50, 'in-review');
+ok($preview_summary['result'] === 'review' && $preview_summary['percent'] === 56.5, 'A preview summary has the wrong outcome or percent');
+ok($preview_summary['counts'] === ['correct' => 2, 'partial' => 1, 'incorrect' => 1, 'pending' => 1, 'unanswered' => 1] && $preview_summary['total'] === 6, 'A preview summary has the wrong verdict counts');
+ok(AnswerReview::summarize([], 0, 0, 0, 'completed')['percent'] === null, 'A preview with no marks available has a percent');
 $reviewable = [['quiz_attempt_id' => 9], ['quiz_attempt_id' => 4]];
 ok(AnswerReview::select($reviewable, 4)['quiz_attempt_id'] === 4, 'The requested attempt was not chosen');
 ok(AnswerReview::select($reviewable, 7)['quiz_attempt_id'] === 9, 'An attempt that cannot be reviewed was chosen');

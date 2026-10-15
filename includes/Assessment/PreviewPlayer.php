@@ -81,6 +81,7 @@ final class PreviewPlayer {
 			set_transient( 'ohmylms_quiz_preview_' . $session, $saved, HOUR_IN_SECONDS );
 		}
 		$result = null;
+		$items  = array();
 		if ( ( $_POST['action'] ?? '' ) === 'ohmylms-quiz-preview-exit' ) {
 			wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/quiz-edit/' . $id ) );
 			exit;
@@ -107,7 +108,19 @@ final class PreviewPlayer {
 					continue; }
 				$result['earned']  += $marks * $grade['fraction'];
 				$result['pending'] += (int) $grade['pending'];
+				$items[]            = array(
+					'snapshot' => $snapshot,
+					'given'    => (array) ( $answers[ $snapshot->get_id() ] ?? array() ),
+					'grade'    => $grade,
+					'marks'    => $marks,
+				);
 			}
+		}
+		if ( $result ) {
+			// Editors always see the answers; the note says when learners will not.
+			$result['entries'] = \OhMyLMS\Quiz\AnswerReview::preview( $items );
+			$result['summary'] = \OhMyLMS\Quiz\AnswerReview::summarize( $result['entries'], array_sum( array_column( $result['entries'], 'awarded' ) ), $result['total'], (float) $quiz->get_passing_grade(), $result['pending'] ? 'in-review' : 'completed' );
+			$result['hidden']  = ! \OhMyLMS\Quiz\AnswerReview::enabled( (array) $saved['settings'] );
 		}
 		$questions = array();
 		foreach ( $saved['snapshots'] as $data ) {
