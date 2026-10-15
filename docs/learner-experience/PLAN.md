@@ -327,6 +327,25 @@ cancellation state; billing does not control mastery or course completion.
 
 ### Slice K — compatibility and rollout
 
+- [ ] Retire obsolete pages, shortcodes, templates and assets incrementally as each
+  replacement passes its acceptance checks (user direction, October 16, 2026).
+- [ ] Inventory shortcode use in stored page/block content, widgets, menus, page
+  settings and code, including filtered shortcode tags and external/theme consumers.
+  Record each old route/tag, its replacement and any remaining dependency.
+- [ ] Migrate first-party content, menus and configured page IDs to canonical hub
+  destinations. Preserve mixed-content pages; remove only the obsolete embedded
+  shortcode or replace it with its supported equivalent.
+- [ ] Before trashing a redundant generated page, preserve its former URL through
+  a redirect that works after the page is trashed. Verify GET navigation, signed-out
+  behavior and account endpoints; never redirect away from required POST handlers.
+- [ ] Remove unused shortcode registrations and their implementation after consumers
+  are migrated. Where external consumers still require a public tag, retain a narrow
+  documented compatibility adapter to the replacement until that dependency is retired.
+  Existing content must never display a raw removed shortcode.
+- [ ] Remove unreachable templates/styles/scripts and stop provisioning retired
+  pages. Use a repeatable upgrade with a retirement ledger; rebuild authored assets.
+  Keep pages recoverable in Trash initially. Preserve learning records and custom
+  page content. Active enrollment/checkout/auth flows retire only after replacements work.
 - [ ] Verify configured legacy page URLs/endpoints and custom endpoint slugs.
 - [ ] Confirm old public shortcodes/hooks remain compatible where required.
 - [ ] Verify browser Back/Forward, direct links, reload and activity return.
@@ -336,6 +355,8 @@ cancellation state; billing does not control mastery or course completion.
 
 Acceptance: new learner experience is coherent end to end; no legacy screen is
 accidentally embedded in an unfinished route; rollback/compatibility is understood.
+Each delivered slice includes its legacy cleanup, with retired page IDs/routes/tags,
+migration results and remaining compatibility adapters recorded in the checkpoint.
 
 ## 10. Code map for resuming
 

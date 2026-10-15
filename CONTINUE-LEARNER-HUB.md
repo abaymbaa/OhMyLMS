@@ -2,6 +2,72 @@
 
 Last updated: October 15, 2026, Asia/Ulaanbaatar.
 
+## Parent and child UI extension (October 16, 2026)
+
+The user requested parent/child features and explicitly requested UI replication.
+The new specification is
+[`docs/learner-experience/learner-hub-development.md`](docs/learner-experience/learner-hub-development.md).
+It covers reference signup/profile layouts, parent and child workspaces, course
+personalization, progress/connections, unit/practice presentation, authorization,
+delivery slices, and visual acceptance. The parent dashboard itself was not
+observed; its design is proposed. Existing school guardian links are implemented;
+independent-family links and these new UI slices are planned, not completed.
+This request updates documentation only. Preserve ongoing learner/teacher work.
+
+Next step for this extension: P0 screen inventory and independent-family scope
+contract, following the new specification. Earlier learner/teacher checkpoints
+remain relevant to their existing slices.
+
+Update: the P0 source/screen audit and proposed contract are recorded in
+[`PARENT-CHILD-P0.md`](docs/learner-experience/PARENT-CHILD-P0.md). The latest
+checkpoint below records runtime verification and actual legacy page retirement.
+Next parent implementation slice is P1; unobserved reference screens remain open.
+
+### Integrated delivery plan (October 16, 2026)
+
+The parent/child specification is part of the active roadmap. Preserve the current
+player, Membership, and teacher workspace changes and complete their verification
+before extending the shared shell. In this product, **class means a student roster**;
+courses, assignments, and reports remain separate destinations associated with it.
+
+1. Finish the current learner/player and teacher workspace verification, including
+   the unresolved legacy enrollment return flow. Keep an honest record of checks
+   blocked by credentials or browser viewport support.
+2. **P0:** inventory parent/child screens and supported services; document the
+   independent-family relationship, approval, revocation, cache, migration, and API
+   contracts before adding schema. Separate observed reference UI from proposed UI.
+3. **P1:** add eligible Learner / Parent / Teacher context selection, parent
+   signup/profile presentation, and reliable role-aware landing. Reuse authentication;
+   selecting a context never grants permissions.
+4. **P2:** build the parent workspace and child selector using existing approved
+   school guardian links, with current relationship checks and read-only access.
+5. **P3:** add independent-family relationships and private child setup/recovery.
+   Support families without a school; never widen existing school guardian checks.
+6. **P4:** add child grade/course personalization, course previews, profile, and
+   Connections using actual data. Following courses does not enroll or purchase.
+7. **P5:** refine unit/practice presentation on the existing player, preserving
+   question extensions, assessment contracts, attempts, and scoring behavior.
+8. **P6:** finish scoped parent reports and release verification: cross-child,
+   cross-school/home, revoked-link, localization, mobile, migration, and rollback
+   cases. Parent viewing must not mutate child learning records.
+
+Parent assignments, messaging, and purchases for children remain deferred as stated
+in the specification. Membership initially belongs to the signed-in adult. No
+parent/child implementation or schema migration is claimed by this roadmap update.
+
+### Legacy retirement is part of delivery (October 16, 2026)
+
+The user authorized deleting old pages and cleaning up obsolete shortcodes along
+the way. Apply PLAN.md Slice K to every completed replacement, rather than leaving
+duplicate interfaces indefinitely. Inventory actual use, migrate content/menu/page
+settings, establish redirects that survive page retirement, then trash redundant
+generated pages and remove unused shortcode implementations/templates/assets.
+Stop provisioning retired pages. Keep a small documented compatibility adapter only
+where an identified consumer still needs it, and record the remaining dependency.
+Do not delete custom mixed-content pages or learning records as interface cleanup.
+The old enrollment page is still required until its replacement flow is verified.
+No live pages or shortcode registrations were deleted in this planning update.
+
 ## Decisions agreed October 15, 2026 (implementation authorized)
 
 The user approved building in this live plugin folder, using the PLAN section 12 defaults,
@@ -699,3 +765,574 @@ Next candidates, in suggested order:
 2. Membership as a primary section (rail link exists; renders legacy purchase screens).
 3. Khan-style teacher shell (role switch, no Teacher Tools).
 4. Not verified anywhere: Connections with a real class, email/password cards via the browser, enrol-from-legacy-page round trip, the 50-check integration script (needs private credentials), the JS build/test suite.
+
+## Current implementation checkpoint (October 16, 2026, later)
+
+This checkpoint supersedes older descriptions of the player as an exit bar only.
+The initial focused player was committed externally as `2f4a2a4`; additional work
+below is uncommitted in the live plugin directory. No push was performed here.
+
+- Player: focused course/unit navigation, current activity and course exit, shared
+  appearance preference, scoped lesson/quiz/assignment presentation. Built-in quiz
+  designs use the paper presentation inside this shell; custom designs remain
+  supported and saved assessment settings/contracts are unchanged. An active quiz
+  keeps native exit controls and hides extra navigation. Session context is included
+  in code but has not been verified in the browser.
+- Membership: native overview, plans, purchases and owned invoices; bounded queries,
+  actual subscription status and dates. Legacy commerce routes map here. Placeholder
+  billing information is removed from Settings; checkout remains the billing flow.
+- Teacher: eligible role switch, My classes, Assignments, Roster, Reports and Class
+  settings, using existing relationship checks. **A class is a student roster.**
+  Teacher rows are excluded from the student list. Assigned work/report data stays
+  class-scoped; existing management pages still handle editing. Full teacher form
+  replacement and full Khan Academy feature parity are not claimed.
+- Landing: first visit chooses Classes when applicable, otherwise My learning;
+  progressive enhancement remembers a valid learner section/view on the device.
+  Home remains a compatible route but is removed from the primary rail.
+- Parent/child: the new specification has been read and integrated into the ordered
+  roadmap near the top of this document. No parent/child schema or UI is implemented
+  by this checkpoint. Preserve the new specification and start it at P0.
+
+Validation actually run:
+
+- `npm test`: 415 tests, 414 passed, one skipped, zero failed. `npm run build` passed
+  with two existing bundle-size warnings. `npm run lint:source` passed.
+- Learning model unit checks: 25 passed; mastery display and membership selection
+  unit scripts passed. Extended hub integration tests were syntax-checked, but the
+  credential/disposable-database integration suite was not run.
+- Live disposable fixture probe: 21 passed, including customer ownership, all four
+  Membership views, teacher views, Connections with an approved teacher, immediate
+  revocation, and signed-out rejection. Synthetic fixture posts, class, school,
+  memberships, teacher, enrollment and quiz attempt were removed afterward.
+- Targeted ESLint/Prettier (hub/player JS) and Stylelint (hub/player CSS) passed.
+  PHPCS on hub/player/new classes and hub templates: zero errors, ten warnings
+  (six existing database warnings, two membership meta-query warnings, two fresh
+  teacher permission-query warnings). Syntax checks passed on the modified quiz
+  template and integration script.
+- Repository-wide standards are still failing: existing PHP debt, 7,019 JavaScript
+  errors/27 warnings, and 1,649 CSS errors. The modified legacy `quiz-form.php`
+  retains the same 82 errors/nine warnings as its HEAD baseline. No blanket rule
+  disabling or baseline was added to conceal these results.
+- Desktop browser: lesson/quiz/assignment frames, light/dark presentation,
+  Membership, teacher roster and existing quiz exit UI inspected. The empty fixture
+  quiz correctly refused to start; a synthetic in-progress attempt checked the
+  frame only. Answer submission/grading is not verified by that inspection.
+
+Still open, in order:
+
+1. Fix and verify legacy free enrollment: clicking Enroll now on the fixture's
+   legacy course page navigated to the new overview without creating enrollment.
+   Investigate the existing add-to-cart script/localization and AJAX flow; retain
+   its nonce/access checks. Do not replace it with insecure GET enrollment.
+2. Verify remembered-section landing, role-switch interaction and teacher Settings
+   save return context. Finish actual mobile checks: the IAB viewport override did
+   not change the observed desktop width, so the new player/mobile layout is unverified.
+3. Run the credential-protected hub/school integration suites in their required
+   disposable environment. Email/password browser submissions and Connections with
+   a real class remain unverified; only synthetic class relationships were checked.
+4. Continue parent/child P0 and subsequent gates in the integrated roadmap.
+
+Screenshots under ignored `test-results/` include `teacher-roster-final.jpg` (light,
+synthetic student roster) and `teacher-roster-dark.jpg`. The older file named
+`player-mobile-dark.jpg` actually captured a desktop viewport; it is not mobile proof.
+
+## Enrollment recovery, legacy retirement and parent P0 (October 16, 2026)
+
+This section supersedes the unresolved enrollment diagnosis and the statement that
+no legacy pages had yet been retired. Work remains uncommitted in the live plugin
+folder; no push was performed.
+
+### Runtime changes
+
+- The enrollment failure was an unconfigured checkout page: the add-to-cart script
+  loaded and posted correctly, but `ohmylms_get_checkout_url()` returned an empty
+  string. Created/configured the canonical **Checkout page 395**, at
+  `http://800.local/ohmylms-checkout/`, with `[ohmylms_checkout]` and the existing
+  checkout template. This is a real required page, intentionally retained.
+- `includes/Ajax.php` now rejects an absent checkout destination with HTTP 503 before
+  changing the cart. It no longer reports success with a relative/empty redirect.
+  The legacy JS still has limited error presentation; improving that authored
+  interaction is separate from this routing fix. No payment bypass was introduced.
+- `Hub::redirect_course_page()` now applies only to GET, preserving form handlers.
+- Teacher Settings forms carry the requested presentation context; the save handler
+  rechecks `TeacherWorkspace::available()` before returning there. A forged teacher
+  context falls back to the learner's own Settings. No arbitrary return URL is accepted.
+- History's filter label now reads Quizzes, removing the excluded Exam wording.
+
+### Legacy retirement ledger
+
+New `includes/Student/LegacyPages.php` registers redirects independently of page
+publication. Explicit administrator-only `retire()` checks the configured page,
+exact standalone shortcode, metadata, child pages and menu references before
+moving it to Trash. It retains custom content/builder metadata and pages with
+children or explicit menu dependencies. No automatic frontend deletion occurs.
+
+| Retired ID | Former URL | Replacement |
+| --- | --- | --- |
+| 115 | `/my-dashboard-2/` | My learning |
+| 117 | `/my-profile/` | Settings / Account |
+| 118 | `/my-courses-2/` | My learning / Courses |
+
+All three are **in Trash**, not permanently purged. Their configured student page
+IDs now point to the canonical hub. Redirects also support plain page-ID URLs,
+known account endpoints/custom endpoint slugs, invoice ID and pagination; actions
+and old nonces are not forwarded. Logout uses WordPress's own nonce-protected URL.
+The ledger is option `ohmylms_hub_retired_pages`. Default page provisioning omits
+retired definitions. Disabling the hub through its settings restores recoverable
+pages and their original configured IDs via `LegacyPages::restore()`.
+
+Narrow compatibility exception: retain the public tags `ohmylms_dashboard`,
+`ohmylms_profile`, `ohmylms_my_profile`, and `ohmylms_my_courses`. With the hub enabled,
+they now render a canonical workspace link instead of the obsolete interface,
+preserving surrounding mixed content and preventing raw shortcode text. With the
+hub disabled, the existing renderers remain available for rollback. Filtered tag
+names and public callbacks are unchanged. Embedded/editor/theme consumers and
+disabled-hub fallback still depend on these tags/templates; do not remove their
+registrations or legacy renderer files until those dependencies are migrated.
+Checkout, course catalog, Membership and purchase tags remain active dependencies.
+Other plugins' older `cr-*` pages/tags were not retired by this plugin migration.
+
+### Verification and cleanup
+
+- `php tests/php/checkout-routing-unit.php`: two checks passed, including invalid
+  nonce rejection and missing checkout rejection before any cart/payment service.
+- Disposable live CLI checkout: zero-price order created active enrollment and
+  `CourseOutline::get()` reflected it. Outbound mail/HTTP were suppressed within
+  that fixture process. The test learner, order and enrollment were removed.
+- Settings handler probe: five checks passed for eligible teacher return, forged
+  teacher-context rejection, correct card return and POST redirect handling. This
+  was a CLI handler check; no real email/password form was submitted in the browser.
+- Retirement probe: **19 checks passed**, including custom content, builder metadata,
+  draft child-page preservation, plain/pretty route handling, invoice context,
+  filtered provisioning, shortcode adapters, unauthorized actor rejection and rollback.
+  Its fixture pages were removed and original options restored before applying the
+  real three-page migration. Verified the retired pages had no builder/custom metadata.
+- Browser: the old dashboard/profile/courses URLs redirected to their proper new
+  views after trashing; remembered History landing and Learner -> Teacher switching
+  worked; teacher Settings forms contained the teacher context. Checkout displayed
+  the fixture at $0. **Final checkout submission was tested by CLI, not in the browser.**
+- Synthetic course 390 and activities 391–394 were removed. Fixture persistent-cart
+  references and any fixture enrollment xAPI references were cleaned. A final query
+  found zero fixture posts. Checkout page 395 remains published. Screenshot:
+  `test-results/legacy-pages-retired.jpg`.
+- Targeted PHPCS: new retirement class and modified Settings/templates have no
+  errors; the test stub retains three unused-parameter warnings, the extended hub
+  integration script 30 existing fixture/database warnings, and Hub six database
+  warnings. The changed legacy files retain their prior counts: Ajax 176 errors/25
+  warnings; Shortcodes 19 errors. These were checked before and after the edits.
+  Syntax checks and `git diff --check` passed. Repository `lint:standards` was rerun
+  and still stops on existing PHP debt (`test-results/continuation-standards.log`).
+  The credential-protected disposable integration suite was extended but not run.
+  No JS/build-source changes in this continuation; earlier npm test/build results
+  remain recorded above, not claimed as newly rerun.
+
+### Parent/child P0 and exact next work
+
+Read `docs/learner-experience/PARENT-CHILD-P0.md`: source audit, observed/proposed
+screen inventory, separate independent-family table/API contract, scope/cache rules,
+provenance gap and migration boundaries. Existing school guardian queries are scoped
+to approved school work; they are not permission to read a child's global history.
+School signup requires 12–128-character passwords, while Settings currently allows
+eight; reconcile that policy explicitly in P1 rather than claiming it is unified.
+
+Next: **P1 role selection and parent onboarding**, reusing authentication and the
+existing parent role, with explicit role-aware landing and no role-based child-data
+grant. Then P2 school-linked read-only parent workspace. Independent-family tables
+and child setup remain P3. Parent dashboard, linking, recovery and personalization
+step-two reference screens still need observation or a clearly proposed design.
+Mobile verification, credential integration suites, real-class Connections, and
+browser email/password submission remain open. Continue retiring legacy dependencies
+as their replacements and redirects are verified; keep this ledger current.
+
+## Native teacher class management (October 16, 2026)
+
+A class is an independent **student roster**, separate from courses. Management is
+native in the hub (`hub_role=teacher`); no Tutor Me, Teacher Tools, Exam type or
+learner-facing roadmaps.
+
+### What exists
+
+- `includes/Schools/ClassManagement.php`: create (school contexts limited to
+  administered schools/active academic years), edit name/subject/grade (never
+  school/year), archive with explicit confirmation, restore, searchable/paginated
+  roster, add existing approved school students (separate candidate pagination),
+  remove roster membership (accounts, enrollments and history are untouched).
+- Private standalone invitations: recipient email must match, single-use, 48-hour
+  expiry, revocation, issuer-access revalidation, **no automatic email**. They reuse
+  `school_invitations` with `school_id=0`; `Service::accept()` branches to
+  `ClassManagement::accept()` inside its existing transaction/token validation.
+  Acceptance only grants standalone student membership: no school membership, no
+  global role change, no email-verified flag.
+- `includes/Student/TeacherActions.php` (POST handlers, nonce/method checks; also
+  redirects the old `?ohmylms_portal=1&view=teacher-dashboard` GET entry to the hub,
+  excluding invitation and file flows), `TeacherWorkspace.php`, `Hub.php`,
+  templates `teacher.php`, `teacher-class.php`, `teacher-create.php`, `classes.php`
+  (learner class list/connections support standalone classes), `student-hub.css`.
+  Invitation links preserve their destination through sign-in.
+
+### Verification
+
+- Browser (admin, real session): create + redirect to roster, edit saved, archive
+  (confirmation), archived list, open archived class, **Restore class** ("Class
+  restored."), **roster removal** (blocked without the confirm checkbox; with it,
+  "Student removed from this class. Their account and learning history were kept."),
+  **old portal redirect** `?ohmylms_portal=1&view=teacher-dashboard` ->
+  `/student-home/?hub_section=classes&hub_role=teacher`. Mobile (375px) roster has
+  no horizontal overflow. The disposable student's invitation acceptance was done
+  by CLI, not browser.
+- `test-results/teacher-management-probe.php`: 47 checks passed on synthetic
+  fixtures (permissions, nonce/method, expiry/replay/revocation, issuer revocation,
+  archive/restore, school-roster restrictions, enrollment preservation).
+- PHPCS (targeted): 0 errors. Warnings: ClassManagement 15 and TeacherWorkspace 4
+  (direct DB/cache), test support 15, integration runner 1. Syntax checks passed;
+  stylelint passed (trailing blank line at CSS EOF removed).
+- Repository-wide PHP/JS/CSS standards debt is substantial and unchanged.
+
+### Not run / limitations
+
+- The credential-protected `tests/php/teacher-class-integration.php` runner was
+  **not run** (disposable-database guard not bypassed).
+- Later refinements (verified with a temporary class, since removed): `aria-current`
+  on the selected class tab, "All classes" returns to the archived list for archived
+  classes, spacing under the back pill. Still not done: a wider class panel. Roster-row wrapping with a real student on
+  narrow screens was not re-checked after the student was removed.
+- Teachers need no automatic invitation email; teachers share links manually.
+
+### Fixture cleanup
+
+Live fixture class 5 and synthetic student 206 were removed, including class
+memberships, the invitation row and its `class_invitation_*` audit entries (matched by
+exact invitation IDs). Verified afterwards: zero classes, memberships, invitations
+and invitation audit rows, user gone. Helper scripts remain under the git-ignored
+`test-results/` for reference. The `Demo student` fixture no longer exists.
+
+Next: **P1 parent onboarding** per `docs/learner-experience/PARENT-CHILD-P0.md`.
+
+## P1: role selection and parent onboarding (October 16, 2026)
+
+Built per `PARENT-CHILD-P0.md`; school-linked only. No new tables or migrations.
+
+- `includes/Student/ParentWorkspace.php`: `available()` (parent role or an active
+  guardian link, schools enabled), `parent_only()`, `url()`, `children()` (delegates
+  to `Schools\Service::children()`, so each child is authorized fresh by school,
+  guardian link and active membership; a parent role label grants nothing).
+- `includes/Student/ParentActions.php`: signed-out `admin-post` handler with nonce
+  that calls `Schools\Controller::signup()` (made `public`; behavior unchanged, same
+  rate limit, honeypot, 12-128 password rule, parent role only, verification email).
+  Errors other than 400/429 are replaced by a generic message.
+- `Hub.php`: signed-out entry renders `templates/student-hub/signin.php` (learner /
+  parent / teacher chooser with explicit destinations preserved through sign-in; the
+  parent choice shows the sign-up form). Signed-in `hub_role=parent` shows a
+  "Family workspace" (`parent.php`: approved children or an empty state, 100-row
+  notice). A parent-only account with no explicit section lands there; explicit
+  routes always win. Forged `hub_role=parent` is denied.
+- `workspace.php`: role switch lists Learner/Teacher/Parent per eligibility.
+  Settings keeps the parent context on save (`SettingsSave`).
+- Password policy reconciled: hub password change now requires 12-128 characters
+  (`SettingsSave::MIN_PASS`/`MAX_PASS`), matching school sign-up.
+
+Verification: CLI probes (`test-results/parent-p1-probe.php` 17 checks:
+chooser per role, parent form only for parent, no-link empty state, parent-only
+landing, subscriber denied; `parent-signup-probe.php` 6 checks: short password,
+honeypot, forced role, parent-only role, no elevated caps; mail/HTTP suppressed,
+fixtures removed, one orphan `account_created` audit row removed). Learner page
+still renders in the browser with the role switch. PHPCS 0 errors on changed files
+(Hub 6, signin 5, workspace 1 warnings); stylelint passes.
+
+Not done / limitations: no browser test of the signed-out chooser or real
+sign-up/email (signing out would end the admin session; sign-up tested by CLI);
+no child-detail view yet; parent dashboard layout is a proposed OhMyLMS design, not a
+verified Khan Academy replica. Next: **P2** read-only school-linked child overview
+and progress, denying unrelated children, inactive schools/memberships and revoked
+links on every request.
+
+## P2: read-only school-linked child overview (October 16, 2026)
+
+- `ParentWorkspace::child()` accepts a requested `hub_child`/`hub_school` pair only
+  if it is in the actor's fresh `Service::children()` result (active school, active
+  guardian link, active student membership). Request values select a candidate and
+  never grant access. `child_url()` builds the links; query vars `hub_child` and
+  `hub_school` were registered in `Hub.php`.
+- `ParentWorkspace::work()` reads distributed work through
+  `Service::assignments( 0, child, school, page )`, which rechecks guardian access,
+  school status and current class/school membership; it returns no global history.
+- `templates/student-hub/parent.php`: child list with View links; overview with
+  child, school, completed/not completed assigned work, pagination (50 per page),
+  empty and "not available" states. Not included: measured skills/mastery, global
+  history, messaging, assignment creation (deferred by the P0 contract).
+- Probe `test-results/parent-p2-probe.php`: 12 checks passed on synthetic
+  fixtures: linked child allowed; unlinked child in the same school, wrong school
+  scope and another parent denied; only the linked child's work listed; forged
+  child URL leaks nothing; revoked link, inactive membership and suspended school
+  denied on the next request. Fixtures removed; a count query found no leftover
+  schools, classes, links, assignments or test users. PHPCS: 0 errors/warnings on
+  the two new/changed P2 files.
+- Not tested: browser rendering of the child overview (needs a real parent login,
+  which we do not impersonate), mobile layout, and the credential integration suites.
+- Next: P3 independent-family model (tables, invitations, child setup) per
+  `PARENT-CHILD-P0.md`, only after reconfirming the contract; it introduces schema,
+  so start with a migration/rollback plan.
+
+P3 plan (no code yet): `docs/learner-experience/PARENT-CHILD-P3-PLAN.md`, with four open policy decisions before P3a.
+
+## P3a: independent family schema and service, no UI (October 16, 2026)
+
+Defaults from `PARENT-CHILD-P3-PLAN.md` were adopted: no birth date (name and
+optional grade only); managed children have no email and sign in through a
+parent-issued setup link; existing learners link by private email-matched
+invitation; no home aggregates.
+
+- `includes/Family/Schema.php`: option `ohmylms_family_schema` (version 1), tables
+  `ohmylms_family_links`, `_invitations`, `_audit` (additive, idempotent
+  `dbDelta`, installed on `init` priority 7 by `Family\Bootstrap`, wired in
+  `includes/extensions.php`). Rollback: define `OHMYLMS_FAMILY_ENABLED` as false;
+  routes/services stop, data and audit rows stay. **The tables were installed on the
+  live 800.local database by the probe** (empty afterwards).
+- `includes/Family/Service.php`: `guardian_eligible()` (parent role + verified
+  email), `children()`/`child()` (fresh read, bounded 100), `create_child()`
+  (quota 20, no email, random password nobody sees, active link),
+  `issue_setup()` (supersedes older setup tokens), `invite_existing()` (quota 20),
+  `accept_link()` (signed-in, email match, verified, not self, issuer re-checked,
+  row-locked single use, reactivates the unique pair with revision bump),
+  `accept_setup()` (no session, 12-128 password, issuer/link recheck, returns login
+  once), `revoke_link()` (guardian or learner), `revoke_invitation()` (issuer).
+  Tokens are 64-hex, stored only as SHA-256, valid 48 hours, never audited.
+- Probe `test-results/family-p3a-probe.php`: 36 checks passed (idempotent install,
+  non-parent denied, other parent isolation, superseded/replayed/expired/malformed
+  tokens, issuer role loss, wrong-email/signed-out/self accept, revocation applies on
+  next request, reinstatement keeps one row, no raw tokens stored). Fixtures and test
+  users removed; counts verified zero. Mail/HTTP suppressed. PHPCS: zero errors and
+  warnings on `includes/Family`.
+- Not done: concurrent-acceptance race test (relies on `FOR UPDATE` row locks;
+  not exercised with parallel requests), REST routes, hub UI, child sign-in screen,
+  rate limiting beyond the pending-invitation quota, merging home links into
+  `ParentWorkspace::children()`, and a migration test on a fresh database.
+- Next: **P3b** "Add a child" UI and setup-link page (native forms + nonces), then
+  P3c invitations UI and P3d personalization.
+
+## P3b: add a child and child setup page (October 16, 2026)
+
+- `includes/Student/FamilyActions.php`: nonce-protected `admin-post` operations
+  `create_child` (also issues the first setup link), `issue_setup` and `revoke_link`
+  (confirmation required), results shown once through a 60-second per-user transient
+  (it briefly holds the setup URL, like the teacher invitation flash). Public setup
+  handler `ohmylms_family_setup` (nonce, 15 attempts per 15 minutes per client,
+  matching passwords, 12-128 characters) shows the login name once in the response and
+  never stores it.
+- `Hub.php`: `?ohmylms_child_setup=<64 hex>` signed out renders
+  `templates/student-hub/child-setup.php`; the token is only a form value and the page
+  sends no-store, no-referrer and noindex headers. A signed-in visitor gets the normal
+  hub.
+- `templates/student-hub/parent.php`: a "Home learning" card (separate from
+  school-linked children) with the child list, New setup link, Remove link
+  (confirmation) and Add a child form (name, optional grade). No email is sent.
+- Verified over real HTTP on http://800.local with a disposable guardian: setup page
+  200 with private headers; bad token shows no form; no nonce 403; mismatched
+  passwords, success and replay behave; login name shown, no token echoed back
+  outside the form. CLI render probe: 10 checks passed (home section, one-time
+  setup link, flash consumed, confirmation, unknown operation, other parent denied
+  view/issue/revoke). PHPCS: 0 errors on new/changed files. Fixtures removed; family
+  tables verified empty and no test users remain.
+- Not browser-tested: the signed-in parent page (a real parent login is not
+  impersonated) and its mobile layout; child sign-in after setup beyond the service
+  checks; the child's own "Connections" view. Parent's school and home sections are
+  separate lists, not merged.
+- Next: **P3c** invite an existing learner (UI), learner-side accept/decline and
+  revoke, then P3d personalization.
+
+## P3c: invite an existing learner (October 16, 2026)
+
+- `Family\Service` gained `invitations()` (guardian's pending list, no hashes),
+  `guardians()` (learner's active, still-eligible guardians), `preview( token )`
+  (non-consuming, only for the addressed signed-in account) and `decline( token )`.
+- `FamilyActions`: parent operations `invite_existing` and `revoke_invitation`;
+  learner handler `ohmylms_family_invite` (nonce; accept or decline, token revalidated
+  against the signed-in account); `invite_url()`. Results use the existing one-time
+  flash. Invitation pages send no-store/no-referrer headers.
+- Hub: `?ohmylms_family_invite=<64 hex>`; signed out it shows sign-in and preserves the
+  destination; signed in it renders `family-invite.php` (guardian name, Accept/Decline,
+  or a non-leaking "not available" page for anyone else).
+- UI: parent "Home learning" card gets Invite a child (email), the one-time link, and
+  pending invitations with Revoke. Learner Connections (and the no-class state) get
+  `family-connections.php` with guardians and a confirmed Remove connection; both
+  sides can revoke and the effect applies on the next request.
+- Verified: `test-results/family-p3c-probe.php` 19 checks passed (non-parent denied,
+  wrong account/signed-out leak nothing, destination preserved, decline/revoke block
+  acceptance, learner sees the guardian, unrelated learner sees nothing, removal
+  needs confirmation and is immediate for both sides). Earlier probes rerun: P3a 36,
+  P2 12, signup 6, teacher 47, all passing. Real HTTP on 800.local: invitation page
+  signed-out returns 200, private headers, sign-in with redirect preserved. PHPCS 0
+  errors/warnings on the family files. Fixtures removed; family and school tables
+  empty. An orphan `account_created` audit row left by the signup probe was removed
+  (that probe does not clean its own audit row).
+- Mishap noted: `phpcbf` run over a file with a parse error truncated
+  `family-connections.php`; it was rewritten and re-linted. Do not run phpcbf on files
+  that fail `php -l`.
+- Not done: browser test as a real parent/learner (no impersonation); mobile
+  layout; the learner accept flow through the real `admin-post` handler (service and
+  render are tested, the redirecting handler is not exercised by a test).
+- Next: **P3d** managed-child personalization (grade, then real course choices),
+  child sign-in verification, then the P3 integration runner and P6 provenance work.
+
+### Parent UI polish (October 16, 2026)
+
+Parent page wrapped in `.oml-hub-family` (max 880px, cards no longer capped at 640px),
+flash as a notice card with a monospace one-time link field, child rows with a Home
+learning chip and grouped actions (Remove link is red), bordered collapsible forms.
+Verified visually from a static snapshot rendered from the real template and
+stylesheet (`test-results/parent-workspace-polished.jpg`); stylelint passes, PHPCS clean,
+P3c probe still 19/19. Not checked: narrow/mobile widths, dark mode, interactions in
+a real parent session. The snapshot helper is `test-results/parent-ui-snapshot.php`
+(`cleanup` removes its fixtures and HTML).
+
+### Live parent session test on 800.local (October 16, 2026)
+
+With a disposable parent account (ID 264, created through `Controller::signup`; the
+user signed in themself, no other account was logged into) the real browser flows
+worked: parent workspace in dark mode, Add a child (one-time setup link; flash gone
+on reload), Invite existing learner (one-time invitation link and pending list),
+Revoke invitation, Remove link blocked without confirmation and working with it,
+Settings in parent context (hidden `hub_role=parent`, password 12-128), role switch
+(Learner, Parent), 375px layout with no horizontal overflow. Not tested live: the
+learner accepting an invitation in a browser (needs a second signed-in learner) and
+school-linked children. Children and family rows created in the test were removed
+with `test-results/family-clean-guardian.php`; the parent account was kept for
+further tests and must be deleted afterwards (`... 264 delete-account`).
+An attempt to grant the real admin account the parent role was reverted
+(roles verified as administrator only).
+
+## P3d and completion pass (October 16, 2026)
+
+- **P3d (managed-child choices):** `Family\Service::is_managed()`, `choices()` and
+  `set_choices()`; `FamilyActions` operation `update_choices`; "Learning choices" form
+  per managed child on the parent page (grade; follow public collections). Following
+  uses the existing `Bundles\Follows`, lists the collection on the child's My learning,
+  grants no access and enrols nobody; only public catalog collections are accepted
+  (drafts and unknown IDs ignored); invited learners are not managed, so a parent
+  cannot set their choices; other parents are denied. Probe 14/14. Collections need the
+  site to have published bundles: 800.local has none, so the live test used a
+  disposable bundle and course that were removed.
+- **Live test as the disposable parent (user signed in):** Add child, grade 4 and
+  collection save ("Learning choices saved.", values persisted on reload).
+- **Race test** (`test-results/family-race.php`): four parallel PHP processes accepted
+  the same invitation and setup token; exactly one succeeded for each, one link row, one
+  audit entry for each. Row locks hold.
+- **Regression:** P3a 36, P3c 19, P3d 14, P2 12, P1 17, signup 6, teacher 47 all pass.
+  PHPCS: 0 errors on the family/parent files (5 warnings in `signin.php`); stylelint and
+  syntax checks pass. Tables empty; no fixture bundles, courses or children remain.
+  The test parent account (ID 264) and its credentials file were deleted afterwards (verified: no test users, family tables empty, admin roles unchanged).
+- **Remaining, deliberately not done:** learner accepting an invitation in a browser
+  (needs a second signed-in learner account; service, render and race are tested);
+  school-linked children live (probes only); family REST routes (UI uses admin-post
+  forms only); fresh-database migration run; home-learning reports (P6, needs activity
+  provenance); unobserved reference screens (parent dashboard, recovery, personalization
+  step two) remain proposed designs; teacher integration runner and the wider class panel;
+  repository-wide standards debt; retirement of remaining legacy pages.
+
+### Follow-up polish (October 16, 2026)
+
+- Selected teacher class panel widened to 880px (`.oml-hub-class-panel`), forms kept at
+  640px. Verified live on 800.local (dark mode) after the user signed in: the class settings
+  panel is wide, fields stay readable, the selected tab shows `aria-current`; the flash
+  and create cards were widened to match. The disposable class was removed, and the test
+  teacher account created for this check (ID 310) and its file were deleted.
+- Signed-out chooser verified live on 800.local (parent tab shows the sign-up form).
+  Found and fixed low-contrast "Sign in to continue" text in dark mode
+  (`a.oml-hub-button` inside `.oml-hub-signin`).
+- Correction: the test parent account note above is superseded; it was deleted.
+
+### Final verification snapshot (October 16, 2026)
+
+`npm test` (asset parity plus 415 JS tests): 414 pass, 0 fail, 1 skipped. PHP syntax
+clean on every changed/new file. All fixtures and disposable accounts (parent, teacher,
+learner) were deleted; family and school tables are empty. Still open: browser round-trip of a
+learner accepting a parent invitation, the unrun credential-protected teacher
+integration runner, legacy-page retirement, home-learning reports, and the unobserved
+reference screens.
+
+Legacy retirement inventory and proposal: `docs/learner-experience/LEGACY-RETIREMENT-PLAN.md` (no changes made; first proposed steps are parent/student portal redirects and deleting two trashed test pages).
+
+### Legacy retire-now steps done (October 16, 2026)
+
+Portal `parent-dashboard` and `student-assignments` now redirect eligible signed-in users to
+the parent workspace and learner Classes (`LegacyPages::redirect_portal`); test pages 313
+and 314 were permanently deleted (page 312, another test fixture, remains in Trash);
+provisioning already respected the ledger (verified, no change). Details and limits in
+`docs/learner-experience/LEGACY-RETIREMENT-PLAN.md`. Probe: 12 checks; earlier probes
+rerun and passing.
+
+### Admin parent role (October 16, 2026)
+
+At the user's request the real `admin` account was given the `ohmylms_parent` role in
+addition to `administrator` (so the parent workspace and family tools can be used live).
+To undo: `get_user_by('login','admin')->remove_role('ohmylms_parent')`. Any children
+or links created as admin live in the family tables and are removable with
+`test-results/family-clean-guardian.php <admin id>` (without `delete-account`).
+
+### Live parent test as admin (October 16, 2026)
+
+With the admin account holding the parent role, in the signed-in browser on 800.local:
+parent workspace and role switch (Learner/Teacher/Parent), Add a child, Learning choices
+(grade and a disposable collection), Invite existing learner, Revoke invitation, Remove link
+(blocked without the confirmation box, works with it) all passed. The portal
+`view=parent-dashboard` now redirects to the family workspace, and with `ohmylms_invite` it
+stays on the portal. The child, links, invitation rows, disposable bundle and course were
+removed (family tables, bundles, follows empty). Admin keeps the `ohmylms_parent` role.
+
+## School activation in the hub; invitation links repointed (October 16, 2026)
+
+- `Schools\Service::invite_role( token )` reports the role of a still-valid token without
+  consuming it. `Student\SchoolActivation` (admin-post `ohmylms_school_activate`, nonce, 15
+  attempts per 15 minutes, matching 12-128 character passwords) calls the existing
+  `Service::accept()` only for `activation` tokens and shows the sign-in name once.
+  `templates/student-hub/school-activation.php` is the signed-out page; the hub renders it
+  for `?ohmylms_invite=<token>` when the token is a valid activation invitation. Invitation
+  pages send no-store, no-referrer and noindex headers.
+- Signed-in users who open a non-activation invitation link directly now land on the Join a
+  class view with the token filled (when the Classes tab is enabled); signed-out visitors
+  still go to sign-in with the destination preserved.
+- `Hub::invitation_url()`: new school invitation links point at the hub (activation always;
+  other roles when the Classes tab is on), falling back to the portal otherwise. The portal
+  route and the React portal app are untouched, so links already sent keep working.
+- Verified on 800.local over real HTTP with a disposable school and managed student:
+  activation page 200 with private headers and a password form; student-role and bogus
+  tokens show no form; no nonce 403; mismatch, short password and wrong-role token
+  rejected; success sets the password (confirmed) and consumes the invitation; replay
+  rejected without changing the password; the old portal link still returns 200. Render
+  probe 2 checks; earlier probes (P1, P2, P3c, redirects, teacher) still pass. PHPCS 0 errors;
+  school fixtures removed.
+- Not done: the credential-protected `tests/php/schools-integration.php` was not run; the
+  invited non-activation roles (teacher, school admin, guardian) were not exercised end to
+  end through the hub join view in a browser.
+
+### Live school invitation round trip as admin (October 16, 2026)
+
+Disposable school, class, student and two assignments; a guardian invitation addressed to
+the admin's email was opened through a redirect file (token never typed in a command).
+- **Bug found and fixed:** the remembered-location script in `assets/js/student-hub.js`
+  rewrote the invitation URL to the saved section (My learning), so direct invitation
+  links never reached the Join view. It now skips restoring when `ohmylms_invite` is present.
+  ESLint passes; `npm test` (asset parity + 415 JS tests) rerun: 414 pass, 0 fail, 1 skipped.
+- Verified live in the browser: the invitation opens the hub Join view with the token
+  filled; Accept works ("Invitation accepted..."); the parent workspace lists the
+  school-linked child; the child overview shows both assignments (1 completed, 1 not);
+  a forged school scope shows "This learner is not available". The overview card now uses
+  the wide panel width.
+- Cleanup: fixture school, class, assignments, link, invitation, audit rows and the student
+  were removed; the admin's `_ohmylms_email_verified` meta (which acceptance sets) was
+  restored to its prior state; admin roles unchanged.
+
+### Teacher and school-admin invitations through the hub (October 16, 2026)
+
+Live on 800.local as admin with a disposable school: the hub Join view accepted a teacher
+invitation (school and class memberships plus `ohmylms_teacher`) and a school-admin
+invitation (membership plus `ohmylms_school_admin`). The teacher workspace then listed the
+school's class, and the Create a class form offered the administered school and year. Both
+invitations were marked consumed. Cleanup removed the school, class, memberships and
+invitations, removed the two added WordPress roles, and restored the email-verified meta;
+admin is back to administrator plus parent. Fixed: the success message "Open My
+classes to see your class" is shown for every role; wording could be role-aware. The
+credential-protected schools integration suite was still not run.
+
+Join-view success text is now role-neutral ("Invitation accepted. Open My classes, or use Switch
+role at the top to open your new workspace."); the class-specific API message is unchanged.
