@@ -1,4 +1,4 @@
-/** Pure helpers for the course "Organize" panel: placing a course in the curriculum and Learning Tracks. */
+/** Pure helpers for the course "Organize" panel: placing a course in the curriculum and Course Bundles. */
 
 /**
  * Curriculum items in tree order (siblings by position), each with its depth. Items whose parent is missing are shown at the top level.
@@ -107,12 +107,12 @@ export function sameIds( a, b ) {
 }
 
 /**
- * Learning Tracks: published first, then drafts, each alphabetically.
- * @param tracks
+ * Course Bundles: published first, then drafts, each alphabetically.
+ * @param bundles
  */
-export function orderTracks( tracks ) {
-	return [ ...( tracks || [] ) ]
-		.map( ( track ) => ( { ...track, id: Number( track.id ) } ) )
+export function orderBundles( bundles ) {
+	return [ ...( bundles || [] ) ]
+		.map( ( bundle ) => ( { ...bundle, id: Number( bundle.id ) } ) )
 		.sort(
 			( a, b ) =>
 				Number( b.status === 'published' ) -

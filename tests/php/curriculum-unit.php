@@ -7,8 +7,8 @@ function get_option() { return false; }
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 use OhMyLMS\Curriculum\Tree;
 use OhMyLMS\Skills\Mastery;
-use OhMyLMS\Tracks\Combined;
-use OhMyLMS\Tracks\Progress;
+use OhMyLMS\Bundles\Combined;
+use OhMyLMS\Bundles\Progress;
 $checks = 0;
 function check($condition, $message) { global $checks; if (!$condition) { throw new RuntimeException($message); } $checks++; }
 

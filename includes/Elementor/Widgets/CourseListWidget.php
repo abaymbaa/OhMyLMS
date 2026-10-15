@@ -205,14 +205,14 @@ class CourseListWidget extends Widget_Base {
 		);
 
 		$this->add_control(
-			'track',
+			'bundle',
 			array(
-				'label'       => esc_html__( 'Learning tracks', 'ohmylms' ),
-				'description' => esc_html__( 'Only show courses in these Learning Tracks. Leave empty to show all.', 'ohmylms' ),
+				'label'       => esc_html__( 'Course bundles', 'ohmylms' ),
+				'description' => esc_html__( 'Only show courses in these Course Bundles. Leave empty to show all.', 'ohmylms' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
-				'options'     => \OhMyLMS\Curriculum\Placement::track_options(),
+				'options'     => \OhMyLMS\Curriculum\Placement::bundle_options(),
 			)
 		);
 
@@ -1287,8 +1287,8 @@ class CourseListWidget extends Widget_Base {
 			$attrs['order'] = $settings['order'];
 		}
 
-		// Curriculum items and Learning Tracks the list is limited to (comma-separated slugs).
-		foreach ( array( 'curriculum', 'track' ) as $group ) {
+		// Curriculum items and Course Bundles the list is limited to (comma-separated slugs).
+		foreach ( array( 'curriculum', 'bundle' ) as $group ) {
 			if ( ! empty( $settings[ $group ] ) ) {
 				$attrs[ $group ] = implode( ',', array_map( 'sanitize_key', (array) $settings[ $group ] ) );
 			}

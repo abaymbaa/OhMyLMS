@@ -45,7 +45,9 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 	}, [ item.id ] );
 
 	const branch = info && info.children > 0 && strategy === 'delete';
-	const tracks = info ? ( branch ? info.tracks : info.own_tracks ) || 0 : 0;
+	const bundles = info
+		? ( branch ? info.bundles : info.own_bundles ) || 0
+		: 0;
 	return (
 		<Modal
 			title={ sprintf( __( 'Delete “%s”?', 'ohmylms' ), item.name ) }
@@ -103,16 +105,16 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 								'ohmylms'
 							) }
 						</li>
-						{ tracks > 0 && (
+						{ bundles > 0 && (
 							<li>
 								{ sprintf(
 									_n(
-										'It will be removed from %d learning track.',
-										'It will be removed from %d learning tracks.',
-										tracks,
+										'It will be removed from %d course bundle.',
+										'It will be removed from %d course bundles.',
+										bundles,
 										'ohmylms'
 									),
-									tracks
+									bundles
 								) }
 							</li>
 						) }

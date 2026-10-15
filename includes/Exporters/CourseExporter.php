@@ -99,7 +99,7 @@ class CourseExporter {
 		// Get terms associated with the course.
 		$taxonomies = get_object_taxonomies( OHMYLMS_COURSE_CPT, 'objects' );
 		foreach ( $taxonomies as $taxonomy ) {
-			// Course categories and tags were replaced by the curriculum and Learning Tracks (exported below).
+			// Course categories and tags were replaced by the curriculum and Course Bundles (exported below).
 			if ( in_array( $taxonomy->name, array( 'course_category', 'course_tag' ), true ) ) {
 				continue;
 			}
@@ -133,12 +133,12 @@ class CourseExporter {
 			'meta'            => $course_meta,
 			'terms'           => $course_terms,
 			'curriculum'      => $this->get_curriculum_paths( $course_id ),
-			'learning_tracks' => array_values(
+			'learning_bundles' => array_values(
 				array_map(
-					static function ( $track ) {
-						return $track['title'];
+					static function ( $bundle ) {
+						return $bundle['title'];
 					},
-					\OhMyLMS\Curriculum\Placement::tracks( $course_id )
+					\OhMyLMS\Curriculum\Placement::bundles( $course_id )
 				)
 			),
 			'contents'        => $contents, // Include all chapters and their associated contents.

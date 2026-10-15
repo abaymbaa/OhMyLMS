@@ -10,7 +10,7 @@ namespace OhMyLMS\XApi;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * OhMyLMS > xAPI: connection settings, privacy choices, delivery status and a test button.
+ * Legacy hidden xAPI screen. The primary UI lives under OhMyLMS > Settings > xAPI.
  *
  * Every action is an admin-post handler that checks the capability and a nonce, then redirects
  * back with a short notice code (never a message taken from the request).
@@ -32,7 +32,7 @@ final class AdminPage {
 	}
 
 	/**
-	 * Add the submenu entry.
+	 * Retain the legacy settings URL without adding a separate submenu entry.
 	 */
 	public static function menu() {
 		add_submenu_page(
@@ -43,6 +43,7 @@ final class AdminPage {
 			self::SLUG,
 			array( __CLASS__, 'render' )
 		);
+		remove_submenu_page( defined( 'OHMYLMS_SLUG' ) ? OHMYLMS_SLUG : 'ohmylms', self::SLUG );
 	}
 
 	/**
@@ -52,7 +53,7 @@ final class AdminPage {
 	 * @return string
 	 */
 	private static function url( $notice = '' ) {
-		$url = admin_url( 'admin.php?page=' . self::SLUG );
+		$url = admin_url( 'admin.php?page=ohmylms#/settings/xapi-settings' );
 
 		return '' === $notice ? $url : add_query_arg( 'xapi_notice', $notice, $url );
 	}

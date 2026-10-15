@@ -1159,7 +1159,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	}
 }
 
-/* Curriculum accordion editor and Learning Tracks manager. Indentation comes from nesting,
+/* Curriculum accordion editor and Course Bundles manager. Indentation comes from nesting,
  * so every inline panel, add row and child list lines up with its parent. Logical properties
  * keep right-to-left layouts correct. */
 .ohmylms-cur-status {
@@ -1458,14 +1458,14 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	gap: 8px;
 }
 
-.ohmylms-track-members {
+.ohmylms-bundle-members {
 	margin: 8px 0 16px;
 	padding: 0;
 	list-style: none;
-	counter-reset: ohmylms-track-member;
+	counter-reset: ohmylms-bundle-member;
 }
 
-.ohmylms-track-members > li {
+.ohmylms-bundle-members > li {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -1474,7 +1474,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	border-bottom: 1px solid var(--ohmylms-admin-border, #dcdcde);
 }
 
-.ohmylms-track-member-name {
+.ohmylms-bundle-member-name {
 	display: flex;
 	flex: 1 1 240px;
 	flex-wrap: wrap;
@@ -1484,7 +1484,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	overflow-wrap: anywhere;
 }
 
-.ohmylms-track-picker {
+.ohmylms-bundle-picker {
 	display: grid;
 	gap: 10px;
 	max-width: 640px;
@@ -1495,7 +1495,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
-.ohmylms-track-publish {
+.ohmylms-bundle-publish {
 	margin-top: 20px;
 	padding-top: 12px;
 	border-top: 1px solid var(--ohmylms-admin-border, #dcdcde);

@@ -1,5 +1,5 @@
 /**
- * Curriculum editor, Learning Tracks manager and the learner dashboard in a real browser.
+ * Curriculum editor, Course Bundles manager and the learner dashboard in a real browser.
  * Needs the disposable site: OHMYLMS_TEST_CREDENTIALS (JSON), OHMYLMS_CHROMIUM_PATH (browser),
  * OHMYLMS_PHP and, if the PHP build needs one, OHMYLMS_PHP_INI. Run with --workers=1.
  */
@@ -204,105 +204,105 @@ test('administrator builds, edits, searches, reorders, moves and deletes curricu
   expect(problems).toEqual([]);
 });
 
-test('administrator creates, fills and publishes a Learning Track inline', async ({ page }, testInfo) => {
+test('administrator creates, fills and publishes a Course Bundle inline', async ({ page }, testInfo) => {
   const problems = watch(page);
   const tag = state.tag;
   await login(page, admin().username, admin().password);
-  await page.goto('/wp-admin/admin.php?page=ohmylms#/extensions/tracks');
-  await expect(page.getByRole('heading', { name: 'Learning Tracks', exact: true })).toBeVisible({ timeout: 30000 });
+  await page.goto('/wp-admin/admin.php?page=ohmylms#/extensions/bundles');
+  await expect(page.getByRole('heading', { name: 'Course Bundles', exact: true })).toBeVisible({ timeout: 30000 });
   await expect(page.getByText(`English exam preparation ${tag}`, { exact: true })).toBeVisible();
   await expect(page.locator('li', { hasText: `English exam preparation ${tag}` }).getByText('3 members')).toBeVisible();
 
-  const title = `Browser track ${tag}`;
-  await page.getByRole('button', { name: 'New track' }).click();
-  await page.getByLabel('Name of the new track').fill(title);
+  const title = `Browser bundle ${tag}`;
+  await page.getByRole('button', { name: 'New bundle' }).click();
+  await page.getByLabel('Name of the new bundle').fill(title);
   await page.getByLabel('Description (optional)').fill('Chosen by hand');
-  await page.getByRole('button', { name: 'Create track' }).click();
+  await page.getByRole('button', { name: 'Create bundle' }).click();
   await expect(page.locator('.ohmylms-cur-status .components-notice').filter({ hasText: `Created “${title}”` })).toBeVisible();
   const panel = page.getByRole('region', { name: `Editing ${title}` });
   await expect(panel).toBeVisible();
-  // A track cannot be published until it has members, and says why.
+  // A bundle cannot be published until it has members, and says why.
   await expect(panel.getByRole('button', { name: 'Publish', exact: true })).toBeDisabled();
   await expect(panel.getByText('Add at least one course or curriculum item before publishing.')).toBeVisible();
 
   await panel.getByLabel('Find a course').fill('English warm-up');
-  await panel.getByRole('button', { name: `Add English warm-up ${tag} to the track` }).click();
+  await panel.getByRole('button', { name: `Add English warm-up ${tag} to the bundle` }).click();
   await panel.getByLabel('Add from').selectOption('curriculum');
   await panel.getByLabel('Find a curriculum item').fill('Entrance test');
-  await panel.getByRole('button', { name: `Add Entrance test ${tag} to the track` }).click();
+  await panel.getByRole('button', { name: `Add Entrance test ${tag} to the bundle` }).click();
   await panel.getByLabel('Find a curriculum item').fill('Entrance test');
-  await expect(panel.getByRole('button', { name: `Add Entrance test ${tag} to the track` })).toHaveCount(0);
+  await expect(panel.getByRole('button', { name: `Add Entrance test ${tag} to the bundle` })).toHaveCount(0);
   await expect(panel.getByText('Unsaved changes')).toBeVisible();
   await expect(panel.getByRole('button', { name: 'Publish', exact: true })).toBeDisabled();
   await expect(panel.getByText('Save your changes before publishing.')).toBeVisible();
   await panel.getByRole('button', { name: `Move Entrance test ${tag} up` }).click();
-  expect(await panel.locator('.ohmylms-track-member-name strong').allTextContents()).toEqual([`Entrance test ${tag}`, `English warm-up ${tag}`]);
-  await panel.getByRole('button', { name: 'Save track' }).click();
+  expect(await panel.locator('.ohmylms-bundle-member-name strong').allTextContents()).toEqual([`Entrance test ${tag}`, `English warm-up ${tag}`]);
+  await panel.getByRole('button', { name: 'Save bundle' }).click();
   await expect(page.locator('.ohmylms-cur-status .components-notice').filter({ hasText: `Saved “${title}”.` })).toBeVisible();
   await panel.getByRole('button', { name: 'Publish', exact: true }).click();
-  await expect(panel.getByText(/Learners can find this track/)).toBeVisible();
+  await expect(panel.getByText(/Learners can find this bundle/)).toBeVisible();
   // Order survives a reload; a member is never added automatically.
   await page.reload();
   await page.getByRole('button', { name: `Edit ${title}` }).click();
   const reopened = page.getByRole('region', { name: `Editing ${title}` });
-  await expect(reopened.locator('.ohmylms-track-member-name strong').first()).toHaveText(`Entrance test ${tag}`);
-  expect(await reopened.locator('.ohmylms-track-member-name strong').count()).toBe(2);
+  await expect(reopened.locator('.ohmylms-bundle-member-name strong').first()).toHaveText(`Entrance test ${tag}`);
+  expect(await reopened.locator('.ohmylms-bundle-member-name strong').count()).toBe(2);
   await reopened.getByRole('button', { name: `Delete ${title}…` }).click();
   await expect(reopened.getByText('No learners follow it.')).toBeVisible();
   await reopened.getByRole('button', { name: 'Cancel' }).click();
-  await page.screenshot({ path: testInfo.outputPath('tracks-desktop.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('bundles-desktop.png'), fullPage: true });
   await noModal(page);
   expect(problems).toEqual([]);
 });
 
-test('learner finds, adds and removes a track; following does not enrol or grant access', async ({ page }, testInfo) => {
+test('learner finds, adds and removes a bundle; following does not enrol or grant access', async ({ page }, testInfo) => {
   const problems = watch(page);
   const tag = state.tag;
-  const track = `English exam preparation ${tag}`;
+  const bundle = `English exam preparation ${tag}`;
   await login(page, state.login, state.password);
   // On the real student dashboard the section sits beneath the standard statistics, exactly once.
   await page.goto(state.dashboard_url);
   await expect(page.getByText('Enrolled Courses', { exact: true })).toBeVisible();
-  await expect(page.locator('#ohmylms-tracks')).toHaveCount(1);
-  await expect(page.locator('#ohmylms-tracks').getByRole('heading', { name: 'My learning tracks' })).toBeVisible();
+  await expect(page.locator('#ohmylms-bundles')).toHaveCount(1);
+  await expect(page.locator('#ohmylms-bundles').getByRole('heading', { name: 'My course bundles' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('learner-dashboard-page.png'), fullPage: true });
   await page.goto(state.page_url);
-  const section = page.locator('#ohmylms-tracks');
-  await expect(section.getByRole('heading', { name: 'My learning tracks' })).toBeVisible();
+  const section = page.locator('#ohmylms-bundles');
+  await expect(section.getByRole('heading', { name: 'My course bundles' })).toBeVisible();
   await expect(section.getByText('does not enrol you', { exact: false })).toBeVisible();
-  const suggestion = section.locator('.ohmylms-tracks-suggested li', { hasText: track });
+  const suggestion = section.locator('.ohmylms-bundles-suggested li', { hasText: bundle });
   await expect(suggestion.getByText('Includes 1 course you are enrolled in.')).toBeVisible();
   // The learner cannot reach administration.
-  const denied = await page.evaluate(async () => { const c = window.ohmylmsTracks; const get = (path) => fetch(c.root + path, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return [await get('curriculum/tree'), await get('tracks'), await get('skill-mappings')]; });
+  const denied = await page.evaluate(async () => { const c = window.ohmylmsBundles; const get = (path) => fetch(c.root + path, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return [await get('curriculum/tree'), await get('bundles'), await get('skill-mappings')]; });
   expect(denied).toEqual([403, 403, 403]);
 
   // Add it: keyboard operable, announced, focus returns to the section.
-  const add = section.getByRole('button', { name: `Add ${track} to my dashboard` });
+  const add = section.getByRole('button', { name: `Add ${bundle} to my dashboard` });
   await add.focus();
   await page.keyboard.press('Enter');
-  const followed = section.getByRole('article', { name: track });
+  const followed = section.getByRole('article', { name: bundle });
   await expect(followed).toBeVisible();
-  expect(await page.evaluate(() => document.activeElement && document.activeElement.id)).toBe('ohmylms-tracks');
+  expect(await page.evaluate(() => document.activeElement && document.activeElement.id)).toBe('ohmylms-bundles');
   await expect(followed.getByText(`English warm-up ${tag}`)).toBeVisible();
-  const warmup = followed.locator('.ohmylms-track-course', { hasText: `English warm-up ${tag}` });
+  const warmup = followed.locator('.ohmylms-bundle-course', { hasText: `English warm-up ${tag}` });
   await expect(warmup.getByText('Enrolled', { exact: true })).toBeVisible();
   await expect(warmup.getByText('Traditional', { exact: true })).toBeVisible();
   await expect(warmup.getByLabel('Activities completed: 1 of 3')).toBeVisible();
-  const other = followed.locator('.ohmylms-track-course', { hasText: `Test prep ${tag}` });
+  const other = followed.locator('.ohmylms-bundle-course', { hasText: `Test prep ${tag}` });
   await expect(other.getByText('Not enrolled', { exact: true })).toBeVisible();
   await expect(other.getByText(/You are not enrolled in this course/)).toBeVisible();
   await expect(other.locator('progress')).toHaveCount(0);
   // Syllabus-level view with skills: unassessed skills say so, and no percentage is invented.
-  const syllabus = followed.locator('.ohmylms-track-syllabus', { hasText: 'Reading and writing' });
+  const syllabus = followed.locator('.ohmylms-bundle-syllabus', { hasText: 'Reading and writing' });
   await expect(syllabus.getByText('2 skills: 0 strengths · 0 need practice · 1 in progress · 1 not assessed')).toBeVisible();
-  const row = (name) => followed.locator('.ohmylms-track-skill-table tbody tr', { hasText: name });
+  const row = (name) => followed.locator('.ohmylms-bundle-skill-table tbody tr', { hasText: name });
   await expect(row(`Vocabulary in context ${tag}`).getByText('Not assessed').first()).toBeVisible();
   await expect(row(`Reading inference ${tag}`).getByText('Developing').first()).toBeVisible();
   await expect(row(`Vocabulary in context ${tag}`).getByText('None available yet')).toBeVisible();
   expect(await followed.innerText()).not.toMatch(/\d\s?%/);
   await expect(followed.getByText('Course completed')).toHaveCount(0);
   // Following changed neither enrollment nor access.
-  const access = await page.evaluate(async ({ other, enrolled }) => { const c = window.ohmylmsTracks; const get = (id) => fetch(`${c.root}courses/${id}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return { other: await get(other), enrolled: await get(enrolled) }; }, { other: state.other_course, enrolled: state.enrolled_course });
+  const access = await page.evaluate(async ({ other, enrolled }) => { const c = window.ohmylmsBundles; const get = (id) => fetch(`${c.root}courses/${id}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); return { other: await get(other), enrolled: await get(enrolled) }; }, { other: state.other_course, enrolled: state.enrolled_course });
   expect(access.other).toBe(403);
   expect(access.enrolled).not.toBe(403);
   await page.screenshot({ path: testInfo.outputPath('learner-desktop.png'), fullPage: true });
@@ -313,12 +313,12 @@ test('learner finds, adds and removes a track; following does not enrol or grant
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.reload();
-  await expect(page.locator('#ohmylms-tracks').getByRole('article', { name: track })).toBeVisible();
+  await expect(page.locator('#ohmylms-bundles').getByRole('article', { name: bundle })).toBeVisible();
   // Remove it again: back to suggestions, enrollment untouched.
-  await page.locator('#ohmylms-tracks').getByRole('button', { name: `Remove ${track} from my dashboard` }).click();
-  await expect(page.locator('#ohmylms-tracks').getByRole('article', { name: track })).toHaveCount(0);
-  await expect(page.locator('#ohmylms-tracks .ohmylms-tracks-suggested li', { hasText: track })).toBeVisible();
-  const still = await page.evaluate(async (enrolled) => { const c = window.ohmylmsTracks; return fetch(`${c.root}courses/${enrolled}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); }, state.enrolled_course);
+  await page.locator('#ohmylms-bundles').getByRole('button', { name: `Remove ${bundle} from my dashboard` }).click();
+  await expect(page.locator('#ohmylms-bundles').getByRole('article', { name: bundle })).toHaveCount(0);
+  await expect(page.locator('#ohmylms-bundles .ohmylms-bundles-suggested li', { hasText: bundle })).toBeVisible();
+  const still = await page.evaluate(async (enrolled) => { const c = window.ohmylmsBundles; return fetch(`${c.root}courses/${enrolled}/learning/progress`, { credentials: 'same-origin', headers: { 'X-WP-Nonce': c.nonce } }).then((r) => r.status); }, state.enrolled_course);
   expect(still).not.toBe(403);
   expect(problems).toEqual([]);
 });

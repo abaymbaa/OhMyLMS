@@ -14,7 +14,7 @@ require_once ABSPATH . 'wp-admin/includes/user.php';
 use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Placement;
 use OhMyLMS\Curriculum\Schema;
-use OhMyLMS\Tracks\Tracks;
+use OhMyLMS\Bundles\Bundles;
 
 global $wpdb;
 $admin = get_user_by('login', $config['username']); wp_set_current_user($admin->ID);
@@ -40,16 +40,16 @@ $purge = static function ($post_id) {
 $item = static function ($name, $parent = 0) use (&$state) { $created = Items::create(['name' => $name, 'item_type' => 'custom', 'parent_id' => $parent]); $state['items'][] = (int) $created['id']; return (int) $created['id']; };
 if ($action === 'setup') {
     Schema::install();
-    $state = ['tag' => $tag, 'posts' => [], 'items' => [], 'tracks' => [], 'terms' => [], 'users' => [], 'options' => ['ohmylms_archive_page_filters' => get_option('ohmylms_archive_page_filters', false), 'ohmylms_archive_page_filter_is_enabled' => get_option('ohmylms_archive_page_filter_is_enabled', false)]];
+    $state = ['tag' => $tag, 'posts' => [], 'items' => [], 'bundles' => [], 'terms' => [], 'users' => [], 'options' => ['ohmylms_archive_page_filters' => get_option('ohmylms_archive_page_filters', false), 'ohmylms_archive_page_filter_is_enabled' => get_option('ohmylms_archive_page_filter_is_enabled', false)]];
     $state['science'] = $item('Science ' . $tag); $state['physics'] = $item('Physics ' . $tag, $state['science']); $state['chemistry'] = $item('Chemistry ' . $tag, $state['science']);
     $state['arts'] = $item('Arts ' . $tag); $state['unused'] = $item('Unused ' . $tag);
     $state['physics_course'] = $course('Physics 101 ' . $tag); $state['chemistry_course'] = $course('Chemistry 101 ' . $tag); $state['arts_course'] = $course('Painting ' . $tag);
     $state['mine'] = $course('Author course ' . $tag, 'draft'); $state['plain'] = $course('Plain course ' . $tag);
     foreach ([[$state['physics_course'], $state['physics']], [$state['chemistry_course'], $state['chemistry']], [$state['arts_course'], $state['arts']]] as [$course_id, $item_id]) { Placement::set_items($course_id, [$item_id]); }
-    $track = Tracks::create(['title' => 'Data career ' . $tag]); $state['track'] = (int) $track['id']; $state['tracks'][] = $state['track'];
-    Tracks::add_course($state['track'], $state['physics_course']); Tracks::add_course($state['track'], $state['arts_course']); Tracks::set_status($state['track'], true);
-    $draft = Tracks::create(['title' => 'Hidden path ' . $tag]); $state['draft_track'] = (int) $draft['id']; $state['tracks'][] = $state['draft_track'];
-    Tracks::add_course($state['draft_track'], $state['chemistry_course']);
+    $bundle = Bundles::create(['title' => 'Data career ' . $tag]); $state['bundle'] = (int) $bundle['id']; $state['bundles'][] = $state['bundle'];
+    Bundles::add_course($state['bundle'], $state['physics_course']); Bundles::add_course($state['bundle'], $state['arts_course']); Bundles::set_status($state['bundle'], true);
+    $draft = Bundles::create(['title' => 'Hidden path ' . $tag]); $state['draft_bundle'] = (int) $draft['id']; $state['bundles'][] = $state['draft_bundle'];
+    Bundles::add_course($state['draft_bundle'], $state['chemistry_course']);
     // Old data: a category term, a course in it, and a plan whose rule still points at it.
     $term = wp_insert_term('Legacy category ' . $tag, 'course_category'); $state['legacy_term'] = (int) $term['term_id']; $state['terms'][] = [$state['legacy_term'], 'course_category'];
     $state['legacy_course'] = $course('Legacy course ' . $tag); wp_set_object_terms($state['legacy_course'], [$state['legacy_term']], 'course_category');
@@ -65,14 +65,14 @@ if ($action === 'setup') {
     echo wp_json_encode($state), "\n";
 } elseif ($action === 'state') {
     $state = $given();
-    $out = ['items' => [], 'tracks' => [], 'plan' => ohmylms_get_membership($state['plan'])->get_course_curriculum('edit'), 'plan_tracks' => ohmylms_get_membership($state['plan'])->get_course_tracks('edit')];
-    foreach (['physics_course', 'chemistry_course', 'arts_course', 'mine', 'plain'] as $key) { $out['items'][$key] = Placement::item_ids($state[$key]); $out['tracks'][$key] = Placement::track_ids($state[$key]); }
+    $out = ['items' => [], 'bundles' => [], 'plan' => ohmylms_get_membership($state['plan'])->get_course_curriculum('edit'), 'plan_bundles' => ohmylms_get_membership($state['plan'])->get_course_bundles('edit')];
+    foreach (['physics_course', 'chemistry_course', 'arts_course', 'mine', 'plain'] as $key) { $out['items'][$key] = Placement::item_ids($state[$key]); $out['bundles'][$key] = Placement::bundle_ids($state[$key]); }
     $out['legacy_rules'] = ohmylms_get_membership($state['plan'])->get_course_categories('edit');
     $out['legacy_terms'] = wp_get_object_terms($state['legacy_course'], 'course_category', ['fields' => 'ids']);
     echo wp_json_encode($out), "\n";
 } elseif ($action === 'cleanup') {
     $state = $given();
-    foreach ($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Tracks::table() . ' WHERE title LIKE %s', '%' . $wpdb->esc_like($tag) . '%')) as $id) { Tracks::delete((int) $id, true); }
+    foreach ($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Bundles::table() . ' WHERE title LIKE %s', '%' . $wpdb->esc_like($tag) . '%')) as $id) { Bundles::delete((int) $id, true); }
     foreach (array_reverse($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Items::table() . ' WHERE name LIKE %s ORDER BY id', '%' . $wpdb->esc_like($tag) . '%'))) as $id) { if (Items::get((int) $id)) { Items::delete((int) $id, 'delete', true); } }
     foreach ($state['posts'] as $post) { $purge($post); }
     wp_delete_post($state['page'], true);

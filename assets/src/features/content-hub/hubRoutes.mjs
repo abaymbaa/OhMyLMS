@@ -1,12 +1,12 @@
 /**
  * Routing data for the Content Hub, kept free of React so it can be tested on its own.
  *
- * The hub replaces the Courses, Skills, Curriculum, Learning Tracks and Assessments submenus. Its tabs
- * are Courses, Lessons, Quizzes, Question Bank, Assignments, Skills, Curriculum and Learning Tracks, and
+ * The hub replaces the Courses, Skills, Curriculum, Course Bundles and Assessments submenus. Its tabs
+ * are Courses, Lessons, Quizzes, Question Bank, Assignments, Skills, Curriculum and Course Bundles, and
  * the hub itself (`#/content-hub`) opens the first of them. Every address those screens had keeps working
  * and opens the matching tab (`#/courses`, `#/quizzes`, `#/assignments`, `#/assessments`,
  * `#/assessments/question-bank`, `#/assessments/assignments`, `#/extensions/skills`,
- * `#/extensions/question-bank`, `#/extensions/curriculum`, `#/extensions/tracks`, `#/categories` and
+ * `#/extensions/question-bank`, `#/extensions/curriculum`, `#/extensions/bundles`, `#/categories` and
  * `#/tags`), so existing links and bookmarks survive. The retired Catalog addresses
  * (`#/content-hub/catalog` and `#/content-hub/catalog/ID`) open the Courses tab and the course's editor.
  */
@@ -28,7 +28,7 @@ export const HUB_TABS = [
 	},
 	{ id: 'skills', path: '/content-hub/skills', label: 'Skills' },
 	{ id: 'curriculum', path: '/content-hub/curriculum', label: 'Curriculum' },
-	{ id: 'tracks', path: '/content-hub/tracks', label: 'Learning Tracks' },
+	{ id: 'bundles', path: '/content-hub/bundles', label: 'Course Bundles' },
 ];
 
 /** SDK admin pages that are hub tabs, keyed by their `#/extensions/<id>` address. */
@@ -36,7 +36,7 @@ export const HUB_EXTENSION_TABS = {
 	skills: 'skills',
 	'question-bank': 'question-bank',
 	curriculum: 'curriculum',
-	tracks: 'tracks',
+	bundles: 'bundles',
 };
 
 /** The application's own list screens that are hub tabs, keyed by their old route. */
@@ -59,7 +59,7 @@ const TAB_PAGES = {
 	'question-bank': 'QuestionBankPage',
 	skills: 'SkillsPage',
 	curriculum: 'CurriculumPage',
-	tracks: 'TracksPage',
+	bundles: 'BundlesPage',
 };
 
 /** Core screens that are opened from the hub; the admin menu keeps Content Hub highlighted for them. */

@@ -145,10 +145,10 @@ export const curriculumComponents = lazyComponents(
 		import( /* webpackChunkName: "curriculum" */ '../features/curriculum' ),
 	'curriculumComponents'
 );
-export const trackComponents = lazyComponents(
-	[ 'TracksPage' ],
-	() => import( /* webpackChunkName: "tracks" */ '../features/tracks' ),
-	'trackComponents'
+export const bundleComponents = lazyComponents(
+	[ 'BundlesPage' ],
+	() => import( /* webpackChunkName: "bundles" */ '../features/bundles' ),
+	'bundleComponents'
 );
 
 export const contentHubComponents = lazyComponents(

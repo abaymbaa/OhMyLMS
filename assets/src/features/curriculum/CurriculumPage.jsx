@@ -334,16 +334,16 @@ export function CurriculumPage() {
 							)
 						);
 					}
-					if ( result.tracks_updated ) {
+					if ( result.bundles_updated ) {
 						parts.push(
 							sprintf(
 								_n(
-									'Removed from %d learning track.',
-									'Removed from %d learning tracks.',
-									result.tracks_updated,
+									'Removed from %d course bundle.',
+									'Removed from %d course bundles.',
+									result.bundles_updated,
 									'ohmylms'
 								),
-								result.tracks_updated
+								result.bundles_updated
 							)
 						);
 					}

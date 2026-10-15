@@ -1,6 +1,6 @@
 <?php
 /**
- * Curriculum, Learning Tracks, skill mapping and dashboard progress.
+ * Curriculum, Course Bundles, skill mapping and dashboard progress.
  * Disposable WordPress database only: configured through OHMYLMS_TEST_CREDENTIALS.
  * Names used below are made up to illustrate shapes; they are not real syllabus definitions.
  */
@@ -23,12 +23,12 @@ use OhMyLMS\Learning\Schema as LearningSchema;
 use OhMyLMS\QuestionBank\Banks;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Skills\Taxonomy;
-use OhMyLMS\Tracks\Follows;
-use OhMyLMS\Tracks\Frontend;
-use OhMyLMS\Tracks\Progress;
-use OhMyLMS\Tracks\Tracks;
+use OhMyLMS\Bundles\Follows;
+use OhMyLMS\Bundles\Frontend;
+use OhMyLMS\Bundles\Progress;
+use OhMyLMS\Bundles\Bundles;
 
-$checks = 0; $posts = []; $users = []; $terms = []; $banks = []; $track_ids = []; $item_ids = [];
+$checks = 0; $posts = []; $users = []; $terms = []; $banks = []; $bundle_ids = []; $item_ids = [];
 $previous_integrations = get_option('ohmylms_integrations', []);
 $admin = get_user_by('login', $config['username'])->ID;
 $tag = wp_generate_password(5, false, false);
@@ -48,7 +48,7 @@ function created($path, $body) {
 }
 function user($role = 'subscriber') {
     global $users;
-    $id = wp_create_user('track-' . wp_generate_password(9, false, false), wp_generate_password(24), 'track-' . wp_generate_password(9, false, false) . '@example.invalid');
+    $id = wp_create_user('bundle-' . wp_generate_password(9, false, false), wp_generate_password(24), 'bundle-' . wp_generate_password(9, false, false) . '@example.invalid');
     (new WP_User($id))->set_role($role); $users[] = $id; return $id;
 }
 function skill($name) {
@@ -83,7 +83,7 @@ function states($student) {
     global $wpdb;
     return $wpdb->get_results($wpdb->prepare('SELECT term_id, level, review_due, evidence_count, independent_correct, families, score FROM ' . AssessmentSchema::table('student_skill_state') . ' WHERE student_id=%d ORDER BY term_id', $student), ARRAY_A);
 }
-function view($track_id, $student) { return Progress::for_track(Tracks::get($track_id), $student); }
+function view($bundle_id, $student) { return Progress::for_bundle(Bundles::get($bundle_id), $student); }
 /** The course store memoizes content counts per request; a single-process test must reset them after changing content. */
 function reset_course_counts() {
     $class = new ReflectionClass(\OhMyLMS\DataStores\CourseStore::class);
@@ -97,7 +97,7 @@ try {
     AssessmentSchema::install(); LearningSchema::install();
     global $wpdb;
     foreach (array_keys(Schema::definitions()) as $name) { ok($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', Schema::table($name))) === Schema::table($name), "Table $name missing"); }
-    $start = ['items' => count_rows(Items::table()), 'tracks' => count_rows(Tracks::table()), 'links' => count_rows(Links::table()), 'follows' => count_rows(Follows::table()), 'mappings' => count_rows(SkillMappings::table()), 'members' => count_rows(Tracks::members_table())];
+    $start = ['items' => count_rows(Items::table()), 'bundles' => count_rows(Bundles::table()), 'links' => count_rows(Links::table()), 'follows' => count_rows(Follows::table()), 'mappings' => count_rows(SkillMappings::table()), 'members' => count_rows(Bundles::members_table())];
 
     // ---- Hierarchy: different depths, shared names, admin-defined types, stable IDs ----
     $cambridge = item('Cambridge ' . $tag, 0, 'framework');
@@ -233,29 +233,29 @@ try {
     $promoted = api('DELETE', "curriculum/items/$holder", ['children' => 'promote', 'confirm' => true]);
     $expected = $before_order; array_splice($expected, $position, 1, ['Child one', 'Child two']);
     ok($promoted->get_status() === 200 && $promoted->get_data()['promoted'] === 2 && children_of($cambridge) === $expected && dense($cambridge) && Items::get($holder) === null, 'Promoting children kept the wrong order: ' . wp_json_encode(children_of($cambridge)));
-    // A deleted branch removes its links and track memberships, nothing else.
+    // A deleted branch removes its links and bundle memberships, nothing else.
     $branch = item('Branch', $cambridge); $branch_child = item('Branch child', $branch);
     api('POST', "curriculum/items/$branch_child/links", ['object_type' => 'course', 'object_id' => $other_english]);
-    $branch_track = api('POST', 'tracks', ['title' => 'Branch track ' . $tag])->get_data()['track']['id']; $track_ids[] = (int) $branch_track;
-    api('PUT', "tracks/$branch_track/items", ['items' => [['type' => 'curriculum', 'id' => $branch_child], ['type' => 'course', 'id' => $other_english]]]);
+    $branch_bundle = api('POST', 'bundles', ['title' => 'Branch bundle ' . $tag])->get_data()['bundle']['id']; $bundle_ids[] = (int) $branch_bundle;
+    api('PUT', "bundles/$branch_bundle/items", ['items' => [['type' => 'curriculum', 'id' => $branch_child], ['type' => 'course', 'id' => $other_english]]]);
     $removed = api('DELETE', "curriculum/items/$branch", ['children' => 'delete', 'confirm' => true]);
-    ok($removed->get_status() === 200 && count($removed->get_data()['deleted']) === 2 && $removed->get_data()['links_removed'] === 1 && $removed->get_data()['tracks_updated'] === 1, 'Branch delete summary wrong: ' . wp_json_encode($removed->get_data()));
-    $left = Tracks::members((int) $branch_track);
+    ok($removed->get_status() === 200 && count($removed->get_data()['deleted']) === 2 && $removed->get_data()['links_removed'] === 1 && $removed->get_data()['bundles_updated'] === 1, 'Branch delete summary wrong: ' . wp_json_encode($removed->get_data()));
+    $left = Bundles::members((int) $branch_bundle);
     ok(Items::get($branch) === null && Items::get($branch_child) === null && count($left) === 1 && $left[0]['type'] === 'course' && $left[0]['id'] === $other_english, 'A deleted branch left references behind');
-    api('DELETE', "tracks/$branch_track", ['force' => true]);
+    api('DELETE', "bundles/$branch_bundle", ['force' => true]);
 
     // ---- Authorization: guests, learners and even authors cannot administer ----
     $student = user(); $student_b = user(); $editor = user('editor');
-    $probe_track = (int) api('POST', 'tracks', ['title' => 'Probe track ' . $tag])->get_data()['track']['id']; $track_ids[] = $probe_track;
+    $probe_bundle = (int) api('POST', 'bundles', ['title' => 'Probe bundle ' . $tag])->get_data()['bundle']['id']; $bundle_ids[] = $probe_bundle;
     $routes = [
         ['GET', 'curriculum/tree'], ['POST', 'curriculum/items', ['name' => 'Intruder']], ['GET', "curriculum/items/$maths"], ['PUT', "curriculum/items/$maths", ['name' => 'Hacked']],
         ['DELETE', "curriculum/items/$maths", ['children' => 'delete', 'confirm' => true]], ['POST', "curriculum/items/$maths/move", ['parent_id' => 0]],
         ['POST', "curriculum/items/$maths/links", ['object_type' => 'course', 'object_id' => $other_english]], ['DELETE', "curriculum/items/$syllabus/links", ['object_type' => 'course', 'object_id' => $igcse_english]],
         ['GET', 'curriculum/link-targets', [], ['type' => 'course']], ['GET', 'skill-mappings'], ['PUT', 'skill-mappings', ['specific_id' => $skill_a, 'shared_id' => $skill_b]], ['DELETE', 'skill-mappings', ['specific_id' => $skill_a, 'shared_id' => $skill_b]],
-        ['GET', 'tracks'], ['POST', 'tracks', ['title' => 'Intruder track']], ['GET', "tracks/$probe_track"], ['PUT', "tracks/$probe_track", ['title' => 'Hacked']],
-        ['PUT', "tracks/$probe_track/items", ['items' => []]], ['POST', "tracks/$probe_track/publish"], ['DELETE', "tracks/$probe_track", ['force' => true]], ['GET', 'tracks/targets', [], ['type' => 'course']],
+        ['GET', 'bundles'], ['POST', 'bundles', ['title' => 'Intruder bundle']], ['GET', "bundles/$probe_bundle"], ['PUT', "bundles/$probe_bundle", ['title' => 'Hacked']],
+        ['PUT', "bundles/$probe_bundle/items", ['items' => []]], ['POST', "bundles/$probe_bundle/publish"], ['DELETE', "bundles/$probe_bundle", ['force' => true]], ['GET', 'bundles/targets', [], ['type' => 'course']],
     ];
-    $totals = [count_rows(Items::table()), count_rows(Tracks::table()), count_rows(Links::table()), count_rows(SkillMappings::table())];
+    $totals = [count_rows(Items::table()), count_rows(Bundles::table()), count_rows(Links::table()), count_rows(SkillMappings::table())];
     foreach ([[0, 401], [$student, 403], [$editor, 403]] as [$who, $expected_status]) {
         wp_set_current_user($who);
         foreach ($routes as $route) {
@@ -264,79 +264,79 @@ try {
         }
     }
     wp_set_current_user($admin);
-    ok($totals === [count_rows(Items::table()), count_rows(Tracks::table()), count_rows(Links::table()), count_rows(SkillMappings::table())] && Items::get($maths)['name'] === 'Mathematics', 'A denied request still changed data');
+    ok($totals === [count_rows(Items::table()), count_rows(Bundles::table()), count_rows(Links::table()), count_rows(SkillMappings::table())] && Items::get($maths)['name'] === 'Mathematics', 'A denied request still changed data');
     wp_set_current_user(0);
-    ok(api('GET', 'me/tracks')->get_status() === 401 && api('POST', "tracks/$probe_track/follow")->get_status() === 401 && api('DELETE', "tracks/$probe_track/follow")->get_status() === 401 && api('GET', "me/tracks/$probe_track")->get_status() === 401, 'Guests reached learner routes');
+    ok(api('GET', 'me/bundles')->get_status() === 401 && api('POST', "bundles/$probe_bundle/follow")->get_status() === 401 && api('DELETE', "bundles/$probe_bundle/follow")->get_status() === 401 && api('GET', "me/bundles/$probe_bundle")->get_status() === 401, 'Guests reached learner routes');
     wp_set_current_user($admin);
 
-    // ---- Tracks: named groupings across curricula, published explicitly ----
-    $track = api('POST', 'tracks', ['title' => 'English Exam Preparation ' . $tag, 'description' => 'Selected English and test-prep courses']);
-    ok($track->get_status() === 201 && $track->get_data()['track']['status'] === 'draft', 'Tracks should start as drafts');
-    $english = (int) $track->get_data()['track']['id']; $track_ids[] = $english;
-    foreach ([['title' => ''], ['title' => str_repeat('t', 191)], ['title' => 'ok', 'description' => str_repeat('d', 2001)]] as $bad) { ok(api('POST', 'tracks', $bad)->get_status() === 400, 'Invalid track accepted'); }
-    $empty_publish = api('POST', "tracks/$english/publish");
-    ok($empty_publish->get_status() === 409 && code($empty_publish) === 'ohmylms_track_empty' && Tracks::get($english)['status'] === 'draft', 'An empty track was published');
+    // ---- Bundles: named groupings across curricula, published explicitly ----
+    $bundle = api('POST', 'bundles', ['title' => 'English Exam Preparation ' . $tag, 'description' => 'Selected English and test-prep courses']);
+    ok($bundle->get_status() === 201 && $bundle->get_data()['bundle']['status'] === 'draft', 'Bundles should start as drafts');
+    $english = (int) $bundle->get_data()['bundle']['id']; $bundle_ids[] = $english;
+    foreach ([['title' => ''], ['title' => str_repeat('t', 191)], ['title' => 'ok', 'description' => str_repeat('d', 2001)]] as $bad) { ok(api('POST', 'bundles', $bad)->get_status() === 400, 'Invalid bundle accepted'); }
+    $empty_publish = api('POST', "bundles/$english/publish");
+    ok($empty_publish->get_status() === 409 && code($empty_publish) === 'ohmylms_bundle_empty' && Bundles::get($english)['status'] === 'draft', 'An empty bundle was published');
     $selected = [['type' => 'course', 'id' => $igcse_english], ['type' => 'course', 'id' => $sat_prep], ['type' => 'curriculum', 'id' => $syllabus]];
-    $set = api('PUT', "tracks/$english/items", ['items' => $selected]);
+    $set = api('PUT', "bundles/$english/items", ['items' => $selected]);
     ok($set->get_status() === 200 && array_map(static function ($m) { return $m['type'] . ':' . $m['id']; }, $set->get_data()['members']) === ['course:' . $igcse_english, 'course:' . $sat_prep, 'curriculum:' . $syllabus], 'Members not stored in the chosen order');
-    ok(!in_array($other_english, array_column(Tracks::members($english), 'id'), true) || count(Tracks::members($english)) === 3, 'A track must contain only what was chosen');
-    ok(count(array_filter(Tracks::members($english), static function ($m) use ($other_english) { return $m['type'] === 'course' && $m['id'] === $other_english; })) === 0, 'Another English course was added automatically');
+    ok(!in_array($other_english, array_column(Bundles::members($english), 'id'), true) || count(Bundles::members($english)) === 3, 'A bundle must contain only what was chosen');
+    ok(count(array_filter(Bundles::members($english), static function ($m) use ($other_english) { return $m['type'] === 'course' && $m['id'] === $other_english; })) === 0, 'Another English course was added automatically');
     foreach ([[['type' => 'course', 'id' => $igcse_english], ['type' => 'course', 'id' => $igcse_english]], [['type' => 'course', 'id' => 999999]], [['type' => 'curriculum', 'id' => 999999]], [['type' => 'course', 'id' => $exam]], [['type' => 'lesson', 'id' => 1]]] as $bad) {
-        ok(api('PUT', "tracks/$english/items", ['items' => $bad])->get_status() === 400 && count(Tracks::members($english)) === 3, 'Invalid members accepted: ' . wp_json_encode($bad));
+        ok(api('PUT', "bundles/$english/items", ['items' => $bad])->get_status() === 400 && count(Bundles::members($english)) === 3, 'Invalid members accepted: ' . wp_json_encode($bad));
     }
-    $reordered = api('PUT', "tracks/$english/items", ['items' => array_reverse($selected)]);
+    $reordered = api('PUT', "bundles/$english/items", ['items' => array_reverse($selected)]);
     ok($reordered->get_data()['members'][0]['id'] === $syllabus, 'Reordering members failed');
-    api('PUT', "tracks/$english/items", ['items' => $selected]);
-    $current = Tracks::get($english);
-    ok(api('PUT', "tracks/$english/items", ['items' => [], 'expected_updated_at' => '2000-01-01 00:00:00'])->get_status() === 409 && count(Tracks::members($english)) === 3, 'A stale member edit overwrote newer data');
-    ok(api('PUT', "tracks/$english", ['title' => 'x', 'expected_updated_at' => '2000-01-01 00:00:00'])->get_status() === 409, 'A stale track edit was accepted');
-    $edited = api('PUT', "tracks/$english", ['title' => 'English Exam Preparation ' . $tag, 'description' => 'Edited description', 'expected_updated_at' => $current['updated_at']]);
-    ok($edited->get_status() === 200 && $edited->get_data()['track']['description'] === 'Edited description', 'Track edit failed');
-    $second_track = (int) api('POST', 'tracks', ['title' => 'Second track ' . $tag])->get_data()['track']['id']; $track_ids[] = $second_track;
-    ok(api('PUT', "tracks/$second_track/items", ['items' => [['type' => 'course', 'id' => $igcse_english], ['type' => 'curriculum', 'id' => $syllabus]]])->get_status() === 200 && Tracks::members($english) !== [] && count(Tracks::members($english)) === 3, 'A course or syllabus could not appear in more than one track');
-    ok(get_post_status($igcse_english) === 'publish' && count(Links::for_item($syllabus)['course']) === 2, 'Track membership duplicated or changed content');
-    ok(api('POST', "tracks/$english/publish")->get_data()['track']['status'] === 'published' && Tracks::get($english)['published_at'] !== null, 'Publishing failed');
-    ok(api('PUT', "tracks/$english/items", ['items' => []])->get_status() === 409, 'A published track was emptied');
-    $listed = array_column(api('GET', 'tracks')->get_data()['tracks'], null, 'id');
-    ok($listed[$english]['member_count'] === 3 && $listed[$english]['status'] === 'published' && $listed[$english]['follower_count'] === 0 && $listed[$probe_track]['member_count'] === 0, 'Track list counts wrong: ' . wp_json_encode($listed[$english]));
+    api('PUT', "bundles/$english/items", ['items' => $selected]);
+    $current = Bundles::get($english);
+    ok(api('PUT', "bundles/$english/items", ['items' => [], 'expected_updated_at' => '2000-01-01 00:00:00'])->get_status() === 409 && count(Bundles::members($english)) === 3, 'A stale member edit overwrote newer data');
+    ok(api('PUT', "bundles/$english", ['title' => 'x', 'expected_updated_at' => '2000-01-01 00:00:00'])->get_status() === 409, 'A stale bundle edit was accepted');
+    $edited = api('PUT', "bundles/$english", ['title' => 'English Exam Preparation ' . $tag, 'description' => 'Edited description', 'expected_updated_at' => $current['updated_at']]);
+    ok($edited->get_status() === 200 && $edited->get_data()['bundle']['description'] === 'Edited description', 'Bundle edit failed');
+    $second_bundle = (int) api('POST', 'bundles', ['title' => 'Second bundle ' . $tag])->get_data()['bundle']['id']; $bundle_ids[] = $second_bundle;
+    ok(api('PUT', "bundles/$second_bundle/items", ['items' => [['type' => 'course', 'id' => $igcse_english], ['type' => 'curriculum', 'id' => $syllabus]]])->get_status() === 200 && Bundles::members($english) !== [] && count(Bundles::members($english)) === 3, 'A course or syllabus could not appear in more than one bundle');
+    ok(get_post_status($igcse_english) === 'publish' && count(Links::for_item($syllabus)['course']) === 2, 'Bundle membership duplicated or changed content');
+    ok(api('POST', "bundles/$english/publish")->get_data()['bundle']['status'] === 'published' && Bundles::get($english)['published_at'] !== null, 'Publishing failed');
+    ok(api('PUT', "bundles/$english/items", ['items' => []])->get_status() === 409, 'A published bundle was emptied');
+    $listed = array_column(api('GET', 'bundles')->get_data()['bundles'], null, 'id');
+    ok($listed[$english]['member_count'] === 3 && $listed[$english]['status'] === 'published' && $listed[$english]['follower_count'] === 0 && $listed[$probe_bundle]['member_count'] === 0, 'Bundle list counts wrong: ' . wp_json_encode($listed[$english]));
 
     // ---- Learners: discover, follow, unfollow; separate from enrollment and access ----
     wp_set_current_user($student);
-    $mine = api('GET', 'me/tracks')->get_data();
+    $mine = api('GET', 'me/bundles')->get_data();
     $suggested_ids = array_column($mine['suggested'], 'id');
-    ok(in_array($english, $suggested_ids, true) && !in_array($second_track, $suggested_ids, true) && $mine['followed'] === [], 'Learners should discover published tracks only');
-    ok(api('POST', "tracks/$second_track/follow")->get_status() === 404 && !Follows::is_following($student, $second_track), 'A draft track could be followed');
-    ok(api('POST', 'tracks/999999/follow')->get_status() === 404, 'A missing track could be followed');
+    ok(in_array($english, $suggested_ids, true) && !in_array($second_bundle, $suggested_ids, true) && $mine['followed'] === [], 'Learners should discover published bundles only');
+    ok(api('POST', "bundles/$second_bundle/follow")->get_status() === 404 && !Follows::is_following($student, $second_bundle), 'A draft bundle could be followed');
+    ok(api('POST', 'bundles/999999/follow')->get_status() === 404, 'A missing bundle could be followed');
     $enrollments_before = count_rows($wpdb->prefix . 'ohmylms_user_enrollment'); $progress_before = count_rows($wpdb->prefix . 'ohmylms_user_progress');
-    $followed = api('POST', "tracks/$english/follow");
+    $followed = api('POST', "bundles/$english/follow");
     ok($followed->get_status() === 200 && $followed->get_data()['followed'] === true && strpos($followed->get_data()['html'], 'English Exam Preparation') !== false, 'Following failed');
-    api('POST', "tracks/$english/follow");
-    ok((int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . Follows::table() . ' WHERE user_id=%d AND track_id=%d', $student, $english)) === 1, 'Following twice created two rows');
-    ok(count_rows($wpdb->prefix . 'ohmylms_user_enrollment') === $enrollments_before && count_rows($wpdb->prefix . 'ohmylms_user_progress') === $progress_before, 'Following a track changed enrollments or progress');
-    ok(\OhMyLMS\Learning\CourseProgram::enrollment($student, $igcse_english) === null && \OhMyLMS\Learning\CourseProgram::enrollment($student, $sat_prep) === null, 'Following a track enrolled the learner');
-    ok(api('GET', "courses/$igcse_english/learning/progress")->get_status() === 403, 'Following a track granted course access');
-    ok(array_column(api('GET', 'me/tracks')->get_data()['followed'], 'id') === [$english], 'Followed track missing from the dashboard list');
-    $detail = api('GET', "me/tracks/$english");
-    ok($detail->get_status() === 200 && member($detail->get_data(), 'course', $igcse_english)['enrolled'] === false, 'Learner track detail failed');
-    ok(api('GET', "me/tracks/$second_track")->get_status() === 404, 'A draft track was readable by a learner');
+    api('POST', "bundles/$english/follow");
+    ok((int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . Follows::table() . ' WHERE user_id=%d AND bundle_id=%d', $student, $english)) === 1, 'Following twice created two rows');
+    ok(count_rows($wpdb->prefix . 'ohmylms_user_enrollment') === $enrollments_before && count_rows($wpdb->prefix . 'ohmylms_user_progress') === $progress_before, 'Following a bundle changed enrollments or progress');
+    ok(\OhMyLMS\Learning\CourseProgram::enrollment($student, $igcse_english) === null && \OhMyLMS\Learning\CourseProgram::enrollment($student, $sat_prep) === null, 'Following a bundle enrolled the learner');
+    ok(api('GET', "courses/$igcse_english/learning/progress")->get_status() === 403, 'Following a bundle granted course access');
+    ok(array_column(api('GET', 'me/bundles')->get_data()['followed'], 'id') === [$english], 'Followed bundle missing from the dashboard list');
+    $detail = api('GET', "me/bundles/$english");
+    ok($detail->get_status() === 200 && member($detail->get_data(), 'course', $igcse_english)['enrolled'] === false, 'Learner bundle detail failed');
+    ok(api('GET', "me/bundles/$second_bundle")->get_status() === 404, 'A draft bundle was readable by a learner');
     // A different learner is unaffected, and cannot change someone else's dashboard.
     wp_set_current_user($student_b);
-    ok(api('GET', 'me/tracks')->get_data()['followed'] === [] && in_array($english, array_column(api('GET', 'me/tracks')->get_data()['suggested'], 'id'), true), 'Another learner saw someone else\'s follows');
-    api('DELETE', "tracks/$english/follow");
-    ok(Follows::is_following($student, $english), 'A learner removed another learner\'s track');
+    ok(api('GET', 'me/bundles')->get_data()['followed'] === [] && in_array($english, array_column(api('GET', 'me/bundles')->get_data()['suggested'], 'id'), true), 'Another learner saw someone else\'s follows');
+    api('DELETE', "bundles/$english/follow");
+    ok(Follows::is_following($student, $english), 'A learner removed another learner\'s bundle');
     wp_set_current_user($student);
-    $unfollowed = api('DELETE', "tracks/$english/follow");
-    ok($unfollowed->get_status() === 200 && $unfollowed->get_data()['followed'] === false && !Follows::is_following($student, $english) && api('DELETE', "tracks/$english/follow")->get_status() === 200, 'Removing from the dashboard failed or was not repeatable');
+    $unfollowed = api('DELETE', "bundles/$english/follow");
+    ok($unfollowed->get_status() === 200 && $unfollowed->get_data()['followed'] === false && !Follows::is_following($student, $english) && api('DELETE', "bundles/$english/follow")->get_status() === 200, 'Removing from the dashboard failed or was not repeatable');
     ok(count_rows($wpdb->prefix . 'ohmylms_user_enrollment') === $enrollments_before, 'Unfollowing changed enrollments');
-    api('POST', "tracks/$english/follow");
-    // Unpublishing hides a track from followers; republishing restores it.
+    api('POST', "bundles/$english/follow");
+    // Unpublishing hides a bundle from followers; republishing restores it.
     wp_set_current_user($admin);
-    api('POST', "tracks/$english/publish", ['published' => false]);
-    ok(Follows::followed($student) === [] && Follows::is_following($student, $english), 'Unpublishing should hide a track but keep the follow');
-    api('POST', "tracks/$english/publish", ['published' => true]);
+    api('POST', "bundles/$english/publish", ['published' => false]);
+    ok(Follows::followed($student) === [] && Follows::is_following($student, $english), 'Unpublishing should hide a bundle but keep the follow');
+    api('POST', "bundles/$english/publish", ['published' => true]);
     ok(array_map('intval', array_column(Follows::followed($student), 'id')) === [$english], 'Republishing should restore the follow');
-    $needs_force = api('DELETE', "tracks/$english");
-    ok($needs_force->get_status() === 409 && code($needs_force) === 'ohmylms_track_has_followers' && $needs_force->get_data()['data']['followers'] === 1 && Tracks::get($english) !== null, 'Deleting a followed track needs confirmation');
+    $needs_force = api('DELETE', "bundles/$english");
+    ok($needs_force->get_status() === 409 && code($needs_force) === 'ohmylms_bundle_has_followers' && $needs_force->get_data()['data']['followers'] === 1 && Bundles::get($english) !== null, 'Deleting a followed bundle needs confirmation');
     Follows::unfollow($student, $english);
 
     // ---- Course progress: counts from the course's own rules, read-only ----
@@ -357,26 +357,26 @@ try {
     ok(!array_key_exists('percent', $course_row) && !array_key_exists('percentage', $course_row), 'No percentage should be invented');
     $not_enrolled = member($english_view, 'course', $sat_prep);
     ok($not_enrolled['enrolled'] === false && $not_enrolled['progress'] === null && $not_enrolled['completed'] === false, 'A course the learner is not enrolled in must show no progress');
-    api('PUT', "tracks/$second_track/items", ['items' => [['type' => 'course', 'id' => $draft_course], ['type' => 'course', 'id' => $igcse_english]]]);
-    wp_set_current_user($admin); api('POST', "tracks/$second_track/publish");
-    $hidden = view($second_track, $student);
+    api('PUT', "bundles/$second_bundle/items", ['items' => [['type' => 'course', 'id' => $draft_course], ['type' => 'course', 'id' => $igcse_english]]]);
+    wp_set_current_user($admin); api('POST', "bundles/$second_bundle/publish");
+    $hidden = view($second_bundle, $student);
     ok(member($hidden, 'course', $draft_course) === null && member($hidden, 'course', $igcse_english) !== null, 'An unpublished course was shown to a learner');
-    ok(array_filter(Tracks::describe_members($second_track), static function ($m) use ($draft_course) { return $m['id'] === $draft_course && $m['status'] === 'draft'; }) !== [], 'Administrators should still see unpublished members');
+    ok(array_filter(Bundles::describe_members($second_bundle), static function ($m) use ($draft_course) { return $m['id'] === $draft_course && $m['status'] === 'draft'; }) !== [], 'Administrators should still see unpublished members');
     // Managed course: dimensions from its learning program; viewing never awards completion.
     $managed_lesson = created('lessons', ['name' => 'Managed lesson ' . $tag, 'description' => '<p>x</p>', 'type' => 'text', 'status' => 'publish']);
     $managed = created('courses', ['name' => 'Managed course ' . $tag, 'status' => 'publish']);
     $published = api('POST', "courses/$managed/learning/publish", ['mode' => 'traditional', 'recognize_prior' => true, 'evidence_days' => 0, 'bank_ids' => [], 'outcomes' => [], 'items' => [['id' => wp_generate_uuid4(), 'type' => 'lesson', 'content_id' => $managed_lesson, 'chapter_id' => 0, 'required' => true, 'pass_percent' => 80]], 'apply_existing' => false]);
     ok($published->get_status() === 200, 'Learning program publish failed: ' . wp_json_encode($published->get_data()));
     $managed_eid = enroll($student, $managed);
-    api('PUT', "tracks/$second_track/items", ['items' => [['type' => 'course', 'id' => $managed], ['type' => 'course', 'id' => $igcse_english]]]);
+    api('PUT', "bundles/$second_bundle/items", ['items' => [['type' => 'course', 'id' => $managed], ['type' => 'course', 'id' => $igcse_english]]]);
     $before_awards = count_rows(\OhMyLMS\Learning\Schema::table('awards'));
-    $managed_view = member(view($second_track, $student), 'course', $managed);
+    $managed_view = member(view($second_bundle, $student), 'course', $managed);
     ok($managed_view['progress']['kind'] === 'program' && $managed_view['progress']['dimensions']['activities'] === ['met' => 0, 'total' => 1] && $managed_view['mode'] === 'traditional', 'Program dimensions wrong: ' . wp_json_encode($managed_view));
     $wpdb->insert($wpdb->prefix . 'ohmylms_user_progress', ['enrollment_id' => $managed_eid, 'content_id' => $managed_lesson, 'content_type' => 'text', 'status' => 'completed', 'start_date' => current_time('mysql')]);
     ok(CompletionPolicy::status($student, $managed)['eligible'] === true, 'Fixture should be eligible for completion');
-    $managed_view = member(view($second_track, $student), 'course', $managed);
+    $managed_view = member(view($second_bundle, $student), 'course', $managed);
     ok($managed_view['progress']['dimensions']['activities'] === ['met' => 1, 'total' => 1], 'Program progress did not update');
-    ok($wpdb->get_var($wpdb->prepare("SELECT progress FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d", $managed_eid)) === 'running' && count_rows(\OhMyLMS\Learning\Schema::table('awards')) === $before_awards && $managed_view['completed'] === false, 'Viewing a track changed course completion');
+    ok($wpdb->get_var($wpdb->prepare("SELECT progress FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d", $managed_eid)) === 'running' && count_rows(\OhMyLMS\Learning\Schema::table('awards')) === $before_awards && $managed_view['completed'] === false, 'Viewing a bundle changed course completion');
     $after_state = [count_rows($wpdb->prefix . 'ohmylms_user_progress') - 1, $wpdb->get_var($wpdb->prepare("SELECT progress FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d", $eid))];
     ok($after_state === $before_state, 'Building the dashboard changed progress records');
 
@@ -398,7 +398,7 @@ try {
         }
         ok(api('PUT', 'skills/' . $term, ['public_practice' => true])->get_status() === 200, 'Public practice flag failed');
     }
-    $skills_track = (int) api('POST', 'tracks', ['title' => 'Skills track ' . $tag])->get_data()['track']['id']; $track_ids[] = $skills_track;
+    $skills_bundle = (int) api('POST', 'bundles', ['title' => 'Skills bundle ' . $tag])->get_data()['bundle']['id']; $bundle_ids[] = $skills_bundle;
     api('POST', "curriculum/items/$words/links", ['object_type' => 'skill', 'object_id' => $strong]);
     api('POST', "curriculum/items/$words/links", ['object_type' => 'skill', 'object_id' => $weak]);
     api('POST', "curriculum/items/$sat_math/links", ['object_type' => 'skill', 'object_id' => $untouched]);
@@ -406,8 +406,8 @@ try {
     api('POST', "curriculum/items/$sat_math/links", ['object_type' => 'skill', 'object_id' => $nopool]);
     api('POST', "curriculum/items/$sat/links", ['object_type' => 'skill', 'object_id' => $strong]);
     wp_set_current_user($admin);
-    api('PUT', "tracks/$skills_track/items", ['items' => [['type' => 'curriculum', 'id' => $sat]]]);
-    $skill_view = view($skills_track, $student);
+    api('PUT', "bundles/$skills_bundle/items", ['items' => [['type' => 'curriculum', 'id' => $sat]]]);
+    $skill_view = view($skills_bundle, $student);
     $by_term = []; foreach ($skill_view['skills'] as $entry) { $by_term[$entry['term_id']] = $entry; }
     ok(count($skill_view['skills']) === 5 && isset($by_term[$strong], $by_term[$weak], $by_term[$partial], $by_term[$untouched], $by_term[$nopool]), 'Skills of descendant items were not gathered once each: ' . count($skill_view['skills']));
     ok($by_term[$strong]['classification'] === 'strength' && $by_term[$strong]['practice_url'] === null, 'Strengths should not be queued for practice');
@@ -443,12 +443,12 @@ try {
     ok(count(SkillMappings::all([$same_a, $same_b])) === 0, 'Skills with matching names must not be mapped automatically');
 
     // ---- Combined view: pooled once, related skills excluded, shared evidence never completes another course ----
-    $combined_track = (int) api('POST', 'tracks', ['title' => 'Combined track ' . $tag])->get_data()['track']['id']; $track_ids[] = $combined_track;
+    $combined_bundle = (int) api('POST', 'bundles', ['title' => 'Combined bundle ' . $tag])->get_data()['bundle']['id']; $bundle_ids[] = $combined_bundle;
     $item_a = item('Syllabus A item', $cambridge, 'syllabus', ['code' => 'A-1', 'version' => '2024']);
     $item_b = item('Syllabus B item', $sat, 'syllabus', ['code' => 'B-1', 'version' => '2026']);
     api('POST', "curriculum/items/$item_a/links", ['object_type' => 'skill', 'object_id' => $skill_a]);
     api('POST', "curriculum/items/$item_b/links", ['object_type' => 'skill', 'object_id' => $skill_b]);
-    api('PUT', "tracks/$combined_track/items", ['items' => [['type' => 'curriculum', 'id' => $item_a], ['type' => 'curriculum', 'id' => $item_b]]]);
+    api('PUT', "bundles/$combined_bundle/items", ['items' => [['type' => 'curriculum', 'id' => $item_a], ['type' => 'curriculum', 'id' => $item_b]]]);
     $t = time() - 5 * DAY_IN_SECONDS;
     // Phase 1. Syllabus A has two correct answers. The same graded part (event 9200001) is also
     // recorded under B. Counted once the pool holds 2 answers (developing); double counted it
@@ -459,14 +459,14 @@ try {
     evidence($student, $related, 9200005, true, 8005, 'r1', $t + 240);
     foreach ([$skill_a, $skill_b, $related] as $term) { Mastery::recompute($student, $term); }
     $states_before = states($student);
-    $group = view($combined_track, $student)['combined'];
+    $group = view($combined_bundle, $student)['combined'];
     ok(count($group) === 1 && $group[0]['shared']['term_id'] === $shared, 'The shared skill did not appear in the combined view');
     $group = $group[0];
     ok($group['pooled_sources'] === 2, 'Only equivalent mappings should pool: ' . $group['pooled_sources']);
     ok($group['evidence_count'] === 2 && $group['level'] === 'developing', 'The same graded answer was counted twice, or a related skill was pooled: ' . wp_json_encode([$group['evidence_count'], $group['level']]));
     // Phase 2. A genuine extra answer under B lifts the pool to three distinct answers.
     evidence($student, $skill_b, 9200003, true, 8003, 'b1', $t + 120); Mastery::recompute($student, $skill_b);
-    $group = view($combined_track, $student)['combined'][0];
+    $group = view($combined_bundle, $student)['combined'][0];
     ok($group['evidence_count'] === 3 && in_array($group['level'], ['proficient', 'mastered'], true), 'Pooled level should reflect three distinct correct answers: ' . wp_json_encode([$group['evidence_count'], $group['level']]));
     $own = array_column(states($student), null, 'term_id');
     ok($own[$skill_a]['level'] === 'developing' && $own[$skill_b]['level'] === 'developing' && $own[$related]['level'] === 'developing', 'Pooling must not change any skill\'s own level: ' . wp_json_encode($own));
@@ -480,11 +480,11 @@ try {
     ok($by_source[$skill_a]['context'][0]['path'] !== [] || $by_source[$skill_a]['context'][1]['path'] !== [], 'Curriculum path context missing');
     ok($by_source[$related]['evidence_count'] === 1 && $group['evidence_count'] === 3, 'A related mapping must not add evidence');
     $states_after_view = states($student);
-    view($combined_track, $student); view($combined_track, $student);
+    view($combined_bundle, $student); view($combined_bundle, $student);
     ok(states($student) === $states_after_view, 'Building a combined view changed stored skill states');
     // Without any evidence, the shared skill reads Not assessed.
     $fresh = user(); enroll($fresh, $igcse_english);
-    $fresh_group = view($combined_track, $fresh)['combined'][0];
+    $fresh_group = view($combined_bundle, $fresh)['combined'][0];
     ok($fresh_group['level'] === 'not-assessed' && $fresh_group['level_label'] === 'Not assessed' && $fresh_group['evidence_count'] === 0, 'An unassessed shared skill must read Not assessed');
     // Matching names alone never pool evidence.
     evidence($student, $same_a, 9200010, true, 8010, 'n1', $t); Mastery::recompute($student, $same_a);
@@ -502,23 +502,23 @@ try {
     $z_eid = enroll($student, $course_z);
     $z_status = CompletionPolicy::status($student, $course_z);
     ok($z_status['dimensions']['outcomes'] === ['met' => 0, 'total' => 1] && !$z_status['eligible'], 'Course Z should be incomplete: its own skill is only developing');
-    api('PUT', "tracks/$combined_track/items", ['items' => [['type' => 'curriculum', 'id' => $item_a], ['type' => 'curriculum', 'id' => $item_b], ['type' => 'course', 'id' => $course_z]]]);
-    $z_view = member(view($combined_track, $student), 'course', $course_z);
+    api('PUT', "bundles/$combined_bundle/items", ['items' => [['type' => 'curriculum', 'id' => $item_a], ['type' => 'curriculum', 'id' => $item_b], ['type' => 'course', 'id' => $course_z]]]);
+    $z_view = member(view($combined_bundle, $student), 'course', $course_z);
     ok($z_view['completed'] === false && $z_view['progress']['dimensions']['outcomes'] === ['met' => 0, 'total' => 1], 'Shared skill evidence marked another course as progressing');
     ok(CompletionPolicy::award($student, $course_z)['completed'] === false && $wpdb->get_var($wpdb->prepare("SELECT progress FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d", $z_eid)) === 'running', 'Shared skill evidence completed another course');
     ok(states($student) === $states_before_z, 'Evaluating another course changed stored skill states');
 
     // ---- Rendering: escaped output and clear separation ----
     $wpdb->update($wpdb->terms, ['name' => '<img src=x onerror=alert(1)>'], ['term_id' => $skill_a]);
-    $wpdb->update(Tracks::table(), ['title' => 'A & B "quoted" <i>raw</i> ' . $tag], ['id' => $combined_track]);
+    $wpdb->update(Bundles::table(), ['title' => 'A & B "quoted" <i>raw</i> ' . $tag], ['id' => $combined_bundle]);
     clean_term_cache($skill_a, Taxonomy::NAME);
-    Follows::follow($student, $english); Follows::follow($student, $skills_track);
-    wp_set_current_user($admin); api('POST', "tracks/$combined_track/publish", ['published' => true]); api('POST', "tracks/$skills_track/publish", ['published' => true]);
-    Follows::follow($student, $combined_track); Follows::follow($student, $skills_track);
+    Follows::follow($student, $english); Follows::follow($student, $skills_bundle);
+    wp_set_current_user($admin); api('POST', "bundles/$combined_bundle/publish", ['published' => true]); api('POST', "bundles/$skills_bundle/publish", ['published' => true]);
+    Follows::follow($student, $combined_bundle); Follows::follow($student, $skills_bundle);
     wp_set_current_user($student);
     $html = Frontend::section($student);
     ok(strpos($html, '<img src=x') === false && strpos($html, '&lt;img src=x') !== false, 'A skill name was not escaped');
-    ok(strpos($html, 'A &amp; B &quot;quoted&quot; &lt;i&gt;raw&lt;/i&gt;') !== false && strpos($html, '<i>raw</i>') === false, 'A track title was not escaped');
+    ok(strpos($html, 'A &amp; B &quot;quoted&quot; &lt;i&gt;raw&lt;/i&gt;') !== false && strpos($html, '<i>raw</i>') === false, 'A bundle title was not escaped');
     $missing = array_values(array_filter(['Not assessed', 'Not enrolled', 'Remove from dashboard', 'aria-label="Remove ', 'role="status"', '<progress', 'Needs practice', 'Strength', 'Add to my dashboard', 'Combined skills', 'Counts toward shared level', 'Related only', 'Practice'], static function ($marker) use ($html) { return strpos($html, $marker) === false; }));
     ok(!$missing, 'Dashboard markup missing labelled controls or states: ' . wp_json_encode($missing));
     ok(strpos($html, 'does not enrol you') !== false && strpos($html, 'never completes a course') !== false, 'Following must be explained as separate from enrollment');
@@ -532,7 +532,7 @@ try {
     $doomed_skill = skill('Doomed skill');
     api('POST', "curriculum/items/$words/links", ['object_type' => 'course', 'object_id' => $doomed_course]);
     api('POST', "curriculum/items/$words/links", ['object_type' => 'skill', 'object_id' => $doomed_skill]);
-    api('PUT', "tracks/$second_track/items", ['items' => [['type' => 'course', 'id' => $doomed_course], ['type' => 'course', 'id' => $igcse_english]]]);
+    api('PUT', "bundles/$second_bundle/items", ['items' => [['type' => 'course', 'id' => $doomed_course], ['type' => 'course', 'id' => $igcse_english]]]);
     SkillMappings::save($doomed_skill, $other_shared, 'equivalent', '');
     $doomed_exam = created('quiz', ['name' => 'Doomed exam ' . $tag, 'status' => 'publish']);
     api('POST', "curriculum/items/$words/links", ['object_type' => 'quiz', 'object_id' => $doomed_exam]);
@@ -541,26 +541,26 @@ try {
     wp_delete_post($doomed_exam, true);
     wp_delete_term($doomed_skill, Taxonomy::NAME);
     ok(Links::memberships('course', $doomed_course) === [] && Links::memberships('quiz', $doomed_exam) === [] && Links::memberships('skill', $doomed_skill) === [] && SkillMappings::for_skill($doomed_skill)['maps_to'] === [], 'Deleted content left curriculum links or mappings');
-    ok(array_column(Tracks::members($second_track), 'id') === [$igcse_english], 'A deleted course stayed in a track');
+    ok(array_column(Bundles::members($second_bundle), 'id') === [$igcse_english], 'A deleted course stayed in a bundle');
     $leaver = user(); Follows::follow($leaver, $english);
     wp_delete_user($leaver);
     ok((int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . Follows::table() . ' WHERE user_id=%d', $leaver)) === 0, 'A deleted learner left follows behind');
 
     // ---- Migration: repeatable, additive, existing records untouched ----
-    $before = ['items' => count_rows(Items::table()), 'tracks' => count_rows(Tracks::table()), 'follows' => count_rows(Follows::table()), 'links' => count_rows(Links::table()),
+    $before = ['items' => count_rows(Items::table()), 'bundles' => count_rows(Bundles::table()), 'follows' => count_rows(Follows::table()), 'links' => count_rows(Links::table()),
         'enrollments' => count_rows($wpdb->prefix . 'ohmylms_user_enrollment'), 'progress' => count_rows($wpdb->prefix . 'ohmylms_user_progress'), 'programs' => count_rows(\OhMyLMS\Learning\Schema::table('programs')),
         'states' => count_rows(AssessmentSchema::table('student_skill_state')), 'evidence' => count_rows(AssessmentSchema::table('skill_evidence')), 'courses' => (int) wp_count_posts(OHMYLMS_COURSE_CPT)->publish];
     delete_option(Schema::OPTION); ok(!Schema::ready(), 'Option reset failed');
     ok(Schema::install() === true && Schema::ready(), 'Reinstall failed');
     Schema::install();
-    $after = ['items' => count_rows(Items::table()), 'tracks' => count_rows(Tracks::table()), 'follows' => count_rows(Follows::table()), 'links' => count_rows(Links::table()),
+    $after = ['items' => count_rows(Items::table()), 'bundles' => count_rows(Bundles::table()), 'follows' => count_rows(Follows::table()), 'links' => count_rows(Links::table()),
         'enrollments' => count_rows($wpdb->prefix . 'ohmylms_user_enrollment'), 'progress' => count_rows($wpdb->prefix . 'ohmylms_user_progress'), 'programs' => count_rows(\OhMyLMS\Learning\Schema::table('programs')),
         'states' => count_rows(AssessmentSchema::table('student_skill_state')), 'evidence' => count_rows(AssessmentSchema::table('skill_evidence')), 'courses' => (int) wp_count_posts(OHMYLMS_COURSE_CPT)->publish];
     ok($before === $after, 'Repeating the migration changed existing records: ' . wp_json_encode([$before, $after]));
     ok(CompletionPolicy::status($student, $managed)['dimensions']['activities'] === ['met' => 1, 'total' => 1] && \OhMyLMS\Learning\CourseProgram::current($managed)['mode'] === 'traditional' && \OhMyLMS\Learning\CourseProgram::current($course_z)['mode'] === 'skill-based', 'Existing courses, modes or progress changed');
 } finally {
     wp_set_current_user($admin);
-    foreach ($track_ids as $id) { if (Tracks::get($id)) { Tracks::delete($id, true); } }
+    foreach ($bundle_ids as $id) { if (Bundles::get($id)) { Bundles::delete($id, true); } }
     // A syllabus is also a course: remove the courses (and chapters) that syllabus items were given.
     foreach ($item_ids as $id) {
         $made = Items::get($id)['course_id'] ?? 0;
@@ -585,7 +585,7 @@ try {
     foreach ($banks as $bank_id) { $wpdb->delete(AssessmentSchema::table('qb_banks'), ['id' => $bank_id]); }
     update_option('ohmylms_integrations', $previous_integrations);
     if (isset($start)) {
-        $end = ['items' => count_rows(Items::table()), 'tracks' => count_rows(Tracks::table()), 'links' => count_rows(Links::table()), 'follows' => count_rows(Follows::table()), 'mappings' => count_rows(SkillMappings::table()), 'members' => count_rows(Tracks::members_table())];
+        $end = ['items' => count_rows(Items::table()), 'bundles' => count_rows(Bundles::table()), 'links' => count_rows(Links::table()), 'follows' => count_rows(Follows::table()), 'mappings' => count_rows(SkillMappings::table()), 'members' => count_rows(Bundles::members_table())];
         if ($end !== $start) { fwrite(STDERR, 'Cleanup left rows behind: ' . wp_json_encode([$start, $end]) . "\n"); }
     }
 }

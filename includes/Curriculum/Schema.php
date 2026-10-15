@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Additive, independently versioned storage for curriculum structures, their links to
- * content, shared-skill mappings and Learning Tracks. Nothing here alters an existing
+ * content, shared-skill mappings and Course Bundles. Nothing here alters an existing
  * table: courses, enrollments, learning modes and progress keep their own records, and
  * these tables only reference them by ID. Installing is safe to repeat.
  */
@@ -14,7 +14,8 @@ final class Schema {
 	// 3: a syllabus is also a course (course_id).
 	// 4: curriculum topics and syllabus chapters have editable icons.
 	// 5: combined coverage groups retain explicit required membership.
-	const VERSION = '5';
+	// 6: Course Bundles were stored as "tracks": their tables and columns are renamed, keeping every row.
+	const VERSION = '6';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
 	public static function table( $name ) {
@@ -38,11 +39,11 @@ final class Schema {
 			// Explicit, directional links from a curriculum-specific skill to a shared skill.
 			'skill_mappings'        => "specific_term_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, relation varchar(20) NOT NULL DEFAULT 'equivalent', group_uuid char(36) NOT NULL DEFAULT '', note text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY mapping (specific_term_id,shared_term_id), KEY shared (shared_term_id)",
 			'skill_mapping_groups'  => 'uuid char(36) NOT NULL, source_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, member_ids text NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY shared (shared_term_id)',
-			// Learning Tracks: named groupings of courses and curriculum items.
-			'tracks'                => "uuid char(36) NOT NULL, title varchar(190) NOT NULL, description text NULL, status varchar(20) NOT NULL DEFAULT 'draft', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, published_at datetime NULL, UNIQUE KEY uuid (uuid), KEY status_position (status,position)",
-			'track_items'           => 'track_id bigint unsigned NOT NULL, item_type varchar(20) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY member (track_id,item_type,item_id), KEY track_position (track_id,position), KEY object (item_type,item_id)',
-			// Following a track only adds it to a dashboard; it is not an enrollment and grants no access.
-			'track_follows'         => 'track_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, followed_at datetime NOT NULL, UNIQUE KEY follow (track_id,user_id), KEY user_follow (user_id)',
+			// Course Bundles: named groupings of courses and curriculum items.
+			'bundles'               => "uuid char(36) NOT NULL, title varchar(190) NOT NULL, description text NULL, status varchar(20) NOT NULL DEFAULT 'draft', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, published_at datetime NULL, UNIQUE KEY uuid (uuid), KEY status_position (status,position)",
+			'bundle_items'          => 'bundle_id bigint unsigned NOT NULL, item_type varchar(20) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY member (bundle_id,item_type,item_id), KEY bundle_position (bundle_id,position), KEY object (item_type,item_id)',
+			// Following a bundle only adds it to a dashboard; it is not an enrollment and grants no access.
+			'bundle_follows'        => 'bundle_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, followed_at datetime NOT NULL, UNIQUE KEY follow (bundle_id,user_id), KEY user_follow (user_id)',
 		);
 	}
 
@@ -55,6 +56,8 @@ final class Schema {
 			return true; }
 		global $wpdb;
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		if ( ! self::migrate_tracks_to_bundles() ) {
+			return false; }
 		foreach ( self::definitions() as $name => $definition ) {
 			$table   = self::table( $name );
 			$columns = str_replace( ', ', ",\n", $definition );
@@ -66,6 +69,56 @@ final class Schema {
 		$wpdb->query( 'UPDATE ' . self::table( 'curriculum_items' ) . " SET is_syllabus=1 WHERE item_type='syllabus' AND is_syllabus=0" );
 		update_option( self::OPTION, self::VERSION, false );
 		do_action( 'ohmylms_curriculum_schema_installed', self::VERSION );
+		return true;
+	}
+
+	/**
+	 * Move data stored under the former "track" names to the "bundle" names. Safe to repeat: every step
+	 * checks what exists first, rows are carried over by renaming the tables, and nothing is dropped
+	 * unless the replacement is empty. Returns false, leaving the old data in place, if both an old
+	 * table and a populated new table exist.
+	 */
+	private static function migrate_tracks_to_bundles() {
+		global $wpdb;
+		$exists = static function ( $table ) use ( $wpdb ) {
+			return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) === $table;
+		};
+		foreach ( array(
+			'tracks'        => 'bundles',
+			'track_items'   => 'bundle_items',
+			'track_follows' => 'bundle_follows',
+		) as $old_name => $new_name ) {
+			$old = self::table( $old_name );
+			$new = self::table( $new_name );
+			if ( ! $exists( $old ) ) {
+				continue; }
+			if ( $exists( $new ) ) {
+				// An empty new table can only have been created by an earlier partial install.
+				if ( (int) $wpdb->get_var( "SELECT COUNT(*) FROM $new" ) > 0 ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					return false; }
+				$wpdb->query( "DROP TABLE $new" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			}
+			$wpdb->query( "RENAME TABLE $old TO $new" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( ! $exists( $new ) ) {
+				return false; }
+		}
+		// Columns and keys that carried the old name.
+		foreach ( array( 'bundle_items', 'bundle_follows' ) as $name ) {
+			$table = self::table( $name );
+			if ( ! $exists( $table ) ) {
+				continue; }
+			if ( $wpdb->get_var( "SHOW COLUMNS FROM $table LIKE 'track_id'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( "ALTER TABLE $table CHANGE track_id bundle_id bigint unsigned NOT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			}
+		}
+		$items = self::table( 'bundle_items' );
+		if ( $exists( $items ) && $wpdb->get_var( "SHOW INDEX FROM $items WHERE Key_name = 'track_position'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE $items DROP INDEX track_position" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( ! $wpdb->get_var( "SHOW INDEX FROM $items WHERE Key_name = 'bundle_position'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( "ALTER TABLE $items ADD INDEX bundle_position (bundle_id,position)" ); } // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		}
+		// Membership plans stored their Course Bundle rule under the old meta key.
+		$wpdb->update( $wpdb->postmeta, array( 'meta_key' => '_course_bundles' ), array( 'meta_key' => '_course_tracks' ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 		return true;
 	}
 }

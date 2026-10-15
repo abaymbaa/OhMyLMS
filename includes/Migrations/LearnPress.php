@@ -233,7 +233,7 @@ class LearnPress {
 	 */
 	private function migrate_terms_and_taxonomies( $new_course_id ) {
 		// LearnPress categories become curriculum items (keeping their parent chain) and its tags
-		// become Learning Tracks.
+		// become Course Bundles.
 		$categories = wp_get_post_terms( $this->lp_course_id, 'course_category' );
 		if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
 			$paths = array();

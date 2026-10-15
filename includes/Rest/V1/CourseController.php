@@ -545,13 +545,13 @@ class CourseController extends RestController {
 			}
 		}
 
-		// Filter by curriculum item (courses linked beneath it count too) and by learning track.
+		// Filter by curriculum item (courses linked beneath it count too) and by course bundle.
 		// category_id and tag_id are the former category and tag parameters: they now mean a curriculum
-		// item ID and a learning track ID, so existing list filters keep working.
+		// item ID and a course bundle ID, so existing list filters keep working.
 		$item_filter  = array_filter( array( $request['curriculum_id'] ?? null, $request['category_id'] ?? null ), 'is_numeric' );
-		$track_filter = array_filter( array( $request['track_id'] ?? null, $request['tag_id'] ?? null ), 'is_numeric' );
-		if ( $item_filter || $track_filter ) {
-			$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, array_map( 'intval', $item_filter ), array_map( 'intval', $track_filter ) );
+		$bundle_filter = array_filter( array( $request['bundle_id'] ?? null, $request['tag_id'] ?? null ), 'is_numeric' );
+		if ( $item_filter || $bundle_filter ) {
+			$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, array_map( 'intval', $item_filter ), array_map( 'intval', $bundle_filter ) );
 		}
 
 		$args       = apply_filters( 'ohmylms_rest_ohmylms_course_query', $args, $request );
@@ -2103,7 +2103,7 @@ class CourseController extends RestController {
 			'categories'            => $this->get_taxonomy_terms( $course ),
 			'tags'                  => $this->get_taxonomy_terms( $course, 'tag' ),
 			'curriculum'            => \OhMyLMS\Curriculum\Placement::items( $course->get_id() ),
-			'learning_tracks'       => \OhMyLMS\Curriculum\Placement::tracks( $course->get_id() ),
+			'learning_bundles'       => \OhMyLMS\Curriculum\Placement::bundles( $course->get_id() ),
 			'course_url'            => get_permalink( $course->get_id() ),
 			'content'               => array(
 				'chapters' => count( $course->get_chapters() ),
@@ -2347,7 +2347,7 @@ class CourseController extends RestController {
 			return new WP_Error( 'missing_params', 'Missing parameters', array( 'status' => 400 ) );
 		}
 		if ( in_array( $taxonomy, array( 'course_category', 'course_tag' ), true ) ) {
-			return new WP_Error( 'ohmylms_taxonomy_replaced', __( 'Course categories and tags were replaced by curriculum items and learning tracks. Use /courses/{id}/organization.', 'ohmylms' ), array( 'status' => 410 ) );
+			return new WP_Error( 'ohmylms_taxonomy_replaced', __( 'Course categories and tags were replaced by curriculum items and course bundles. Use /courses/{id}/organization.', 'ohmylms' ), array( 'status' => 410 ) );
 		}
 		$result = wp_set_object_terms( $course_id, $terms, $taxonomy );
 
@@ -2374,14 +2374,14 @@ class CourseController extends RestController {
 	 */
 	protected function get_taxonomy_terms( $course, $taxonomy = 'category' ) {
 		$terms = array();
-		// Course categories and tags were replaced by curriculum items and learning tracks. The admin app still
+		// Course categories and tags were replaced by curriculum items and course bundles. The admin app still
 		// reads categories and tags from the course, so these keys now carry the replacements.
 		if ( 'tag' === $taxonomy ) {
-			foreach ( \OhMyLMS\Curriculum\Placement::tracks( $course->get_id() ) as $track ) {
+			foreach ( \OhMyLMS\Curriculum\Placement::bundles( $course->get_id() ) as $bundle ) {
 				$terms[] = array(
-					'id'   => $track['id'],
-					'name' => $track['title'],
-					'slug' => $track['slug'],
+					'id'   => $bundle['id'],
+					'name' => $bundle['title'],
+					'slug' => $bundle['slug'],
 				);
 			}
 			return $terms;
@@ -2410,7 +2410,7 @@ class CourseController extends RestController {
 	protected function handle_terms( $post_id, $request ) {
 		$taxonomies = wp_list_filter( get_object_taxonomies( OHMYLMS_COURSE_CPT, 'objects' ), array( 'show_in_rest' => true ) );
 		foreach ( $taxonomies as $taxonomy ) {
-			// Categories and tags are replaced by curriculum and learning tracks (see CourseOrganizationController).
+			// Categories and tags are replaced by curriculum and course bundles (see CourseOrganizationController).
 			if ( in_array( $taxonomy->name, array( 'course_category', 'course_tag' ), true ) ) {
 				continue;
 			}

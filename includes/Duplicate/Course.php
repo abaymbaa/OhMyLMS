@@ -83,11 +83,11 @@ class Course {
 			set_post_thumbnail( $new_course_id, $thumbnail_id );
 		}
 
-		// Duplicate curriculum placement. Learning Track membership is curated, so it is not copied.
+		// Duplicate curriculum placement. Course Bundle membership is curated, so it is not copied.
 		\OhMyLMS\Curriculum\Placement::copy_items( $this->course_id, $new_course_id );
 
 		// Duplicate terms of any other taxonomy. Course categories and tags were replaced by the
-		// curriculum and Learning Tracks, so terms left over from before are not carried to the copy.
+		// curriculum and Course Bundles, so terms left over from before are not carried to the copy.
 		$taxonomies = array_diff( get_object_taxonomies( OHMYLMS_COURSE_CPT ), array( 'course_category', 'course_tag' ) );
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = wp_get_post_terms( $this->course_id, $taxonomy, array( 'fields' => 'ids' ) );

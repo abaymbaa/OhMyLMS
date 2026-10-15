@@ -1,32 +1,32 @@
 <?php
 namespace OhMyLMS\Curriculum;
 
-use OhMyLMS\Tracks\Tracks;
+use OhMyLMS\Bundles\Bundles;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Where a course sits: the curriculum items it is linked to and the Learning Tracks it belongs to.
+ * Where a course sits: the curriculum items it is linked to and the Course Bundles it belongs to.
  *
  * This is the replacement for course categories and tags. Everything that used to read or write
  * `course_category` or `course_tag` (the editor, course lists and filters, shortcodes, membership
- * plans, importers) goes through here, so curriculum and tracks are the only way to organize courses.
+ * plans, importers) goes through here, so curriculum and bundles are the only way to organize courses.
  * The old taxonomies stay registered and keep their stored terms, but nothing consults them.
  *
  *  - Curriculum items play the part of hierarchical categories: filtering by an item includes
  *    everything linked under its descendants.
- *  - A Learning Track plays the part of a tag, but is curated: its members are courses, and the
+ *  - A Course Bundle plays the part of a tag, but is curated: its members are courses, and the
  *    courses linked under any curriculum item that is a member.
  */
 final class Placement {
 	/** Filter slugs are synthetic so the public filter markup and script work unchanged. */
 	const ITEM_PREFIX  = 'c';
-	const TRACK_PREFIX = 't';
+	const BUNDLE_PREFIX = 'b';
 
 	public static function item_slug( $id ) {
 		return self::ITEM_PREFIX . (int) $id; }
-	public static function track_slug( $id ) {
-		return self::TRACK_PREFIX . (int) $id; }
+	public static function bundle_slug( $id ) {
+		return self::BUNDLE_PREFIX . (int) $id; }
 
 	/** Tell dependents (membership plans) that course placement changed. */
 	public static function changed() {
@@ -37,9 +37,9 @@ final class Placement {
 		return Schema::ready();
 	}
 
-	/** IDs from filter slugs of one kind ('item' or 'track'); anything else is ignored. */
+	/** IDs from filter slugs of one kind ('item' or 'bundle'); anything else is ignored. */
 	public static function ids_from_slugs( $slugs, $kind ) {
-		$prefix = $kind === 'track' ? self::TRACK_PREFIX : self::ITEM_PREFIX;
+		$prefix = $kind === 'bundle' ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
 		$ids    = array();
 		foreach ( (array) $slugs as $slug ) {
 			if ( is_string( $slug ) && preg_match( '/^' . $prefix . '(\d+)$/D', $slug, $match ) ) {
@@ -54,7 +54,7 @@ final class Placement {
 	 * shows no courses instead of silently showing all of them.
 	 */
 	public static function ids_from_list( $value, $kind ) {
-		$prefix = $kind === 'track' ? self::TRACK_PREFIX : self::ITEM_PREFIX;
+		$prefix = $kind === 'bundle' ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
 		$parts  = is_array( $value ) ? $value : preg_split( '/\s*,\s*/', trim( (string) $value ), -1, PREG_SPLIT_NO_EMPTY );
 		$ids    = array();
 		foreach ( $parts as $part ) {
@@ -95,30 +95,30 @@ final class Placement {
 		return $rows;
 	}
 
-	/** @return int[] Tracks the course is a direct member of. */
-	public static function track_ids( $course_id ) {
+	/** @return int[] Bundles the course is a direct member of. */
+	public static function bundle_ids( $course_id ) {
 		global $wpdb;
 		if ( ! self::ready() ) {
 			return array(); }
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT track_id FROM ' . Tracks::members_table() . " WHERE item_type='course' AND item_id=%d ORDER BY track_id", (int) $course_id ) ) );
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT bundle_id FROM ' . Bundles::members_table() . " WHERE item_type='course' AND item_id=%d ORDER BY bundle_id", (int) $course_id ) ) );
 	}
 
-	public static function tracks( $course_id ) {
+	public static function bundles( $course_id ) {
 		$rows = array();
-		foreach ( self::track_ids( $course_id ) as $id ) {
-			$track = Tracks::get( $id );
-			if ( $track ) {
+		foreach ( self::bundle_ids( $course_id ) as $id ) {
+			$bundle = Bundles::get( $id );
+			if ( $bundle ) {
 				$rows[] = array(
-					'id'     => (int) $track['id'],
-					'title'  => $track['title'],
-					'slug'   => self::track_slug( $id ),
-					'status' => $track['status'],
+					'id'     => (int) $bundle['id'],
+					'title'  => $bundle['title'],
+					'slug'   => self::bundle_slug( $id ),
+					'status' => $bundle['status'],
 				); }
 		}
 		return $rows;
 	}
 
-	// ---- Which courses are under items or tracks -------------------------------------------
+	// ---- Which courses are under items or bundles -------------------------------------------
 
 	/** Courses linked to the given items, and by default to everything beneath them. */
 	public static function course_ids_for_items( array $item_ids, $descendants = true ) {
@@ -134,16 +134,16 @@ final class Placement {
 		return Links::object_ids( $all, 'course' );
 	}
 
-	/** Courses a track refers to: direct course members plus courses linked under its curriculum members. */
-	public static function course_ids_for_tracks( array $track_ids ) {
+	/** Courses a bundle refers to: direct course members plus courses linked under its curriculum members. */
+	public static function course_ids_for_bundles( array $bundle_ids ) {
 		global $wpdb;
-		$track_ids = array_values( array_unique( array_filter( array_map( 'intval', $track_ids ) ) ) );
-		if ( ! $track_ids || ! self::ready() ) {
+		$bundle_ids = array_values( array_unique( array_filter( array_map( 'intval', $bundle_ids ) ) ) );
+		if ( ! $bundle_ids || ! self::ready() ) {
 			return array(); }
-		$placeholders = implode( ',', array_fill( 0, count( $track_ids ), '%d' ) );
+		$placeholders = implode( ',', array_fill( 0, count( $bundle_ids ), '%d' ) );
 		$courses      = array();
 		$items        = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT item_type, item_id FROM ' . Tracks::members_table() . " WHERE track_id IN ($placeholders)", $track_ids ), ARRAY_A ) as $row ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT item_type, item_id FROM ' . Bundles::members_table() . " WHERE bundle_id IN ($placeholders)", $bundle_ids ), ARRAY_A ) as $row ) {
 			if ( $row['item_type'] === 'course' ) {
 				$courses[] = (int) $row['item_id'];
 			} else {
@@ -155,20 +155,20 @@ final class Placement {
 	/** Course IDs matching filter slugs of one kind: the union of everything selected. */
 	public static function course_ids_for_slugs( $slugs, $kind ) {
 		$ids = self::ids_from_slugs( $slugs, $kind );
-		return $kind === 'track' ? self::course_ids_for_tracks( $ids ) : self::course_ids_for_items( $ids );
+		return $kind === 'bundle' ? self::course_ids_for_bundles( $ids ) : self::course_ids_for_items( $ids );
 	}
 
 	/**
-	 * Narrow WP_Query arguments to courses matching curriculum and track filters. Selections in one
+	 * Narrow WP_Query arguments to courses matching curriculum and bundle filters. Selections in one
 	 * group are alternatives; the two groups must both match. A selection that matches nothing
 	 * yields no courses rather than silently showing everything.
 	 */
-	public static function narrow_query( array $args, array $item_ids = array(), array $track_ids = array() ) {
+	public static function narrow_query( array $args, array $item_ids = array(), array $bundle_ids = array() ) {
 		$sets = array();
 		if ( $item_ids ) {
 			$sets[] = self::course_ids_for_items( $item_ids ); }
-		if ( $track_ids ) {
-			$sets[] = self::course_ids_for_tracks( $track_ids ); }
+		if ( $bundle_ids ) {
+			$sets[] = self::course_ids_for_bundles( $bundle_ids ); }
 		if ( ! $sets ) {
 			return $args; }
 		$matches = array_shift( $sets );
@@ -239,18 +239,18 @@ final class Placement {
 	}
 
 	/**
-	 * A course's curriculum items, or with $tracks its published Learning Tracks, as {id,name,slug} for
+	 * A course's curriculum items, or with $bundles its published Course Bundles, as {id,name,slug} for
 	 * course cards and learner-facing dashboards.
 	 */
-	public static function card_terms( $course_id, $tracks = false ) {
+	public static function card_terms( $course_id, $bundles = false ) {
 		$terms = array();
-		if ( $tracks ) {
-			foreach ( self::tracks( $course_id ) as $track ) {
-				if ( $track['status'] === 'published' ) {
+		if ( $bundles ) {
+			foreach ( self::bundles( $course_id ) as $bundle ) {
+				if ( $bundle['status'] === 'published' ) {
 					$terms[] = array(
-						'id'   => $track['id'],
-						'name' => $track['title'],
-						'slug' => $track['slug'],
+						'id'   => $bundle['id'],
+						'name' => $bundle['title'],
+						'slug' => $bundle['slug'],
 					); }
 			}
 			return $terms;
@@ -279,23 +279,23 @@ final class Placement {
 		return $map;
 	}
 
-	/** Published tracks that have at least one published course, for public filters. */
-	public static function public_tracks() {
+	/** Published bundles that have at least one published course, for public filters. */
+	public static function public_bundles() {
 		global $wpdb;
 		if ( ! self::ready() ) {
 			return array(); }
 		$result = array();
-		foreach ( Tracks::all( 'published' ) as $track ) {
-			$courses = self::course_ids_for_tracks( array( (int) $track['id'] ) );
+		foreach ( Bundles::all( 'published' ) as $bundle ) {
+			$courses = self::course_ids_for_bundles( array( (int) $bundle['id'] ) );
 			if ( ! $courses ) {
 				continue; }
 			$placeholders = implode( ',', array_fill( 0, count( $courses ), '%d' ) );
 			$count        = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type=%s AND post_status='publish' AND ID IN ($placeholders)", array_merge( array( OHMYLMS_COURSE_CPT ), $courses ) ) );
 			if ( $count ) {
 				$result[] = array(
-					'id'    => (int) $track['id'],
-					'title' => $track['title'],
-					'slug'  => self::track_slug( (int) $track['id'] ),
+					'id'    => (int) $bundle['id'],
+					'title' => $bundle['title'],
+					'slug'  => self::bundle_slug( (int) $bundle['id'] ),
 					'count' => $count,
 				); }
 		}
@@ -325,13 +325,13 @@ final class Placement {
 		return $options;
 	}
 
-	/** Published Learning Tracks for page-builder pickers, keyed by slug (t<id>). @return array<string,string> */
-	public static function track_options() {
+	/** Published Course Bundles for page-builder pickers, keyed by slug (t<id>). @return array<string,string> */
+	public static function bundle_options() {
 		if ( ! self::ready() ) {
 			return array(); }
 		$options = array();
-		foreach ( Tracks::all( 'published' ) as $track ) {
-			$options[ self::track_slug( $track['id'] ) ] = $track['title']; }
+		foreach ( Bundles::all( 'published' ) as $bundle ) {
+			$options[ self::bundle_slug( $bundle['id'] ) ] = $bundle['title']; }
 		return $options;
 	}
 
@@ -364,17 +364,17 @@ final class Placement {
 		return $result;
 	}
 
-	/** Tracks shaped like course tag terms. */
-	public static function term_tracks( $search = '' ) {
+	/** Bundles shaped like course tag terms. */
+	public static function term_bundles( $search = '' ) {
 		if ( ! self::ready() ) {
 			return array(); }
 		$result = array();
-		foreach ( Tracks::all() as $row ) {
+		foreach ( Bundles::all() as $row ) {
 			if ( $search !== '' && stripos( $row['title'], $search ) === false ) {
 				continue; }
 			$id      = (int) $row['id'];
 			$courses = array();
-			foreach ( self::course_ids_for_tracks( array( $id ) ) as $course_id ) {
+			foreach ( self::course_ids_for_bundles( array( $id ) ) as $course_id ) {
 				$courses[] = array(
 					'id'    => $course_id,
 					'title' => get_the_title( $course_id ),
@@ -383,7 +383,7 @@ final class Placement {
 				'term_id'     => $id,
 				'id'          => $id,
 				'name'        => $row['title'],
-				'slug'        => self::track_slug( $id ),
+				'slug'        => self::bundle_slug( $id ),
 				'description' => (string) $row['description'],
 				'count'       => count( $courses ),
 				'courses'     => $courses,
@@ -422,36 +422,36 @@ final class Placement {
 	}
 
 	/**
-	 * Replace the tracks a course belongs to. Tracks are curated, so callers should allow this only for
-	 * administrators. A published track cannot be left with no members.
+	 * Replace the bundles a course belongs to. Bundles are curated, so callers should allow this only for
+	 * administrators. A published bundle cannot be left with no members.
 	 *
 	 * @return true|\WP_Error
 	 */
-	public static function set_tracks( $course_id, array $track_ids ) {
+	public static function set_bundles( $course_id, array $bundle_ids ) {
 		if ( ! self::ready() ) {
 			return Access::error( 'ohmylms_curriculum_unavailable', __( 'Curriculum storage is not installed yet.', 'ohmylms' ), 503 ); }
 		if ( ! self::valid_course( $course_id ) ) {
 			return Access::error( 'ohmylms_course_missing', __( 'Course not found.', 'ohmylms' ), 404 ); }
-		$wanted = array_values( array_unique( array_filter( array_map( 'intval', $track_ids ) ) ) );
+		$wanted = array_values( array_unique( array_filter( array_map( 'intval', $bundle_ids ) ) ) );
 		foreach ( $wanted as $id ) {
-			if ( ! Tracks::get( $id ) ) {
-				return Access::error( 'ohmylms_track_invalid', __( 'A selected learning track no longer exists.', 'ohmylms' ) ); }
+			if ( ! Bundles::get( $id ) ) {
+				return Access::error( 'ohmylms_bundle_invalid', __( 'A selected course bundle no longer exists.', 'ohmylms' ) ); }
 		}
-		$current = self::track_ids( $course_id );
+		$current = self::bundle_ids( $course_id );
 		foreach ( array_diff( $current, $wanted ) as $id ) {
-			$result = Tracks::remove_course( $id, $course_id );
+			$result = Bundles::remove_course( $id, $course_id );
 			if ( is_wp_error( $result ) ) {
 				return $result; }
 		}
 		foreach ( array_diff( $wanted, $current ) as $id ) {
-			$result = Tracks::add_course( $id, $course_id );
+			$result = Bundles::add_course( $id, $course_id );
 			if ( is_wp_error( $result ) ) {
 				return $result; }
 		}
 		return true;
 	}
 
-	/** Give a duplicate the same curriculum placement as its original. Track membership is not copied. */
+	/** Give a duplicate the same curriculum placement as its original. Bundle membership is not copied. */
 	public static function copy_items( $from_course, $to_course ) {
 		if ( ! self::ready() ) {
 			return; }
@@ -524,18 +524,18 @@ final class Placement {
 		}
 		return $path;
 	}
-	/** Add an imported course to the tracks with these titles, creating draft tracks that do not exist yet. */
+	/** Add an imported course to the bundles with these titles, creating draft bundles that do not exist yet. */
 	public static function import_tags( $course_id, array $titles ) {
 		if ( ! self::ensure_ready() ) {
 			return; }
 		foreach ( array_unique( array_filter( array_map( 'trim', array_map( 'strval', $titles ) ), 'strlen' ) ) as $title ) {
-			$track = Tracks::find_by_title( $title );
-			if ( ! $track ) {
-				$track = Tracks::create( array( 'title' => $title ) );
-				if ( is_wp_error( $track ) ) {
+			$bundle = Bundles::find_by_title( $title );
+			if ( ! $bundle ) {
+				$bundle = Bundles::create( array( 'title' => $title ) );
+				if ( is_wp_error( $bundle ) ) {
 					continue; }
 			}
-			Tracks::add_course( (int) $track['id'], $course_id );
+			Bundles::add_course( (int) $bundle['id'], $course_id );
 		}
 	}
 }

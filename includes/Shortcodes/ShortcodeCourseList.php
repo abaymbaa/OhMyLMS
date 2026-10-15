@@ -58,9 +58,9 @@ class ShortcodeCourseList {
 			'posts_per_page'                         => get_option( 'ohmylms_courses_per_page', 10 ),
 			'orderby'                                => 'date',
 			'order'                                  => 'DESC',
-			// Curriculum item and Learning Track IDs, comma-separated (e.g. curriculum="12,14" track="3").
+			// Curriculum item and Course Bundle IDs, comma-separated (e.g. curriculum="12,14" bundle="3").
 			'curriculum'                             => '',
-			'track'                                  => '',
+			'bundle'                                  => '',
 
 			// Layout settings
 			'layout'                                 => get_option( 'ohmylms_archive_page_layout', 'grid' ),
@@ -241,11 +241,11 @@ class ShortcodeCourseList {
 			'order'          => sanitize_text_field( $atts['order'] ),
 		);
 
-		// Limit to curriculum items (and everything below them) and Learning Tracks when given.
+		// Limit to curriculum items (and everything below them) and Course Bundles when given.
 		$args = \OhMyLMS\Curriculum\Placement::narrow_query(
 			$args,
 			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['curriculum'], 'item' ),
-			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['track'], 'track' )
+			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['bundle'], 'bundle' )
 		);
 
 		// Set up global query for template
@@ -693,7 +693,7 @@ class ShortcodeCourseList {
 			'orderby'                             => 'orderby',
 			'order'                               => 'order',
 			'curriculum'                          => 'curriculum',
-			'track'                               => 'track',
+			'bundle'                               => 'bundle',
 			'layout'                              => 'layout',
 			'layoutStyle'                         => 'layout_style',
 			'showFilter'                          => 'show_filter',

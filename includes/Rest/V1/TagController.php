@@ -5,9 +5,9 @@ use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Curriculum\Placement;
 
 /**
- * Course tags were replaced by Learning Tracks. GET returns tracks in the shape of the former tag terms
- * (the track ID is `term_id`) for older clients; nothing can be written here any more. Tracks are
- * managed with /tracks and a course's tracks with /courses/{id}/organization.
+ * Course tags were replaced by Course Bundles. GET returns bundles in the shape of the former tag terms
+ * (the bundle ID is `term_id`) for older clients; nothing can be written here any more. Bundles are
+ * managed with /bundles and a course's bundles with /courses/{id}/organization.
  */
 class TagController extends RestController {
 
@@ -66,13 +66,13 @@ class TagController extends RestController {
 	}
 
 	public function get_items( $request ) {
-		return rest_ensure_response( Placement::term_tracks( (string) $request['search'] ) );
+		return rest_ensure_response( Placement::term_bundles( (string) $request['search'] ) );
 	}
 
 	public function replaced( $request ) {
 		return new \WP_Error(
 			'ohmylms_tags_replaced',
-			__( 'Course tags were replaced by Learning Tracks. Manage them under OhMyLMS > Learning Tracks.', 'ohmylms' ),
+			__( 'Course tags were replaced by Course Bundles. Manage them under OhMyLMS > Course Bundles.', 'ohmylms' ),
 			array( 'status' => 410 )
 		);
 	}

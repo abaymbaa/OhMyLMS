@@ -72,7 +72,7 @@ class Membership extends Data {
 		'course_categories'            => array(),
 		'course_tags'                  => array(),
 		'course_curriculum'            => array(),
-		'course_tracks'                => array(),
+		'course_bundles'                => array(),
 		'excluded_courses'             => array(),
 	);
 
@@ -527,7 +527,7 @@ class Membership extends Data {
 	 */
 	public function get_products( $context = 'view' ) {
 		$products = $this->get_prop( 'products', $context ) ?? array();
-		return $context === 'edit' ? $products : \OhMyLMS\Membership\CourseSelection::resolve( $products, $this->get_course_categories(), $this->get_course_tags(), $this->get_excluded_courses(), $this->get_course_curriculum(), $this->get_course_tracks() );
+		return $context === 'edit' ? $products : \OhMyLMS\Membership\CourseSelection::resolve( $products, $this->get_course_categories(), $this->get_course_tags(), $this->get_excluded_courses(), $this->get_course_curriculum(), $this->get_course_bundles() );
 	}
 	public function get_course_categories( $context = 'view' ) {
 		return $this->get_prop( 'course_categories', $context ) ?? array(); }
@@ -535,8 +535,8 @@ class Membership extends Data {
 		return $this->get_prop( 'course_tags', $context ) ?? array(); }
 	public function get_course_curriculum( $context = 'view' ) {
 		return $this->get_prop( 'course_curriculum', $context ) ?? array(); }
-	public function get_course_tracks( $context = 'view' ) {
-		return $this->get_prop( 'course_tracks', $context ) ?? array(); }
+	public function get_course_bundles( $context = 'view' ) {
+		return $this->get_prop( 'course_bundles', $context ) ?? array(); }
 	public function get_excluded_courses( $context = 'view' ) {
 		return $this->get_prop( 'excluded_courses', $context ) ?? array(); }
 	public function set_course_categories( $ids ) {
@@ -545,8 +545,8 @@ class Membership extends Data {
 		$this->set_prop( 'course_tags', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
 	public function set_course_curriculum( $ids ) {
 		$this->set_prop( 'course_curriculum', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
-	public function set_course_tracks( $ids ) {
-		$this->set_prop( 'course_tracks', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
+	public function set_course_bundles( $ids ) {
+		$this->set_prop( 'course_bundles', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
 	public function set_excluded_courses( $ids ) {
 		$this->set_prop( 'excluded_courses', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
 

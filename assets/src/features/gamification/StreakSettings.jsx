@@ -98,7 +98,7 @@ export function StreakSettings( { BadgeEditor } ) {
 				<h2>{ __( 'Daily learning streaks', 'ohmylms' ) }</h2>
 				<p>
 					{ __(
-						'Help learners build a daily habit across all courses and learning tracks.',
+						'Help learners build a daily habit across all courses and course bundles.',
 						'ohmylms'
 					) }
 				</p>

@@ -5,7 +5,7 @@ import { transformSync } from '@babel/core';
 import {
 	filterItems,
 	orderItems,
-	orderTracks,
+	orderBundles,
 	sameIds,
 	toggleId,
 } from '../../assets/src/features/courses/organization.mjs';
@@ -76,13 +76,13 @@ test( 'toggling adds or removes a single id without changing the input', () => {
 	assert.ok( ! sameIds( [ 1 ], [ 1, 2 ] ) );
 } );
 
-test( 'learning tracks list published ones first, then drafts, alphabetically', () => {
+test( 'course bundles list published ones first, then drafts, alphabetically', () => {
 	assert.deepEqual(
-		orderTracks( [
+		orderBundles( [
 			{ id: 1, title: 'Zebra', status: 'published' },
 			{ id: 2, title: 'Alpha', status: 'draft' },
 			{ id: 3, title: 'Beta', status: 'published' },
-		] ).map( ( track ) => track.title ),
+		] ).map( ( bundle ) => bundle.title ),
 		[ 'Beta', 'Zebra', 'Alpha' ]
 	);
 } );
@@ -126,7 +126,7 @@ const factory = new Function(
 	'TextControl',
 	'filterItems',
 	'orderItems',
-	'orderTracks',
+	'orderBundles',
 	'sameIds',
 	'toggleId',
 	'restUrl',
@@ -140,7 +140,7 @@ const factory = new Function(
 	'TextControl',
 	filterItems,
 	orderItems,
-	orderTracks,
+	orderBundles,
 	sameIds,
 	toggleId,
 	restUrl
@@ -247,22 +247,22 @@ const outline = {
 		},
 	],
 };
-const trackOutline = {
-	tracks: [
+const bundleOutline = {
+	bundles: [
 		{ id: 7, title: 'Data career', status: 'published' },
 		{ id: 8, title: 'Draft path', status: 'draft' },
 	],
 };
-const organization = ( curriculum, tracks, manage = true ) => ( {
+const organization = ( curriculum, bundles, manage = true ) => ( {
 	curriculum: curriculum.map( ( id ) => ( { id } ) ),
-	tracks: tracks.map( ( id ) => ( { id } ) ),
-	can_manage_tracks: manage,
+	bundles: bundles.map( ( id ) => ( { id } ) ),
+	can_manage_bundles: manage,
 } );
 const route = ( state ) => ( settings ) => {
 	if ( settings.url.endsWith( '/curriculum/outline' ) )
 		return Promise.resolve( outline );
-	if ( settings.url.endsWith( '/tracks/outline' ) )
-		return Promise.resolve( trackOutline );
+	if ( settings.url.endsWith( '/bundles/outline' ) )
+		return Promise.resolve( bundleOutline );
 	if (
 		settings.url.endsWith( '/courses/5/organization' ) &&
 		settings.method === 'PUT'
@@ -278,7 +278,7 @@ test( 'the panel loads the outline and the course placement, then saves each cha
 			Promise.resolve(
 				organization(
 					settings.data.curriculum_ids || [ 2 ],
-					settings.data.track_ids || [ 7 ]
+					settings.data.bundle_ids || [ 7 ]
 				)
 			),
 	};
@@ -310,7 +310,7 @@ test( 'the panel loads the outline and the course placement, then saves each cha
 			panel.requests.slice( 0, 3 ).map( ( request ) => request.url ),
 			[
 				'http://xyz.local/wp-json/ohmylms/v1/curriculum/outline',
-				'http://xyz.local/wp-json/ohmylms/v1/tracks/outline',
+				'http://xyz.local/wp-json/ohmylms/v1/bundles/outline',
 				'http://xyz.local/wp-json/ohmylms/v1/courses/5/organization',
 			]
 		);
@@ -334,7 +334,7 @@ test( 'the panel loads the outline and the course placement, then saves each cha
 			.props.onChange( true );
 		await settle();
 		assert.deepEqual( panel.requests.at( -1 ).data, {
-			track_ids: [ 7, 8 ],
+			bundle_ids: [ 7, 8 ],
 		} );
 	} finally {
 		delete globalThis.window;
@@ -346,7 +346,7 @@ test( 'a rejected change is undone and the server reason is shown', async () => 
 		organization: organization( [], [ 7 ] ),
 		put: () =>
 			Promise.reject(
-				new Error( 'A published track must keep at least one member.' )
+				new Error( 'A published bundle must keep at least one member.' )
 			),
 	};
 	const panel = mount( route( state ) );
@@ -373,7 +373,7 @@ test( 'a rejected change is undone and the server reason is shown', async () => 
 	}
 } );
 
-test( 'people who cannot manage learning tracks see them read-only', async () => {
+test( 'people who cannot manage course bundles see them read-only', async () => {
 	const state = {
 		organization: organization( [], [ 7 ], false ),
 		put: () => Promise.reject( new Error( 'unexpected write' ) ),

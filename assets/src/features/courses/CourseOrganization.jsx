@@ -9,14 +9,14 @@ import {
 import {
 	filterItems,
 	orderItems,
-	orderTracks,
+	orderBundles,
 	sameIds,
 	toggleId,
 } from './organization.mjs';
 import { restUrl } from '../restUrl.mjs';
 
 /**
- * Where a course sits: the curriculum items it is placed under and the Learning Tracks it belongs to.
+ * Where a course sits: the curriculum items it is placed under and the Course Bundles it belongs to.
  * These replace course categories and tags. Changes are saved as soon as they are made, because the
  * course editor's Save button only covers the course itself.
  * @param readRuntime
@@ -37,10 +37,11 @@ export function createCourseOrganization( readRuntime ) {
 			error: '',
 		} );
 		const [ items, setItems ] = Hooks.useState( [] );
-		const [ tracks, setTracks ] = Hooks.useState( [] );
+		const [ bundles, setBundles ] = Hooks.useState( [] );
 		const [ curriculumIds, setCurriculumIds ] = Hooks.useState( [] );
-		const [ trackIds, setTrackIds ] = Hooks.useState( [] );
-		const [ canManageTracks, setCanManageTracks ] = Hooks.useState( false );
+		const [ bundleIds, setBundleIds ] = Hooks.useState( [] );
+		const [ canManageBundles, setCanManageBundles ] =
+			Hooks.useState( false );
 		const [ search, setSearch ] = Hooks.useState( '' );
 		const [ busy, setBusy ] = Hooks.useState( false );
 		const [ error, setError ] = Hooks.useState( '' );
@@ -67,20 +68,20 @@ export function createCourseOrganization( readRuntime ) {
 			setLoad( { status: 'loading', error: '' } );
 			Promise.all( [
 				request( { path: '/ohmylms/v1/curriculum/outline' } ),
-				request( { path: '/ohmylms/v1/tracks/outline' } ),
+				request( { path: '/ohmylms/v1/bundles/outline' } ),
 				request( {
 					path: `/ohmylms/v1/courses/${ courseId }/organization`,
 				} ),
 			] )
-				.then( ( [ outline, trackOutline, organization ] ) => {
+				.then( ( [ outline, bundleOutline, organization ] ) => {
 					if ( ! active ) {
 						return;
 					}
 					setItems( orderItems( outline.items ) );
-					setTracks( orderTracks( trackOutline.tracks ) );
+					setBundles( orderBundles( bundleOutline.bundles ) );
 					setCurriculumIds( idsOf( organization.curriculum ) );
-					setTrackIds( idsOf( organization.tracks ) );
-					setCanManageTracks( !! organization.can_manage_tracks );
+					setBundleIds( idsOf( organization.bundles ) );
+					setCanManageBundles( !! organization.can_manage_bundles );
 					setLoad( { status: 'ready', error: '' } );
 				} )
 				.catch( ( cause ) => {
@@ -90,7 +91,7 @@ export function createCourseOrganization( readRuntime ) {
 							error: messageOf(
 								cause,
 								I18n.__(
-									'Could not load the curriculum and learning tracks.',
+									'Could not load the curriculum and course bundles.',
 									'ohmylms'
 								)
 							),
@@ -120,8 +121,8 @@ export function createCourseOrganization( readRuntime ) {
 					data: { [ field ]: next },
 				} );
 				setCurriculumIds( idsOf( saved.curriculum ) );
-				setTrackIds( idsOf( saved.tracks ) );
-				setCanManageTracks( !! saved.can_manage_tracks );
+				setBundleIds( idsOf( saved.bundles ) );
+				setCanManageBundles( !! saved.can_manage_bundles );
 			} catch ( cause ) {
 				apply( previous );
 				setError(
@@ -135,7 +136,7 @@ export function createCourseOrganization( readRuntime ) {
 			}
 		}
 
-		// Curriculum and Learning Tracks are tabs of the Content Hub.
+		// Curriculum and Course Bundles are tabs of the Content Hub.
 		const adminHref = ( page ) =>
 			window.location.href.split( '#' )[ 0 ] + '#/content-hub/' + page;
 		const visibleItems = filterItems( items, search );
@@ -341,32 +342,32 @@ export function createCourseOrganization( readRuntime ) {
 								>
 									<Controls.HeadingWP level={ 4 }>
 										{ I18n.__(
-											'Learning tracks',
+											'Course bundles',
 											'ohmylms'
 										) }
 									</Controls.HeadingWP>
 									<p>
 										{ I18n.__(
-											'Learning tracks are curated paths that learners can follow. Only published tracks are shown to learners.',
+											'Course bundles are curated paths that learners can follow. Only published bundles are shown to learners.',
 											'ohmylms'
 										) }
 									</p>
-									{ tracks.length === 0 ? (
+									{ bundles.length === 0 ? (
 										<p>
 											{ I18n.__(
-												'There are no learning tracks yet.',
+												'There are no course bundles yet.',
 												'ohmylms'
 											) }{ ' ' }
-											{ canManageTracks && (
+											{ canManageBundles && (
 												<a
 													href={ adminHref(
-														'tracks'
+														'bundles'
 													) }
 													target="_blank"
 													rel="noopener noreferrer"
 												>
 													{ I18n.__(
-														'Create a learning track',
+														'Create a course bundle',
 														'ohmylms'
 													) }
 												</a>
@@ -376,13 +377,13 @@ export function createCourseOrganization( readRuntime ) {
 										<div
 											role="group"
 											aria-label={ I18n.__(
-												'Learning tracks',
+												'Course bundles',
 												'ohmylms'
 											) }
 										>
-											{ tracks.map( ( track ) => (
+											{ bundles.map( ( bundle ) => (
 												<div
-													key={ track.id }
+													key={ bundle.id }
 													style={ {
 														margin: '6px 0',
 													} }
@@ -390,38 +391,38 @@ export function createCourseOrganization( readRuntime ) {
 													<CheckboxControl
 														__nextHasNoMarginBottom
 														label={
-															track.status ===
+															bundle.status ===
 															'published'
-																? track.title
-																: `${ track.title } (${ I18n.__( 'draft', 'ohmylms' ) })`
+																? bundle.title
+																: `${ bundle.title } (${ I18n.__( 'draft', 'ohmylms' ) })`
 														}
-														checked={ trackIds.includes(
-															track.id
+														checked={ bundleIds.includes(
+															bundle.id
 														) }
 														disabled={
 															busy ||
-															! canManageTracks
+															! canManageBundles
 														}
 														onChange={ (
 															checked
 														) => {
 															const next =
 																toggleId(
-																	trackIds,
-																	track.id,
+																	bundleIds,
+																	bundle.id,
 																	checked
 																);
 															if (
 																! sameIds(
 																	next,
-																	trackIds
+																	bundleIds
 																)
 															) {
 																save(
-																	'track_ids',
+																	'bundle_ids',
 																	next,
-																	trackIds,
-																	setTrackIds
+																	bundleIds,
+																	setBundleIds
 																);
 															}
 														} }
@@ -430,29 +431,32 @@ export function createCourseOrganization( readRuntime ) {
 											) ) }
 										</div>
 									) }
-									{ ! canManageTracks &&
-										tracks.length > 0 && (
+									{ ! canManageBundles &&
+										bundles.length > 0 && (
 											<p>
 												{ I18n.__(
-													'Only administrators can change which learning tracks a course is in.',
+													'Only administrators can change which course bundles a course is in.',
 													'ohmylms'
 												) }
 											</p>
 										) }
-									{ canManageTracks && tracks.length > 0 && (
-										<p>
-											<a
-												href={ adminHref( 'tracks' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{ I18n.__(
-													'Manage learning tracks',
-													'ohmylms'
-												) }
-											</a>
-										</p>
-									) }
+									{ canManageBundles &&
+										bundles.length > 0 && (
+											<p>
+												<a
+													href={ adminHref(
+														'bundles'
+													) }
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ I18n.__(
+														'Manage course bundles',
+														'ohmylms'
+													) }
+												</a>
+											</p>
+										) }
 								</Controls.SpacerWP>
 							</Controls.CardWP>
 						</Controls.FlexItemWP>

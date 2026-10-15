@@ -146,8 +146,8 @@ function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
 /**
  * Course IDs that a course-list group slug refers to.
  *
- * Course categories and tags were replaced by the curriculum and Learning Tracks, so the group slug is
- * `c<id>` for a curriculum item (including everything below it) or `t<id>` for a Learning Track.
+ * Course categories and tags were replaced by the curriculum and Course Bundles, so the group slug is
+ * `c<id>` for a curriculum item (including everything below it) or `t<id>` for a Course Bundle.
  * Course lists pass the first selected filter value here.
  *
  * @param string|null $slug Group slug, or 'all'/empty for no grouping.
@@ -163,7 +163,7 @@ function ohmylms_course_ids_for_group( $slug ) {
 		array_unique(
 			array_merge(
 				\OhMyLMS\Curriculum\Placement::course_ids_for_slugs( array( $slug ), 'item' ),
-				\OhMyLMS\Curriculum\Placement::course_ids_for_slugs( array( $slug ), 'track' )
+				\OhMyLMS\Curriculum\Placement::course_ids_for_slugs( array( $slug ), 'bundle' )
 			)
 		)
 	);
@@ -196,7 +196,7 @@ function ohmylms_get_best_selling_course_ids( $category = null ) {
           AND m.meta_key = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
@@ -242,7 +242,7 @@ function ohmylms_get_top_rated_course_ids( $category = null ) {
           AND pm.meta_key = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
@@ -287,7 +287,7 @@ function ohmylms_get_top_reviewed_course_ids( $category = null ) {
           AND pm.meta_key = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
@@ -331,7 +331,7 @@ function ohmylms_get_free_course_ids( $category = null ) {
           AND pm.meta_value = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
@@ -370,7 +370,7 @@ function ohmylms_get_paid_course_ids( $category = null ) {
           AND pm.meta_value = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
@@ -408,7 +408,7 @@ function ohmylms_get_recent_course_ids( $category = null ) {
           AND p.post_status = %s
     ';
 
-	// Limit to the courses of the selected curriculum item or Learning Track.
+	// Limit to the courses of the selected curriculum item or Course Bundle.
 	if ( null !== $group ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}

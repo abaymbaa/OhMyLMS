@@ -15,7 +15,7 @@ use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Schema as C;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Skills\Taxonomy;
-use OhMyLMS\Tracks\Tracks;
+use OhMyLMS\Bundles\Bundles;
 
 global $wpdb;
 $admin = get_user_by('login', $config['username']); wp_set_current_user($admin->ID);
@@ -31,7 +31,7 @@ $call = static function ($method, $path, $data = []) {
 };
 if ($action === 'setup') {
     C::install();
-    $state = ['tag' => $tag, 'posts' => [], 'terms' => [], 'items' => [], 'tracks' => [], 'previous_integrations' => get_option('ohmylms_integrations')];
+    $state = ['tag' => $tag, 'posts' => [], 'terms' => [], 'items' => [], 'bundles' => [], 'previous_integrations' => get_option('ohmylms_integrations')];
     $create = static function ($path, $data) use ($call, &$state) { $id = (int) $call('POST', $path, $data)['id']; $state['posts'][] = $id; return $id; };
     $item = static function ($name, $parent, $type, $extra = []) use ($call, &$state) { $id = (int) $call('POST', 'curriculum/items', array_merge(['name' => $name, 'parent_id' => $parent, 'item_type' => $type], $extra))['item']['id']; $state['items'][] = $id; return $id; };
     // Courses: one the learner is enrolled in with partial progress, one they are not.
@@ -57,13 +57,13 @@ if ($action === 'setup') {
     $call('POST', 'curriculum/items/' . $state['syllabus'] . '/links', ['object_type' => 'course', 'object_id' => $state['enrolled_course']]);
     $call('POST', 'curriculum/items/' . $state['section'] . '/links', ['object_type' => 'skill', 'object_id' => $state['skill_seen']]);
     $call('POST', 'curriculum/items/' . $state['section'] . '/links', ['object_type' => 'skill', 'object_id' => $state['skill_new']]);
-    // A published track mixing a course and a curriculum item from another curriculum.
-    $track = $call('POST', 'tracks', ['title' => 'English exam preparation ' . $tag, 'description' => 'Selected English and test-prep material.'])['track'];
-    $state['track'] = (int) $track['id']; $state['tracks'][] = $state['track'];
-    $call('PUT', 'tracks/' . $state['track'] . '/items', ['items' => [['type' => 'course', 'id' => $state['enrolled_course']], ['type' => 'course', 'id' => $state['other_course']], ['type' => 'curriculum', 'id' => $state['section']]]]);
-    $call('POST', 'tracks/' . $state['track'] . '/publish', ['published' => true]);
+    // A published bundle mixing a course and a curriculum item from another curriculum.
+    $bundle = $call('POST', 'bundles', ['title' => 'English exam preparation ' . $tag, 'description' => 'Selected English and test-prep material.'])['bundle'];
+    $state['bundle'] = (int) $bundle['id']; $state['bundles'][] = $state['bundle'];
+    $call('PUT', 'bundles/' . $state['bundle'] . '/items', ['items' => [['type' => 'course', 'id' => $state['enrolled_course']], ['type' => 'course', 'id' => $state['other_course']], ['type' => 'curriculum', 'id' => $state['section']]]]);
+    $call('POST', 'bundles/' . $state['bundle'] . '/publish', ['published' => true]);
     // Learner: enrolled in one course with one lesson done and one skill with two correct answers.
-    $state['login'] = 'tracks-browser-' . $tag; $state['password'] = wp_generate_password(24, false, false);
+    $state['login'] = 'bundles-browser-' . $tag; $state['password'] = wp_generate_password(24, false, false);
     $state['student'] = wp_create_user($state['login'], $state['password'], $state['login'] . '@example.invalid');
     (new WP_User($state['student']))->set_role('subscriber');
     $wpdb->insert($wpdb->prefix . 'ohmylms_user_enrollment', ['user_id' => $state['student'], 'course_id' => $state['enrolled_course'], 'status' => 'enrolled', 'progress' => 'running', 'start_date' => current_time('mysql')]);
@@ -74,15 +74,15 @@ if ($action === 'setup') {
     }
     Mastery::recompute($state['student'], $state['skill_seen']);
     // A page for the learner dashboard section.
-    $state['page'] = wp_insert_post(['post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'My tracks ' . $tag, 'post_name' => 'my-tracks-' . $tag, 'post_content' => '[ohmylms_tracks]']);
+    $state['page'] = wp_insert_post(['post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'My bundles ' . $tag, 'post_name' => 'my-bundles-' . $tag, 'post_content' => '[ohmylms_bundles]']);
     $state['page_url'] = get_permalink($state['page']);
     $state['dashboard_url'] = get_permalink((int) get_option('ohmylms_student_dashboard_page_id'));
     file_put_contents($file, wp_json_encode($state)); echo wp_json_encode($state), "\n";
 } elseif ($action === 'cleanup') {
     $state = json_decode(file_get_contents($file), true);
-    foreach (array_reverse($state['tracks']) as $id) { if (Tracks::get($id)) { Tracks::delete($id, true); } }
-    // Administrators may have created more items and tracks during the run: remove anything carrying the tag.
-    foreach ($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Tracks::table() . ' WHERE title LIKE %s', '%' . $wpdb->esc_like($tag) . '%')) as $id) { Tracks::delete((int) $id, true); }
+    foreach (array_reverse($state['bundles']) as $id) { if (Bundles::get($id)) { Bundles::delete($id, true); } }
+    // Administrators may have created more items and bundles during the run: remove anything carrying the tag.
+    foreach ($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Bundles::table() . ' WHERE title LIKE %s', '%' . $wpdb->esc_like($tag) . '%')) as $id) { Bundles::delete((int) $id, true); }
     foreach (array_reverse($wpdb->get_col($wpdb->prepare('SELECT id FROM ' . Items::table() . ' WHERE name LIKE %s ORDER BY id', '%' . $wpdb->esc_like($tag) . '%'))) as $id) { if (Items::get((int) $id)) { Items::delete((int) $id, 'delete', true); } }
     foreach (array_reverse($state['items']) as $id) { if (Items::get($id)) { Items::delete($id, 'delete', true); } }
     // Remaining browser-created items (names without the tag) that were created for this run.
@@ -94,7 +94,7 @@ if ($action === 'setup') {
         wp_delete_post($course, true);
     }
     foreach (['skill_evidence', 'student_skill_state'] as $table) { $wpdb->delete(A::table($table), ['student_id' => $state['student']]); }
-    $wpdb->delete(\OhMyLMS\Tracks\Follows::table(), ['user_id' => $state['student']]);
+    $wpdb->delete(\OhMyLMS\Bundles\Follows::table(), ['user_id' => $state['student']]);
     $wpdb->delete($wpdb->prefix . 'ohmylms_user_progress', ['enrollment_id' => $state['enrollment']]);
     $wpdb->delete($wpdb->prefix . 'ohmylms_user_enrollment', ['id' => $state['enrollment']]);
     foreach ($state['posts'] as $post) { $wpdb->delete($wpdb->prefix . 'ohmylms_content_relationship', ['content_id' => $post]); wp_delete_post($post, true); }

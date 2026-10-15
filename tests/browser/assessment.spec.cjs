@@ -259,7 +259,7 @@ test('Quizzes, Question Bank and Assignments are Content Hub tabs, and the old A
   await login(page, admin().username, admin().password);
   await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub');
   const tabs = page.getByRole('navigation', { name: 'Content Hub sections' });
-  await expect(tabs.getByRole('link')).toHaveText(['Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks'], { timeout: 30000 });
+  await expect(tabs.getByRole('link')).toHaveText(['Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Course Bundles'], { timeout: 30000 });
   // There is no Assessments entry (or one for any of its sections) in the admin menu any more.
   const submenu = page.locator('#adminmenu li.wp-has-current-submenu .wp-submenu a:visible');
   const labels = (await submenu.allTextContents()).map((text) => text.trim());
@@ -293,7 +293,7 @@ test('Quizzes, Question Bank and Assignments are Content Hub tabs, and the old A
   // Nine tabs still fit a phone: they wrap instead of running off the screen.
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/wp-admin/admin.php?page=ohmylms#/content-hub/question-bank');
-  await expect(tabs.getByRole('link', { name: 'Learning Tracks', exact: true })).toBeVisible({ timeout: 30000 });
+  await expect(tabs.getByRole('link', { name: 'Course Bundles', exact: true })).toBeVisible({ timeout: 30000 });
   const box = await tabs.boundingBox();
   expect(box.x + box.width).toBeLessThanOrEqual(390);
   for (const link of await tabs.getByRole('link').all()) expect((await link.boundingBox()).x + (await link.boundingBox()).width).toBeLessThanOrEqual(390);

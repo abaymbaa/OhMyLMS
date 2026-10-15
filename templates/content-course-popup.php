@@ -44,7 +44,7 @@ foreach ( $data as $row ) {
 			'posts_per_page' => -1,  // Adjust as needed
 		);
 
-		// The selected curriculum item (with everything below it) or Learning Track.
+		// The selected curriculum item (with everything below it) or Course Bundle.
 		$group = ohmylms_course_ids_for_group( $category );
 		if ( null !== $group ) {
 			$args['post__in'] = $group ? $group : array( 0 );

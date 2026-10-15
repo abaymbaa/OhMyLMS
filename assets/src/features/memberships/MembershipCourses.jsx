@@ -5,7 +5,7 @@ import { restUrl } from '../restUrl.mjs';
 
 /**
  * Which courses a membership plan includes: individual courses, curriculum items (with everything
- * below them) and Learning Tracks, minus exclusions. Category and tag rules saved before those were
+ * below them) and Course Bundles, minus exclusions. Category and tag rules saved before those were
  * replaced still grant access, so they are listed here and can only be removed.
  * @param readRuntime
  */
@@ -31,7 +31,7 @@ export function createMembershipCourses( readRuntime ) {
 		);
 		const [ courses, setCourses ] = Hooks.useState( [] );
 		const [ items, setItems ] = Hooks.useState( [] );
-		const [ tracks, setTracks ] = Hooks.useState( [] );
+		const [ bundles, setBundles ] = Hooks.useState( [] );
 		const [ preview, setPreview ] = Hooks.useState( null );
 		const [ error, setError ] = Hooks.useState( '' );
 		const [ previewError, setPreviewError ] = Hooks.useState( '' );
@@ -55,7 +55,7 @@ export function createMembershipCourses( readRuntime ) {
 		const selection = {
 			products: plan?.products || [],
 			course_curriculum: ids( plan?.course_curriculum ),
-			course_tracks: ids( plan?.course_tracks ),
+			course_bundles: ids( plan?.course_bundles ),
 			// Rules saved before categories and tags were replaced; they keep granting access until removed.
 			course_categories: ids( plan?.course_categories ),
 			course_tags: ids( plan?.course_tags ),
@@ -107,16 +107,16 @@ export function createMembershipCourses( readRuntime ) {
 						);
 					}
 				} );
-			request( { path: '/ohmylms/v1/tracks/outline' } )
+			request( { path: '/ohmylms/v1/bundles/outline' } )
 				.then( ( outline ) => {
 					if ( active ) {
-						setTracks(
-							( outline.tracks || [] ).map( ( track ) => ( {
-								value: Number( track.id ),
+						setBundles(
+							( outline.bundles || [] ).map( ( bundle ) => ( {
+								value: Number( bundle.id ),
 								label: Ge(
-									track.status === 'published'
-										? track.title
-										: `${ track.title } (${ I18n.__( 'draft', 'ohmylms' ) })`
+									bundle.status === 'published'
+										? bundle.title
+										: `${ bundle.title } (${ I18n.__( 'draft', 'ohmylms' ) })`
 								),
 							} ) )
 						);
@@ -127,7 +127,7 @@ export function createMembershipCourses( readRuntime ) {
 						setError(
 							cause.message ||
 								I18n.__(
-									'Could not load learning tracks.',
+									'Could not load course bundles.',
 									'ohmylms'
 								)
 						);
@@ -302,7 +302,7 @@ export function createMembershipCourses( readRuntime ) {
 					<Controls.SpacerWP padding={ 6 } margin={ 0 }>
 						<p>
 							{ I18n.__(
-								'Include individual courses, curriculum items or learning tracks. Matching courses below a curriculum item and future published courses are included automatically. Exclusions override every inclusion.',
+								'Include individual courses, curriculum items or course bundles. Matching courses below a curriculum item and future published courses are included automatically. Exclusions override every inclusion.',
 								'ohmylms'
 							) }
 						</p>
@@ -357,12 +357,12 @@ export function createMembershipCourses( readRuntime ) {
 							}
 						/>
 						{ field(
-							I18n.__( 'Learning tracks', 'ohmylms' ),
-							selected( selection.course_tracks, tracks ),
-							tracks,
+							I18n.__( 'Course bundles', 'ohmylms' ),
+							selected( selection.course_bundles, bundles ),
+							bundles,
 							( rows ) =>
 								updateMembershipPlan(
-									'course_tracks',
+									'course_bundles',
 									rows.map( ( item ) => item.value )
 								)
 						) }
@@ -388,7 +388,7 @@ export function createMembershipCourses( readRuntime ) {
 							>
 								<p>
 									{ I18n.__(
-										'This plan still includes courses through old course categories and tags. They keep granting access, so members are not affected, but they can no longer be changed. Remove one once its courses are covered by curriculum items or learning tracks.',
+										'This plan still includes courses through old course categories and tags. They keep granting access, so members are not affected, but they can no longer be changed. Remove one once its courses are covered by curriculum items or course bundles.',
 										'ohmylms'
 									) }
 								</p>

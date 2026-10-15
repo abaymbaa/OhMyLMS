@@ -1,5 +1,5 @@
 /**
- * Curriculum and Learning Tracks in place of categories and tags, in a real browser: the admin menu and
+ * Curriculum and Course Bundles in place of categories and tags, in a real browser: the admin menu and
  * old routes, the course editor, course list filter, membership plan editor, public filters and old URLs.
  * Needs the disposable site: OHMYLMS_TEST_CREDENTIALS (JSON), OHMYLMS_CHROMIUM_PATH (browser),
  * OHMYLMS_PHP and, if the PHP build needs one, OHMYLMS_PHP_INI. Run with --workers=1.
@@ -39,7 +39,7 @@ const app = (hash) => `/wp-admin/admin.php?page=ohmylms#${hash}`;
 // wp.apiFetch sends PUT as POST with an override header, so any write to the route counts.
 const saved = (page, route) => page.waitForResponse((response) => decodeURIComponent(response.url()).includes(route) && ['POST', 'PUT'].includes(response.request().method()) && response.ok());
 
-test('Curriculum and Learning Tracks are Content Hub tabs, and the old category, tag and extension addresses open them', async ({ page }) => {
+test('Curriculum and Course Bundles are Content Hub tabs, and the old category, tag and extension addresses open them', async ({ page }) => {
   const problems = watch(page);
   await login(page, admin().username, admin().password);
   await page.goto(app('/courses'));
@@ -48,11 +48,11 @@ test('Curriculum and Learning Tracks are Content Hub tabs, and the old category,
   // The old #/courses address opens the hub's Courses tab, and the hub entry stays highlighted.
   await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible({ timeout: 30000 });
   const labels = (await submenu.allTextContents()).map((text) => text.trim());
-  // Content Hub holds Courses, Lessons, Assessments, Skills, Curriculum and Learning Tracks, so none has its own entry.
+  // Content Hub holds Courses, Lessons, Assessments, Skills, Curriculum and Course Bundles, so none has its own entry.
   expect(labels.slice(0, 2)).toEqual(['Content Hub', 'Certificates']);
-  for (const retired of ['Courses', 'Assessments', 'Skills', 'Curriculum', 'Learning Tracks', 'Categories', 'Tags']) expect(labels).not.toContain(retired);
+  for (const retired of ['Courses', 'Assessments', 'Skills', 'Curriculum', 'Course Bundles', 'Categories', 'Tags']) expect(labels).not.toContain(retired);
   const tabs = page.getByRole('navigation', { name: 'Content Hub sections' });
-  await expect(tabs.getByRole('link')).toHaveText(['Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Learning Tracks']);
+  await expect(tabs.getByRole('link')).toHaveText(['Courses', 'Lessons', 'Quizzes', 'Question Bank', 'Assignments', 'Skills', 'Curriculum', 'Course Bundles']);
   const tabAt = async (hash, tab, heading) => {
     await page.goto(app(hash));
     await expect(tabs.locator('a[aria-current="page"]')).toHaveText(tab, { timeout: 30000 });
@@ -62,12 +62,12 @@ test('Curriculum and Learning Tracks are Content Hub tabs, and the old category,
     await expect(submenu.filter({ hasText: /^Content Hub$/ })).toBeVisible();
   };
   await tabAt('/content-hub/curriculum', 'Curriculum', 'Curriculum');
-  await tabAt('/content-hub/tracks', 'Learning Tracks', 'Learning Tracks');
+  await tabAt('/content-hub/bundles', 'Course Bundles', 'Course Bundles');
   // Every older address keeps working and lands on the same tab.
   await tabAt('/extensions/curriculum', 'Curriculum', 'Curriculum');
-  await tabAt('/extensions/tracks', 'Learning Tracks', 'Learning Tracks');
+  await tabAt('/extensions/bundles', 'Course Bundles', 'Course Bundles');
   await tabAt('/categories', 'Curriculum', 'Curriculum');
-  await tabAt('/tags', 'Learning Tracks', 'Learning Tracks');
+  await tabAt('/tags', 'Course Bundles', 'Course Bundles');
   // The hub address itself shows the Courses tab; there is no Catalog tab, and its old addresses lead on.
   await page.goto(app('/content-hub'));
   await expect(tabs.locator('a[aria-current="page"]')).toHaveText('Courses', { timeout: 30000 });
@@ -84,16 +84,16 @@ test('Curriculum and Learning Tracks are Content Hub tabs, and the old category,
   expect(problems).toEqual([]);
 });
 
-test('the course editor places a course in the curriculum and learning tracks, saving as you go', async ({ page }) => {
+test('the course editor places a course in the curriculum and course bundles, saving as you go', async ({ page }) => {
   const problems = watch(page);
   const tag = state.tag;
   await login(page, admin().username, admin().password);
   await page.goto(app(`/course-edit/${state.plain}/settings/organize`));
   const items = page.getByRole('group', { name: 'Curriculum items' });
-  const tracks = page.getByRole('group', { name: 'Learning tracks' });
+  const bundles = page.getByRole('group', { name: 'Course bundles' });
   await expect(items.getByLabel(`Arts ${tag}`)).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('Organize your courses in categories')).toHaveCount(0);
-  await expect(tracks.getByLabel(`Hidden path ${tag} (draft)`)).toBeVisible();
+  await expect(bundles.getByLabel(`Hidden path ${tag} (draft)`)).toBeVisible();
   await expect(items.getByLabel(`Arts ${tag}`)).not.toBeChecked();
 
   // Searching keeps the branch above a match, so a result is never shown out of context.
@@ -113,19 +113,19 @@ test('the course editor places a course in the curriculum and learning tracks, s
   await page.reload();
   await expect(items.getByLabel(`Arts ${tag}`)).toBeChecked({ timeout: 30000 });
 
-  const track = saved(page, 'organization');
-  await tracks.getByLabel(`Data career ${tag}`).check();
-  await track;
-  expect(server().tracks.plain).toEqual([state.track]);
+  const bundle = saved(page, 'organization');
+  await bundles.getByLabel(`Data career ${tag}`).check();
+  await bundle;
+  expect(server().bundles.plain).toEqual([state.bundle]);
 
   const untrack = saved(page, 'organization');
-  await tracks.getByLabel(`Data career ${tag}`).uncheck();
+  await bundles.getByLabel(`Data career ${tag}`).uncheck();
   await untrack;
   const unplace = saved(page, 'organization');
   await items.getByLabel(`Arts ${tag}`).uncheck();
   await unplace;
   expect(server().items.plain).toEqual([]);
-  expect(server().tracks.plain).toEqual([]);
+  expect(server().bundles.plain).toEqual([]);
   expect(problems).toEqual([]);
 });
 
@@ -148,7 +148,7 @@ test('the course list filters by curriculum item, including everything below it'
   expect(problems).toEqual([]);
 });
 
-test('the membership editor selects curriculum items and tracks, and keeps old rules removable', async ({ page }) => {
+test('the membership editor selects curriculum items and bundles, and keeps old rules removable', async ({ page }) => {
   const problems = watch(page);
   const tag = state.tag;
   await login(page, admin().username, admin().password);
@@ -171,8 +171,8 @@ test('the membership editor selects curriculum items and tracks, and keeps old r
   await expect(legacy).toHaveCount(0);
   await expect(modal.getByText('Included courses preview (2)')).toBeVisible({ timeout: 15000 });
 
-  // Add a learning track: its courses join the preview, with the track named as the reason.
-  const field = modal.getByRole('heading', { name: 'Learning tracks', exact: true }).locator('xpath=following-sibling::*[1]');
+  // Add a course bundle: its courses join the preview, with the bundle named as the reason.
+  const field = modal.getByRole('heading', { name: 'Course bundles', exact: true }).locator('xpath=following-sibling::*[1]');
   await field.click({ force: true });
   await page.getByRole('option', { name: `Data career ${tag}` }).click({ force: true });
   await expect(preview.getByRole('row', { name: new RegExp(`Painting ${tag}.*Data career ${tag}`) })).toBeVisible({ timeout: 15000 });
@@ -183,19 +183,19 @@ test('the membership editor selects curriculum items and tracks, and keeps old r
   await put;
   const after = server();
   expect(after.plan).toEqual([state.science]);
-  expect(after.plan_tracks).toEqual([state.track]);
+  expect(after.plan_bundles).toEqual([state.bundle]);
   expect(after.legacy_rules).toEqual([]);
   expect(after.legacy_terms).toEqual([state.legacy_term]);
   expect(problems).toEqual([]);
 });
 
-test('public course filters list curriculum items and learning tracks and filter without a reload', async ({ page }) => {
+test('public course filters list curriculum items and course bundles and filter without a reload', async ({ page }) => {
   const tag = state.tag;
   const problems = watch(page);
   await page.goto(state.page_url);
   const filters = page.locator('.ohmylms-filter-accordion');
   await expect(filters.getByText('Curriculum', { exact: true })).toBeVisible({ timeout: 30000 });
-  await expect(filters.getByText('Learning track', { exact: true })).toBeVisible();
+  await expect(filters.getByText('Course bundle', { exact: true })).toBeVisible();
   for (const hidden of [`Unused ${tag}`, `Hidden path ${tag}`, `Legacy category ${tag}`]) await expect(filters.getByText(hidden)).toHaveCount(0);
   const box = (name) => filters.locator('label.ohmylms-checkbox', { hasText: name });
   const grid = page.locator('body');

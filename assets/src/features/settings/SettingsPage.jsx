@@ -2,6 +2,7 @@
 import { createElement } from '@wordpress/element';
 import { MovableTabPanel } from '../navigation/MovableTabPanel';
 import { AiTutorSettings } from './AiTutorSettings';
+import { XApiSettings } from './XApiSettings';
 export function createSettingsPage( readRuntime ) {
 	return function SettingsPage() {
 		const {
@@ -472,6 +473,11 @@ export function createSettingsPage( readRuntime ) {
 					),
 					key: 'ai-tutor-settings',
 					children: <AiTutorSettings />,
+				},
+				{
+					label: 'xAPI',
+					key: 'xapi-settings',
+					children: <XApiSettings />,
 				},
 			].concat(
 				S6(

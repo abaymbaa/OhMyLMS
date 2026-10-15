@@ -49,10 +49,10 @@ class Menu {
 		if ( current_user_can( $capability ) ) {
 			$submenu[ $slug ][] = array( esc_attr__( 'Dashboard', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/dashboard' );
 			// Courses, lessons, quizzes, the question bank, assignments, skills, the curriculum and Learning
-			// Tracks are managed together in the Content Hub; the old #/courses, #/quizzes, #/assignments,
+			// Bundles are managed together in the Content Hub; the old #/courses, #/quizzes, #/assignments,
 			// #/assessments, #/extensions/skills, #/extensions/question-bank, #/extensions/curriculum,
-			// #/extensions/tracks, #/categories and #/tags addresses open the matching tabs. Curriculum
-			// replaces course categories and Learning Tracks replace course tags.
+			// #/extensions/bundles, #/categories and #/tags addresses open the matching tabs. Curriculum
+			// replaces course categories and Course Bundles replace course tags.
 			$submenu[ $slug ][] = array( esc_attr__( 'Content Hub', 'ohmylms' ), $capability, 'admin.php?page=' . $slug . '#/content-hub' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			// With Gamification on, Certificates is a tab of the Gamification screen (#/gamification/certificates)
 				// and #/certificates opens it; without Gamification it keeps its own entry.

@@ -19,14 +19,14 @@ export function DeleteItem( { item, dependents } ) {
 		descendants: 0,
 		links: 0,
 		own_links: 0,
-		tracks: 0,
-		own_tracks: 0,
+		bundles: 0,
+		own_bundles: 0,
 		groups: 0,
 		own_groups: 0,
 	};
 	const branch = info.children > 0 && strategy === 'delete';
 	const links = branch ? info.links : info.own_links;
-	const tracks = branch ? info.tracks : info.own_tracks;
+	const bundles = branch ? info.bundles : info.own_bundles;
 	const groups = ( branch ? info.groups : info.own_groups ) || 0;
 
 	async function remove() {
@@ -138,16 +138,16 @@ export function DeleteItem( { item, dependents } ) {
 						) }
 					</li>
 				) }
-				{ tracks > 0 && (
+				{ bundles > 0 && (
 					<li>
 						{ sprintf(
 							_n(
-								'It will be removed from %d learning track.',
-								'It will be removed from %d learning tracks.',
-								tracks,
+								'It will be removed from %d course bundle.',
+								'It will be removed from %d course bundles.',
+								bundles,
 								'ohmylms'
 							),
-							tracks
+							bundles
 						) }
 					</li>
 				) }

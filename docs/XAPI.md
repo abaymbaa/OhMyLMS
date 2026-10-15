@@ -2,7 +2,11 @@
 
 OhMyLMS can send learning activity to a Learning Record Store (LRS) as xAPI 1.0.3 statements. This is phase 1: OhMyLMS as an activity provider. It does not launch third-party content or act as an LRS (see "Not built yet").
 
-Code: `includes/XApi/`. Settings: **OhMyLMS > xAPI**. Off by default.
+Code: `includes/XApi/`. Configure the LRS under **OhMyLMS > Settings > xAPI**. The bundled **xAPI** add-on under **OhMyLMS > Add-ons > Connections** opens this same Settings tab through **Manage**. Off by default; no additional plugin is required.
+
+The Add-ons switch and the settings screen's **Send statements** checkbox control the same setting. Existing enabled installations retain their configuration when the add-on card is introduced. Enabling the add-on does not send anything until a valid LRS endpoint is configured. Disabling it stops collection and delivery and removes the delivery cron job; queued statements and credentials are retained for re-enabling. Daily retention housekeeping continues while OhMyLMS is active. Deactivating OhMyLMS removes both xAPI cron jobs.
+
+There is no standalone xAPI submenu. The Settings tab and the add-on's **Manage** button remain available while disabled for connection setup. Settings save and delivery actions run in place, without reloading the admin screen. The legacy hidden `admin.php?page=ohmylms-xapi` page and admin-post handlers remain registered for compatibility; their actions return to the Settings tab.
 
 ## What is sent
 
@@ -70,6 +74,7 @@ Filters and actions: `ohmylms_xapi_account_homepage` (account home page IRI), `o
 
 ```
 php tests/xapi-unit.php                                              # pure: UUIDs, scores, durations, identity, response codes
+php tests/xapi-addon-unit.php                                        # add-on switches, upgrade, schedules and deactivation
 php tests/php/assessment-integration.php xapi                        # isolated test site: hooks, real attempt and regrade, fake LRS, failures
 ```
 
@@ -93,7 +98,7 @@ First run against Veracity (lrs.io), 2026-10-13: all 11 statements of a quiz flo
 
 `includes/XApi/` is clean under `phpcs.xml.dist` except for one documented compatibility exception:
 
-- **File names.** WordPress prefers `class-*.php`; this plugin autoloads `OhMyLMS\` from `includes/` by PSR-4, which needs the class name as the file name. Every PSR-4 file in the plugin has the same two `WordPress.Files.FileName` findings, and `docs/CODING-STANDARDS.md` requires PSR-4 mappings to stay compatible, so these 32 findings are reported, not suppressed.
+- **File names.** WordPress prefers `class-*.php`; this plugin autoloads `OhMyLMS\` from `includes/` by PSR-4, which needs the class name as the file name. Every PSR-4 file in the plugin, including `Integration.php`, has the same two `WordPress.Files.FileName` findings, and `docs/CODING-STANDARDS.md` requires PSR-4 mappings to stay compatible, so these findings are reported, not suppressed.
 
 Suppressions in this module are narrow and carry their reason in the comment:
 

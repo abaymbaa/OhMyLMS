@@ -243,10 +243,10 @@ class CourseListElement {
 			),
 			array(
 				'type'        => 'dropdown',
-				'heading'     => __( 'Learning track', 'ohmylms' ),
-				'param_name'  => 'track',
-				'value'       => self::dropdown_values( \OhMyLMS\Curriculum\Placement::track_options() ),
-				'description' => __( 'Only show courses in this Learning Track.', 'ohmylms' ),
+				'heading'     => __( 'Course bundle', 'ohmylms' ),
+				'param_name'  => 'bundle',
+				'value'       => self::dropdown_values( \OhMyLMS\Curriculum\Placement::bundle_options() ),
+				'description' => __( 'Only show courses in this Course Bundle.', 'ohmylms' ),
 			),
 			// Row Settings (Pro)
 

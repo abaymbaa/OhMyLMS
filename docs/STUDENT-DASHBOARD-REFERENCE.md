@@ -19,7 +19,7 @@ The video is a promotional overview, so it does not establish assignment workflo
 
 1. A compact greeting with the learner's existing avatar, name, and a Customize dashboard action.
 2. **What should I work on?** as the primary area. A wide tabbed panel contains Continue learning, Recent skills, and Recommendations. Add From your teacher only when an actual learner-specific assignment source has been verified.
-3. A narrow companion column contains the existing learning streak card, with today's status, freeze balance, and the next badge milestone. Learning tracks can supply a study-plan card where a learner has an applicable track.
+3. A narrow companion column contains the existing learning streak card, with today's status, freeze balance, and the next badge milestone. Course bundles can supply a study-plan card where a learner has an applicable bundle.
 4. **How am I doing?** shows this week's real activity and skill progress. Course counts remain available as secondary information.
 5. **My achievements** shows earned badges, the learner's current level, and progress toward the next achievement. An adjacent leaderboard card reuses existing eligible course rankings.
 6. Existing enrolled courses and memberships remain reachable through the account navigation and relevant dashboard links.
@@ -46,13 +46,13 @@ On mobile, stack the work panel and companion column, wrap tabs, and stack summa
 - A count of skills practiced is different from skills whose mastery improved. Use precise labels and derive each measure from its corresponding records.
 - Show comparisons with prior weeks only when meaningful history is available. Do not invent averages for a new account.
 - Teacher ownership of a course does not imply that a particular skill was assigned to a learner. Verify assignment storage before exposing an assignment tab.
-- The IXL diagnostic snapshot and SAT plan represent separate product capabilities. The OhMyLMS adaptation should use its actual assessments and tracks rather than add unsupported diagnostic scores.
+- The IXL diagnostic snapshot and SAT plan represent separate product capabilities. The OhMyLMS adaptation should use its actual assessments and bundles rather than add unsupported diagnostic scores.
 - Streaks, badges, points, levels, and leaderboard visibility must honor their existing settings. Theme changes must not alter achievements or learning data.
 - Use original visual assets and OhMyLMS labels while following the reference's card hierarchy and friendly presentation.
 
 ## Implemented dashboard
 
-The default student dashboard now uses this layout, available through the existing dashboard shortcode/block and profile dashboard template. Continue learning, recent skills, review recommendations, real weekly practice totals, achievements, eligible course leaderboards, and learning tracks reuse existing data and services. Streaks and their next unearned milestone appear when enabled. Membership cards remain available for enrolled members.
+The default student dashboard now uses this layout, available through the existing dashboard shortcode/block and profile dashboard template. Continue learning, recent skills, review recommendations, real weekly practice totals, achievements, eligible course leaderboards, and course bundles reuse existing data and services. Streaks and their next unearned milestone appear when enabled. Membership cards remain available for enrolled members.
 
 Meadow, Ocean, and Sunset themes use original CSS scenery and persist per learner through the nonce-authenticated `PUT /ohmylms/v1/student/dashboard-theme` route. Only the current learner's preference can be changed. Keyboard-accessible tabs, mobile stacking, honest empty states, and failed-save feedback are included. Theme template overrides are still supported.
 

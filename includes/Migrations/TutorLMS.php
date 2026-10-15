@@ -495,7 +495,7 @@ class TutorLMS {
 		}
 
 		// Tutor categories become curriculum items (keeping their parent chain) and its tags become
-		// Learning Tracks. Existing items and tracks with the same name are reused.
+		// Course Bundles. Existing items and bundles with the same name are reused.
 		$paths = array();
 		foreach ( $course_categories as $category ) {
 			$paths[] = \OhMyLMS\Curriculum\Placement::term_path( $category );

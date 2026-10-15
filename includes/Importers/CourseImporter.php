@@ -142,15 +142,15 @@ class CourseImporter {
 			}
 		}
 
-		// Course categories and tags were replaced by the curriculum and Learning Tracks. Files exported
-		// before that carry them as terms, so they are imported as curriculum items and tracks instead.
+		// Course categories and tags were replaced by the curriculum and Course Bundles. Files exported
+		// before that carry them as terms, so they are imported as curriculum items and bundles instead.
 		$curriculum_paths = array();
-		$track_titles     = array();
+		$bundle_titles     = array();
 		foreach ( (array) ( $data['curriculum'] ?? array() ) as $path ) {
 			$curriculum_paths[] = (array) $path;
 		}
-		foreach ( (array) ( $data['learning_tracks'] ?? array() ) as $title ) {
-			$track_titles[] = (string) $title;
+		foreach ( (array) ( $data['learning_bundles'] ?? array() ) as $title ) {
+			$bundle_titles[] = (string) $title;
 		}
 
 		if ( ! empty( $data['terms'] ) ) {
@@ -161,7 +161,7 @@ class CourseImporter {
 						continue;
 					}
 					if ( 'course_tag' === $term_data['taxonomy'] ) {
-						$track_titles[] = $term_data['term'];
+						$bundle_titles[] = $term_data['term'];
 						continue;
 					}
 				}
@@ -223,7 +223,7 @@ class CourseImporter {
 		}
 
 		\OhMyLMS\Curriculum\Placement::import_categories( $course_id, $curriculum_paths );
-		\OhMyLMS\Curriculum\Placement::import_tags( $course_id, $track_titles );
+		\OhMyLMS\Curriculum\Placement::import_tags( $course_id, $bundle_titles );
 
 		if ( isset( $data['thumbnail'] ) ) {
 			$thumbnail_id = $this->import_thumbnail( $data['thumbnail'] );

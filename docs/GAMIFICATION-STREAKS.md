@@ -15,7 +15,7 @@ Implemented on `codex/gamification-streaks`. Existing Performance removal and st
 
 ## Streak behavior
 
-Streaks default **off**. They track one overall learner streak across courses, subjects and Learning Tracks independently of spendable points, levels and mastery.
+Streaks default **off**. They track one overall learner streak across courses, subjects and Course Bundles independently of spendable points, levels and mastery.
 
 Qualifying sources are a newly persisted completed lesson, a finalized quiz/assessment with meaningful saved answers, and a completed owned skill-practice session with at least three meaningfully answered problems by default. Wrong answers qualify. A quiz exit, empty answers, active/inline/guest practice, individual answers, mastery recomputations, login, purchases and social events do not qualify. Quiz ownership and responses are read from persisted attempts; lesson ownership is checked through progress/enrollment rows; practice uses the persisted session owner and items. There is no client activity-write endpoint. Server processing time determines the qualifying date, including automatic finalization of a saved quiz attempt.
 

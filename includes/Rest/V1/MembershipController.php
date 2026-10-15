@@ -653,7 +653,7 @@ class MembershipController extends RestController {
 		if ( is_wp_error( $error ) ) {
 			throw new DataException( $error->get_error_code(), $error->get_error_message(), 400 );
 		}
-		foreach ( array( 'course_categories', 'course_tags', 'course_curriculum', 'course_tracks', 'excluded_courses' ) as $field ) {
+		foreach ( array( 'course_categories', 'course_tags', 'course_curriculum', 'course_bundles', 'excluded_courses' ) as $field ) {
 			if ( isset( $request[ $field ] ) ) {
 				$membership->{'set_' . $field}( $request[ $field ] );
 			}
@@ -743,7 +743,7 @@ class MembershipController extends RestController {
 			'course_categories'            => $membership->get_course_categories(),
 			'course_tags'                  => $membership->get_course_tags(),
 			'course_curriculum'            => $membership->get_course_curriculum(),
-			'course_tracks'                => $membership->get_course_tracks(),
+			'course_bundles'                => $membership->get_course_bundles(),
 			'legacy_rules'                 => $this->legacy_rules( $membership ),
 			'excluded_courses'             => $membership->get_excluded_courses(),
 			'courses'                      => count( $membership->get_products() ),
@@ -756,7 +756,7 @@ class MembershipController extends RestController {
 	}
 
 	/**
-	 * Course rules. Curriculum items and learning tracks are the rules to choose from. Legacy category and
+	 * Course rules. Curriculum items and course bundles are the rules to choose from. Legacy category and
 	 * tag rules, saved before those were replaced, can only be kept or removed, never extended: members keep
 	 * the access they were granted until an administrator removes the rule, yet nothing new is organized by
 	 * categories or tags.
@@ -766,7 +766,7 @@ class MembershipController extends RestController {
 			'course_categories' => 'course_category',
 			'course_tags'       => 'course_tag',
 			'course_curriculum' => 'curriculum',
-			'course_tracks'     => 'tracks',
+			'course_bundles'     => 'bundles',
 			'excluded_courses'  => null,
 		);
 		foreach ( $rules as $field => $kind ) {
@@ -783,8 +783,8 @@ class MembershipController extends RestController {
 				$id = (int) $id;
 				if ( $kind === 'curriculum' ) {
 					$exists = \OhMyLMS\Curriculum\Items::get( $id ) !== null;
-				} elseif ( $kind === 'tracks' ) {
-					$exists = \OhMyLMS\Tracks\Tracks::get( $id ) !== null;
+				} elseif ( $kind === 'bundles' ) {
+					$exists = \OhMyLMS\Bundles\Bundles::get( $id ) !== null;
 				} elseif ( $kind ) {
 					$exists = (bool) term_exists( $id, $kind );
 				} else {
@@ -797,7 +797,7 @@ class MembershipController extends RestController {
 			if ( $membership && in_array( $kind, array( 'course_category', 'course_tag' ), true ) ) {
 				$saved = $kind === 'course_category' ? $membership->get_course_categories( 'edit' ) : $membership->get_course_tags( 'edit' );
 				if ( array_diff( array_map( 'intval', $request[ $field ] ), array_map( 'intval', (array) $saved ) ) ) {
-					return new WP_Error( 'membership_legacy_rules', __( 'Category and tag rules were replaced by curriculum items and learning tracks. Existing rules can only be removed.', 'ohmylms' ), array( 'status' => 400 ) );
+					return new WP_Error( 'membership_legacy_rules', __( 'Category and tag rules were replaced by curriculum items and course bundles. Existing rules can only be removed.', 'ohmylms' ), array( 'status' => 400 ) );
 				}
 			}
 		}
@@ -839,8 +839,8 @@ class MembershipController extends RestController {
 			return $valid;
 		}
 		$curriculum   = $request['course_curriculum'] ?? array();
-		$tracks       = $request['course_tracks'] ?? array();
-		$courses      = \OhMyLMS\Membership\CourseSelection::resolve( $request['products'] ?? array(), $request['course_categories'] ?? array(), $request['course_tags'] ?? array(), $request['excluded_courses'] ?? array(), $curriculum, $tracks );
+		$bundles       = $request['course_bundles'] ?? array();
+		$courses      = \OhMyLMS\Membership\CourseSelection::resolve( $request['products'] ?? array(), $request['course_categories'] ?? array(), $request['course_tags'] ?? array(), $request['excluded_courses'] ?? array(), $curriculum, $bundles );
 		$direct       = array_column( $request['products'] ?? array(), 'id' );
 		$categories   = $request['course_categories'] ?? array();
 		$category_ids = $categories;
@@ -850,7 +850,7 @@ class MembershipController extends RestController {
 				$category_ids = array_merge( $category_ids, $children );
 			}
 		}
-		// Curriculum rules include everything beneath a selected item; a track includes its courses and the courses under its curriculum members.
+		// Curriculum rules include everything beneath a selected item; a bundle includes its courses and the courses under its curriculum members.
 		$item_scope = array();
 		if ( $curriculum ) {
 			$parents    = \OhMyLMS\Curriculum\Items::parents();
@@ -859,13 +859,13 @@ class MembershipController extends RestController {
 				$item_scope = array_merge( $item_scope, \OhMyLMS\Curriculum\Tree::descendants( $parents, $item ) );
 			}
 		}
-		$track_courses = array();
-		foreach ( $tracks as $track_id ) {
-			$track = \OhMyLMS\Tracks\Tracks::get( (int) $track_id );
-			if ( $track ) {
-				$track_courses[] = array(
-					'title'   => $track['title'],
-					'courses' => \OhMyLMS\Curriculum\Placement::course_ids_for_tracks( array( (int) $track_id ) ),
+		$bundle_courses = array();
+		foreach ( $bundles as $bundle_id ) {
+			$bundle = \OhMyLMS\Bundles\Bundles::get( (int) $bundle_id );
+			if ( $bundle ) {
+				$bundle_courses[] = array(
+					'title'   => $bundle['title'],
+					'courses' => \OhMyLMS\Curriculum\Placement::course_ids_for_bundles( array( (int) $bundle_id ) ),
 				);
 			}
 		}
@@ -895,9 +895,9 @@ class MembershipController extends RestController {
 					}
 				}
 			}
-			foreach ( $track_courses as $track ) {
-				if ( in_array( (int) $course['id'], $track['courses'], true ) ) {
-					$course['reasons'][] = $track['title'];
+			foreach ( $bundle_courses as $bundle ) {
+				if ( in_array( (int) $course['id'], $bundle['courses'], true ) ) {
+					$course['reasons'][] = $bundle['title'];
 				}
 			}
 		}

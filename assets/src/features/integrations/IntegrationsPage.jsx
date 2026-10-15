@@ -239,6 +239,10 @@ export function createIntegrationsPage( readRuntime ) {
 				};
 			} )(),
 			j = function ( t ) {
+				if ( t.key === 'xapi' ) {
+					window.location.hash = '/settings/xapi-settings';
+					return;
+				}
 				R( t );
 			},
 			A = C.filter( function ( e ) {

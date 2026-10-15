@@ -13,19 +13,19 @@ function translate( text ) {
 			return __( 'Curriculum: ', 'ohmylms' );
 		case 'Show the curriculum as tabs.':
 			return __( 'Show the curriculum as tabs.', 'ohmylms' );
-		case 'Learning tracks':
-			return __( 'Learning tracks', 'ohmylms' );
-		case 'Learning track':
-			return __( 'Learning track', 'ohmylms' );
-		case 'Learning track: ':
-			return __( 'Learning track: ', 'ohmylms' );
+		case 'Course bundles':
+			return __( 'Course bundles', 'ohmylms' );
+		case 'Course bundle':
+			return __( 'Course bundle', 'ohmylms' );
+		case 'Course bundle: ':
+			return __( 'Course bundle: ', 'ohmylms' );
 		default:
 			return text;
 	}
 }
 
 /**
- * Show "Curriculum" and "Learning tracks" wherever the recovered admin app still says category or tag.
+ * Show "Curriculum" and "Course bundles" wherever the recovered admin app still says category or tag.
  * `wp.hooks` is read from the global, not imported, because wp-i18n already loads it first and the SDK
  * must keep working (without relabeling) on pages that provide only part of `wp`.
  */

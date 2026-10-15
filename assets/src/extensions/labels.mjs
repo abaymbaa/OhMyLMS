@@ -1,5 +1,5 @@
 /**
- * Course categories were replaced by the curriculum and course tags by Learning Tracks. The recovered
+ * Course categories were replaced by the curriculum and course tags by Course Bundles. The recovered
  * admin app still says "Category" and "Tag" in its course list filters, course page toggles and
  * archive-page settings, so those exact strings are relabeled through WordPress's gettext filter
  * (see curriculumLabels.js).
@@ -13,9 +13,9 @@ export const RELABELED = Object.freeze( {
 	Category: 'Curriculum',
 	'Category: ': 'Curriculum: ',
 	'Enable course category.': 'Show the curriculum as tabs.',
-	Tags: 'Learning tracks',
-	Tag: 'Learning track',
-	'Tag: ': 'Learning track: ',
+	Tags: 'Course bundles',
+	Tag: 'Course bundle',
+	'Tag: ': 'Course bundle: ',
 } );
 
 /**

@@ -13,11 +13,11 @@ final class CourseSelection {
 
 	/**
 	 * Courses a membership plan includes. Curriculum items (with everything beneath them) and
-	 * Learning Tracks are the rules to choose from. Legacy category and tag rules, saved before they
+	 * Course Bundles are the rules to choose from. Legacy category and tag rules, saved before they
 	 * were replaced, still resolve so existing members keep the access they were granted until an
 	 * administrator removes those rules.
 	 */
-	public static function resolve( $products, $categories, $tags, $excluded, $curriculum = array(), $tracks = array() ) {
+	public static function resolve( $products, $categories, $tags, $excluded, $curriculum = array(), $bundles = array() ) {
 		$ids = self::ids( array_column( (array) $products, 'id' ) );
 		$tax = array( 'relation' => 'OR' );
 		foreach ( array(
@@ -52,9 +52,9 @@ final class CourseSelection {
 		if ( $curriculum ) {
 			$ids = array_merge( $ids, \OhMyLMS\Curriculum\Placement::course_ids_for_items( $curriculum ) );
 		}
-		$tracks = self::ids( $tracks );
-		if ( $tracks ) {
-			$ids = array_merge( $ids, \OhMyLMS\Curriculum\Placement::course_ids_for_tracks( $tracks ) );
+		$bundles = self::ids( $bundles );
+		if ( $bundles ) {
+			$ids = array_merge( $ids, \OhMyLMS\Curriculum\Placement::course_ids_for_bundles( $bundles ) );
 		}
 		$ids    = array_diff( self::ids( $ids ), self::ids( $excluded ) );
 		$result = array();

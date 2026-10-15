@@ -57,7 +57,7 @@ const runtime = ( extra ) => ( {
 	...extra,
 } );
 
-// useState slots, in order: courses, items, tracks, preview, error, previewError, loading, item status.
+// useState slots, in order: courses, items, bundles, preview, error, previewError, loading, item status.
 const preview = {
 	total: 1,
 	courses: [
@@ -118,7 +118,7 @@ test( 'membership editor restores all selections, saves IDs and shows the resolv
 	const plan = {
 		products: [ { id: 1, name: 'Direct course' } ],
 		course_curriculum: [ 10 ],
-		course_tracks: [ 20 ],
+		course_bundles: [ 20 ],
 		course_categories: [],
 		course_tags: [],
 		excluded_courses: [ 3 ],
@@ -165,7 +165,7 @@ test( 'membership editor restores all selections, saves IDs and shows the resolv
 	selects[ 3 ].props.onChange( [ { value: 5, label: 'Excluded' } ] );
 	assert.deepEqual( writes, [
 		[ 'course_curriculum', [ 11 ] ],
-		[ 'course_tracks', [] ],
+		[ 'course_bundles', [] ],
 		[ 'excluded_courses', [ 5 ] ],
 	] );
 	assert.ok(
@@ -200,7 +200,7 @@ test( 'old category and tag rules are listed, keep counting in the preview, and 
 	const plan = {
 		products: [],
 		course_curriculum: [],
-		course_tracks: [],
+		course_bundles: [],
 		course_categories: [ 30, 31 ],
 		course_tags: [ '40' ],
 		excluded_courses: [],
@@ -288,7 +288,7 @@ test( 'old category and tag rules are listed, keep counting in the preview, and 
 	}
 } );
 
-test( 'curriculum and track loading uses the REST root and survives a failed track request', async () => {
+test( 'curriculum and bundle loading uses the REST root and survives a failed bundle request', async () => {
 	const effects = [];
 	const states = [];
 	const requests = [];
@@ -322,7 +322,7 @@ test( 'curriculum and track loading uses the REST root and survives a failed tra
 				},
 				l: () => ( settings ) => {
 					requests.push( settings );
-					return settings.url.endsWith( '/tracks/outline' )
+					return settings.url.endsWith( '/bundles/outline' )
 						? Promise.reject( new Error( 'Invalid JSON' ) )
 						: Promise.resolve( {
 								items: [
@@ -344,7 +344,7 @@ test( 'curriculum and track loading uses the REST root and survives a failed tra
 			requests.map( ( request ) => request.url ),
 			[
 				'http://xyz.local/wp-json/ohmylms/v1/curriculum/outline?courses=1',
-				'http://xyz.local/wp-json/ohmylms/v1/tracks/outline',
+				'http://xyz.local/wp-json/ohmylms/v1/bundles/outline',
 			]
 		);
 		assert.equal( states[ 1 ][ 0 ].label, 'Cambridge' );
@@ -380,7 +380,7 @@ test( 'plain-permalink sites get a valid URL for routes with a query string', as
 				},
 				l: () => ( settings ) => {
 					requests.push( settings.url );
-					return Promise.resolve( { items: [], tracks: [] } );
+					return Promise.resolve( { items: [], bundles: [] } );
 				},
 			} )
 		);
@@ -389,7 +389,7 @@ test( 'plain-permalink sites get a valid URL for routes with a query string', as
 		await new Promise( ( resolve ) => setImmediate( resolve ) );
 		assert.deepEqual( requests, [
 			'http://xyz.local/index.php?rest_route=/ohmylms/v1/curriculum/outline&courses=1',
-			'http://xyz.local/index.php?rest_route=/ohmylms/v1/tracks/outline',
+			'http://xyz.local/index.php?rest_route=/ohmylms/v1/bundles/outline',
 		] );
 	} finally {
 		delete globalThis.window;

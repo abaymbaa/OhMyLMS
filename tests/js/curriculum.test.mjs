@@ -409,7 +409,7 @@ test( 'type slugs are normalized and drafts validated like the server', () => {
 	);
 } );
 
-test( 'drafts track unsaved changes and produce trimmed payloads', () => {
+test( 'drafts bundle unsaved changes and produce trimmed payloads', () => {
 	const source = item( 3, 2, 0, 'Subject', {
 		item_type: 'subject',
 		code: 'S-100',
@@ -441,13 +441,13 @@ test( 'drafts track unsaved changes and produce trimmed payloads', () => {
 	);
 } );
 
-test( 'deletion needs confirmation when children, links or tracks would be affected', () => {
+test( 'deletion needs confirmation when children, links or bundles would be affected', () => {
 	const none = {
 		children: 0,
 		links: 0,
 		own_links: 0,
-		tracks: 0,
-		own_tracks: 0,
+		bundles: 0,
+		own_bundles: 0,
 	};
 	assert.equal( needsConfirmation( none, '' ), false );
 	assert.equal( needsConfirmation( { ...none, own_links: 2 }, '' ), true );

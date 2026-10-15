@@ -474,9 +474,9 @@ class Ajax {
 				'posts_per_page' => $posts_per_page,
 				'post_status'    => 'publish',
 			);
-			// The category and tag filters now filter by curriculum item and learning track.
+			// The category and tag filters now filter by curriculum item and course bundle.
 			$item_ids  = array();
-			$track_ids = array();
+			$bundle_ids = array();
 
 			// Check for filter parameters
 			if ( ! empty( $_POST['filter_type'] ) ) {
@@ -505,7 +505,7 @@ class Ajax {
 				}
 				if ( isset( $_POST['tag_slug'] ) && is_array( $_POST['tag_slug'] ) ) {
 					$tag_slugs = array_map( 'sanitize_text_field', $_POST['tag_slug'] );
-					$track_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'track' );
+					$bundle_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'bundle' );
 				}
 				if ( ! empty( $_POST['search_term'] ) ) {
 					$args['s'] = sanitize_text_field( $_POST['search_term'] );
@@ -535,7 +535,7 @@ class Ajax {
 				}
 			}
 
-			$args  = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $track_ids );
+			$args  = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $bundle_ids );
 			$query = new \WP_Query( $args );
 
 			if ( $query->have_posts() ) :
@@ -632,10 +632,10 @@ class Ajax {
 			);
 		}
 
-		// Category and tag filters are curriculum item and learning track filters; they are applied
+		// Category and tag filters are curriculum item and course bundle filters; they are applied
 		// below, once the remaining query arguments are built.
 		$item_ids  = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $category_slugs, 'item' );
-		$track_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'track' );
+		$bundle_ids = \OhMyLMS\Curriculum\Placement::ids_from_slugs( $tag_slugs, 'bundle' );
 
 		// Set relations for multiple queries
 		if ( count( $meta_query ) > 1 ) {
@@ -677,7 +677,7 @@ class Ajax {
 			$args['order']   = 'DESC';
 		}
 
-		$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $track_ids );
+		$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, $item_ids, $bundle_ids );
 
 		// Handle different filter types
 		if ( 'category' === $filter_type ) {

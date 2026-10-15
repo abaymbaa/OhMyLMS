@@ -13,8 +13,8 @@ The user will enter skills before implementation resumes. Mapping and skill rest
 - `assets/src/features/curriculum/SkillMappings.jsx` already provides manual mapping selection, equivalent/related relationships, notes, and removal.
 - `includes/Curriculum/SkillMappings.php` stores directional mappings and prevents mapping chains. A specific skill can link to multiple shared skills; a shared target cannot itself point to another target.
 - `includes/Rest/V1/SkillMappingController.php` provides administrator-only mapping endpoints.
-- `includes/Tracks/Progress.php` builds combined shared-skill views while retaining source levels and curriculum context.
-- `includes/Tracks/Combined.php` deduplicates answer evidence. Combined evaluation does not write skill state or complete courses.
+- `includes/Bundles/Progress.php` builds combined shared-skill views while retaining source levels and curriculum context.
+- `includes/Bundles/Combined.php` deduplicates answer evidence. Combined evaluation does not write skill state or complete courses.
 
 This is a source audit, not verification of imported syllabus records or live behavior.
 
@@ -54,7 +54,7 @@ Initial release: creation, rename, description/group edits, and manual reassignm
 
 ## Phase 4: Mathematics in student profiles
 
-Integrate with existing profile navigation and track/progress services after checking their extension points.
+Integrate with existing profile navigation and bundle/progress services after checking their extension points.
 
 - Show shared mathematics skills grouped by topic, with mastery level, evidence count, and an unassessed state.
 - Open a skill to inspect contributing objectives, evidence, mapping relationships, and notes.
@@ -67,7 +67,7 @@ Deliverable: one Mathematics profile section with traceable shared progress and 
 
 ## Phase 5: validation and rollout
 
-Add meaningful coverage alongside existing curriculum, syllabus, and track tests:
+Add meaningful coverage alongside existing curriculum, syllabus, and bundle tests:
 
 - Mapping save/edit/remove, capability and nonce checks, invalid targets, and prohibited chains.
 - Renaming preserves identity and mappings; equivalent evidence is deduplicated; related evidence is excluded; course completion is unchanged.

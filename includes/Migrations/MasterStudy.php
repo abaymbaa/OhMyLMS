@@ -205,12 +205,12 @@ class MasterStudy {
 	 */
 	private function migrate_terms_and_taxonomies( $new_course_id ) {
 		// Category taxonomies become curriculum items (keeping their parent chain) and tags become
-		// Learning Tracks. Existing items and tracks with the same name are reused.
+		// Course Bundles. Existing items and bundles with the same name are reused.
 		$taxonomy_map = array(
 			'stm_lms_course_taxonomy' => 'curriculum',
 			'stm_course_category'     => 'curriculum',
 			'stm-courses-category'    => 'curriculum',
-			'post_tag'                => 'track',
+			'post_tag'                => 'bundle',
 		);
 
 		foreach ( $taxonomy_map as $source_taxonomy => $target ) {
@@ -223,7 +223,7 @@ class MasterStudy {
 				continue;
 			}
 
-			if ( 'track' === $target ) {
+			if ( 'bundle' === $target ) {
 				\OhMyLMS\Curriculum\Placement::import_tags( $new_course_id, wp_list_pluck( $terms, 'name' ) );
 				continue;
 			}

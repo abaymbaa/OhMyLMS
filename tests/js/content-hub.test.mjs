@@ -61,7 +61,7 @@ const { ContentHubFrame, contentHubScreen, redirectScreen } = load(
 	}
 );
 
-test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curriculum and Learning Tracks under one base path', () => {
+test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curriculum and Course Bundles under one base path', () => {
 	assert.deepEqual(
 		HUB_TABS.map( ( tab ) => tab.id ),
 		[
@@ -72,7 +72,7 @@ test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curricul
 			'assignments',
 			'skills',
 			'curriculum',
-			'tracks',
+			'bundles',
 		]
 	);
 	assert.deepEqual(
@@ -85,7 +85,7 @@ test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curricul
 			'Assignments',
 			'Skills',
 			'Curriculum',
-			'Learning Tracks',
+			'Course Bundles',
 		]
 	);
 	assert.equal(
@@ -106,7 +106,7 @@ const allPages = {
 	QuestionBankPage: () => null,
 	SkillsPage: () => null,
 	CurriculumPage: () => null,
-	TracksPage: () => null,
+	BundlesPage: () => null,
 };
 
 test( 'Hub routes reuse the application list screens and the SDK pages', () => {
@@ -139,7 +139,7 @@ test( 'Hub routes reuse the application list screens and the SDK pages', () => {
 			'/content-hub/assignments',
 			'/content-hub/skills',
 			'/content-hub/curriculum',
-			'/content-hub/tracks',
+			'/content-hub/bundles',
 			'/assessments',
 			'/assessments/question-bank',
 			'/assessments/assignments',
@@ -167,7 +167,7 @@ test( 'Hub routes reuse the application list screens and the SDK pages', () => {
 	assert.equal( byTab[ 'question-bank' ], allPages.QuestionBankPage );
 	assert.equal( byTab.skills, allPages.SkillsPage );
 	assert.equal( byTab.curriculum, allPages.CurriculumPage );
-	assert.equal( byTab.tracks, allPages.TracksPage );
+	assert.equal( byTab.bundles, allPages.BundlesPage );
 	assert.deepEqual(
 		Object.keys( byTab ).sort(),
 		HUB_TABS.map( ( tab ) => tab.id ).sort(),
@@ -212,7 +212,7 @@ test( 'Without the application list screens the hub still serves its own tabs', 
 			'/content-hub/question-bank',
 			'/content-hub/skills',
 			'/content-hub/curriculum',
-			'/content-hub/tracks',
+			'/content-hub/bundles',
 			'/assessments/question-bank',
 		]
 	);
@@ -303,7 +303,7 @@ test( 'Editors opened from the hub keep its menu entry highlighted', () => {
 		);
 } );
 
-test( 'The admin menu offers Content Hub instead of Courses, Assessments, Skills, Curriculum and Learning Tracks', () => {
+test( 'The admin menu offers Content Hub instead of Courses, Assessments, Skills, Curriculum and Course Bundles', () => {
 	const menu = fs.readFileSync( 'includes/Admin/Menu.php', 'utf8' );
 	const labels = [
 		...menu.matchAll(
@@ -320,8 +320,8 @@ test( 'The admin menu offers Content Hub instead of Courses, Assessments, Skills
 	assert.ok( ! names.includes( 'Skills' ), 'no Skills submenu' );
 	assert.ok( ! names.includes( 'Curriculum' ), 'no Curriculum submenu' );
 	assert.ok(
-		! names.includes( 'Learning Tracks' ),
-		'no Learning Tracks submenu'
+		! names.includes( 'Course Bundles' ),
+		'no Course Bundles submenu'
 	);
 	assert.ok( ! names.includes( 'Assessments' ), 'no Assessments submenu' );
 	assert.ok(
@@ -334,7 +334,7 @@ test( 'The admin menu offers Content Hub instead of Courses, Assessments, Skills
 				'/extensions/skills',
 				'/extensions/question-bank',
 				'/extensions/curriculum',
-				'/extensions/tracks',
+				'/extensions/bundles',
 			].includes( hash )
 		)
 	);
@@ -366,7 +366,7 @@ test( 'Old addresses open the hub tabs', () => {
 		skills: 'skills',
 		'question-bank': 'question-bank',
 		curriculum: 'curriculum',
-		tracks: 'tracks',
+		bundles: 'bundles',
 	} );
 	for ( const tab of [
 		...Object.values( HUB_EXTENSION_TABS ),
@@ -377,10 +377,10 @@ test( 'Old addresses open the hub tabs', () => {
 			HUB_TABS.some( ( entry ) => entry.id === tab ),
 			tab
 		);
-	// The retired category and tag screens open Curriculum and Learning Tracks, now hub tabs too.
+	// The retired category and tag screens open Curriculum and Course Bundles, now hub tabs too.
 	assert.match(
 		source,
-		/replacedBy = \{ '\/categories': 'curriculum', '\/tags': 'tracks' \}/
+		/replacedBy = \{ '\/categories': 'curriculum', '\/tags': 'bundles' \}/
 	);
 	assert.match(
 		source,
@@ -400,11 +400,11 @@ test( 'Old addresses open the hub tabs', () => {
 	);
 } );
 
-test( 'Question Bank, Curriculum and Learning Tracks drop their own page title level inside the hub', () => {
+test( 'Question Bank, Curriculum and Course Bundles drop their own page title level inside the hub', () => {
 	for ( const file of [
 		'assets/src/features/question-bank/QuestionBankPage.jsx',
 		'assets/src/features/curriculum/CurriculumPage.jsx',
-		'assets/src/features/tracks/TracksPage.jsx',
+		'assets/src/features/bundles/BundlesPage.jsx',
 	] ) {
 		const source = codeForAssertions( fs.readFileSync( file, 'utf8' ) );
 		assert.match( source, /const hub = useContext\(HubContext\);/, file );

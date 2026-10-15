@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { RELABELED, relabel } from '../../assets/src/extensions/labels.mjs';
 
-test( 'category and tag labels are replaced by the curriculum and learning track wording', () => {
+test( 'category and tag labels are replaced by the curriculum and course bundle wording', () => {
 	assert.equal( relabel( 'Category', 'Category' ), 'Curriculum' );
 	assert.equal( relabel( 'Categories', 'Categories' ), 'Curriculum' );
-	assert.equal( relabel( 'Tags', 'Tags' ), 'Learning tracks' );
-	assert.equal( relabel( 'Tag: ', 'Tag: ' ), 'Learning track: ' );
+	assert.equal( relabel( 'Tags', 'Tags' ), 'Course bundles' );
+	assert.equal( relabel( 'Tag: ', 'Tag: ' ), 'Course bundle: ' );
 	assert.equal(
 		relabel( 'Catégorie', 'Category', ( text ) => `[${ text }]` ),
 		'[Curriculum]',

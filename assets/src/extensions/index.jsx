@@ -36,7 +36,7 @@ import {
 	setupComponents,
 	questionBankComponents,
 	curriculumComponents,
-	trackComponents,
+	bundleComponents,
 	contentHubComponents,
 } from './lazyFeatures';
 import { registerQuestionBankPages } from '../features/question-bank/registerPages';
@@ -67,7 +67,7 @@ const registry = createRegistry();
 registerQuestionBankPages( registry, questionBankComponents );
 registerCurriculumPages( registry, {
 	...curriculumComponents,
-	...trackComponents,
+	...bundleComponents,
 } );
 registerCurriculumLabels();
 registerBuiltinSlashCommands( registry );
@@ -97,12 +97,12 @@ const publicApi = {
 	setupComponents,
 	questionBankComponents,
 	curriculumComponents,
-	trackComponents,
+	bundleComponents,
 	contentHubComponents,
 	extendRoutes( routes ) {
-		// Course categories and tags were replaced by the curriculum and Learning Tracks. Their old screens
+		// Course categories and tags were replaced by the curriculum and Course Bundles. Their old screens
 		// could only report errors, so old links to them open the replacements, which are Content Hub tabs.
-		const replacedBy = { '/categories': 'curriculum', '/tags': 'tracks' };
+		const replacedBy = { '/categories': 'curriculum', '/tags': 'bundles' };
 		// With Gamification on, Certificates is one of its tabs (`#/gamification/certificates`); the old
 		// `#/certificates` address opens it and the template editor keeps the Gamification entry highlighted.
 		// With Gamification off there is no such screen, so Certificates keeps its own screen and menu entry.
@@ -179,7 +179,7 @@ const publicApi = {
 			}
 			return route;
 		} );
-		// Skills, Question Bank, Curriculum and Learning Tracks are SDK admin pages that the hub also shows
+		// Skills, Question Bank, Curriculum and Course Bundles are SDK admin pages that the hub also shows
 		// as tabs. Without the registered page the tab falls back to the component itself.
 		const hubPage = ( id, fallback ) => {
 			const entry = registry.get( 'admin-page', id );
@@ -196,7 +196,7 @@ const publicApi = {
 				'curriculum',
 				curriculumComponents.CurriculumPage
 			),
-			TracksPage: hubPage( 'tracks', trackComponents.TracksPage ),
+			BundlesPage: hubPage( 'bundles', bundleComponents.BundlesPage ),
 		};
 		// The application's own list screens keep their extension slots when shown as hub tabs.
 		const hubScreens = routes.map( ( route ) =>

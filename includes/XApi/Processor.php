@@ -303,7 +303,10 @@ final class Processor {
 	 * Keep the cron events in step with the settings.
 	 */
 	public static function schedule() {
-		if ( Settings::enabled() && ! wp_next_scheduled( self::HOOK ) ) {
+		$enabled = Settings::enabled();
+		if ( ! $enabled ) {
+			wp_clear_scheduled_hook( self::HOOK );
+		} elseif ( ! wp_next_scheduled( self::HOOK ) ) {
 			wp_schedule_event( time() + 60, 'ohmylms_every_minute', self::HOOK );
 		}
 		if ( ! wp_next_scheduled( self::PRUNE_HOOK ) ) {

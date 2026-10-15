@@ -347,7 +347,7 @@ class StudentProController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_taxonomy_terms( $course, $taxonomy = 'category' ) {
-		// Course categories and tags were replaced by the curriculum and Learning Tracks; the response
+		// Course categories and tags were replaced by the curriculum and Course Bundles; the response
 		// keys are unchanged.
 		return \OhMyLMS\Curriculum\Placement::card_terms( $course->get_id(), 'tag' === $taxonomy );
 	}

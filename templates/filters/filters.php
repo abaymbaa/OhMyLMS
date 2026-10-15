@@ -39,7 +39,7 @@ $items = array(
 		foreach ( $filter_data as $filter ) {
 			$filter_title = '';
 			// The "category" and "tag" filters keep their stored keys but now list the curriculum and
-			// Learning Tracks. Only entries with published courses are shown; slugs are c<id> / t<id>.
+			// Course Bundles. Only entries with published courses are shown; slugs are c<id> / t<id>.
 			if ( 'category' == $filter ) {
 				$filter_title = __( 'Curriculum', 'ohmylms' );
 				foreach ( \OhMyLMS\Curriculum\Placement::public_items() as $entry ) {
@@ -51,8 +51,8 @@ $items = array(
 			}
 
 			if ( 'tag' == $filter ) {
-				$filter_title = __( 'Learning track', 'ohmylms' );
-				foreach ( \OhMyLMS\Curriculum\Placement::public_tracks() as $entry ) {
+				$filter_title = __( 'Course bundle', 'ohmylms' );
+				foreach ( \OhMyLMS\Curriculum\Placement::public_bundles() as $entry ) {
 					$items['tag'][] = array(
 						'name' => $entry['title'],
 						'slug' => $entry['slug'],

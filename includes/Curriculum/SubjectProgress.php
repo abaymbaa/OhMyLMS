@@ -7,7 +7,7 @@
 
 namespace OhMyLMS\Curriculum;
 
-use OhMyLMS\Tracks\Progress;
+use OhMyLMS\Bundles\Progress;
 
 defined( 'ABSPATH' ) || exit;
 

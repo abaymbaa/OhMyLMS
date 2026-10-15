@@ -8,4 +8,4 @@ Edit the JSX files in this directory and run `npm run build` from the plugin roo
 
 Validate with `npm run lint`, `npm test`, `npm run build`, and the `/categories` and `/tags` browser routes.
 
-Note: course categories and tags have been replaced by the curriculum and Learning Tracks. The routes `/categories` and `/tags` now open those pages (`assets/src/extensions/index.jsx`), and the REST endpoints these components call refuse writes with HTTP 410, so the components are no longer reachable. They stay in the tree only because the recovered application build still binds them.
+Note: course categories and tags have been replaced by the curriculum and Course Bundles. The routes `/categories` and `/tags` now open those pages (`assets/src/extensions/index.jsx`), and the REST endpoints these components call refuse writes with HTTP 410, so the components are no longer reachable. They stay in the tree only because the recovered application build still binds them.

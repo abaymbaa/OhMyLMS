@@ -15,10 +15,12 @@ defined( 'ABSPATH' ) || exit;
 final class Bootstrap {
 
 	/**
-	 * Register everything. Safe to call when the emitter is switched off: the listeners return
-	 * immediately and nothing is scheduled.
+	 * Register everything. When switched off, listeners return immediately and delivery
+	 * is unscheduled; retention housekeeping remains available.
 	 */
 	public static function init() {
+		Integration::init();
+		add_action( 'rest_api_init', array( SettingsController::class, 'register_routes' ) );
 		add_action( 'init', array( Schema::class, 'install' ), 6 );
 		add_filter( 'cron_schedules', array( Processor::class, 'schedules' ) ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected -- a one-minute interval is required for timely delivery.
 		add_action( 'init', array( Processor::class, 'schedule' ), 31 );

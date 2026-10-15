@@ -17,7 +17,7 @@ Cambridge                       framework   ┐
 ```
 
 - **A syllabus is any item.** Open an item with **Edit** and tick **This item is a syllabus**. It saves at once and keeps the item's own type (a "subject" stays a "subject"); it gets a **Syllabus** badge, **its name becomes a link to the syllabus editor**, and the panel offers **Open the syllabus editor**. Items typed "syllabus" before this existed were switched on automatically. A syllabus row in the tree has no **Add child** button: its topics are added in the editor.
-- **Topics** are the items beneath the syllabus (a unit, a strand, a paper). A topic is an ordinary curriculum item, so it can be moved and reordered, linked to courses and put in Learning Tracks. They are optional: chapters can sit directly under the syllabus. A CSV import creates them too.
+- **Topics** are the items beneath the syllabus (a unit, a strand, a paper). A topic is an ordinary curriculum item, so it can be moved and reordered, linked to courses and put in Course Bundles. They are optional: chapters can sit directly under the syllabus. A CSV import creates them too.
 - **Chapters** are the skill groups. A chapter has a name, an optional code and optional notes, and is ordered among the chapters beside it. It sits under the syllabus or under a topic. A chapter given only a code is named by its code. **A chapter is also a chapter of the syllabus's course** (see below).
 - **Skills** are placed in chapters, in order. A skill has a name (the learning objective), an optional **code** and optional notes or examples.
 
@@ -52,7 +52,7 @@ Every change is saved on the server first and the screen follows what the server
 
 ## A syllabus is also a course
 
-Every syllabus has one real course (an ordinary course post), so it is listed in the Content Hub **Courses** tab and can be published, priced, enrolled in and put in a Learning Track like any other course. The syllabus owns the structure and the course mirrors it, one way:
+Every syllabus has one real course (an ordinary course post), so it is listed in the Content Hub **Courses** tab and can be published, priced, enrolled in and put in a Course Bundle like any other course. The syllabus owns the structure and the course mirrors it, one way:
 
 | Syllabus | Course |
 | --- | --- |
@@ -83,7 +83,7 @@ A skill is a library skill, so what teaches and tests it belongs to the **skill*
 
 Skills created for a syllabus are ordinary skills in the skill library (Content Hub → **Skills**), so questions, lessons, practice and learner evidence work on them like any other skill.
 
-- Each syllabus has one **root skill** in the library, named after the syllabus, created the first time a skill is added. Its skills are the root's children, so the library tree reads Syllabus → skills, and the same objective text in two syllabuses is two separate skills (skills are never merged by name; use [skill mappings](CURRICULUM-TRACKS.md) to relate them).
+- Each syllabus has one **root skill** in the library, named after the syllabus, created the first time a skill is added. Its skills are the root's children, so the library tree reads Syllabus → skills, and the same objective text in two syllabuses is two separate skills (skills are never merged by name; use [skill mappings](CURRICULUM-BUNDLES.md) to relate them).
 - **Names may repeat inside a syllabus** (the same objective in a Core and an Extended section); the **code** tells them apart. **Codes are unique within a syllabus**, ignoring case.
 - A skill's name, code and notes are edited in the syllabus; the library shows the same values.
 - **Removing a skill from a chapter, or deleting a chapter, never deletes the skill.** It stays in the library with its questions, lessons and evidence. Delete it there if you want it gone.
@@ -127,7 +127,7 @@ So importing the same file twice reports "nothing to import", and a corrected or
 
 ## Where syllabus skills show up
 
-- **Learning Tracks.** A syllabus's skills (and those of its topics) count as the skills of that curriculum item on a learner's track dashboard, and a skill shows the topic it belongs to.
+- **Course Bundles.** A syllabus's skills (and those of its topics) count as the skills of that curriculum item on a learner's bundle dashboard, and a skill shows the topic it belongs to.
 - **Skill library.** Under the syllabus's root skill, with their codes.
 - **The course.** As its chapters and skills, in the course you open from the Content Hub Courses tab.
 - The Curriculum tree shows each syllabus with its course and its number of skill groups (its chapters) and skills.
@@ -176,7 +176,7 @@ OHMYLMS_TEST_CREDENTIALS=/path/test-credentials.json php tests/php/syllabus-inte
 OHMYLMS_TEST_CREDENTIALS=... OHMYLMS_CHROMIUM_PATH=... npx playwright test tests/browser/syllabus.spec.cjs --workers=1
 ```
 
-The integration suite refuses any database other than `ohmylms_source_test`. It covers the flag and its guard, group and skill editing, equal names and unique codes, maths and Cyrillic text, long names that begin alike, a dry run that changes nothing, an import applied, repeated and edited, a refused file, an import that fails part-way and rolls back (including the library skills it created), the Tracks and membership integration, deletion, permissions, and the course: it is made, named, linked and rebuilt, chapters and skills follow every change (rename, reorder, move, delete, import), what was added to the course by hand survives, more than 200 skills fit, and deleting a syllabus keeps its course. The browser spec opens the editor from the syllabus's name and builds chapters and skills from the keyboard, attaches a lesson to a chapter, tags lessons to a skill, and runs the CSV import and export.
+The integration suite refuses any database other than `ohmylms_source_test`. It covers the flag and its guard, group and skill editing, equal names and unique codes, maths and Cyrillic text, long names that begin alike, a dry run that changes nothing, an import applied, repeated and edited, a refused file, an import that fails part-way and rolls back (including the library skills it created), the Bundles and membership integration, deletion, permissions, and the course: it is made, named, linked and rebuilt, chapters and skills follow every change (rename, reorder, move, delete, import), what was added to the course by hand survives, more than 200 skills fit, and deleting a syllabus keeps its course. The browser spec opens the editor from the syllabus's name and builds chapters and skills from the keyboard, attaches a lesson to a chapter, tags lessons to a skill, and runs the CSV import and export.
 
 ## Known limitations
 
