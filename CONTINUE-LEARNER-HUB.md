@@ -1,6 +1,84 @@
 # Continue the OhMyLMS learner experience
 
-Last updated: October 15, 2026, Asia/Ulaanbaatar.
+Last updated: October 16, 2026, Asia/Ulaanbaatar.
+
+## Current state: start here (October 16, 2026)
+
+This section is the authoritative summary. Everything below it is a chronological
+ledger; where an older note says "next step is P1/P2/P3" or "no parent/child
+implementation exists", this section wins.
+
+### Product decisions (from the user)
+
+- Closely adapt Khan Academy's UI with OhMyLMS branding and content.
+- A **class is a student roster**, separate from courses.
+- No Tutor Me, Teacher Tools, Exam content type or learner-facing roadmaps.
+- **No front-end LMS portal.** Invitations and acceptance go through the hub
+  workspaces; school administration is the hub **School workspace**, not wp-admin.
+  Platform administrators may still use the wp-admin Account Hub.
+- Self-registration is kept for learner, teacher and parent (hub sign-in chooser).
+- A teacher can create **one school** (Khan Academy "add your school" adapted: no public
+  school database, so the teacher creates it and becomes its administrator).
+
+### What exists (all behind `[ohmylms_student_hub]`, `hub_role` selects the workspace)
+
+| Workspace / feature | Entry | Main code |
+| --- | --- | --- |
+| Learner (library, My learning, classes, achievements, history, settings, membership) | default | `Student/Hub.php`, `templates/student-hub/*` |
+| Teacher: independent classes, roster, invitations, archive/restore | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php` |
+| Parent: school-linked children (read-only work overview) and home-learning children (managed accounts, setup links, invitations, grade and followed collections, revocation) | `hub_role=parent` | `Student/ParentWorkspace.php`, `ParentActions.php`, `FamilyActions.php`, `includes/Family/*` (own schema `ohmylms_family_schema`) |
+| School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `templates/student-hub/school.php` |
+| Sign-in chooser and sign-up (learner, teacher, parent) | signed out | `templates/student-hub/signin.php`, `ParentActions.php` |
+| Invitation pages (school activation, family invitation, child setup) | `?ohmylms_invite`, `?ohmylms_family_invite`, `?ohmylms_child_setup` | `SchoolActivation.php`, `FamilyActions.php` |
+| Legacy retirement and portal forwarding | portal URLs | `Student/LegacyPages.php`, `Schools/Views.php`, `ViewAs.php` |
+
+Security conventions used everywhere: nonce per operation, POST-only handlers, services
+re-authorize on every call, request ids only select a candidate, tokens are 64-hex, stored as
+SHA-256, single use, 48 hours, never audited or logged, invitation pages send no-store and
+no-referrer headers, one-time results travel through short per-user transients.
+
+### Verification record
+
+- `npm test` (asset parity plus 415 JS tests): 414 pass, 0 fail, 1 skipped.
+- PHPCS: 0 errors on all new files; remaining warnings are database/cache calls in the school and
+  class services. Repository-wide PHP/JS/CSS standards debt is large and unchanged.
+- Ad-hoc probes live in `test-results/` which is **git-ignored**: they are not in the repository.
+  They covered P1 (17 checks), P2 (12), family P3a/P3c/P3d (36/19/14), legacy redirects (12),
+  teacher management (47), school workspace (43), school activation over HTTP, and a four-process
+  race on invitation acceptance. Promote the ones you want to keep into `tests/php/`.
+- Live browser checks on http://800.local: teacher, parent, school and learner flows, invitations
+  for guardian, teacher and school-admin roles, a non-admin teacher creating a school.
+- **Never run:** `tests/php/schools-integration.php`, `teacher-class-integration.php` and the
+  credential-protected hub integration suite (disposable-database guard not bypassed). **Not tested
+  live:** roster import UI, a second account accepting a school teacher invitation as a non-admin,
+  mobile and dark-mode passes on every new page.
+
+### Working rules for the local site (800.local)
+
+The assistant cannot type passwords on this host. For a real session it creates a disposable account,
+writes credentials to a git-ignored file, and the user signs in in the browser pane. Fixtures and
+accounts are removed afterwards and verified by count queries. The real admin account holds the extra
+`ohmylms_parent` role at the user's request (undo: `remove_role('ohmylms_parent')`). A class named "0-0"
+created by the user is real data and must be left alone.
+
+### Git state
+
+Everything is committed locally on `main` (not pushed). Latest commits: roster import, school settings
+and member removal, school workspace and teacher-created schools, portal retirement, family and parent
+work, teacher classes and legacy retirement, plus documentation commits.
+
+### Open work, in suggested order
+
+1. School reports and gradebook in the School workspace (the old portal had class reports, grading,
+   skill reports).
+2. Managed-student password reset, leaving a school, school rollover.
+3. Live browser pass of roster import and a non-admin teacher accepting a school invitation.
+4. Remove the dormant portal React app and renderers (wp-admin Account Hub still hosts them for platform
+   administrators; decide whether to keep that).
+5. Home-learning reports (P6) need activity provenance first; parent dashboard, recovery and
+   personalization step two were never observed in the reference and remain proposed designs.
+6. Run the credential-protected integration suites in a disposable database.
+
 
 ## Parent and child UI extension (October 16, 2026)
 
