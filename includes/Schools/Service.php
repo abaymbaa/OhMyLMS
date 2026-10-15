@@ -74,20 +74,45 @@ final class Service {
 		return $wpdb->get_results( $wpdb->prepare( "SELECT s.* FROM $s s WHERE $where ORDER BY s.name LIMIT 50 OFFSET %d", ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 	}
 	public static function create_school( $data ) {
-		Access::require_access( Access::platform() );
+		// Platform administrators may create any school; a teacher may create one school and becomes its administrator.
+		Access::require_access( Access::platform() || Access::teacher() );
+		global $wpdb;
+		if ( ! Access::platform() ) {
+			self::need( ! (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE created_by=%d AND status='active'", Schema::table( 'schools' ), get_current_user_id() ) ), 'You have already created a school.' );
+		}
 		$name = self::text( $data['name'] ?? '' );
 		$zone = self::text( $data['timezone'] ?? 'UTC', 80 );
 		self::need( $name && in_array( $zone, timezone_identifiers_list(), true ), 'Provide a school name and a valid timezone.' );
+		$base = sanitize_title( $data['slug'] ?? $name );
+		$base = $base ? $base : 'school';
+		$slug = $base;
+		for ( $i = 2; $i < 100 && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE slug=%s', Schema::table( 'schools' ), $slug ) ); $i++ ) {
+			$slug = $base . '-' . $i;
+		}
 		$id = self::insert(
 			'schools',
 			array(
 				'name'       => $name,
-				'slug'       => sanitize_title( $data['slug'] ?? $name ),
+				'slug'       => $slug,
 				'timezone'   => $zone,
 				'created_by' => get_current_user_id(),
 				'created_at' => self::now(),
 			)
 		);
+		if ( ! Access::platform() ) {
+			$user = wp_get_current_user();
+			foreach ( array( 'school_admin', 'teacher' ) as $role ) {
+				self::membership(
+					'school_memberships',
+					array(
+						'school_id' => $id,
+						'user_id'   => $user->ID,
+						'role'      => $role,
+					)
+				);
+			}
+			$user->add_role( 'ohmylms_school_admin' );
+		}
 		self::audit( $id, 'school_created', $id );
 		return array( 'id' => $id );
 	}

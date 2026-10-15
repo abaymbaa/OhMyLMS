@@ -1758,3 +1758,14 @@
 .ohmylms-student-hub .oml-hub-class-panel .oml-hub-field {
 	max-width: 640px;
 }
+
+.ohmylms-student-hub .oml-hub-field select {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	background: var(--hub-bg);
+	color: var(--hub-text);
+	font: inherit;
+}

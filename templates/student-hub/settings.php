@@ -19,16 +19,17 @@ $hub_flash    = SettingsSave::flash( $hub_user->ID );
 $hub_action   = admin_url( 'admin-post.php' );
 $teacher_mode = ! empty( $teacher_mode );
 $parent_mode  = ! empty( $parent_mode );
+$school_mode  = ! empty( $school_mode );
 /**
  * Opening tag of a card form with its nonce and card name.
  *
  * @param string $card Card key.
  */
-$hub_open = static function ( $card ) use ( $hub_action, $teacher_mode, $parent_mode ) {
+$hub_open = static function ( $card ) use ( $hub_action, $teacher_mode, $parent_mode, $school_mode ) {
 	echo '<form class="oml-hub-card oml-hub-settings-card" method="post" action="' . esc_url( $hub_action ) . '" data-hub-dirty autocomplete="off">';
 	echo '<input type="hidden" name="action" value="' . esc_attr( SettingsSave::ACTION ) . '">';
 	echo '<input type="hidden" name="card" value="' . esc_attr( $card ) . '">';
-	echo '<input type="hidden" name="hub_role" value="' . esc_attr( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : 'learner' ) ) . '">';
+	echo '<input type="hidden" name="hub_role" value="' . esc_attr( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : ( $school_mode ? 'school' : 'learner' ) ) ) . '">';
 	wp_nonce_field( SettingsSave::ACTION . '_' . $card );
 };
 /**

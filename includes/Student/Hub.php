@@ -29,6 +29,7 @@ final class Hub {
 		ParentActions::init();
 		FamilyActions::init();
 		SchoolActivation::init();
+		SchoolActions::init();
 		add_shortcode( 'ohmylms_student_hub', array( __CLASS__, 'shortcode' ) );
 		add_action( 'admin_init', array( __CLASS__, 'install_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'upgrade' ) );
@@ -569,6 +570,21 @@ final class Hub {
 		}
 		$teacher_mode = 'teacher' === $hub_role;
 		$parent_mode  = 'parent' === $hub_role;
+		$school_mode  = 'school' === $hub_role;
+		if ( $school_mode ) {
+			if ( ! SchoolWorkspace::available() ) {
+				return '<p>' . esc_html__( 'The school workspace is not available for this account.', 'ohmylms' ) . '</p>';
+			}
+			$config['tabs']                      = array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'account' );
+			$config['title']                     = __( 'School workspace', 'ohmylms' );
+			$config['labels']['school-overview'] = __( 'Overview', 'ohmylms' );
+			$config['labels']['school-classes']  = __( 'Classes', 'ohmylms' );
+			$config['labels']['school-people']   = __( 'People', 'ohmylms' );
+			$config['labels']['school-invites']  = __( 'Invitations', 'ohmylms' );
+			$section                             = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'school-overview';
+			$views                               = 'account' === $section ? self::views( $section ) : array();
+			$view                                = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
+		}
 		if ( $parent_mode ) {
 			if ( ! ParentWorkspace::available() ) {
 				return '<p>' . esc_html__( 'The parent workspace is not available for this account.', 'ohmylms' ) . '</p>';
@@ -596,7 +612,7 @@ final class Hub {
 			$view                               = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
 		}
 		ob_start();
-		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student', 'teacher_mode', 'parent_mode' ) );
+		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student', 'teacher_mode', 'parent_mode', 'school_mode' ) );
 		return ob_get_clean();
 	}
 

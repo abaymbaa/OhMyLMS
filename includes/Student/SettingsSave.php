@@ -184,6 +184,8 @@ final class SettingsSave {
 			$url = TeacherWorkspace::url( 'account', self::CARDS[ $card ] );
 		} elseif ( 'parent' === $role && ParentWorkspace::available() ) {
 			$url = ParentWorkspace::url( 'account', self::CARDS[ $card ] );
+		} elseif ( 'school' === $role && SchoolWorkspace::available() ) {
+			$url = SchoolWorkspace::url( 'account', self::CARDS[ $card ] );
 		}
 		wp_safe_redirect( $url );
 		exit;

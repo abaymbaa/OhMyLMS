@@ -51,6 +51,7 @@ $teacher_titles  = array(
 		<a class="oml-hub-pill" href="<?php echo esc_url( TeacherWorkspace::url( $section, 'archived' ) ); ?>" <?php echo 'archived' === $teacher_status ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Archived classes', 'ohmylms' ); ?></a>
 	</nav>
 	<?php ohmylms_get_template( 'student-hub/teacher-create.php' ); ?>
+	<?php ohmylms_get_template( 'student-hub/teacher-school.php' ); ?>
 	<div class="oml-hub-commerce-grid">
 		<?php foreach ( $teacher_classes as $teacher_row ) : ?>
 			<section class="oml-hub-card oml-hub-settings-card oml-hub-class-panel">
