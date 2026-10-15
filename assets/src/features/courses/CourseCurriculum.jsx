@@ -569,6 +569,7 @@ export function createCourseCurriculum( readRuntime ) {
 								}
 							/>
 						</div>
+						{ props.objectivesPanel }
 						<Controls.SpacerWP
 							marginTop={ 2 }
 							paddingX={ 4 }

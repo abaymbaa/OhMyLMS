@@ -348,7 +348,7 @@ button.ohmylms-quiz-skill-chip {
 
 button.ohmylms-quiz-skill-chip:hover,
 button.ohmylms-quiz-skill-chip:focus-visible {
-	border-color: currentColor;
+	border-color: currentcolor;
 }
 
 .ohmylms-quiz-skill-chip.is-selected {
@@ -410,6 +410,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 @media (max-width: 782px) {
+
 	.ohmylms-quiz-skills-question {
 		grid-template-columns: 32px 1fr;
 	}
@@ -3725,3 +3726,4 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-question-live-preview input[type="checkbox"]::before {
 	display: none !important;
 }
+

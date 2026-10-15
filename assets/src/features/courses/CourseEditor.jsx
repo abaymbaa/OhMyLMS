@@ -1,7 +1,9 @@
+/** @jsx createElement */
 import { createElement, Fragment, useEffect } from '@wordpress/element';
 import { useCourseEditor } from './useCourseEditor';
 import { useCourseIntegrations } from './useCourseIntegrations';
 import { courseEditPath } from './model.mjs';
+import { CourseObjectives } from './CourseObjectives';
 
 /**
  * Course orchestration with the existing controls, routes and data store.
@@ -127,40 +129,53 @@ export function createCourseEditor( readRuntime ) {
 						) : course ? (
 							<Fragment>
 								{ step === 'content' ? (
-									<Curriculum
-										handleAutomation={
-											dialogs.openAutomation
-										}
-										handleIntegration={
-											dialogs.openIntegration
-										}
-										courseId={ courseId }
-										setIsSaved={ noop }
-										setAutoSave={ editor.setAutoSave }
-										setActiveStep={ setActiveStep }
-										activeStep={ step }
-										completedSteps={ editor.completedSteps }
-										setCompletedSteps={ noop }
-										onSave={ editor.save }
-										courseDescription={
-											course.description || ''
-										}
-										handleInputChange={ editor.updateTitle }
-										onContentChange={
-											editor.updateDescription
-										}
-										handleRemoveMedia={ ( type ) =>
-											editor.actions.removeFeaturedImage(
-												courseId,
-												type
-											)
-										}
-										handleUploadComplete={ uploadMedia }
-										hasMedia={ Boolean(
-											course.image_src || course.video_src
-										) }
-										loading={ editor.loading }
-									/>
+									<Fragment>
+										<Curriculum
+											objectivesPanel={
+												<CourseObjectives
+													key={ courseId }
+													courseId={ courseId }
+												/>
+											}
+											handleAutomation={
+												dialogs.openAutomation
+											}
+											handleIntegration={
+												dialogs.openIntegration
+											}
+											courseId={ courseId }
+											setIsSaved={ noop }
+											setAutoSave={ editor.setAutoSave }
+											setActiveStep={ setActiveStep }
+											activeStep={ step }
+											completedSteps={
+												editor.completedSteps
+											}
+											setCompletedSteps={ noop }
+											onSave={ editor.save }
+											courseDescription={
+												course.description || ''
+											}
+											handleInputChange={
+												editor.updateTitle
+											}
+											onContentChange={
+												editor.updateDescription
+											}
+											handleRemoveMedia={ ( type ) =>
+												editor.actions.removeFeaturedImage(
+													courseId,
+													type
+												)
+											}
+											handleUploadComplete={ uploadMedia }
+											hasMedia={ Boolean(
+												course.image_src ||
+												course.video_src
+											) }
+											loading={ editor.loading }
+										/>
+									</Fragment>
 								) : step === 'settings' ? (
 									<Visibility isVisible>
 										<Settings

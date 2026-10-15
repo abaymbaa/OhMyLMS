@@ -42,6 +42,13 @@ run on every tool call. No API keys for model providers are stored by WordPress.
 | `list_courses`, `list_lessons`, `list_quizzes`, `list_questions` | Optional `page` (>=1), `per_page` (1–20), `search` (<=200 characters) |
 | `get_course`, `get_lesson`, `get_quiz`, `get_question` | Required positive integer `id` |
 | `get_course_chapters` | Required positive integer course `id` |
+| `get_course_objectives` | Course `id`; optional `page`, `per_page` (1–50, default 10). Returns selected targets, content connections, available syllabuses, total pages and the current mapping `revision`. |
+| `list_course_objective_options` | Course `id`, `syllabus_id`; optional `page`, `per_page` (1–50), `search` (up to 200 characters). Searches official codes, titles, full wording and topics. |
+| `set_course_objectives` | Course `id`, current `revision`, complete `mappings` list of `{syllabus_id, term_id}` (up to 200). Replaces all targets; omitted references are removed, `[]` clears targets. |
+
+Course objective tools reuse the course editor's API and storage. Read **every mapping page** before editing, keep all references you intend to retain, then submit the full list with the revision. HTTP 409 means another session changed the mappings: read again and reconcile. A successful write returns the first 10 mappings, totals and the new revision. Mappings describe course scope; these tools do not alter official objective text, completion requirements or student achievement. Existing recorded lesson/assessment connections are not content-suitability reviews.
+
+The three course-objective tools use the same dedicated MCP endpoint and administrator credentials as the existing tools. Reconnect or refresh tool discovery after installing the update. Clients with an explicit tool allowlist must add the three names above. No new token is needed. Read tools are marked read-only; replacing targets is marked as a write that can remove references and requires a fresh revision.
 
 List results include pagination totals when supplied by the LMS. Results over 256 KiB return
 an actionable tool error. Payments, credentials, arbitrary REST routes and arbitrary database queries

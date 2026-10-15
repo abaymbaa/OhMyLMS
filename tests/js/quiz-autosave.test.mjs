@@ -2,7 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as model from '../../assets/src/features/quiz-editor/model.mjs';
-import { promptText } from '../../assets/src/features/question-editor/questionPrompt.mjs';
+import {
+	promptText,
+	questionPrompt,
+} from '../../assets/src/features/question-editor/questionPrompt.mjs';
+import {
+	promptSnapshots,
+	quickEditStatus,
+} from '../../assets/src/features/quiz-editor/quickEditStatus.mjs';
 import {
 	quizEditSnapshot,
 	mergeSavedQuestions,
@@ -114,6 +121,9 @@ function harness() {
 	};
 	const scope = {
 		...model,
+		questionPrompt,
+		promptSnapshots,
+		quickEditStatus,
 		promptText,
 		useSelect: ( fn ) => fn( () => data ),
 		useDispatch: () => actions,

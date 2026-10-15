@@ -287,6 +287,6 @@ class Server {
 			),
 			'required'    => array( 'id' ),
 		);
-		return array_merge( $tools, ComparisonTools::definitions() );
+		return array_merge( $tools, ComparisonTools::definitions(), CourseObjectiveTools::definitions() );
 	}
 }

@@ -21,6 +21,7 @@ class WP_Error {
 require dirname(__DIR__, 2) . '/includes/MCP/Server.php';
 require dirname(__DIR__, 2) . '/includes/MCP/Abilities.php';
 require dirname(__DIR__, 2) . '/includes/MCP/ComparisonTools.php';
+require dirname(__DIR__, 2) . '/includes/MCP/CourseObjectiveTools.php';
 use OhMyLMS\MCP\Server;
 use OhMyLMS\MCP\Abilities;
 function mcp_addon_check($condition, $message) { if (!$condition) throw new RuntimeException($message); }
@@ -40,7 +41,10 @@ mcp_addon_check(Server::enabled() && Server::manifest([])['mcp']['is_enable'] ==
 Server::register_server($adapter);
 mcp_addon_check($adapter->calls === 1, 'Enabled add-on creates a server.');
 Abilities::register();
-mcp_addon_check(count($GLOBALS['mcp_abilities']) === 23, 'Enabled MCP preserves nine content reads and adds fourteen explicit shared-skill, roadmap, grouped-mapping and audit abilities.');
+mcp_addon_check(count($GLOBALS['mcp_abilities']) === 26, 'Enabled MCP preserves existing abilities and adds three course objective tools.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-objectives']['meta']['annotations']['readonly'], 'Course objective reads are read-only.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/set-course-objectives']['meta']['annotations']['destructive'], 'Replacing course targets may remove references.');
+mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/set-course-objectives']['meta']['annotations']['idempotent'], 'Revision-checked replacement is not labeled idempotent.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-combined-skill-mapping']['meta']['annotations']['readonly'], 'Combined coverage tool is explicitly a write.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/list-courses']['meta']['annotations']['readonly'], 'Existing content tools remain read-only.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-skill-mapping']['meta']['annotations']['readonly'], 'Mapping writes are accurately annotated.');
