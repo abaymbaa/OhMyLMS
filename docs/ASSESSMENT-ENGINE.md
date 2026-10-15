@@ -105,6 +105,12 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   The setting is read from the current quiz, not the frozen revision, so changing it applies to
   past attempts too. Types without a readable key (long text, structured and the extended
   types) show the learner's answer and verdict but no correct answer.
+  The review opens with a score summary (headline, marks, percentage and verdict counts). A
+  learner with several attempts picks one with `?review=ATTEMPT_ID`; only their own submitted
+  attempts count, and anything else shows the newest. Structured questions list each part with
+  its own verdict and marks. "Retry the questions I missed" (`?retry=1`) offers the missed,
+  automatically marked questions again as inline practice checks. It needs the practice engine
+  and approved, non-exam-only questions, and never changes the quiz marks.
 
 ## REST API (ohmylms/v1)
 

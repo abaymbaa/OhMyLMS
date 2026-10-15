@@ -33,7 +33,7 @@ final class AttemptReport {
 		);
 	}
 
-	private static function parts( $attempt_id, array $item, QuestionSnapshot $snapshot ) {
+	public static function parts( $attempt_id, array $item, QuestionSnapshot $snapshot ) {
 		global $wpdb;
 		$weights = Structured::weights( $snapshot->get_settings() );
 		$awards  = array();

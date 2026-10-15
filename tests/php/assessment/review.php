@@ -17,6 +17,17 @@ ok(AnswerReview::enabled(['show_correct_answers' => '1', 'hide_answers' => false
 ok(!AnswerReview::enabled(['show_correct_answers' => 'false']), 'A stored "false" counted as on');
 ok(!AnswerReview::enabled(['show_correct_answers' => true, 'hide_answers' => true]), 'Hide answers did not win over the switch');
 
+// Outcome, and which attempt is reviewed: the one asked for if it may be reviewed, otherwise the newest.
+ok(AnswerReview::result(23, 23, 50, 'completed') === 'pass', 'Full marks did not pass');
+ok(AnswerReview::result(60, 100, 50, 'completed') === 'pass', 'Reaching the passing mark did not pass');
+ok(AnswerReview::result(1, 23, 50, 'completed') === 'fail', 'Below the passing mark did not fail');
+ok(AnswerReview::result(15, 23, 50, 'in-review') === 'review', 'A teacher-marked attempt was not awaiting review');
+$reviewable = [['quiz_attempt_id' => 9], ['quiz_attempt_id' => 4]];
+ok(AnswerReview::select($reviewable, 4)['quiz_attempt_id'] === 4, 'The requested attempt was not chosen');
+ok(AnswerReview::select($reviewable, 7)['quiz_attempt_id'] === 9, 'An attempt that cannot be reviewed was chosen');
+ok(AnswerReview::select($reviewable, 0)['quiz_attempt_id'] === 9, 'The newest attempt was not the default');
+ok(AnswerReview::select([], 4) === null, 'An attempt was chosen from nothing');
+
 [$course_id, $quiz_id] = course_with_quiz($admin, ['allow_attempts' => 9, 'show_correct_answers' => true]);
 ok(AnswerReview::enabled(ohmylms_get_quiz($quiz_id)->get_settings()), 'The switch did not survive saving the quiz');
 

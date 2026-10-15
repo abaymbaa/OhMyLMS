@@ -52,11 +52,11 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 		
 		<div class="ohmylms-table ohmylms-quiz-table">
 			<div class="ohmylms-tr ohmylms-head">
-				<div class="ohmylms-th date">Date</div>
-				<div class="ohmylms-th question">Question</div>
-				<div class="ohmylms-th total-marks">Total Marks</div>
-				<div class="ohmylms-th earned-marks">Earned Marks</div>
-				<div class="ohmylms-th status">Status</div>
+				<div class="ohmylms-th date"><?php esc_html_e( 'Date', 'ohmylms' ); ?></div>
+				<div class="ohmylms-th question"><?php esc_html_e( 'Question', 'ohmylms' ); ?></div>
+				<div class="ohmylms-th total-marks"><?php esc_html_e( 'Total Marks', 'ohmylms' ); ?></div>
+				<div class="ohmylms-th earned-marks"><?php esc_html_e( 'Earned Marks', 'ohmylms' ); ?></div>
+				<div class="ohmylms-th status"><?php esc_html_e( 'Status', 'ohmylms' ); ?></div>
 			</div>
 
 			<?php
@@ -95,31 +95,31 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 							if ( ! $feedback && $attempt['status'] !== 'in-progress' ) {
 								echo '<span class="pending">' . esc_html__( 'Submitted — results not released yet', 'ohmylms' ) . '</span>';
 							} elseif ( $attempt['status'] === 'in-review' ) {
-								echo '<span class="pending">Review</span>';
+								echo '<span class="pending">' . esc_html__( 'Awaiting review', 'ohmylms' ) . '</span>';
 							} elseif ( $attempt['status'] === 'in-progress' ) {
 									echo '<span class="pending">' . esc_html__( 'In progress', 'ohmylms' ) . '</span>';
 							} elseif ( $earned >= $basis['max'] && $basis['max'] > 0 ) {
-								echo '<span class="passed">Pass</span>';
+								echo '<span class="passed">' . esc_html__( 'Pass', 'ohmylms' ) . '</span>';
 							} elseif ( $earned >= $basis['passing'] ) {
-								echo '<span class="passed">Pass</span>';
+								echo '<span class="passed">' . esc_html__( 'Pass', 'ohmylms' ) . '</span>';
 							} elseif ( $earned < $basis['passing'] ) {
-								echo '<span class="failed">Fail</span>';
+								echo '<span class="failed">' . esc_html__( 'Fail', 'ohmylms' ) . '</span>';
 							} elseif ( empty( $attempt['end_date'] ) && $attempt['end_date'] !== '0000-00-00 00:00:00' ) {
-								echo '<span class="pending">Pending</span>';
+								echo '<span class="pending">' . esc_html__( 'Pending', 'ohmylms' ) . '</span>';
 							}
 							?>
 						</div>
 
 						<div class="ohmylms-mobile-td">
-							<div class="ohmylms-td question" data-title="Question">
+							<div class="ohmylms-td question" data-title="<?php echo esc_attr__( 'Question', 'ohmylms' ); ?>">
 								<?php echo $attempt['total_answers_count']; ?>
 							</div>
 
-							<div class="ohmylms-td total-marks" data-title="Total Marks">
+							<div class="ohmylms-td total-marks" data-title="<?php echo esc_attr__( 'Total Marks', 'ohmylms' ); ?>">
 								<?php echo esc_html( \OhMyLMS\Assessment\Scoring::display( $basis['max'] ) ); ?>
 							</div>
 
-							<div class="ohmylms-td earned-marks" data-title="Earned Marks">
+							<div class="ohmylms-td earned-marks" data-title="<?php echo esc_attr__( 'Earned Marks', 'ohmylms' ); ?>">
 								<?php echo $feedback ? esc_html( \OhMyLMS\Assessment\Scoring::display( $earned ) ) : '—'; ?>
 							</div>
 						</div>
@@ -144,11 +144,21 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 
 		<?php
 		// Only quizzes that switched on "Show correct answers" reveal the answers, and only after submission.
-		$review_attempt = \OhMyLMS\Quiz\AnswerReview::latest_submitted( (array) $quiz_attempts );
-		if ( $review_attempt && \OhMyLMS\Quiz\AnswerReview::can_review( $quiz->get_settings(), $review_attempt ) ) {
+		// The newest attempt is shown unless the address asks for another one (?review=ID).
+		$review_attempts = \OhMyLMS\Quiz\AnswerReview::reviewable( (array) $quiz->get_settings(), (array) $quiz_attempts, $quiz );
+		$review_attempt  = \OhMyLMS\Quiz\AnswerReview::select( $review_attempts, \OhMyLMS\Quiz\AnswerReview::requested() );
+		if ( $review_attempt ) {
+			$review_entries = \OhMyLMS\Quiz\AnswerReview::for_attempt( $review_attempt['quiz_attempt_id'] );
 			ohmylms_get_template(
 				'single-lesson/quiz-review.php',
-				array( 'entries' => \OhMyLMS\Quiz\AnswerReview::for_attempt( $review_attempt['quiz_attempt_id'] ) )
+				array(
+					'entries'  => $review_entries,
+					'summary'  => \OhMyLMS\Quiz\AnswerReview::summary( $review_entries, $review_attempt, $quiz ),
+					'attempts' => $review_attempts,
+					'attempt'  => $review_attempt,
+					'retry'    => \OhMyLMS\Quiz\AnswerReview::retry_items( $review_entries ),
+					'retrying' => isset( $_GET['retry'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['retry'] ) ), // phpcs:ignore WordPress.Security.NonceVerification -- display only.
+				)
 			);
 		}
 		?>

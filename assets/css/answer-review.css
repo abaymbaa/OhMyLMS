@@ -6,6 +6,10 @@
 	margin-top: 32px;
 }
 
+.ohmylms-answer-review-heading {
+	margin-top: 0;
+}
+
 .ohmylms-answer-review-intro {
 	margin: 0 0 16px;
 	color: #50575e;
@@ -70,4 +74,165 @@
 .ohmylms-answer-review ul {
 	margin: 0;
 	padding-inline-start: 20px;
+}
+
+/* Score summary at the top of the review. */
+.ohmylms-review-summary {
+	margin: 0 0 24px;
+	padding: 16px 20px;
+	border: 1px solid #dcdcde;
+	border-inline-start: 4px solid #8c8f94;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.ohmylms-review-summary.is-pass {
+	border-inline-start-color: #1a7f37;
+}
+
+.ohmylms-review-summary.is-fail {
+	border-inline-start-color: #c62828;
+}
+
+.ohmylms-review-summary.is-review {
+	border-inline-start-color: #b26200;
+}
+
+.ohmylms-review-headline {
+	margin: 0 0 4px;
+}
+
+.ohmylms-review-score {
+	margin: 0 0 8px;
+}
+
+.ohmylms-review-percent,
+.ohmylms-review-passing {
+	color: #50575e;
+}
+
+.ohmylms-review-passing {
+	margin: 8px 0 0;
+}
+
+.ohmylms-review-meter {
+	display: block;
+	width: 100%;
+	max-width: 420px;
+	height: 12px;
+}
+
+.ohmylms-review-counts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+	margin: 12px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-review-counts li::before {
+	content: "";
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	margin-inline-end: 6px;
+	border-radius: 50%;
+	background: #8c8f94;
+}
+
+.ohmylms-review-counts .is-correct::before {
+	background: #1a7f37;
+}
+
+.ohmylms-review-counts .is-partial::before,
+.ohmylms-review-counts .is-pending::before {
+	background: #b26200;
+}
+
+.ohmylms-review-counts .is-incorrect::before {
+	background: #c62828;
+}
+
+.ohmylms-review-actions {
+	margin: 16px 0 0;
+}
+
+.ohmylms-review-actions .ohmylms-button {
+	display: inline-block;
+	text-decoration: none;
+}
+
+/* Choosing which attempt to review. */
+.ohmylms-review-attempts {
+	margin: 0 0 24px;
+}
+
+.ohmylms-review-attempts ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-review-attempts a {
+	display: inline-block;
+	padding: 6px 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+	color: inherit;
+	text-decoration: none;
+}
+
+.ohmylms-review-attempts .is-current a {
+	border-color: #1d2327;
+	font-weight: 600;
+}
+
+/* Parts of a structured question. */
+.ohmylms-answer-review-parts {
+	display: grid;
+	gap: 12px;
+	margin: 12px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-answer-review-part {
+	padding: 8px 12px;
+	border-inline-start: 3px solid #8c8f94;
+	background: #f6f7f7;
+}
+
+.ohmylms-answer-review-part.is-correct {
+	border-inline-start-color: #1a7f37;
+}
+
+.ohmylms-answer-review-part.is-partial,
+.ohmylms-answer-review-part.is-pending {
+	border-inline-start-color: #b26200;
+}
+
+.ohmylms-answer-review-part.is-incorrect {
+	border-inline-start-color: #c62828;
+}
+
+.ohmylms-answer-review-part p {
+	margin: 4px 0;
+}
+
+.ohmylms-answer-review-part-answer span {
+	color: #50575e;
+}
+
+/* Practising the missed questions again. */
+.ohmylms-review-retry {
+	margin-top: 32px;
+}
+
+.ohmylms-review-retry-number {
+	margin: 24px 0 8px;
 }

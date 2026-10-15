@@ -9,10 +9,16 @@ namespace OhMyLMS\Quiz;
 
 use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\AttemptItems;
+use OhMyLMS\Assessment\AttemptReport;
+use OhMyLMS\Assessment\Engine;
 use OhMyLMS\Assessment\Grader;
 use OhMyLMS\Assessment\InlineBlanks;
 use OhMyLMS\Assessment\Interactive;
 use OhMyLMS\Assessment\Schema;
+use OhMyLMS\Assessment\Structured;
+use OhMyLMS\Extensions\Registry;
+use OhMyLMS\QuestionBank\Usage;
+use OhMyLMS\QuestionBank\VersionPublisher;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,6 +34,15 @@ defined( 'ABSPATH' ) || exit;
 final class AnswerReview {
 	/** Quiz setting that turns the review on. */
 	const SETTING = 'show_correct_answers';
+
+	/** Address parameter that picks the attempt to review. */
+	const QUERY_VAR = 'review';
+
+	/** Verdicts the "retry the questions I missed" action offers again. */
+	const MISSED = array( 'incorrect', 'partial', 'unanswered' );
+
+	/** Smallest difference between two mark values that counts as different. */
+	const EPSILON = 0.00005;
 
 	/**
 	 * Has the quiz asked for answers to be shown on the result screen?
@@ -73,6 +88,164 @@ final class AnswerReview {
 	}
 
 	/**
+	 * Attempt the address asks to review (?review=ID), or 0.
+	 *
+	 * @return int
+	 */
+	public static function requested() {
+		return isset( $_GET[ self::QUERY_VAR ] ) ? absint( wp_unslash( $_GET[ self::QUERY_VAR ] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification -- display only.
+	}
+
+	/**
+	 * Submitted attempts the learner may review, newest first.
+	 *
+	 * @param array   $settings Quiz settings.
+	 * @param array[] $attempts Rows from Quiz::get_all_quiz_attempts().
+	 * @param object  $quiz     Quiz; when given, each row also gets its "review_result" (see result()).
+	 * @return array[]
+	 */
+	public static function reviewable( array $settings, array $attempts, $quiz = null ) {
+		$list = array();
+		foreach ( $attempts as $attempt ) {
+			if ( self::can_review( $settings, $attempt ) ) {
+				if ( $quiz ) {
+					$basis                   = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
+					$attempt['review_result'] = self::result( (float) ( $attempt['total_achieved_marks'] ?? 0 ), $basis['max'], $basis['passing'], (string) ( $attempt['status'] ?? '' ) );
+				}
+				$list[] = $attempt;
+			}
+		}
+		usort(
+			$list,
+			static function ( $left, $right ) {
+				return (int) $right['quiz_attempt_id'] <=> (int) $left['quiz_attempt_id'];
+			}
+		);
+		return $list;
+	}
+
+	/**
+	 * The attempt to review: the one asked for when the learner may review it, else the newest.
+	 *
+	 * @param array[] $reviewable Output of reviewable().
+	 * @param int     $requested  Output of requested().
+	 * @return array|null
+	 */
+	public static function select( array $reviewable, $requested ) {
+		foreach ( $reviewable as $attempt ) {
+			if ( (int) $attempt['quiz_attempt_id'] === (int) $requested ) {
+				return $attempt;
+			}
+		}
+		return $reviewable ? $reviewable[0] : null;
+	}
+
+	/**
+	 * Address of the quiz page showing the review of an attempt. It starts from the page being
+	 * viewed, so it also works where the quiz has no pretty permalink.
+	 *
+	 * @param int   $attempt_id Attempt ID.
+	 * @param array $args       Extra query arguments.
+	 * @return string
+	 */
+	public static function url( $attempt_id, array $args = array() ) {
+		return remove_query_arg( 'quiz', add_query_arg( array_merge( array( self::QUERY_VAR => (int) $attempt_id ), $args ) ) );
+	}
+
+	/**
+	 * Overall outcome of a submitted attempt: review (awaiting a teacher), pass or fail.
+	 *
+	 * @param float  $earned  Marks earned.
+	 * @param float  $max     Marks available.
+	 * @param float  $passing Passing mark.
+	 * @param string $status  Attempt status.
+	 * @return string
+	 */
+	public static function result( $earned, $max, $passing, $status ) {
+		if ( 'in-review' === $status ) {
+			return 'review';
+		}
+		return ( ( $max > 0 && $earned >= $max ) || $earned >= $passing ) ? 'pass' : 'fail';
+	}
+
+	/**
+	 * Score and verdict counts for the top of a review.
+	 *
+	 * @param array[] $entries Output of for_attempt().
+	 * @param array   $attempt Attempt row.
+	 * @param object  $quiz    Quiz.
+	 * @return array result, earned, max, passing, percent, counts and total.
+	 */
+	public static function summary( array $entries, array $attempt, $quiz ) {
+		$basis  = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
+		$earned = round( (float) ( $attempt['total_achieved_marks'] ?? 0 ), 4 );
+		$counts = array(
+			'correct'    => 0,
+			'partial'    => 0,
+			'incorrect'  => 0,
+			'pending'    => 0,
+			'unanswered' => 0,
+		);
+		foreach ( $entries as $entry ) {
+			if ( isset( $counts[ $entry['verdict'] ] ) ) {
+				++$counts[ $entry['verdict'] ];
+			}
+		}
+		return array(
+			'result'  => self::result( $earned, $basis['max'], $basis['passing'], (string) ( $attempt['status'] ?? '' ) ),
+			'earned'  => $earned,
+			'max'     => $basis['max'],
+			'passing' => $basis['passing'],
+			'percent' => $basis['max'] > 0 ? round( min( 100, $earned / $basis['max'] * 100 ), 1 ) : null,
+			'counts'  => $counts,
+			'total'   => count( $entries ),
+		);
+	}
+
+	/**
+	 * UUID of a question the practice engine can serve again (approved, not exam-only, not
+	 * archived and marked automatically), or an empty string.
+	 *
+	 * @param int $question_id Question ID.
+	 * @return string
+	 */
+	public static function practice_uuid( $question_id ) {
+		$identity = VersionPublisher::identity( (int) $question_id, false );
+		if ( ! $identity || (int) $identity['secure'] || ! (int) $identity['approved_version_id'] || Usage::ARCHIVED === get_post_status( (int) $question_id ) ) {
+			return '';
+		}
+		$version    = VersionPublisher::version( (int) $identity['approved_version_id'] );
+		$definition = $version ? Registry::get( 'question', (string) $version['type'] ) : null;
+		return $definition && empty( $definition['manual'] ) ? (string) $identity['uuid'] : '';
+	}
+
+	/**
+	 * The missed questions of a review that can be practised again, as number and UUID.
+	 *
+	 * @param array[] $entries Output of for_attempt().
+	 * @return array[]
+	 */
+	public static function retry_items( array $entries ) {
+		if ( ! Schema::ready() || ! Engine::practice() ) {
+			return array();
+		}
+		$items = array();
+		foreach ( $entries as $entry ) {
+			if ( ! in_array( $entry['verdict'], self::MISSED, true ) || empty( $entry['question_id'] ) ) {
+				continue;
+			}
+			$uuid = self::practice_uuid( (int) $entry['question_id'] );
+			if ( '' !== $uuid ) {
+				$items[] = array(
+					'number' => (int) $entry['number'],
+					'uuid'   => $uuid,
+				);
+			}
+		}
+		return $items;
+	}
+
+	/**
 	 * One entry per question of an attempt the signed-in learner owns.
 	 *
 	 * Each entry: name (HTML), type, verdict (correct|partial|incorrect|pending|unanswered),
@@ -98,7 +271,13 @@ final class AnswerReview {
 			foreach ( AttemptItems::items( $attempt_id ) as $item ) {
 				$question = AttemptItems::snapshot( $item );
 				if ( $question ) {
-					$entries[] = self::entry( $question, $rows[ (int) $item['question_id'] ] ?? null, (float) $item['marks'] );
+					$row   = $rows[ (int) $item['question_id'] ] ?? null;
+					$entry = self::entry( $question, $row, (float) $item['marks'] );
+					if ( 'structured' === $entry['type'] ) {
+						$entry['parts'] = self::parts( $attempt_id, $item, $question, $row );
+					}
+					$entry['number'] = count( $entries ) + 1;
+					$entries[]       = $entry;
 				}
 			}
 			return $entries;
@@ -106,10 +285,66 @@ final class AnswerReview {
 		foreach ( $rows as $question_id => $row ) {
 			$question = ohmylms_get_question( $question_id );
 			if ( $question ) {
-				$entries[] = self::entry( $question, $row, (float) $row['question_marks'] );
+				$entry           = self::entry( $question, $row, (float) $row['question_marks'] );
+				$entry['number'] = count( $entries ) + 1;
+				$entries[]       = $entry;
 			}
 		}
 		return $entries;
+	}
+
+	/**
+	 * How each part of a structured question went.
+	 *
+	 * @param int    $attempt_id Attempt ID.
+	 * @param array  $item       Attempt item.
+	 * @param object $question   Frozen snapshot.
+	 * @param array  $row        Stored answer row or null.
+	 * @return array[] id, label, prompt, kind, verdict, given, expected, awarded and max for each part.
+	 */
+	private static function parts( $attempt_id, array $item, $question, $row ) {
+		$settings = $question->get_settings();
+		$marks    = AttemptReport::parts( $attempt_id, $item, $question );
+		$given    = $row ? maybe_unserialize( $row['given_answer'] ) : array();
+		$given    = is_array( $given ) ? $given : array();
+		$parts    = array();
+		foreach ( Structured::parts( $settings ) as $part ) {
+			$id      = $part['id'];
+			$text    = isset( $given[ $id ] ) && is_scalar( $given[ $id ] ) ? trim( (string) $given[ $id ] ) : '';
+			$mark    = $marks[ $id ] ?? null;
+			$max     = $mark ? (float) $mark['max'] : (float) $part['marks'];
+			$awarded = $mark && null !== $mark['awarded'] ? (float) $mark['awarded'] : null;
+			if ( '' === $text ) {
+				$verdict = 'unanswered';
+			} elseif ( null === $awarded ) {
+				$verdict = 'pending';
+			} elseif ( $max <= 0 ) {
+				$verdict = 'ungraded';
+			} else {
+				$verdict = $awarded + self::EPSILON >= $max ? 'correct' : ( $awarded > self::EPSILON ? 'partial' : 'incorrect' );
+			}
+			$unit     = trim( (string) ( $part['unit'] ?? '' ) );
+			$expected = null;
+			if ( 'numerical' === $part['kind'] ) {
+				$numbers  = isset( $part['answers'] ) && is_array( $part['answers'] ) ? $part['answers'] : ( isset( $part['answer'] ) ? array( $part['answer'] ) : array() );
+				$expected = trim( implode( ' / ', array_map( 'strval', array_filter( $numbers, 'is_scalar' ) ) ) . ' ' . $unit );
+			} elseif ( 'text' === $part['kind'] ) {
+				$accepted = array_values( array_filter( array_map( 'strval', array_filter( (array) ( $part['accepted'] ?? array() ), 'is_scalar' ) ), 'strlen' ) );
+				$expected = $accepted ? $accepted[0] : null;
+			}
+			$parts[] = array(
+				'id'       => $id,
+				'label'    => (string) $part['label'],
+				'prompt'   => wp_kses_post( (string) ( $part['prompt'] ?? '' ) ),
+				'kind'     => $part['kind'],
+				'verdict'  => $verdict,
+				'given'    => $text,
+				'expected' => $expected ? $expected : null,
+				'awarded'  => 'pending' === $verdict ? null : round( (float) $awarded, 4 ),
+				'max'      => round( $max, 4 ),
+			);
+		}
+		return $parts;
 	}
 
 	/**
@@ -137,6 +372,7 @@ final class AnswerReview {
 			$verdict = $awarded > 0 ? 'partial' : 'incorrect';
 		}
 		return array(
+			'question_id' => (int) $question->get_id(),
 			'name'        => self::prompt( $question, $type ),
 			'type'        => $type,
 			'verdict'     => $verdict,
