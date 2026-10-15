@@ -66,7 +66,7 @@ final class Views {
 		add_action( 'template_redirect', array( self::class, 'portal' ) );
 	}
 	public static function redirect_management() {
-		if ( ( $_GET['page'] ?? '' ) !== 'ohmylms-schools' || ! current_user_can( 'manage_options' ) ) {
+		if ( ( $_GET['page'] ?? '' ) !== 'ohmylms-schools' || ! current_user_can( 'manage_options' ) || isset( $_GET['school'] ) || isset( $_GET['class'] ) ) {
 			return; }
 		$tab = sanitize_key( $_GET['tab'] ?? 'schools' );
 		if ( ! in_array( $tab, array( 'students', 'teachers', 'parents', 'users', 'classes', 'schools' ), true ) ) {
@@ -101,6 +101,17 @@ final class Views {
 		);
 	}
 	public static function render( $kind ) {
+		$hub = \OhMyLMS\Student\Hub::base_url();
+		if ( $hub && in_array( $kind, array( 'student-registration', 'teacher-registration', 'parent-registration', 'sign-in' ), true ) ) {
+			// Registration and sign-in now live in the hub chooser; this keeps old embedded tags useful.
+			$destinations = array(
+				'student-registration' => $hub,
+				'teacher-registration' => \OhMyLMS\Student\TeacherWorkspace::url(),
+				'parent-registration'  => \OhMyLMS\Student\ParentWorkspace::url(),
+				'sign-in'              => $hub,
+			);
+			return '<p class="ohmylms-school-shortcut"><a href="' . esc_url( $destinations[ $kind ] ) . '">' . esc_html__( 'Create an account or sign in', 'ohmylms' ) . '</a></p>';
+		}
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 			define( 'DONOTCACHEPAGE', true ); }
 		self::assets();

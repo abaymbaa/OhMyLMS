@@ -166,6 +166,23 @@ final class ViewAs {
 			}
 			if ( ! $r['course_id'] && ! ( $role === 'student' && ! $r['class_id'] && $url !== Views::portal_url() ) ) {
 				$url = add_query_arg( 'view', $role === 'parent' ? 'parent-dashboard' : ( $role === 'student' ? 'student-assignments' : 'teacher-dashboard' ), $url ); }
+				// Preview lands in the hub workspace for the viewed role; the old portal is not used.
+				if ( empty( $r['course_id'] ) && class_exists( '\OhMyLMS\Student\Hub' ) && \OhMyLMS\Student\Hub::base_url() ) {
+					$class_id = absint( $r['class_id'] );
+					if ( 'parent' === $role ) {
+						$url = \OhMyLMS\Student\ParentWorkspace::url();
+					} elseif ( 'teacher' === $role ) {
+						$url = \OhMyLMS\Student\TeacherWorkspace::url();
+						if ( $class_id ) {
+							$url = add_query_arg( 'hub_class', $class_id, $url );
+						}
+					} else {
+						$url = \OhMyLMS\Student\Hub::url( $class_id ? 'classes' : 'learn' );
+						if ( $class_id ) {
+							$url = add_query_arg( 'hub_class', $class_id, $url );
+						}
+					}
+				}
 				return array( 'url' => $url );
 	}
 	public static function session() {

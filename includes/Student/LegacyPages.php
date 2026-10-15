@@ -204,7 +204,37 @@ final class LegacyPages {
 		return '';
 	}
 
-	/** Redirect the retired parent and student portal views for eligible signed-in users; GET only. */
+	/**
+	 * Admin destination for the front-end school administration view, or empty when it must stay.
+	 *
+	 * School administration now lives in wp-admin. Invitation, file and View-as flows are never moved.
+	 *
+	 * @param string $view Portal view name.
+	 * @param array  $query Request query parameters (flags and scalar values).
+	 * @return string
+	 */
+	public static function admin_target( $view, array $query ) {
+		if ( ! in_array( $view, array( '', 'school-dashboard' ), true ) || ! is_user_logged_in() || ! current_user_can( 'read' ) || \OhMyLMS\Schools\ViewAs::session() ) {
+			return '';
+		}
+		foreach ( array( 'ohmylms_invite', 'ohmylms_school_file' ) as $keep ) {
+			if ( isset( $query[ $keep ] ) ) {
+				return '';
+			}
+		}
+		$args = array( 'page' => 'ohmylms-schools' );
+		foreach ( array( 'school', 'class' ) as $key ) {
+			if ( ! empty( $query[ $key ] ) ) {
+				$args[ $key ] = absint( $query[ $key ] );
+			}
+		}
+		if ( ! empty( $query['tab'] ) && in_array( $query['tab'], array( 'students', 'teachers', 'parents', 'users', 'classes', 'schools' ), true ) ) {
+			$args['tab'] = $query['tab'];
+		}
+		return add_query_arg( $args, admin_url( 'admin.php' ) );
+	}
+
+	/** Redirect the retired parent, student and school portal views for eligible signed-in users; GET only. */
 	public static function redirect_portal() {
 		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) || ! isset( $_GET['ohmylms_portal'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
 			return;
@@ -217,7 +247,27 @@ final class LegacyPages {
 			}
 		}
 		$view   = isset( $_GET['view'] ) && is_string( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
+		if ( isset( $query['ohmylms_school_file'] ) ) {
+			return; // Authorized file downloads are not a portal screen.
+		}
+		$invite = isset( $_GET['ohmylms_invite'] ) && is_string( $_GET['ohmylms_invite'] ) ? sanitize_text_field( wp_unslash( $_GET['ohmylms_invite'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Opaque single-use token forwarded to the hub.
+		if ( Hub::base_url() && preg_match( '/^[a-f0-9]{64}$/', $invite ) ) {
+			wp_safe_redirect( add_query_arg( 'ohmylms_invite', $invite, Hub::base_url() ) );
+			exit;
+		}
 		$target = self::portal_target( $view, $query );
+		if ( ! $target ) {
+			$values = array();
+			foreach ( array( 'school', 'class', 'tab' ) as $key ) {
+				if ( isset( $_GET[ $key ] ) && is_scalar( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
+					$values[ $key ] = sanitize_key( wp_unslash( (string) $_GET[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
+				}
+			}
+			$target = self::admin_target( $view, $query + $values );
+		}
+		if ( ! $target && ! is_user_logged_in() && Hub::base_url() ) {
+			$target = Hub::base_url();
+		}
 		if ( $target ) {
 			wp_safe_redirect( $target );
 			exit;

@@ -26,7 +26,12 @@ final class ParentActions {
 	public static function handle() {
 		check_admin_referer( self::ACTION );
 		$base = Hub::base_url();
-		$back = add_query_arg( 'hub_role', 'parent', $base ? $base : home_url( '/' ) );
+		$role = isset( $_POST['role'] ) && is_string( $_POST['role'] ) ? sanitize_key( wp_unslash( $_POST['role'] ) ) : 'parent';
+		$role = in_array( $role, array( 'student', 'teacher', 'parent' ), true ) ? $role : 'parent';
+		$back = $base ? $base : home_url( '/' );
+		if ( 'student' !== $role ) {
+			$back = add_query_arg( 'hub_role', $role, $back );
+		}
 		if ( 'POST' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 			wp_safe_redirect( $back );
 			exit;
@@ -34,7 +39,7 @@ final class ParentActions {
 		try {
 			Controller::signup(
 				array(
-					'role'       => 'parent',
+					'role'       => $role,
 					'email'      => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
 					'password'   => isset( $_POST['password'] ) && is_string( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords are never altered.
 					'first_name' => isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '',
@@ -42,9 +47,9 @@ final class ParentActions {
 					'website'    => isset( $_POST['website'] ) ? sanitize_text_field( wp_unslash( $_POST['website'] ) ) : '',
 				)
 			);
-			$args = array( 'parent_signup' => 'created' );
+			$args = array( 'signup' => 'created' );
 		} catch ( \Throwable $error ) {
-			$args    = array( 'parent_signup' => 'failed' );
+			$args    = array( 'signup' => 'failed' );
 			$message = in_array( $error->getCode(), array( 400, 429 ), true ) ? $error->getMessage() : __( 'Unable to create this account. Please try again.', 'ohmylms' );
 			set_transient( 'ohmylms_parent_signup_' . self::client_key(), $message, MINUTE_IN_SECONDS );
 		}
