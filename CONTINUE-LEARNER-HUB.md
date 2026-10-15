@@ -1336,3 +1336,47 @@ credential-protected schools integration suite was still not run.
 
 Join-view success text is now role-neutral ("Invitation accepted. Open My classes, or use Switch
 role at the top to open your new workspace."); the class-specific API message is unchanged.
+
+## No portal (October 16, 2026)
+
+Per the user: no front-end LMS portal. Self-registration for learner, teacher and parent is in
+the hub chooser; old portal and registration entry points forward to the hub or wp-admin; View-as
+previews land in hub workspaces. Details and limits: `docs/learner-experience/LEGACY-RETIREMENT-PLAN.md`.
+Verified over HTTP on 800.local (chooser role fields, student/teacher/parent signups created the
+right roles and a forged admin role became parent, portal URLs 302 to the hub, invitation tokens
+preserved) and in the browser (portal URL as admin opens the wp-admin Account Hub). The signups
+and their audit rows were removed. Not committed. `tests/php/view-as-unit.php` passes; the
+credential-protected suites were not run.
+
+## School workspace and teacher-created schools (October 16, 2026)
+
+**Khan Academy reference (public Help Center article "How do I add my school to my teacher
+dashboard?"):** a teacher account adds one school from a button on the Teacher Dashboard
+(country, ZIP, pick from a public database; "Other" fallback; optional; one school per
+account; changeable). We do not have a public school database and a teacher must not join an
+existing private school freely, so the adaptation is: a teacher **creates their school**
+from the Teacher workspace ("Create your school": name and time zone), becomes its
+administrator and teacher, and invites others. One school per teacher account. Not observed:
+the signed-in Khan teacher dashboard itself (only the help article).
+
+- `Schools\Service::create_school()` now allows teachers (previously platform admins only):
+  creator gets active `school_admin` and `teacher` memberships and the `ohmylms_school_admin`
+  role; one school per non-platform user; slugs are made unique. Platform behavior unchanged.
+- `Student\SchoolWorkspace` (availability = administers an active school; platform admins see
+  all active schools), `Student\SchoolActions` (`ohmylms_school_admin` admin-post: create
+  school, academic year, class, archive class (confirm), add student, invite, revoke invite,
+  remove parent link (confirm)), `templates/student-hub/school.php` (Overview, Classes,
+  People, Invitations), `teacher-school.php` (Create your school / Open school workspace).
+  Hub mode `hub_role=school`, role switch entry "School", Settings keeps the context.
+  All reads/writes go through the existing school services, which re-authorize every call.
+- Select fields got dark-mode styling (`.oml-hub-field select`).
+- Verified: probe `test-results/school-workspace-probe.php` 28/28 (non-teacher denied, one
+  school per teacher, creator roles, distinct slugs, other teacher denied, year/class/student/
+  invite/archive flows, forged school id shows nothing, hub-pointing activation link); live as
+  admin in the browser: create school, year, class, student, activation invitation (hub link),
+  pending list. Earlier probes still pass. PHPCS 0 errors/warnings on the new files.
+- Not done: school settings (name/time zone edit), teacher invitations accepted into the
+  workspace UI beyond the existing flow, roster import, gradebook/reports, rollover, managed
+  student password reset, co-admin removal, "leave school", and a browser test as a real
+  non-admin teacher (platform admins were used). The wp-admin Account Hub remains for platform
+  administration. Not committed.

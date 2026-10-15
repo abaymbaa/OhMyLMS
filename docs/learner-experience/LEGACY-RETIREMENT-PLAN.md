@@ -136,3 +136,24 @@ Revised direction:
    redirect for the old registration URLs.
 
 Needs from you: whether student and teacher self-registration should remain.
+
+## Decision: no front-end portal (October 16, 2026)
+
+The user does not want to use the LMS portal. Invitations and acceptance go through the hub
+workspaces (learner, teacher, family); school administration uses wp-admin. Done:
+
+- Student, teacher and parent self-registration are all in the hub sign-in chooser (one
+  form per role through `ohmylms_parent_signup`, role allowlisted to student, teacher or
+  parent; any other value becomes parent). Created roles: `ohmylms_student`,
+  `ohmylms_teacher`, `ohmylms_parent`.
+- Old registration and sign-in tags/blocks (`Views::render`) now render a link to the hub.
+- Every portal GET entry forwards: invitation links keep their token and open in the hub;
+  parent/student/teacher views go to their workspaces; the school view goes to the wp-admin
+  Account Hub (`school`, `class`, `tab` preserved); signed-out visitors go to the hub chooser.
+  Authorized file downloads are untouched. The wp-admin page no longer bounces when `school`
+  or `class` is present.
+- View-as preview now lands in the hub workspace of the viewed role.
+- Not removed: the portal renderer code and React app remain as dormant fallback and are
+  what the wp-admin page uses; the "Manage" button in the admin directory still points at the
+  portal URL, which now forwards to wp-admin. Removing the code is a later cleanup.
+
