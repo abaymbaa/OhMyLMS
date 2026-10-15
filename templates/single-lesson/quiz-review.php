@@ -12,6 +12,7 @@
  * @global array|null   $attempt  The attempt being reviewed.
  * @global array[]|null $retry    Missed questions that can be practised, from \OhMyLMS\Quiz\AnswerReview::retry_items().
  * @global bool|null    $retrying Whether the practice list is open.
+ * @global string|null  $anchor   Unique element ID of this review, so several quizzes can share a page.
  */
 
 use OhMyLMS\Assessment\Scoring;
@@ -30,6 +31,7 @@ $attempts = isset( $attempts ) && is_array( $attempts ) ? $attempts : array();
 $attempt  = isset( $attempt ) && is_array( $attempt ) ? $attempt : null;
 $retry    = isset( $retry ) && is_array( $retry ) ? $retry : array();
 $retrying = ! empty( $retrying );
+$anchor   = isset( $anchor ) && is_string( $anchor ) && '' !== $anchor ? sanitize_html_class( $anchor ) : 'ohmylms-answer-review';
 
 wp_enqueue_style( 'ohmylms-answer-review', plugins_url( 'assets/css/answer-review.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 
@@ -57,7 +59,7 @@ $stamp          = static function ( $row ) {
 	return $time ? date( 'M j, Y g:i a', $time ) : '';
 };
 ?>
-<section class="ohmylms-answer-review" id="ohmylms-answer-review" aria-labelledby="ohmylms-answer-review-title">
+<section class="ohmylms-answer-review" id="<?php echo esc_attr( $anchor ); ?>" aria-labelledby="<?php echo esc_attr( $anchor ); ?>-title">
 	<?php if ( $summary ) : ?>
 		<div class="ohmylms-review-summary is-<?php echo esc_attr( $summary['result'] ); ?>">
 			<h2 class="ohmylms-review-headline"><?php echo esc_html( $headlines[ $summary['result'] ] ?? __( 'Your result', 'ohmylms' ) ); ?></h2>
@@ -109,7 +111,7 @@ $stamp          = static function ( $row ) {
 
 			<?php if ( $retry && ! $retrying && $attempt ) : ?>
 				<p class="ohmylms-review-actions">
-					<a class="ohmylms-button ohmylms-review-retry-button" href="<?php echo esc_url( AnswerReview::url( $attempt['quiz_attempt_id'], array( 'retry' => 1 ) ) . '#ohmylms-review-retry' ); ?>">
+					<a class="ohmylms-button ohmylms-review-retry-button" href="<?php echo esc_url( AnswerReview::url( $attempt['quiz_attempt_id'], array( 'retry' => 1 ) ) . '#' . $anchor . '-retry' ); ?>">
 						<?php esc_html_e( 'Retry the questions I missed', 'ohmylms' ); ?>
 					</a>
 				</p>
@@ -124,7 +126,7 @@ $stamp          = static function ( $row ) {
 				<?php foreach ( $attempts as $index => $row ) : ?>
 					<?php $current = (int) $row['quiz_attempt_id'] === (int) $attempt['quiz_attempt_id']; ?>
 					<li<?php echo $current ? ' class="is-current"' : ''; ?>>
-						<a href="<?php echo esc_url( AnswerReview::url( $row['quiz_attempt_id'] ) . '#ohmylms-answer-review' ); ?>"<?php echo $current ? ' aria-current="true"' : ''; ?>>
+						<a href="<?php echo esc_url( AnswerReview::url( $row['quiz_attempt_id'] ) . '#' . $anchor ); ?>"<?php echo $current ? ' aria-current="true"' : ''; ?>>
 							<?php
 							/* translators: 1: attempt number, 2: date and time */
 							echo esc_html( sprintf( __( 'Attempt %1$d, %2$s', 'ohmylms' ), count( $attempts ) - $index, $stamp( $row ) ) );
@@ -139,7 +141,7 @@ $stamp          = static function ( $row ) {
 		</nav>
 	<?php endif; ?>
 
-	<h2 class="ohmylms-answer-review-heading" id="ohmylms-answer-review-title"><?php esc_html_e( 'Review your answers', 'ohmylms' ); ?></h2>
+	<h2 class="ohmylms-answer-review-heading" id="<?php echo esc_attr( $anchor ); ?>-title"><?php esc_html_e( 'Review your answers', 'ohmylms' ); ?></h2>
 	<p class="ohmylms-answer-review-intro">
 		<?php
 		if ( $attempt && $latest_id && (int) $attempt['quiz_attempt_id'] !== $latest_id ) {
@@ -230,8 +232,8 @@ $stamp          = static function ( $row ) {
 	</ol>
 
 	<?php if ( $retry && $retrying && $attempt && class_exists( '\OhMyLMS\Practice\Inline' ) ) : ?>
-		<section class="ohmylms-review-retry" id="ohmylms-review-retry" aria-labelledby="ohmylms-review-retry-title">
-			<h2 id="ohmylms-review-retry-title"><?php esc_html_e( 'Retry the questions I missed', 'ohmylms' ); ?></h2>
+		<section class="ohmylms-review-retry" id="<?php echo esc_attr( $anchor ); ?>-retry" aria-labelledby="<?php echo esc_attr( $anchor ); ?>-retry-title">
+			<h2 id="<?php echo esc_attr( $anchor ); ?>-retry-title"><?php esc_html_e( 'Retry the questions I missed', 'ohmylms' ); ?></h2>
 			<p><?php esc_html_e( 'This is practice. Your quiz marks do not change.', 'ohmylms' ); ?></p>
 			<?php
 			$practised = 0;
@@ -249,7 +251,7 @@ $stamp          = static function ( $row ) {
 				echo '<p>' . esc_html__( 'These questions cannot be practised right now.', 'ohmylms' ) . '</p>';
 			}
 			?>
-			<p><a href="<?php echo esc_url( AnswerReview::url( $attempt['quiz_attempt_id'] ) . '#ohmylms-answer-review' ); ?>"><?php esc_html_e( 'Done practising', 'ohmylms' ); ?></a></p>
+			<p><a href="<?php echo esc_url( AnswerReview::url( $attempt['quiz_attempt_id'] ) . '#' . $anchor ); ?>"><?php esc_html_e( 'Done practising', 'ohmylms' ); ?></a></p>
 		</section>
 	<?php endif; ?>
 </section>

@@ -113,6 +113,10 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   its own verdict and marks. "Retry the questions I missed" (`?retry=1`) offers the missed,
   automatically marked questions again as inline practice checks. It needs the practice engine
   and approved, non-exam-only questions, and never changes the quiz marks.
+  One renderer, `AnswerReview::render()`, serves every placement: the lesson quiz page, the
+  Quiz Player block and its embed document, `[ohmylms_quiz]`, `[ohmylms_quiz_review]` and the
+  theme helpers `ohmylms_get_quiz_player()` and `ohmylms_get_quiz_review()`. A learner's
+  attempts are found whichever course they were taken in when the review is placed on its own.
 
 ## REST API (ohmylms/v1)
 

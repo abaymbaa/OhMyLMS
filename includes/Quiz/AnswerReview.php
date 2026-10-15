@@ -92,6 +92,99 @@ final class AnswerReview {
 		return $latest;
 	}
 
+	/** Register the shortcode that places the review on any page. */
+	public static function init() {
+		add_shortcode( 'ohmylms_quiz_review', array( __CLASS__, 'shortcode' ) );
+	}
+
+	/**
+	 * [ohmylms_quiz_review quiz="ID"]: the signed-in learner's score and answer review for a
+	 * quiz, on any page or post. Without an ID it uses the quiz being viewed.
+	 *
+	 * @param array|string $attributes Shortcode attributes.
+	 * @return string
+	 */
+	public static function shortcode( $attributes ) {
+		$attributes = shortcode_atts( array( 'quiz' => 0 ), (array) $attributes, 'ohmylms_quiz_review' );
+		$quiz_id    = absint( $attributes['quiz'] );
+		if ( ! $quiz_id && OHMYLMS_QUIZ_CPT === get_post_type() ) {
+			$quiz_id = (int) get_the_ID();
+		}
+		if ( ! $quiz_id ) {
+			return '';
+		}
+		if ( ! is_user_logged_in() ) {
+			return '<p class="ohmylms-answer-review-login"><a href="' . esc_url( wp_login_url( get_permalink() ?: home_url( '/' ) ) ) . '">' . esc_html__( 'Log in to see your quiz results.', 'ohmylms' ) . '</a></p>';
+		}
+		return self::for_quiz( $quiz_id );
+	}
+
+	/**
+	 * Score and answer review of the signed-in learner for a published quiz, wherever it is
+	 * shown. Empty when there is nothing the learner may see yet.
+	 *
+	 * @param int $quiz_id Quiz ID.
+	 * @return string HTML.
+	 */
+	public static function for_quiz( $quiz_id ) {
+		$quiz_id = absint( $quiz_id );
+		if ( ! is_user_logged_in() || OHMYLMS_QUIZ_CPT !== get_post_type( $quiz_id ) || 'publish' !== get_post_status( $quiz_id ) ) {
+			return '';
+		}
+		$quiz = ohmylms_get_quiz( $quiz_id );
+		return $quiz ? self::render( $quiz, self::attempts( $quiz, get_current_user_id() ) ) : '';
+	}
+
+	/**
+	 * Every attempt of a learner on a quiz, whichever course it was taken in.
+	 *
+	 * @param object $quiz       Quiz.
+	 * @param int    $student_id Learner ID.
+	 * @return array[] Rows like Quiz::get_all_quiz_attempts().
+	 */
+	public static function attempts( $quiz, $student_id ) {
+		global $wpdb;
+		$courses = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT course_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id=%d AND student_id=%d", (int) $quiz->get_id(), (int) $student_id ) );
+		$rows    = array();
+		foreach ( $courses as $course_id ) {
+			$rows = array_merge( $rows, (array) $quiz->get_all_quiz_attempts( (int) $student_id, (int) $course_id ) );
+		}
+		return $rows;
+	}
+
+	/**
+	 * The review markup for the learner's attempts, or an empty string when none can be shown.
+	 * Used by the lesson quiz page, the Quiz Player block, the shortcode and themes.
+	 *
+	 * @param object  $quiz     Quiz.
+	 * @param array[] $attempts The learner's attempt rows for this quiz.
+	 * @return string HTML.
+	 */
+	public static function render( $quiz, array $attempts ) {
+		$reviewable = self::reviewable( (array) $quiz->get_settings(), $attempts, $quiz );
+		$requested  = self::requested();
+		$attempt    = self::select( $reviewable, $requested );
+		if ( ! $attempt ) {
+			return '';
+		}
+		$entries = self::for_attempt( $attempt['quiz_attempt_id'] );
+		ob_start();
+		ohmylms_get_template(
+			'single-lesson/quiz-review.php',
+			array(
+				'entries'  => $entries,
+				'summary'  => self::summary( $entries, $attempt, $quiz ),
+				'attempts' => $reviewable,
+				'attempt'  => $attempt,
+				'retry'    => self::retry_items( $entries ),
+				// Practice opens only on the attempt the address names, so other quizzes on the page stay closed.
+				'retrying' => (int) $attempt['quiz_attempt_id'] === $requested && isset( $_GET['retry'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['retry'] ) ), // phpcs:ignore WordPress.Security.NonceVerification -- display only.
+				'anchor'   => 'ohmylms-answer-review-' . (int) $quiz->get_id(),
+			)
+		);
+		return (string) ob_get_clean();
+	}
+
 	/**
 	 * Attempt the address asks to review (?review=ID), or 0.
 	 *
@@ -154,7 +247,8 @@ final class AnswerReview {
 	 * @return string
 	 */
 	public static function url( $attempt_id, array $args = array() ) {
-		return remove_query_arg( 'quiz', add_query_arg( array_merge( array( self::QUERY_VAR => (int) $attempt_id ), $args ) ) );
+		// Practice (retry) is dropped unless asked for, so moving between attempts or leaving practice does not keep it open.
+		return remove_query_arg( 'quiz', add_query_arg( array_merge( array( self::QUERY_VAR => (int) $attempt_id, 'retry' => false ), $args ) ) );
 	}
 
 	/**

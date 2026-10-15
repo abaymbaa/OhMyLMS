@@ -36,7 +36,14 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Learning\NativeLessonEditor::init();
 \OhMyLMS\Blocks\QuizPlayerBlock::init();
+\OhMyLMS\Quiz\AnswerReview::init();
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();
 \OhMyLMS\Schools\Bootstrap::init();
 add_action( 'plugins_loaded', array( 'OhMyLMS\\Extensions\\Modules', 'load' ) );
+/** The Quiz Player for a quiz, as HTML: the same player the block and [ohmylms_quiz] show, for themes and templates. */
+function ohmylms_get_quiz_player( $quiz_id ) {
+	return \OhMyLMS\Blocks\QuizPlayerBlock::shortcode( array( 'quiz' => $quiz_id ) ); }
+/** The signed-in learner's score and answer review for a quiz, as HTML; empty when there is nothing to show. */
+function ohmylms_get_quiz_review( $quiz_id ) {
+	return \OhMyLMS\Quiz\AnswerReview::for_quiz( $quiz_id ); }

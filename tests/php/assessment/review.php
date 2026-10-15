@@ -34,6 +34,15 @@ ok(AnswerReview::select($reviewable, 7)['quiz_attempt_id'] === 9, 'An attempt th
 ok(AnswerReview::select($reviewable, 0)['quiz_attempt_id'] === 9, 'The newest attempt was not the default');
 ok(AnswerReview::select([], 4) === null, 'An attempt was chosen from nothing');
 
+// Links start from the page being viewed (so any placement works), name the attempt, and drop practice unless asked.
+$_SERVER['REQUEST_URI'] = '/some-page/?retry=1&review=3&quiz=start&keep=1';
+$link = AnswerReview::url(9);
+ok(strpos($link, 'review=9') !== false && strpos($link, 'keep=1') !== false, 'A review link lost the attempt or the page: ' . $link);
+ok(strpos($link, 'retry') === false && strpos($link, 'quiz=start') === false, 'A review link kept practice or quiz mode: ' . $link);
+ok(strpos(AnswerReview::url(9, ['retry' => 1]), 'retry=1') !== false, 'A retry link lost practice');
+ok(AnswerReview::for_quiz(0) === '', 'A missing quiz produced a review');
+ok(AnswerReview::shortcode([]) === '', 'A review shortcode without a quiz produced output');
+
 [$course_id, $quiz_id] = course_with_quiz($admin, ['allow_attempts' => 9, 'show_correct_answers' => true]);
 ok(AnswerReview::enabled(ohmylms_get_quiz($quiz_id)->get_settings()), 'The switch did not survive saving the quiz');
 

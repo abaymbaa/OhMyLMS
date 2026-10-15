@@ -143,24 +143,9 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 		</div>
 
 		<?php
-		// Only quizzes that switched on "Show correct answers" reveal the answers, and only after submission.
+		// The learner's score and answer review, shared with the Quiz Player block and the shortcode.
 		// The newest attempt is shown unless the address asks for another one (?review=ID).
-		$review_attempts = \OhMyLMS\Quiz\AnswerReview::reviewable( (array) $quiz->get_settings(), (array) $quiz_attempts, $quiz );
-		$review_attempt  = \OhMyLMS\Quiz\AnswerReview::select( $review_attempts, \OhMyLMS\Quiz\AnswerReview::requested() );
-		if ( $review_attempt ) {
-			$review_entries = \OhMyLMS\Quiz\AnswerReview::for_attempt( $review_attempt['quiz_attempt_id'] );
-			ohmylms_get_template(
-				'single-lesson/quiz-review.php',
-				array(
-					'entries'  => $review_entries,
-					'summary'  => \OhMyLMS\Quiz\AnswerReview::summary( $review_entries, $review_attempt, $quiz ),
-					'attempts' => $review_attempts,
-					'attempt'  => $review_attempt,
-					'retry'    => \OhMyLMS\Quiz\AnswerReview::retry_items( $review_entries ),
-					'retrying' => isset( $_GET['retry'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['retry'] ) ), // phpcs:ignore WordPress.Security.NonceVerification -- display only.
-				)
-			);
-		}
+		echo \OhMyLMS\Quiz\AnswerReview::render( $quiz, (array) $quiz_attempts ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped by the review template.
 		?>
 	</div>
 <?php endwhile; // end of the loop. ?>

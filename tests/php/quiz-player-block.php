@@ -5,6 +5,7 @@ define( 'ABSPATH', __DIR__ );
 define( 'OHMYLMS_QUIZ_CPT', 'ohmylms-quiz' );
 define( 'OHMYLMS_DIR', dirname( __DIR__, 2 ) );
 define( 'OHMYLMS_FILE', OHMYLMS_DIR . '/ohmylms.php' );
+define( 'OHMYLMS_VERSION', 'test' );
 require __DIR__ . '/fixtures/quiz-player-runtime.php';
 class WP_Error {
 	public $code;
@@ -24,6 +25,9 @@ function wp_interactivity_data_wp_context( $context ) { return 'data-wp-context=
 function wp_login_url( $return ) { return 'https://example.test/login?return=' . urlencode( $return ); }
 function has_block( $name ) { return true; }
 function nocache_headers() { $GLOBALS['uncached'] = true; }
+function shortcode_atts( $defaults, $attributes ) { return array_merge( $defaults, array_intersect_key( (array) $attributes, $defaults ) ); }
+function wp_json_encode( $value ) { return json_encode( $value ); }
+function do_blocks( $markup ) { $GLOBALS['blocks'][] = $markup; return 'rendered:' . $markup; }
 $fixtures = array(
 	7 => array( 'type' => 'ohmylms-quiz', 'status' => 'publish', 'title' => 'Math <quiz>', 'editable' => false ),
 	8 => array( 'type' => 'ohmylms-quiz', 'status' => 'private', 'title' => 'Private quiz', 'editable' => false ),
@@ -111,4 +115,11 @@ $GLOBALS['engine_error'] = new WP_Error( 'quiz_locked', 'Locked.' );
 check_embed( $GLOBALS['engine_error'] === QuizPlayerBlock::mutate( array( 'id' => 7, 'operation' => 'start' ) ), 'Engine access failures must propagate unchanged.' );
 QuizPlayerBlock::prevent_cache();
 check_embed( DONOTCACHEPAGE && $GLOBALS['uncached'], 'Personalized quiz pages must bypass page caching.' );
+// [ohmylms_quiz] renders the registered block itself, so it is the same player everywhere.
+check_embed( '' === QuizPlayerBlock::shortcode( array() ), 'A player shortcode without a quiz must render nothing.' );
+check_embed( '' === QuizPlayerBlock::shortcode( array( 'quiz' => 'abc' ) ), 'A non-numeric quiz must render nothing.' );
+$GLOBALS['blocks'] = array();
+$shortcode = QuizPlayerBlock::shortcode( array( 'quiz' => '7' ) );
+check_embed( array( '<!-- wp:ohmylms/quiz-player {"quizId":7} /-->' ) === $GLOBALS['blocks'], 'The shortcode must render the quiz player block for that quiz.' );
+check_embed( str_starts_with( $shortcode, 'rendered:' ), 'The shortcode must return the block output unchanged.' );
 echo $checks . " quiz player block checks passed.\n";

@@ -26,11 +26,34 @@ final class QuizPlayerBlock {
 		add_filter( 'wp_redirect', array( __CLASS__, 'redirect' ), 10 );
 		add_filter( 'ohmylms_quiz_interactivity_context', array( __CLASS__, 'player_context' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'prevent_cache' ), 0 );
+		add_shortcode( 'ohmylms_quiz', array( __CLASS__, 'shortcode' ) );
+	}
+
+	/**
+	 * [ohmylms_quiz quiz="ID"]: the same player as the block, anywhere shortcodes work. It
+	 * renders the registered block itself, so every placement shares one implementation.
+	 *
+	 * @param array|string $attributes Shortcode attributes.
+	 * @return string Player markup.
+	 */
+	public static function shortcode( $attributes ) {
+		$attributes = shortcode_atts( array( 'quiz' => 0 ), (array) $attributes, 'ohmylms_quiz' );
+		$quiz_id    = absint( $attributes['quiz'] );
+		if ( ! $quiz_id ) {
+			return '';
+		}
+		return do_blocks( '<!-- wp:ohmylms/quiz-player ' . wp_json_encode( array( 'quizId' => $quiz_id ) ) . ' /-->' );
+	}
+
+	/** Does the page being viewed place the player with [ohmylms_quiz]? */
+	private static function has_player_shortcode() {
+		$post = get_post();
+		return $post instanceof \WP_Post && has_shortcode( $post->post_content, 'ohmylms_quiz' );
 	}
 
 	/** Keep personalized quiz pages out of page caches before headers are sent. */
 	public static function prevent_cache() {
-		if ( has_block( 'ohmylms/quiz-player' ) ) {
+		if ( has_block( 'ohmylms/quiz-player' ) || self::has_player_shortcode() ) {
 			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 				define( 'DONOTCACHEPAGE', true );
 			}
@@ -83,6 +106,8 @@ final class QuizPlayerBlock {
 		}
 		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/quiz' );
 		\OhMyLMS\Quiz\PlayerTemplates::enqueue( 'classic' );
+		// Loaded up front: the review appears after a submit refreshes only this region, which cannot add stylesheets.
+		wp_enqueue_style( 'ohmylms-answer-review', plugins_url( 'assets/css/answer-review.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 		\OhMyLMS\Assessment\Delivery::require_script();
 		wp_enqueue_style( 'ohmylms-quiz-inline', plugins_url( 'assets/css/quiz-player-inline.css', OHMYLMS_FILE ), array( 'ohmylms-player-templates' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/quiz-player-inline.css' ) );
 		$context = array_merge( self::inline_context( $quiz_id ), array( 'quizId' => $quiz_id, 'submitting' => false, 'error' => '' ) );
@@ -329,6 +354,8 @@ final class QuizPlayerBlock {
 		);
 		$latest    = $attempts[0] ?? null;
 		$remaining = $quiz->count_total_attempt( get_current_user_id(), $course_id ) < $quiz->get_take_attempts();
+		// The same score and answer review as the lesson quiz page; empty when the quiz keeps its answers private.
+		$review = \OhMyLMS\Quiz\AnswerReview::render( $quiz, $attempts );
 		?>
 		<div class="ohmylms-quiz-embed-start">
 			<h2><?php echo esc_html( $quiz->get_name() ); ?></h2>
@@ -336,7 +363,9 @@ final class QuizPlayerBlock {
 				<p role="status"><?php esc_html_e( 'Your last attempt has been submitted.', 'ohmylms' ); ?></p>
 				<?php
 				$feedback = ! \OhMyLMS\Assessment\Schema::ready() || \OhMyLMS\Assessment\AssessmentSettings::feedback_visible( $latest['quiz_attempt_id'] );
-				if ( $feedback ) {
+				if ( $feedback && '' !== $review ) {
+					// The review below opens with the score.
+				} elseif ( $feedback ) {
 					$basis = \OhMyLMS\Assessment\AttemptReport::basis( $latest['quiz_attempt_id'], $quiz );
 					// translators: 1: Earned quiz marks, 2: Total available marks.
 					echo '<p>' . esc_html( sprintf( __( 'Score: %1$s / %2$s', 'ohmylms' ), \OhMyLMS\Assessment\Scoring::display( $latest['total_achieved_marks'] ?? 0 ), \OhMyLMS\Assessment\Scoring::display( $basis['max'] ) ) ) . '</p>';
@@ -359,6 +388,7 @@ final class QuizPlayerBlock {
 			<?php if ( ! self::$inline_quiz ) : ?>
 			<p><a target="_top" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"><?php esc_html_e( 'View quiz results', 'ohmylms' ); ?></a></p>
 			<?php endif; ?>
+		<?php echo $review; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped by the review template. ?>
 		</div>
 		<?php
 	}
