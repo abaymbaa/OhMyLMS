@@ -24,6 +24,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Extensions\Slots::init();
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Schools\Bootstrap::init();
+\OhMyLMS\ProfileBuilder\Bootstrap::init();
 \OhMyLMS\Extensions\Addons::init();
 \OhMyLMS\Extensions\Slots::init();
 \OhMyLMS\Extensions\Authoring::init();
