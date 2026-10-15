@@ -19,7 +19,7 @@ $hub_periods = array(
 $hub_types   = array(
 	'all'      => __( 'All activities', 'ohmylms' ),
 	'lesson'   => __( 'Lessons', 'ohmylms' ),
-	'quiz'     => __( 'Quizzes and exams', 'ohmylms' ),
+	'quiz'     => __( 'Quizzes', 'ohmylms' ),
 	'practice' => __( 'Skill practice', 'ohmylms' ),
 );
 $hub_period  = get_query_var( 'hub_period', 'week' );

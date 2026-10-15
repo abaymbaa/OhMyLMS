@@ -19,7 +19,8 @@ defined( 'ABSPATH' ) || exit;
 final class SettingsSave {
 
 	const ACTION    = 'ohmylms_hub_settings';
-	const MIN_PASS  = 8;
+	const MIN_PASS  = 12;
+	const MAX_PASS  = 128;
 	const FLASH_KEY = 'ohmylms_hub_settings_flash_';
 
 	/** Cards and the Settings tab each returns to. */
@@ -108,9 +109,9 @@ final class SettingsSave {
 				if ( ! self::password_ok( $user, $current ) ) {
 					$errors[] = __( 'Your current password is incorrect.', 'ohmylms' );
 				}
-				if ( strlen( $new ) < self::MIN_PASS ) {
-					/* translators: %d: minimum password length. */
-					$errors[] = sprintf( __( 'Choose a new password of at least %d characters.', 'ohmylms' ), self::MIN_PASS );
+				if ( strlen( $new ) < self::MIN_PASS || strlen( $new ) > self::MAX_PASS ) {
+					/* translators: 1: minimum, 2: maximum password length. */
+					$errors[] = sprintf( __( 'Choose a new password between %1$d and %2$d characters.', 'ohmylms' ), self::MIN_PASS, self::MAX_PASS );
 				} elseif ( $new !== $confirm ) {
 					$errors[] = __( 'The new passwords do not match.', 'ohmylms' );
 				} elseif ( $new === $current ) {
@@ -177,7 +178,14 @@ final class SettingsSave {
 			),
 			MINUTE_IN_SECONDS
 		);
-		wp_safe_redirect( Hub::url( 'account', self::CARDS[ $card ] ) );
+		$role = isset( $_POST['hub_role'] ) && is_string( $_POST['hub_role'] ) ? sanitize_key( wp_unslash( $_POST['hub_role'] ) ) : '';
+		$url  = Hub::url( 'account', self::CARDS[ $card ] );
+		if ( 'teacher' === $role && TeacherWorkspace::available() ) {
+			$url = TeacherWorkspace::url( 'account', self::CARDS[ $card ] );
+		} elseif ( 'parent' === $role && ParentWorkspace::available() ) {
+			$url = ParentWorkspace::url( 'account', self::CARDS[ $card ] );
+		}
+		wp_safe_redirect( $url );
 		exit;
 	}
 

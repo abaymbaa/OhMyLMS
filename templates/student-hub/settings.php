@@ -13,19 +13,22 @@ use OhMyLMS\Student\SettingsSave;
 
 defined( 'ABSPATH' ) || exit;
 
-$hub_user    = wp_get_current_user();
-$hub_student = new Student( $hub_user->ID );
-$hub_flash   = SettingsSave::flash( $hub_user->ID );
-$hub_action  = admin_url( 'admin-post.php' );
+$hub_user     = wp_get_current_user();
+$hub_student  = new Student( $hub_user->ID );
+$hub_flash    = SettingsSave::flash( $hub_user->ID );
+$hub_action   = admin_url( 'admin-post.php' );
+$teacher_mode = ! empty( $teacher_mode );
+$parent_mode  = ! empty( $parent_mode );
 /**
  * Opening tag of a card form with its nonce and card name.
  *
  * @param string $card Card key.
  */
-$hub_open = static function ( $card ) use ( $hub_action ) {
+$hub_open = static function ( $card ) use ( $hub_action, $teacher_mode, $parent_mode ) {
 	echo '<form class="oml-hub-card oml-hub-settings-card" method="post" action="' . esc_url( $hub_action ) . '" data-hub-dirty autocomplete="off">';
 	echo '<input type="hidden" name="action" value="' . esc_attr( SettingsSave::ACTION ) . '">';
 	echo '<input type="hidden" name="card" value="' . esc_attr( $card ) . '">';
+	echo '<input type="hidden" name="hub_role" value="' . esc_attr( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : 'learner' ) ) . '">';
 	wp_nonce_field( SettingsSave::ACTION . '_' . $card );
 };
 /**
@@ -83,7 +86,7 @@ $hub_save = static function () {
 		<?php $hub_open( 'password' ); ?>
 			<h2><?php esc_html_e( 'Password', 'ohmylms' ); ?></h2>
 			<div class="oml-hub-field"><label for="hub-pass-current"><?php esc_html_e( 'Current password', 'ohmylms' ); ?></label><input id="hub-pass-current" name="password_current" type="password" autocomplete="current-password"></div>
-			<div class="oml-hub-field"><label for="hub-pass-new"><?php esc_html_e( 'New password', 'ohmylms' ); ?></label><input id="hub-pass-new" name="password1" type="password" minlength="<?php echo esc_attr( SettingsSave::MIN_PASS ); ?>" autocomplete="new-password"></div>
+			<div class="oml-hub-field"><label for="hub-pass-new"><?php esc_html_e( 'New password', 'ohmylms' ); ?></label><input id="hub-pass-new" name="password1" type="password" minlength="<?php echo esc_attr( SettingsSave::MIN_PASS ); ?>" maxlength="<?php echo esc_attr( SettingsSave::MAX_PASS ); ?>" autocomplete="new-password"></div>
 			<div class="oml-hub-field"><label for="hub-pass-confirm"><?php esc_html_e( 'Confirm new password', 'ohmylms' ); ?></label><input id="hub-pass-confirm" name="password2" type="password" autocomplete="new-password"></div>
 			<?php $hub_save(); ?>
 		</form>

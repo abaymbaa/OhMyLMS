@@ -87,6 +87,18 @@ final class PlayerContext {
 	}
 
 	/**
+	 * Use the calm shared stage in the focused shell, retaining extension designs.
+	 *
+	 * This is presentation only: saved quiz settings and frozen attempts are unchanged.
+	 *
+	 * @param string $selected Resolved presentation identifier.
+	 * @return string
+	 */
+	public static function quiz_template( $selected ) {
+		return self::$active && in_array( $selected, array( 'playful', 'classic', 'paper', 'focus' ), true ) ? 'paper' : $selected;
+	}
+
+	/**
 	 * Where "back to the course" goes: the Khan-style overview when Browse subjects is on, else the course page.
 	 *
 	 * @param int $course_id Course ID.

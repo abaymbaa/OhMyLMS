@@ -6,6 +6,9 @@
  */
 
 use OhMyLMS\Student\Hub;
+use OhMyLMS\Student\LegacyPages;
+use OhMyLMS\Student\MembershipView;
+use OhMyLMS\Student\TeacherWorkspace;
 
 if ( 'cli' !== PHP_SAPI ) {
 	exit;
@@ -32,6 +35,7 @@ $hub_enrolled = 0;
 $hub_school   = 0;
 $hub_class    = 0;
 $hub_learning = 0;
+$hub_retired  = get_option( LegacyPages::OPTION, null );
 
 /**
  * Fail immediately when an integration invariant is broken.
@@ -52,7 +56,7 @@ try {
 	wp_set_current_user( get_user_by( 'login', $hub_credentials['username'] )->ID );
 	delete_option( Hub::OPTION );
 	Hub::install_page();
-	$hub_config  = Hub::settings();
+	$hub_config = Hub::settings();
 	// Cover every section, including the legacy My work and Progress views kept for old links.
 	$hub_config['tabs'] = array_keys( Hub::sections() );
 	update_option( Hub::OPTION, Hub::sanitize( $hub_config ), false );
@@ -77,6 +81,25 @@ try {
 	ohmylms_hub_check( $hub_config['page_id'] > 0 && Hub::settings()['page_id'] === $hub_config['page_id'], 'Page installation is not idempotent.' );
 	ohmylms_hub_check( has_shortcode( get_post_field( 'post_content', $hub_config['page_id'] ), 'ohmylms_student_hub' ), 'Hub shortcode is absent.' );
 	ohmylms_hub_check( shortcode_exists( 'ohmylms_dashboard' ) && shortcode_exists( 'ohmylms_profile' ) && shortcode_exists( 'ohmylms_my_courses' ), 'A legacy shortcode was removed.' );
+	update_option(
+		LegacyPages::OPTION,
+		array(
+			999999 => array(
+				'url'      => home_url( '/retired-hub-fixture/' ),
+				'endpoint' => 'profile',
+				'option'   => 'ohmylms_student_profile_page_id',
+			),
+		)
+	);
+	$hub_retired_path = wp_parse_url( home_url( '/retired-hub-fixture/' ), PHP_URL_PATH );
+	ohmylms_hub_check( str_contains( LegacyPages::target( $hub_retired_path ), 'hub_section=account' ), 'Retired route requires its old page to remain published.' );
+	ohmylms_hub_check( str_contains( LegacyPages::target( '/?page_id=999999' ), 'hub_section=account' ), 'Retired plain permalink was lost.' );
+	ohmylms_hub_check( '' === LegacyPages::target( rtrim( $hub_retired_path, '/' ) . '-other/' ), 'Retired route captured an unrelated page.' );
+	$hub_retired_invoice = LegacyPages::target( $hub_retired_path . 'invoice-details/9/?action=bad&_wpnonce=private' );
+	ohmylms_hub_check( str_contains( $hub_retired_invoice, 'hub_view=invoice' ) && str_contains( $hub_retired_invoice, 'id=9' ) && ! str_contains( $hub_retired_invoice, 'private' ) && ! str_contains( $hub_retired_invoice, 'action=' ), 'Retired invoice route lost context or forwarded actions/nonces.' );
+	foreach ( array( 'ohmylms_dashboard', 'ohmylms_profile', 'ohmylms_my_profile', 'ohmylms_my_courses' ) as $hub_old_tag ) {
+		ohmylms_hub_check( str_contains( do_shortcode( '[' . $hub_old_tag . ']' ), 'Open your learning workspace' ), 'A compatibility tag still renders the obsolete workspace.' );
+	}
 	$hub_invalid = Hub::sanitize(
 		array(
 			'tabs'    => array( 'learn', 'learn', '../admin', array() ),
@@ -314,6 +337,43 @@ try {
 		)
 	);
 	wp_set_current_user( $hub_users[1] );
+	ohmylms_hub_check( TeacherWorkspace::available(), 'An active teacher relationship cannot enter the teacher workspace.' );
+	ohmylms_hub_check( in_array( $hub_class, array_map( 'intval', array_column( TeacherWorkspace::classes(), 'id' ) ), true ), 'Teacher cannot see their assigned class.' );
+	$wp_query->set( 'hub_role', 'teacher' );
+	$wp_query->set( 'hub_section', 'roster' );
+	$wp_query->set( 'hub_class', $hub_class );
+	ohmylms_hub_check( str_contains( Hub::shortcode(), 'Owner' ), 'Teacher roster does not show the active member.' );
+	$wp_query->set( 'hub_section', 'account' );
+	$wp_query->set( 'hub_view', 'notifications' );
+	ohmylms_hub_check( str_contains( Hub::shortcode(), 'name="hub_role" value="teacher"' ), 'Teacher Settings form lost its workspace context.' );
+	$hub_save_redirect = static function () {
+		$destination = '';
+		$capture     = static function ( $location ) use ( &$destination ) {
+			$destination = $location;
+			throw new RuntimeException( 'hub_settings_redirect_captured' );
+		};
+
+		$_POST = array(
+			'card'     => 'notifications',
+			'hub_role' => 'teacher',
+			'_wpnonce' => wp_create_nonce( \OhMyLMS\Student\SettingsSave::ACTION . '_notifications' ),
+		);
+		add_filter( 'wp_redirect', $capture );
+		try {
+			\OhMyLMS\Student\SettingsSave::handle();
+		} catch ( RuntimeException $error ) {
+			if ( 'hub_settings_redirect_captured' !== $error->getMessage() ) {
+				throw $error;
+			}
+		} finally {
+			remove_filter( 'wp_redirect', $capture );
+			$_POST = array();
+		}
+		return $destination;
+	};
+	ohmylms_hub_check( str_contains( $hub_save_redirect(), 'hub_role=teacher' ), 'Saving Settings dropped an eligible teacher into the learner workspace.' );
+	$wp_query->set( 'hub_role', '' );
+	$wp_query->set( 'hub_section', 'classes' );
 	ohmylms_hub_check( ! str_contains( Hub::shortcode(), 'Hub teacher-assigned work' ), 'Learner hub exposed another student’s assigned work to a non-student class role.' );
 	$wp_query->set( 'hub_section', 'work' );
 	$wp_query->set( 'hub_view', 'active' );
@@ -326,11 +386,18 @@ try {
 	Hub::account( 'invoice' );
 	$hub_invoice = ob_get_clean();
 	ohmylms_hub_check( str_contains( $hub_invoice, 'Choose an invoice' ), 'Another customer can read an invoice.' );
+	ohmylms_hub_check( false === MembershipView::invoice( $hub_order->get_id() ), 'Membership invoice adapter exposed another customer invoice.' );
+	ohmylms_hub_check( ! in_array( $hub_order->get_id(), wp_list_pluck( MembershipView::owned( 'ohmylms-order' )->posts, 'ID' ), true ), 'Purchases use authorship instead of customer ownership.' );
+	wp_set_current_user( $hub_users[0] );
+	ohmylms_hub_check( (bool) MembershipView::invoice( $hub_order->get_id() ), 'Owner cannot read their membership invoice.' );
+	ohmylms_hub_check( ! TeacherWorkspace::available(), 'A student without a teacher relationship gained teacher access.' );
+	ohmylms_hub_check( ! str_contains( $hub_save_redirect(), 'hub_role=teacher' ), 'A forged Settings context opened the teacher workspace for a student.' );
 	$hub_config['commerce'] = false;
 	$hub_config['tabs']     = array( 'learn', 'account' );
 	$hub_config['default']  = 'learn';
 	update_option( Hub::OPTION, $hub_config );
 	ohmylms_hub_check( ! isset( Hub::views( 'account' )['orders'] ), 'Hidden commerce views remain available in the hub.' );
+	ohmylms_hub_check( array() === Hub::views( 'membership' ) && ! in_array( 'membership', Hub::settings()['tabs'], true ), 'Disabled commerce remains in primary navigation.' );
 	$wp_query->set( 'hub_section', 'home' );
 	$wp_query->set( 'hub_view', 'invalid' );
 	ohmylms_hub_check( str_contains( Hub::shortcode(), 'Pick up where you left off.' ), 'Hidden section did not fall back to configured default (My learning).' );
@@ -341,6 +408,11 @@ try {
 	ohmylms_hub_check( '' === Hub::base_url() && '' === Hub::endpoint_url( 'dashboard' ), 'Disabling the hub did not restore legacy routing.' );
 	echo esc_html( $hub_checks . ' Student Home integration checks passed.' ) . "\n";
 } finally {
+	if ( null === $hub_retired ) {
+		delete_option( LegacyPages::OPTION );
+	} else {
+		update_option( LegacyPages::OPTION, $hub_retired, false );
+	}
 	if ( $hub_learning ) {
 		$wpdb->delete( \OhMyLMS\Schools\Schema::table( 'assignment_recipients' ), array( 'assignment_id' => $hub_learning ) );
 	}

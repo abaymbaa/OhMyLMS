@@ -59,7 +59,7 @@ final class Controller {
 			throw new \RuntimeException( 'Too many attempts. Please try again in 15 minutes.', 429 ); }
 		set_transient( $key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 	}
-	private static function signup( $data ) {
+	public static function signup( $data ) {
 		self::rate_limit( 'school_signup' );
 		Service::need( ! is_user_logged_in(), 'You are already signed in.' );
 		Service::need( empty( $data['website'] ), 'Unable to create this account.' );

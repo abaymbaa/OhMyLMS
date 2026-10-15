@@ -24,6 +24,11 @@ final class Hub {
 
 	/** Register the shortcode, settings page, and compatible legacy navigation. */
 	public static function init() {
+		LegacyPages::init();
+		TeacherActions::init();
+		ParentActions::init();
+		FamilyActions::init();
+		SchoolActivation::init();
 		add_shortcode( 'ohmylms_student_hub', array( __CLASS__, 'shortcode' ) );
 		add_action( 'admin_init', array( __CLASS__, 'install_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'upgrade' ) );
@@ -38,7 +43,7 @@ final class Hub {
 		add_filter( 'template_include', array( __CLASS__, 'page_template' ) );
 		add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
 		add_filter( 'ohmylms_get_endpoint_url', array( __CLASS__, 'endpoint_link' ), 10, 4 );
-		foreach ( array( 'student_dashboard', 'student_courses' ) as $page ) {
+		foreach ( array( 'student_dashboard', 'student_profile', 'student_courses' ) as $page ) {
 			add_filter( 'ohmylms_get_' . $page . '_page_permalink', array( __CLASS__, 'legacy_permalink' ) );
 		}
 	}
@@ -50,7 +55,7 @@ final class Hub {
 	 * @return array
 	 */
 	public static function query_vars( $vars ) {
-		return array_merge( $vars, array( 'hub_section', 'hub_view', 'hub_class', 'hub_q', 'hub_course', 'hub_period', 'hub_type', 'id', 'current_page' ) );
+		return array_merge( $vars, array( 'hub_section', 'hub_view', 'hub_class', 'hub_q', 'hub_course', 'hub_period', 'hub_type', 'hub_role', 'hub_child', 'hub_school', 'ohmylms_child_setup', 'ohmylms_family_invite', 'hub_candidate_page', 'ohmylms_invite', 'id', 'current_page' ) );
 	}
 
 	/**
@@ -66,6 +71,7 @@ final class Hub {
 			'library'      => __( 'Browse subjects', 'ohmylms' ),
 			'achievements' => __( 'Achievements', 'ohmylms' ),
 			'history'      => __( 'History', 'ohmylms' ),
+			'membership'   => __( 'Membership', 'ohmylms' ),
 			'work'         => __( 'My work', 'ohmylms' ),
 			'progress'     => __( 'Progress', 'ohmylms' ),
 			'account'      => __( 'Account', 'ohmylms' ),
@@ -130,6 +136,12 @@ final class Hub {
 		// Account must stay reachable, including when other sections are hidden.
 		if ( ! in_array( 'account', $result['tabs'], true ) ) {
 			$result['tabs'][] = 'account';
+		}
+		// Membership was always present when commerce was on; keep that behavior.
+		if ( $result['commerce'] && ! in_array( 'membership', $result['tabs'], true ) ) {
+			array_splice( $result['tabs'], array_search( 'account', $result['tabs'], true ), 0, array( 'membership' ) );
+		} elseif ( ! $result['commerce'] ) {
+			$result['tabs'] = array_values( array_diff( $result['tabs'], array( 'membership' ) ) );
 		}
 		foreach ( self::sections() as $key => $label ) {
 			$labels                   = is_array( $input['labels'] ?? null ) ? $input['labels'] : array();
@@ -226,6 +238,21 @@ final class Hub {
 	}
 
 	/**
+	 * Link for a school invitation: the hub when it can handle the role, else the old portal.
+	 *
+	 * @param string $token Raw invitation token.
+	 * @param string $role Invitation role.
+	 * @return string
+	 */
+	public static function invitation_url( $token, $role ) {
+		$base = self::base_url();
+		if ( ! $base || ( 'activation' !== $role && ! in_array( 'classes', self::settings()['tabs'], true ) ) ) {
+			return add_query_arg( 'ohmylms_invite', $token, \OhMyLMS\Schools\Views::portal_url() );
+		}
+		return add_query_arg( 'ohmylms_invite', $token, $base );
+	}
+
+	/**
 	 * Build navigation from an allowlisted section and view.
 	 *
 	 * @param string $section Section identifier.
@@ -263,6 +290,9 @@ final class Hub {
 	 * old page is asked for explicitly with ?legacy=1. Signed-out visitors keep the public course page.
 	 */
 	public static function redirect_course_page() {
+		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
+			return;
+		}
 		if ( ! is_singular( OHMYLMS_COURSE_CPT ) || ! is_user_logged_in() || isset( $_GET['preview'] ) || isset( $_GET['legacy'] ) || ! in_array( 'library', self::settings()['tabs'], true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display switch.
 			return;
 		}
@@ -286,17 +316,17 @@ final class Hub {
 			return '';
 		}
 		$map = array(
-			'dashboard'            => array( 'home', '' ),
+			'dashboard'            => array( 'learn', '' ),
 			'my-courses'           => array( 'learn', 'courses' ),
 			'profile'              => array( 'account', 'account' ),
 			'profile-edit'         => array( 'account', 'account' ),
 			'edit-profile'         => array( 'account', 'account' ),
 			'settings'             => array( 'account', 'appearance' ),
 			'notification'         => array( 'account', 'notifications' ),
-			'transactions-history' => array( 'account', 'orders' ),
-			'invoice-details'      => array( 'account', 'invoice' ),
-			'billing-information'  => array( 'account', 'billing' ),
-			'membership'           => array( 'account', 'membership' ),
+			'transactions-history' => array( 'membership', 'orders' ),
+			'invoice-details'      => array( 'membership', 'invoice' ),
+			'billing-information'  => array( 'membership', 'overview' ),
+			'membership'           => array( 'membership', 'overview' ),
 		);
 		return isset( $map[ $endpoint ] ) ? add_query_arg( $query_params, self::url( ...$map[ $endpoint ] ) ) : '';
 	}
@@ -407,6 +437,7 @@ final class Hub {
 				define( 'DONOTCACHEPAGE', true );
 			}
 			nocache_headers();
+			header( 'Referrer-Policy: no-referrer' );
 		}
 	}
 
@@ -469,18 +500,103 @@ final class Hub {
 	 * @return string
 	 */
 	public static function shortcode() {
+		$activation_token = get_query_var( 'ohmylms_invite' );
+		if ( is_string( $activation_token ) && preg_match( '/^[a-f0-9]{64}$/', $activation_token ) && 'activation' === \OhMyLMS\Schools\Service::invite_role( $activation_token ) ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/school-activation.php', array( 'activation_token' => $activation_token ) );
+			return ob_get_clean();
+		}
+		$setup_token = get_query_var( 'ohmylms_child_setup' );
+		if ( ! is_user_logged_in() && is_string( $setup_token ) && preg_match( '/^[a-f0-9]{64}$/', $setup_token ) ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/child-setup.php', array( 'setup_token' => $setup_token ) );
+			return ob_get_clean();
+		}
 		if ( ! is_user_logged_in() ) {
-			return '<div class="ohmylms-student-hub oml-hub-signin"><h2>' . esc_html__( 'Your learning space', 'ohmylms' ) . '</h2><p><a href="' . esc_url( wp_login_url( get_permalink() ) ) . '">' . esc_html__( 'Sign in to continue learning', 'ohmylms' ) . '</a></p></div>';
+			$role   = get_query_var( 'hub_role' );
+			$role   = is_string( $role ) && in_array( $role, array( 'teacher', 'parent' ), true ) ? $role : '';
+			$return = 'teacher' === $role ? TeacherWorkspace::url() : ( 'parent' === $role ? ParentWorkspace::url() : get_permalink() );
+			$invite = get_query_var( 'ohmylms_invite' );
+			if ( is_string( $invite ) && preg_match( '/^[a-f0-9]{64}$/', $invite ) ) {
+				$return = add_query_arg( 'ohmylms_invite', $invite, self::url( 'classes', 'join' ) );
+			}
+			$family_invite = get_query_var( 'ohmylms_family_invite' );
+			if ( is_string( $family_invite ) && preg_match( '/^[a-f0-9]{64}$/', $family_invite ) ) {
+				$return = add_query_arg( 'ohmylms_family_invite', $family_invite, self::url() );
+			}
+			ob_start();
+			ohmylms_get_template(
+				'student-hub/signin.php',
+				array(
+					'signin_role'   => $role,
+					'signin_return' => $return,
+				)
+			);
+			return ob_get_clean();
+		}
+		$family_invite = get_query_var( 'ohmylms_family_invite' );
+		if ( is_string( $family_invite ) && preg_match( '/^[a-f0-9]{64}$/', $family_invite ) ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/family-invite.php', array( 'family_token' => $family_invite ) );
+			return ob_get_clean();
 		}
 		$config  = self::settings();
 		$section = get_query_var( 'hub_section' );
-		$section = is_string( $section ) && in_array( $section, $config['tabs'], true ) ? $section : $config['default'];
-		$views   = self::views( $section );
-		$view    = get_query_var( 'hub_view' );
-		$view    = is_string( $view ) && isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
-		$student = new Student( get_current_user_id() );
+		$direct_invite = get_query_var( 'ohmylms_invite' );
+		if ( ! $section && is_string( $direct_invite ) && preg_match( '/^[a-f0-9]{64}$/', $direct_invite ) && in_array( 'classes', $config['tabs'], true ) ) {
+			$section = 'classes';
+			set_query_var( 'hub_view', 'join' );
+		}
+		if ( ! $section && 'home' === $config['default'] ) {
+			$landing = self::learner_classes() ? 'classes' : 'learn';
+			$section = in_array( $landing, $config['tabs'], true ) ? $landing : $config['default'];
+		}
+		$requested_view = get_query_var( 'hub_view' );
+		if ( $config['commerce'] && 'account' === $section && in_array( $requested_view, array( 'membership', 'orders', 'invoice', 'billing' ), true ) ) {
+			$section = 'membership';
+			if ( in_array( $requested_view, array( 'membership', 'billing' ), true ) ) {
+				set_query_var( 'hub_view', 'overview' );
+			}
+		}
+		$section  = is_string( $section ) && in_array( $section, $config['tabs'], true ) ? $section : $config['default'];
+		$views    = self::views( $section );
+		$view     = get_query_var( 'hub_view' );
+		$view     = is_string( $view ) && isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
+		$student  = new Student( get_current_user_id() );
+		$hub_role = get_query_var( 'hub_role' );
+		if ( '' === $hub_role && ! get_query_var( 'hub_section' ) && ParentWorkspace::parent_only() ) {
+			$hub_role = 'parent';
+		}
+		$teacher_mode = 'teacher' === $hub_role;
+		$parent_mode  = 'parent' === $hub_role;
+		if ( $parent_mode ) {
+			if ( ! ParentWorkspace::available() ) {
+				return '<p>' . esc_html__( 'The parent workspace is not available for this account.', 'ohmylms' ) . '</p>';
+			}
+			$config['tabs']             = array( 'family', 'account' );
+			$config['title']            = __( 'Family workspace', 'ohmylms' );
+			$config['labels']['family'] = __( 'My children', 'ohmylms' );
+			$section                    = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'family';
+			$views                      = 'family' === $section ? array() : self::views( $section );
+			$view                       = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
+		}
+		if ( $teacher_mode ) {
+			if ( ! TeacherWorkspace::available() ) {
+				return '<p>' . esc_html__( 'The teacher workspace is not available for this account.', 'ohmylms' ) . '</p>';
+			}
+			$config['tabs']                     = array( 'classes', 'work', 'roster', 'progress', 'class-settings', 'library', 'account' );
+			$config['title']                    = __( 'Teacher workspace', 'ohmylms' );
+			$config['labels']['classes']        = __( 'My classes', 'ohmylms' );
+			$config['labels']['work']           = __( 'Assignments', 'ohmylms' );
+			$config['labels']['roster']         = __( 'Roster', 'ohmylms' );
+			$config['labels']['progress']       = __( 'Reports', 'ohmylms' );
+			$config['labels']['class-settings'] = __( 'Class settings', 'ohmylms' );
+			$section                            = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'classes';
+			$views                              = in_array( $section, array( 'classes', 'work', 'roster', 'progress', 'class-settings' ), true ) ? array() : self::views( $section );
+			$view                               = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
+		}
 		ob_start();
-		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student' ) );
+		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student', 'teacher_mode', 'parent_mode' ) );
 		return ob_get_clean();
 	}
 
@@ -491,6 +607,14 @@ final class Hub {
 	 * @return array
 	 */
 	public static function views( $section ) {
+		if ( 'membership' === $section ) {
+			return self::settings()['commerce'] ? array(
+				'overview' => __( 'Overview', 'ohmylms' ),
+				'plans'    => __( 'Plans', 'ohmylms' ),
+				'orders'   => __( 'Purchases', 'ohmylms' ),
+				'invoice'  => __( 'Invoice', 'ohmylms' ),
+			) : array();
+		}
 		if ( 'classes' === $section ) {
 			return array(
 				'assignments' => __( 'Assignments', 'ohmylms' ),
@@ -523,16 +647,6 @@ final class Hub {
 			'notifications' => __( 'Notifications', 'ohmylms' ),
 			'classes'       => __( 'Connections', 'ohmylms' ),
 		);
-		if ( self::settings()['commerce'] ) {
-			$views += array(
-				'orders'  => __( 'Purchases', 'ohmylms' ),
-				'invoice' => __( 'Invoice', 'ohmylms' ),
-				'billing' => __( 'Billing', 'ohmylms' ),
-			);
-			if ( ohmylms_is_pro() ) {
-				$views['membership'] = __( 'Membership', 'ohmylms' );
-			}
-		}
 		return $views;
 	}
 
@@ -548,7 +662,7 @@ final class Hub {
 		global $wpdb;
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT DISTINCT c.id,c.name,c.subject,c.grade,c.school_id,s.name AS school_name FROM %i c JOIN %i m ON m.class_id=c.id AND m.user_id=%d AND m.role='student' AND m.status='active' JOIN %i s ON s.id=c.school_id AND s.status='active' JOIN %i sm ON sm.school_id=s.id AND sm.user_id=m.user_id AND sm.role='student' AND sm.status='active' WHERE c.status='active' ORDER BY s.name,c.name",
+				"SELECT DISTINCT c.id,c.name,c.subject,c.grade,c.school_id,s.name AS school_name FROM %i c JOIN %i m ON m.class_id=c.id AND m.user_id=%d AND m.role='student' AND m.status='active' LEFT JOIN %i s ON s.id=c.school_id AND s.status='active' LEFT JOIN %i sm ON sm.school_id=s.id AND sm.user_id=m.user_id AND sm.role='student' AND sm.status='active' WHERE c.status='active' AND (c.school_id=0 OR (s.id IS NOT NULL AND sm.id IS NOT NULL)) ORDER BY s.name,c.name",
 				\OhMyLMS\Schools\Schema::table( 'classes' ),
 				\OhMyLMS\Schools\Schema::table( 'class_memberships' ),
 				get_current_user_id(),
@@ -576,15 +690,16 @@ final class Hub {
 		global $wpdb;
 		$teachers  = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT DISTINCT u.display_name FROM %i m JOIN %i u ON u.ID=m.user_id JOIN %i sm ON sm.school_id=%d AND sm.user_id=m.user_id AND sm.role='teacher' AND sm.status='active' WHERE m.class_id=%d AND m.role='teacher' AND m.status='active' ORDER BY u.display_name",
+				"SELECT DISTINCT u.display_name FROM %i m JOIN %i u ON u.ID=m.user_id LEFT JOIN %i sm ON sm.school_id=%d AND sm.user_id=m.user_id AND sm.role='teacher' AND sm.status='active' WHERE m.class_id=%d AND m.role='teacher' AND m.status='active' AND (%d=0 OR sm.id IS NOT NULL) ORDER BY u.display_name",
 				\OhMyLMS\Schools\Schema::table( 'class_memberships' ),
 				$wpdb->users,
 				\OhMyLMS\Schools\Schema::table( 'school_memberships' ),
 				$classes[ $class_id ]['school_id'],
-				$class_id
+				$class_id,
+				$classes[ $class_id ]['school_id']
 			)
 		);
-		$guardians = $wpdb->get_col(
+		$guardians = (int) $classes[ $class_id ]['school_id'] ? $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT DISTINCT u.display_name FROM %i g JOIN %i u ON u.ID=g.guardian_user_id WHERE g.school_id=%d AND g.student_user_id=%d AND g.status='active' ORDER BY u.display_name",
 				\OhMyLMS\Schools\Schema::table( 'guardian_links' ),
@@ -592,7 +707,7 @@ final class Hub {
 				$classes[ $class_id ]['school_id'],
 				get_current_user_id()
 			)
-		);
+		) : array();
 		return array(
 			'teachers'  => $teachers,
 			'guardians' => $guardians,
@@ -670,6 +785,9 @@ final class Hub {
 		// Unchecked boxes are not submitted, so state both explicitly.
 		$input['library_types']   = isset( $input['library_types'] ) && is_array( $input['library_types'] ) ? $input['library_types'] : array();
 		$input['library_bundles'] = ! empty( $input['library_bundles'] );
+		if ( empty( $input['enabled'] ) ) {
+			LegacyPages::restore();
+		}
 		update_option( self::OPTION, self::sanitize( $input ), false );
 		// Wording applies site-wide, so it is saved with the same capability and nonce check.
 		$terms = isset( $_POST['terms'] ) && is_array( $_POST['terms'] ) ? map_deep( wp_unslash( $_POST['terms'] ), 'sanitize_text_field' ) : array();

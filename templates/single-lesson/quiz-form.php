@@ -52,6 +52,7 @@ if ( $attempt_context ) {
 }
 
 $player_template = \OhMyLMS\Quiz\PlayerTemplates::resolve( $settings['player_template'] ?? \OhMyLMS\Quiz\PlayerTemplates::DEFAULT_TEMPLATE );
+$player_template = \OhMyLMS\Student\PlayerContext::quiz_template( $player_template );
 \OhMyLMS\Quiz\PlayerTemplates::enqueue( $player_template );
 $quiz_layout = is_array( $settings ) && isset( $settings['layout'] ) ? $settings['layout'] : 'one_question_per_page';
 if ( ! in_array( $quiz_layout, array( 'one_question_per_page', 'all_questions_in_one_page', 'number_of_questions_per_page' ), true ) ) {

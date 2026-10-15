@@ -24,9 +24,9 @@ $work_page       = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 	<div class="oml-hub-card">
 		<h2><?php esc_html_e( 'Accept an invitation', 'ohmylms' ); ?></h2>
 		<p><?php esc_html_e( 'Paste the OhMyLMS invitation link or invitation code you received. Sign in using the email address it was sent to.', 'ohmylms' ); ?></p>
-		<form data-hub-invitation data-endpoint="<?php echo esc_url( rest_url( 'ohmylms/v1/school/accept' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>" data-error="<?php esc_attr_e( 'Could not accept this invitation. Check the link and try again.', 'ohmylms' ); ?>" data-success="<?php esc_attr_e( 'Invitation accepted. Open My classes to see your class.', 'ohmylms' ); ?>">
+		<form data-hub-invitation data-endpoint="<?php echo esc_url( rest_url( 'ohmylms/v1/school/accept' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>" data-error="<?php esc_attr_e( 'Could not accept this invitation. Check the link and try again.', 'ohmylms' ); ?>" data-success="<?php esc_attr_e( 'Invitation accepted. Open My classes, or use Switch role at the top to open your new workspace.', 'ohmylms' ); ?>">
 			<label for="hub-invitation"><?php esc_html_e( 'Invitation link or code', 'ohmylms' ); ?></label>
-			<input id="hub-invitation" name="invitation" type="text" required autocomplete="off" spellcheck="false">
+			<input id="hub-invitation" name="invitation" type="text" value="<?php echo esc_attr( is_string( get_query_var( 'ohmylms_invite' ) ) ? get_query_var( 'ohmylms_invite' ) : '' ); ?>" required autocomplete="off" spellcheck="false">
 			<button type="submit" class="oml-hub-button"><?php esc_html_e( 'Accept invitation', 'ohmylms' ); ?></button>
 			<p role="status" aria-live="polite" data-invitation-status></p>
 		</form>
@@ -44,6 +44,7 @@ $work_page       = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 			<a class="oml-hub-textlink" href="<?php echo esc_url( Hub::url( 'classes', 'join' ) ); ?>"><?php esc_html_e( 'Join a class', 'ohmylms' ); ?></a>
 		</p>
 	</section>
+	<?php ohmylms_get_template( 'student-hub/family-connections.php' ); ?>
 	<?php return; ?>
 <?php endif; ?>
 
@@ -55,7 +56,7 @@ $work_page       = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 	<label class="screen-reader-text" for="hub-class"><?php esc_html_e( 'Class', 'ohmylms' ); ?></label>
 	<select name="hub_class" id="hub-class">
 		<?php foreach ( $learner_classes as $learner_class ) : ?>
-			<option value="<?php echo esc_attr( $learner_class['id'] ); ?>" <?php selected( $class_id, $learner_class['id'] ); ?>><?php echo esc_html( $learner_class['name'] . ' · ' . $learner_class['school_name'] ); ?></option>
+			<option value="<?php echo esc_attr( $learner_class['id'] ); ?>" <?php selected( $class_id, $learner_class['id'] ); ?>><?php echo esc_html( $learner_class['name'] . ( $learner_class['school_name'] ? ' · ' . $learner_class['school_name'] : '' ) ); ?></option>
 		<?php endforeach; ?>
 	</select>
 	<button type="submit" class="oml-hub-button"><?php esc_html_e( 'Open class', 'ohmylms' ); ?></button>
@@ -82,6 +83,7 @@ $work_page       = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 			</article>
 		<?php endforeach; ?>
 	</div>
+	<?php ohmylms_get_template( 'student-hub/family-connections.php' ); ?>
 	<?php return; ?>
 <?php endif; ?>
 

@@ -121,6 +121,10 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function my_profile( $atts ) {
+		$link = \OhMyLMS\Student\LegacyPages::link( 'profile' );
+		if ( $link ) {
+			return $link;
+		}
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyProfile', 'output' ), $atts );
 	}
 
@@ -132,6 +136,10 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function dashboard( $atts ) {
+		$link = \OhMyLMS\Student\LegacyPages::link( 'dashboard' );
+		if ( $link ) {
+			return $link;
+		}
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeDashboard', 'output' ), $atts );
 	}
 
@@ -143,6 +151,10 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function profile( $atts ) {
+		$link = \OhMyLMS\Student\LegacyPages::link( 'profile' );
+		if ( $link ) {
+			return $link;
+		}
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeProfile', 'output' ), $atts );
 	}
 
@@ -154,6 +166,10 @@ class Shortcodes {
 	 * @since 1.0.0
 	 */
 	public static function my_courses( $atts ) {
+		$link = \OhMyLMS\Student\LegacyPages::link( 'my-courses' );
+		if ( $link ) {
+			return $link;
+		}
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyCourses', 'output' ), $atts );
 	}
 

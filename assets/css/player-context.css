@@ -35,6 +35,7 @@
 	--player-selected: #eeedff;
 	--ohmylms-heading-color: var(--player-text);
 	--ohmylms-text-color: var(--player-text);
+	--ohmylms-body-text-color: var(--player-text);
 	--ohmylms-primary-color: var(--player-accent);
 	min-height: 100vh;
 	background: var(--player-page);
@@ -199,6 +200,15 @@
 	margin-top: 24px;
 }
 
+body.ohmylms-page .oml-player .ohmylms-lesson-details .ohmylms-lesson-navigation {
+	border-color: var(--player-border);
+	background: var(--player-surface);
+}
+
+body.ohmylms-page .oml-player .ohmylms-lesson-details .ohmylms-lesson-navigation .ohmylms-checkbox {
+	background: #5753fa;
+}
+
 .oml-player-taking-quiz .oml-player-layout {
 	grid-template-columns: minmax(0, 1fr);
 }
@@ -207,6 +217,7 @@
 .oml-player-taking-quiz .oml-player-main {
 	--ohmylms-heading-color: #1b1c2e;
 	--ohmylms-text-color: #5d6075;
+	--ohmylms-body-text-color: #1b1c2e;
 	--ohmylms-primary-color: #5753fa;
 	padding: 0;
 	background: #fff;
@@ -236,4 +247,35 @@
 	.oml-player .ohmylms-lesson-navigation {
 		padding: 16px;
 	}
+}
+
+/* The focused quiz uses the shared paper stage with the workspace accent. */
+body.ohmylms-page .oml-player .ohmylms-quiz.ohmylms-player-template-paper {
+	--player-stage: #fff;
+	--player-canvas: #fff;
+	--player-toolbar: #fff;
+	--player-toolbar-text: #1b1c2e;
+	--player-text: #1b1c2e;
+	--player-accent: #5753fa;
+	font-family: inherit;
+}
+
+body.ohmylms-page .oml-player .ohmylms-quiz[data-player-template] .ohmylms-container {
+	width: min(100% - 32px, 800px);
+}
+
+body.ohmylms-page .oml-player .ohmylms-quiz[data-player-template] .ohmylms-quiz-form .quiz-checkbox-radio-options {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+body.ohmylms-page .oml-player .ohmylms-quiz[data-player-template] .ohmylms-button {
+	border-radius: 12px;
+	background: #5753fa;
+	box-shadow: 0 4px 0 #363498;
+	color: #fff;
+}
+
+body.ohmylms-page .oml-player .ohmylms-quiz[data-player-template] .ohmylms-button:disabled {
+	box-shadow: none;
+	opacity: 0.5;
 }

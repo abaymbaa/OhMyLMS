@@ -186,6 +186,15 @@ class Ajax {
 		}
 
 		$checkout_url = ohmylms_get_checkout_url();
+		if ( ! $checkout_url ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => __( 'Enrollment is temporarily unavailable. Please contact the site administrator.', 'ohmylms' ),
+				),
+				503
+			);
+		}
 
 		// Not logged in + guest checkout disabled → redirect to checkout which has its own login form.
 		if ( ! is_user_logged_in() && ! ohmylms_is_guest_purchase_enabled() ) {

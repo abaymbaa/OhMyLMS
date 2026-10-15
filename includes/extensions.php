@@ -40,6 +40,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();
 \OhMyLMS\Schools\Bootstrap::init();
+\OhMyLMS\Family\Bootstrap::init();
 add_action( 'plugins_loaded', array( 'OhMyLMS\\Extensions\\Modules', 'load' ) );
 /** The Quiz Player for a quiz, as HTML: the same player the block and [ohmylms_quiz] show, for themes and templates. */
 function ohmylms_get_quiz_player( $quiz_id ) {

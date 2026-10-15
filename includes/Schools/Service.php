@@ -312,7 +312,7 @@ final class Service {
 				'created_at'      => self::now(),
 			)
 		);
-		$url   = add_query_arg( 'ohmylms_invite', $token, Views::portal_url() );
+		$url   = \OhMyLMS\Student\Hub::invitation_url( $token, $role );
 		// Return the link to the authorized staff member. Mail is sent only on an explicit UI action.
 		if ( ! empty( $data['send_email'] ) && $role !== 'activation' ) {
 			$sent = wp_mail( $email, __( 'Your OhMyLMS invitation', 'ohmylms' ), sprintf( __( 'Open this invitation within 48 hours: %s', 'ohmylms' ), $url ) );
@@ -338,6 +338,20 @@ final class Service {
 		self::audit( $school, 'invitation_revoked', $id );
 		return array( 'success' => true );
 	}
+	/**
+	 * Role of a currently valid invitation, without consuming it; empty when invalid.
+	 *
+	 * @param string $token Raw token.
+	 * @return string
+	 */
+	public static function invite_role( $token ) {
+		global $wpdb;
+		if ( ! is_string( $token ) || ! preg_match( '/^[a-f0-9]{64}$/', $token ) ) {
+			return '';
+		}
+		$role = $wpdb->get_var( $wpdb->prepare( 'SELECT role FROM %i WHERE token_hash=%s AND consumed_at IS NULL AND revoked_at IS NULL AND expires_at>%s', Schema::table( 'school_invitations' ), hash( 'sha256', $token ), self::now() ) );
+		return $role ? (string) $role : '';
+	}
 	public static function accept( $token, $password = '' ) {
 		global $wpdb;
 		self::need( is_string( $token ) && preg_match( '/^[a-f0-9]{64}$/', $token ), 'Invalid invitation.' );
@@ -347,6 +361,9 @@ final class Service {
 				$invite = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE token_hash=%s FOR UPDATE", hash( 'sha256', $token ) ), ARRAY_A );
 				self::need( $invite && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This invitation has expired or has already been used.' );
 				$school     = (int) $invite['school_id'];
+				if ( 0 === $school ) {
+					return ClassManagement::accept( $invite );
+				}
 				$school_row = self::row( 'schools', $school );
 				self::need( $school_row && $school_row['status'] === 'active', 'This school is inactive.' );
 				$issuer = get_userdata( $invite['invited_by'] );
