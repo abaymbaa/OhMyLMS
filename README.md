@@ -9,7 +9,6 @@ WordPress LMS with editable React feature modules and a reproducible source buil
 - [Block cleanup](docs/BLOCK-CLEANUP.md): retired editor blocks and existing-content compatibility.
 - [Content Hub](docs/CONTENT-HUB.md): one place for courses (grades, exams and subjects built from chapters and skills), the lesson library and the skill library. Skills are a core feature.
 - [Curriculum and Course Bundles](docs/CURRICULUM-BUNDLES.md): curriculum structures (which replace course categories), Course Bundles (which replace course tags), shared-skill mappings and the learner dashboard.
-- [Profile Builder](docs/PROFILE-BUILDER.md): the student dashboard as a block-editor layout of server-rendered section blocks, with a locked default, reset and permissions.
 - [Syllabuses](docs/SYLLABUS.md): turn any curriculum item into a syllabus with skill groups and skills, and import it from a CSV file.
 - [MCP connections](docs/MCP.md): authenticated LMS tools for OpenAI, Anthropic, and Gemini.
 - [Acceptance status](docs/ACCEPTANCE.md): tested scope and compatibility limitations.

@@ -202,12 +202,6 @@
   margin-bottom: 28px;
 }
 
-/* Group blocks add flow-layout margins between children; the grids use gap instead. */
-.oml-dashboard-main-grid > *,
-.oml-dashboard-bottom-grid > * {
-  margin-block: 0;
-}
-
 .oml-dashboard-card,
 .oml-dashboard-aside .ohmylms-streak-card {
   background: #fff;
