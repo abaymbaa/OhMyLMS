@@ -255,7 +255,19 @@
 
 .ohmylms-skill-studio .ohmylms-studio-edge-label text {
 	fill: #1d2327;
-	font-size: 11px;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge:focus-visible {
+	outline: none;
+}
+
+.ohmylms-skill-studio .ohmylms-studio-edge:hover .ohmylms-studio-edge-label rect,
+.ohmylms-skill-studio .ohmylms-studio-edge:focus-visible .ohmylms-studio-edge-label rect,
+.ohmylms-skill-studio .ohmylms-studio-edge.is-selected .ohmylms-studio-edge-label rect {
+	stroke: var(--wp-admin-theme-color, #3858e9);
+	stroke-width: 2px;
 }
 
 .ohmylms-skill-studio .ohmylms-studio-edge.is-pending .ohmylms-studio-edge-label rect {

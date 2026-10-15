@@ -347,6 +347,17 @@ window.dispatchEvent(
 	new CustomEvent( 'ohmylms:extensions-ready', { detail: publicApi } )
 );
 function mountSlots() {
+	const assistant = document.getElementById( 'ohmylms-admin-assistant-root' );
+	if ( assistant ) {
+		import(
+			/* webpackChunkName: "admin-assistant" */ '../features/assistant/launcher'
+		)
+			.then( ( { mountAssistant } ) => mountAssistant( assistant ) )
+			.catch( () => {
+				assistant.textContent =
+					'The administrator assistant could not load. Refresh to retry.';
+			} );
+	}
 	if ( document.querySelector( '[data-ohmylms-registration-fields]' ) ) {
 		import(
 			/* webpackChunkName: "registration" */ '../features/students/mountRegistration'

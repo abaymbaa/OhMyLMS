@@ -97,6 +97,17 @@ try {
     $current = Comparison::shared_skill( $shared['id'] );
     $renamed = Comparison::save_shared( $shared['id'], array( 'name' => 'Renamed equation ' . $tag, 'subject' => 'General', 'topic' => 'Equations', 'expected_revision' => $current['revision'] ) );
     ok( $renamed['id'] === $shared['id'] && $renamed['uuid'] === $shared['uuid'], 'rename and grouping preserve stable identity' );
+    $mapping_post_reads = 0;
+    $mapping_query_probe = static function ( $query ) use ( &$mapping_post_reads, $wpdb ) {
+        if ( preg_match( '/\b(?:FROM|JOIN)\s+`?' . preg_quote( $wpdb->posts, '/' ) . '`?\b/i', $query ) ) { ++$mapping_post_reads; }
+        return $query;
+    };
+    add_filter( 'query', $mapping_query_probe );
+    $mapping_summary = SkillMappings::for_skill( $objectives[0] );
+    remove_filter( 'query', $mapping_query_probe );
+    ok( 0 === $mapping_post_reads, 'mapping summaries do not expand lesson or course resources' );
+    ok( $mapping_summary['maps_to'][0]['shared']['name'] === $renamed['name'], 'mapping summary reflects a renamed target without stale cache' );
+    ok( array( 'id', 'name', 'code' ) === array_keys( $mapping_summary['maps_to'][0]['shared'] ), 'mapping endpoint summary contract retained' );
     ok( is_wp_error( Comparison::save_shared( $shared['id'], array( 'name' => 'Stale', 'expected_revision' => $current['revision'] ) ) ), 'stale skill edits rejected' );
     foreach ( array( OHMYLMS_LESSON_CPT, OHMYLMS_QUIZ_CPT, OHMYLMS_ASSIGNMENT_CPT ) as $type ) {
         $post = wp_insert_post( array( 'post_type' => $type, 'post_title' => 'Shared resource ' . $tag, 'post_status' => 'publish' ) ); $posts[] = $post;

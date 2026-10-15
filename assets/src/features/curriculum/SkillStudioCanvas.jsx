@@ -307,7 +307,9 @@ export function SkillStudioCanvas( {
 										pending
 											? proposal.relation
 											: mapping.relation
-									];
+									] ||
+									mapping?.relation ||
+									proposal?.relation;
 								const path = `M ${ x1 } ${ y1 } C ${ mid } ${ y1 }, ${ mid } ${ y2 }, ${ x2 } ${ y2 }`;
 								const labelWidth = Math.max(
 									90,
@@ -316,7 +318,30 @@ export function SkillStudioCanvas( {
 								return (
 									<g
 										key={ row.term_id }
-										className={ `ohmylms-studio-edge${ pending ? ' is-pending' : '' }${ mapping?.group_uuid ? ' is-combined' : '' }` }
+										className={ `ohmylms-studio-edge${ pending ? ' is-pending' : '' }${ mapping?.group_uuid ? ' is-combined' : '' }${ selectedId === row.term_id ? ' is-selected' : '' }` }
+										role="button"
+										tabIndex={ disabled ? -1 : 0 }
+										aria-disabled={ disabled }
+										aria-label={ sprintf(
+											/* translators: 1: objective name, 2: relationship type. */
+											__(
+												'Edit connection for %1$s: %2$s',
+												'ohmylms'
+											),
+											row.name,
+											label
+										) }
+										onKeyDown={ ( event ) => {
+											if (
+												event.key === 'Enter' ||
+												event.key === ' '
+											) {
+												event.preventDefault();
+												if ( ! disabled ) {
+													onConnection( row );
+												}
+											}
+										} }
 										onClick={ () =>
 											! disabled && onConnection( row )
 										}

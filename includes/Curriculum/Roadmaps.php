@@ -7,6 +7,8 @@
 
 namespace OhMyLMS\Curriculum;
 
+use OhMyLMS\Skills\Taxonomy;
+
 defined( 'ABSPATH' ) || exit;
 
 /** Uses the existing ordered syllabus workspace without duplicating skills. */
@@ -52,12 +54,16 @@ final class Roadmaps {
 				$ids   = $row['is_shared'] ? array( $row['term_id'] ) : array_column( $row['maps_to'], 'shared_id' );
 				$found = false;
 				foreach ( $ids as $shared_id ) {
-					$skill = Comparison::shared_skill( $shared_id );
-					if ( $skill ) {
+					if ( isset( $skills[ $shared_id ] ) ) {
+						$found = true;
+						continue;
+					}
+					$term = get_term( (int) $shared_id, Taxonomy::NAME );
+					if ( $term && ! is_wp_error( $term ) && metadata_exists( 'term', $shared_id, Comparison::SUBJECT_META ) ) {
 						$found                = true;
 						$skills[ $shared_id ] = array(
 							'id'   => (int) $shared_id,
-							'name' => $skill['name'],
+							'name' => Taxonomy::plain( $term->name ),
 						);
 					}
 				}

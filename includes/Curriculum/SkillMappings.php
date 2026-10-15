@@ -26,23 +26,31 @@ final class SkillMappings {
 	public static function table() {
 		return Schema::table( 'skill_mappings' ); }
 
+	/**
+	 * Read only the identity fields that a mapping exposes.
+	 *
+	 * @param int $term_id Skill term ID.
+	 * @return array|null
+	 */
+	private static function term_summary( $term_id ) {
+		$term = get_term( (int) $term_id, Taxonomy::NAME );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return null;
+		}
+		return array(
+			'id'   => (int) $term->term_id,
+			'name' => Taxonomy::plain( $term->name ),
+			'code' => (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ),
+		);
+	}
+
 	private static function describe( array $row ) {
-		$specific = Taxonomy::describe( (int) $row['specific_term_id'] );
-		$shared   = Taxonomy::describe( (int) $row['shared_term_id'] );
 		return array(
 			'id'          => (int) $row['id'],
 			'specific_id' => (int) $row['specific_term_id'],
 			'shared_id'   => (int) $row['shared_term_id'],
-			'specific'    => $specific ? array(
-				'id'   => $specific['id'],
-				'name' => $specific['name'],
-				'code' => $specific['code'],
-			) : null,
-			'shared'      => $shared ? array(
-				'id'   => $shared['id'],
-				'name' => $shared['name'],
-				'code' => $shared['code'],
-			) : null,
+			'specific'    => self::term_summary( $row['specific_term_id'] ),
+			'shared'      => self::term_summary( $row['shared_term_id'] ),
 			'relation'    => $row['relation'],
 			'group_uuid'  => $row['group_uuid'] ?? '',
 			'note'        => (string) $row['note'],
@@ -56,6 +64,17 @@ final class SkillMappings {
 		$term_id = (int) $term_id;
 		$up      = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE specific_term_id=%d ORDER BY id', $term_id ), ARRAY_A );
 		$down    = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE shared_term_id=%d ORDER BY id', $term_id ), ARRAY_A );
+		$rows    = array_merge( $up, $down );
+		if ( $rows ) {
+			get_terms(
+				array(
+					'taxonomy'   => Taxonomy::NAME,
+					'include'    => array_unique( array_merge( array_column( $rows, 'specific_term_id' ), array_column( $rows, 'shared_term_id' ) ) ),
+					'hide_empty' => false,
+					'number'     => 0,
+				)
+			);
+		}
 		return array(
 			'maps_to'     => array_map( array( __CLASS__, 'describe' ), $up ),
 			'mapped_from' => array_map( array( __CLASS__, 'describe' ), $down ),
