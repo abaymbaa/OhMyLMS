@@ -16,6 +16,12 @@ class Shortcodes {
 	 * Init shortcodes
 	 */
 	public static function init() {
+		\OhMyLMS\Student\Hub::init();
+		\OhMyLMS\Utility\Terminology::init();
+		\OhMyLMS\QuestionBank\ImportPage::init();
+		\OhMyLMS\Student\LearnerCatalog::init();
+		\OhMyLMS\Student\SettingsSave::init();
+		\OhMyLMS\Student\PlayerContext::init();
 		$shortcodes = array(
 			'ohmylms_offer_button'    => __CLASS__ . '::offer_button',
 			'ohmylms_checkout'        => __CLASS__ . '::checkout',

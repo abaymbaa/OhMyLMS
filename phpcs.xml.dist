@@ -13,6 +13,10 @@
   <exclude-pattern>*/vendor/*</exclude-pattern>
   <exclude-pattern>*/node_modules/*</exclude-pattern>
   <rule ref="WordPress"/>
+  <!-- This new service follows the repository's Composer PSR-4 class/file mapping. -->
+  <rule ref="WordPress.Files.FileName">
+    <exclude-pattern>*/includes/Student/Hub.php</exclude-pattern>
+  </rule>
   <rule ref="WordPress.WP.I18n">
     <properties><property name="text_domain" type="array"><element value="ohmylms"/></property></properties>
   </rule>

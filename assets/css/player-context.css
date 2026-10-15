@@ -1,0 +1,31 @@
+.oml-player-context {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 10px 24px;
+	border-bottom: 1px solid #dcdeeb;
+	background: #fff;
+	color: #1b1c2e;
+	font-size: 14px;
+}
+
+.oml-player-context .oml-player-exit {
+	color: #3b39c9;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.oml-player-context .oml-player-exit:hover,
+.oml-player-context .oml-player-exit:focus-visible {
+	text-decoration: underline;
+}
+
+.oml-player-context .oml-player-course {
+	overflow: hidden;
+	color: #5d6075;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

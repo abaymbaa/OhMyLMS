@@ -193,6 +193,11 @@ function ohmylms_get_account_menu_item_classes( $endpoint ) {
  * @return string
  */
 function ohmylms_get_account_endpoint_url( $endpoint, $query_params = array() ) {
+	$hub_url = \OhMyLMS\Student\Hub::endpoint_url( $endpoint, $query_params );
+	if ( $hub_url ) {
+		return $hub_url;
+	}
+
 	if ( 'dashboard' === $endpoint ) {
 		return ohmylms_get_page_permalink( 'student_dashboard' );
 	}

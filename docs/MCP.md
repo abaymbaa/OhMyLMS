@@ -144,6 +144,27 @@ findings, and the new acceptance fixture passes PHPCS. Existing `Server.php`, `A
 MCP test harnesses retain legacy standards findings; this update is not a repository-wide lint cleanup.
 The course fixture retains two CLI file-I/O warnings.
 
+## Question bank: classify and import with AI
+
+Four tools let an AI assistant classify past papers or any other questions and put them in the question bank
+**without being able to make them count toward learner progress**. Approval stays with a person.
+
+| Tool | Arguments |
+| --- | --- |
+| `search_skill_catalogue` | Optional `search` (name words, code such as `DSAT.D.1.5`, or UUID), `parent_id` (direct children of one skill), `page`, `per_page` (1-50, default 20). Returns `id`, `uuid`, `code`, `name`, `objective`, `parent_id`, `path` (ancestors) and `children` per skill. |
+| `import_questions` | `rows` (up to 100 objects), `dry_run` (**default true**), `bank_id`, `update_existing`, `skip_invalid`. See `docs/QUESTION-BULK-IMPORT.md` for the row fields; rows may also carry `confidence` (0-1) and `notes` (why those skills). There is no `approve` argument. |
+| `list_questions_for_review` | Optional `page`, `per_page` (1-20), `search`. Returns the questions waiting for review with text, skills, level, family, confidence, notes and version information. |
+| `review_questions` | `ids` (1-50) and `decision`: `approve` (approves the current version and clears the flag) or `dismiss` (clears the flag without approving). |
+
+How it works:
+- Rows imported through MCP are **always** saved as unapproved drafts and **flagged for review**; the server forces this, so a client cannot opt out. A question with no approved version is never drawn into practice and never moves SmartScore or a learner's progress bar.
+- `dry_run` defaults to true. Call `import_questions` once to see per-row errors (unknown skill code, wrong answer letter, missing fields), fix them, then call it again with `dry_run: false`.
+- Sending the same rows again updates the same questions (they are identified by exam, paper, year, section, number and language), and changing a question puts it back in review while its previously approved version stays in use.
+- People can review without any AI client under **OhMyLMS > Import questions > Waiting for review**.
+- `review_questions` changes what learners are measured on. Prefer approving in the admin page; if an assistant approves, it should only do so for questions a person asked it to approve.
+- Suggested classification loop for an assistant: read the paper, call `search_skill_catalogue` for each question's topic, choose the most specific skill the question really tests (the first skill is primary), set a lower `confidence` when unsure, dry-run, correct, import, then tell the person how many are waiting.
+- Reconnect or refresh tool discovery after updating the plugin, and add the four names to any client allowlist. No new token is needed.
+
 ## WordPress abilities
 
 Each tool is backed by an ability in the `ohmylms` category, for example

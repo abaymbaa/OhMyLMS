@@ -124,18 +124,18 @@ class FrontendAssets extends Assets {
 					$localized_data['video_progress_nonce']        = wp_create_nonce( 'video_progress_nonce' );
 				}
 
-				if ( ohmylms_is_single_course_page() || is_ohmylms_dashboard() || is_ohmylms_my_courses_shortcode() ) {
+				if ( ohmylms_is_single_course_page() || is_ohmylms_dashboard() || is_ohmylms_my_courses_shortcode() || \OhMyLMS\Student\Hub::is_page() ) {
 					$localized_data['course_drop_nonce']          = wp_create_nonce( 'course_drop_nonce' );
 					$localized_data['download_certificate_nonce'] = wp_create_nonce( 'download_certificate_nonce' );
 				}
 
-				if ( is_ohmylms_profile_shortcode() ) {
+				if ( is_ohmylms_profile_shortcode() || \OhMyLMS\Student\Hub::is_page() ) {
 					$localized_data['student_profile_cover_upload_nonce'] = wp_create_nonce( 'student_profile_cover_image' );
 					$localized_data['student_profile_cover_delete_nonce'] = wp_create_nonce( 'student_profile_cover_image_delete' );
 					$localized_data['student_profile_image_upload_nonce'] = wp_create_nonce( 'student_profile_image_upload' );
 				}
 
-				if ( ohmylms_is_membership_page() || ohmylms_is_membership_plan_shortcode() || is_ohmylms_dashboard() ) {
+				if ( ohmylms_is_membership_page() || ohmylms_is_membership_plan_shortcode() || is_ohmylms_dashboard() || \OhMyLMS\Student\Hub::is_page() ) {
 					$localized_data['cancel_membership_nonce'] = wp_create_nonce( 'cancel_membership_nonce' );
 				}
 				break;
