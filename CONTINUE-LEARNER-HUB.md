@@ -1380,3 +1380,29 @@ the signed-in Khan teacher dashboard itself (only the help article).
   student password reset, co-admin removal, "leave school", and a browser test as a real
   non-admin teacher (platform admins were used). The wp-admin Account Hub remains for platform
   administration. Not committed.
+
+### School settings and member removal (October 16, 2026)
+
+`Service::update_school()` (name and time zone, school admin or platform, audited), plus
+`SchoolActions` operations `update_school` and `remove_member` (confirmation required; the
+existing service refuses self-removal, deactivates class memberships and parent links, keeps the
+account). New "School settings" tab in the School workspace and a Remove control per person.
+Probe 35/35; live as admin: rename plus time zone saved, a student was removed with the account
+kept. Test school removed. Still not done: roster import, reports/gradebook, rollover,
+student password reset, leaving a school, and a real non-admin teacher browser session. Not committed.
+
+### Real non-admin teacher session (October 16, 2026)
+
+With a disposable teacher account (role `ohmylms_teacher`, signed in by the user, no admin bar):
+"Create your school" appeared; creating a school opened the School workspace with 1 teacher and
+1 administrator; academic year and class creation worked; the teacher workspace then listed the
+school class and the role switch offered Learner, Teacher and School.
+**Two bugs found and fixed:** (1) portal and direct `wp-admin/admin.php?page=ohmylms-schools`
+URLs dropped non-administrators into the WordPress dashboard; they now go to the School workspace
+(`LegacyPages::admin_target`, `Views::redirect_management`); only platform administrators are
+sent to the Account Hub. (2) The forwarded `school` id was replaced by a presence flag (`1`);
+the real id is now kept. Probes still pass (school workspace 35, redirects 12, chooser 17).
+The school fixture and the added `ohmylms_school_admin` role were removed; the test teacher
+account (ID 404) and its credentials file remain until the user asks to delete them.
+Not tested live: a second account accepting a school teacher invitation as a non-admin.
+
