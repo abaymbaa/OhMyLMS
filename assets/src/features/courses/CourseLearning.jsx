@@ -14,6 +14,9 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { CourseLinks } from './CourseLinks';
+import { LessonGroups } from './LessonGroups';
+import { moveItemToUnit, prepareGroups } from './groups.mjs';
 const request = ( course, suffix = '', options = {} ) =>
 	window.wp.apiFetch( {
 		path: `/ohmylms/v1/courses/${ course }/learning${ suffix }`,
@@ -109,6 +112,11 @@ export function CourseLearning( { courseId } ) {
 		setDirty( true );
 		setPreview( null );
 	};
+	const replaceProgram = ( next ) => {
+		setProgram( next );
+		setDirty( true );
+		setPreview( null );
+	};
 	const outcome = ( index, patch ) =>
 		update( {
 			outcomes: program.outcomes.map( ( item, i ) =>
@@ -147,10 +155,14 @@ export function CourseLearning( { courseId } ) {
 	}
 	async function save( publish ) {
 		await run( async () => {
+			const { program: clean, invalid } = prepareGroups( program );
+			if ( invalid.length ) {
+				throw new Error( __( 'Name each lesson group.', 'ohmylms' ) );
+			}
 			await request( courseId, publish ? '/publish' : '', {
 				method: publish ? 'POST' : 'PUT',
 				data: {
-					...program,
+					...clean,
 					apply_existing: applyExisting,
 					expected_program_id: loaded.published?.id || 0,
 				},
@@ -484,6 +496,16 @@ export function CourseLearning( { courseId } ) {
 				/>
 			</section>
 			<section>
+				<h3>{ __( 'Lesson groups', 'ohmylms' ) }</h3>
+				<LessonGroups
+					program={ program }
+					chapters={ loaded.chapters || [] }
+					onChange={ replaceProgram }
+					newId={ identity }
+					disabled={ busy }
+				/>
+			</section>
+			<section>
 				<h3>{ __( 'Learning path', 'ohmylms' ) }</h3>
 				<div className="ohmylms-learning-table-scroll">
 					<table className="widefat">
@@ -512,9 +534,13 @@ export function CourseLearning( { courseId } ) {
 											hideLabelFromVision
 											value={ String( item.chapter_id ) }
 											onChange={ ( id ) =>
-												placement( index, {
-													chapter_id: Number( id ),
-												} )
+												replaceProgram(
+													moveItemToUnit(
+														program,
+														item.id,
+														Number( id )
+													)
+												)
 											}
 											options={ [
 												{
@@ -894,6 +920,7 @@ export function CourseLearning( { courseId } ) {
 					</Fragment>
 				) }
 			</section>
+			<CourseLinks courseId={ courseId } />
 		</div>
 	);
 }

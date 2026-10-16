@@ -133,12 +133,26 @@ class CurriculumController extends RestController {
 	}
 
 	public function course_links( WP_REST_Request $request ) {
-		return rest_ensure_response( array( 'links' => CourseLinks::get( (int) $request['id'] ) ) );
+		return rest_ensure_response( array( 'links' => $this->titled( CourseLinks::get( (int) $request['id'] ) ) ) );
+	}
+
+	/**
+	 * Add the linked course's title so the editor can show what it links to.
+	 *
+	 * @param array[] $links Links from CourseLinks.
+	 * @return array[]
+	 */
+	private function titled( array $links ) {
+		foreach ( $links as &$link ) {
+			$link['title']  = html_entity_decode( (string) get_the_title( $link['course_id'] ), ENT_QUOTES, 'UTF-8' );
+			$link['status'] = (string) get_post_status( $link['course_id'] );
+		}
+		return $links;
 	}
 
 	public function replace_course_links( WP_REST_Request $request ) {
 		$result = CourseLinks::replace( (int) $request['id'], $request['links'] );
-		return is_wp_error( $result ) ? $result : rest_ensure_response( array( 'links' => $result ) );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( array( 'links' => $this->titled( $result ) ) );
 	}
 
 	private function payload( array $extra = array() ) {

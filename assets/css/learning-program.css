@@ -90,3 +90,45 @@
 
   .ohmylms-learning-skills td[data-label]::before { content: attr(data-label); font-weight: 600; }
 }
+
+.ohmylms-lesson-groups-unit {
+	margin: 16px 0;
+}
+
+.ohmylms-lesson-group {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	margin: 8px 0;
+	padding: 8px 12px;
+}
+
+.ohmylms-lesson-group-head {
+	align-items: flex-end;
+	display: flex;
+	gap: 4px;
+}
+
+.ohmylms-lesson-group-head .components-base-control {
+	flex: 1;
+}
+
+.ohmylms-lesson-group ul,
+.ohmylms-course-links-list {
+	margin: 8px 0;
+}
+
+.ohmylms-lesson-group-item,
+.ohmylms-course-links-list li {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+}
+
+.ohmylms-lesson-group-item .components-base-control {
+	min-width: 200px;
+}
+
+.ohmylms-course-links {
+	margin-top: 24px;
+}
