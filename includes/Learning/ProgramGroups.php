@@ -124,6 +124,102 @@ final class ProgramGroups {
 	}
 
 	/**
+	 * Replace all lesson groups of ONE unit in a program, leaving every other unit untouched. Rows of the unit that
+	 * no group lists become ungrouped. The caller still runs the whole program through CourseProgram::normalize().
+	 *
+	 * @param array    $program Program (draft) with 'items', 'outcomes' and optionally 'groups'.
+	 * @param int      $chapter The unit's chapter ID.
+	 * @param array    $spec    New groups in order: [{id?, title, item_ids?: [placement id], skill_ids?: [term id]}].
+	 *                            An id must be an existing group of this unit; without one a group is created.
+	 * @param callable $new_id  Returns a new group identifier.
+	 * @return array|string     The program with the new groups, or an error code:
+	 *                            chapter|invalid|id|group|group_chapter|title|item|duplicate.
+	 */
+	public static function replace_unit( array $program, $chapter, array $spec, callable $new_id ) {
+		$chapter = (int) $chapter;
+		if ( $chapter <= 0 ) {
+			return 'chapter'; }
+		$here   = array();
+		$others = array();
+		$kept   = array();
+		foreach ( (array) ( $program['groups'] ?? array() ) as $group ) {
+			if ( (int) $group['chapter_id'] === $chapter ) {
+				$here[ $group['id'] ] = true;
+			} else {
+				$others[ $group['id'] ] = true;
+				$kept[]                 = $group; }
+		}
+		$items  = array();
+		$skills = array();
+		foreach ( (array) ( $program['items'] ?? array() ) as $item ) {
+			if ( (int) ( $item['chapter_id'] ?? 0 ) === $chapter ) {
+				$items[ (string) $item['id'] ] = true; }
+		}
+		foreach ( (array) ( $program['outcomes'] ?? array() ) as $outcome ) {
+			if ( (int) ( $outcome['chapter_id'] ?? 0 ) === $chapter ) {
+				$skills[ (int) $outcome['term_id'] ] = true; }
+		}
+		$seen        = array();
+		$item_group  = array();
+		$skill_group = array();
+		$created     = array();
+		foreach ( $spec as $row ) {
+			if ( ! is_array( $row ) ) {
+				return 'invalid'; }
+			$id = $row['id'] ?? '';
+			if ( null === $id || '' === $id ) {
+				$id = (string) $new_id();
+			} elseif ( ! is_string( $id ) || ! isset( $here[ $id ] ) ) {
+				return is_string( $id ) && isset( $others[ $id ] ) ? 'group_chapter' : 'group'; }
+			if ( isset( $seen[ $id ] ) ) {
+				return 'id'; }
+			$seen[ $id ] = true;
+			$title       = self::title( $row['title'] ?? '' );
+			if ( '' === $title ) {
+				return 'title'; }
+			foreach ( (array) ( $row['item_ids'] ?? array() ) as $item_id ) {
+				if ( ! is_string( $item_id ) || ! isset( $items[ $item_id ] ) ) {
+					return 'item'; }
+				if ( isset( $item_group[ $item_id ] ) ) {
+					return 'duplicate'; }
+				$item_group[ $item_id ] = $id;
+			}
+			foreach ( (array) ( $row['skill_ids'] ?? array() ) as $term_id ) {
+				if ( ! is_int( $term_id ) || ! isset( $skills[ $term_id ] ) ) {
+					return 'item'; }
+				if ( isset( $skill_group[ $term_id ] ) ) {
+					return 'duplicate'; }
+				$skill_group[ $term_id ] = $id;
+			}
+			$created[] = array(
+				'id'         => $id,
+				'chapter_id' => $chapter,
+				'title'      => $title,
+			);
+		}
+		foreach ( array(
+			'items'    => array( 'id', $item_group ),
+			'outcomes' => array( 'term_id', $skill_group ),
+		) as $list => $map ) {
+			foreach ( $program[ $list ] ?? array() as $index => $row ) {
+				if ( (int) ( $row['chapter_id'] ?? 0 ) !== $chapter ) {
+					continue; }
+				unset( $row['group_id'] );
+				$key = (string) $row[ $map[0] ];
+				if ( isset( $map[1][ $key ] ) ) {
+					$row['group_id'] = $map[1][ $key ]; }
+				$program[ $list ][ $index ] = $row;
+			}
+		}
+		$groups = array_merge( $kept, $created );
+		if ( $groups ) {
+			$program['groups'] = $groups;
+		} else {
+			unset( $program['groups'] ); }
+		return $program;
+	}
+
+	/**
 	 * Carry lesson-group membership over from the stored draft for rows whose payload omits `group_id`
 	 * (editors that do not know about groups). A row that moved to another unit is left ungrouped, and a
 	 * row that sends `group_id` itself (even empty) is never overridden.

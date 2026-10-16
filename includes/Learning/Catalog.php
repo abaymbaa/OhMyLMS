@@ -331,9 +331,26 @@ final class Catalog {
 	 * Store the structure in the draft. Only outcomes, attachments and the mode are replaced; learning
 	 * settings, practice steps and everything else in the draft are kept. Validation is the program's own.
 	 *
-	 * @param array{mode?:string,outcomes?:array,attachments?:array} $data
+	 * @param int                                                                  $course_id Course ID.
+	 * @param array{mode?:string,outcomes?:array,attachments?:array,groups?:array} $data      Parts of the structure to replace.
+	 * @return true|\WP_Error
 	 */
 	public static function save_draft( $course_id, array $data ) {
+		$program = self::check_draft( $course_id, $data );
+		if ( is_wp_error( $program ) ) {
+			return $program; }
+		update_post_meta( (int) $course_id, CourseProgram::DRAFT, $program );
+		return true;
+	}
+
+	/**
+	 * Validate a structure change exactly as save_draft would, without storing it.
+	 *
+	 * @param int   $course_id Course ID.
+	 * @param array $data      Any of mode, outcomes, attachments and groups (lesson groups, replaced as a whole).
+	 * @return array|\WP_Error The program that would be stored.
+	 */
+	public static function check_draft( $course_id, array $data ) {
 		if ( ! Schema::ready() ) {
 			return self::error( __( 'Learning storage is unavailable.', 'ohmylms' ), 503 ); }
 		$draft = self::draft( $course_id );
@@ -348,6 +365,11 @@ final class Catalog {
 			if ( ! is_array( $data['outcomes'] ) ) {
 				return self::error( __( 'Skills must be a list.', 'ohmylms' ) ); }
 			$draft['outcomes'] = ProgramGroups::carry( array_values( array_filter( $data['outcomes'], 'is_array' ) ), $existing['outcomes'], 'term_id' );
+		}
+		if ( array_key_exists( 'groups', $data ) ) {
+			if ( ! is_array( $data['groups'] ) ) {
+				return self::error( __( 'Lesson groups must be a list.', 'ohmylms' ) ); }
+			$draft['groups'] = array_values( $data['groups'] );
 		}
 		$kept     = array_column( $draft['outcomes'], 'term_id' );
 		$kept     = array_map( 'intval', $kept );
@@ -384,8 +406,7 @@ final class Catalog {
 		if ( is_wp_error( $program ) ) {
 			return $program; }
 		$program['author_id'] = get_current_user_id();
-		update_post_meta( (int) $course_id, CourseProgram::DRAFT, $program );
-		return true;
+		return $program;
 	}
 
 	/** Publish the stored draft. This is the program's own publish: readiness checks, versioning, enrolled learners. */
@@ -394,6 +415,120 @@ final class Catalog {
 		$draft                        = $editor['draft'];
 		$draft['expected_program_id'] = $editor['published'] ? (int) $editor['published']['id'] : 0;
 		return CourseProgram::save( (int) $course_id, $draft, true, (bool) $apply_existing );
+	}
+
+	// ---- Structure for assistants (MCP) ------------------------------------------------------------------
+
+	/** Units of a course with their position and the label printed on the hub. */
+	public static function units( $course_id ) {
+		$units = array();
+		foreach ( self::chapters( $course_id ) as $position => $chapter ) {
+			$units[] = array(
+				'id'       => $chapter['id'],
+				'title'    => $chapter['name'],
+				'number'   => $chapter['number'],
+				'label'    => UnitNumber::label( $chapter['number'], $position ),
+				'position' => $position + 1,
+			);
+		}
+		return $units;
+	}
+
+	/** A token for the stored draft; a write that quotes an older one is refused instead of overwriting newer work. */
+	public static function revision( $course_id ) {
+		$stored = get_post_meta( (int) $course_id, CourseProgram::DRAFT, true );
+		$source = is_array( $stored ) ? $stored : CourseProgram::current( (int) $course_id );
+		return is_array( $source ) ? self::fingerprint( $source ) : md5( 'empty' );
+	}
+
+	/**
+	 * The structure in a compact, read-only form: units, lesson groups, skills and attachments.
+	 *
+	 * @param int $course_id Course ID.
+	 * @return array
+	 */
+	public static function program_view( $course_id ) {
+		$payload     = self::payload( $course_id );
+		$draft       = self::draft( $course_id );
+		$attachments = array();
+		foreach ( $payload['attachments'] as $row ) {
+			unset( $row['native_editor_url'], $row['also_in'] );
+			$attachments[] = $row;
+		}
+		$skills = array();
+		foreach ( $payload['skills'] as $row ) {
+			unset( $row['questions'] );
+			$skills[] = $row;
+		}
+		return array(
+			'course'              => array_diff_key( $payload['course'], array( 'url' => 1 ) ),
+			'revision'            => self::revision( $course_id ),
+			'mode'                => $payload['mode'],
+			'published_version'   => $payload['published_version'],
+			'unpublished_changes' => $payload['unpublished_changes'],
+			'units'               => self::units( $course_id ),
+			'groups'              => array_values( (array) ( $draft['groups'] ?? array() ) ),
+			'outcomes'            => $skills,
+			'attachments'         => $attachments,
+		);
+	}
+
+	/**
+	 * Run a draft change only when the caller saw the current draft, holding the same lock the publish uses.
+	 *
+	 * @param int      $course_id Course ID.
+	 * @param string   $revision  Revision from program_view().
+	 * @param callable $change    Performs the change.
+	 * @return mixed|\WP_Error
+	 */
+	public static function with_revision( $course_id, $revision, callable $change ) {
+		global $wpdb;
+		$key = 'ohmylms_program_' . (int) $course_id;
+		if ( ! $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 3)', $key ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- A named lock, not table data.
+			return self::error( __( 'Another author is saving this course. Try again.', 'ohmylms' ), 409, 'ohmylms_program_busy' ); }
+		try {
+			wp_cache_delete( (int) $course_id, 'post_meta' );
+			if ( ! is_string( $revision ) || ! hash_equals( self::revision( $course_id ), $revision ) ) {
+				return self::error( __( 'The course structure changed since you read it. Read it again and reapply your change.', 'ohmylms' ), 409, 'ohmylms_program_stale' ); }
+			return $change();
+		} finally {
+			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $key ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- A named lock, not table data.
+		}
+	}
+
+	/**
+	 * Replace the lesson groups of one unit and assign its items; see ProgramGroups::replace_unit().
+	 *
+	 * @param int   $course_id  Course ID.
+	 * @param int   $chapter_id Unit (chapter) ID.
+	 * @param array $spec       New groups in order.
+	 * @param bool  $dry_run    Validate only.
+	 * @return array|\WP_Error The program that was (or would be) stored.
+	 */
+	public static function save_unit_groups( $course_id, $chapter_id, array $spec, $dry_run = false ) {
+		if ( ! Schema::ready() ) {
+			return self::error( __( 'Learning storage is unavailable.', 'ohmylms' ), 503 ); }
+		if ( ! self::belongs( $course_id, $chapter_id ) ) {
+			return self::error( __( 'The chapter does not belong to this course.', 'ohmylms' ), 404 ); }
+		$draft = self::draft( $course_id );
+		unset( $draft['id'], $draft['version'], $draft['course_id'] );
+		$changed = ProgramGroups::replace_unit( $draft, (int) $chapter_id, $spec, 'wp_generate_uuid4' );
+		if ( is_string( $changed ) ) {
+			$messages = array(
+				'item'      => __( 'A lesson group can only hold items and skills placed in this unit.', 'ohmylms' ),
+				'duplicate' => __( 'Put each item in only one lesson group.', 'ohmylms' ),
+				'id'        => __( 'Lesson group identifiers must be unique.', 'ohmylms' ),
+				'title'     => __( 'Name each lesson group.', 'ohmylms' ),
+				'group'     => __( 'The lesson group does not exist in this unit.', 'ohmylms' ),
+			);
+			return self::error( $messages[ $changed ] ?? __( 'Invalid lesson group.', 'ohmylms' ) ); }
+		$program = CourseProgram::normalize( (int) $course_id, $changed );
+		if ( is_wp_error( $program ) ) {
+			return $program; }
+		$program['author_id'] = get_current_user_id();
+		if ( ! $dry_run ) {
+			update_post_meta( (int) $course_id, CourseProgram::DRAFT, $program ); }
+		return $program;
 	}
 
 	// ---- Pickers and lists -------------------------------------------------------------------------------
