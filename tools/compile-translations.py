@@ -76,10 +76,11 @@ def compile_catalog(locale, merge_pot=False):
         "locale_data": {"messages": messages},
     }
     # WordPress checks this registered-handle filename before a source-path hash.
-    (languages / f"ohmylms-{locale}-ohmylms.json").write_text(
-        json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n",
-        encoding="utf-8",
-    )
+    json_path = languages / f"ohmylms-{locale}-ohmylms.json"
+    with json_path.open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
+        )
     return {
         "entries": len(po),
         "added_untranslated": len(added),
