@@ -38,12 +38,49 @@ export function addLink( links, courseId, link ) {
 export const removeLink = ( links, key ) =>
 	links.filter( ( link ) => linkKey( link ) !== key );
 
-export function moveLink( links, key, direction ) {
+/**
+ * The hub strip a link appears in: sub-courses have their own; prerequisites and "Get ready for"
+ * suggestions share "Get ready for this course".
+ * @param {Object} link Link.
+ * @return {string} Strip.
+ */
+export const stripOf = ( link ) =>
+	link.type === 'subcourse' ? 'subcourse' : 'get_ready';
+
+/**
+ * The link a move would swap with: the nearest one in the same strip in that direction. Swapping
+ * with a neighbour of another strip would change nothing a learner can see.
+ * @param {Object[]} links     Links.
+ * @param {string}   key       Key of the link to move.
+ * @param {number}   direction -1 (up) or 1 (down).
+ * @return {number} Index to swap with, or -1 when the link cannot move.
+ */
+function swapIndex( links, key, direction ) {
 	const index = links.findIndex( ( link ) => linkKey( link ) === key );
-	const other = index + direction;
-	if ( index < 0 || other < 0 || other >= links.length ) {
+	if ( index < 0 ) {
+		return -1;
+	}
+	for (
+		let other = index + direction;
+		other >= 0 && other < links.length;
+		other += direction
+	) {
+		if ( stripOf( links[ other ] ) === stripOf( links[ index ] ) ) {
+			return other;
+		}
+	}
+	return -1;
+}
+
+export const canMoveLink = ( links, key, direction ) =>
+	swapIndex( links, key, direction ) >= 0;
+
+export function moveLink( links, key, direction ) {
+	const other = swapIndex( links, key, direction );
+	if ( other < 0 ) {
 		return links;
 	}
+	const index = links.findIndex( ( link ) => linkKey( link ) === key );
 	const next = [ ...links ];
 	[ next[ index ], next[ other ] ] = [ next[ other ], next[ index ] ];
 	return next;

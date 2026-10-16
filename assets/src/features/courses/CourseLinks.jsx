@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import {
 	addLink,
+	canMoveLink,
 	linkKey,
 	loadLinks,
 	moveLink,
@@ -151,7 +152,9 @@ export function CourseLinks( { courseId } ) {
 										__( 'Move %s up', 'ohmylms' ),
 										name
 									) }
-									disabled={ busy || ! index }
+									disabled={
+										busy || ! canMoveLink( links, key, -1 )
+									}
 									onClick={ () =>
 										edit( moveLink( links, key, -1 ) )
 									}
@@ -164,7 +167,7 @@ export function CourseLinks( { courseId } ) {
 										name
 									) }
 									disabled={
-										busy || index === links.length - 1
+										busy || ! canMoveLink( links, key, 1 )
 									}
 									onClick={ () =>
 										edit( moveLink( links, key, 1 ) )
