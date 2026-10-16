@@ -20,6 +20,8 @@ final class CourseLinks {
 	/** Links of these types form a hierarchy and may not loop. "get_ready" is only a suggestion. */
 	const ACYCLIC      = array( 'subcourse', 'prerequisite' );
 	const MAX_PER_COURSE = 50;
+	/** Named database lock held while links are validated and written. */
+	const LOCK = 'ohmylms-course-links';
 
 	/**
 	 * Would adding course -> related close a loop in the sub-course/prerequisite graph?
@@ -53,7 +55,9 @@ final class CourseLinks {
 	 *
 	 * @param int              $course Course that owns the links.
 	 * @param mixed            $links  Submitted [{course_id, type}], array order is the order shown.
-	 * @param array<int,int[]> $others Acyclic edges of every OTHER course (this course's own are being replaced).
+	 * @param array<string,array<int,int[]>> $others Acyclic edges of every OTHER course, one graph per link type
+	 *                                               (this course's own are being replaced). Sub-courses and
+	 *                                               prerequisites are different relations, so each is checked on its own.
 	 * @return array|string Clean [{course_id,type,position}] or an error code: invalid|too_many|type|self|duplicate|cycle.
 	 */
 	public static function validate( $course, $links, array $others ) {
@@ -62,8 +66,11 @@ final class CourseLinks {
 			return 'invalid'; }
 		if ( count( $links ) > self::MAX_PER_COURSE ) {
 			return 'too_many'; }
-		$edges = $others;
-		unset( $edges[ $course ] );
+		$edges = array();
+		foreach ( self::ACYCLIC as $acyclic ) {
+			$edges[ $acyclic ] = (array) ( $others[ $acyclic ] ?? array() );
+			unset( $edges[ $acyclic ][ $course ] );
+		}
 		$clean = array();
 		$seen  = array();
 		foreach ( array_values( $links ) as $position => $link ) {
@@ -82,9 +89,9 @@ final class CourseLinks {
 				return 'duplicate'; }
 			$seen[ $key ] = true;
 			if ( in_array( $type, self::ACYCLIC, true ) ) {
-				if ( self::creates_cycle( $edges, $course, $related ) ) {
+				if ( self::creates_cycle( $edges[ $type ], $course, $related ) ) {
 					return 'cycle'; }
-				$edges[ $course ][] = $related;
+				$edges[ $type ][ $course ][] = $related;
 			}
 			$clean[] = array(
 				'course_id' => $related,
@@ -132,19 +139,20 @@ final class CourseLinks {
 		);
 	}
 
-	/** Acyclic-type edges of every course except $except. */
+	/** Acyclic-type edges of every course except $except, as [link type => [course => related courses]]. */
 	private static function edges( $except ) {
 		global $wpdb;
 		$types = "'" . implode( "','", self::ACYCLIC ) . "'";
-		$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT course_id, related_course_id FROM ' . Schema::table( 'course_links' ) . " WHERE link_type IN ($types) AND course_id<>%d", (int) $except ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed allowlist.
+		$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT course_id, related_course_id, link_type FROM ' . Schema::table( 'course_links' ) . " WHERE link_type IN ($types) AND course_id<>%d", (int) $except ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed allowlist.
 		$edges = array();
 		foreach ( $rows ?: array() as $row ) {
-			$edges[ (int) $row['course_id'] ][] = (int) $row['related_course_id']; }
+			$edges[ $row['link_type'] ][ (int) $row['course_id'] ][] = (int) $row['related_course_id']; }
 		return $edges;
 	}
 
 	/**
-	 * Replace all links of a course in one transaction.
+	 * Replace all links of a course. The edge read, the cycle check and the write happen under one named
+	 * lock and one transaction, so two saves cannot each pass the check and then together close a loop.
 	 *
 	 * @return array[]|\WP_Error The stored links, or an error naming the first rejected one.
 	 */
@@ -153,17 +161,20 @@ final class CourseLinks {
 		$course_id = (int) $course_id;
 		if ( ! self::ready() ) {
 			return new \WP_Error( 'ohmylms_course_links_unavailable', __( 'Course links are not installed yet.', 'ohmylms' ), array( 'status' => 503 ) ); }
-		$clean = self::validate( $course_id, $links, self::edges( $course_id ) );
-		if ( is_string( $clean ) ) {
-			return new \WP_Error( 'ohmylms_course_link_invalid', self::message( $clean ), array( 'status' => 400 ) ); }
-		foreach ( $clean as $link ) {
-			if ( get_post_type( $link['course_id'] ) !== OHMYLMS_COURSE_CPT || ! current_user_can( 'read_post', $link['course_id'] ) ) {
-				return new \WP_Error( 'ohmylms_course_link_invalid', __( 'Choose an existing course you can view.', 'ohmylms' ), array( 'status' => 400 ) ); }
-		}
 		$table = Schema::table( 'course_links' );
+		$lock  = self::LOCK . '-' . md5( $wpdb->prefix );
+		if ( (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) !== '1' ) {
+			return new \WP_Error( 'ohmylms_course_link_busy', __( 'Another change is being saved. Try again in a moment.', 'ohmylms' ), array( 'status' => 409 ) ); }
 		try {
-			Transaction::run(
-				static function () use ( $wpdb, $table, $course_id, $clean ) {
+			$rejected = Transaction::run(
+				static function () use ( $wpdb, $table, $course_id, $links ) {
+					$clean = CourseLinks::validate( $course_id, $links, CourseLinks::edges( $course_id ) );
+					if ( is_string( $clean ) ) {
+						return new \WP_Error( 'ohmylms_course_link_invalid', CourseLinks::message( $clean ), array( 'status' => 400 ) ); }
+					foreach ( $clean as $link ) {
+						if ( get_post_type( $link['course_id'] ) !== OHMYLMS_COURSE_CPT || ! current_user_can( 'read_post', $link['course_id'] ) ) {
+							return new \WP_Error( 'ohmylms_course_link_invalid', __( 'Choose an existing course you can view.', 'ohmylms' ), array( 'status' => 400 ) ); }
+					}
 					if ( false === $wpdb->delete( $table, array( 'course_id' => $course_id ) ) ) {
 						throw new \RuntimeException( 'Link clear failed' ); }
 					foreach ( $clean as $link ) {
@@ -180,10 +191,15 @@ final class CourseLinks {
 						) ) {
 							throw new \RuntimeException( 'Link write failed' ); }
 					}
+					return null;
 				}
 			);
+			if ( $rejected instanceof \WP_Error ) {
+				return $rejected; }
 		} catch ( \Throwable $error ) {
 			return new \WP_Error( 'ohmylms_course_link_failed', __( 'Could not save the course links.', 'ohmylms' ), array( 'status' => 500 ) );
+		} finally {
+			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
 		}
 		return self::get( $course_id );
 	}

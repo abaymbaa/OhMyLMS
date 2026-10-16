@@ -34,14 +34,52 @@ check(CourseLinks::validate(1, [['course_id' => 1, 'type' => 'subcourse']], []) 
 check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'friend']], []) === 'type', 'type is whitelisted');
 check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse'], ['course_id' => 2, 'type' => 'subcourse']], []) === 'duplicate', 'same link twice is rejected');
 check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse'], ['course_id' => 2, 'type' => 'get_ready']], [])), 'the same course may be linked in two different ways');
-check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'prerequisite']], [2 => [1]]) === 'cycle', 'a prerequisite loop through another course is rejected');
-check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse']], [2 => [1]]) === 'cycle', 'sub-course and prerequisite share one graph');
-check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'get_ready']], [2 => [1]])), 'get-ready suggestions may point both ways');
-check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse']], [1 => [9]])), "this course's own old edges are ignored while replacing");
+check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'prerequisite']], ['prerequisite' => [2 => [1]]]) === 'cycle', 'a prerequisite loop through another course is rejected');
+check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse']], ['subcourse' => [2 => [1]]]) === 'cycle', 'a sub-course loop is rejected');
+check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse']], ['prerequisite' => [2 => [1]]])), 'a course may contain one that requires it: sub-courses and prerequisites are separate graphs');
+check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'prerequisite']], ['subcourse' => [2 => [1]]])), 'and a prerequisite may be the parent of a sub-course');
+check(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse'], ['course_id' => 3, 'type' => 'subcourse']], ['subcourse' => [3 => [1]]]) === 'cycle', 'a loop through a link of this same submission and the stored graph is rejected');
+check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'get_ready']], ['subcourse' => [2 => [1]], 'prerequisite' => [2 => [1]]])), 'get-ready suggestions may point both ways');
+check(is_array(CourseLinks::validate(1, [['course_id' => 2, 'type' => 'subcourse']], ['subcourse' => [1 => [9]]])), "this course's own old edges are ignored while replacing");
 $many = [];
 for ($i = 2; $i < 54; $i++) { $many[] = ['course_id' => $i, 'type' => 'get_ready']; }
 check(CourseLinks::validate(1, $many, []) === 'too_many', 'more than 50 links are rejected');
 check(CourseLinks::validate(1, 'x', []) === 'invalid' && CourseLinks::validate(1, [['type' => 'subcourse']], []) === 'invalid', 'malformed input is rejected');
+
+// ---- Lesson group carry-over (Content Hub saves rows without group_id) ----
+$stored = [['id' => 'i1', 'chapter_id' => 10, 'group_id' => 'g1'], ['id' => 'i2', 'chapter_id' => 10], ['id' => 'i3', 'chapter_id' => 10, 'group_id' => 'g1']];
+$sent = ProgramGroups::carry([['id' => 'i1', 'chapter_id' => 10], ['id' => 'i2', 'chapter_id' => 10], ['id' => 'i3', 'chapter_id' => 20], ['id' => 'new', 'chapter_id' => 10]], $stored, 'id');
+check(($sent[0]['group_id'] ?? null) === 'g1', 'a row sent without group_id keeps its group');
+check(!isset($sent[1]['group_id']) && !isset($sent[3]['group_id']), 'ungrouped and new rows stay ungrouped');
+check(!isset($sent[2]['group_id']), 'a row that moved to another unit loses its group');
+$sent = ProgramGroups::carry([['id' => 'i1', 'chapter_id' => 10, 'group_id' => '']], $stored, 'id');
+check($sent[0]['group_id'] === '', 'an explicit empty group_id clears the group');
+$outcomes = ProgramGroups::carry([['term_id' => 5, 'chapter_id' => 10], ['term_id' => 6]], [['term_id' => 5, 'chapter_id' => 10, 'group_id' => 'g1'], ['term_id' => 6, 'group_id' => 'g1']], 'term_id');
+check(($outcomes[0]['group_id'] ?? null) === 'g1' && ($outcomes[1]['group_id'] ?? null) === 'g1', 'outcomes are matched by term_id');
+
+// ---- Copying a program to a duplicated or imported course ----
+use OhMyLMS\Learning\CourseProgram;
+$program = [
+    'id' => 9, 'version' => 2, 'course_id' => 1, 'mode' => 'blended',
+    'groups' => [['id' => 'g1', 'chapter_id' => 10, 'title' => 'Intro'], ['id' => 'g2', 'chapter_id' => 30, 'title' => 'Gone']],
+    'outcomes' => [['term_id' => 5, 'target' => 'proficient', 'required' => true, 'chapter_id' => 10, 'group_id' => 'g1'], ['term_id' => 6, 'target' => 'proficient', 'required' => false]],
+    'items' => [
+        ['id' => 'i1', 'type' => 'lesson', 'content_id' => 100, 'chapter_id' => 10, 'group_id' => 'g1', 'skill_ids' => [5]],
+        ['id' => 'i2', 'type' => 'practice', 'content_id' => 5, 'chapter_id' => 10],
+        ['id' => 'i3', 'type' => 'quiz', 'content_id' => 300, 'chapter_id' => 30, 'group_id' => 'g2'],
+        ['id' => 'i4', 'type' => 'lesson', 'content_id' => 400, 'chapter_id' => 20],
+    ],
+];
+$copy = CourseProgram::remap($program, [10 => 110, 20 => 120], [100 => 1100, 400 => 1400]);
+check(!isset($copy['id']) && !isset($copy['version']) && !isset($copy['course_id']) && $copy['mode'] === 'blended', 'row identifiers are dropped, settings kept');
+check(count($copy['groups']) === 1 && $copy['groups'][0] === ['id' => 'g1', 'chapter_id' => 110, 'title' => 'Intro'], 'groups follow their unit and groups of uncopied units are dropped');
+check($copy['outcomes'][0]['chapter_id'] === 110 && $copy['outcomes'][0]['group_id'] === 'g1' && !isset($copy['outcomes'][1]['chapter_id']), 'outcomes follow their unit and keep their group');
+check($copy['items'][0]['chapter_id'] === 110 && $copy['items'][0]['content_id'] === 1100 && $copy['items'][0]['group_id'] === 'g1' && $copy['items'][0]['skill_ids'] === [5], 'lessons get the new unit and content, keeping group and skills');
+check($copy['items'][1]['content_id'] === 5, 'a practice item points at a skill, which is not remapped');
+check($copy['items'][2]['chapter_id'] === 0 && !isset($copy['items'][2]['group_id']) && $copy['items'][2]['content_id'] === 300, 'a row whose unit was not copied becomes unplaced and ungrouped');
+check($copy['items'][3]['chapter_id'] === 120 && $copy['items'][3]['content_id'] === 1400 && !isset($copy['items'][3]['group_id']), 'an ungrouped row stays ungrouped');
+$plain = CourseProgram::remap(['mode' => 'traditional', 'outcomes' => [], 'items' => []], [], []);
+check(!isset($plain['groups']), 'a program without groups gets none');
 
 // ---- Schema ----
 check(Schema::VERSION === '7', 'schema version is bumped for course_links');
