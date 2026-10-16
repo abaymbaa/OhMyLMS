@@ -12,6 +12,7 @@ import { ListTableFrame } from './ListTableFrame';
 import { PeopleDirectory } from '../schools/PeopleDirectory';
 import { AddModal } from '../schools/AddModal';
 import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
+import { PreviewHome } from '../schools/PreviewHome';
 export function createStudentList( readRuntime ) {
 	function StudentTable() {
 		const {
@@ -380,6 +381,7 @@ export function createStudentList( readRuntime ) {
 				window.location.hash.split( '?' )[ 1 ]
 			).get( 'tab' );
 			return [
+				'students',
 				'teachers',
 				'parents',
 				'users',
@@ -387,7 +389,7 @@ export function createStudentList( readRuntime ) {
 				'schools',
 			].includes( value )
 				? value
-				: 'students';
+				: 'home';
 		};
 		const [ tab, setTab ] = useState( currentTab );
 		const [ adding, setAdding ] = useState( false );
@@ -405,10 +407,10 @@ export function createStudentList( readRuntime ) {
 		return (
 			<Controls.ContainerWP>
 				<Header
-					title={ __( 'Students', 'ohmylms' ) }
+					title={ __( 'Account Hub', 'ohmylms' ) }
 					showAddButton={ false }
 				/>
-				{ canViewAs() && (
+				{ canViewAs() && tab !== 'home' && (
 					<div
 						style={ {
 							marginBottom: 16,
@@ -447,17 +449,19 @@ export function createStudentList( readRuntime ) {
 				) }
 				<PeopleTabs
 					movable
+					withHome
 					active={ tab }
 					onChange={ ( next ) => {
 						window.history.pushState(
 							null,
 							'',
-							`#/accounthub${ next === 'students' ? '' : `?tab=${ next }` }`
+							`#/accounthub${ next === 'home' ? '' : `?tab=${ next }` }`
 						);
 						setTab( next );
 					} }
 				/>
-				{ tab === 'students' ? (
+				{ tab === 'home' && <PreviewHome /> }
+				{ tab === 'students' && (
 					<>
 						<div
 							style={ {
@@ -482,7 +486,8 @@ export function createStudentList( readRuntime ) {
 						) }
 						<StudentTable key={ version } />
 					</>
-				) : (
+				) }
+				{ ! [ 'home', 'students' ].includes( tab ) && (
 					<PeopleDirectory
 						key={ tab }
 						tab={ tab }

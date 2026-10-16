@@ -10,6 +10,12 @@ defined( 'ABSPATH' ) || exit;
 
 /** Account switching keeps the administrator's session server-side. */
 final class ViewAs {
+	/** Roles an administrator can preview; "school" is a school administrator. */
+	const ROLES = array( 'student', 'teacher', 'parent', 'school' );
+
+	/** Admin user meta prefix remembering the person last previewed for each role. */
+	const LAST_META = '_ohmylms_view_as_last_';
+
 	private static function cookie_name() {
 		return 'ohmylms_view_as_' . COOKIEHASH; }
 	private static function key( $token ) {
@@ -30,6 +36,7 @@ final class ViewAs {
 	public static function register() {
 		foreach ( array(
 			'options' => 'GET',
+			'default' => 'GET',
 			'start'   => 'POST',
 			'return'  => 'POST',
 		) as $action => $method ) {
@@ -56,15 +63,15 @@ final class ViewAs {
 			);
 		}
 	}
-	public static function candidates( $role, $class = 0, $course = 0, $search = '', $page = 1, $only = 0 ) {
+	public static function candidates( $role, $class = 0, $course = 0, $search = '', $page = 1, $only = 0, $newest = false ) {
 		global $wpdb;
-		Service::need( in_array( $role, array( 'student', 'teacher', 'parent', 'instructor' ), true ), 'Choose a valid view.' );
+		Service::need( in_array( $role, array_merge( self::ROLES, array( 'instructor' ) ), true ), 'Choose a valid view.' );
 		Service::need( ! $class || ! $course, 'Choose one class or course.' );
 		$args = array(
 			'number'         => 50,
 			'paged'          => max( 1, $page ),
-			'orderby'        => 'display_name',
-			'order'          => 'ASC',
+			'orderby'        => $newest ? 'ID' : 'display_name',
+			'order'          => $newest ? 'DESC' : 'ASC',
 			'search'         => $search ? '*' . $search . '*' : '',
 			'search_columns' => array( 'display_name', 'user_login', 'user_email' ),
 		);
@@ -83,6 +90,7 @@ final class ViewAs {
 				'teacher'    => array( 'ohmylms_teacher', 'ohmylms_instructor' ),
 				'instructor' => array( 'ohmylms_instructor' ),
 				'parent'     => array( 'ohmylms_parent' ),
+				'school'     => array( 'ohmylms_school_admin' ),
 			);
 			if ( 'student' === $role && function_exists( 'ohmylms_get_student_role' ) ) {
 				$roles['student'][] = ohmylms_get_student_role(); }
@@ -92,9 +100,9 @@ final class ViewAs {
 					'fields'   => 'ID',
 				)
 			);
-			if ( in_array( $role, array( 'student', 'teacher' ), true ) ) {
+			if ( in_array( $role, array( 'student', 'teacher', 'school' ), true ) ) {
 				$m   = Schema::table( 'school_memberships' );
-				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE role=%s AND status='active'", $role ) ) );
+				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE role=%s AND status='active'", 'school' === $role ? 'school_admin' : $role ) ) );
 			} elseif ( 'parent' === $role ) {
 				$m   = Schema::table( 'guardian_links' );
 				$ids = array_merge( $ids, $wpdb->get_col( "SELECT guardian_user_id FROM $m WHERE status='active'" ) );
@@ -126,6 +134,61 @@ final class ViewAs {
 	public static function options( $r ) {
 		return self::candidates( sanitize_key( $r['role'] ), absint( $r['class_id'] ), absint( $r['course_id'] ), Service::text( $r['search'] ?? '' ), absint( $r['page'] ) );
 	}
+	/**
+	 * Choose the person a one-click preview should use.
+	 *
+	 * Pure so it can be tested: the remembered person wins when they still hold the role,
+	 * otherwise the most recently signed-in person, otherwise the newest account.
+	 *
+	 * @param array $remembered Candidate rows for the remembered user (empty when none or no longer eligible).
+	 * @param array $pool       Eligible people, newest account first.
+	 * @param array $activity   Last sign-in time by user ID.
+	 * @return array Keys: person (array|null), source (remembered|recent|empty string).
+	 */
+	public static function pick_default( array $remembered, array $pool, array $activity ) {
+		if ( $remembered ) {
+			return array(
+				'person' => $remembered[0],
+				'source' => 'remembered',
+			);
+		}
+		$best = null;
+		foreach ( $pool as $person ) {
+			$seen = (string) ( $activity[ $person['id'] ] ?? '' );
+			if ( null === $best || strcmp( $seen, $best[1] ) > 0 ) {
+				$best = array( $person, $seen );
+			}
+		}
+		if ( ! $best ) {
+			return array(
+				'person' => null,
+				'source' => '',
+			);
+		}
+		return array(
+			'person' => $best[0],
+			'source' => 'recent',
+		);
+	}
+
+	/**
+	 * Default person for a role, used by the one-click previews.
+	 *
+	 * @param \WP_REST_Request $r Request with a role.
+	 * @return array
+	 */
+	public static function default( $r ) {
+		$role = sanitize_key( $r['role'] ?? '' );
+		Service::need( in_array( $role, self::ROLES, true ), 'Choose a valid view.' );
+		$last       = absint( get_user_meta( get_current_user_id(), self::LAST_META . $role, true ) );
+		$remembered = $last ? self::candidates( $role, 0, 0, '', 1, $last ) : array();
+		$pool       = $remembered ? array() : self::candidates( $role, 0, 0, '', 1, 0, true );
+		$activity   = array();
+		foreach ( $pool as $person ) {
+			$activity[ $person['id'] ] = get_user_meta( $person['id'], '_ohmylms_last_login', true );
+		}
+		return array_merge( array( 'role' => $role ), self::pick_default( $remembered, $pool, $activity ) );
+	}
 	public static function start( $r ) {
 		Access::require_access( current_user_can( 'manage_options' ) && ! self::session() );
 		$user = absint( $r['user_id'] );
@@ -151,6 +214,9 @@ final class ViewAs {
 			HOUR_IN_SECONDS
 		);
 		Service::audit( 0, 'view_as_started', $user );
+		if ( empty( $r['course_id'] ) && empty( $r['class_id'] ) ) {
+			update_user_meta( $actor, self::LAST_META . $role, $user );
+		}
 		self::cookie( $token, $expires );
 		wp_clear_auth_cookie();
 		wp_set_auth_cookie( $user, false, is_ssl(), $target_session );
@@ -174,7 +240,9 @@ final class ViewAs {
 				// Preview lands in the hub workspace for the viewed role; the old portal is not used.
 			if ( empty( $r['course_id'] ) && class_exists( '\OhMyLMS\Student\Hub' ) && \OhMyLMS\Student\Hub::base_url() ) {
 				$class_id = absint( $r['class_id'] );
-				if ( 'parent' === $role ) {
+				if ( 'school' === $role ) {
+					$url = \OhMyLMS\Student\SchoolWorkspace::url();
+				} elseif ( 'parent' === $role ) {
 					$url = \OhMyLMS\Student\ParentWorkspace::url();
 				} elseif ( 'teacher' === $role ) {
 					$url = \OhMyLMS\Student\TeacherWorkspace::url();

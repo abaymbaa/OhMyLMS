@@ -12,7 +12,7 @@ redirects.
 
 | Page | State | Owner | Notes |
 | --- | --- | --- | --- |
-| 318 Student Home | published | OhMyLMS | the hub; also configured as the student dashboard/profile/courses page |
+| 318 Student Home | published | OhMyLMS | the hub, slug `profile` (renamed from `student-home` by `Hub::migrate_slug`; the old address 301-redirects); also configured as the student dashboard/profile/courses page |
 | 115, 117, 118 (old dashboard/profile/courses) | trashed | OhMyLMS | retired earlier; ledger option `ohmylms_hub_retired_pages`; redirects work |
 | 395 Checkout | published | OhMyLMS | active dependency; keep |
 | 123 All Membership | published | OhMyLMS | `ohmylms_membership_page_id`; keep |

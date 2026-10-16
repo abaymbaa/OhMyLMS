@@ -63,6 +63,7 @@ export function ViewAsModal( {
 		teacher: __( 'teacher', 'ohmylms' ),
 		parent: __( 'parent', 'ohmylms' ),
 		instructor: __( 'instructor', 'ohmylms' ),
+		school: __( 'school administrator', 'ohmylms' ),
 	}[ role ];
 	return (
 		<Modal

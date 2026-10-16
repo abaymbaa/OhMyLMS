@@ -8,11 +8,15 @@ export function PeopleTabs( {
 	canListUsers = true,
 	onChange,
 	movable = false,
+	withHome = false,
 } ) {
 	const studentUrl =
 		studentsUrl ||
 		`admin.php?page=${ new URLSearchParams( window.location.search ).get( 'page' ) || 'ohmylms' }#/accounthub`;
+	// The first tab is the bare Account Hub address; every other tab adds ?tab=.
+	const first = withHome ? 'home' : 'students';
 	const sections = [
+		...( withHome ? [ [ 'home', __( 'Home', 'ohmylms' ) ] ] : [] ),
 		[ 'students', __( 'Students', 'ohmylms' ) ],
 		...( canListUsers
 			? [
@@ -34,7 +38,7 @@ export function PeopleTabs( {
 					<a
 						key={ id }
 						href={
-							id === 'students'
+							id === first
 								? studentUrl
 								: `${ studentUrl }?tab=${ id }`
 						}
@@ -63,10 +67,7 @@ export function PeopleTabs( {
 			label={ __( 'Students and schools', 'ohmylms' ) }
 			tabs={ sections.map( ( [ id ] ) => ( {
 				id,
-				href:
-					id === 'students'
-						? studentUrl
-						: `${ studentUrl }?tab=${ id }`,
+				href: id === first ? studentUrl : `${ studentUrl }?tab=${ id }`,
 			} ) ) }
 			labels={ Object.fromEntries( sections ) }
 		/>

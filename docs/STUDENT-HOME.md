@@ -2,8 +2,11 @@
 
 The unified student workspace uses one published WordPress page containing
 `[ohmylms_student_hub]`. On the next administrator visit the plugin provisions
-Student Home without modifying or deleting existing student pages. Configure it
-under **OhMyLMS → Student Home**. The canonical page fills the viewport; embedding
+Student Home without modifying or deleting existing student pages. The public
+page lives at `/profile/` (it was `/student-home/` before October 2026; the old
+address redirects with its query string). Configure it under **OhMyLMS → Account
+Hub → Home**, under *Customize the learner home*; the former
+`admin.php?page=ohmylms-student-home` address redirects there. The canonical page fills the viewport; embedding
 the shortcode in another page retains that page's theme template.
 
 Administrators can rename, hide and reorder sections, set the default section,

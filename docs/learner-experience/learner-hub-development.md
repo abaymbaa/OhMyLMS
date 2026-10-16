@@ -226,3 +226,8 @@ source audit, screen inventory and proposed family contract are now recorded in
 [PARENT-CHILD-P0.md](PARENT-CHILD-P0.md). Unobserved reference screens remain open
 visual acceptance items. Next implementation slice: P1 role selection and parent
 onboarding; follow the continuation ledger for current runtime changes and checks.
+
+
+## Hub address and administration (October 2026)
+
+The hub page slug is `profile`; `/student-home/` redirects permanently with its query string, so invitation emails and bookmarks keep working. Retired-page redirects must never match the hub's own address (the old profile page also used `/profile/`). Hub administration, one-click role previews and the optional sample preview people live on the Account Hub home tab; see "Account Hub home, previews and the profile slug" in CONTINUE-LEARNER-HUB.md for the files, options and tests.

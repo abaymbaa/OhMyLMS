@@ -11,6 +11,7 @@ final class Bootstrap {
 		add_action( 'init', array( Schema::class, 'install' ), 6 );
 		add_action( 'rest_api_init', array( Controller::class, 'register' ) );
 		add_action( 'rest_api_init', array( ViewAs::class, 'register' ) );
+		add_action( 'rest_api_init', array( SamplePreview::class, 'register' ) );
 		add_action( 'rest_api_init', array( Gradebook::class, 'register' ) );
 		add_action( 'init', array( ViewAs::class, 'protect_session' ), 1 );
 		add_action( 'wp_footer', array( ViewAs::class, 'banner' ) );
