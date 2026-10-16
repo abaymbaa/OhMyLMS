@@ -12,7 +12,6 @@ use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Curriculum\Access;
 use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Links;
-use OhMyLMS\Curriculum\QuizKind;
 use OhMyLMS\Curriculum\SkillMappings;
 use OhMyLMS\Curriculum\Syllabus;
 use OhMyLMS\Curriculum\SyllabusCourse;
@@ -110,27 +109,6 @@ class CurriculumController extends RestController {
 				),
 			)
 		);
-		// Khan-style assessment kind (quiz, unit test, course challenge); a post-meta field, no schema.
-		register_rest_route(
-			$this->namespace,
-			'/curriculum/quizzes/(?P<id>\d+)/kind',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_kind' ),
-					'permission_callback' => function ( WP_REST_Request $request ) {
-						return $this->check_object_permission( $request, 'edit', array( OHMYLMS_QUIZ_CPT ) );
-					},
-				),
-			)
-		);
-	}
-
-	public function update_kind( WP_REST_Request $request ) {
-		if ( ! QuizKind::set( (int) $request['id'], (string) $request['kind'] ) ) {
-			return new \WP_Error( 'ohmylms_invalid_kind', __( 'Unknown quiz kind.', 'ohmylms' ), array( 'status' => 400 ) );
-		}
-		return rest_ensure_response( QuizKind::describe( (int) $request['id'] ) );
 	}
 
 	private function payload( array $extra = array() ) {

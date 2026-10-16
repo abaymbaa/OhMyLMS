@@ -16,7 +16,6 @@ defined( 'ABSPATH' ) || exit;
 final class Bootstrap {
 	public static function init() {
 		add_action( 'init', array( Schema::class, 'install' ), 7 );
-		add_filter( 'ohmylms_rest_prepare_quiz', array( __CLASS__, 'quiz_kind' ), 10, 2 );
 		add_action( 'before_delete_post', array( __CLASS__, 'post_deleted' ) );
 		// Core fires `delete_term` after the term is gone from the database; there is no `deleted_term`.
 		add_action( 'delete_term', array( __CLASS__, 'term_deleted' ), 10, 3 );
@@ -25,14 +24,6 @@ final class Bootstrap {
 		SubjectProgress::init();
 		add_action( 'init', array( SharedContent::class, 'register' ), 11 );
 		Directory::init();
-	}
-
-	/** Adds the assessment kind and scope to quiz REST responses. */
-	public static function quiz_kind( $response, $post ) {
-		if ( $response instanceof \WP_REST_Response ) {
-			$response->set_data( array_merge( (array) $response->get_data(), QuizKind::describe( $post->ID ) ) );
-		}
-		return $response;
 	}
 
 	/** A deleted course or quiz/exam leaves no curriculum links, and a deleted course leaves no bundle slot. */
