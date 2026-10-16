@@ -81,6 +81,17 @@ class AssessmentController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/skill-assessments/course',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_course_assessments' ),
+					'permission_callback' => array( $this, 'author_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/quiz/(?P<id>[\d]+)/revisions',
 			array(
 				array(
@@ -103,6 +114,12 @@ class AssessmentController extends RestController {
 
 	public function author_permission() {
 		return AccessPolicy::check( current_user_can( 'edit_posts' ) );
+	}
+
+	public function create_course_assessments( WP_REST_Request $request ) {
+		$body   = (array) $request->get_json_params();
+		$result = \OhMyLMS\Assessment\SkillAssessment::create_for_course( absint( $body['course_id'] ?? 0 ), $body );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
 	public function create_skill_assessment( WP_REST_Request $request ) {

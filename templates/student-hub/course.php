@@ -109,7 +109,7 @@ $hub_units   = $hub_outline['units'];
 					<?php foreach ( $hub_unit['items'] as $hub_row ) : ?>
 						<?php
 						$hub_state = $hub_row['level'] ? $hub_row['level'] : ( $hub_row['complete'] ? 'complete' : 'none' );
-						$hub_tip   = $hub_kind_name[ $hub_row['kind'] ] . ': ' . $hub_row['name'] . ( $hub_row['label'] ? ' (' . $hub_row['label'] . ')' : ( $hub_row['complete'] ? ' (' . __( 'Complete', 'ohmylms' ) . ')' : '' ) );
+						$hub_tip   = ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) . ': ' . $hub_row['name'] . ( $hub_row['label'] ? ' (' . $hub_row['label'] . ')' : ( $hub_row['complete'] ? ' (' . __( 'Complete', 'ohmylms' ) . ')' : '' ) );
 						?>
 						<span class="oml-hub-dot is-<?php echo esc_attr( $hub_state ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><?php echo $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></span>
 					<?php endforeach; ?>
@@ -140,6 +140,12 @@ $hub_units   = $hub_outline['units'];
 					<span class="oml-hub-unit-count"><?php /* translators: 1: completed, 2: total. */ echo esc_html( sprintf( __( '%1$d/%2$d', 'ohmylms' ), $hub_unit['done'], $hub_unit['total'] ) ); ?></span>
 				<?php endif; ?>
 			</summary>
+			<?php if ( ! empty( $hub_unit['test'] ) ) : ?>
+				<p class="oml-hub-levelup">
+					<a class="oml-hub-button" href="<?php echo esc_url( $hub_unit['test']['url'] ); ?>"><?php esc_html_e( 'Level up', 'ohmylms' ); ?></a>
+					<span><?php echo esc_html( $hub_unit['test']['complete'] ? __( 'Take the unit test again to keep your skills sharp.', 'ohmylms' ) : __( 'Take the unit test to level up your skills in this unit.', 'ohmylms' ) ); ?></span>
+				</p>
+			<?php endif; ?>
 			<?php
 			$hub_groups = array(
 				'learn'       => array(
@@ -174,7 +180,7 @@ $hub_units   = $hub_outline['units'];
 						<a class="oml-hub-row" href="<?php echo esc_url( $hub_row['url'] ); ?>">
 							<span class="oml-hub-row-icon <?php echo esc_attr( $hub_row['level'] ? 'is-' . $hub_row['level'] : ( $hub_row['complete'] ? 'is-complete' : '' ) ); ?>"><?php echo $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?></span>
 							<span class="oml-hub-row-name"><?php echo esc_html( $hub_row['name'] ); ?></span>
-							<span class="oml-hub-row-meta"><?php echo esc_html( $hub_row['label'] ? $hub_row['label'] : $hub_kind_name[ $hub_row['kind'] ] ); ?><?php echo $hub_row['complete'] && ! $hub_row['label'] ? ' · ' . esc_html__( 'Complete', 'ohmylms' ) : ''; ?></span>
+							<span class="oml-hub-row-meta"><?php echo esc_html( $hub_row['label'] ? $hub_row['label'] : ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) ); ?><?php echo $hub_row['complete'] && ! $hub_row['label'] ? ' · ' . esc_html__( 'Complete', 'ohmylms' ) : ''; ?></span>
 						</a>
 					</li>
 				<?php endforeach; ?>
@@ -184,3 +190,10 @@ $hub_units   = $hub_outline['units'];
 		</details>
 	<?php endforeach; ?>
 </div>
+<?php if ( ! empty( $hub_outline['challenge'] ) ) : ?>
+	<section class="oml-hub-challenge" aria-labelledby="hub-challenge-title">
+		<h2 id="hub-challenge-title"><?php esc_html_e( 'Course challenge', 'ohmylms' ); ?></h2>
+		<p class="oml-hub-challenge-text"><?php esc_html_e( 'Test your knowledge of the skills in this course.', 'ohmylms' ); ?></p>
+		<a class="oml-hub-button" href="<?php echo esc_url( $hub_outline['challenge']['url'] ); ?>"><?php echo esc_html( $hub_outline['challenge']['complete'] ? __( 'Take the course challenge again', 'ohmylms' ) : __( 'Start course challenge', 'ohmylms' ) ); ?></a>
+	</section>
+<?php endif; ?>

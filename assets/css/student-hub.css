@@ -1874,6 +1874,39 @@
 	display: none;
 }
 
+/* Level up (the unit test) and the course challenge. */
+.ohmylms-student-hub .oml-hub-levelup {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	padding: 16px 20px;
+	border-top: 1px solid var(--hub-border);
+}
+
+.ohmylms-student-hub .oml-hub-levelup span {
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-challenge {
+	margin-top: 24px;
+	padding: 24px;
+	border: 1px solid var(--hub-border);
+	border-radius: 12px;
+	text-align: center;
+}
+
+.ohmylms-student-hub .oml-hub-challenge h2 {
+	margin: 0 0 8px;
+	font-size: 18px;
+}
+
+.ohmylms-student-hub .oml-hub-challenge-text {
+	margin: 0 0 16px;
+	color: var(--hub-muted);
+}
+
 /* Unit groups retain real activity types and the original activity URLs. */
 .ohmylms-student-hub .oml-hub-unit-group {
 	padding: 16px 20px;

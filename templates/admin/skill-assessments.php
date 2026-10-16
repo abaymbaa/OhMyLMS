@@ -14,6 +14,7 @@
  * @global array             $form        Submitted values.
  * @global array|null        $created     The assessment just created.
  * @global string            $message     Error message.
+ * @global array|null        $course_report Result of creating a unit test for every unit.
  * @global array             $styles      Style key to label and description.
  */
 
@@ -39,6 +40,37 @@ $ticked = $form['skills'];
 	<?php endif; ?>
 	<?php if ( '' !== $message ) : ?>
 		<div class="notice notice-error"><p><?php echo esc_html( $message ); ?></p></div>
+	<?php endif; ?>
+
+	<?php if ( ! empty( $course_report ) ) : ?>
+		<div class="notice notice-success"><p>
+			<?php
+			/* translators: %d: number of assessments */
+			echo esc_html( sprintf( _n( '%d assessment was created.', '%d assessments were created.', count( $course_report['created'] ), 'ohmylms' ), count( $course_report['created'] ) ) );
+			?>
+		</p>
+		<?php if ( $course_report['created'] ) : ?>
+			<ul style="list-style:disc;margin-left:20px">
+				<?php foreach ( $course_report['created'] as $item ) : ?>
+					<li><?php echo esc_html( $item['title'] ); ?> — <?php /* translators: 1: questions, 2: skills */ echo esc_html( sprintf( __( '%1$d questions for %2$d skills', 'ohmylms' ), $item['questions'], $item['skills'] ) ); ?>, <?php echo 'publish' === $item['status'] ? esc_html__( 'published', 'ohmylms' ) : esc_html__( 'draft', 'ohmylms' ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+		<?php if ( $course_report['skipped'] ) : ?>
+			<p><strong><?php esc_html_e( 'Skipped:', 'ohmylms' ); ?></strong></p>
+			<ul style="list-style:disc;margin-left:20px">
+				<?php foreach ( $course_report['skipped'] as $item ) : ?>
+					<li><?php echo esc_html( $item['unit'] ); ?> — <?php echo esc_html( $item['reason'] ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+		<?php if ( $course_report['left_out'] ) : ?>
+			<p><?php echo esc_html( sprintf( /* translators: %s: skill names */ __( 'Left out for lack of approved questions: %s.', 'ohmylms' ), implode( ', ', $course_report['left_out'] ) ) ); ?></p>
+		<?php endif; ?>
+		<?php if ( $course_report['managed'] ) : ?>
+			<p><?php esc_html_e( 'This course uses a learning program. Learners see the new assessments only after you add them to the program in the course’s learning program editor.', 'ohmylms' ); ?></p>
+		<?php endif; ?>
+		</div>
 	<?php endif; ?>
 
 	<h2><?php esc_html_e( '1. Choose a unit (optional)', 'ohmylms' ); ?></h2>
@@ -148,4 +180,22 @@ $ticked = $form['skills'];
 		</table>
 		<?php submit_button( __( 'Create assessment', 'ohmylms' ) ); ?>
 	</form>
+
+	<?php if ( $course_id ) : ?>
+		<hr>
+		<h2><?php esc_html_e( 'Or: a unit test for every unit of this course', 'ohmylms' ); ?></h2>
+		<p><?php esc_html_e( 'Creates one unit test for each unit that does not have one yet, from the skills its lessons teach, and adds it at the end of the unit. Skills without enough approved questions are left out and listed. Learners then see a Level up button on each unit.', 'ohmylms' ); ?></p>
+		<form method="post" action="<?php echo esc_url( add_query_arg( array( 'course' => $course_id ), $page_url ) ); ?>">
+			<?php wp_nonce_field( 'ohmylms_course_assessments' ); ?>
+			<input type="hidden" name="ohmylms_course_assessments" value="1">
+			<input type="hidden" name="course" value="<?php echo esc_attr( $course_id ); ?>">
+			<p>
+				<label for="oml-sa-course-per"><?php esc_html_e( 'Questions per skill', 'ohmylms' ); ?></label>
+				<input type="number" id="oml-sa-course-per" name="per_skill" min="1" max="10" value="1" class="small-text">
+			</p>
+			<p><label><input type="checkbox" name="challenge" value="1"> <?php esc_html_e( 'Also create a course challenge from all the skills', 'ohmylms' ); ?></label></p>
+			<p><label><input type="checkbox" name="publish" value="1"> <?php esc_html_e( 'Publish them now (otherwise they stay drafts)', 'ohmylms' ); ?></label></p>
+			<?php submit_button( __( 'Create for every unit', 'ohmylms' ), 'secondary' ); ?>
+		</form>
+	<?php endif; ?>
 </div>

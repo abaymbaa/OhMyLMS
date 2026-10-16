@@ -158,6 +158,150 @@ final class SkillAssessment {
 	}
 
 	/**
+	 * Whether a unit already holds an assessment of a style.
+	 *
+	 * @param int    $chapter_id Unit ID.
+	 * @param string $style      unit-test or course-challenge.
+	 * @return bool
+	 */
+	public static function unit_has_style( $chapter_id, $style ) {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Fresh read of the unit's quizzes.
+		$ids = $wpdb->get_col( $wpdb->prepare( "SELECT content_id FROM %i WHERE chapter_id=%d AND content_type='quiz'", $wpdb->prefix . 'ohmylms_content_relationship', (int) $chapter_id ) );
+		foreach ( $ids as $quiz_id ) {
+			if ( 'publish' === get_post_status( (int) $quiz_id ) || 'draft' === get_post_status( (int) $quiz_id ) ) {
+				if ( AssessmentSettings::get( (int) $quiz_id )['style'] === $style ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Create a unit test for every unit of a course that has none, and optionally a course challenge.
+	 *
+	 * Each unit test draws from the skills its lessons and quizzes teach. A skill with fewer different
+	 * questions than asked for is left out (and listed) instead of stopping the whole run. Units with no
+	 * skills, or with no skill that has enough questions, are skipped with the reason.
+	 *
+	 * @param int   $course_id Course ID.
+	 * @param array $args      per_skill (1-10), challenge (bool), publish (bool).
+	 * @return array|\WP_Error created, skipped, left_out (skill names), managed (the course uses a learning program).
+	 */
+	public static function create_for_course( $course_id, array $args = array() ) {
+		$course_id = absint( $course_id );
+		if ( ! $course_id || OHMYLMS_COURSE_CPT !== get_post_type( $course_id ) ) {
+			return new \WP_Error( 'ohmylms_skill_assessment_course', __( 'Course not found.', 'ohmylms' ), array( 'status' => 404 ) );
+		}
+		if ( ! current_user_can( 'edit_post', $course_id ) ) {
+			return new \WP_Error( 'ohmylms_skill_assessment_course', __( 'You cannot edit this course.', 'ohmylms' ), array( 'status' => 403 ) );
+		}
+		$per_skill = (int) ( $args['per_skill'] ?? 1 );
+		if ( $per_skill < 1 || $per_skill > 10 ) {
+			return self::error( __( 'Draw between 1 and 10 questions for each skill.', 'ohmylms' ) );
+		}
+		$publish = ! empty( $args['publish'] );
+		$cap     = max( 1, min( self::MAX_SKILLS, intdiv( self::MAX_QUESTIONS, $per_skill ) ) );
+		$report  = array(
+			'created'  => array(),
+			'skipped'  => array(),
+			'left_out' => array(),
+			'managed'  => (bool) get_post_meta( $course_id, \OhMyLMS\Learning\CourseProgram::CURRENT, true ),
+		);
+		$pool    = array();
+		$last    = 0;
+		foreach ( (array) ohmylms_get_course( $course_id )->get_chapters() as $chapter ) {
+			$chapter_id = (int) $chapter['id'];
+			$last       = $chapter_id;
+			$skills     = self::unit_skills( $chapter_id );
+			foreach ( $skills as $skill ) {
+				$pool[ $skill['id'] ] = $skill;
+			}
+			if ( self::unit_has_style( $chapter_id, 'unit-test' ) ) {
+				$report['skipped'][] = array(
+					'unit'   => $chapter['name'],
+					'reason' => __( 'It already has a unit test.', 'ohmylms' ),
+				);
+				continue;
+			}
+			$result = self::build_from( $chapter['name'] . ': ' . self::label( 'unit-test' ), 'unit-test', $skills, $per_skill, $cap, $chapter_id, $publish, $report );
+			if ( is_wp_error( $result ) ) {
+				$report['skipped'][] = array(
+					'unit'   => $chapter['name'],
+					'reason' => $result->get_error_message(),
+				);
+			} else {
+				$report['created'][] = $result;
+			}
+		}
+		if ( ! empty( $args['challenge'] ) && $last ) {
+			$has = false;
+			foreach ( (array) ohmylms_get_course( $course_id )->get_chapters() as $chapter ) {
+				$has = $has || self::unit_has_style( (int) $chapter['id'], 'course-challenge' );
+			}
+			if ( $has ) {
+				$report['skipped'][] = array(
+					'unit'   => self::label( 'course-challenge' ),
+					'reason' => __( 'The course already has a course challenge.', 'ohmylms' ),
+				);
+			} else {
+				$result = self::build_from( get_the_title( $course_id ) . ': ' . self::label( 'course-challenge' ), 'course-challenge', array_values( $pool ), $per_skill, $cap, $last, $publish, $report );
+				if ( is_wp_error( $result ) ) {
+					$report['skipped'][] = array(
+						'unit'   => self::label( 'course-challenge' ),
+						'reason' => $result->get_error_message(),
+					);
+				} else {
+					$report['created'][] = $result;
+				}
+			}
+		}
+		$report['left_out'] = array_values( array_unique( $report['left_out'] ) );
+		return $report;
+	}
+
+	/**
+	 * Build one assessment from the skills that have enough questions, noting the ones that do not.
+	 *
+	 * @param string   $title      Title.
+	 * @param string   $style      Style.
+	 * @param array[]  $skills     Skills from unit_skills().
+	 * @param int      $per_skill  Questions per skill.
+	 * @param int      $cap        Most skills one assessment may cover.
+	 * @param int      $chapter_id Unit to place it in.
+	 * @param bool     $publish    Publish it.
+	 * @param array    $report     Report being built; skills left out are added to left_out.
+	 * @return array|\WP_Error
+	 */
+	private static function build_from( $title, $style, array $skills, $per_skill, $cap, $chapter_id, $publish, array &$report ) {
+		if ( ! $skills ) {
+			return self::error( __( 'No skills are connected to this unit yet.', 'ohmylms' ) );
+		}
+		$eligible = array();
+		foreach ( $skills as $skill ) {
+			if ( (int) $skill['available'] >= $per_skill ) {
+				$eligible[] = $skill;
+			} else {
+				$report['left_out'][] = $skill['name'];
+			}
+		}
+		if ( ! $eligible ) {
+			return self::error( __( 'None of its skills have enough approved questions yet.', 'ohmylms' ) );
+		}
+		return self::create(
+			array(
+				'title'      => $title,
+				'style'      => $style,
+				'skills'     => array_column( array_slice( $eligible, 0, $cap ), 'id' ),
+				'per_skill'  => $per_skill,
+				'chapter_id' => $chapter_id,
+				'publish'    => $publish,
+			)
+		);
+	}
+
+	/**
 	 * Whether the current user may add content to a unit: it must belong to a course they can edit.
 	 *
 	 * @param int $chapter_id Unit (chapter) ID.

@@ -10,6 +10,9 @@
 
 namespace OhMyLMS\Student;
 
+use OhMyLMS\Assessment\AssessmentSettings;
+use OhMyLMS\Assessment\Schema as AssessmentSchema;
+use OhMyLMS\Assessment\SkillAssessment;
 use OhMyLMS\Data\Student;
 use OhMyLMS\Learning\CompletionPolicy;
 use OhMyLMS\Learning\CourseProgram;
@@ -53,6 +56,7 @@ final class CourseOutline {
 			'url'         => self::course_page( $course_id ),
 			'locked'      => $locked,
 			'enrolled'    => false,
+			'challenge'   => null,
 			'units'       => array(),
 			'summary'     => array(),
 			'continue'    => array(
@@ -113,11 +117,14 @@ final class CourseOutline {
 			$skills[ (int) $outcome['term_id'] ] = $display[ (int) $outcome['term_id'] ]['key'] ?? 'not-started';
 		}
 
-		$done  = 0;
-		$total = 0;
+		$done      = 0;
+		$total     = 0;
+		$challenge = null;
 		foreach ( $units as &$unit ) {
 			$unit['done']  = count( array_filter( array_column( $unit['items'], 'complete' ) ) );
 			$unit['total'] = count( $unit['items'] );
+			$unit['test']  = self::first_with_style( $unit['items'], 'unit-test' );
+			$challenge     = $challenge ? $challenge : self::first_with_style( $unit['items'], 'course-challenge' );
 			$done         += $unit['done'];
 			$total        += $unit['total'];
 		}
@@ -142,8 +149,9 @@ final class CourseOutline {
 		return array_merge(
 			$base,
 			array(
-				'enrolled' => (bool) $enrollment,
-				'units'    => array_values( $units ),
+				'enrolled'  => (bool) $enrollment,
+				'challenge' => $challenge,
+				'units'     => array_values( $units ),
 				'summary'  => $summary,
 				'continue' => self::continue_action( $course, $student, $state, (bool) $enrollment, $summary ),
 			)
@@ -203,9 +211,13 @@ final class CourseOutline {
 		} else {
 			$url = self::course_page( $course->get_id() );
 		}
+		// A quiz may be a unit test or a course challenge (mixed-skill assessments); everything else is "quiz".
+		$style = 'quiz' === $type && AssessmentSchema::ready() ? (string) AssessmentSettings::get( $content )['style'] : 'quiz';
 		return array(
 			'content_id' => $content,
 			'kind'       => in_array( $type, array( 'quiz', 'assignment' ), true ) ? $type : 'lesson',
+			'style'      => $style,
+			'kind_label' => 'quiz' === $style ? '' : SkillAssessment::label( $style ),
 			'name'       => get_the_title( $content ),
 			'complete'   => $complete,
 			'required'   => ! empty( $item['required'] ),
@@ -213,6 +225,22 @@ final class CourseOutline {
 			'label'      => '',
 			'url'        => $url,
 		);
+	}
+
+	/**
+	 * The first activity that is a mixed-skill assessment of the given style.
+	 *
+	 * @param array[] $items Unit activities.
+	 * @param string  $style unit-test or course-challenge.
+	 * @return array|null
+	 */
+	private static function first_with_style( array $items, $style ) {
+		foreach ( $items as $row ) {
+			if ( 'quiz' === $row['kind'] && ( $row['style'] ?? '' ) === $style ) {
+				return $row;
+			}
+		}
+		return null;
 	}
 
 	/**

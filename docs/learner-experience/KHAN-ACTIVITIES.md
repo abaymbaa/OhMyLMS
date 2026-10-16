@@ -218,3 +218,27 @@ comparison 98, learning 76, player templates 81, Student Home 88, JS 423 (422 pa
 with counts, creating a published unit test from the form. `mcp-integration.php` stops at "Official adapter server not registered" on this test
 site (the MCP adapter is not installed there); it was not run to completion. PHPCS is not installed here, so it is outstanding for the new
 files. The authoring screen is plain PHP with no script, so there was no build step.
+
+## 11. Level up and unit tests for every unit (October 16, 2026)
+
+- **Unit page.** `Student\CourseOutline` now marks each quiz with its assessment style, exposes a unit's unit test (`units[].test`) and the
+  course's challenge (`challenge`), and names those rows "Unit test" and "Course challenge" instead of "Quiz". In the hub course overview a unit
+  that has a published unit test shows a **Level up** button at the top of its body ("Take the unit test to level up your skills in this
+  unit", or "again" once completed), and the course gets a **Course challenge** card with "Start course challenge". A learner who is not
+  enrolled is sent to the course page, as for every other activity. Drafts never show.
+- **Placement.** `SkillAssessment::create_for_course()` (REST `POST /ohmylms/v1/skill-assessments/course`, and a section on the Skill
+  assessments screen once a course is chosen) creates one unit test for every unit that does not have one, from the skills its lessons and
+  quizzes teach, and adds it at the end of the unit. Skills with fewer different questions than asked for are left out and listed; a unit with
+  no skills, or none with enough questions, is skipped with the reason. Optionally one course challenge from all the skills, placed in the
+  last unit. Running it again changes nothing (units that already have a unit test or the course a challenge are skipped). It needs edit
+  rights on the course and creates drafts unless "publish" is ticked.
+- **Limit.** A course with a published learning program (managed program) keeps its own item list, so new assessments appear for its
+  learners only after they are added in the program editor; the screen says so. Courses without a program read their units directly and show
+  them at once.
+
+Verification: assessment phase `levelup` (42 checks: input and permission checks, two unit tests plus a challenge in unit order, left-out
+and skipped reasons, rerun creates nothing, the outline's `test` and `challenge`, Level up on exactly the two units with a test, the course
+challenge card, a visitor sent to the course page, a draft hidden, and the whole-course form), all assessment phases together 877,
+learning 76, player templates 81, Student Home 88, assistant 28, JS 423 (422 pass, 1 skipped), Stylelint clean on the changed stylesheet.
+Browser (disposable site): the course overview with Level up, the "Unit test" and "Course challenge" rows and the challenge card, and the
+whole-course form on the authoring screen. PHPCS is still not installed here.

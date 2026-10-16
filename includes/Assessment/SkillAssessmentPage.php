@@ -117,6 +117,24 @@ final class SkillAssessmentPage {
 				$created = $result;
 			}
 		}
+		$course_report = null;
+		if ( isset( $_POST['ohmylms_course_assessments'] ) && check_admin_referer( 'ohmylms_course_assessments' ) ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() above.
+			$course_id     = isset( $_POST['course'] ) ? absint( $_POST['course'] ) : 0;
+			$course_report = SkillAssessment::create_for_course(
+				$course_id,
+				array(
+					'per_skill' => isset( $_POST['per_skill'] ) ? absint( $_POST['per_skill'] ) : 1,
+					'challenge' => ! empty( $_POST['challenge'] ),
+					'publish'   => ! empty( $_POST['publish'] ),
+				)
+			);
+			// phpcs:enable
+			if ( is_wp_error( $course_report ) ) {
+				$message       = $course_report->get_error_message();
+				$course_report = null;
+			}
+		}
 		$courses = self::courses();
 		if ( ! isset( $courses[ $course_id ] ) ) {
 			$course_id = 0;
@@ -149,6 +167,7 @@ final class SkillAssessmentPage {
 				'found'       => $found,
 				'form'        => $form,
 				'created'     => $created,
+				'course_report' => $course_report,
 				'message'     => $message,
 				'styles'      => array(
 					'quiz'             => array( SkillAssessment::label( 'quiz' ), __( 'A short check of the skills so far.', 'ohmylms' ) ),
