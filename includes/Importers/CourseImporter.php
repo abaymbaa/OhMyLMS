@@ -71,18 +71,26 @@ class CourseImporter {
 					return $course_id;
 				}
 
-				// Import chapters and contents.
+				// Import chapters and contents, remembering the new IDs for the learning program.
+				$chapter_map = array();
+				$content_map = array();
 				foreach ( $course_data['contents'] as $chapter_data ) {
 					$chapter_id = $this->create_chapter( $chapter_data, $course_id );
 
 					if ( is_wp_error( $chapter_id ) ) {
 						continue; // Log or handle error as needed.
 					}
+					if ( isset( $chapter_data['id'] ) ) {
+						$chapter_map[ (int) $chapter_data['id'] ] = (int) $chapter_id; }
 
 					foreach ( $chapter_data['contents'] as $content_data ) {
-						$this->create_content( $content_data, $chapter_id );
+						$content_id = $this->create_content( $content_data, $chapter_id );
+						if ( isset( $content_data['id'] ) && ! is_wp_error( $content_id ) ) {
+							$content_map[ (int) $content_data['id'] ] = (int) $content_id; }
 					}
 				}
+				if ( ! empty( $course_data['learning_program'] ) && is_array( $course_data['learning_program'] ) ) {
+					\OhMyLMS\Learning\CourseProgram::store_copy( $course_id, $course_data['learning_program'], $chapter_map, $content_map ); }
 				array_push( $course_ids, $course_id );
 				if ( ! empty( $course_data['course_links'] ) ) {
 					$link_jobs[ $course_id ] = $course_data['course_links']; }
@@ -143,6 +151,10 @@ class CourseImporter {
 
 		// Save metadata.
 		foreach ( $data['meta'] as $key => $value ) {
+			// Program IDs from another site would point at the wrong units; `learning_program` is remapped instead.
+			if ( in_array( $key, array( \OhMyLMS\Learning\CourseProgram::DRAFT, \OhMyLMS\Learning\CourseProgram::CURRENT ), true ) ) {
+				continue;
+			}
 			if ( '_video_url' == $key ) {
 				$video_id = $this->import_attachment( $value[0] );
 

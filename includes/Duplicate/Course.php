@@ -74,8 +74,9 @@ class Course {
 			throw new \Exception( __( 'Failed to duplicate course.', 'ohmylms' ) );
 		}
 
-		// Duplicate meta data.
-		$this->duplicate_meta( $this->course_id, $new_course_id );
+		// Duplicate meta data. The learning program is copied below, once the new units and content exist;
+		// the published program belongs to the original course, so the copy starts as an unpublished draft.
+		$this->duplicate_meta( $this->course_id, $new_course_id, array( \OhMyLMS\Learning\CourseProgram::DRAFT, \OhMyLMS\Learning\CourseProgram::CURRENT ) );
 
 		// Duplicate thumbnail.
 		$thumbnail_id = get_post_thumbnail_id( $this->course_id );
@@ -109,7 +110,9 @@ class Course {
 			$this->course_id
 		);
 
-		$chapters = $wpdb->get_results( $chapter_query, ARRAY_A );
+		$chapters    = $wpdb->get_results( $chapter_query, ARRAY_A );
+		$chapter_map = array();
+		$content_map = array();
 
 		foreach ( $chapters as $chapter ) {
 			$original_chapter_id = $chapter['chapter_id'];
@@ -127,6 +130,7 @@ class Course {
 			);
 
 			$this->duplicate_meta( $original_chapter_id, $new_chapter_id );
+			$chapter_map[ (int) $original_chapter_id ] = (int) $new_chapter_id;
 
 			$wpdb->insert(
 				"{$wpdb->prefix}ohmylms_chapter_relationship",
@@ -165,6 +169,7 @@ class Course {
 				);
 
 				$this->duplicate_meta( $original_content_id, $new_content_id );
+				$content_map[ (int) $original_content_id ] = (int) $new_content_id;
 
 				$wpdb->insert(
 					"{$wpdb->prefix}ohmylms_content_relationship",
@@ -181,6 +186,12 @@ class Course {
 					$this->duplicate_quiz_questions( $original_content_id, $new_content_id );
 				}
 			}
+		}
+
+		// Lesson groups, skills and content placement of the learning program follow the copied units and content.
+		$program = \OhMyLMS\Learning\CourseProgram::portable( $this->course_id );
+		if ( $program ) {
+			\OhMyLMS\Learning\CourseProgram::store_copy( $new_course_id, $program, $chapter_map, $content_map );
 		}
 
 		return $new_course_id;

@@ -261,6 +261,91 @@ final class CourseProgram {
 		return $program;
 	}
 
+	/**
+	 * The stored draft of a course in a form that can move to another course: the draft if there is one,
+	 * else the published program, without its row identifiers. Null when the course never had a program.
+	 *
+	 * @param int $course_id Course post ID.
+	 * @return array|null
+	 */
+	public static function portable( $course_id ) {
+		$draft = get_post_meta( (int) $course_id, self::DRAFT, true );
+		if ( ! is_array( $draft ) ) {
+			$draft = self::current( (int) $course_id );
+		}
+		if ( ! is_array( $draft ) ) {
+			return null;
+		}
+		unset( $draft['id'], $draft['version'], $draft['course_id'] );
+		return $draft;
+	}
+
+	/**
+	 * Re-point a program at a copy of its course: units and course content get their new IDs, lesson groups
+	 * follow their unit. Content the copy shares with the original (placements) keeps its ID; a row whose
+	 * unit was not copied becomes unplaced and ungrouped. Pure, so it needs no database.
+	 *
+	 * @param array $program  Program as returned by portable().
+	 * @param array $chapters Old chapter ID => new chapter ID.
+	 * @param array $contents Old content ID => new content ID.
+	 * @return array
+	 */
+	public static function remap( array $program, array $chapters, array $contents ) {
+		unset( $program['id'], $program['version'], $program['course_id'] );
+		$groups = array();
+		foreach ( (array) ( $program['groups'] ?? array() ) as $group ) {
+			$old = (int) ( $group['chapter_id'] ?? 0 );
+			if ( isset( $chapters[ $old ] ) ) {
+				$group['chapter_id']    = (int) $chapters[ $old ];
+				$groups[ $group['id'] ] = $group;
+			}
+		}
+		$place = static function ( array $row ) use ( $chapters, $groups ) {
+			$old = (int) ( $row['chapter_id'] ?? 0 );
+			if ( isset( $chapters[ $old ] ) ) {
+				$row['chapter_id'] = (int) $chapters[ $old ];
+			} else {
+				unset( $row['chapter_id'] );
+				if ( isset( $row['type'] ) ) {
+					$row['chapter_id'] = 0; }
+			}
+			if ( isset( $row['group_id'] ) && ( ! isset( $groups[ $row['group_id'] ] ) || (int) $groups[ $row['group_id'] ]['chapter_id'] !== (int) ( $row['chapter_id'] ?? 0 ) ) ) {
+				unset( $row['group_id'] );
+			}
+			return $row;
+		};
+		$program['outcomes'] = array_map( $place, (array) ( $program['outcomes'] ?? array() ) );
+		$items               = array();
+		foreach ( (array) ( $program['items'] ?? array() ) as $item ) {
+			$item = $place( $item );
+			if ( 'practice' !== ( $item['type'] ?? '' ) && isset( $contents[ (int) ( $item['content_id'] ?? 0 ) ] ) ) {
+				$item['content_id'] = (int) $contents[ (int) $item['content_id'] ];
+			}
+			$items[] = $item;
+		}
+		$program['items'] = $items;
+		if ( $groups ) {
+			$program['groups'] = array_values( $groups );
+		} else {
+			unset( $program['groups'] );
+		}
+		return $program;
+	}
+
+	/**
+	 * Store a program copied from another course as the new course's draft (not published).
+	 *
+	 * @param int   $course_id New course post ID.
+	 * @param array $program   Program from portable().
+	 * @param array $chapters  Old chapter ID => new chapter ID.
+	 * @param array $contents  Old content ID => new content ID.
+	 */
+	public static function store_copy( $course_id, array $program, array $chapters, array $contents ) {
+		$program              = self::remap( $program, $chapters, $contents );
+		$program['author_id'] = get_current_user_id();
+		update_post_meta( (int) $course_id, self::DRAFT, $program );
+	}
+
 	/** The error for a rejected group list or membership (codes come from ProgramGroups). */
 	private static function group_error( $code ) {
 		$messages = array(

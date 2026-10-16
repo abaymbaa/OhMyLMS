@@ -88,8 +88,10 @@ class CourseExporter {
 			return null;
 		}
 
-		// Retrieve all metadata for the course.
+		// Retrieve all metadata for the course. The learning program is exported separately (below) because
+		// it refers to unit and content IDs that only mean something next to the exported contents.
 		$course_meta = get_post_meta( $course_id );
+		unset( $course_meta[ \OhMyLMS\Learning\CourseProgram::DRAFT ], $course_meta[ \OhMyLMS\Learning\CourseProgram::CURRENT ] );
 
 		if ( ! empty( $course_meta['_video_id'][0] ) ) {
 			$course_meta['_video_url'][] = wp_get_attachment_url( $course_meta['_video_id'][0] );
@@ -139,6 +141,7 @@ class CourseExporter {
 			'terms'            => $course_terms,
 			'curriculum'       => $this->get_curriculum_paths( $course_id ),
 			'course_links'     => \OhMyLMS\Curriculum\CourseLinks::export( $course_id ),
+			'learning_program' => \OhMyLMS\Learning\CourseProgram::portable( $course_id ),
 			'learning_bundles' => array_values(
 				array_map(
 					static function ( $bundle ) {
