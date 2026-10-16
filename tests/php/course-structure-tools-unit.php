@@ -25,6 +25,7 @@ foreach ($tools as $name => $tool) {
     check(in_array('id', $tool['required'], true) && $tool['properties']['id']['type'] === 'integer' && $tool['properties']['id']['minimum'] === 1, "$name needs a course id");
     check($tool['list'] === false, "$name is not a paged list");
     check($tool['readonly'] === ($tool['method'] === 'GET'), "$name annotation matches its method");
+    check(!($tool['destructive'] && $tool['idempotent']), "$name is not destructive and idempotent, which WordPress would route as DELETE without a body");
     check(!isset($routes[$tool['method'] . $tool['route']]), "$name has its own method and route");
     $routes[$tool['method'] . $tool['route']] = true;
     check(strpos($tool['route'], '{id}') !== false, "$name routes by course id");

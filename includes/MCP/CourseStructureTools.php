@@ -279,7 +279,7 @@ final class CourseStructureTools {
 				),
 				array( 'id', 'chapter_id', 'revision', 'groups' ),
 				true,
-				true,
+				false,
 			),
 			'get_course_links'       => array(
 				'GET',
@@ -304,7 +304,7 @@ final class CourseStructureTools {
 				),
 				array( 'id', 'links' ),
 				true,
-				true,
+				false,
 			),
 		);
 
