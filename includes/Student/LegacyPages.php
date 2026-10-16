@@ -125,6 +125,7 @@ final class LegacyPages {
 		$request = wp_parse_url( $request_uri );
 		$query   = array();
 		parse_str( $request['query'] ?? '', $query );
+		$hub_path = trailingslashit( (string) wp_parse_url( Hub::base_url(), PHP_URL_PATH ) );
 		foreach ( get_option( self::OPTION, array() ) as $page_id => $entry ) {
 			$original = wp_parse_url( $entry['url'] );
 			$path     = trailingslashit( $original['path'] ?? '/' );
@@ -132,6 +133,10 @@ final class LegacyPages {
 			$by_id    = isset( $query['page_id'] ) && is_scalar( $query['page_id'] ) && absint( $query['page_id'] ) === (int) $page_id;
 			$by_path  = empty( $original['query'] ) && ( $current === $path || str_starts_with( $current, $path ) );
 			if ( ! $by_id && ! $by_path ) {
+				continue;
+			}
+			if ( $by_path && ! $by_id && $path === $hub_path && $current === $hub_path ) {
+				// The retired page used the address the hub now owns (for example /profile/): the hub itself is not a legacy route.
 				continue;
 			}
 			$endpoint = $entry['endpoint'];
@@ -167,13 +172,59 @@ final class LegacyPages {
 		return '';
 	}
 
+	/**
+	 * Where the hub lived before its slug changed, with the full query string kept.
+	 *
+	 * Invitation emails and bookmarks (?ohmylms_invite=, ?hub_section=, ?hub_role=) keep working.
+	 *
+	 * @param string $request_uri Request URI, relative to the current site origin.
+	 * @return string New hub URL, or empty when this is not the old hub address.
+	 */
+	public static function renamed_hub_target( $request_uri ) {
+		$record = get_option( Hub::SLUG_OPTION );
+		$base   = Hub::base_url();
+		if ( ! is_array( $record ) || 'renamed' !== ( $record['result'] ?? '' ) || empty( $record['old_path'] ) || ! $base ) {
+			return '';
+		}
+		$request = wp_parse_url( $request_uri );
+		$old     = trailingslashit( (string) $record['old_path'] );
+		$current = trailingslashit( $request['path'] ?? '/' );
+		$new     = trailingslashit( (string) wp_parse_url( $base, PHP_URL_PATH ) );
+		if ( $old !== $current || $new === $old ) {
+			return '';
+		}
+		$query = (string) ( $request['query'] ?? '' );
+		return '' === $query ? $base : $base . ( false === strpos( $base, '?' ) ? '?' : '&' ) . $query;
+	}
+
+	/**
+	 * Whether a redirect would send the visitor to the address they asked for.
+	 *
+	 * @param string $target Destination URL.
+	 * @param string $request_uri Request URI.
+	 * @return bool
+	 */
+	public static function same_location( $target, $request_uri ) {
+		$to   = wp_parse_url( $target );
+		$from = wp_parse_url( $request_uri );
+		return trailingslashit( $to['path'] ?? '/' ) === trailingslashit( $from['path'] ?? '/' ) && ( $to['query'] ?? '' ) === ( $from['query'] ?? '' );
+	}
+
 	/** Redirect GET bookmarks; form submissions stay with their existing handlers. */
 	public static function redirect() {
 		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 			return;
 		}
-		$target = self::target( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) );
-		if ( $target ) {
+		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
+		if ( is_404() ) {
+			$renamed = self::renamed_hub_target( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) );
+			if ( $renamed ) {
+				wp_safe_redirect( $renamed, 301 );
+				exit;
+			}
+		}
+		$target = self::target( $request_uri );
+		if ( $target && ! self::same_location( $target, $request_uri ) ) {
 			wp_safe_redirect( $target );
 			exit;
 		}

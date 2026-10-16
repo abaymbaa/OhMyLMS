@@ -19,6 +19,21 @@ final class Hub {
 
 	const OPTION = 'ohmylms_student_hub';
 
+	/** Slug of the generated public hub page. */
+	const SLUG = 'profile';
+
+	/** Slug used before the hub moved to the shorter public address. */
+	const LEGACY_SLUG = 'student-home';
+
+	/** Records the one-time slug migration and the old path to redirect. */
+	const SLUG_OPTION = 'ohmylms_hub_slug_migration';
+
+	/** Admin editor, now embedded in the Account Hub home tab. */
+	const EDITOR_PAGE = 'ohmylms-student-home-settings';
+
+	/** Former admin address; it redirects to the Account Hub home tab. */
+	const ADMIN_PAGE = 'ohmylms-student-home';
+
 	/** Sections replaced by Achievements and History; still valid for old links and re-enabling. */
 	const LEGACY_SECTIONS = array( 'work', 'progress' );
 
@@ -33,6 +48,8 @@ final class Hub {
 		add_shortcode( 'ohmylms_student_hub', array( __CLASS__, 'shortcode' ) );
 		add_action( 'admin_init', array( __CLASS__, 'install_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'upgrade' ) );
+		add_action( 'admin_init', array( __CLASS__, 'migrate_slug' ) );
+		add_action( 'admin_init', array( __CLASS__, 'redirect_admin_page' ), 1 );
 		add_action( 'init', array( __CLASS__, 'upgrade' ), 20 );
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ), 30 );
 		add_action( 'admin_post_ohmylms_student_hub', array( __CLASS__, 'save' ) );
@@ -184,7 +201,7 @@ final class Hub {
 				'post_type'    => 'page',
 				'post_status'  => 'publish',
 				'post_title'   => __( 'Student Home', 'ohmylms' ),
-				'post_name'    => 'student-home',
+				'post_name'    => self::SLUG,
 				'post_content' => '[ohmylms_student_hub]',
 			),
 			true
@@ -227,6 +244,133 @@ final class Hub {
 			$config['tabs'] = array_values( array_diff( $config['tabs'], self::LEGACY_SECTIONS ) );
 		}
 		update_option( self::OPTION, self::sanitize( $config ), false );
+	}
+
+	/**
+	 * Decide whether the hub page should move from the old slug to the new one.
+	 *
+	 * Pure so the rules are testable: rename only the configured hub page, only while it still
+	 * has the old slug, and only when the new slug is free.
+	 *
+	 * @param array $facts Keys: configured_id, page_id (int), post_type, post_name, new_slug_taken (bool).
+	 * @return array Keys: rename (bool), reason (string).
+	 */
+	public static function slug_migration_decision( array $facts ) {
+		$configured = absint( $facts['configured_id'] ?? 0 );
+		$page_id    = absint( $facts['page_id'] ?? 0 );
+		if ( ! $configured || $configured !== $page_id || 'page' !== ( $facts['post_type'] ?? '' ) ) {
+			return array(
+				'rename' => false,
+				'reason' => 'The configured hub page was not found.',
+			);
+		}
+		if ( self::LEGACY_SLUG !== ( $facts['post_name'] ?? '' ) ) {
+			return array(
+				'rename' => false,
+				'reason' => 'The hub page no longer uses the old slug.',
+			);
+		}
+		if ( ! empty( $facts['new_slug_taken'] ) ) {
+			return array(
+				'rename' => false,
+				'reason' => 'The new slug is already used by another post.',
+			);
+		}
+		return array(
+			'rename' => true,
+			'reason' => 'Renamed.',
+		);
+	}
+
+	/**
+	 * Whether another non-trashed post already owns the new slug (trashed posts carry a __trashed suffix).
+	 *
+	 * @param int $except_id Post that may keep the slug.
+	 * @return bool
+	 */
+	private static function new_slug_taken( $except_id ) {
+		global $wpdb;
+		$found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name=%s AND ID<>%d AND post_status NOT IN ('trash','auto-draft','inherit') AND post_type IN ('page','post','attachment') LIMIT 1", self::SLUG, $except_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact, uncached slug check before a one-time rename.
+		return (bool) $found;
+	}
+
+	/** Rename the configured hub page from the old slug to the new one once; the outcome is recorded either way. */
+	public static function migrate_slug() {
+		if ( get_option( self::SLUG_OPTION ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$page_id = absint( self::settings()['page_id'] );
+		$page    = $page_id ? get_post( $page_id ) : null;
+		$record  = array(
+			'version' => 1,
+			'at'      => gmdate( 'Y-m-d H:i:s' ),
+		);
+		if ( $page && self::SLUG === $page->post_name ) {
+			$record['result'] = 'not_needed';
+			$record['reason'] = 'The hub page already uses the new slug.';
+			update_option( self::SLUG_OPTION, $record, false );
+			return;
+		}
+		$decision         = self::slug_migration_decision(
+			array(
+				'configured_id'  => $page_id,
+				'page_id'        => $page ? (int) $page->ID : 0,
+				'post_type'      => $page ? $page->post_type : '',
+				'post_name'      => $page ? $page->post_name : '',
+				'new_slug_taken' => $page ? self::new_slug_taken( $page_id ) : false,
+			)
+		);
+		$record['reason'] = $decision['reason'];
+		if ( ! $decision['rename'] ) {
+			$record['result'] = 'skipped';
+			update_option( self::SLUG_OPTION, $record, false );
+			return;
+		}
+		$old_path = (string) wp_parse_url( get_permalink( $page ), PHP_URL_PATH );
+		$updated  = wp_update_post(
+			array(
+				'ID'        => $page_id,
+				'post_name' => self::SLUG,
+			),
+			true
+		);
+		$current  = get_post( $page_id );
+		if ( is_wp_error( $updated ) || ! $current || self::SLUG !== $current->post_name ) {
+			// WordPress chose a different unique slug; restore the original so the hub address is unchanged.
+			wp_update_post(
+				array(
+					'ID'        => $page_id,
+					'post_name' => self::LEGACY_SLUG,
+				)
+			);
+			$record['result'] = 'skipped';
+			$record['reason'] = 'WordPress would not give the page the new slug.';
+			update_option( self::SLUG_OPTION, $record, false );
+			return;
+		}
+		$record['result']   = 'renamed';
+		$record['page_id']  = $page_id;
+		$record['old_path'] = $old_path;
+		update_option( self::SLUG_OPTION, $record, false );
+	}
+
+	/**
+	 * Account Hub home tab, where the former Student Home admin screen now lives.
+	 *
+	 * @return string
+	 */
+	public static function admin_home_url() {
+		return admin_url( 'admin.php?page=' . OHMYLMS_SLUG . '#/accounthub' );
+	}
+
+	/** Send the retired Student Home admin address to the Account Hub home tab. */
+	public static function redirect_admin_page() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only navigation.
+		if ( ! isset( $_GET['page'] ) || self::ADMIN_PAGE !== sanitize_key( wp_unslash( $_GET['page'] ) ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		wp_safe_redirect( self::admin_home_url() );
+		exit;
 	}
 
 	/**
@@ -911,7 +1055,8 @@ final class Hub {
 
 	/** Register the administration editor beside the other OhMyLMS menus. */
 	public static function admin_menu() {
-		add_submenu_page( 'ohmylms', __( 'Student Home', 'ohmylms' ), __( 'Student Home', 'ohmylms' ), 'manage_options', 'ohmylms-student-home', array( __CLASS__, 'editor' ) );
+		// Hidden: the Account Hub home tab embeds this editor in a frame.
+		add_submenu_page( null, __( 'Student Home', 'ohmylms' ), __( 'Student Home', 'ohmylms' ), 'manage_options', self::EDITOR_PAGE, array( __CLASS__, 'editor' ) );
 	}
 
 	/**
@@ -920,7 +1065,7 @@ final class Hub {
 	 * @param string $hook Current admin screen hook.
 	 */
 	public static function admin_assets( $hook ) {
-		if ( 'ohmylms_page_ohmylms-student-home' !== $hook ) {
+		if ( 'admin_page_' . self::EDITOR_PAGE !== $hook ) {
 			return;
 		}
 		wp_enqueue_style( 'ohmylms-student-hub', plugins_url( 'assets/css/student-hub.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/student-hub.css' ) );
@@ -931,6 +1076,10 @@ final class Hub {
 	public static function editor() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
+		}
+		if ( isset( $_GET['embed'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presentation flag only.
+			// Framed inside the Account Hub home tab: drop the surrounding admin chrome.
+			echo '<style>#adminmenumain,#wpadminbar,#wpfooter{display:none!important}html.wp-toolbar{padding-top:0!important}#wpcontent,#wpfooter{margin-left:0!important}</style>';
 		}
 		ohmylms_get_template( 'student-hub/editor.php', array( 'config' => self::settings() ) );
 	}
@@ -958,7 +1107,8 @@ final class Hub {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'     => 'ohmylms-student-home',
+					'page'     => self::EDITOR_PAGE,
+					'embed'    => 1,
 					'saved'    => 1,
 					'_wpnonce' => wp_create_nonce( 'ohmylms_student_hub_saved' ),
 				),

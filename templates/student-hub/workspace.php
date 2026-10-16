@@ -64,7 +64,7 @@ $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home'
 			<div class="oml-hub-rail-foot">
 				<a href="<?php echo esc_url( $hub_url( 'account', 'account' ) ); ?>" <?php echo 'account' === $section ? 'aria-current="page"' : ''; ?>><?php echo $hub_icon( 'account' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?><span><?php esc_html_e( 'Settings', 'ohmylms' ); ?></span></a>
 				<?php if ( current_user_can( 'manage_options' ) ) : ?>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=ohmylms-student-home' ) ); ?>"><?php echo $hub_icon( 'progress' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?><span><?php esc_html_e( 'Customize', 'ohmylms' ); ?></span></a>
+					<a href="<?php echo esc_url( Hub::admin_home_url() ); ?>"><?php echo $hub_icon( 'progress' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?><span><?php esc_html_e( 'Customize', 'ohmylms' ); ?></span></a>
 				<?php endif; ?>
 				<div class="oml-hub-theme" role="group" aria-label="<?php esc_attr_e( 'Appearance on this device', 'ohmylms' ); ?>">
 					<button type="button" data-hub-theme-set="system"><?php esc_html_e( 'Auto', 'ohmylms' ); ?></button>
