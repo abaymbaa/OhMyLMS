@@ -171,6 +171,9 @@ final class CourseProgram {
 		$chapters            = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", $course_id ) ) );
 		$chapter_set         = array_flip( $chapters );
 		$known               = self::known_skills( $data['outcomes'] );
+		$groups              = ProgramGroups::normalize( $data['groups'] ?? null, $chapters );
+		if ( is_string( $groups ) ) {
+			return self::group_error( $groups ); }
 		foreach ( $data['outcomes'] as $outcome ) {
 			if ( ! is_array( $outcome ) ) {
 				return self::error( __( 'Invalid outcome.', 'ohmylms' ) ); }
@@ -189,6 +192,11 @@ final class CourseProgram {
 				return self::error( __( 'The unit does not belong to this course.', 'ohmylms' ) ); }
 			if ( $chapter ) {
 				$entry['chapter_id'] = $chapter; }
+			$member = ProgramGroups::check_member( $groups, $outcome['group_id'] ?? null, $chapter );
+			if ( $member ) {
+				return self::group_error( $member ); }
+			if ( ! empty( $outcome['group_id'] ) ) {
+				$entry['group_id'] = $outcome['group_id']; }
 			$program['outcomes'][] = $entry;
 		}
 		$ids       = array();
@@ -211,6 +219,11 @@ final class CourseProgram {
 				'content_id' => $content,
 				'required'   => ! empty( $item['required'] ),
 			);
+			$member = ProgramGroups::check_member( $groups, $item['group_id'] ?? null, $chapter );
+			if ( $member ) {
+				return self::group_error( $member ); }
+			if ( ! empty( $item['group_id'] ) ) {
+				$entry['group_id'] = $item['group_id']; }
 			// Content attaches to a whole chapter (no skills) or to chosen skills of this program.
 			$scope = array_values( array_unique( array_map( 'intval', (array) ( $item['skill_ids'] ?? array() ) ) ) );
 			if ( $scope && array_diff( $scope, array_keys( $skills ) ) ) {
@@ -242,7 +255,24 @@ final class CourseProgram {
 			}
 			$program['items'][] = $entry;
 		}
+		// Only stored when used, so a course without groups keeps the exact program it had before.
+		if ( $groups ) {
+			$program['groups'] = $groups; }
 		return $program;
+	}
+
+	/** The error for a rejected group list or membership (codes come from ProgramGroups). */
+	private static function group_error( $code ) {
+		$messages = array(
+			'oversized'     => __( 'Too many lesson groups.', 'ohmylms' ),
+			'invalid'       => __( 'Invalid lesson group.', 'ohmylms' ),
+			'id'            => __( 'Lesson group identifiers must be unique.', 'ohmylms' ),
+			'chapter'       => __( 'The unit does not belong to this course.', 'ohmylms' ),
+			'title'         => __( 'Name each lesson group.', 'ohmylms' ),
+			'group'         => __( 'The lesson group does not exist.', 'ohmylms' ),
+			'group_chapter' => __( 'A lesson group can only hold content from its own unit.', 'ohmylms' ),
+		);
+		return self::error( $messages[ $code ] ?? $messages['invalid'] );
 	}
 
 	public static function pool( array $program, $skill ) {

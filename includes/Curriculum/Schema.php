@@ -23,7 +23,8 @@ final class Schema {
 	// 4: curriculum topics and syllabus chapters have editable icons.
 	// 5: combined coverage groups retain explicit required membership.
 	// 6: Course Bundles were stored as "tracks": their tables and columns are renamed, keeping every row.
-	const VERSION = '6';
+	// 7: course_links holds advisory course-to-course links (sub-courses, prerequisites, "get ready for").
+	const VERSION = '7';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
 	public static function table( $name ) {
@@ -50,6 +51,8 @@ final class Schema {
 			// Course Bundles: named groupings of courses and curriculum items.
 			'bundles'               => "uuid char(36) NOT NULL, title varchar(190) NOT NULL, description text NULL, status varchar(20) NOT NULL DEFAULT 'draft', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, published_at datetime NULL, UNIQUE KEY uuid (uuid), KEY status_position (status,position)",
 			'bundle_items'          => 'bundle_id bigint unsigned NOT NULL, item_type varchar(20) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY member (bundle_id,item_type,item_id), KEY bundle_position (bundle_id,position), KEY object (item_type,item_id)',
+			// Advisory links between courses: sub-courses, prerequisites and "get ready for" suggestions. They never gate access.
+			'course_links'          => "course_id bigint unsigned NOT NULL, related_course_id bigint unsigned NOT NULL, link_type varchar(20) NOT NULL DEFAULT 'subcourse', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY course_link (course_id,related_course_id,link_type), KEY related (related_course_id,link_type)",
 			// Following a bundle only adds it to a dashboard; it is not an enrollment and grants no access.
 			'bundle_follows'        => 'bundle_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, followed_at datetime NOT NULL, UNIQUE KEY follow (bundle_id,user_id), KEY user_follow (user_id)',
 		);

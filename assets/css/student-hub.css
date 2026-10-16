@@ -2173,3 +2173,30 @@
 .ohmylms-student-hub .oml-course-upnext a {
 	color: var(--hub-text);
 }
+
+.ohmylms-student-hub .oml-course-links {
+	display: grid;
+	gap: 8px;
+	margin: 0 0 16px;
+}
+
+.ohmylms-student-hub .oml-course-links-group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.ohmylms-student-hub .oml-course-links-label {
+	font-weight: 600;
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-course-links .oml-hub-chip {
+	text-decoration: none;
+}
+
+.ohmylms-student-hub .oml-hub-lesson-group h3 {
+	margin-top: 16px;
+}

@@ -13,10 +13,12 @@ namespace OhMyLMS\Student;
 use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
 use OhMyLMS\Assessment\SkillAssessment;
+use OhMyLMS\Curriculum\CourseLinks;
 use OhMyLMS\Data\Student;
 use OhMyLMS\Learning\CompletionPolicy;
 use OhMyLMS\Learning\CourseProgram;
 use OhMyLMS\Learning\LearningPath;
+use OhMyLMS\Learning\ProgramGroups;
 use OhMyLMS\Learning\Schema as LearningSchema;
 use OhMyLMS\Skills\MasteryDisplay;
 use OhMyLMS\Skills\Taxonomy;
@@ -58,6 +60,10 @@ final class CourseOutline {
 			'enrolled'    => false,
 			'challenge'   => null,
 			'units'       => array(),
+			'links'       => array(
+				'get_ready'  => array(),
+				'subcourses' => array(),
+			),
 			'summary'     => array(),
 			'continue'    => array(
 				'state' => 'view',
@@ -100,7 +106,8 @@ final class CourseOutline {
 			if ( ! $row ) {
 				continue;
 			}
-			$chapter = (int) ( $item['chapter_id'] ?? 0 );
+			$row['group_id'] = (string) ( $item['group_id'] ?? '' );
+			$chapter         = (int) ( $item['chapter_id'] ?? 0 );
 			if ( ! isset( $units[ $chapter ] ) ) {
 				$units[ $chapter ] = array(
 					'id'    => $chapter,
@@ -123,6 +130,10 @@ final class CourseOutline {
 		foreach ( $units as &$unit ) {
 			$unit['done']  = count( array_filter( array_column( $unit['items'], 'complete' ) ) );
 			$unit['total'] = count( $unit['items'] );
+			// Lesson groups: 'items' stays the flat list; groups and what sits outside them are extra views of it.
+			$arranged          = ProgramGroups::arrange( (array) ( $program['groups'] ?? array() ), $unit['items'], $unit['id'] );
+			$unit['groups']    = $arranged['groups'];
+			$unit['ungrouped'] = $arranged['ungrouped'];
 			$unit['test']  = self::first_with_style( $unit['items'], 'unit-test' );
 			$challenge     = $challenge ? $challenge : self::first_with_style( $unit['items'], 'course-challenge' );
 			$done         += $unit['done'];
@@ -152,10 +163,45 @@ final class CourseOutline {
 				'enrolled'  => (bool) $enrollment,
 				'challenge' => $challenge,
 				'units'     => array_values( $units ),
+				'links'     => self::links( $course_id ),
 				'summary'   => $summary,
 				'continue'  => self::continue_action( $course, $student, $state, (bool) $enrollment, $summary ),
 			)
 		);
+	}
+
+	/**
+	 * Advisory links to other courses: what to get ready with, and the sub-courses.
+	 *
+	 * Only published courses outside roadmaps are listed, so a link never reveals anything the
+	 * learner could not already open. The links gate nothing.
+	 *
+	 * @param int $course_id Course post ID.
+	 * @return array{get_ready: array[], subcourses: array[]} Each entry has id, title and url.
+	 */
+	private static function links( $course_id ) {
+		$out     = array(
+			'get_ready'  => array(),
+			'subcourses' => array(),
+		);
+		$roadmap = LearnerCatalog::roadmap_course_ids();
+		foreach ( CourseLinks::get( $course_id ) as $link ) {
+			$id = (int) $link['course_id'];
+			if ( OHMYLMS_COURSE_CPT !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) || in_array( $id, $roadmap, true ) ) {
+				continue;
+			}
+			$entry = array(
+				'id'    => $id,
+				'title' => get_the_title( $id ),
+				'url'   => is_user_logged_in() && in_array( 'library', Hub::settings()['tabs'], true ) ? Hub::course_url( $id ) : get_permalink( $id ),
+			);
+			if ( 'subcourse' === $link['type'] ) {
+				$out['subcourses'][] = $entry;
+			} else {
+				$out['get_ready'][] = $entry;
+			}
+		}
+		return $out;
 	}
 
 	/**

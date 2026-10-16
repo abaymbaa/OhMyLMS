@@ -164,14 +164,28 @@ final class Catalog {
 		$draft = self::draft( $course_id );
 		foreach ( $draft['outcomes'] as &$outcome ) {
 			if ( (int) ( $outcome['chapter_id'] ?? 0 ) === $chapter_id ) {
-				unset( $outcome['chapter_id'] ); }
+				unset( $outcome['chapter_id'], $outcome['group_id'] ); }
 		}
 		unset( $outcome );
 		foreach ( $draft['items'] as &$item ) {
 			if ( (int) ( $item['chapter_id'] ?? 0 ) === $chapter_id ) {
-				$item['chapter_id'] = 0; }
+				$item['chapter_id'] = 0;
+				unset( $item['group_id'] ); }
 		}
 		unset( $item );
+		// Lesson groups of the deleted unit go with it.
+		if ( ! empty( $draft['groups'] ) ) {
+			$draft['groups'] = array_values(
+				array_filter(
+					$draft['groups'],
+					static function ( $group ) use ( $chapter_id ) {
+						return (int) $group['chapter_id'] !== $chapter_id;
+					}
+				)
+			);
+			if ( ! $draft['groups'] ) {
+				unset( $draft['groups'] ); }
+		}
 		update_post_meta( (int) $course_id, CourseProgram::DRAFT, $draft );
 		$wpdb->delete(
 			$wpdb->prefix . 'ohmylms_chapter_relationship',
@@ -189,7 +203,7 @@ final class Catalog {
 	private static function fingerprint( $program ) {
 		if ( ! is_array( $program ) ) {
 			return ''; }
-		$keep = array( 'mode', 'recognize_prior', 'evidence_days', 'bank_ids', 'outcomes', 'items' );
+		$keep = array( 'mode', 'recognize_prior', 'evidence_days', 'bank_ids', 'outcomes', 'items', 'groups' );
 		return md5( wp_json_encode( array_intersect_key( $program, array_flip( $keep ) ) ) );
 	}
 

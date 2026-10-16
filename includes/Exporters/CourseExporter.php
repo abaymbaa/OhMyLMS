@@ -138,6 +138,7 @@ class CourseExporter {
 			'meta'             => $course_meta,
 			'terms'            => $course_terms,
 			'curriculum'       => $this->get_curriculum_paths( $course_id ),
+			'course_links'     => \OhMyLMS\Curriculum\CourseLinks::export( $course_id ),
 			'learning_bundles' => array_values(
 				array_map(
 					static function ( $bundle ) {

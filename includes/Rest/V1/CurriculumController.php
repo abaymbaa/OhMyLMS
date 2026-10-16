@@ -10,6 +10,7 @@ namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Curriculum\Access;
+use OhMyLMS\Curriculum\CourseLinks;
 use OhMyLMS\Curriculum\Items;
 use OhMyLMS\Curriculum\Links;
 use OhMyLMS\Curriculum\SkillMappings;
@@ -109,6 +110,35 @@ class CurriculumController extends RestController {
 				),
 			)
 		);
+		// Advisory links between courses (sub-courses, prerequisites, "get ready for"). Anyone who can edit the course may manage them.
+		$course_editor = function ( WP_REST_Request $request ) {
+			return $this->check_object_permission( $request, 'edit', array( OHMYLMS_COURSE_CPT ) );
+		};
+		register_rest_route(
+			$this->namespace,
+			'/courses/(?P<id>\d+)/links',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'course_links' ),
+					'permission_callback' => $course_editor,
+				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'replace_course_links' ),
+					'permission_callback' => $course_editor,
+				),
+			)
+		);
+	}
+
+	public function course_links( WP_REST_Request $request ) {
+		return rest_ensure_response( array( 'links' => CourseLinks::get( (int) $request['id'] ) ) );
+	}
+
+	public function replace_course_links( WP_REST_Request $request ) {
+		$result = CourseLinks::replace( (int) $request['id'], $request['links'] );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( array( 'links' => $result ) );
 	}
 
 	private function payload( array $extra = array() ) {

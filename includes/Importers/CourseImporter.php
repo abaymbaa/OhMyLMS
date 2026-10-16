@@ -56,6 +56,7 @@ class CourseImporter {
 		// Decode the JSON data.
 		$course_datas = json_decode( $json_data, true );
 		$course_ids   = array();
+		$link_jobs    = array();
 		if ( is_array( $course_datas ) ) {
 			foreach ( $course_datas as $course_data ) {
 
@@ -83,7 +84,13 @@ class CourseImporter {
 					}
 				}
 				array_push( $course_ids, $course_id );
+				if ( ! empty( $course_data['course_links'] ) ) {
+					$link_jobs[ $course_id ] = $course_data['course_links']; }
 			}
+		}
+		// Advisory course links are restored once every course in the file exists, so links between them resolve.
+		foreach ( $link_jobs as $linked_course => $exported_links ) {
+			\OhMyLMS\Curriculum\CourseLinks::import( $linked_course, $exported_links );
 		}
 
 		// Trigger migration completed event for tracking.

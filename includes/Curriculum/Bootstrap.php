@@ -33,6 +33,7 @@ final class Bootstrap {
 		$type = get_post_type( $post_id );
 		if ( $type === OHMYLMS_COURSE_CPT ) {
 			Links::remove_object( 'course', $post_id );
+			CourseLinks::remove_course( $post_id );
 			Bundles::remove_member( 'course', $post_id );
 		} elseif ( $type === OHMYLMS_QUIZ_CPT ) {
 			Links::remove_object( 'quiz', $post_id );

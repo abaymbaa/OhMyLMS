@@ -38,6 +38,26 @@ $hub_kind_name  = array(
 $hub_kind_icon = static function ( $kind ) use ( $hub_kind_paths ) {
 	return '<svg class="oml-hub-kind" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="' . esc_attr( $hub_kind_paths[ $kind ] ?? $hub_kind_paths['lesson'] ) . '"/></svg>';
 };
+/**
+ * One list of activity rows.
+ *
+ * @param array[] $rows Outline rows.
+ */
+$hub_rows = static function ( array $rows ) use ( $hub_kind_icon, $hub_kind_name ) {
+	?>
+	<ul class="oml-hub-rows">
+	<?php foreach ( $rows as $hub_row ) : ?>
+		<li>
+			<a class="oml-hub-row" href="<?php echo esc_url( $hub_row['url'] ); ?>">
+				<span class="oml-hub-row-icon <?php echo esc_attr( $hub_row['level'] ? 'is-' . $hub_row['level'] : ( $hub_row['complete'] ? 'is-complete' : '' ) ); ?>"><?php echo $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?></span>
+				<span class="oml-hub-row-name"><?php echo esc_html( $hub_row['name'] ); ?></span>
+				<span class="oml-hub-row-meta"><?php echo esc_html( $hub_row['label'] ? $hub_row['label'] : ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) ); ?><?php echo $hub_row['complete'] && ! $hub_row['label'] ? ' · ' . esc_html__( 'Complete', 'ohmylms' ) : ''; ?></span>
+			</a>
+		</li>
+	<?php endforeach; ?>
+	</ul>
+	<?php
+};
 ?>
 <p class="oml-hub-crumb"><a class="oml-hub-crumb-link" href="<?php echo esc_url( $hub_back ); ?>">&larr; <?php esc_html_e( 'Browse subjects', 'ohmylms' ); ?></a></p>
 <?php if ( is_wp_error( $hub_outline ) ) : ?>
@@ -113,6 +133,21 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<a class="oml-hub-button" href="<?php echo esc_url( $hub_outline['continue']['url'] ); ?>"><?php echo esc_html( $hub_outline['continue']['label'] ); ?></a>
 			<?php endif; ?>
 		</section>
+		<?php $hub_links = $hub_outline['links'] ?? array(); ?>
+		<?php if ( ! empty( $hub_links['get_ready'] ) || ! empty( $hub_links['subcourses'] ) ) : ?>
+			<aside class="oml-course-links" aria-label="<?php esc_attr_e( 'Related courses', 'ohmylms' ); ?>">
+				<?php foreach ( array( 'get_ready' => __( 'Get ready for this course', 'ohmylms' ), 'subcourses' => __( 'Sub-courses', 'ohmylms' ) ) as $hub_link_key => $hub_link_label ) : ?>
+					<?php if ( ! empty( $hub_links[ $hub_link_key ] ) ) : ?>
+						<p class="oml-course-links-group">
+							<span class="oml-course-links-label"><?php echo esc_html( $hub_link_label ); ?></span>
+							<?php foreach ( $hub_links[ $hub_link_key ] as $hub_link ) : ?>
+								<a class="oml-hub-chip" href="<?php echo esc_url( $hub_link['url'] ); ?>"><?php echo esc_html( $hub_link['title'] ); ?></a>
+							<?php endforeach; ?>
+						</p>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</aside>
+		<?php endif; ?>
 		<?php if ( ! $hub_outline['enrolled'] && $hub_course_object ) : ?>
 			<?php
 			global $course;
@@ -192,6 +227,12 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 							<span><?php echo esc_html( $hub_unit['test']['complete'] ? __( 'Take the unit test again to keep your skills sharp.', 'ohmylms' ) : __( 'Take the unit test to level up your skills in this unit.', 'ohmylms' ) ); ?></span>
 						</p>
 					<?php endif; ?>
+					<?php foreach ( $hub_unit['groups'] ?? array() as $hub_custom_group ) : ?>
+						<section class="oml-hub-unit-group oml-hub-lesson-group" aria-labelledby="hub-group-<?php echo esc_attr( $hub_custom_group['id'] ); ?>">
+							<h3 id="hub-group-<?php echo esc_attr( $hub_custom_group['id'] ); ?>"><?php echo esc_html( $hub_custom_group['title'] ); ?></h3>
+							<?php $hub_rows( $hub_custom_group['items'] ); ?>
+						</section>
+					<?php endforeach; ?>
 					<?php
 					$hub_groups = array(
 						'learn'       => array(
@@ -209,7 +250,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 					);
 					foreach ( $hub_groups as $hub_group_key => $hub_group ) :
 						$hub_group_items = array_filter(
-							$hub_unit['items'],
+							$hub_unit['ungrouped'] ?? $hub_unit['items'],
 							static function ( $item ) use ( $hub_group ) {
 								return in_array( $item['kind'], $hub_group['kinds'], true );
 							}
@@ -220,17 +261,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 						?>
 					<section class="oml-hub-unit-group" aria-labelledby="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-<?php echo esc_attr( $hub_group_key ); ?>">
 						<h3 id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-<?php echo esc_attr( $hub_group_key ); ?>"><?php echo esc_html( $hub_group['label'] ); ?></h3>
-						<ul class="oml-hub-rows">
-						<?php foreach ( $hub_group_items as $hub_row ) : ?>
-							<li>
-								<a class="oml-hub-row" href="<?php echo esc_url( $hub_row['url'] ); ?>">
-									<span class="oml-hub-row-icon <?php echo esc_attr( $hub_row['level'] ? 'is-' . $hub_row['level'] : ( $hub_row['complete'] ? 'is-complete' : '' ) ); ?>"><?php echo $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?></span>
-									<span class="oml-hub-row-name"><?php echo esc_html( $hub_row['name'] ); ?></span>
-									<span class="oml-hub-row-meta"><?php echo esc_html( $hub_row['label'] ? $hub_row['label'] : ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) ); ?><?php echo $hub_row['complete'] && ! $hub_row['label'] ? ' · ' . esc_html__( 'Complete', 'ohmylms' ) : ''; ?></span>
-								</a>
-							</li>
-						<?php endforeach; ?>
-						</ul>
+						<?php $hub_rows( $hub_group_items ); ?>
 					</section>
 					<?php endforeach; ?>
 				</section>

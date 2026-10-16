@@ -86,6 +86,9 @@ class Course {
 		// Duplicate curriculum placement. Course Bundle membership is curated, so it is not copied.
 		\OhMyLMS\Curriculum\Placement::copy_items( $this->course_id, $new_course_id );
 
+		// Advisory course links (sub-courses, prerequisites, "get ready for") point at the same courses.
+		\OhMyLMS\Curriculum\CourseLinks::copy( $this->course_id, $new_course_id );
+
 		// Duplicate terms of any other taxonomy. Course categories and tags were replaced by the
 		// curriculum and Course Bundles, so terms left over from before are not carried to the copy.
 		$taxonomies = array_diff( get_object_taxonomies( OHMYLMS_COURSE_CPT ), array( 'course_category', 'course_tag' ) );
