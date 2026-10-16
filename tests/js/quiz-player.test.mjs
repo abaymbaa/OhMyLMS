@@ -181,7 +181,8 @@ test( 'per-page validation moves to the page containing the first unanswered que
 test( 'timer mount uses the injected scoped expiry and cleanup allows remounting', ( t ) => {
 	t.mock.timers.enable( { apis: [ 'setInterval', 'Date' ] } );
 	const context = { timed: true, remaining: 1, quizId: 9 };
-	const root = {};
+	const box = { querySelector: () => ( { getAttribute: () => 'single-choice' } ) };
+	const root = { querySelectorAll: () => [ box ] };
 	let expired = 0;
 	const player = createQuizPlayer( {
 		getContext: () => context,
@@ -193,6 +194,7 @@ test( 'timer mount uses the injected scoped expiry and cleanup allows remounting
 		expire: () => expired++,
 	} );
 	const cleanup = player.callbacks.mount();
+	assert.deepEqual( context.answered, { 1: true } );
 	assert.equal( player.callbacks.mount(), undefined );
 	t.mock.timers.tick( 1000 );
 	assert.equal( expired, 1 );
