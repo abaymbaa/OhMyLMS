@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T06:44:00+00:00\n"
+"POT-Creation-Date: 2026-10-16T06:54:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ohmylms\n"
@@ -698,6 +698,7 @@ msgstr ""
 #: includes/Elementor/Widgets/BuyNowWidget.php:63
 #: includes/PostTypes/CoursePostType.php:50
 #: includes/WPBakery/Elements/BuyNowElement.php:71
+#: templates/admin/skill-assessments.php:48
 #: templates/checkout/review-order.php:23
 #: templates/student-hub/course.php:56
 #: templates/student-hub/school-gradebook.php:42
@@ -12500,7 +12501,7 @@ msgstr ""
 msgid "Secure key storage is unavailable. Configure the server environment variable instead."
 msgstr ""
 
-#: includes/AI/AssistantTools.php:66
+#: includes/AI/AssistantTools.php:72
 msgid "This assistant action is not supported."
 msgstr ""
 
@@ -13209,8 +13210,12 @@ msgstr ""
 msgid "One of the skills does not exist."
 msgstr ""
 
-#: includes/Assessment/SkillAssessment.php:156
-#: includes/Assessment/SkillAssessment.php:159
+#: includes/Assessment/SkillAssessment.php:69
+msgid "You cannot add content to that unit."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:204
+#: includes/Assessment/SkillAssessment.php:207
 #: includes/PostTypes/QuizPostType.php:28
 #: includes/PostTypes/QuizPostType.php:29
 #: includes/PostTypes/QuizPostType.php:56
@@ -13270,12 +13275,29 @@ msgstr ""
 msgid "Quiz"
 msgstr ""
 
-#: includes/Assessment/SkillAssessment.php:157
+#: includes/Assessment/SkillAssessment.php:205
 msgid "Unit test"
 msgstr ""
 
-#: includes/Assessment/SkillAssessment.php:158
+#: includes/Assessment/SkillAssessment.php:206
 msgid "Course challenge"
+msgstr ""
+
+#: includes/Assessment/SkillAssessmentPage.php:26
+#: templates/admin/skill-assessments.php:27
+msgid "Skill assessments"
+msgstr ""
+
+#: includes/Assessment/SkillAssessmentPage.php:154
+msgid "A short check of the skills so far."
+msgstr ""
+
+#: includes/Assessment/SkillAssessmentPage.php:155
+msgid "A check of every skill in the unit."
+msgstr ""
+
+#: includes/Assessment/SkillAssessmentPage.php:156
+msgid "A check of the skills across the course."
 msgstr ""
 
 #: includes/Assessment/Structured.php:112
@@ -16077,6 +16099,7 @@ msgstr ""
 #: includes/Learning/Frontend.php:227
 #: includes/Practice/Frontend.php:84
 #: includes/Skills/Taxonomy.php:24
+#: templates/admin/skill-assessments.php:94
 #: assets/dist/admin/chunks/courses.469edd03bdba.js:1
 #: assets/dist/admin/chunks/curriculum.4211a101a30a.js:1
 #: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:1
@@ -18099,6 +18122,7 @@ msgstr ""
 #: packages/e-commerce/includes/Gateways/GatewayOffline.php:49
 #: packages/e-commerce/includes/Gateways/QPay/GatewayQPay.php:50
 #: packages/e-commerce/includes/Gateways/Stripe/GatewayStripeIntents.php:84
+#: templates/admin/skill-assessments.php:119
 #: assets/blocks/js/membership-list.js:51
 #: assets/dist/admin/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/curriculum.4211a101a30a.js:1
@@ -25225,6 +25249,7 @@ msgid "Could not add the questions."
 msgstr ""
 
 #: includes/Rest/V1/QuestionBankToolsController.php:50
+#: includes/Rest/V1/SkillAssessmentToolsController.php:49
 msgid "Administrator access is required."
 msgstr ""
 
@@ -28123,6 +28148,7 @@ msgid "Account details"
 msgstr ""
 
 #: includes/Utility/Terminology.php:51
+#: templates/admin/skill-assessments.php:55
 #: assets/dist/admin/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/courses.469edd03bdba.js:1
 #: assets/src/features/courses/CourseLearning.jsx:450
@@ -28184,6 +28210,8 @@ msgstr ""
 #: includes/WPBakery/Elements/OfferButtonElement.php:148
 #: includes/WPBakery/Elements/OfferButtonElement.php:156
 #: includes/WPBakery/Elements/OfferButtonElement.php:164
+#: templates/admin/skill-assessments.php:123
+#: templates/admin/skill-assessments.php:126
 msgid "Style"
 msgstr ""
 
@@ -31438,6 +31466,166 @@ msgstr ""
 
 #: templates/admin/import-questions.php:173
 msgid "(a media library image ID or URL) are optional."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:28
+msgid "Build a quiz, unit test or course challenge that draws a few approved questions for each skill you choose. Each attempt gets its own questions, and every question keeps its own skill, so results update the learner’s skill levels."
+msgstr ""
+
+#. translators: 1: assessment title, 2: number of questions, 3: number of skills
+#: templates/admin/skill-assessments.php:34
+#, php-format
+msgid "“%1$s” was created with %2$d questions for %3$d skills."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:36
+msgid "It is published."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:36
+msgid "It is a draft: publish it from the quiz editor when you are ready."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:37
+msgid "Open it"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:44
+msgid "1. Choose a unit (optional)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:50
+msgid "No course"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:57
+msgid "No unit"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:62
+msgid "Load"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:64
+msgid "Pick a course first, load it, then pick one of its units and load again to see the skills it teaches."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:65
+msgid "2. Find more skills (optional)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:67
+msgid "Search skills by name or code"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:69
+#: templates/student-hub/library.php:52
+#: templates/student-hub/school.php:173
+#: templates/student-hub/teacher-class.php:52
+#: assets/dist/admin/chunks/analytics.c466bb9eedba.js:1
+#: assets/dist/admin/chunks/courses.469edd03bdba.js:1
+#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:1
+#: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:1
+#: assets/dist/admin/ohmylms.js:76615
+#: assets/src/application/shared/course-archive-columns-and-filters.js:161
+#: assets/src/application/shared/course-report-reminder-email.js:488
+#: assets/src/features/analytics/CourseStudentsReport.jsx:522
+#: assets/src/features/courses/CourseLearning.jsx:607
+#: assets/src/features/question-bank/BankPicker.jsx:106
+#: assets/src/features/question-bank/QuestionBankPage.jsx:173
+#: build/assets/dist/admin/ohmylms.js:76615
+#: build/parity/assets/dist/admin/ohmylms.js:79965
+#: build/parity/assets/dist/admin/ohmylms.js:94677
+#: build/sdk/chunks/analytics.c466bb9eedba.js:1
+#: build/sdk/chunks/courses.469edd03bdba.js:1
+#: build/sdk/chunks/question-bank.043949d8f6bf.js:1
+#: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
+#: assets/dist/admin/chunks/analytics.c466bb9eedba.js:4987
+#: assets/dist/admin/chunks/courses.469edd03bdba.js:2057
+#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:161
+#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:877
+#: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:1126
+#: assets/dist/admin/ohmylms.js:81730
+#: assets/dist/admin/ohmylms.js:96691
+#: build/assets/dist/admin/ohmylms.js:81730
+#: build/assets/dist/admin/ohmylms.js:96691
+#: build/parity/assets/dist/admin/ohmylms.js:81730
+#: build/parity/assets/dist/admin/ohmylms.js:96691
+#: build/sdk/chunks/analytics.c466bb9eedba.js:4987
+#: build/sdk/chunks/courses.469edd03bdba.js:2057
+#: build/sdk/chunks/question-bank.043949d8f6bf.js:161
+#: build/sdk/chunks/question-bank.043949d8f6bf.js:877
+#: build/sdk/chunks/quiz-editor.307f6aad0827.js:1126
+msgid "Search"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:79
+msgid "3. Choose the skills"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:82
+msgid "Skills this unit teaches"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:83
+#: templates/student-hub/library.php:54
+msgid "Search results"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:94
+msgid "Use this skill"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:94
+msgid "Different questions available"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:104
+msgid "None yet: approve questions for this skill first."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:113
+msgid "No skills yet. Load a unit that has lessons with skills, or search for skills above."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:116
+msgid "4. Set it up"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:120
+msgid "Leave empty to use the style and the first skill."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:134
+msgid "Questions per skill"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:135
+msgid "Each skill needs at least this many different questions (not variants of one another) in the bank."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:138
+msgid "Time limit (minutes)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:139
+msgid "0 means no limit; learners see a guide of one to two minutes per question."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:142
+msgid "When it is made"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:144
+msgid "Publish it now (otherwise it stays a draft)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:145
+msgid "Add it at the end of the chosen unit"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:149
+msgid "Create assessment"
 msgstr ""
 
 #: templates/archive-membership.php:73
@@ -36053,52 +36241,8 @@ msgstr ""
 msgid "Search courses"
 msgstr ""
 
-#: templates/student-hub/library.php:52
-#: templates/student-hub/school.php:173
-#: templates/student-hub/teacher-class.php:52
-#: assets/dist/admin/chunks/analytics.c466bb9eedba.js:1
-#: assets/dist/admin/chunks/courses.469edd03bdba.js:1
-#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:1
-#: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:1
-#: assets/dist/admin/ohmylms.js:76615
-#: assets/src/application/shared/course-archive-columns-and-filters.js:161
-#: assets/src/application/shared/course-report-reminder-email.js:488
-#: assets/src/features/analytics/CourseStudentsReport.jsx:522
-#: assets/src/features/courses/CourseLearning.jsx:607
-#: assets/src/features/question-bank/BankPicker.jsx:106
-#: assets/src/features/question-bank/QuestionBankPage.jsx:173
-#: build/assets/dist/admin/ohmylms.js:76615
-#: build/parity/assets/dist/admin/ohmylms.js:79965
-#: build/parity/assets/dist/admin/ohmylms.js:94677
-#: build/sdk/chunks/analytics.c466bb9eedba.js:1
-#: build/sdk/chunks/courses.469edd03bdba.js:1
-#: build/sdk/chunks/question-bank.043949d8f6bf.js:1
-#: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
-#: assets/dist/admin/chunks/analytics.c466bb9eedba.js:4987
-#: assets/dist/admin/chunks/courses.469edd03bdba.js:2057
-#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:161
-#: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:877
-#: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:1126
-#: assets/dist/admin/ohmylms.js:81730
-#: assets/dist/admin/ohmylms.js:96691
-#: build/assets/dist/admin/ohmylms.js:81730
-#: build/assets/dist/admin/ohmylms.js:96691
-#: build/parity/assets/dist/admin/ohmylms.js:81730
-#: build/parity/assets/dist/admin/ohmylms.js:96691
-#: build/sdk/chunks/analytics.c466bb9eedba.js:4987
-#: build/sdk/chunks/courses.469edd03bdba.js:2057
-#: build/sdk/chunks/question-bank.043949d8f6bf.js:161
-#: build/sdk/chunks/question-bank.043949d8f6bf.js:877
-#: build/sdk/chunks/quiz-editor.307f6aad0827.js:1126
-msgid "Search"
-msgstr ""
-
 #: templates/student-hub/library.php:54
 msgid "All subjects"
-msgstr ""
-
-#: templates/student-hub/library.php:54
-msgid "Search results"
 msgstr ""
 
 #: templates/student-hub/library.php:57
