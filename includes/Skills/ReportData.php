@@ -32,7 +32,7 @@ final class ReportData {
 			return array();
 		}
 		$holders = implode( ',', array_fill( 0, count( $students ), '%d' ) );
-		$ids     = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT course_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE status='enrolled' AND user_id IN ($holders)", $students ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- The IN list is only %d placeholders.
+		$ids     = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT course_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE status='enrolled' AND user_id IN ($holders)", $students ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- The IN list is only %d placeholders; fresh enrolment read, never cached.
 		return array_values(
 			array_filter(
 				array_map( 'intval', $ids ),
@@ -109,7 +109,7 @@ final class ReportData {
 		$rows   = array();
 		if ( $students && Schema::ready() ) {
 			$holders = implode( ',', array_fill( 0, count( $students ), '%d' ) );
-			$states  = $wpdb->get_results( $wpdb->prepare( 'SELECT student_id, term_id, level, review_due, evidence_count, independent_correct, families FROM ' . Schema::table( 'student_skill_state' ) . " WHERE student_id IN ($holders)", $students ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- The IN list is only %d placeholders.
+			$states  = $wpdb->get_results( $wpdb->prepare( 'SELECT student_id, term_id, level, review_due, evidence_count, independent_correct, families FROM ' . Schema::table( 'student_skill_state' ) . " WHERE student_id IN ($holders)", $students ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- The IN list is only %d placeholders; fresh report read, never cached.
 			foreach ( $states as $state ) {
 				$skills[ (int) $state['term_id'] ]                             = true;
 				$rows[ (int) $state['student_id'] ][ (int) $state['term_id'] ] = array(

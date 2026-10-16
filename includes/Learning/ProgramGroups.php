@@ -54,9 +54,15 @@ final class ProgramGroups {
 		return $groups;
 	}
 
-	/** Plain, single-line, length-limited title. */
+	/**
+	 * Plain, single-line, length-limited title.
+	 *
+	 * @param mixed $value Submitted title.
+	 * @return string
+	 */
 	public static function title( $value ) {
-		$text = trim( preg_replace( '/\s+/u', ' ', strip_tags( is_scalar( $value ) ? (string) $value : '' ) ) );
+		// strip_tags(), not wp_strip_all_tags(): these rules stay free of WordPress calls so they run without a database.
+		$text = trim( preg_replace( '/\s+/u', ' ', strip_tags( is_scalar( $value ) ? (string) $value : '' ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags
 		return function_exists( 'mb_substr' ) ? mb_substr( $text, 0, self::MAX_TITLE ) : substr( $text, 0, self::MAX_TITLE );
 	}
 
