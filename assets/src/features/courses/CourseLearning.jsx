@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { CourseLinks } from './CourseLinks';
 import { LessonGroups } from './LessonGroups';
 import { moveItemToUnit, prepareGroups } from './groups.mjs';
+import { UnitNumbers } from './UnitNumbers';
 const request = ( course, suffix = '', options = {} ) =>
 	window.wp.apiFetch( {
 		path: `/ohmylms/v1/courses/${ course }/learning${ suffix }`,
@@ -495,6 +496,23 @@ export function CourseLearning( { courseId } ) {
 					} ) ) }
 				/>
 			</section>
+			<UnitNumbers
+				courseId={ courseId }
+				chapters={ loaded.chapters || [] }
+				onSaved={ ( saved ) =>
+					setLoaded( ( value ) => ( {
+						...value,
+						chapters: ( value.chapters || [] ).map( ( chapter ) => {
+							const change = saved.find(
+								( row ) => row.id === chapter.id
+							);
+							return change
+								? { ...chapter, number: change.number }
+								: chapter;
+						} ),
+					} ) )
+				}
+			/>
 			<section>
 				<h3>{ __( 'Lesson groups', 'ohmylms' ) }</h3>
 				<LessonGroups

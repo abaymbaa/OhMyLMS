@@ -288,6 +288,9 @@ class CourseImporter {
 				if ( $video_id ) {
 					update_post_meta( $chapter_id, '_video_id', $video_id );
 				}
+			} elseif ( \OhMyLMS\Curriculum\UnitNumber::META === $key ) {
+				// An imported file is not trusted: keep the unit number only when it is a valid label.
+				\OhMyLMS\Curriculum\UnitNumber::set( $chapter_id, is_array( $value ) ? ( $value[0] ?? '' ) : $value );
 			} elseif ( '_video_id' !== $key ) {
 					update_post_meta( $chapter_id, $key, maybe_unserialize( $value[0] ) );
 			}

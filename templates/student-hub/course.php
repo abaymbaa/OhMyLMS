@@ -103,7 +103,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<?php foreach ( $hub_units as $hub_index => $hub_unit ) : ?>
 					<li>
 						<a href="#hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>" <?php echo $hub_index === $hub_next_unit ? 'aria-current="true"' : ''; ?>>
-							<span class="oml-course-unit-label"><?php /* translators: %d: unit number. */ echo esc_html( sprintf( __( 'UNIT %d', 'ohmylms' ), $hub_index + 1 ) ); ?></span>
+							<span class="oml-course-unit-label"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'UNIT %s', 'ohmylms' ), $hub_unit['number'] ) ); ?></span>
 							<span><?php echo esc_html( $hub_unit['title'] ); ?></span>
 						</a>
 					</li>
@@ -192,7 +192,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<aside class="oml-course-upnext" aria-label="<?php esc_attr_e( 'Up next', 'ohmylms' ); ?>">
 					<span class="oml-course-upnext-label"><?php esc_html_e( 'Up next', 'ohmylms' ); ?></span>
 					<a href="<?php echo esc_url( $hub_next['url'] ); ?>"><?php echo esc_html( $hub_next['name'] ); ?></a>
-					<span class="oml-course-upnext-unit"><?php /* translators: %d: unit number. */ echo esc_html( sprintf( __( 'Unit %d', 'ohmylms' ), $hub_next_unit + 1 ) ); ?></span>
+					<span class="oml-course-upnext-unit"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'Unit %s', 'ohmylms' ), $hub_units[ $hub_next_unit ]['number'] ?? $hub_next_unit + 1 ) ); ?></span>
 				</aside>
 			<?php endif; ?>
 
@@ -209,7 +209,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 			<?php foreach ( $hub_units as $hub_index => $hub_unit ) : ?>
 				<?php $hub_unit_skills = count( array_filter( $hub_unit['items'], static function ( $item ) { return 'practice' === $item['kind']; } ) ); ?>
 				<section class="oml-course-unit" id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>" aria-labelledby="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-title">
-					<p class="oml-course-unit-label"><?php /* translators: %d: unit number. */ echo esc_html( sprintf( __( 'UNIT %d', 'ohmylms' ), $hub_index + 1 ) ); ?></p>
+					<p class="oml-course-unit-label"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'UNIT %s', 'ohmylms' ), $hub_unit['number'] ) ); ?></p>
 					<h2 id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-title"><?php echo esc_html( $hub_unit['title'] ); ?></h2>
 					<p class="oml-course-unit-meta">
 						<?php if ( $hub_unit_skills ) : ?>

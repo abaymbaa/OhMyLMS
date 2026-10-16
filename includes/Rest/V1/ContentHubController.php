@@ -389,7 +389,7 @@ class ContentHubController extends RestController {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function rename_chapter( WP_REST_Request $request ) {
-		$chapter = Catalog::rename_chapter( (int) $request['id'], (int) $request['chapter_id'], (string) ( $this->body( $request )['name'] ?? '' ) );
+		$chapter = Catalog::update_chapter( (int) $request['id'], (int) $request['chapter_id'], $this->body( $request ) );
 		return is_wp_error( $chapter ) ? $chapter : $this->catalog( $request['id'] );
 	}
 

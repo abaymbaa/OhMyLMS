@@ -8,6 +8,7 @@
  */
 namespace OhMyLMS\Learning;
 
+use OhMyLMS\Curriculum\UnitNumber;
 use OhMyLMS\Skills\Taxonomy;
 
 defined( 'ABSPATH' ) || exit;
@@ -51,7 +52,7 @@ final class Catalog {
 
 	// ---- Chapters (units) -------------------------------------------------------------------------------
 
-	/** @return array<int, array{id:int,name:string}> */
+	/** @return array<int, array{id:int,name:string,number:string}> `number` is the author's unit label, '' for automatic numbering. */
 	public static function chapters( $course_id ) {
 		global $wpdb;
 		$ids      = $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d ORDER BY order_number ASC, id ASC", (int) $course_id ) );
@@ -60,8 +61,9 @@ final class Catalog {
 			$post = get_post( (int) $id );
 			if ( $post && $post->post_type === OHMYLMS_CHAPTER_CPT && 'trash' !== $post->post_status ) {
 				$chapters[] = array(
-					'id'   => (int) $id,
-					'name' => self::title( $id ),
+					'id'     => (int) $id,
+					'name'   => self::title( $id ),
+					'number' => UnitNumber::get( $id ),
 				); }
 		}
 		return $chapters;
@@ -121,6 +123,34 @@ final class Catalog {
 		return is_wp_error( $result ) ? $result : array(
 			'id'   => (int) $chapter_id,
 			'name' => $name,
+		);
+	}
+
+	/**
+	 * Change a chapter's name and/or unit number. Everything is checked before anything is written.
+	 *
+	 * @param int   $course_id  Course ID.
+	 * @param int   $chapter_id Chapter ID.
+	 * @param array $fields     Any of `name` and `number`.
+	 * @return array|\WP_Error
+	 */
+	public static function update_chapter( $course_id, $chapter_id, array $fields ) {
+		if ( ! self::belongs( $course_id, $chapter_id ) ) {
+			return self::error( __( 'The chapter does not belong to this course.', 'ohmylms' ), 404 ); }
+		$has_number = array_key_exists( 'number', $fields );
+		if ( $has_number && null === UnitNumber::normalize( $fields['number'] ) ) {
+			return self::error( __( 'A unit number is up to 10 letters, digits, dots or dashes, for example 3 or 2A.', 'ohmylms' ) ); }
+		if ( array_key_exists( 'name', $fields ) || ! $has_number ) {
+			$renamed = self::rename_chapter( $course_id, $chapter_id, (string) ( $fields['name'] ?? '' ) );
+			if ( is_wp_error( $renamed ) ) {
+				return $renamed; }
+		}
+		if ( $has_number ) {
+			UnitNumber::set( $chapter_id, $fields['number'] ); }
+		return array(
+			'id'     => (int) $chapter_id,
+			'name'   => self::title( $chapter_id ),
+			'number' => UnitNumber::get( $chapter_id ),
 		);
 	}
 

@@ -14,6 +14,7 @@ use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
 use OhMyLMS\Assessment\SkillAssessment;
 use OhMyLMS\Curriculum\CourseLinks;
+use OhMyLMS\Curriculum\UnitNumber;
 use OhMyLMS\Data\Student;
 use OhMyLMS\Learning\CompletionPolicy;
 use OhMyLMS\Learning\CourseProgram;
@@ -127,7 +128,11 @@ final class CourseOutline {
 		$done      = 0;
 		$total     = 0;
 		$challenge = null;
+		$position  = 0;
 		foreach ( $units as &$unit ) {
+			// The printed label may be an author's own ("3", "2A"); anchors and order stay by position.
+			$unit['number'] = UnitNumber::label( $unit['id'] ? UnitNumber::get( $unit['id'] ) : '', $position++ );
+
 			$unit['done']  = count( array_filter( array_column( $unit['items'], 'complete' ) ) );
 			$unit['total'] = count( $unit['items'] );
 			// Lesson groups: 'items' stays the flat list; groups and what sits outside them are extra views of it.

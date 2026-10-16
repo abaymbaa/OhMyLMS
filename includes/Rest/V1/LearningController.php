@@ -2,6 +2,7 @@
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
+use OhMyLMS\Curriculum\UnitNumber;
 use OhMyLMS\Learning\CourseProgram;
 use OhMyLMS\Learning\CompletionPolicy;
 use OhMyLMS\Learning\Schema;
@@ -94,8 +95,9 @@ class LearningController extends RestController {
 		$data['chapters']  = array_map(
 			static function ( $chapter ) {
 				return array(
-					'id'   => (int) $chapter['id'],
-					'name' => get_the_title( $chapter['id'] ),
+					'id'     => (int) $chapter['id'],
+					'name'   => get_the_title( $chapter['id'] ),
+					'number' => UnitNumber::get( $chapter['id'] ),
 				);
 			},
 			(array) ohmylms_get_course( $request['id'] )->get_chapters()
