@@ -178,6 +178,13 @@ final class Service {
 		self::need( $name, 'A class name is required.' );
 		return self::transaction(
 			function () use ( $school, $year, $name, $data ) {
+				if ( $school ) {
+					global $wpdb;
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Revalidate the year under the same lock used by rollover.
+					$year_status = $wpdb->get_var( $wpdb->prepare( 'SELECT status FROM %i WHERE id=%d FOR UPDATE', Schema::table( 'academic_years' ), $year['id'] ) );
+					Access::require_access( Access::school( $school ) );
+					self::need( 'active' === $year_status, 'Select an active academic year in this school.' );
+				}
 				$id = self::insert(
 					'classes',
 					array(
@@ -252,6 +259,16 @@ final class Service {
 		self::need( (int) $record['user_id'] !== get_current_user_id() || Access::platform(), 'Ask another administrator to remove your membership.' );
 		self::transaction(
 			function () use ( $school, $id, $record, $wpdb ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Share the departure lock and recheck authority after waiting for it.
+				$wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE id=%d FOR UPDATE', Schema::table( 'schools' ), $school ) );
+				Access::require_access( Access::school( $school ) );
+				$record = self::row( 'school_memberships', $id );
+				self::need( $record && (int) $record['school_id'] === $school, 'Membership not found.' );
+				if ( 'school_admin' === $record['role'] && 'active' === $record['status'] ) {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Do not remove the last existing active administrator.
+					$other_admin = $wpdb->get_var( $wpdb->prepare( "SELECT m.id FROM %i m JOIN %i u ON u.ID=m.user_id WHERE m.school_id=%d AND m.role='school_admin' AND m.status='active' AND m.user_id<>%d LIMIT 1", Schema::table( 'school_memberships' ), $wpdb->users, $school, $record['user_id'] ) );
+					self::need( $other_admin, 'Invite another school administrator before removing this administrator.' );
+				}
 				self::update( 'school_memberships', array( 'status' => 'inactive' ), array( 'id' => $id ) );
 				$c = Schema::table( 'classes' );
 				$m = Schema::table( 'class_memberships' );
@@ -333,7 +350,7 @@ final class Service {
 		if ( $role === 'activation' || $role === 'guardian' ) {
 			Access::require_access( Access::student( $school, $student ) ); }
 		if ( $role === 'activation' ) {
-			Access::require_access( (int) get_user_meta( $student, '_ohmylms_managed_school', true ) === $school ); }
+			Access::require_access( Lifecycle::managed_student( $school, $student ) ); }
 		if ( $class ) {
 			$record = Access::classroom( $class, true );
 			self::need( $record && (int) $record['school_id'] === $school && in_array( $role, array( 'teacher', 'student' ), true ), 'Select a valid class for this invitation.' );
@@ -397,8 +414,14 @@ final class Service {
 		global $wpdb;
 		self::need( is_string( $token ) && preg_match( '/^[a-f0-9]{64}$/', $token ), 'Invalid invitation.' );
 		$table = Schema::table( 'school_invitations' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Candidate lookup only, outside the transaction so it cannot establish a stale authorization snapshot before acquiring the user lock.
+		$candidate = $wpdb->get_row( $wpdb->prepare( 'SELECT role,student_user_id FROM %i WHERE token_hash=%s', $table, hash( 'sha256', $token ) ), ARRAY_A );
 		return self::transaction(
-			function () use ( $wpdb, $table, $token, $password ) {
+			function () use ( $wpdb, $table, $token, $password, $candidate ) {
+				if ( $candidate && 'activation' === $candidate['role'] ) {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Match recovery's user-then-invitation lock order to avoid reset/accept deadlocks.
+					$wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM %i WHERE ID=%d FOR UPDATE', $wpdb->users, $candidate['student_user_id'] ) );
+				}
 				$invite = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE token_hash=%s FOR UPDATE", hash( 'sha256', $token ) ), ARRAY_A );
 				self::need( $invite && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This invitation has expired or has already been used.' );
 				$school     = (int) $invite['school_id'];
@@ -411,9 +434,11 @@ final class Service {
 				self::need( $issuer && ( user_can( $issuer, 'manage_options' ) || Access::school( $school, array( 'school_admin' ), $issuer->ID ) ), 'The invitation issuer no longer has permission.' );
 				if ( $invite['role'] === 'activation' ) {
 					$user_id = (int) $invite['student_user_id'];
-					Access::require_access( Access::student( $school, $user_id ) && (int) get_user_meta( $user_id, '_ohmylms_managed_school', true ) === $school );
+					Access::require_access( Lifecycle::managed_student( $school, $user_id ) );
 					self::need( strlen( $password ) >= 12 && strlen( $password ) <= 128, 'Choose a password between 12 and 128 characters.' );
 					wp_set_password( $password, $user_id );
+					$updated_user = get_userdata( $user_id );
+					self::need( $updated_user && wp_check_password( $password, $updated_user->user_pass, $user_id ), 'Unable to save the new password.' );
 					// Invalidate other outstanding recovery links for this child.
 					$wpdb->query( $wpdb->prepare( "UPDATE $table SET revoked_at=%s WHERE student_user_id=%d AND role='activation' AND id<>%d AND consumed_at IS NULL", self::now(), $user_id, $invite['id'] ) );
 				} else {
@@ -639,14 +664,41 @@ final class Service {
 		Access::require_access( $learning['prior_completion'] || get_gmt_from_date( $attempt['start_date'] ) >= $assigned );
 		return array( $learning, $attempt );
 	}
-	public static function submissions( $class ) {
+	/**
+	 * Page through reviewable class submissions, rechecking every attempt's scope.
+	 *
+	 * @param int  $class Class ID.
+	 * @param int  $page Page number.
+	 * @param bool $has_more Whether another candidate page exists.
+	 * @return array
+	 */
+	public static function submissions( $class, $page = 1, &$has_more = null ) {
 		global $wpdb;
 		$class_row = Access::classroom( $class, true );
 		Access::require_access( $class_row );
-		$a        = Schema::table( 'learning_assignments' );
-		$r        = Schema::table( 'assignment_recipients' );
-		$attempts = Schema::table( 'assignment_attempts' );
-		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT a.id AS learning_id,t.id FROM $a a JOIN $r r ON r.assignment_id=a.id JOIN $attempts t ON t.assignment_id=a.content_id AND t.course_id=a.course_id AND t.user_id=r.student_user_id WHERE a.class_id=%d AND a.status='active' ORDER BY t.id DESC LIMIT 100", $class ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Current relationship-scoped candidates; each result is authorized again below.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT a.id AS learning_id,t.id FROM %i a JOIN %i r ON r.assignment_id=a.id
+				JOIN %i t ON t.assignment_id=a.content_id AND t.course_id=a.course_id AND t.user_id=r.student_user_id
+				JOIN %i u ON u.ID=t.user_id
+				JOIN %i cm ON cm.class_id=a.class_id AND cm.user_id=t.user_id AND cm.role='student' AND cm.status='active'
+				JOIN %i sm ON sm.school_id=a.school_id AND sm.user_id=t.user_id AND sm.role='student' AND sm.status='active'
+				WHERE a.class_id=%d AND a.school_id=%d AND a.status='active' ORDER BY t.id DESC,a.id DESC LIMIT 101 OFFSET %d",
+				Schema::table( 'learning_assignments' ),
+				Schema::table( 'assignment_recipients' ),
+				Schema::table( 'assignment_attempts' ),
+				$wpdb->users,
+				Schema::table( 'class_memberships' ),
+				Schema::table( 'school_memberships' ),
+				$class,
+				$class_row['school_id'],
+				( min( 10000, max( 1, absint( $page ) ) ) - 1 ) * 100
+			),
+			ARRAY_A
+		);
+		$has_more = count( $rows ) > 100;
+		$rows     = array_slice( $rows, 0, 100 );
 		$result   = array();
 		foreach ( $rows as $row ) {
 			try {
@@ -722,13 +774,21 @@ final class Service {
 		$to   = self::row( 'academic_years', absint( $data['to_year'] ?? 0 ) );
 		self::need( $from && $to && $from['id'] !== $to['id'] && (int) $from['school_id'] === $school && (int) $to['school_id'] === $school && $from['status'] === 'active' && $to['status'] === 'active', 'Select two different active years in this school.' );
 		return self::transaction(
-			function () use ( $school, $from, $to, $wpdb ) {
+			function () use ( $school, $from, $to, $wpdb, $data ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lock both years in ID order to serialize concurrent rollovers and class creation.
+				$wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE id IN (%d,%d) ORDER BY id FOR UPDATE', Schema::table( 'academic_years' ), $from['id'], $to['id'] ) );
+				Access::require_access( Access::school( $school ) );
+				$target = self::row( 'academic_years', $to['id'] );
+				self::need( $target && 'active' === $target['status'], 'The destination year is no longer active.' );
 				$years = Schema::table( 'academic_years' );
 				// Serialize rollover; repeated requests must never duplicate classes.
 				$status = $wpdb->get_var( $wpdb->prepare( "SELECT status FROM $years WHERE id=%d FOR UPDATE", $from['id'] ) );
 				self::need( $status === 'active', 'This year has already been archived.' );
 				$c       = Schema::table( 'classes' );
-				$classes = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $c WHERE academic_year_id=%d AND school_id=%d AND status='active'", $from['id'], $school ), ARRAY_A );
+				$classes = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $c WHERE academic_year_id=%d AND school_id=%d AND status='active' ORDER BY id FOR UPDATE", $from['id'], $school ), ARRAY_A );
+				if ( isset( $data['preview_hash'] ) ) {
+					self::need( hash_equals( $data['preview_hash'], Lifecycle::signature( self::row( 'academic_years', $from['id'] ), self::row( 'academic_years', $to['id'] ), $classes ) ), 'The academic years or source classes changed. Preview the rollover again.' );
+				}
 				foreach ( $classes as $class ) {
 					// New year starts with empty rosters; grade promotion is an explicit staff decision.
 					self::insert(

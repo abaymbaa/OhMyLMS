@@ -123,8 +123,23 @@ $hub_save = static function () {
 	<?php $hub_classes = Hub::learner_classes(); ?>
 	<section class="oml-hub-card oml-hub-settings-card" aria-labelledby="hub-connections-heading">
 		<h2 id="hub-connections-heading"><?php esc_html_e( 'Connections', 'ohmylms' ); ?></h2>
+		<?php
+		$school_result = \OhMyLMS\Student\SchoolActions::flash();
+		if ( $school_result ) :
+			?>
+			<p class="oml-hub-notice" role="status"><?php echo esc_html( $school_result['error'] ?? $school_result['message'] ?? '' ); ?></p>
+		<?php endif; ?>
+		<?php foreach ( \OhMyLMS\Schools\Lifecycle::memberships() as $connection_school ) : ?>
+			<form method="post" action="<?php echo esc_url( $hub_action ); ?>">
+				<h3><?php echo esc_html( $connection_school['name'] ); ?></h3>
+				<?php \OhMyLMS\Student\SchoolActions::fields( 'leave_school', $connection_school['id'], 'account' ); ?>
+				<p><?php esc_html_e( 'Leaving removes your school and class access while keeping your account and learning history. A sole school administrator must appoint another administrator first. School-managed students must contact their administrator.', 'ohmylms' ); ?></p>
+				<label class="oml-hub-check"><input type="checkbox" name="confirm" value="yes" required><span><?php esc_html_e( 'I want to leave this school.', 'ohmylms' ); ?></span></label>
+				<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Leave school', 'ohmylms' ); ?></button></p>
+			</form>
+		<?php endforeach; ?>
 		<?php if ( ! $hub_classes ) : ?>
-			<p><?php esc_html_e( 'You are not in any class yet. Join with the invitation your teacher gave you.', 'ohmylms' ); ?></p>
+			<p><?php echo esc_html( $teacher_mode ? __( 'Your teacher classes are listed in My classes.', 'ohmylms' ) : __( 'You are not in any class yet. Join with the invitation your teacher gave you.', 'ohmylms' ) ); ?></p>
 		<?php endif; ?>
 		<?php foreach ( $hub_classes as $hub_class ) : ?>
 			<?php $hub_people = Hub::supporters( (int) $hub_class['id'] ); ?>

@@ -982,6 +982,14 @@
 	font-weight: 700;
 }
 
+.ohmylms-student-hub .oml-hub-gradebook-table th,
+.ohmylms-student-hub .oml-hub-gradebook-table td {
+	padding: 12px;
+	border: 1px solid var(--hub-border);
+	text-align: left;
+	vertical-align: top;
+}
+
 .ohmylms-student-hub .oml-hub-table tbody tr:last-child td {
 	border-bottom: 0;
 }
@@ -1273,6 +1281,11 @@
 
 .ohmylms-student-hub .oml-hub-coursecard p {
 	margin: 0;
+}
+
+.ohmylms-student-hub .oml-hub-school-reports details > p,
+.ohmylms-student-hub .oml-hub-school-reports details > ul {
+	margin: 16px;
 }
 
 .ohmylms-student-hub .oml-hub-coursecard > p:last-child {
@@ -1728,6 +1741,27 @@
 .ohmylms-student-hub .oml-hub-family details > form {
 	padding: 0 16px 16px;
 }
+
+.ohmylms-student-hub .oml-hub-school-reports summary .oml-hub-family-meta {
+	display: block;
+	margin: 8px 0 0;
+}
+
+.ohmylms-student-hub .oml-hub-gradebook-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	margin: 20px 0;
+}
+
+.ohmylms-student-hub .oml-hub-school-reports {
+	min-width: 0;
+}
+
+.ohmylms-student-hub .oml-hub-gradebook-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
 
 .ohmylms-student-hub .oml-hub-family details .oml-hub-actions {
 	margin-bottom: 0;

@@ -541,8 +541,8 @@ final class Hub {
 			ohmylms_get_template( 'student-hub/family-invite.php', array( 'family_token' => $family_invite ) );
 			return ob_get_clean();
 		}
-		$config  = self::settings();
-		$section = get_query_var( 'hub_section' );
+		$config        = self::settings();
+		$section       = get_query_var( 'hub_section' );
 		$direct_invite = get_query_var( 'ohmylms_invite' );
 		if ( ! $section && is_string( $direct_invite ) && preg_match( '/^[a-f0-9]{64}$/', $direct_invite ) && in_array( 'classes', $config['tabs'], true ) ) {
 			$section = 'classes';
@@ -575,16 +575,18 @@ final class Hub {
 			if ( ! SchoolWorkspace::available() ) {
 				return '<p>' . esc_html__( 'The school workspace is not available for this account.', 'ohmylms' ) . '</p>';
 			}
-			$config['tabs']                      = array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'school-settings', 'account' );
-			$config['title']                     = __( 'School workspace', 'ohmylms' );
-			$config['labels']['school-overview'] = __( 'Overview', 'ohmylms' );
-			$config['labels']['school-classes']  = __( 'Classes', 'ohmylms' );
-			$config['labels']['school-people']   = __( 'People', 'ohmylms' );
-			$config['labels']['school-invites']  = __( 'Invitations', 'ohmylms' );
-			$config['labels']['school-settings'] = __( 'School settings', 'ohmylms' );
-			$section                             = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'school-overview';
-			$views                               = 'account' === $section ? self::views( $section ) : array();
-			$view                                = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
+			$config['tabs']                       = array( 'school-overview', 'school-classes', 'school-reports', 'school-gradebook', 'school-people', 'school-invites', 'school-settings', 'account' );
+			$config['title']                      = __( 'School workspace', 'ohmylms' );
+			$config['labels']['school-overview']  = __( 'Overview', 'ohmylms' );
+			$config['labels']['school-classes']   = __( 'Classes', 'ohmylms' );
+			$config['labels']['school-reports']   = __( 'Reports', 'ohmylms' );
+			$config['labels']['school-gradebook'] = __( 'Gradebook', 'ohmylms' );
+			$config['labels']['school-people']    = __( 'People', 'ohmylms' );
+			$config['labels']['school-invites']   = __( 'Invitations', 'ohmylms' );
+			$config['labels']['school-settings']  = __( 'School settings', 'ohmylms' );
+			$section                              = in_array( get_query_var( 'hub_section' ), $config['tabs'], true ) ? get_query_var( 'hub_section' ) : 'school-overview';
+			$views                                = 'account' === $section ? self::views( $section ) : array();
+			$view                                 = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
 		}
 		if ( $parent_mode ) {
 			if ( ! ParentWorkspace::available() ) {

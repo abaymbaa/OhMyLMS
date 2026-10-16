@@ -62,7 +62,8 @@ final class SchoolWorkspace {
 	 * @return string
 	 */
 	public static function url( $section = 'school-overview', $view = '', $school_id = 0 ) {
-		$url = add_query_arg( 'hub_role', 'school', Hub::url( $section, $view ) );
+		$school_id = $school_id ? absint( $school_id ) : absint( get_query_var( 'hub_school', 0 ) );
+		$url       = add_query_arg( 'hub_role', 'school', Hub::url( $section, $view ) );
 		return $school_id ? add_query_arg( 'hub_school', absint( $school_id ), $url ) : $url;
 	}
 

@@ -88,7 +88,11 @@ try {
     school_request('GET', "classes/$class/members");
     school_request('GET', "schools/$b/roster", [], 403);
     school_request('POST', "schools/$a/invitations", ['role' => 'school_admin', 'email' => 'x@example.invalid'], 403);
-    school_request('POST', 'schools', ['name' => 'Forbidden'], 403);
+	// Teachers can create one school under the current hub contract, with no platform capabilities.
+	$schools[] = $teacher_school = school_request( 'POST', 'schools', array( 'name' => "Teacher school $suffix" ) )['id'];
+	school_check( \OhMyLMS\Schools\Access::school( $teacher_school ), 'Teacher did not become administrator of their own school' );
+	school_check( ! current_user_can( 'manage_options' ), 'School creation granted platform administration' );
+	school_request( 'POST', 'schools', array( 'name' => 'Second teacher school' ), 400 );
     school_check(!current_user_can('edit_posts'), 'Teacher gained broad WordPress editing rights');
     school_request('GET', 'users', [], 403);
     wp_set_current_user($admin->ID);

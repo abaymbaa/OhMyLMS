@@ -27,7 +27,8 @@ implementation exists", this section wins.
 | Learner (library, My learning, classes, achievements, history, settings, membership) | default | `Student/Hub.php`, `templates/student-hub/*` |
 | Teacher: independent classes, roster, invitations, archive/restore | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php` |
 | Parent: school-linked children (read-only work overview) and home-learning children (managed accounts, setup links, invitations, grade and followed collections, revocation) | `hub_role=parent` | `Student/ParentWorkspace.php`, `ParentActions.php`, `FamilyActions.php`, `includes/Family/*` (own schema `ohmylms_family_schema`) |
-| School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `templates/student-hub/school.php` |
+| School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal, managed-student recovery and previewed rollover | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `Schools/Lifecycle.php`, `templates/student-hub/school.php` |
+| School reports and gradebook: completion/overdue counts, assigned-work drill-down, stored skill summaries, submission review/feedback, quiz/assignment matrix, weighted totals and CSV | `hub_role=school&hub_section=school-reports` or `school-gradebook` | `Student/SchoolReports.php`, `SchoolGradebook.php`, `SchoolActions.php`, `templates/student-hub/school-reports.php` |
 | Sign-in chooser and sign-up (learner, teacher, parent) | signed out | `templates/student-hub/signin.php`, `ParentActions.php` |
 | Invitation pages (school activation, family invitation, child setup) | `?ohmylms_invite`, `?ohmylms_family_invite`, `?ohmylms_child_setup` | `SchoolActivation.php`, `FamilyActions.php` |
 | Legacy retirement and portal forwarding | portal URLs | `Student/LegacyPages.php`, `Schools/Views.php`, `ViewAs.php` |
@@ -48,10 +49,11 @@ no-referrer headers, one-time results travel through short per-user transients.
   race on invitation acceptance. Promote the ones you want to keep into `tests/php/`.
 - Live browser checks on http://800.local: teacher, parent, school and learner flows, invitations
   for guardian, teacher and school-admin roles, a non-admin teacher creating a school.
-- **Never run:** `tests/php/schools-integration.php`, `teacher-class-integration.php` and the
-  credential-protected hub integration suite (disposable-database guard not bypassed). **Not tested
-  live:** roster import UI, a second account accepting a school teacher invitation as a non-admin,
-  mobile and dark-mode passes on every new page.
+- Protected disposable-database suites passed without bypassing their guards: school reports
+  (82 checks: 32 report, 31 lifecycle, 19 matrix), schools, teacher classes (47), student hub (72),
+  and gradebook. The isolated site blocks outbound HTTP/email and uses the current plugin source.
+- Live browser verification passed for roster import, non-admin teacher invitation acceptance and
+  departure, matrix/CSV download, recovery generation, rollover confirmation, mobile and dark theme.
 
 ### Working rules for the local site (800.local)
 
@@ -63,21 +65,24 @@ created by the user is real data and must be left alone.
 
 ### Git state
 
-Everything is committed locally on `main` (not pushed). Latest commits: roster import, school settings
+The school reports, lifecycle and gradebook checkpoint is committed locally on `main` (not pushed).
+Use the latest Git log for its commit ID. Latest earlier commits: roster import, school settings
 and member removal, school workspace and teacher-created schools, portal retirement, family and parent
 work, teacher classes and legacy retirement, plus documentation commits.
 
 ### Open work, in suggested order
 
-1. School reports and gradebook in the School workspace (the old portal had class reports, grading,
-   skill reports).
-2. Managed-student password reset, leaving a school, school rollover.
-3. Live browser pass of roster import and a non-admin teacher accepting a school invitation.
+1. School reports, the submission gradebook, the scoped quiz/assignment matrix, totals and full
+   class/course CSV export are implemented. Manual grade overrides remain in the platform Account
+   Hub course gradebook and are deliberately separate from school assessment grades.
+2. Managed-student recovery, leaving a school and previewed academic-year rollover are implemented.
+3. Roster import and a non-admin teacher accepting an invitation and leaving the school passed
+   live browser checks. See the latest checkpoint for the remaining verification details.
 4. Remove the dormant portal React app and renderers (wp-admin Account Hub still hosts them for platform
    administrators; decide whether to keep that).
 5. Home-learning reports (P6) need activity provenance first; parent dashboard, recovery and
    personalization step two were never observed in the reference and remain proposed designs.
-6. Run the credential-protected integration suites in a disposable database.
+6. Protected integration verification is complete; retain the disposable-database guards for future runs.
 
 
 ## Parent and child UI extension (October 16, 2026)
@@ -1497,3 +1502,137 @@ tampered CSV rejected, two students created, other teacher denied). PHPCS clean.
 browser** (the live test was skipped at the user's request; the browser session was signed out).
 The disposable test school was removed.
 
+### School reports and submission gradebook (October 16, 2026)
+
+- New School workspace destinations: Reports and Gradebook. Reports paginate classes in groups
+  of 20 and show completion percentage, completed/assigned counts and overdue work for current
+  school and class students. Class drill-down shows distributed work (50 rows per page), due
+  dates in the school's time zone, and completed/not-completed/overdue states.
+- Skills shows existing stored summaries for current class students (50 roster entries per
+  page). It reads without processing/rebuilding evidence. The UI explicitly describes these
+  as overall learning levels, not school-attributed activity or grades. Disabled skills and
+  learners without evidence have empty states. Home-learning provenance/report work stays open.
+- Gradebook reviews distributed assignment submissions, 100 candidates per page, with a
+  lookahead so filtered pre-distribution attempts cannot hide later pages. Each attempt has
+  its own score, answer, protected attachment link and feedback form. Saving uses the existing
+  `Service::grade()` assessment/completion pipeline. This slice does not introduce course-wide
+  quiz matrices, manual grade overrides or exports.
+- `SchoolReports` checks the active school administrator relationship and exact class/school
+  match for every entry. POST grading uses an operation-specific nonce, school/class checks,
+  recipient and attempt checks, and whole-number score validation. Archived classes retain
+  assigned-work reports but grading is closed. Removed students disappear from current reports.
+  Sidebar navigation now preserves the selected school. No schema change.
+- Verification: **32 fixture checks passed**, including non-platform school administrators,
+  cross-school denial, student denial, removed membership, invalid/decimal scores, pre-assignment
+  attempts, passing/failing assessment status, completion propagation, archived grading denial,
+  21 classes and over 100 submissions with non-overlapping pagination. Reusable checks are in
+  `tests/php/support/school-report-checks.php`; the new credential-protected entry point is
+  `tests/php/school-reports-integration.php`. The checks ran against disposable fixtures on the
+  local site; the protected disposable-database runner and older full suites were not run.
+- Built-in browser on 800.local: real Reports/Gradebook navigation, assigned-work due date,
+  85/100 grade and feedback persisted as passed, work changed to Completed, skills empty state,
+  dark theme and 390px mobile layout (no horizontal overflow). Browser grading used the existing
+  platform-admin session; non-platform authorization was verified through the PHP fixture checks.
+  Two browser fixture schools, three accounts and their course/assignment records were removed;
+  fixture school/account absence was verified. Existing school data was preserved.
+- `npm test`: asset parity plus 415 tests, 414 passed / 0 failed / 1 skipped. PHP syntax passed.
+  PHPCS clean on the new runtime class/template and modified school action/workspace/templates;
+  student-hub CSS passes Stylelint. Existing Hub/Service standards debt remains; test fixtures
+  have direct-database cleanup warnings and the protected runner has a local file-read warning.
+  Changes are uncommitted.
+
+### Managed recovery, departure, rollover and the course matrix (October 16, 2026)
+
+Delivered sequentially after the submission-report slice:
+
+1. **Managed-student recovery:** People offers a confirmed "Create password reset link" action
+   for ordinary accounts owned by the selected school. It replaces unused activation links,
+   shows the new private link once for 48 hours, and leaves the current password unchanged until
+   the student chooses another. Creation and acceptance both reject cross-school, removed or
+   promoted staff accounts. Recovery and activation acceptance lock the user before invitations
+   in the same order. Acceptance verifies that the new password was actually saved.
+2. **Leaving a school:** Settings → Connections lists the signed-in person's actual school
+   memberships and a confirmed Leave school action. It deactivates school/class access and
+   associated guardian links, revokes invitations issued by that member, and retains the account,
+   enrollments and learning records. School-managed students contact their administrator.
+   The last active administrator cannot leave or be removed. Voluntary departure and removal
+   share a school lock and recheck permissions after locking. Global WordPress roles are retained.
+3. **Academic-year rollover:** Classes offers a five-minute, per-user preview. Confirmation copies
+   class names/subjects/grades into the destination with empty rosters and archives the source
+   year/classes. No assignments, enrollments or students are copied. The source class list and
+   both year records are fingerprinted and checked under locks; changed, expired, forged or
+   repeated previews fail. Both years are locked in ID order. Class creation rechecks its year
+   under lock so it cannot finish inserting into a year that rollover just archived.
+4. **Browser verification:** CSV import preview correctly classified one new and one existing
+   student, and commit created exactly one. A disposable teacher with no platform-administrator
+   permissions accepted a school/class invitation, saw the class, then used Connections to leave.
+   The browser showed the departure success message and "No classes to show" afterwards. Rollover
+   preview listed the expected source class without mutation.
+5. **Course matrix and CSV:** Gradebook defaults to a paginated, read-only course matrix (50 current
+   class students per page). A separate Review submissions view retains scoring and feedback.
+   Only distributed activities enter columns; each student's cell needs their own activity/course
+   distribution and permitted attempt date (or explicitly allowed prior completion). Whole-course
+   distributions include the course's assessments. Latest graded attempts survive pending retakes,
+   zero is a real grade, and quiz maxima use stored attempt-answer marks. Student totals are weighted
+   earned/possible points over graded work. Missing/pending/unassigned cells are excluded. Platform
+   manual overrides remain separate. The POST/nonce-protected full-class CSV streams all roster
+   pages, reauthorizes each, and neutralizes spreadsheet formula prefixes in untrusted text.
+
+New services/templates: `Schools/Lifecycle.php`, `Student/SchoolGradebook.php`,
+`templates/student-hub/school-rollover.php`, `templates/student-hub/school-gradebook.php`.
+No schema migration or changes to purchase/enrollment policy.
+
+Verification: **77 reusable PHP checks passed** (32 report, 28 lifecycle, 17 matrix), including
+21-class/100-plus-submission and 51-student pagination, exact scope, archived years/classes,
+replacement/replay/promotion recovery cases, stale rollover previews, departure, quiz maxima,
+pending retakes, zeroes, weighted totals and CSV text protection. The guarded
+`tests/php/school-reports-integration.php` entry point runs all three support check sets, but was
+not itself run against the credential-protected disposable database. The same support checks ran
+with removable local fixtures. `npm test`: 415 total, 414 pass, 0 fail, 1 skipped, asset parity passes.
+New runtime files and modified templates/actions pass PHPCS; student-hub CSS passes Stylelint;
+PHP syntax checks pass. Existing Service/Hub standards debt remains, and fixture files retain
+direct-database/local-file diagnostic warnings. The three variable-length IN-list queries have
+narrow documented PHPCS exceptions because the static sniff cannot count dynamic variadic values;
+each placeholder and argument list is built from the same bounded student-ID array.
+
+Real HTTP CSV checks passed for the expected 85/100 and 7/10 grades and 83.64% weighted total,
+CSV download headers, invalid nonce rejection, and cross-school export denial.
+Final built-in browser verification also passed: the quiz/assignment matrix displayed 85/100 and
+7/10 with the correct 92/110 (83.64%) total; "Download full class CSV" produced a real downloaded
+file with matching values. Rollover confirmation archived the source class and displayed its active
+replacement. The managed-student password recovery action displayed the expected private-link
+success message without changing a password through the browser. A 390px check found a grid
+minimum-width issue; setting the report card's minimum width to zero fixed it (page width 375px
+inside a 390px viewport; table scrolls inside its 293px region). Dark-theme verification passed
+and the viewport override was reset. A third disposable school was created through the teacher UI
+for this final test; the user returned to the real administrator session before the matrix,
+download and rollover checks. No extra sign-in is needed. Changes remain uncommitted.
+
+Cleanup completed and verified: all three browser fixture schools and their student/staff accounts,
+class memberships, assignments/attempts, quiz answers/questions, course/chapter records and audit
+rows were removed. The roster-imported student was included. The private credentials file,
+invitation redirect file and temporary executable probes were removed. Screenshots and the sample
+CSV remain as ignored verification artifacts. The real administrator session and existing school
+data were preserved.
+
+## Review and protected-test checkpoint (October 16, 2026)
+
+Reviewed and committed the school reports, lifecycle and gradebook implementation locally.
+Two review fixes are included: activation candidate lookup precedes the transaction so a
+concurrent student-membership revocation cannot be missed through an old repeatable-read
+snapshot; streamed CSV columns and totals remain aligned with the original header even when
+assignments change between pages. Regression tests exercise both cases.
+
+Protected disposable-database verification passed: school reports **82 checks** (32 report,
+31 lifecycle, 19 matrix), schools integration, teacher classes **47**, student hub **72**, and
+gradebook integration. The legacy schools test now checks the agreed one-school-per-teacher
+contract and confirms school creation does not grant platform administration. The isolated
+configuration explicitly declares its local environment; production configuration is unchanged.
+All database guards remained enabled, and outbound HTTP/email are blocked on that test site.
+
+Final asset parity and JS tests passed: **414 pass, 0 fail, 1 skipped**. Targeted runtime PHP
+standards and student-hub CSS checks passed; fixture cleanup/local-file warnings remain.
+The separate mysqli connection in the race regression has a narrow documented exception
+because the test requires an independently committed transaction. Existing Service/Hub
+standards debt remains. The local PHP installation emits an existing missing-Imagick startup
+warning; it did not prevent the suites passing. No push was performed.

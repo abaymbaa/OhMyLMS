@@ -6,6 +6,7 @@
  */
 
 use OhMyLMS\Schools\Service;
+use OhMyLMS\Schools\Lifecycle;
 use OhMyLMS\Student\Hub;
 use OhMyLMS\Student\SchoolActions;
 use OhMyLMS\Student\SchoolWorkspace;
@@ -73,6 +74,8 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 			</nav>
 		</section>
 
+	<?php elseif ( in_array( $section, array( 'school-reports', 'school-gradebook' ), true ) ) : ?>
+		<?php ohmylms_get_template( 'student-hub/school-reports.php', compact( 'school', 'school_id', 'school_post', 'school_page', 'section' ) ); ?>
 	<?php elseif ( 'school-classes' === $section ) : ?>
 		<?php
 		$school_years   = Service::years( $school_id );
@@ -146,6 +149,7 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 			</details>
 		</section>
 
+		<?php ohmylms_get_template( 'student-hub/school-rollover.php', compact( 'school_id', 'school_post', 'school_active', 'school_flash' ) ); ?>
 	<?php elseif ( 'school-people' === $section ) : ?>
 		<?php
 		$school_search  = sanitize_text_field( (string) get_query_var( 'hub_q', '' ) );
@@ -174,6 +178,14 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 				<ul class="oml-hub-commerce-list">
 					<?php foreach ( $school_roster as $school_person ) : ?>
 						<li><div><strong><?php echo esc_html( $school_person['display_name'] ); ?></strong><p class="oml-hub-family-meta"><span class="oml-hub-chip"><?php echo esc_html( $school_labels[ $school_person['role'] ] ?? $school_person['role'] ); ?></span><?php echo ! empty( $school_person['external_student_id'] ) ? ' ' . esc_html( $school_person['external_student_id'] ) : ''; ?></p></div>
+							<?php if ( 'student' === $school_person['role'] && Lifecycle::managed_student( $school_id, (int) $school_person['user_id'] ) ) : ?>
+								<form method="post" action="<?php echo esc_url( $school_post ); ?>" class="oml-hub-family-actions">
+									<?php SchoolActions::fields( 'student_recovery', $school_id, 'school-people' ); ?>
+									<input type="hidden" name="student_user_id" value="<?php echo esc_attr( $school_person['user_id'] ); ?>">
+									<label class="oml-hub-family-confirm"><input type="checkbox" name="confirm" value="yes" required> <?php esc_html_e( 'Replace unused recovery links', 'ohmylms' ); ?></label>
+									<button type="submit" class="oml-hub-pill"><?php esc_html_e( 'Create password reset link', 'ohmylms' ); ?></button>
+								</form>
+							<?php endif; ?>
 							<?php if ( get_current_user_id() !== (int) $school_person['user_id'] ) : ?>
 								<form method="post" action="<?php echo esc_url( $school_post ); ?>" class="oml-hub-family-actions">
 									<?php SchoolActions::fields( 'remove_member', $school_id, 'school-people' ); ?>

@@ -9,6 +9,7 @@ namespace OhMyLMS\Student;
 
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Schools\Service;
+use OhMyLMS\Schools\Lifecycle;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,6 +22,7 @@ final class SchoolActions {
 	/** Register the signed-in form handler. */
 	public static function init() {
 		add_action( 'admin_post_' . self::ACTION, array( __CLASS__, 'handle' ) );
+		add_action( 'admin_post_' . SchoolGradebook::EXPORT_ACTION, array( SchoolGradebook::class, 'export' ) );
 	}
 
 	/**
@@ -56,9 +58,37 @@ final class SchoolActions {
 				'school_id' => (int) $created['id'],
 			);
 		}
+		if ( 'leave_school' === $operation ) {
+			Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm leaving this school.' );
+			Lifecycle::leave( absint( $school_id ) );
+			return array( 'message' => __( 'You left the school. Your account and learning history were kept.', 'ohmylms' ) );
+		}
 		Access::require_access( SchoolWorkspace::available() );
 		$school_id = absint( $school_id );
 		switch ( $operation ) {
+			case 'student_recovery':
+				Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm replacing this student’s password recovery link.' );
+				$invite = Lifecycle::recovery( $school_id, absint( $data['student_user_id'] ?? 0 ) );
+				return array(
+					'message'    => __( 'Password recovery link created. Earlier unused links were revoked. Share this private link with the student within 48 hours. Their password changes only when they choose a new one.', 'ohmylms' ),
+					'invite_url' => $invite['url'],
+				);
+			case 'rollover_preview':
+				$preview = Lifecycle::preview( $school_id, absint( $data['from_year'] ?? 0 ), absint( $data['to_year'] ?? 0 ) );
+				return array(
+					'message'  => __( 'Review the rollover below. Nothing has changed yet.', 'ohmylms' ),
+					'rollover' => $preview,
+				);
+			case 'rollover_commit':
+				Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm archiving the source year and its classes.' );
+				$result = Lifecycle::rollover( $school_id, absint( $data['from_year'] ?? 0 ), absint( $data['to_year'] ?? 0 ) );
+				return array( 'message' => sprintf( /* translators: %d: number of new empty classes. */ _n( 'Rollover complete: %d empty class created. The source year and classes were archived; learning history was kept.', 'Rollover complete: %d empty classes created. The source year and classes were archived; learning history was kept.', $result['classes_created'], 'ohmylms' ), $result['classes_created'] ) );
+			case 'grade_submission':
+				$learning = Service::row( 'learning_assignments', absint( $data['learning_id'] ?? 0 ) );
+				SchoolReports::classroom( $school_id, $learning ? (int) $learning['class_id'] : 0 );
+				Access::require_access( $learning && (int) $learning['school_id'] === $school_id );
+				Service::grade( (int) $learning['id'], absint( $data['attempt_id'] ?? 0 ), $data );
+				return array( 'message' => __( 'Grade saved.', 'ohmylms' ) );
 			case 'update_school':
 				Service::update_school( $school_id, $data );
 				return array( 'message' => __( 'School details saved.', 'ohmylms' ) );
@@ -135,17 +165,18 @@ final class SchoolActions {
 		check_admin_referer( self::ACTION . '_' . $operation );
 		$school_id = isset( $_POST['school_id'] ) ? absint( $_POST['school_id'] ) : 0;
 		$section   = isset( $_POST['return_section'] ) && is_string( $_POST['return_section'] ) ? sanitize_key( wp_unslash( $_POST['return_section'] ) ) : 'school-overview';
-		$section   = in_array( $section, array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'school-settings' ), true ) ? $section : 'school-overview';
+		$section   = in_array( $section, array( 'school-overview', 'school-classes', 'school-people', 'school-invites', 'school-settings', 'school-gradebook' ), true ) ? $section : 'school-overview';
 		try {
 			if ( 'POST' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 				throw new \RuntimeException( 'Invalid request.', 400 );
 			}
 			$data = array();
-			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm' ) as $key ) {
+			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm', 'learning_id', 'attempt_id', 'score', 'from_year', 'to_year' ) as $key ) {
 				$data[ $key ] = isset( $_POST[ $key ] ) && is_string( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			}
-			$data['csv'] = isset( $_POST['csv'] ) && is_string( $_POST['csv'] ) ? sanitize_textarea_field( wp_unslash( $_POST['csv'] ) ) : '';
-			$flash       = self::apply( $operation, $school_id, $data );
+			$data['csv']  = isset( $_POST['csv'] ) && is_string( $_POST['csv'] ) ? sanitize_textarea_field( wp_unslash( $_POST['csv'] ) ) : '';
+			$data['note'] = isset( $_POST['note'] ) && is_string( $_POST['note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['note'] ) ) : '';
+			$flash        = self::apply( $operation, $school_id, $data );
 			if ( ! empty( $flash['school_id'] ) ) {
 				$school_id = (int) $flash['school_id'];
 			}
@@ -153,7 +184,14 @@ final class SchoolActions {
 			$flash = array( 'error' => in_array( $error->getCode(), array( 400, 403, 409 ), true ) ? $error->getMessage() : __( 'Unable to complete this request.', 'ohmylms' ) );
 		}
 		set_transient( self::FLASH . get_current_user_id(), $flash, 5 * MINUTE_IN_SECONDS );
-		wp_safe_redirect( SchoolWorkspace::url( $section, '', $school_id ) );
+		$return_url = SchoolWorkspace::url( $section, '', $school_id );
+		if ( 'leave_school' === $operation ) {
+			$return_url = Hub::url( 'account', 'classes' );
+		}
+		if ( 'school-gradebook' === $section ) {
+			$return_url = add_query_arg( 'hub_class', isset( $_POST['class_id'] ) ? absint( $_POST['class_id'] ) : 0, $return_url );
+		}
+		wp_safe_redirect( $return_url );
 		exit;
 	}
 
