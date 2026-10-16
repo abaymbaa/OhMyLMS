@@ -320,7 +320,9 @@ class AssignmentStore extends DataStore {
 			'end_date'      => current_time( 'mysql', 1 ),
 		);
 
-		$wpdb->insert( $table_name, $data );
+		if ( $wpdb->insert( $table_name, $data ) ) {
+			do_action( 'ohmylms_assignment_submitted', (int) $wpdb->insert_id, $assignment->get_id(), $course_id, $student_id );
+		}
 	}
 
 

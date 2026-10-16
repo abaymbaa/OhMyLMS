@@ -23,10 +23,12 @@ final class ParentWorkspace {
 	 * @return bool
 	 */
 	public static function available() {
-		if ( ! is_user_logged_in() || Schema::VERSION !== get_option( 'ohmylms_school_schema' ) || ( defined( 'OHMYLMS_SCHOOLS_ENABLED' ) && ! OHMYLMS_SCHOOLS_ENABLED ) ) {
+		if ( ! is_user_logged_in() ) {
 			return false;
 		}
-		return in_array( 'ohmylms_parent', wp_get_current_user()->roles, true ) || (bool) self::children();
+		$school_ready = Schema::VERSION === get_option( 'ohmylms_school_schema' ) && ( ! defined( 'OHMYLMS_SCHOOLS_ENABLED' ) || OHMYLMS_SCHOOLS_ENABLED );
+		$family_ready = \OhMyLMS\Family\Schema::enabled();
+		return ( $school_ready || $family_ready ) && ( in_array( 'ohmylms_parent', wp_get_current_user()->roles, true ) || ( $school_ready && (bool) self::children() ) || ( $family_ready && (bool) \OhMyLMS\Family\Service::children() ) );
 	}
 
 	/**
@@ -56,7 +58,7 @@ final class ParentWorkspace {
 	 * @return array
 	 */
 	public static function children() {
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() || Schema::VERSION !== get_option( 'ohmylms_school_schema' ) || ( defined( 'OHMYLMS_SCHOOLS_ENABLED' ) && ! OHMYLMS_SCHOOLS_ENABLED ) ) {
 			return array();
 		}
 		return Service::children();

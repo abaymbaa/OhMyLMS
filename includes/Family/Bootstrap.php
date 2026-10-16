@@ -18,5 +18,6 @@ final class Bootstrap {
 			return;
 		}
 		add_action( 'init', array( Schema::class, 'install' ), 7 );
+		Provenance::init();
 	}
 }

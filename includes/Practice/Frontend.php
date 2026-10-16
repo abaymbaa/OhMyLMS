@@ -207,6 +207,7 @@ final class Frontend {
 		);
 		ob_start();
 		?>
+		<?php \OhMyLMS\Family\Provenance::render( (int) $attributes['course'], $term->term_id, 'practice' ); ?>
 		<section class="ohmylms-practice" data-style="<?php echo esc_attr( $attributes['style'] === 'lesson' ? 'lesson' : 'standard' ); ?>" data-skill="<?php echo esc_attr( $term->term_id ); ?>" data-course="<?php echo esc_attr( (int) $attributes['course'] ); ?>" data-items="<?php echo esc_attr( (int) $attributes['items'] ); ?>">
 			<h2><?php echo esc_html( sprintf( __( 'Practice: %s', 'ohmylms' ), $term->name ) ); ?></h2>
 			<?php

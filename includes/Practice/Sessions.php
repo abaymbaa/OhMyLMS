@@ -53,6 +53,7 @@ final class Sessions {
 		if ( ! $wpdb->insert( Schema::table( 'practice_sessions' ), $session ) ) {
 			return new \WP_Error( 'ohmylms_practice_storage', __( 'Could not start practice.', 'ohmylms' ), array( 'status' => 500 ) ); }
 		$session['id'] = (int) $wpdb->insert_id;
+		do_action( 'ohmylms_practice_started', $session );
 		self::issue( $session );
 		return self::get( $session['uuid'] );
 	}

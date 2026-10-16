@@ -6,8 +6,10 @@ Status as of October 16, 2026: implementation specification, partly delivered. B
 (see "Current state: start here" in [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md)): shared
 role contexts and sign-in chooser, parent sign-up, the parent workspace with school-linked children
 (P2), independent family links with managed children, invitations and learning choices (P3a to P3d),
-and the school workspace. Still planned or unobserved: the parent dashboard layout, recovery and
-personalization step two, parent reports for home learning (P6, needs activity provenance), and the
+and the school workspace. Home-learning activity reports now use explicit, immutable launch context
+(see [the reporting contract](HOME-LEARNING-REPORTS.md)); older unknown activity and global mastery
+are excluded. Still planned or unobserved: the parent dashboard layout, recovery and
+personalization step two, and the
 unit/practice presentation refinements (P5). The slice list below is the original plan, not a
 progress record.
 The user requested extending the development plan and explicitly requested UI

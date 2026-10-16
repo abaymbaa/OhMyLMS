@@ -13,6 +13,11 @@ use OhMyLMS\Student\ParentWorkspace;
 
 defined( 'ABSPATH' ) || exit;
 
+if ( 'home_learning' === get_query_var( 'hub_scope', '' ) ) {
+	ohmylms_get_template( 'student-hub/family-report.php' );
+	return;
+}
+
 $family_children = ParentWorkspace::children();
 $family_home     = FamilySchema::enabled() ? Family::children() : array();
 $family_flash    = FamilyActions::flash();
@@ -113,6 +118,16 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 						<li>
 							<div><strong><?php echo esc_html( $family_kid['display_name'] ); ?></strong><p class="oml-hub-family-meta"><span class="oml-hub-chip"><?php esc_html_e( 'Home learning', 'ohmylms' ); ?></span></p></div>
 							<div class="oml-hub-family-actions">
+								<?php
+								$family_report_url = add_query_arg(
+									array(
+										'hub_scope' => 'home_learning',
+										'hub_child' => $family_kid['learner_user_id'],
+									),
+									ParentWorkspace::url()
+								);
+								?>
+								<a class="oml-hub-pill" href="<?php echo esc_url( $family_report_url ); ?>"><?php esc_html_e( 'View home-learning report', 'ohmylms' ); ?></a>
 								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><?php FamilyActions::fields( 'issue_setup' ); ?><input type="hidden" name="child_id" value="<?php echo esc_attr( $family_kid['learner_user_id'] ); ?>"><button type="submit" class="oml-hub-pill"><?php esc_html_e( 'New setup link', 'ohmylms' ); ?></button></form>
 								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><?php FamilyActions::fields( 'revoke_link' ); ?><input type="hidden" name="link_id" value="<?php echo esc_attr( $family_kid['link_id'] ); ?>"><label class="oml-hub-family-confirm"><input type="checkbox" name="confirm" value="yes" required> <?php esc_html_e( 'Confirm removal', 'ohmylms' ); ?></label> <button type="submit" class="oml-hub-pill oml-hub-pill-danger"><?php esc_html_e( 'Remove link', 'ohmylms' ); ?></button></form>
 							</div>

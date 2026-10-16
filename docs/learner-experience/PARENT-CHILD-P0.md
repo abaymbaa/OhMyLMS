@@ -6,10 +6,11 @@ reference gaps.
 **Status as of October 16, 2026:** the contract below has been implemented through P1, P2 and
 P3a-P3d: role chooser and parent sign-up, school-linked read-only child overview, and the
 independent family schema (`ohmylms_family_schema`, tables `ohmylms_family_links`,
-`_invitations`, `_audit`) with managed children, setup links, existing-learner invitations,
+`_invitations`, `_audit`, and version 2 `_activity`) with managed children, setup links, existing-learner invitations,
 learning choices and revocation. Differences from this contract: family operations use
 `admin-post` forms rather than a `/ohmylms/v1/family` REST namespace, and the hub password minimum was
-reconciled to 12-128. Not yet done: home-learning reports (P6) and the unobserved reference screens.
+reconciled to 12-128. Home-learning activity reports and launch provenance are implemented; see
+[HOME-LEARNING-REPORTS.md](HOME-LEARNING-REPORTS.md). The unobserved reference screens remain proposed.
 See "Current state: start here" in the continuation ledger. The "No migrations or parent UI have
 run" line near the end is historical.
 Read with [the screen specification](learner-hub-development.md) and the

@@ -117,6 +117,7 @@ final class PlayerContext {
 		if ( ! $course_id || OHMYLMS_COURSE_CPT !== get_post_type( $course_id ) ) {
 			return;
 		}
+		\OhMyLMS\Family\Provenance::render( $course_id, get_the_ID() );
 		?>
 		<nav class="oml-player-context" aria-label="<?php esc_attr_e( 'Course navigation', 'ohmylms' ); ?>">
 			<a class="oml-player-exit" href="<?php echo esc_url( self::overview_url( $course_id ) ); ?>">

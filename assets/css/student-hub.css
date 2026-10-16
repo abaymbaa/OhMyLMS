@@ -1803,3 +1803,13 @@
 	color: var(--hub-text);
 	font: inherit;
 }
+
+.ohmylms-student-hub .oml-hub-family-report h1 {
+	font-size: 2rem;
+	line-height: 1.2;
+}
+
+.oml-hub-family-report .oml-hub-pill[aria-current="page"] {
+	background: #5753fa;
+	color: #fff;
+}

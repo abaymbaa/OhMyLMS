@@ -48,3 +48,5 @@ $player_kinds = array(
 			</nav>
 		<?php endif; ?>
 		<main class="oml-player-main" id="oml-player-main" tabindex="-1">
+			<?php if ( ! $player_quiz ) {
+				\OhMyLMS\Family\Provenance::render( $player_outline['id'], $player_current ); } ?>

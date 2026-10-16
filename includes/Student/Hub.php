@@ -56,7 +56,7 @@ final class Hub {
 	 * @return array
 	 */
 	public static function query_vars( $vars ) {
-		return array_merge( $vars, array( 'hub_section', 'hub_view', 'hub_class', 'hub_q', 'hub_course', 'hub_period', 'hub_type', 'hub_role', 'hub_child', 'hub_school', 'ohmylms_child_setup', 'ohmylms_family_invite', 'hub_candidate_page', 'ohmylms_invite', 'id', 'current_page' ) );
+		return array_merge( $vars, array( 'hub_section', 'hub_view', 'hub_class', 'hub_q', 'hub_course', 'hub_period', 'hub_type', 'hub_role', 'hub_child', 'hub_scope', 'hub_school', 'ohmylms_child_setup', 'ohmylms_family_invite', 'hub_candidate_page', 'ohmylms_invite', 'id', 'current_page' ) );
 	}
 
 	/**

@@ -27,6 +27,7 @@ implementation exists", this section wins.
 | Learner (library, My learning, classes, achievements, history, settings, membership) | default | `Student/Hub.php`, `templates/student-hub/*` |
 | Teacher: independent classes, roster, invitations, archive/restore | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php` |
 | Parent: school-linked children (read-only work overview) and home-learning children (managed accounts, setup links, invitations, grade and followed collections, revocation) | `hub_role=parent` | `Student/ParentWorkspace.php`, `ParentActions.php`, `FamilyActions.php`, `includes/Family/*` (own schema `ohmylms_family_schema`) |
+| Home-learning activity reports: explicit launch provenance, current-link scope, 7/30/90 days and pagination | `hub_role=parent&hub_section=family&hub_scope=home_learning&hub_child=ID` | `Family/Provenance.php`, `Family/Reports.php`, `templates/student-hub/family-report.php`; contract in `docs/learner-experience/HOME-LEARNING-REPORTS.md` |
 | School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal, managed-student recovery and previewed rollover | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `Schools/Lifecycle.php`, `templates/student-hub/school.php` |
 | School reports and gradebook: completion/overdue counts, assigned-work drill-down, stored skill summaries, submission review/feedback, quiz/assignment matrix, weighted totals and CSV | `hub_role=school&hub_section=school-reports` or `school-gradebook` | `Student/SchoolReports.php`, `SchoolGradebook.php`, `SchoolActions.php`, `templates/student-hub/school-reports.php` |
 | Sign-in chooser and sign-up (learner, teacher, parent) | signed out | `templates/student-hub/signin.php`, `ParentActions.php` |
@@ -52,6 +53,9 @@ no-referrer headers, one-time results travel through short per-user transients.
 - Protected disposable-database suites passed without bypassing their guards: school reports
   (82 checks: 32 report, 31 lifecycle, 19 matrix), schools, teacher classes (47), student hub (88),
   legacy account blocks (44), and gradebook. The isolated site blocks outbound HTTP/email and uses the current plugin source.
+- Home-learning provenance/report suite: 33 protected checks, including migration, rollback,
+  no-school operation, context replay, cross-child/guardian scope and revocation. The hub (88)
+  and school reports (82) were rerun after the provenance hooks were added.
 - Live browser verification passed for roster import, non-admin teacher invitation acceptance and
   departure, matrix/CSV download, recovery generation, rollover confirmation, mobile and dark theme.
 
@@ -59,13 +63,14 @@ no-referrer headers, one-time results travel through short per-user transients.
 
 The assistant cannot type passwords on this host. For a real session it creates a disposable account,
 writes credentials to a git-ignored file, and the user signs in in the browser pane. Fixtures and
-accounts are removed afterwards and verified by count queries. The real admin account holds the extra
-`ohmylms_parent` role at the user's request (undo: `remove_role('ohmylms_parent')`). A class named "0-0"
+accounts are removed afterwards and verified by count queries. The existing View-as feature can preview
+disposable users without entering passwords; always return to admin before cleanup. Earlier checkpoints
+added a parent role to the real admin; do not assume it is still present or change real roles for tests. A class named "0-0"
 created by the user is real data and must be left alone.
 
 ### Git state
 
-The school reports, lifecycle and gradebook checkpoint is committed locally on `main` (not pushed).
+The school reports, portal retirement and home-learning reporting checkpoints are committed locally on `main` (not pushed).
 Use the latest Git log for its commit ID. Latest earlier commits: roster import, school settings
 and member removal, school workspace and teacher-created schools, portal retirement, family and parent
 work, teacher classes and legacy retirement, plus documentation commits.
@@ -80,8 +85,10 @@ work, teacher classes and legacy retirement, plus documentation commits.
    live browser checks. See the latest checkpoint for the remaining verification details.
 4. Dormant frontend portal screens and standalone renderers are removed. The wp-admin Account Hub
    and platform school/class editors are preserved; old links, blocks and shortcodes lead to the hub.
-5. Home-learning reports (P6) need activity provenance first; parent dashboard, recovery and
-   personalization step two were never observed in the reference and remain proposed designs.
+5. Home-learning activity reports and explicit origin recording are implemented. Global mastery,
+   unknown historical activity and inline/guest evidence remain excluded. Parent dashboard,
+   recovery and personalization step-two reference layouts remain unobserved/proposed; current
+   managed-child setup/recovery and learning-choice forms already function.
 6. Protected integration verification is complete; retain the disposable-database guards for future runs.
 
 
@@ -1669,3 +1676,43 @@ access. An existing JetPlugins frontend error appeared in browser logs; it did n
 routes. The current signed-in administrator session and real data were preserved. Browser proof
 is ignored at `test-results/portal-retirement-hub.png`. Next implementation slice: activity
 provenance before independent home-learning reports.
+
+## Home-learning provenance and report checkpoint (October 16, 2026)
+
+Family schema version 2 adds an immutable origin record per new activity source. The learner
+explicitly selects Home learning or a currently received school distribution on the existing
+player/practice page. Choices are user/session/content-bound WordPress nonces; page queries or
+same-origin referrers carry them to verified creation hooks. Source ownership is read from the
+persisted source row. Missing/invalid context stays unknown. There is no backfill or enrollment-based
+inference. Quiz/practice origins freeze at creation; new assignment submissions and verified lesson
+completions record once. Resumes/reviews cannot change the original scope. View-as previews cannot
+assert provenance. No passwords, raw context nonces or answer bodies enter the new activity table.
+
+Parents can open View home-learning report for an approved home child. Each summary/page query
+rechecks the exact active link, and only home-origin completions created within the current link
+approval period count. The report provides 7/30/90-day windows, activity counts, active UTC dates,
+dated titles and 20-row pagination. It does not expose school work, old unknown history, scores or
+global mastery. The school workspace/report pipeline is unchanged. Parent availability now supports
+family-only sites. See docs/learner-experience/HOME-LEARNING-REPORTS.md for the contract and exclusions.
+
+Protected verification: **33 family provenance/report checks**, including all four source types,
+forged/cross-user/cross-content contexts, actual assignment submission capture, same-origin nonce
+transport, replay/resume immutability, unknown older attempts, recipient revocation, cross-child and
+non-guardian denial, link revocation/reapproval, periods/pagination, email-verification policy,
+additive/idempotent migration, no-school operation and rollback with retained data. Student Home
+**88** and school report/lifecycle/matrix **82** checks passed. Asset parity and JS: **414 pass,
+0 fail, 1 skipped**. New runtime files, modified templates and parent workspace/context PHP pass
+PHPCS; both changed stylesheets pass Stylelint; PHP syntax passes. The new guarded fixture runner
+retains direct-database/local-file warnings; older runtime standards debt is unchanged.
+
+Built-in browser checks showed the populated report as a disposable parent through View-as,
+verified dark mode and a 390px responsive viewport (375px document width), and selected Home learning
+on a disposable lesson before starting work. The original administrator session was restored.
+Fixture users, posts, relationships, enrollment, submissions, activity, links and preview audits
+were removed; count checks returned zero. No password entry or real-account role changes occurred.
+Screenshots remain ignored at test-results/home-learning-report.png, home-learning-report-mobile.png
+and learning-context-choice.png. Temporary CLI helpers outside the web root were removed.
+
+Next: review the proposed parent dashboard/recovery and grade-then-collection layouts if those visual
+refinements are wanted. Current managed-child setup/recovery and learning-choice forms already work.
+The new report uses the existing hub design; it is not claimed as an observed reference replica.
