@@ -21,11 +21,6 @@ final class SourceAssets {
 		if ( strpos( $url, $base . 'assets/' ) !== 0 ) {
 			return $url; }
 		$relative = strtok( substr( $url, strlen( $base ) ), '?' );
-		// The source-built vendor/editor bundles load two copies of prosemirror-model/transform, which
-		// breaks the lesson editor (Enter and the slash menu throw). Keep them on the shipped build.
-		// See docs/DEVELOPMENT.md (Known issues).
-		if ( strpos( $relative, 'assets/dist/vendors/' ) === 0 ) {
-			return $url; }
 		$file = OHMYLMS_DIR . '/build/' . $relative;
 		if ( ! is_file( $file ) ) {
 			return $url; }

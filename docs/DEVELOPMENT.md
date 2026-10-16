@@ -104,7 +104,7 @@ Every extension route gets the gutter even without the component.
 
 ## Known issues
 
-- Source-built vendor bundles break the lesson editor. `tools/vendor-adapters.mjs` redirects the ESM copy of prosemirror-state to the CJS copy, but prosemirror-model and prosemirror-transform stay duplicated (ESM 58903/38262 vs CJS 77712/36553). In the browser, Enter and the `/` block menu throw `Can not convert <paragraph> to a Fragment (looks like multiple versions of prosemirror-model were loaded)`. Removing the state adapter is worse (`Adding different instances of a keyed plugin`). `SourceAssets::url()` therefore keeps `assets/dist/vendors/*` on the shipped files while the app and SDK use the source build. A proper fix must unify all three ProseMirror packages onto one copy, mapping the minified ESM export names; then remove that exception.
+None currently recorded. The source-built vendor bundles used to load duplicate ProseMirror packages, which broke the rich-text editor. `tools/vendor-adapters.mjs` now maps the ESM copies of prosemirror-state, prosemirror-model and prosemirror-transform onto their CJS twins (module ids 42845/37820, 58903/77712, 38262/36553), so each package has a single instance, and the bundled `core/preferences` and `core/keyboard-shortcuts` stores are replaced by the WordPress ones. `SourceAssets::url()` serves `assets/dist/vendors/*` from `build/` like every other asset. If you rebuild after upgrading the shipped vendor bundle, re-check those module ids and export names.
 
 ## Block-based Text lessons and the future quiz/question engine
 

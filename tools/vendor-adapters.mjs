@@ -1,11 +1,65 @@
 import traverseModule from '@babel/traverse';
 import { parseExpression } from '@babel/parser';
 const traverse = traverseModule.default || traverseModule;
-/** The installed vendor bundle contains CJS and ESM copies of prosemirror-state.
- * Share the existing editor's CJS instance while retaining ESM export names.
- * This fixes duplicate PluginKey generators, not by suppressing errors.
+/** The installed vendor bundle contains CJS and ESM copies of prosemirror-state, -model and -transform.
+ * Each ESM factory is replaced by a thin re-export of its CJS twin under the ESM minified export names,
+ * so exactly one instance of every package (and one PluginKey generator) is loaded. Mixing copies makes
+ * `instanceof` and schema checks fail ("multiple versions of prosemirror-model were loaded").
  * The untouched recovered factories remain available to the parity build.
  */
+const proseMirrorCopies = {
+	// ESM factory id -> [CJS factory id, { ESM minified export: CJS export }]
+	42845: [
+		37820,
+		{
+			$t: 'EditorState',
+			LN: 'Selection',
+			U3: 'TextSelection',
+			hs: 'PluginKey',
+			i5: 'AllSelection',
+			k_: 'Plugin',
+			nh: 'NodeSelection',
+		},
+	],
+	58903: [
+		77712,
+		{
+			S4: 'DOMParser',
+			ZF: 'DOMSerializer',
+			FK: 'Fragment',
+			CU: 'Mark',
+			sX: 'MarkType',
+			bP: 'Node',
+			u$: 'NodeRange',
+			vI: 'ReplaceError',
+			Sj: 'Schema',
+			Ji: 'Slice',
+		},
+	],
+	38262: [
+		36553,
+		{
+			$L: 'replaceStep',
+			Ln: 'ReplaceStep',
+			N0: 'joinPoint',
+			Um: 'insertPoint',
+			Wg: 'ReplaceAroundStep',
+			X9: 'Mapping',
+			dL: 'Transform',
+			jP: 'liftTarget',
+			n9: 'canJoin',
+			oM: 'findWrapping',
+			zy: 'canSplit',
+		},
+	],
+};
+function proseMirrorFactory( cjsId, names ) {
+	const exports = Object.entries( names )
+		.map( ( [ esm, cjs ] ) => `${ esm }:()=>cjs.${ cjs }` )
+		.join( ',' );
+	return `(module,exports,require)=>{const cjs=require(${ cjsId });require.d(exports,{${ exports }});}`;
+}
+
 export function adaptVendors( ast ) {
 	let hits = 0;
 	let shortcuts = 0,
@@ -53,31 +107,31 @@ export function adaptVendors( ast ) {
 					},
 				} );
 			}
+			const copy = proseMirrorCopies[ String( p.node.key.value ) ];
 			if (
-				String( p.node.key.value ) !== '42845' ||
+				! copy ||
 				! [ 'ArrowFunctionExpression', 'FunctionExpression' ].includes(
 					p.node.value.type
 				)
 			)
 				return;
-			p.node.value = parseExpression( `(module,exports,require)=>{
-   const state=require(37820);
-   require.d(exports,{$t:()=>state.EditorState,LN:()=>state.Selection,U3:()=>state.TextSelection,
-    hs:()=>state.PluginKey,i5:()=>state.AllSelection,k_:()=>state.Plugin,nh:()=>state.NodeSelection});
-  }` );
+			p.node.value = parseExpression(
+				proseMirrorFactory( copy[ 0 ], copy[ 1 ] )
+			);
 			hits++;
 			p.skip();
 		},
 	} );
-	if ( hits !== 1 )
+	if ( hits !== Object.keys( proseMirrorCopies ).length )
 		throw new Error(
-			'ProseMirror state adapter expected one factory; found ' + hits
+			'ProseMirror adapter expected one factory per package; found ' +
+				hits
 		);
 	if ( shortcuts !== 1 || preferences !== 1 || registrations !== 1 )
 		throw new Error(
 			'WordPress store adapters did not match expected factories'
 		);
-	return { proseMirrorState: hits, shortcuts, preferences };
+	return { proseMirror: hits, shortcuts, preferences };
 }
 
 // This utility only needs status strings, not the collaboration provider and Yjs.

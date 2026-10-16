@@ -41,7 +41,7 @@ test( 'connection labels preserve behavior without importing collaboration or Yj
 
 test( 'shortcuts share the native WordPress store and hooks', () => {
 	const ast = parse(
-		`({${ [ 42845, 55578, 87240 ].map( ( id ) => `${ id }:${ factory( 'vendors/vendors', id ) }` ).join( ',' ) }})`
+		`({${ [ 42845, 55578, 87240, 58903, 38262 ].map( ( id ) => `${ id }:${ factory( 'vendors/vendors', id ) }` ).join( ',' ) }})`
 	);
 	adaptVendors( ast );
 	const shortcuts = {
@@ -69,4 +69,48 @@ test( 'shortcuts share the native WordPress store and hooks', () => {
 	).code;
 	assert.match( preferencesCode, /window\.wp\.preferences\.store/ );
 	assert.doesNotMatch( preferencesCode, /register\)\(x\)/ );
+} );
+
+test( 'each ProseMirror package resolves to a single CJS copy under the original export names', () => {
+	const pairs = [
+		[ 42845, 37820 ],
+		[ 58903, 77712 ],
+		[ 38262, 36553 ],
+	];
+	const ast = parse(
+		`({${ [ 42845, 55578, 87240, 58903, 38262 ].map( ( id ) => `${ id }:${ factory( 'vendors/vendors', id ) }` ).join( ',' ) }})`
+	);
+	adaptVendors( ast );
+	const modules = vm.runInNewContext( generate( ast ).code, {
+		window: { wp: { keyboardShortcuts: {}, preferences: {} } },
+	} );
+	for ( const [ esmId, cjsId ] of pairs ) {
+		// Every name the ESM consumers import must still be exported.
+		const original = factory( 'vendors/vendors', esmId ).match(
+			/n\.d\(t, \{([^}]*)\}\)/
+		)[ 1 ];
+		const names = [ ...original.matchAll( /^\s*([\w$]+):/gm ) ].map(
+			( m ) => m[ 1 ]
+		);
+		assert.ok( names.length > 5 );
+		// A Proxy hands out one unique sentinel per CJS export, so identity proves no second copy is used.
+		const cjs = new Proxy( {}, { get: ( o, key ) => ( o[ key ] ??= {} ) } );
+		const required = [];
+		const exports = {};
+		const req = ( id ) => {
+			required.push( id );
+			return cjs;
+		};
+		req.d = ( target, getters ) => {
+			for ( const [ name, get ] of Object.entries( getters ) )
+				Object.defineProperty( target, name, {
+					get,
+					enumerable: true,
+				} );
+		};
+		modules[ esmId ]( {}, exports, req );
+		assert.deepEqual( required, [ cjsId ] );
+		assert.deepEqual( Object.keys( exports ).sort(), names.sort() );
+		for ( const name of names ) assert.ok( exports[ name ] );
+	}
 } );
