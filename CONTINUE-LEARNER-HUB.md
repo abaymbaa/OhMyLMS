@@ -31,7 +31,7 @@ implementation exists", this section wins.
 | School reports and gradebook: completion/overdue counts, assigned-work drill-down, stored skill summaries, submission review/feedback, quiz/assignment matrix, weighted totals and CSV | `hub_role=school&hub_section=school-reports` or `school-gradebook` | `Student/SchoolReports.php`, `SchoolGradebook.php`, `SchoolActions.php`, `templates/student-hub/school-reports.php` |
 | Sign-in chooser and sign-up (learner, teacher, parent) | signed out | `templates/student-hub/signin.php`, `ParentActions.php` |
 | Invitation pages (school activation, family invitation, child setup) | `?ohmylms_invite`, `?ohmylms_family_invite`, `?ohmylms_child_setup` | `SchoolActivation.php`, `FamilyActions.php` |
-| Legacy retirement and portal forwarding | portal URLs | `Student/LegacyPages.php`, `Schools/Views.php`, `ViewAs.php` |
+| Legacy retirement and portal forwarding (no standalone frontend React app) | portal URLs and old blocks/shortcodes | `Student/LegacyPages.php`, `Schools/Views.php`, `ViewAs.php`; wp-admin Account Hub and school/class editors remain |
 
 Security conventions used everywhere: nonce per operation, POST-only handlers, services
 re-authorize on every call, request ids only select a candidate, tokens are 64-hex, stored as
@@ -50,8 +50,8 @@ no-referrer headers, one-time results travel through short per-user transients.
 - Live browser checks on http://800.local: teacher, parent, school and learner flows, invitations
   for guardian, teacher and school-admin roles, a non-admin teacher creating a school.
 - Protected disposable-database suites passed without bypassing their guards: school reports
-  (82 checks: 32 report, 31 lifecycle, 19 matrix), schools, teacher classes (47), student hub (72),
-  and gradebook. The isolated site blocks outbound HTTP/email and uses the current plugin source.
+  (82 checks: 32 report, 31 lifecycle, 19 matrix), schools, teacher classes (47), student hub (88),
+  legacy account blocks (44), and gradebook. The isolated site blocks outbound HTTP/email and uses the current plugin source.
 - Live browser verification passed for roster import, non-admin teacher invitation acceptance and
   departure, matrix/CSV download, recovery generation, rollover confirmation, mobile and dark theme.
 
@@ -78,8 +78,8 @@ work, teacher classes and legacy retirement, plus documentation commits.
 2. Managed-student recovery, leaving a school and previewed academic-year rollover are implemented.
 3. Roster import and a non-admin teacher accepting an invitation and leaving the school passed
    live browser checks. See the latest checkpoint for the remaining verification details.
-4. Remove the dormant portal React app and renderers (wp-admin Account Hub still hosts them for platform
-   administrators; decide whether to keep that).
+4. Dormant frontend portal screens and standalone renderers are removed. The wp-admin Account Hub
+   and platform school/class editors are preserved; old links, blocks and shortcodes lead to the hub.
 5. Home-learning reports (P6) need activity provenance first; parent dashboard, recovery and
    personalization step two were never observed in the reference and remain proposed designs.
 6. Protected integration verification is complete; retain the disposable-database guards for future runs.
@@ -1636,3 +1636,36 @@ The separate mysqli connection in the race regression has a narrow documented ex
 because the test requires an independently committed transaction. Existing Service/Hub
 standards debt remains. The local PHP installation emits an existing missing-Imagick startup
 warning; it did not prevent the suites passing. No push was performed.
+
+## Frontend portal retirement checkpoint (October 16, 2026)
+
+Removed the dormant React signup, invitation, learner-work, parent/child and registration-block
+screens and their frontend mounting paths. The remaining school React entry only mounts
+`admin-management` in wp-admin for platform administrators. The native Account Hub and its
+school/class editors remain available; directory Manage actions now link directly to that editor
+and retain the selected class. New school links point directly to the hub.
+
+Legacy portal URLs forward to the corresponding hub workspace, including the selected class,
+for signed-out users and View-as sessions too. Legacy blocks/shortcodes now render hub links;
+the editor preview describes that behavior. The old standalone HTML document, login renderer,
+asset-pruning hooks and portal/account-only CSS are removed. The file-download endpoint retains
+nonce, resource-scope and upload-path checks. The obsolete portal rejects non-GET screen requests
+with 405, and reports an unavailable hub with 503 rather than resurrecting the old app. Public
+registration REST endpoints remain because the hub uses them. No schema or site data changes.
+
+Verification: protected Student Home integration **88 checks**, legacy account blocks **44**,
+and standalone View-as scope/session checks passed. Final asset parity and JS checks: **414 pass,
+0 fail, 1 skipped**. Full authored-source rebuild and final SDK rebuild passed; generated admin
+chunks/maps were refreshed by the build. Existing math-runtime bundle-size warnings remain.
+Changed Views/LegacyPages/TeacherActions PHP files pass PHPCS, changed PHP syntax checks pass,
+and touched feature JSX passes Prettier. Existing ESLint debt remains: school entry improved
+from 28 to 18 errors (one hook warning); PeopleDirectory stays at 17 errors/one warning;
+ThemeSettings stays at one error/two warnings. No blanket lint suppression was added.
+
+Built-in browser verification passed for the retired teacher URL, selected-class preservation,
+legacy school URL to platform editor, and native Account Hub student directory. The retired parent
+URL correctly reaches the parent hub, which rejects the current account because it has no parent
+access. An existing JetPlugins frontend error appeared in browser logs; it did not block these
+routes. The current signed-in administrator session and real data were preserved. Browser proof
+is ignored at `test-results/portal-retirement-hub.png`. Next implementation slice: activity
+provenance before independent home-learning reports.

@@ -187,19 +187,17 @@ final class LegacyPages {
 	 * @return string
 	 */
 	public static function portal_target( $view, array $query ) {
-		foreach ( array( 'ohmylms_invite', 'ohmylms_school_file', 'school' ) as $keep ) {
+		foreach ( array( 'ohmylms_invite', 'ohmylms_school_file' ) as $keep ) {
 			if ( isset( $query[ $keep ] ) ) {
 				return '';
 			}
 		}
-		if ( ! is_user_logged_in() || ! Hub::base_url() || \OhMyLMS\Schools\ViewAs::session() ) {
+		if ( ! Hub::base_url() ) {
 			return '';
 		}
-		if ( 'parent-dashboard' === $view && ParentWorkspace::available() ) {
-			return ParentWorkspace::url();
-		}
-		if ( 'student-assignments' === $view && Hub::learner_classes() ) {
-			return Hub::url( 'classes' );
+		if ( in_array( $view, array( 'parent-dashboard', 'teacher-dashboard', 'student-assignments' ), true ) ) {
+			$target = \OhMyLMS\Schools\Views::workspace_url( $view );
+			return ! empty( $query['class'] ) ? add_query_arg( 'hub_class', absint( $query['class'] ), $target ) : $target;
 		}
 		return '';
 	}
@@ -207,7 +205,7 @@ final class LegacyPages {
 	/**
 	 * Admin destination for the front-end school administration view, or empty when it must stay.
 	 *
-	 * School administration now lives in wp-admin. Invitation, file and View-as flows are never moved.
+	 * Platform administration stays in wp-admin; school staff use the hub.
 	 *
 	 * @param string $view Portal view name.
 	 * @param array  $query Request query parameters (flags and scalar values).
@@ -243,14 +241,14 @@ final class LegacyPages {
 		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) || ! isset( $_GET['ohmylms_portal'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
 			return;
 		}
-		$query  = array();
-		$keys   = array( 'ohmylms_invite', 'ohmylms_school_file', 'school' );
+		$query = array();
+		$keys  = array( 'ohmylms_invite', 'ohmylms_school_file', 'school' );
 		foreach ( $keys as $key ) {
 			if ( isset( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presence check only.
 				$query[ $key ] = 1;
 			}
 		}
-		$view   = isset( $_GET['view'] ) && is_string( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
+		$view = isset( $_GET['view'] ) && is_string( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
 		if ( isset( $query['ohmylms_school_file'] ) ) {
 			return; // Authorized file downloads are not a portal screen.
 		}
@@ -259,7 +257,8 @@ final class LegacyPages {
 			wp_safe_redirect( add_query_arg( 'ohmylms_invite', $invite, Hub::base_url() ) );
 			exit;
 		}
-		$target = self::portal_target( $view, $query );
+		$class_id = isset( $_GET['class'] ) && is_scalar( $_GET['class'] ) ? absint( $_GET['class'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Navigation only; the workspace reauthorizes this class.
+		$target   = self::portal_target( $view, array_merge( $query, array( 'class' => $class_id ) ) );
 		if ( ! $target ) {
 			$values = array();
 			foreach ( array( 'school', 'class', 'tab' ) as $key ) {

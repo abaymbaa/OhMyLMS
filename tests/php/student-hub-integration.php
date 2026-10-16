@@ -80,6 +80,43 @@ try {
 	Hub::install_page();
 	ohmylms_hub_check( $hub_config['page_id'] > 0 && Hub::settings()['page_id'] === $hub_config['page_id'], 'Page installation is not idempotent.' );
 	ohmylms_hub_check( has_shortcode( get_post_field( 'post_content', $hub_config['page_id'] ), 'ohmylms_student_hub' ), 'Hub shortcode is absent.' );
+	// Legacy entry points must not mount the retired frontend app, even for a platform admin.
+	ohmylms_hub_check( Hub::base_url() === \OhMyLMS\Schools\Views::portal_url(), 'New school links still use the retired portal endpoint.' );
+	foreach ( array( 'student-registration', 'teacher-registration', 'parent-registration', 'sign-in', 'school-dashboard', 'teacher-dashboard', 'parent-dashboard', 'student-assignments', 'admin-management' ) as $hub_legacy_view ) {
+		$hub_legacy_html = \OhMyLMS\Schools\Views::render( $hub_legacy_view );
+		ohmylms_hub_check( false === strpos( $hub_legacy_html, 'data-ohmylms-school-view' ) && false !== strpos( $hub_legacy_html, '<a href=' ), 'Legacy frontend view still mounts React: ' . $hub_legacy_view );
+	}
+	ohmylms_hub_check(
+		str_contains(
+			LegacyPages::admin_target(
+				'school-dashboard',
+				array(
+					'school' => 123,
+					'class'  => 456,
+				)
+			),
+			'page=ohmylms-schools'
+		),
+		'Platform school editor no longer resolves to wp-admin.'
+	);
+	wp_set_current_user( 0 );
+	foreach ( array(
+		'parent-dashboard'    => 'hub_role=parent',
+		'teacher-dashboard'   => 'hub_role=teacher',
+		'student-assignments' => 'hub_section=classes',
+	) as $hub_legacy_view => $hub_expected ) {
+		$hub_legacy_target = LegacyPages::portal_target(
+			$hub_legacy_view,
+			array(
+				'school' => 123,
+				'class'  => 456,
+			)
+		);
+		ohmylms_hub_check( str_contains( $hub_legacy_target, $hub_expected ) && str_contains( $hub_legacy_target, 'hub_class=456' ), 'Signed-out legacy navigation lost its workspace or class.' );
+	}
+	ohmylms_hub_check( '' === LegacyPages::portal_target( 'student-assignments', array( 'ohmylms_school_file' => 1 ) ), 'Legacy redirect captured an authorized file download.' );
+	ohmylms_hub_check( '' === LegacyPages::portal_target( 'teacher-dashboard', array( 'ohmylms_invite' => 1 ) ), 'Legacy navigation captured an invitation.' );
+	wp_set_current_user( get_user_by( 'login', $hub_credentials['username'] )->ID );
 	ohmylms_hub_check( shortcode_exists( 'ohmylms_dashboard' ) && shortcode_exists( 'ohmylms_profile' ) && shortcode_exists( 'ohmylms_my_courses' ), 'A legacy shortcode was removed.' );
 	update_option(
 		LegacyPages::OPTION,

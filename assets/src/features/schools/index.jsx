@@ -276,270 +276,6 @@ function Pager( { page, setPage, count } ) {
 	);
 }
 
-function Signup( { initialRole = 'student', lockedRole = false, onDone } ) {
-	const [ role, setRole ] = useState( initialRole );
-	return (
-		<section>
-			<h2>
-				{ t(
-					{
-						student: 'Student registration',
-						teacher: 'Teacher registration',
-						parent: 'Parent registration',
-					}[ role ]
-				) }
-			</h2>
-			<p>
-				{ t(
-					'Start with an account. No course selection or purchase is required.'
-				) }
-			</p>
-			{ ! lockedRole && (
-				<div className="ohmylms-tabs">
-					{ [ 'student', 'teacher', 'parent' ].map( ( kind ) => (
-						<button
-							aria-pressed={ role === kind }
-							key={ kind }
-							onClick={ () => setRole( kind ) }
-						>
-							{ kind === 'parent'
-								? t( 'Parent / guardian' )
-								: kind === 'teacher'
-									? t( 'Teacher' )
-									: t( 'Student' ) }
-						</button>
-					) ) }
-				</div>
-			) }
-			<Form
-				key={ role }
-				title="Account details"
-				submit="Create account"
-				fields={ [
-					field( 'first_name', 'First name', 'text', false ),
-					field( 'last_name', 'Last name', 'text', false ),
-					{
-						...field( 'email', 'Email', 'email' ),
-						autoComplete: 'email',
-					},
-					{
-						...field( 'password', 'Password', 'password' ),
-						minLength: 12,
-						maxLength: 128,
-						autoComplete: 'new-password',
-						help: 'Use at least 12 characters.',
-					},
-					{
-						...field( 'website', 'Website', 'text', false ),
-						hidden: true,
-						autoComplete: 'off',
-					},
-				] }
-				onSubmit={ async ( data ) => {
-					const result = await api( 'register', { ...data, role } );
-					onDone( result.message );
-				} }
-			/>
-			{ config.googleUrl && ! lockedRole && role === 'student' && (
-				<a
-					className="ohmylms-school-button secondary"
-					href={ config.googleUrl }
-				>
-					{ t( 'Continue with Google' ) }
-				</a>
-			) }
-			<p>
-				<a href={ config.loginUrl }>
-					{ t( 'Already have an account? Sign in' ) }
-				</a>
-			</p>
-			<p>
-				{ t(
-					'School and class access is assigned separately. If you have an invitation, sign in with the invited email address to accept it.'
-				) }
-			</p>
-		</section>
-	);
-}
-
-function Invitation( { token, onDone } ) {
-	const [ activation, setActivation ] = useState( false );
-	return (
-		<section className="ohmylms-card">
-			<h2>{ t( 'You have an OhMyLMS invitation' ) }</h2>
-			<p>
-				{ t(
-					'Staff and parents should sign in with the email address that received this invitation. A school-created student can use password setup.'
-				) }
-			</p>
-			<label>
-				<input
-					type="checkbox"
-					checked={ activation }
-					onChange={ ( event ) =>
-						setActivation( event.target.checked )
-					}
-				/>{ ' ' }
-				{ t( 'Set up or recover a school-created student password' ) }
-			</label>
-			{ ! config.loggedIn && ! activation ? (
-				<a href={ config.loginUrl }>{ t( 'Sign in to accept' ) }</a>
-			) : (
-				<Form
-					title="Accept invitation"
-					submit="Accept invitation"
-					fields={
-						activation
-							? [
-									{
-										...field(
-											'password',
-											'New password',
-											'password'
-										),
-										minLength: 12,
-										maxLength: 128,
-										autoComplete: 'new-password',
-									},
-								]
-							: []
-					}
-					onSubmit={ async ( data ) => {
-						const result = await api( 'accept', {
-							token,
-							...data,
-						} );
-						sessionStorage.removeItem( 'ohmylms-school-invite' );
-						onDone( result );
-					} }
-				/>
-			) }
-		</section>
-	);
-}
-
-function Work( { revision, child = null } ) {
-	const [ page, setPage ] = useState( 1 );
-	const state = useRemote(
-		`work?page=${ page }${ child ? `&student=${ child.student_user_id }&school_id=${ child.school_id }` : '' }${ new URLSearchParams( window.location.search ).get( 'class' ) ? `&class_id=${ encodeURIComponent( new URLSearchParams( window.location.search ).get( 'class' ) ) }` : '' }`,
-		revision
-	);
-	return (
-		<Remote state={ state }>
-			{ ( rows ) => (
-				<>
-					<Table
-						rows={ rows }
-						columns={ [
-							[
-								'title',
-								'Assigned work',
-								( value, row ) =>
-									row.url ? (
-										<a href={ row.url }>{ value }</a>
-									) : (
-										value
-									),
-							],
-							[ 'class_name', 'Class' ],
-							[
-								'due_at',
-								'Due',
-								( value ) =>
-									value
-										? new Date(
-												value.replace( ' ', 'T' ) + 'Z'
-											).toLocaleString()
-										: t( 'No due date' ),
-							],
-							[
-								'completed_at',
-								'Progress',
-								( value ) =>
-									value ? t( 'Completed' ) : t( 'Assigned' ),
-							],
-						] }
-					/>
-					<Pager
-						page={ page }
-						setPage={ setPage }
-						count={ rows.length }
-					/>
-				</>
-			) }
-		</Remote>
-	);
-}
-
-function Family( { revision } ) {
-	const children = useRemote( 'children', revision );
-	const [ selected, setSelected ] = useState(
-		() =>
-			new URLSearchParams( window.location.search ).get( 'school' ) || ''
-	);
-	return (
-		<section>
-			<h2>{ t( 'My children' ) }</h2>
-			<p>
-				{ t(
-					'Only school work shared through an approved guardian link appears here. Ask the school for a child-specific invitation.'
-				) }
-			</p>
-			<Remote state={ children }>
-				{ ( rows ) => {
-					const child =
-						rows.find(
-							( row ) =>
-								`${ row.school_id }-${ row.student_user_id }` ===
-								selected
-						) || rows[ 0 ];
-					return rows.length ? (
-						<>
-							<label>
-								{ t( 'Child and school' ) }
-								<select
-									value={
-										child
-											? `${ child.school_id }-${ child.student_user_id }`
-											: ''
-									}
-									onChange={ ( event ) =>
-										setSelected( event.target.value )
-									}
-								>
-									{ rows.map( ( row ) => (
-										<option
-											key={ `${ row.school_id }-${ row.student_user_id }` }
-											value={ `${ row.school_id }-${ row.student_user_id }` }
-										>
-											{ row.display_name } ·{ ' ' }
-											{ row.school_name }
-										</option>
-									) ) }
-								</select>
-							</label>
-							<Work
-								key={ `${ child.school_id }-${ child.student_user_id }` }
-								child={ child }
-								revision={ revision }
-							/>
-							{ skillsConfig && (
-								<ChildSkills
-									key={ `skills-${ child.school_id }-${ child.student_user_id }` }
-									child={ child }
-									revision={ revision }
-								/>
-							) }
-						</>
-					) : (
-						<p>{ t( 'No linked children yet.' ) }</p>
-					);
-				} }
-			</Remote>
-		</section>
-	);
-}
-
 function ClassView( { classroom, isAdmin, revision, run } ) {
 	const [ course, setCourse ] = useState( '' );
 	const activities = useRemote(
@@ -821,90 +557,6 @@ const levelBadge = ( level, label, reviewDue ) => (
 		) }
 	</>
 );
-
-/**
- * A guardian's view of one child's skill levels and suggested next steps.
- * @param root0
- * @param root0.child
- * @param root0.revision
- */
-function ChildSkills( { child, revision } ) {
-	const state = useRemote(
-		`reports/skills/students/${ child.student_user_id }?school_id=${ child.school_id }`,
-		revision,
-		skillsConfig
-	);
-	return (
-		<section className="ohmylms-child-skills">
-			<h3>{ t( 'Skills' ) }</h3>
-			<p>
-				{ t(
-					'Skill levels come from quiz answers, lesson checks and practice. They are separate from grades.'
-				) }
-			</p>
-			<Remote state={ state }>
-				{ ( data ) => (
-					<>
-						<Table
-							rows={ data.skills }
-							columns={ [
-								[ 'name', 'Skill' ],
-								[
-									'level',
-									'Level',
-									( level, row ) =>
-										levelBadge(
-											level,
-											row.level_label,
-											row.review_due
-										),
-								],
-								[
-									'independent_correct',
-									'Correct on their own',
-								],
-								[ 'families', 'Kinds of question' ],
-							] }
-						/>
-						{ data.recommendations?.length > 0 && (
-							<>
-								<h4>{ t( 'Suggested next steps' ) }</h4>
-								<ul className="ohmylms-recommendations">
-									{ data.recommendations
-										.filter( ( item ) => item.skill )
-										.map( ( item, index ) => (
-											<li
-												key={ `${ item.type }-${ item.skill.id }-${ index }` }
-											>
-												<strong>
-													{ item.skill.name }
-												</strong>{ ' ' }
-												— { item.message }
-												{ ( item.lessons || [] ).map(
-													( lesson ) => (
-														<span key={ lesson.id }>
-															{ ' ' }
-															<a
-																href={
-																	lesson.url
-																}
-															>
-																{ lesson.title }
-															</a>
-														</span>
-													)
-												) }
-											</li>
-										) ) }
-								</ul>
-							</>
-						) }
-					</>
-				) }
-			</Remote>
-		</section>
-	);
-}
 
 /**
  * Class skill matrix for the class's teachers: one row per student, one column per skill.
@@ -1899,52 +1551,27 @@ function IndependentClasses( { revision, run } ) {
 	);
 }
 
-function App( { view } ) {
-	const management = view === 'admin-management';
+// This entry is mounted only by the platform-admin management page.
+function AdminManagement() {
 	const [ revision, setRevision ] = useState( 0 );
 	const [ message, setMessage ] = useState( '' );
 	const [ failure, setFailure ] = useState( '' );
 	const [ link, setLink ] = useState( '' );
-	const [ tab, setTab ] = useState(
-		management
-			? new URLSearchParams( window.location.search ).get( 'tab' ) ||
-					'schools'
-			: view === 'parent-dashboard'
-				? 'family'
-				: view === 'student-assignments'
-					? 'work'
-					: view === 'teacher-dashboard' &&
-						  new URLSearchParams( window.location.search ).get(
-								'class'
-						  ) &&
-						  ! Number(
-								new URLSearchParams(
-									window.location.search
-								).get( 'school' )
-						  )
-						? 'classes'
-						: 'schools'
-	);
-	const [ selected, setSelected ] = useState(
-		() =>
-			new URLSearchParams( window.location.search ).get( 'school' ) || ''
-	);
+	const params = new URLSearchParams( window.location.search );
+	const tab = [
+		'users',
+		'teachers',
+		'parents',
+		'students',
+		'classes',
+		'schools',
+	].includes( params.get( 'tab' ) )
+		? params.get( 'tab' )
+		: 'schools';
+	const [ selected, setSelected ] = useState( params.get( 'school' ) || '' );
 	const [ page, setPage ] = useState( 1 );
-	const [ token, setToken ] = useState( () => {
-		const url = new URL( window.location.href );
-		const incoming = url.searchParams.get( 'ohmylms_invite' );
-		if ( incoming ) {
-			sessionStorage.setItem( 'ohmylms-school-invite', incoming );
-			url.searchParams.delete( 'ohmylms_invite' );
-			window.history.replaceState( null, '', url );
-		}
-		return sessionStorage.getItem( 'ohmylms-school-invite' ) || '';
-	} );
-	const me = useRemote( config.loggedIn ? 'me' : null, revision );
-	const schools = useRemote(
-		config.loggedIn ? `schools?page=${ page }` : null,
-		revision
-	);
+	const me = useRemote( 'me', revision );
+	const schools = useRemote( `schools?page=${ page }`, revision );
 	const run = async ( path, data, method = 'POST', rethrow = false ) => {
 		setFailure( '' );
 		setMessage( '' );
@@ -1969,15 +1596,8 @@ function App( { view } ) {
 			<header>
 				<div>
 					<p className="ohmylms-eyebrow">OhMyLMS</p>
-					<h1>
-						{ t(
-							management ? 'Students' : 'School & family learning'
-						) }
-					</h1>
+					<h1>{ t( 'Students' ) }</h1>
 				</div>
-				{ config.loggedIn && (
-					<a href={ config.logoutUrl }>{ t( 'Sign out' ) }</a>
-				) }
 			</header>
 			{ message && (
 				<p role="status" className="ohmylms-success">
@@ -2004,93 +1624,30 @@ function App( { view } ) {
 					/>
 				</div>
 			) }
-			{ token && (
-				<Invitation
-					token={ token }
-					onDone={ ( result ) => {
-						setToken( '' );
-						setRevision( ( value ) => value + 1 );
-						setMessage(
-							result.message +
-								( result.username
-									? ` ${ t( 'Username' ) }: ${ result.username }`
-									: '' )
-						);
-					} }
-				/>
-			) }
-			{ ! config.loggedIn ? (
-				<Signup
-					initialRole={
-						view === 'parent-registration' ? 'parent' : 'student'
-					}
-					onDone={ setMessage }
-				/>
-			) : (
-				<Remote state={ me }>
-					{ ( person ) => (
+			<Remote state={ me }>
+				{ ( person ) =>
+					person.platform_admin ? (
 						<>
 							<p>
 								{ t( 'Welcome' ) }, { person.name }.
 							</p>
-							{ management ? (
-								<PeopleTabs
-									active={ tab }
-									studentsUrl={ config.studentsUrl }
-									canListUsers={ person.can_list_users }
-								/>
-							) : (
-								<nav
-									className="ohmylms-tabs"
-									aria-label={ t( 'Learning views' ) }
-								>
-									{ ( management
-										? [
-												...( person.can_list_users
-													? [ [ 'users', 'Users' ] ]
-													: [] ),
-												[ 'students', 'Students' ],
-												[ 'classes', 'Classes' ],
-												[ 'schools', 'Schools' ],
-											]
-										: [
-												...( person.can_create_class
-													? [
-															[
-																'classes',
-																'My classes',
-															],
-														]
-													: [] ),
-												[ 'schools', 'My schools' ],
-												[ 'family', 'My children' ],
-												[ 'work', 'My assignments' ],
-											]
-									).map( ( [ key, title ] ) => (
-										<button
-											key={ key }
-											aria-pressed={ tab === key }
-											onClick={ () => setTab( key ) }
-										>
-											{ t( title ) }
-										</button>
-									) ) }
-								</nav>
-							) }
-							{ management &&
-								[ 'users', 'teachers', 'parents' ].includes(
-									tab
-								) &&
+							<PeopleTabs
+								active={ tab }
+								studentsUrl={ config.studentsUrl }
+								canListUsers={ person.can_list_users }
+							/>
+							{ [ 'users', 'teachers', 'parents' ].includes(
+								tab
+							) &&
 								person.can_list_users && (
 									<Users
 										key={ tab }
 										revision={ revision }
 										role={
-											tab === 'teachers'
-												? 'teacher'
-												: tab === 'parents'
-													? 'parent'
-													: ''
+											{
+												teachers: 'teacher',
+												parents: 'parent',
+											}[ tab ] || ''
 										}
 									/>
 								) }
@@ -2100,26 +1657,18 @@ function App( { view } ) {
 									run={ run }
 								/>
 							) }
-							{ management &&
-								tab === 'students' &&
-								config.studentsUrl && (
-									<p>
-										<a href={ config.studentsUrl }>
-											{ t(
-												'Open course enrollments and student progress'
-											) }
-										</a>
-									</p>
-								) }
-							{ tab === 'family' && (
-								<Family revision={ revision } />
+							{ tab === 'students' && config.studentsUrl && (
+								<p>
+									<a href={ config.studentsUrl }>
+										{ t(
+											'Open course enrollments and student progress'
+										) }
+									</a>
+								</p>
 							) }
-							{ tab === 'work' && <Work revision={ revision } /> }
-							{ ( tab === 'schools' ||
-								( management &&
-									[ 'students', 'classes' ].includes(
-										tab
-									) ) ) && (
+							{ [ 'schools', 'students', 'classes' ].includes(
+								tab
+							) && (
 								<Remote state={ schools }>
 									{ ( rows ) => {
 										const school =
@@ -2130,14 +1679,14 @@ function App( { view } ) {
 											) || rows[ 0 ];
 										return (
 											<>
-												{ rows.length ? (
+												{ school ? (
 													<>
-														<label>
+														<label htmlFor="ohmylms-admin-school">
 															{ t( 'School' ) }
 															<select
+																id="ohmylms-admin-school"
 																value={
-																	school?.id ||
-																	''
+																	school.id
 																}
 																onChange={ (
 																	event
@@ -2175,25 +1724,22 @@ function App( { view } ) {
 																revision
 															}
 															run={ run }
-															management={
-																management
-															}
+															management
 															section={
-																tab ===
-																'students'
-																	? 'roster'
-																	: management &&
-																		  tab ===
-																				'schools'
-																		? 'years'
-																		: 'classes'
+																{
+																	students:
+																		'roster',
+																	schools:
+																		'years',
+																}[ tab ] ||
+																'classes'
 															}
 														/>
 													</>
 												) : (
 													<p>
 														{ t(
-															'No school membership yet. Accept an invitation to join your school. Parents can open My children.'
+															'No schools yet.'
 														) }
 													</p>
 												) }
@@ -2202,98 +1748,54 @@ function App( { view } ) {
 													setPage={ setPage }
 													count={ rows.length }
 												/>
-												{ person.platform_admin &&
-													tab === 'schools' && (
-														<Form
-															title="Create school"
-															fields={ [
-																field(
-																	'name',
-																	'School name'
+												{ tab === 'schools' && (
+													<Form
+														title="Create school"
+														fields={ [
+															field(
+																'name',
+																'School name'
+															),
+															{
+																...field(
+																	'timezone',
+																	'Timezone'
 																),
-																{
-																	...field(
-																		'timezone',
-																		'Timezone'
-																	),
-																	value: 'Asia/Ulaanbaatar',
-																	help: 'Use an IANA timezone, for example Asia/Ulaanbaatar.',
-																},
-															] }
-															onSubmit={ (
-																data
-															) =>
-																run(
-																	'schools',
-																	data,
-																	'POST',
-																	true
-																)
-															}
-														/>
-													) }
+																value: 'Asia/Ulaanbaatar',
+																help: 'Use an IANA timezone, for example Asia/Ulaanbaatar.',
+															},
+														] }
+														onSubmit={ ( data ) =>
+															run(
+																'schools',
+																data,
+																'POST',
+																true
+															)
+														}
+													/>
+												) }
 											</>
 										);
 									} }
 								</Remote>
 							) }
-							{ config.googleUrl && (
-								<p>
-									<a href={ config.googleUrl }>
-										{ t(
-											'Connect Google to this account'
-										) }
-									</a>
-								</p>
-							) }
 						</>
-					) }
-				</Remote>
-			) }
+					) : (
+						<p role="alert">
+							{ t(
+								'Platform administrator access is required.'
+							) }
+						</p>
+					)
+				}
+			</Remote>
 		</div>
 	);
 }
 
-function RegistrationBlock( { role } ) {
-	const [ message, setMessage ] = useState( '' );
-	return (
-		<div className="ohmylms-school-shell ohmylms-account-block">
-			{ config.loggedIn ? (
-				<>
-					<h2>{ t( 'You are signed in' ) }</h2>
-					<p>
-						<a href={ config.portalUrl }>
-							{ t( 'Open your dashboard' ) }
-						</a>
-					</p>
-					<p>
-						<a href={ config.logoutUrl }>
-							{ t( 'Sign out to create another account' ) }
-						</a>
-					</p>
-				</>
-			) : message ? (
-				<>
-					<p role="status" className="ohmylms-success">
-						{ message }
-					</p>
-					<a href={ config.loginUrl }>{ t( 'Sign in' ) }</a>
-				</>
-			) : (
-				<Signup initialRole={ role } lockedRole onDone={ setMessage } />
-			) }
-		</div>
-	);
-}
-
-document.querySelectorAll( '[data-ohmylms-school-view]' ).forEach( ( node ) => {
-	const view = node.dataset.ohmylmsSchoolView;
-	const role = {
-		'student-registration': 'student',
-		'teacher-registration': 'teacher',
-		'parent-registration': 'parent',
-	}[ view ];
-	createRoot( node ).render(
-		role ? <RegistrationBlock role={ role } /> : <App view={ view } />
-	);
-} );
+document
+	.querySelectorAll( '[data-ohmylms-school-view="admin-management"]' )
+	.forEach( ( node ) => {
+		createRoot( node ).render( <AdminManagement /> );
+	} );

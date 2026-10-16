@@ -239,7 +239,7 @@ final class Hub {
 	}
 
 	/**
-	 * Link for a school invitation: the hub when it can handle the role, else the old portal.
+	 * Link for a school invitation; legacy URLs remain a compatibility fallback if the hub is unavailable.
 	 *
 	 * @param string $token Raw invitation token.
 	 * @param string $role Invitation role.
@@ -247,7 +247,7 @@ final class Hub {
 	 */
 	public static function invitation_url( $token, $role ) {
 		$base = self::base_url();
-		if ( ! $base || ( 'activation' !== $role && ! in_array( 'classes', self::settings()['tabs'], true ) ) ) {
+		if ( ! $base ) {
 			return add_query_arg( 'ohmylms_invite', $token, \OhMyLMS\Schools\Views::portal_url() );
 		}
 		return add_query_arg( 'ohmylms_invite', $token, $base );

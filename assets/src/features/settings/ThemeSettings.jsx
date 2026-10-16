@@ -131,7 +131,7 @@ export function createThemeSettings( {
 							style={ { margin: '0 0 16px' } }
 						>
 							{ __(
-								'Course pages, lessons, quizzes, practice, lesson checks and the school portal.',
+								'Course pages, lessons, quizzes, practice, lesson checks and the learning hub.',
 								'ohmylms'
 							) }
 						</p>

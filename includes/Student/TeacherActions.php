@@ -21,19 +21,11 @@ final class TeacherActions {
 	/** Register signed-in form handling only. */
 	public static function init() {
 		add_action( 'admin_post_' . self::ACTION, array( __CLASS__, 'handle' ) );
-		add_action( 'template_redirect', array( __CLASS__, 'redirect_legacy' ), 3 );
 	}
 
 	/** Retire the old teacher portal entry while leaving file and invitation flows intact. */
 	public static function redirect_legacy() {
-		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) || ! Hub::base_url() || ! TeacherWorkspace::available() ) {
-			return;
-		}
-		$view = isset( $_GET['view'] ) && is_string( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
-		if ( 'teacher-dashboard' === $view && isset( $_GET['ohmylms_portal'] ) && ! isset( $_GET['ohmylms_invite'] ) && ! isset( $_GET['ohmylms_school_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only legacy navigation.
-			wp_safe_redirect( TeacherWorkspace::url() );
-			exit;
-		}
+		LegacyPages::redirect_portal();
 	}
 
 	/**

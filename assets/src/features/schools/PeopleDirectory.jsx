@@ -310,7 +310,7 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 										title: __( 'Manage', 'ohmylms' ),
 										key: 'manage',
 										onClick: () => {
-											window.location.href = `${ window.location.origin }/?ohmylms_portal=1&school=${ tab === 'schools' ? row.id : row.school_id || '' }`;
+											window.location.href = `admin.php?page=ohmylms-schools&school=${ tab === 'schools' ? row.id : row.school_id || '' }${ tab === 'classes' ? `&class=${ row.id }&tab=classes` : '' }`;
 										},
 									},
 									...( tab === 'classes' &&
