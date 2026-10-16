@@ -98,11 +98,30 @@
 			} )
 		);
 		const opener = hub.querySelector( '[data-hub-rail-open]' );
+		const rail = hub.querySelector( '#oml-hub-rail' );
+		const workspace = hub.querySelector( '.oml-hub-main' );
+		const mobileRail = window.matchMedia( '(max-width: 800px)' );
 		const setRail = ( open ) => {
 			hub.classList.toggle( 'is-rail-open', open );
 			opener?.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			if ( rail ) {
+				rail.inert = mobileRail.matches && ! open;
+				if ( rail.inert ) {
+					rail.setAttribute( 'aria-hidden', 'true' );
+				} else {
+					rail.removeAttribute( 'aria-hidden' );
+				}
+			}
+			if ( workspace ) {
+				workspace.inert = mobileRail.matches && open;
+			}
 		};
-		opener?.addEventListener( 'click', () => setRail( true ) );
+		setRail( false );
+		mobileRail.addEventListener( 'change', () => setRail( false ) );
+		opener?.addEventListener( 'click', () => {
+			setRail( true );
+			rail?.querySelector( '[data-hub-rail-close]' )?.focus();
+		} );
 		hub.querySelector( '[data-hub-rail-close]' )?.addEventListener(
 			'click',
 			() => {
@@ -111,6 +130,29 @@
 			}
 		);
 		document.addEventListener( 'keydown', ( event ) => {
+			if (
+				event.key === 'Tab' &&
+				mobileRail.matches &&
+				hub.classList.contains( 'is-rail-open' )
+			) {
+				const controls = Array.from(
+					rail?.querySelectorAll(
+						'a[href], button:not([disabled]), summary, [tabindex="0"]'
+					) || []
+				).filter( ( control ) => control.getClientRects().length );
+				const first = controls[ 0 ];
+				const last = controls[ controls.length - 1 ];
+				if ( event.shiftKey && document.activeElement === first ) {
+					event.preventDefault();
+					last?.focus();
+				} else if (
+					! event.shiftKey &&
+					document.activeElement === last
+				) {
+					event.preventDefault();
+					first?.focus();
+				}
+			}
 			if (
 				event.key === 'Escape' &&
 				hub.classList.contains( 'is-rail-open' )

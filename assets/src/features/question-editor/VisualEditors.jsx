@@ -18,8 +18,7 @@ const number = ( value, onChange, extra = {} ) => ( {
 	type: 'number',
 	step: 'any',
 	value: value ?? '',
-	onChange: ( text ) =>
-		onChange( text === '' ? undefined : Number( text ) ),
+	onChange: ( text ) => onChange( text === '' ? undefined : Number( text ) ),
 	...extra,
 } );
 
@@ -43,14 +42,22 @@ function ScaleEditor( { value, onChange, jug } ) {
 					{ ...number( value.max, ( max ) => onChange( { max } ) ) }
 				/>
 				<TextControl
-					label={ jug ? __( 'Minor tick', 'ohmylms' ) : __( 'Tick step', 'ohmylms' ) }
-					{ ...number( value.step, ( step ) => onChange( { step } ), { min: 0 } ) }
+					label={
+						jug
+							? __( 'Minor tick', 'ohmylms' )
+							: __( 'Tick step', 'ohmylms' )
+					}
+					{ ...number( value.step, ( step ) => onChange( { step } ), {
+						min: 0,
+					} ) }
 				/>
 			</div>
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Correct value', 'ohmylms' ) }
-					{ ...number( value.target, ( target ) => onChange( { target } ) ) }
+					{ ...number( value.target, ( target ) =>
+						onChange( { target } )
+					) }
 				/>
 				<TextControl
 					label={ __( 'Accepted distance', 'ohmylms' ) }
@@ -59,13 +66,21 @@ function ScaleEditor( { value, onChange, jug } ) {
 							? __( 'Empty means one minor tick.', 'ohmylms' )
 							: __( 'Empty means half a tick.', 'ohmylms' )
 					}
-					{ ...number( value.tolerance, ( tolerance ) => onChange( { tolerance } ), { min: 0 } ) }
+					{ ...number(
+						value.tolerance,
+						( tolerance ) => onChange( { tolerance } ),
+						{ min: 0 }
+					) }
 				/>
 				{ ! jug && (
 					<TextControl
 						label={ __( 'Snap to', 'ohmylms' ) }
 						help={ __( 'Empty means the tick step.', 'ohmylms' ) }
-						{ ...number( value.snap, ( snap ) => onChange( { snap } ), { min: 0 } ) }
+						{ ...number(
+							value.snap,
+							( snap ) => onChange( { snap } ),
+							{ min: 0 }
+						) }
 					/>
 				) }
 				{ jug && (
@@ -104,18 +119,30 @@ export function ShadeModelEditor( { value, onChange } ) {
 			/>
 			<TextControl
 				label={ __( 'Equal parts', 'ohmylms' ) }
-				{ ...number( value.parts, ( parts ) => onChange( { parts } ), { min: 2, max: 100 } ) }
+				{ ...number( value.parts, ( parts ) => onChange( { parts } ), {
+					min: 2,
+					max: 100,
+				} ) }
 			/>
 			{ value.shape === 'grid' && (
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number( value.cols, ( cols ) => onChange( { cols } ), { min: 1 } ) }
+					{ ...number( value.cols, ( cols ) => onChange( { cols } ), {
+						min: 1,
+					} ) }
 				/>
 			) }
 			<TextControl
 				label={ __( 'Parts to shade', 'ohmylms' ) }
-				help={ __( 'Any parts count; the learner may shade any of them.', 'ohmylms' ) }
-				{ ...number( value.answer, ( answer ) => onChange( { answer } ), { min: 0 } ) }
+				help={ __(
+					'Any parts count; the learner may shade any of them.',
+					'ohmylms'
+				) }
+				{ ...number(
+					value.answer,
+					( answer ) => onChange( { answer } ),
+					{ min: 0 }
+				) }
 			/>
 		</div>
 	);
@@ -141,7 +168,8 @@ export function CountBlocksEditor( { value, onChange } ) {
 						onChange={ ( on ) =>
 							onChange( {
 								places: Object.keys( PLACE_VALUES ).filter(
-									( p ) => ( p === place ? on : places.includes( p ) )
+									( p ) =>
+										p === place ? on : places.includes( p )
 								),
 							} )
 						}
@@ -151,11 +179,19 @@ export function CountBlocksEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Number to build', 'ohmylms' ) }
-					{ ...number( value.target, ( target ) => onChange( { target } ), { min: 1, step: 1 } ) }
+					{ ...number(
+						value.target,
+						( target ) => onChange( { target } ),
+						{ min: 1, step: 1 }
+					) }
 				/>
 				<TextControl
 					label={ __( 'Most blocks of one kind', 'ohmylms' ) }
-					{ ...number( value.max_per_place, ( max_per_place ) => onChange( { max_per_place } ), { min: 1, max: 50, step: 1 } ) }
+					{ ...number(
+						value.max_per_place,
+						( max_per_place ) => onChange( { max_per_place } ),
+						{ min: 1, max: 50, step: 1 }
+					) }
 				/>
 			</div>
 			<CheckboxControl
@@ -182,15 +218,27 @@ export function SetClockEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Hour (1–12)', 'ohmylms' ) }
-					{ ...number( value.hour, ( hour ) => onChange( { hour } ), { min: 1, max: 12, step: 1 } ) }
+					{ ...number( value.hour, ( hour ) => onChange( { hour } ), {
+						min: 1,
+						max: 12,
+						step: 1,
+					} ) }
 				/>
 				<TextControl
 					label={ __( 'Minutes (0–59)', 'ohmylms' ) }
-					{ ...number( value.minute, ( minute ) => onChange( { minute } ), { min: 0, max: 59, step: 1 } ) }
+					{ ...number(
+						value.minute,
+						( minute ) => onChange( { minute } ),
+						{ min: 0, max: 59, step: 1 }
+					) }
 				/>
 				<TextControl
 					label={ __( 'Accepted error (minutes)', 'ohmylms' ) }
-					{ ...number( value.tolerance, ( tolerance ) => onChange( { tolerance } ), { min: 0, step: 1 } ) }
+					{ ...number(
+						value.tolerance,
+						( tolerance ) => onChange( { tolerance } ),
+						{ min: 0, step: 1 }
+					) }
 				/>
 				<SelectControl
 					label={ __( 'Hand moves in steps of', 'ohmylms' ) }
@@ -200,11 +248,16 @@ export function SetClockEditor( { value, onChange } ) {
 						{ value: '5', label: __( '5 minutes', 'ohmylms' ) },
 						{ value: '15', label: __( '15 minutes', 'ohmylms' ) },
 					] }
-					onChange={ ( snap ) => onChange( { snap: Number( snap ) } ) }
+					onChange={ ( snap ) =>
+						onChange( { snap: Number( snap ) } )
+					}
 				/>
 			</div>
 			<CheckboxControl
-				label={ __( 'Show the digital time while the learner sets the hands', 'ohmylms' ) }
+				label={ __(
+					'Show the digital time while the learner sets the hands',
+					'ohmylms'
+				) }
 				checked={ !! value.show_digital }
 				onChange={ ( show_digital ) => onChange( { show_digital } ) }
 			/>
@@ -222,9 +275,14 @@ export function MakeAmountEditor( { value, onChange } ) {
 	return (
 		<div className="ohmylms-interactive-editor ohmylms-interactive-row">
 			<TextControl
-				label={ __( 'Bills and coins (separated by commas)', 'ohmylms' ) }
+				label={ __(
+					'Bills and coins (separated by commas)',
+					'ohmylms'
+				) }
 				value={ ( value.denominations || [] ).join( ', ' ) }
-				onChange={ ( text ) => onChange( { denominations: parseAmounts( text ) } ) }
+				onChange={ ( text ) =>
+					onChange( { denominations: parseAmounts( text ) } )
+				}
 			/>
 			<TextControl
 				label={ __( 'Currency symbol', 'ohmylms' ) }
@@ -233,7 +291,11 @@ export function MakeAmountEditor( { value, onChange } ) {
 			/>
 			<TextControl
 				label={ __( 'Amount to make', 'ohmylms' ) }
-				{ ...number( value.target, ( target ) => onChange( { target } ), { min: 1, step: 1 } ) }
+				{ ...number(
+					value.target,
+					( target ) => onChange( { target } ),
+					{ min: 1, step: 1 }
+				) }
 			/>
 		</div>
 	);
@@ -258,11 +320,15 @@ export function BuildChartEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Chart maximum', 'ohmylms' ) }
-					{ ...number( value.max, ( max ) => onChange( { max } ), { min: 1 } ) }
+					{ ...number( value.max, ( max ) => onChange( { max } ), {
+						min: 1,
+					} ) }
 				/>
 				<TextControl
 					label={ __( 'Step', 'ohmylms' ) }
-					{ ...number( value.step, ( step ) => onChange( { step } ), { min: 0 } ) }
+					{ ...number( value.step, ( step ) => onChange( { step } ), {
+						min: 0,
+					} ) }
 				/>
 				<TextControl
 					label={ __( 'Unit (optional)', 'ohmylms' ) }
@@ -273,31 +339,51 @@ export function BuildChartEditor( { value, onChange } ) {
 			{ categories.map( ( category, index ) => (
 				<div key={ category.id } className="ohmylms-interactive-row">
 					<TextControl
-						label={ sprintf( __( 'Bar %d label', 'ohmylms' ), index + 1 ) }
+						label={ sprintf(
+							__( 'Bar %d label', 'ohmylms' ),
+							index + 1
+						) }
 						value={ category.label || '' }
-						onChange={ ( label ) => setCategory( category.id, { label } ) }
+						onChange={ ( label ) =>
+							setCategory( category.id, { label } )
+						}
 					/>
 					<TextControl
 						label={ __( 'Correct height', 'ohmylms' ) }
-						{ ...number( value.values?.[ category.id ], ( height ) =>
-							onChange( { values: { ...value.values, [ category.id ]: height } } )
+						{ ...number(
+							value.values?.[ category.id ],
+							( height ) =>
+								onChange( {
+									values: {
+										...value.values,
+										[ category.id ]: height,
+									},
+								} )
 						) }
 					/>
 					<Button
 						isDestructive
 						variant="tertiary"
 						disabled={ categories.length <= 1 }
-						onClick={ () => onChange( removeCategory( value, category.id ) ) }
+						onClick={ () =>
+							onChange( removeCategory( value, category.id ) )
+						}
 					>
 						{ __( 'Remove bar', 'ohmylms' ) }
 					</Button>
 				</div>
 			) ) }
-			<Button variant="secondary" onClick={ () => onChange( addCategory( value ) ) }>
+			<Button
+				variant="secondary"
+				onClick={ () => onChange( addCategory( value ) ) }
+			>
 				{ __( 'Add bar', 'ohmylms' ) }
 			</Button>
 			<CheckboxControl
-				label={ __( 'Show the data as a table above the chart', 'ohmylms' ) }
+				label={ __(
+					'Show the data as a table above the chart',
+					'ohmylms'
+				) }
 				help={ __(
 					'Turn this off when the question text gives the data, so the table does not reveal the answer.',
 					'ohmylms'
@@ -330,22 +416,43 @@ export function GridBuildEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Rows', 'ohmylms' ) }
-					{ ...number( value.rows, ( rows ) => onChange( { rows } ), { min: 1, max: 20, step: 1 } ) }
+					{ ...number( value.rows, ( rows ) => onChange( { rows } ), {
+						min: 1,
+						max: 20,
+						step: 1,
+					} ) }
 				/>
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number( value.cols, ( cols ) => onChange( { cols } ), { min: 1, max: 20, step: 1 } ) }
+					{ ...number( value.cols, ( cols ) => onChange( { cols } ), {
+						min: 1,
+						max: 20,
+						step: 1,
+					} ) }
 				/>
 			</div>
-			<p>{ __( 'The learner must choose squares that meet all of these:', 'ohmylms' ) }</p>
+			<p>
+				{ __(
+					'The learner must choose squares that meet all of these:',
+					'ohmylms'
+				) }
+			</p>
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Area (squares)', 'ohmylms' ) }
-					{ ...number( constraints.area, ( area ) => set( { area } ), { min: 1, step: 1 } ) }
+					{ ...number(
+						constraints.area,
+						( area ) => set( { area } ),
+						{ min: 1, step: 1 }
+					) }
 				/>
 				<TextControl
 					label={ __( 'Perimeter', 'ohmylms' ) }
-					{ ...number( constraints.perimeter, ( perimeter ) => set( { perimeter } ), { min: 1, step: 1 } ) }
+					{ ...number(
+						constraints.perimeter,
+						( perimeter ) => set( { perimeter } ),
+						{ min: 1, step: 1 }
+					) }
 				/>
 			</div>
 			<CheckboxControl
@@ -359,7 +466,10 @@ export function GridBuildEditor( { value, onChange } ) {
 				onChange={ ( connected ) => set( { connected } ) }
 			/>
 			<CheckboxControl
-				label={ __( 'Show the learner their current area and perimeter', 'ohmylms' ) }
+				label={ __(
+					'Show the learner their current area and perimeter',
+					'ohmylms'
+				) }
 				checked={ !! value.show_measures }
 				onChange={ ( show_measures ) => onChange( { show_measures } ) }
 			/>
@@ -386,10 +496,12 @@ export function VisualPreview( { type, settings = {} } ) {
 		node.textContent = '';
 		const config = { ...settings };
 		if ( type === 'build-chart' && settings.show_table ) {
-			config.table = ( settings.categories || [] ).map( ( category ) => ( {
-				label: category.label,
-				value: settings.values?.[ category.id ] ?? 0,
-			} ) );
+			config.table = ( settings.categories || [] ).map(
+				( category ) => ( {
+					label: category.label,
+					value: settings.values?.[ category.id ] ?? 0,
+				} )
+			);
 		}
 		try {
 			player.render( node, type, config );
@@ -404,7 +516,12 @@ export function VisualPreview( { type, settings = {} } ) {
 		<Fragment>
 			<div ref={ holder } className="ohmylms-visual-preview" />
 			{ ! window.OhMyLMSInteractive && (
-				<p>{ __( 'The interactive preview is not available on this screen.', 'ohmylms' ) }</p>
+				<p>
+					{ __(
+						'The interactive preview is not available on this screen.',
+						'ohmylms'
+					) }
+				</p>
 			) }
 		</Fragment>
 	);

@@ -88,6 +88,9 @@ $teacher_titles  = array(
 		<?php elseif ( 'active' !== $teacher_current['status'] ) : ?>
 			<p><?php esc_html_e( 'This class is archived. Restore it in Class settings to resume management.', 'ohmylms' ); ?></p>
 		<?php else : ?>
+			<?php if ( 'progress' === $section ) : ?>
+				<?php ohmylms_get_template( 'student-hub/teacher-report.php', compact( 'teacher_class', 'teacher_page' ) ); ?>
+			<?php endif; ?>
 			<?php $teacher_work = Service::assignments( $teacher_class, 0, 0, $teacher_page ); ?>
 		<p><?php esc_html_e( 'Distributed class work only. Independent learning is not included.', 'ohmylms' ); ?></p>
 		<ul class="oml-hub-commerce-list">

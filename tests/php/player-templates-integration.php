@@ -8,7 +8,23 @@
 if ( 'cli' !== PHP_SAPI ) {
 	exit;
 }
-require dirname( __DIR__, 5 ) . '/wp-load.php';
+$player_credentials_path = getenv( 'OHMYLMS_TEST_CREDENTIALS' );
+if ( $player_credentials_path ) {
+	if ( ! is_file( $player_credentials_path ) ) {
+		throw new RuntimeException( 'Disposable credentials file not found.' );
+	}
+	$player_credentials = json_decode( file_get_contents( $player_credentials_path ), true );
+	if ( ! is_array( $player_credentials ) || empty( $player_credentials['site'] ) ) {
+		throw new RuntimeException( 'Disposable site path required.' );
+	}
+	require $player_credentials['site'] . '/wp-load.php';
+	if ( ! defined( 'OHMYLMS_TEST_SITE' ) || ! OHMYLMS_TEST_SITE || 'ohmylms_source_test' !== DB_NAME ) {
+		throw new RuntimeException( 'Disposable database required.' );
+	}
+} else {
+	// Retain the existing read-only local-site invocation.
+	require dirname( __DIR__, 5 ) . '/wp-load.php';
+}
 
 use OhMyLMS\Design\Tokens;
 use OhMyLMS\Quiz\PlayerTemplates;

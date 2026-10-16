@@ -8,6 +8,12 @@ This section is the authoritative summary. Everything below it is a chronologica
 ledger; where an older note says "next step is P1/P2/P3" or "no parent/child
 implementation exists", this section wins.
 
+Latest implementation and verification: [release readiness checkpoint](docs/learner-experience/RELEASE-READINESS.md).
+The requested five-part pass added scoped teacher/parent reporting, repaired the targeted checks,
+verified the disposable site, refreshed/compiled Mongolian catalogs and built reproducible assets.
+Full repository lint, translation completion and manual acceptance still have the explicit gates
+listed there. Earlier "PHPCS unavailable" and credential-blocked notes are historical.
+
 ### Product decisions (from the user)
 
 - Closely adapt Khan Academy's UI with OhMyLMS branding and content.
@@ -25,9 +31,9 @@ implementation exists", this section wins.
 | Workspace / feature | Entry | Main code |
 | --- | --- | --- |
 | Learner (library, My learning, classes, achievements, history, settings, membership) | default | `Student/Hub.php`, `templates/student-hub/*` |
-| Teacher: independent classes, roster, invitations, archive/restore | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php` |
+| Teacher: independent classes, roster, invitations, archive/restore and period-specific class skill reports | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php`, `TeacherReports.php` |
 | Parent: school-linked children (read-only work overview) and home-learning children (managed accounts, setup links, invitations, grade and followed collections, revocation) | `hub_role=parent` | `Student/ParentWorkspace.php`, `ParentActions.php`, `FamilyActions.php`, `includes/Family/*` (own schema `ohmylms_family_schema`) |
-| Home-learning activity reports: explicit launch provenance, current-link scope, 7/30/90 days and pagination | `hub_role=parent&hub_section=family&hub_scope=home_learning&hub_child=ID` | `Family/Provenance.php`, `Family/Reports.php`, `templates/student-hub/family-report.php`; contract in `docs/learner-experience/HOME-LEARNING-REPORTS.md` |
+| Home-learning activity reports: explicit launch provenance, current-link scope, 7/30/90 days, activity/day/course totals and pagination | `hub_role=parent&hub_section=family&hub_scope=home_learning&hub_child=ID` | `Family/Provenance.php`, `Family/Reports.php`, `templates/student-hub/family-report.php`; contract in `docs/learner-experience/HOME-LEARNING-REPORTS.md` |
 | Unit/practice presentation: Learn/Practice/Assessments, mastery legend, focused program lessons and course practice, collapsible outline and unit return | course overview, `?ohmylms_learning=COURSE&learning_item=UUID`, `?ohmylms_practice=SKILL&learning_course=COURSE` | `Student/PlayerContext.php`, `Practice/Presentation.php`, `templates/student-hub/activity-page.php`; `docs/learner-experience/P5-UNIT-PRACTICE.md` |
 | School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal, managed-student recovery and previewed rollover | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `Schools/Lifecycle.php`, `templates/student-hub/school.php` |
 | School reports and gradebook: completion/overdue counts, assigned-work drill-down, stored skill summaries, submission review/feedback, quiz/assignment matrix, weighted totals and CSV | `hub_role=school&hub_section=school-reports` or `school-gradebook` | `Student/SchoolReports.php`, `SchoolGradebook.php`, `SchoolActions.php`, `templates/student-hub/school-reports.php` |
@@ -71,8 +77,8 @@ created by the user is real data and must be left alone.
 
 ### Git state
 
-The school reports, portal retirement and home-learning reporting checkpoints are committed locally on `main` (not pushed).
-Use the latest Git log for its commit ID. Latest earlier commits: roster import, school settings
+The checkpoints are local to `main`; use the latest Git log for the current commit ID. Nothing has been pushed.
+Latest earlier commits: roster import, school settings
 and member removal, school workspace and teacher-created schools, portal retirement, family and parent
 work, teacher classes and legacy retirement, plus documentation commits.
 
@@ -92,9 +98,11 @@ work, teacher classes and legacy retirement, plus documentation commits.
    uses grade then collections, with Back/Cancel and a usable no-JavaScript form. These refinements
    use the existing hub style; the original reference layouts remain unobserved.
 6. Protected integration verification is complete; retain the disposable-database guards for future runs.
-7. P5 unit/practice refinements are implemented and browser-verified. Remaining: observed reference
-   comparison (including proposed parent dashboard layouts), richer source-scoped home reports if
-   desired, and release verification/localization. Do not invent unsupported drawing, skip or unit-test controls.
+7. P5, the Khan practice/level/assessment slices and Level up placement are implemented. Parent
+   activity breakdowns and class-only teacher levels are now implemented too. Teacher reference
+   comparison and the current release checks are recorded in `docs/learner-experience/RELEASE-READINESS.md`;
+   its remaining manual, localization, lint and parity gates are the next work. A parent reference
+   dashboard remains unobserved; do not claim exact parity for its proposed layouts.
 
 
 ## Parent and child UI extension (October 16, 2026)
@@ -1865,3 +1873,78 @@ Level up and unit-test placement (October 16, 2026): the hub course overview sho
 test and a **Course challenge** card; `SkillAssessment::create_for_course()` and a whole-course form on **OhMyLMS -> Skill assessments** make a
 unit test for every unit (and optionally a course challenge). Courses with a managed learning program need the new assessments added in the
 program editor. See section 11 of `docs/learner-experience/KHAN-ACTIVITIES.md`.
+
+## Live-folder continuation and standards check (October 16, 2026)
+
+Resumed in the live plugin folder at `8662c55` with a clean working tree. The teacher, family,
+practice, mixed-skill assessment and Level up implementation checkpoints above were already committed;
+the older teacher restore/cleanup hand-off is superseded by the subsequent verification checkpoints.
+
+PHPCS is available here at `tools/coding-standards/vendor/bin/phpcs`. Checked the nine new assessment,
+Khan-level, intro, MCP/REST and authoring-template PHP files previously marked outstanding. Fixed
+mechanical formatting in `SkillAssessment.php`, `SkillAssessmentPage.php` and `SkillAssessmentTools.php`.
+The authoring template now uses scoped course/unit loop variables instead of WordPress globals
+`$id` and `$title`, computes its form URL before rendering the attribute, and uses an explicit edit-link
+fallback. Public identifiers, hooks, assessment contracts and generated assets are unchanged.
+
+Scoped PHPCS result: **16 errors, 2 warnings**, down from 31 errors and 17 warnings. Twelve errors are
+filename findings on six PSR-4 class files: retaining the namespace-to-file mapping is a narrow
+compatibility exception; renaming requires an autoloader migration. No filename suppression was added.
+Four errors and one warning remain in `Skills/Khan/Levels.php` on the dynamic bulk-read queries
+(interpolated table/placeholder lists and replacement-count analysis); these still need resolution and
+integration verification. One warning remains for the authoring screen's 200-course query limit.
+The authoring template, MCP tools and REST tool controller pass their scoped PHPCS checks.
+
+Validation in this session: `npm test` **422 passed, 0 failed, 1 skipped**, including asset parity;
+`npm run lint:source` passed (1,603 parsed files, 236 component contracts); syntax checks passed on
+all four modified PHP files; `mastery-display-unit.php` passed; `git diff --check` passed.
+`npm run check` stops at six existing Prettier failures: `learning/QuizList.jsx`,
+`question-bank/registerPages.js`, `question-editor/QuestionCanvas.jsx`,
+`question-editor/VisualEditors.jsx`, `quiz-editor/QuizEditor.jsx`, `quiz-editor/QuizSkills.jsx`.
+The separate legacy `php tests/unit.php` fails because its anonymous question fixture has no
+`get_settings()` method (called by `QuestionTypes.php:249`); it is not a passing test result.
+
+Not rerun: protected database suites (`OHMYLMS_TEST_CREDENTIALS` is unset), browser flows and the build.
+No live records or browser sessions were changed, and no old fixture cleanup helper was run.
+Changes from this checkpoint are uncommitted and not pushed.
+
+Next: resolve and verify the Khan bulk-query findings on a disposable test site, repair the stale
+unit-test fixture, then rerun the protected assessment phases (especially `khan`, `skillcheck`,
+`levelup`) and teacher/family regression suites. Continue with the release checkpoint's remaining
+keyboard/screen-reader, contrast, dark-theme and large-roster checks. Existing browser results above
+remain historical evidence, not a fresh acceptance pass for this session.
+
+## Five-part implementation and release pass (October 16, 2026)
+
+Completed the targeted Khan SQL cleanup, six-file Prettier cleanup and standalone grading-fixture
+repair. Added parent activity/day/course totals and teacher class-only Khan levels, preserving
+provenance and current roster/link authorization. Fixed content landmarks, unavailable-page h1s,
+mobile keyboard focus/inert state and a dark-theme text-contrast finding. No assessment contract,
+global role, default mastery model or database schema changed.
+
+The existing private disposable installation was found and all requested protected regressions
+ran without bypassing guards: assessment phases 1,049, new report checks 28 (202-learner roster),
+Student Home 92, teacher classes 47, family 56, school reports/lifecycle/matrix 32/31/19, learning 76,
+player templates 81 and account blocks 44, plus schools, gradebook and student directory. The player
+runner now supports the private credential configuration. JavaScript: 425 pass, 0 fail, 1 skipped.
+Build passed with two existing size warnings; 215 generated artifacts match across two builds.
+
+Authenticated built-in browser verification used the existing View as interface, returned to admin
+before cleanup and covered teacher levels/23-person pagination, parent report/link revocation,
+learner Connections with an assigned teacher, keyboard navigation and mobile sections across the
+learner/teacher/school workspaces. Viewport reset. Temporary fixture user/activity/Khan counts are
+zero and preview files were removed. No real 800.local accounts, passwords or learning data changed.
+
+Catalog refresh retained previous JavaScript/JSON entries and extracted PHP plus changed authored
+JavaScript. `tools/compile-translations.py` appends missing entries without replacing existing values
+and compiles the Mongolian MO/admin Jed JSON. All 9,603 prior entries retain their translation values;
+38 new entries remain untranslated. Coverage: 3,300 translated of 9,641, with 2,071 JS messages.
+WordPress loaded both artifacts; recompilation is byte-identical.
+
+Full lint still fails on older repository debt (PHP 14,100 errors/2,986 warnings, JS 6,947 errors/
+27 warnings, CSS 1,647 errors). The new assessment/report scope retains 14 documented PSR-4 filename
+errors and visible warnings; no blanket baseline or filename suppression was added. Review the
+readiness document for the query-local placeholder annotation, exact coverage, command requirements,
+Khan comparison, translation limitations and remaining manual screen-reader/password/email checks.
+This implementation, generated assets and documentation form the local checkpoint; nothing pushed
+or deployed. Do not restart the obsolete teacher restore/cleanup hand-off.

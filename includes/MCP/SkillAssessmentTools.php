@@ -19,7 +19,7 @@ final class SkillAssessmentTools {
 	 */
 	public static function definitions() {
 		$tools  = array(
-			'list_unit_skills'         => array(
+			'list_unit_skills'        => array(
 				'GET',
 				'/unit-skills',
 				'List the skills taught in one unit (chapter): skills on its lessons and the skills its quizzes are connected to, each with how many different approved questions the bank has for it. Use get_course_chapters to find unit IDs. A skill with 0 available cannot be used in an assessment yet.',
@@ -32,7 +32,7 @@ final class SkillAssessmentTools {
 				array( 'chapter_id' ),
 				true,
 			),
-			'create_skill_assessment'  => array(
+			'create_skill_assessment' => array(
 				'POST',
 				'/create',
 				'Create a NEW DRAFT mixed-skill assessment that draws questions from the bank for each chosen skill: a quiz (a short check), a unit-test (every skill of a unit) or a course-challenge. It uses existing approved questions only, in their own question types, and it is never published here: a person publishes it from the quiz editor. Check list_unit_skills first and choose only skills that have at least per_skill questions available. chapter_id places it at the end of that unit (0 for none); time_limit is minutes (0 for no limit).',

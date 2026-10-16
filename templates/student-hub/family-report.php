@@ -21,7 +21,7 @@ $home_base  = add_query_arg(
 try {
 	$home_report = Reports::read( $home_child, absint( get_query_var( 'hub_period', 30 ) ), max( 1, absint( get_query_var( 'current_page', 1 ) ) ) );
 } catch ( RuntimeException $home_error ) {
-	echo '<div class="oml-hub-empty"><h2>' . esc_html__( 'This learner is not available', 'ohmylms' ) . '</h2><p>' . esc_html__( 'An active, approved home-learning link is required.', 'ohmylms' ) . '</p></div>';
+	echo '<div class="oml-hub-empty"><h1>' . esc_html__( 'This learner is not available', 'ohmylms' ) . '</h1><p>' . esc_html__( 'An active, approved home-learning link is required.', 'ohmylms' ) . '</p></div>';
 	return;
 }
 $home_labels = array(
@@ -50,6 +50,32 @@ $home_labels = array(
 		echo esc_html( $home_activity_count . ' · ' . $home_day_count );
 	?>
 	</p>
+	<?php if ( $home_report['types'] ) : ?>
+		<h2><?php esc_html_e( 'Learning by activity', 'ohmylms' ); ?></h2>
+		<ul class="oml-hub-commerce-list">
+			<?php foreach ( $home_report['types'] as $home_type ) : ?>
+				<li><strong><?php echo esc_html( $home_labels[ $home_type['source_kind'] ] ?? __( 'Activity completed', 'ohmylms' ) ); ?></strong><span><?php echo esc_html( number_format_i18n( (int) $home_type['activities'] ) ); ?></span></li>
+			<?php endforeach; ?>
+		</ul>
+		<details>
+			<summary><?php esc_html_e( 'Activity by day (UTC)', 'ohmylms' ); ?></summary>
+			<ul class="oml-hub-commerce-list">
+				<?php foreach ( $home_report['daily'] as $home_day ) : ?>
+					<li><time datetime="<?php echo esc_attr( $home_day['activity_date'] ); ?>"><?php echo esc_html( $home_day['activity_date'] ); ?></time><span><?php echo esc_html( number_format_i18n( (int) $home_day['activities'] ) ); ?></span></li>
+				<?php endforeach; ?>
+			</ul>
+		</details>
+		<details>
+			<summary><?php esc_html_e( 'Most active courses (up to 10)', 'ohmylms' ); ?></summary>
+			<ul class="oml-hub-commerce-list">
+				<?php foreach ( $home_report['courses'] as $home_course ) : ?>
+					<?php $home_course_title = $home_course['course_id'] ? get_the_title( $home_course['course_id'] ) : __( 'Practice outside a course', 'ohmylms' ); ?>
+					<li><strong><?php echo esc_html( $home_course_title ? $home_course_title : __( 'Course no longer available', 'ohmylms' ) ); ?></strong><span><?php echo esc_html( number_format_i18n( (int) $home_course['activities'] ) ); ?></span></li>
+				<?php endforeach; ?>
+			</ul>
+		</details>
+	<?php endif; ?>
+	<h2><?php esc_html_e( 'Recent activity', 'ohmylms' ); ?></h2>
 	<?php if ( ! $home_report['items'] ) : ?>
 		<div class="oml-hub-empty"><h3><?php esc_html_e( 'No recorded home learning yet', 'ohmylms' ); ?></h3><p><?php esc_html_e( 'Your child can choose Home learning on an activity page before starting.', 'ohmylms' ); ?></p></div>
 	<?php else : ?>

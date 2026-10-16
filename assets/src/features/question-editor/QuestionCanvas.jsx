@@ -425,7 +425,9 @@ export function createQuestionCanvas( readRuntime ) {
 						}
 						const patch = questionTypePatch( m, type );
 						if ( patch.description !== undefined ) {
-							s.updateQuestionData( x, { description: patch.description } );
+							s.updateQuestionData( x, {
+								description: patch.description,
+							} );
 						}
 						if ( patch.name ) {
 							s.updateQuestionData( x, { name: patch.name } );
@@ -447,7 +449,7 @@ export function createQuestionCanvas( readRuntime ) {
 					toolbarActions={ props.toolbarActions }
 					toolbarLeading={ props.toolbarLeading }
 					settings={ props.settings }
-						extraSettings={ props.extraSettings }
+					extraSettings={ props.extraSettings }
 					outline={ props.outline }
 					beforeContent={
 						<React.Fragment>

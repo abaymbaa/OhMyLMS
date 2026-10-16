@@ -55,6 +55,9 @@ Revocation takes effect on the next read. Home reports work when the school sche
 
 The report offers 7, 30 and 90 day windows, activity counts, active UTC dates, dated activity titles
 and 20-row pagination. Submission labels distinguish submitted work from lesson/practice completion.
+It also groups authorized records by activity type and UTC date, and shows totals for the ten most
+active courses. These aggregates use the same exact-link scope as the activity list and never infer
+study time or accuracy from submission counts. Daily/course breakdowns use native disclosures.
 It exposes no grades, responses, credentials, school work or global mastery. Site-time formatting
 is used for displayed timestamps; the active-date aggregate explicitly says UTC.
 
@@ -83,3 +86,6 @@ cancellation, recovery confirmation/link creation and dark 390px layout checks u
 The existing hub style is used; unobserved reference layouts are not claimed as replicated designs.
 Rich home-only skill/accuracy reports would need source-scoped evidence
 queries; they must not substitute global mastery or unknown historical results.
+
+The later release pass added the activity breakdowns above and verified report revocation through
+the real parent form in the browser. See `RELEASE-READINESS.md` for current tests and limits.

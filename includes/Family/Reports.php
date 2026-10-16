@@ -38,6 +38,12 @@ final class Reports {
 		$summary = $wpdb->get_row( $wpdb->prepare( "SELECT COUNT(*) AS activities,COUNT(DISTINCT DATE(e.completed_at)) AS active_days $sql", $args ), ARRAY_A );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded page with fresh exact-link authorization.
 		$items = (array) $wpdb->get_results( $wpdb->prepare( "SELECT e.source_kind,e.content_id,e.course_id,e.completed_at $sql ORDER BY e.completed_at DESC,e.id DESC LIMIT 20 OFFSET %d", array_merge( $args, array( ( $page - 1 ) * 20 ) ) ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate only the same currently approved home link.
+		$types = (array) $wpdb->get_results( $wpdb->prepare( "SELECT e.source_kind,COUNT(*) AS activities $sql GROUP BY e.source_kind ORDER BY e.source_kind", $args ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- At most 91 UTC dates in the allowlisted window.
+		$daily = (array) $wpdb->get_results( $wpdb->prepare( "SELECT DATE(e.completed_at) AS activity_date,COUNT(*) AS activities $sql GROUP BY DATE(e.completed_at) ORDER BY activity_date DESC LIMIT 91", $args ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded course totals, with the same exact-link authorization.
+		$courses = (array) $wpdb->get_results( $wpdb->prepare( "SELECT e.course_id,COUNT(*) AS activities $sql GROUP BY e.course_id ORDER BY activities DESC,e.course_id LIMIT 10", $args ), ARRAY_A );
 		// phpcs:enable
 		return array(
 			'child'   => $child,
@@ -46,6 +52,9 @@ final class Reports {
 			'pages'   => max( 1, (int) ceil( (int) $summary['activities'] / 20 ) ),
 			'summary' => $summary,
 			'items'   => $items,
+			'types'   => $types,
+			'daily'   => $daily,
+			'courses' => $courses,
 		);
 	}
 }

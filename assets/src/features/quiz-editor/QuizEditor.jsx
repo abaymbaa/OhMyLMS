@@ -109,14 +109,19 @@ export function createQuizEditor( readRuntime ) {
 									<Button
 										variant="secondary"
 										onClick={ () =>
-											navigate( `/quiz-report/${ route.id }` )
+											navigate(
+												`/quiz-report/${ route.id }`
+											)
 										}
 										icon={ <ResultIcon /> }
 										aria-label={ __( 'Result', 'ohmylms' ) }
 									/>
 								</Tooltip>
 								<Tooltip
-									text={ __( 'Preview saved quiz', 'ohmylms' ) }
+									text={ __(
+										'Preview saved quiz',
+										'ohmylms'
+									) }
 								>
 									<Button
 										variant="secondary"
@@ -154,16 +159,24 @@ export function createQuizEditor( readRuntime ) {
 											! editor.quiz?.id
 										}
 										icon={ <ExportIcon /> }
-										aria-label={ __( 'Export quiz', 'ohmylms' ) }
+										aria-label={ __(
+											'Export quiz',
+											'ohmylms'
+										) }
 									/>
 								</Tooltip>
-								<Tooltip text={ __( 'Add from bank', 'ohmylms' ) }>
+								<Tooltip
+									text={ __( 'Add from bank', 'ohmylms' ) }
+								>
 									<Button
 										variant="secondary"
 										onClick={ () => setPickerOpen( true ) }
 										disabled={ ! editor.quiz?.id }
 										icon={ <BankIcon /> }
-										aria-label={ __( 'Add from bank', 'ohmylms' ) }
+										aria-label={ __(
+											'Add from bank',
+											'ohmylms'
+										) }
 									/>
 								</Tooltip>
 								<Button
@@ -213,13 +226,13 @@ export function createQuizEditor( readRuntime ) {
 						onClick={ () => setView( 'questions' ) }
 					>
 						{ __( 'Questions', 'ohmylms' ) }
-						</Button>
-						<Button
-							role="tab"
-							aria-selected={ view === 'skills' }
-							onClick={ () => setView( 'skills' ) }
-						>
-							{ __( 'Skills', 'ohmylms' ) }
+					</Button>
+					<Button
+						role="tab"
+						aria-selected={ view === 'skills' }
+						onClick={ () => setView( 'skills' ) }
+					>
+						{ __( 'Skills', 'ohmylms' ) }
 					</Button>
 				</div>
 				{ editor.loading ? (

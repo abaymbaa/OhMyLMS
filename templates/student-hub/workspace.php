@@ -103,7 +103,7 @@ $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home'
 					</details>
 				<?php endif; ?>
 			</header>
-			<div class="oml-hub-content ohmylms-dashboard" id="student-home-content">
+			<div class="oml-hub-content ohmylms-dashboard" id="student-home-content" <?php echo Hub::uses_workspace_landmark() ? 'role="main" tabindex="-1"' : ''; ?>>
 				<?php
 				if ( function_exists( 'ohmylms_show_all_notices' ) ) {
 					ohmylms_show_all_notices(); }

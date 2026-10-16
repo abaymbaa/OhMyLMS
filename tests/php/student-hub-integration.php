@@ -80,6 +80,17 @@ try {
 	Hub::install_page();
 	ohmylms_hub_check( $hub_config['page_id'] > 0 && Hub::settings()['page_id'] === $hub_config['page_id'], 'Page installation is not idempotent.' );
 	ohmylms_hub_check( has_shortcode( get_post_field( 'post_content', $hub_config['page_id'] ), 'ohmylms_student_hub' ), 'Hub shortcode is absent.' );
+	$hub_previous_query  = $GLOBALS['wp_query'];
+	$GLOBALS['wp_query'] = new WP_Query( array( 'page_id' => $hub_config['page_id'] ) );
+	$hub_administrator   = get_current_user_id();
+	ohmylms_hub_check( Hub::uses_workspace_landmark(), 'Canonical authenticated workspace did not choose its content landmark.' );
+	$hub_landmark_html = Hub::shortcode();
+	ohmylms_hub_check( 1 === substr_count( $hub_landmark_html, 'role="main"' ) && strpos( $hub_landmark_html, '<aside' ) < strpos( $hub_landmark_html, 'role="main"' ), 'Workspace landmark includes navigation or is duplicated.' );
+	wp_set_current_user( 0 );
+	ohmylms_hub_check( ! Hub::uses_workspace_landmark(), 'Sign-in page must use the outer page landmark.' );
+	wp_set_current_user( $hub_administrator );
+	$GLOBALS['wp_query'] = $hub_previous_query;
+	ohmylms_hub_check( ! Hub::uses_workspace_landmark(), 'An embedded workspace must retain its theme landmark.' );
 	// Legacy entry points must not mount the retired frontend app, even for a platform admin.
 	ohmylms_hub_check( Hub::base_url() === \OhMyLMS\Schools\Views::portal_url(), 'New school links still use the retired portal endpoint.' );
 	foreach ( array( 'student-registration', 'teacher-registration', 'parent-registration', 'sign-in', 'school-dashboard', 'teacher-dashboard', 'parent-dashboard', 'student-assignments', 'admin-management' ) as $hub_legacy_view ) {

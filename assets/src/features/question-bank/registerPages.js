@@ -95,7 +95,10 @@ export function registerQuestionBankPages( registry, components ) {
 		[
 			'expression',
 			__( 'Math expression', 'ohmylms' ),
-			__( 'A typed expression graded by algebraic equivalence', 'ohmylms' ),
+			__(
+				'A typed expression graded by algebraic equivalence',
+				'ohmylms'
+			),
 			ExpressionEditor,
 		],
 		[
@@ -143,7 +146,10 @@ export function registerQuestionBankPages( registry, components ) {
 		[
 			'grid-build',
 			__( 'Build on a grid', 'ohmylms' ),
-			__( 'Choose squares to meet area and perimeter conditions', 'ohmylms' ),
+			__(
+				'Choose squares to meet area and perimeter conditions',
+				'ohmylms'
+			),
 			GridBuildEditor,
 		],
 	].forEach( ( [ type, label, description, render ] ) =>

@@ -46,7 +46,7 @@ export function createQuizList( readRuntime ) {
 		const quizExport = useExportQuiz( ( status, message ) =>
 			openNotificationWithIcon( status, message )
 		);
-		var e =( 0, WordPressData.useDispatch )( StoreModule.default ),
+		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			t = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getNotificationMessage();
 			}, [] ),

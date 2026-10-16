@@ -104,10 +104,12 @@ export function QuizSkillsSummary( {
 	selected = null,
 	onSelect = () => {},
 } ) {
-	const names = new Map( skills.map( ( skill ) => [
+	const names = new Map(
+		skills.map( ( skill ) => [
 			skill.id,
 			`${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`,
-		] ) );
+		] )
+	);
 	const counts = new Map();
 	for ( const question of questions ) {
 		for ( const id of new Set( mapSkillIds( question.skill_map ) ) ) {
@@ -125,7 +127,10 @@ export function QuizSkillsSummary( {
 		return null;
 	}
 	return (
-		<div className="ohmylms-quiz-skills" aria-label={ __( 'Skills covered', 'ohmylms' ) }>
+		<div
+			className="ohmylms-quiz-skills"
+			aria-label={ __( 'Skills covered', 'ohmylms' ) }
+		>
 			<strong>
 				{ sprintf(
 					/* translators: %d: number of skills. */ _n(

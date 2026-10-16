@@ -20,7 +20,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$page_url = admin_url( 'admin.php?page=' . \OhMyLMS\Assessment\SkillAssessmentPage::SLUG );
+$page_url            = admin_url( 'admin.php?page=' . \OhMyLMS\Assessment\SkillAssessmentPage::SLUG );
+$assessment_form_url = add_query_arg(
+	array(
+		'course'  => $course_id,
+		'chapter' => $chapter,
+		'q'       => $search,
+	),
+	$page_url
+);
 // A skill is ticked when the unit teaches it, or when the form was sent with it ticked.
 $ticked = $form['skills'];
 ?>
@@ -29,13 +37,14 @@ $ticked = $form['skills'];
 	<p><?php esc_html_e( 'Build a quiz, unit test or course challenge that draws a few approved questions for each skill you choose. Each attempt gets its own questions, and every question keeps its own skill, so results update the learner’s skill levels.', 'ohmylms' ); ?></p>
 
 	<?php if ( $created ) : ?>
+		<?php $assessment_edit_url = get_edit_post_link( $created['id'] ); ?>
 		<div class="notice notice-success"><p>
 			<?php
 			/* translators: 1: assessment title, 2: number of questions, 3: number of skills */
 			echo esc_html( sprintf( __( '“%1$s” was created with %2$d questions for %3$d skills.', 'ohmylms' ), $created['title'], $created['questions'], $created['skills'] ) );
 			?>
 			<?php echo 'publish' === $created['status'] ? esc_html__( 'It is published.', 'ohmylms' ) : esc_html__( 'It is a draft: publish it from the quiz editor when you are ready.', 'ohmylms' ); ?>
-			<a href="<?php echo esc_url( get_edit_post_link( $created['id'] ) ?: admin_url( 'admin.php?page=ohmylms' ) ); ?>"><?php esc_html_e( 'Open it', 'ohmylms' ); ?></a>
+			<a href="<?php echo esc_url( $assessment_edit_url ? $assessment_edit_url : admin_url( 'admin.php?page=ohmylms' ) ); ?>"><?php esc_html_e( 'Open it', 'ohmylms' ); ?></a>
 		</p></div>
 	<?php endif; ?>
 	<?php if ( '' !== $message ) : ?>
@@ -80,15 +89,15 @@ $ticked = $form['skills'];
 			<label for="oml-sa-course"><?php esc_html_e( 'Course', 'ohmylms' ); ?></label>
 			<select id="oml-sa-course" name="course">
 				<option value="0"><?php esc_html_e( 'No course', 'ohmylms' ); ?></option>
-				<?php foreach ( $courses as $id => $title ) : ?>
-					<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $course_id, $id ); ?>><?php echo esc_html( $title ); ?></option>
+				<?php foreach ( $courses as $assessment_course_id => $assessment_course_title ) : ?>
+					<option value="<?php echo esc_attr( $assessment_course_id ); ?>" <?php selected( $course_id, $assessment_course_id ); ?>><?php echo esc_html( $assessment_course_title ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<label for="oml-sa-chapter"><?php esc_html_e( 'Unit', 'ohmylms' ); ?></label>
 			<select id="oml-sa-chapter" name="chapter">
 				<option value="0"><?php esc_html_e( 'No unit', 'ohmylms' ); ?></option>
-				<?php foreach ( $units as $id => $title ) : ?>
-					<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $chapter, $id ); ?>><?php echo esc_html( $title ); ?></option>
+				<?php foreach ( $units as $assessment_unit_id => $assessment_unit_title ) : ?>
+					<option value="<?php echo esc_attr( $assessment_unit_id ); ?>" <?php selected( $chapter, $assessment_unit_id ); ?>><?php echo esc_html( $assessment_unit_title ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<button type="submit" class="button"><?php esc_html_e( 'Load', 'ohmylms' ); ?></button>
@@ -102,7 +111,7 @@ $ticked = $form['skills'];
 		</p>
 	</form>
 
-	<form method="post" action="<?php echo esc_url( add_query_arg( array( 'course' => $course_id, 'chapter' => $chapter, 'q' => $search ), $page_url ) ); ?>">
+	<form method="post" action="<?php echo esc_url( $assessment_form_url ); ?>">
 		<?php wp_nonce_field( 'ohmylms_skill_assessment' ); ?>
 		<input type="hidden" name="ohmylms_skill_assessment" value="1">
 		<input type="hidden" name="course" value="<?php echo esc_attr( $course_id ); ?>">

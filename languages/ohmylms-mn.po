@@ -76585,3 +76585,192 @@ msgstr "OhMyLMS богино шалгалтын тоглуулагч"
 msgctxt "block description"
 msgid "Embed an existing OhMyLMS quiz in a lesson or WordPress page."
 msgstr "Одоо байгаа OhMyLMS богино шалгалтыг хичээл эсвэл WordPress хуудсанд оруулах."
+
+#: includes/Assessment/SkillAssessment.php:207
+msgid "You cannot edit this course."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:233
+msgid "It already has a unit test."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:255
+msgid "The course already has a course challenge."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:288
+msgid "No skills are connected to this unit yet."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:299
+msgid "None of its skills have enough approved questions yet."
+msgstr ""
+
+#. translators: %d: number of assessments
+#: templates/admin/skill-assessments.php:58
+#, php-format
+msgid "%d assessment was created."
+msgid_plural "%d assessments were created."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: questions, 2: skills
+#: templates/admin/skill-assessments.php:64
+#, php-format
+msgid "%1$d questions for %2$d skills"
+msgstr ""
+
+#. translators: 1: questions, 2: skills
+#: templates/admin/skill-assessments.php:64
+msgid "published"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:69
+msgid "Skipped:"
+msgstr ""
+
+#. translators: %s: skill names
+#: templates/admin/skill-assessments.php:77
+#, php-format
+msgid "Left out for lack of approved questions: %s."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:80
+msgid ""
+"This course uses a learning program. Learners see the new assessments only "
+"after you add them to the program in the course’s learning program editor."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:195
+msgid "Or: a unit test for every unit of this course"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:196
+msgid ""
+"Creates one unit test for each unit that does not have one yet, from the "
+"skills its lessons teach, and adds it at the end of the unit. Skills without"
+" enough approved questions are left out and listed. Learners then see a "
+"Level up button on each unit."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:205
+msgid "Also create a course challenge from all the skills"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:206
+msgid "Publish them now (otherwise they stay drafts)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:207
+msgid "Create for every unit"
+msgstr ""
+
+#: templates/student-hub/course.php:145
+msgid "Level up"
+msgstr ""
+
+#: templates/student-hub/course.php:146
+msgid "Take the unit test again to keep your skills sharp."
+msgstr ""
+
+#: templates/student-hub/course.php:146
+msgid "Take the unit test to level up your skills in this unit."
+msgstr ""
+
+#: templates/student-hub/course.php:197
+msgid "Take the course challenge again"
+msgstr ""
+
+#: templates/student-hub/course.php:197
+msgid "Start course challenge"
+msgstr ""
+
+#: templates/student-hub/family-report.php:54
+msgid "Learning by activity"
+msgstr ""
+
+#: templates/student-hub/family-report.php:61
+msgid "Activity by day (UTC)"
+msgstr ""
+
+#: templates/student-hub/family-report.php:69
+msgid "Most active courses (up to 10)"
+msgstr ""
+
+#: templates/student-hub/family-report.php:72
+msgid "Practice outside a course"
+msgstr ""
+
+#: templates/student-hub/family-report.php:73
+msgid "Course no longer available"
+msgstr ""
+
+#: templates/student-hub/family-report.php:78
+msgid "Recent activity"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:16
+#: templates/student-hub/teacher-report.php:21
+msgid "Class skill levels"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:17
+#: templates/student-hub/teacher-report.php:22
+msgid ""
+"Levels start at Not started for the selected period and follow the Khan "
+"rules using recorded class assessments only. Independent learning, home "
+"learning and overall skill levels are not included."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:18
+#: templates/student-hub/teacher-report.php:23
+msgid "Class report period"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:24
+#: templates/student-hub/teacher-report.php:29
+msgid ""
+"Class skill reporting requires the Khan mastery model and recorded learning "
+"context to be enabled."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:26
+#: templates/student-hub/teacher-report.php:31
+msgid "No students on this roster page."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:32
+#: templates/student-hub/teacher-report.php:37
+msgid ""
+"This period has too many assessment results to summarize. Choose a shorter "
+"period."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:34
+#: templates/student-hub/teacher-report.php:39
+msgid "No recorded class skill assessments in this period."
+msgstr ""
+
+#. translators: %d: recorded assessment count.
+#: templates/student-hub/teacher-report.php:38
+#: templates/student-hub/teacher-report.php:43
+#, php-format
+msgid "%d assessment"
+msgid_plural "%d assessments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/student-hub/teacher-report.php:45
+#: templates/student-hub/teacher-report.php:50
+msgid "Class report roster pages"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:16
+msgid ""
+"This class report is no longer available. Return to your classes and try "
+"again."
+msgstr ""
+
+#: includes/Student/Hub.php:542
+msgid "This workspace is not available"
+msgstr ""

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T06:54:15+00:00\n"
+"POT-Creation-Date: 2026-10-16T09:53:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ohmylms\n"
@@ -84,6 +84,7 @@ msgstr ""
 #: includes/Rest/V1/SessionController.php:201
 #: includes/Rest/V1/SkillController.php:132
 #: packages/e-commerce/includes/Rest/V1/OrdersController.php:360
+#: includes/Rest/V1/AssessmentController.php:137
 msgid "Invalid ID."
 msgstr ""
 
@@ -791,6 +792,7 @@ msgstr ""
 #: build/sdk/chunks/learning.90d3d3e7d866.js:5860
 #: build/sdk/chunks/learning.90d3d3e7d866.js:6615
 #: build/sdk/chunks/memberships.2ad89d5a646a.js:2518
+#: templates/admin/skill-assessments.php:89
 msgid "Course"
 msgstr ""
 
@@ -13197,6 +13199,7 @@ msgid "Choose between 1 and %d skills."
 msgstr ""
 
 #: includes/Assessment/SkillAssessment.php:45
+#: includes/Assessment/SkillAssessment.php:211
 msgid "Draw between 1 and 10 questions for each skill."
 msgstr ""
 
@@ -13272,31 +13275,41 @@ msgstr ""
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:2666
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3658
 #: build/sdk/quiz-player-block.js:115
+#: includes/Assessment/SkillAssessment.php:357
+#: includes/Assessment/SkillAssessment.php:360
+#: assets/src/features/quiz-editor/QuizEditor.jsx:246
 msgid "Quiz"
 msgstr ""
 
 #: includes/Assessment/SkillAssessment.php:205
+#: includes/Assessment/SkillAssessment.php:358
 msgid "Unit test"
 msgstr ""
 
 #: includes/Assessment/SkillAssessment.php:206
+#: includes/Assessment/SkillAssessment.php:359
+#: templates/student-hub/course.php:195
 msgid "Course challenge"
 msgstr ""
 
 #: includes/Assessment/SkillAssessmentPage.php:26
 #: templates/admin/skill-assessments.php:27
+#: templates/admin/skill-assessments.php:36
 msgid "Skill assessments"
 msgstr ""
 
 #: includes/Assessment/SkillAssessmentPage.php:154
+#: includes/Assessment/SkillAssessmentPage.php:173
 msgid "A short check of the skills so far."
 msgstr ""
 
 #: includes/Assessment/SkillAssessmentPage.php:155
+#: includes/Assessment/SkillAssessmentPage.php:174
 msgid "A check of every skill in the unit."
 msgstr ""
 
 #: includes/Assessment/SkillAssessmentPage.php:156
+#: includes/Assessment/SkillAssessmentPage.php:175
 msgid "A check of the skills across the course."
 msgstr ""
 
@@ -14534,6 +14547,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2835
 #: build/sdk/chunks/605.a74fa430878a.js:2835
+#: assets/src/features/question-editor/VisualEditors.jsx:115
 msgid "Grid"
 msgstr ""
 
@@ -16031,6 +16045,7 @@ msgstr ""
 #: build/sdk/chunks/courses.469edd03bdba.js:1
 #: assets/dist/admin/chunks/courses.469edd03bdba.js:2166
 #: build/sdk/chunks/courses.469edd03bdba.js:2166
+#: includes/Student/CourseOutline.php:107
 msgid "Activities"
 msgstr ""
 
@@ -16140,6 +16155,7 @@ msgstr ""
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:1769
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:2368
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1131
+#: templates/admin/skill-assessments.php:135
 msgid "Skill"
 msgstr ""
 
@@ -16358,6 +16374,7 @@ msgstr ""
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:1
 #: assets/dist/admin/chunks/question-bank.043949d8f6bf.js:2677
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:2677
+#: templates/student-hub/course.php:156
 msgid "Practice"
 msgstr ""
 
@@ -16531,6 +16548,7 @@ msgstr ""
 #: includes/Integrations/Funnel/Includes/FunnelEndpoint.php:391
 #: includes/Rest/V1/CourseController.php:1920
 #: includes/Rest/V1/CourseController.php:2291
+#: includes/Assessment/SkillAssessment.php:204
 msgid "Course not found."
 msgstr ""
 
@@ -17330,6 +17348,8 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3647
 #: build/sdk/extensions.js:705
 #: build/sdk/extensions.js:2224
+#: assets/src/features/question-bank/registerPages.js:159
+#: assets/src/features/quiz-editor/QuizEditor.jsx:235
 msgid "Skills"
 msgstr ""
 
@@ -18152,6 +18172,7 @@ msgstr ""
 #: build/sdk/chunks/curriculum.4211a101a30a.js:6014
 #: build/sdk/chunks/memberships.2ad89d5a646a.js:1384
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:1409
+#: templates/admin/skill-assessments.php:160
 msgid "Title"
 msgstr ""
 
@@ -18821,6 +18842,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:655
 #: build/sdk/extensions.js:655
+#: assets/src/features/question-bank/registerPages.js:106
 msgid "Number line"
 msgstr ""
 
@@ -18830,6 +18852,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:661
 #: build/sdk/extensions.js:661
+#: assets/src/features/question-bank/registerPages.js:112
 msgid "Shade a model"
 msgstr ""
 
@@ -18839,6 +18862,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:667
 #: build/sdk/extensions.js:667
+#: assets/src/features/question-bank/registerPages.js:118
 msgid "Count with blocks"
 msgstr ""
 
@@ -18848,6 +18872,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:673
 #: build/sdk/extensions.js:673
+#: assets/src/features/question-bank/registerPages.js:124
 msgid "Set the clock"
 msgstr ""
 
@@ -18857,6 +18882,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:679
 #: build/sdk/extensions.js:679
+#: assets/src/features/question-bank/registerPages.js:130
 msgid "Make an amount"
 msgstr ""
 
@@ -18866,6 +18892,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:685
 #: build/sdk/extensions.js:685
+#: assets/src/features/question-bank/registerPages.js:136
 msgid "Fill to a level"
 msgstr ""
 
@@ -18875,6 +18902,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:691
 #: build/sdk/extensions.js:691
+#: assets/src/features/question-bank/registerPages.js:142
 msgid "Build a chart"
 msgstr ""
 
@@ -18884,6 +18912,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:697
 #: build/sdk/extensions.js:697
+#: assets/src/features/question-bank/registerPages.js:148
 msgid "Build on a grid"
 msgstr ""
 
@@ -21008,6 +21037,7 @@ msgstr ""
 #: includes/Learning/Frontend.php:64
 #: includes/Learning/PracticeAccessPolicy.php:14
 #: includes/Student/CourseOutline.php:274
+#: includes/Student/CourseOutline.php:302
 msgid "This course is not available."
 msgstr ""
 
@@ -21096,6 +21126,7 @@ msgstr ""
 #: build/parity/assets/dist/admin/ohmylms.js:128587
 #: build/parity/assets/dist/admin/ohmylms.js:129510
 #: build/sdk/chunks/setup.1861f1392466.js:5802
+#: templates/student-hub/course.php:183
 msgid "Complete"
 msgstr ""
 
@@ -22572,6 +22603,7 @@ msgstr ""
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:1774
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:2401
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3640
+#: assets/src/features/quiz-editor/QuizEditor.jsx:228
 msgid "Questions"
 msgstr ""
 
@@ -24145,6 +24177,7 @@ msgstr ""
 #: build/sdk/chunks/curriculum.4211a101a30a.js:5307
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:2853
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3732
+#: assets/src/features/quiz-editor/QuizEditor.jsx:320
 #, php-format,js-format
 msgid "Question %d"
 msgstr ""
@@ -24263,6 +24296,7 @@ msgid "Ready for the course challenge?"
 msgstr ""
 
 #: includes/Quiz/Intro.php:83
+#: templates/student-hub/course.php:196
 msgid "Test your knowledge of the skills in this course."
 msgstr ""
 
@@ -24390,6 +24424,7 @@ msgid "Invalid type parameter."
 msgstr ""
 
 #: includes/Rest/V1/AssessmentController.php:185
+#: includes/Rest/V1/AssessmentController.php:202
 msgid "The quiz could not be published."
 msgstr ""
 
@@ -25851,6 +25886,8 @@ msgstr ""
 
 #: includes/Student/CourseOutline.php:60
 #: includes/Student/CourseOutline.php:242
+#: includes/Student/CourseOutline.php:64
+#: includes/Student/CourseOutline.php:270
 msgid "View course"
 msgstr ""
 
@@ -25863,16 +25900,20 @@ msgstr ""
 #: templates/student-hub/home.php:72
 #: templates/student-hub/learning.php:58
 #: templates/student-hub/my-learning.php:58
+#: includes/Student/CourseOutline.php:279
+#: includes/Student/CourseOutline.php:291
 msgid "Continue learning"
 msgstr ""
 
 #: includes/Student/CourseOutline.php:257
 #: templates/student-hub/my-learning.php:87
+#: includes/Student/CourseOutline.php:285
 msgid "Review course"
 msgstr ""
 
 #: includes/Student/CourseOutline.php:263
 #: templates/profile/student-dashboard.php:74
+#: includes/Student/CourseOutline.php:291
 msgid "Start learning"
 msgstr ""
 
@@ -25925,6 +25966,7 @@ msgstr ""
 #: includes/Student/FamilyActions.php:186
 #: includes/Student/Hub.php:697
 #: includes/Student/SchoolActivation.php:61
+#: includes/Student/Hub.php:706
 msgid "Sign in"
 msgstr ""
 
@@ -25949,6 +25991,7 @@ msgstr ""
 #: includes/Student/HistoryFeed.php:127
 #: templates/student-hub/family-report.php:59
 #: templates/student-hub/history.php:23
+#: templates/student-hub/family-report.php:85
 msgid "Skill practice"
 msgstr ""
 
@@ -25973,6 +26016,7 @@ msgstr ""
 #: includes/Student/Hub.php:71
 #: includes/Student/Hub.php:665
 #: templates/student-hub/teacher.php:27
+#: includes/Student/Hub.php:674
 msgid "My classes"
 msgstr ""
 
@@ -25994,6 +26038,7 @@ msgstr ""
 #: includes/Student/Hub.php:74
 #: includes/Student/Hub.php:778
 #: templates/student-hub/achievements.php:29
+#: includes/Student/Hub.php:787
 msgid "Achievements"
 msgstr ""
 
@@ -26035,6 +26080,7 @@ msgstr ""
 #: includes/Student/Hub.php:785
 #: templates/profile/profile-edit.php:66
 #: templates/profile/settings.php:28
+#: includes/Student/Hub.php:794
 msgid "Account"
 msgstr ""
 
@@ -26056,15 +26102,18 @@ msgstr ""
 #: includes/Student/Hub.php:185
 #: includes/Student/Hub.php:891
 #: templates/student-hub/editor.php:13
+#: includes/Student/Hub.php:900
 msgid "Student Home"
 msgstr ""
 
 #: includes/Student/Hub.php:626
+#: includes/Student/Hub.php:635
 msgid "The school workspace is not available for this account."
 msgstr ""
 
 #: includes/Student/Hub.php:630
 #: templates/student-hub/workspace.php:59
+#: includes/Student/Hub.php:639
 msgid "School workspace"
 msgstr ""
 
@@ -26081,6 +26130,8 @@ msgstr ""
 #: build/assets/dist/admin/ohmylms.js:80482
 #: build/parity/assets/dist/admin/ohmylms.js:80482
 #: build/sdk/chunks/analytics.c466bb9eedba.js:284
+#: includes/Student/Hub.php:640
+#: includes/Student/Hub.php:761
 msgid "Overview"
 msgstr ""
 
@@ -26093,12 +26144,15 @@ msgstr ""
 #: assets/dist/admin/chunks/students.052ffe337403.js:919
 #: build/sdk/chunks/students.052ffe337403.js:919
 #: build/sdk/schools.js:728
+#: includes/Student/Hub.php:641
 msgid "Classes"
 msgstr ""
 
 #: includes/Student/Hub.php:633
 #: includes/Student/Hub.php:668
 #: templates/student-hub/teacher.php:30
+#: includes/Student/Hub.php:642
+#: includes/Student/Hub.php:677
 msgid "Reports"
 msgstr ""
 
@@ -26113,30 +26167,36 @@ msgstr ""
 #: assets/dist/admin/chunks/courses.469edd03bdba.js:11993
 #: build/sdk/chunks/courses.469edd03bdba.js:3265
 #: build/sdk/chunks/courses.469edd03bdba.js:11993
+#: includes/Student/Hub.php:643
 msgid "Gradebook"
 msgstr ""
 
 #: includes/Student/Hub.php:635
 #: templates/student-hub/school.php:165
+#: includes/Student/Hub.php:644
 msgid "People"
 msgstr ""
 
 #: includes/Student/Hub.php:636
 #: templates/student-hub/school.php:317
+#: includes/Student/Hub.php:645
 msgid "Invitations"
 msgstr ""
 
 #: includes/Student/Hub.php:637
 #: templates/student-hub/school.php:352
+#: includes/Student/Hub.php:646
 msgid "School settings"
 msgstr ""
 
 #: includes/Student/Hub.php:646
+#: includes/Student/Hub.php:655
 msgid "The parent workspace is not available for this account."
 msgstr ""
 
 #: includes/Student/Hub.php:650
 #: templates/student-hub/workspace.php:59
+#: includes/Student/Hub.php:659
 msgid "Family workspace"
 msgstr ""
 
@@ -26145,15 +26205,18 @@ msgstr ""
 #: templates/student-hub/parent.php:33
 #: templates/student-hub/parent.php:43
 #: templates/student-hub/parent.php:76
+#: includes/Student/Hub.php:660
 msgid "My children"
 msgstr ""
 
 #: includes/Student/Hub.php:660
+#: includes/Student/Hub.php:669
 msgid "The teacher workspace is not available for this account."
 msgstr ""
 
 #: includes/Student/Hub.php:664
 #: templates/student-hub/workspace.php:59
+#: includes/Student/Hub.php:673
 msgid "Teacher workspace"
 msgstr ""
 
@@ -26190,28 +26253,35 @@ msgstr ""
 #: build/sdk/chunks/analytics.c466bb9eedba.js:3456
 #: build/sdk/chunks/courses.469edd03bdba.js:7853
 #: build/sdk/extensions.js:2223
+#: includes/Student/Hub.php:675
+#: includes/Student/Hub.php:769
 msgid "Assignments"
 msgstr ""
 
 #: includes/Student/Hub.php:667
 #: templates/student-hub/teacher.php:29
+#: includes/Student/Hub.php:676
 msgid "Roster"
 msgstr ""
 
 #: includes/Student/Hub.php:669
 #: templates/student-hub/teacher.php:31
+#: includes/Student/Hub.php:678
 msgid "Class settings"
 msgstr ""
 
 #: includes/Student/Hub.php:691
+#: includes/Student/Hub.php:700
 msgid "Activate your account"
 msgstr ""
 
 #: includes/Student/Hub.php:694
+#: includes/Student/Hub.php:703
 msgid "Set up your account"
 msgstr ""
 
 #: includes/Student/Hub.php:700
+#: includes/Student/Hub.php:709
 msgid "Family invitation"
 msgstr ""
 
@@ -26219,15 +26289,18 @@ msgstr ""
 #: templates/profile/loop/membership-card.php:30
 #: templates/profile/loop/membership-card.php:41
 #: templates/profile/loop/membership-card.php:86
+#: includes/Student/Hub.php:712
 msgid "Not available"
 msgstr ""
 
 #: includes/Student/Hub.php:712
 #: templates/student-hub/family-report.php:37
+#: includes/Student/Hub.php:721
 msgid "Home-learning activity"
 msgstr ""
 
 #: includes/Student/Hub.php:712
+#: includes/Student/Hub.php:721
 msgid "Learner overview"
 msgstr ""
 
@@ -26237,15 +26310,18 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:1877
 #: build/sdk/extensions.js:1877
+#: includes/Student/Hub.php:762
 msgid "Plans"
 msgstr ""
 
 #: includes/Student/Hub.php:754
+#: includes/Student/Hub.php:763
 msgid "Purchases"
 msgstr ""
 
 #: includes/Student/Hub.php:755
 #: templates/profile/invoice-details.php:25
+#: includes/Student/Hub.php:764
 msgid "Invoice"
 msgstr ""
 
@@ -26259,6 +26335,8 @@ msgstr ""
 #: assets/dist/admin/ohmylms.js:115391
 #: build/assets/dist/admin/ohmylms.js:115391
 #: build/parity/assets/dist/admin/ohmylms.js:115391
+#: includes/Student/Hub.php:770
+#: includes/Student/Hub.php:797
 msgid "Connections"
 msgstr ""
 
@@ -26267,6 +26345,7 @@ msgstr ""
 #: templates/student-hub/classes.php:44
 #: templates/student-hub/classes.php:63
 #: templates/student-hub/settings.php:152
+#: includes/Student/Hub.php:771
 msgid "Join a class"
 msgstr ""
 
@@ -26336,6 +26415,7 @@ msgstr ""
 #: build/sdk/chunks/webhooks.25deef3ea769.js:1645
 #: build/sdk/chunks/webhooks.25deef3ea769.js:1796
 #: build/sdk/chunks/webhooks.25deef3ea769.js:1967
+#: includes/Student/Hub.php:780
 msgid "Active"
 msgstr ""
 
@@ -26409,6 +26489,8 @@ msgstr ""
 #: build/sdk/chunks/commerce.0372b05b5004.js:306
 #: build/sdk/chunks/commerce.0372b05b5004.js:2040
 #: build/sdk/chunks/courses.469edd03bdba.js:2255
+#: includes/Student/Hub.php:781
+#: templates/student-hub/teacher.php:98
 msgid "Completed"
 msgstr ""
 
@@ -26416,31 +26498,37 @@ msgstr ""
 #: templates/student-hub/course.php:83
 #: templates/student-hub/course.php:101
 #: templates/student-hub/learning.php:17
+#: includes/Student/Hub.php:786
 msgid "Course progress"
 msgstr ""
 
 #: includes/Student/Hub.php:779
 #: includes/XApi/Settings.php:37
+#: includes/Student/Hub.php:788
 msgid "Skill mastery"
 msgstr ""
 
 #: includes/Student/Hub.php:786
 #: templates/student-hub/settings.php:97
+#: includes/Student/Hub.php:795
 msgid "Appearance"
 msgstr ""
 
 #: includes/Student/Hub.php:787
 #: templates/profile/navigation.php:44
 #: templates/student-hub/settings.php:115
+#: includes/Student/Hub.php:796
 msgid "Notifications"
 msgstr ""
 
 #: includes/Student/Hub.php:867
 #: templates/student-hub/membership.php:27
+#: includes/Student/Hub.php:876
 msgid "Choose an invoice from your purchases."
 msgstr ""
 
 #: includes/Student/Hub.php:918
+#: includes/Student/Hub.php:927
 msgid "You cannot customize Student Home."
 msgstr ""
 
@@ -28165,6 +28253,8 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:2808
 #: build/sdk/chunks/courses.469edd03bdba.js:1900
 #: build/sdk/chunks/courses.469edd03bdba.js:1918
+#: templates/admin/skill-assessments.php:96
+#: assets/src/features/question-editor/VisualEditors.jsx:88
 msgid "Unit"
 msgstr ""
 
@@ -28212,6 +28302,8 @@ msgstr ""
 #: includes/WPBakery/Elements/OfferButtonElement.php:164
 #: templates/admin/skill-assessments.php:123
 #: templates/admin/skill-assessments.php:126
+#: templates/admin/skill-assessments.php:164
+#: templates/admin/skill-assessments.php:167
 msgid "Style"
 msgstr ""
 
@@ -31247,6 +31339,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3533
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3540
 #: build/sdk/chunks/quiz-reports.fb754d92fd6f.js:953
+#: assets/src/features/quiz-editor/QuizEditor.jsx:117
 msgid "Result"
 msgstr ""
 
@@ -31300,6 +31393,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3067
 #: build/sdk/chunks/605.a74fa430878a.js:3067
+#: assets/src/features/question-editor/VisualEditors.jsx:418
 msgid "Rows"
 msgstr ""
 
@@ -31469,52 +31563,64 @@ msgid "(a media library image ID or URL) are optional."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:28
+#: templates/admin/skill-assessments.php:37
 msgid "Build a quiz, unit test or course challenge that draws a few approved questions for each skill you choose. Each attempt gets its own questions, and every question keeps its own skill, so results update the learner’s skill levels."
 msgstr ""
 
 #. translators: 1: assessment title, 2: number of questions, 3: number of skills
 #: templates/admin/skill-assessments.php:34
+#: templates/admin/skill-assessments.php:44
 #, php-format
 msgid "“%1$s” was created with %2$d questions for %3$d skills."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:36
+#: templates/admin/skill-assessments.php:46
 msgid "It is published."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:36
+#: templates/admin/skill-assessments.php:46
 msgid "It is a draft: publish it from the quiz editor when you are ready."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:37
+#: templates/admin/skill-assessments.php:47
 msgid "Open it"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:44
+#: templates/admin/skill-assessments.php:85
 msgid "1. Choose a unit (optional)"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:50
+#: templates/admin/skill-assessments.php:91
 msgid "No course"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:57
+#: templates/admin/skill-assessments.php:98
 msgid "No unit"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:62
+#: templates/admin/skill-assessments.php:103
 msgid "Load"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:64
+#: templates/admin/skill-assessments.php:105
 msgid "Pick a course first, load it, then pick one of its units and load again to see the skills it teaches."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:65
+#: templates/admin/skill-assessments.php:106
 msgid "2. Find more skills (optional)"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:67
+#: templates/admin/skill-assessments.php:108
 msgid "Search skills by name or code"
 msgstr ""
 
@@ -31556,75 +31662,94 @@ msgstr ""
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:161
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:877
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1126
+#: templates/admin/skill-assessments.php:110
 msgid "Search"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:79
+#: templates/admin/skill-assessments.php:120
 msgid "3. Choose the skills"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:82
+#: templates/admin/skill-assessments.php:123
 msgid "Skills this unit teaches"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:83
 #: templates/student-hub/library.php:54
+#: templates/admin/skill-assessments.php:124
 msgid "Search results"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:94
+#: templates/admin/skill-assessments.php:135
 msgid "Use this skill"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:94
+#: templates/admin/skill-assessments.php:135
 msgid "Different questions available"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:104
+#: templates/admin/skill-assessments.php:145
 msgid "None yet: approve questions for this skill first."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:113
+#: templates/admin/skill-assessments.php:154
 msgid "No skills yet. Load a unit that has lessons with skills, or search for skills above."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:116
+#: templates/admin/skill-assessments.php:157
 msgid "4. Set it up"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:120
+#: templates/admin/skill-assessments.php:161
 msgid "Leave empty to use the style and the first skill."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:134
+#: templates/admin/skill-assessments.php:175
+#: templates/admin/skill-assessments.php:202
 msgid "Questions per skill"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:135
+#: templates/admin/skill-assessments.php:176
 msgid "Each skill needs at least this many different questions (not variants of one another) in the bank."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:138
+#: templates/admin/skill-assessments.php:179
 msgid "Time limit (minutes)"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:139
+#: templates/admin/skill-assessments.php:180
 msgid "0 means no limit; learners see a guide of one to two minutes per question."
 msgstr ""
 
 #: templates/admin/skill-assessments.php:142
+#: templates/admin/skill-assessments.php:183
 msgid "When it is made"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:144
+#: templates/admin/skill-assessments.php:185
 msgid "Publish it now (otherwise it stays a draft)"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:145
+#: templates/admin/skill-assessments.php:186
 msgid "Add it at the end of the chosen unit"
 msgstr ""
 
 #: templates/admin/skill-assessments.php:149
+#: templates/admin/skill-assessments.php:190
 msgid "Create assessment"
 msgstr ""
 
@@ -34677,6 +34802,10 @@ msgstr ""
 #: build/sdk/chunks/curriculum.4211a101a30a.js:10852
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:1131
 #: build/sdk/chunks/students.052ffe337403.js:851
+#: templates/student-hub/family-report.php:106
+#: templates/student-hub/teacher-report.php:48
+#: templates/student-hub/teacher.php:121
+#: templates/student-hub/teacher-report.php:53
 msgid "Previous"
 msgstr ""
 
@@ -34776,6 +34905,10 @@ msgstr ""
 #: build/sdk/chunks/settings.1d68604343fe.js:1264
 #: build/sdk/chunks/students.052ffe337403.js:858
 #: build/sdk/chunks/webhooks.25deef3ea769.js:1344
+#: templates/student-hub/family-report.php:121
+#: templates/student-hub/teacher-report.php:49
+#: templates/student-hub/teacher.php:137
+#: templates/student-hub/teacher-report.php:54
 msgid "Next"
 msgstr ""
 
@@ -35509,10 +35642,12 @@ msgid "%1$d/%2$d"
 msgstr ""
 
 #: templates/student-hub/course.php:146
+#: templates/student-hub/course.php:152
 msgid "Learn"
 msgstr ""
 
 #: templates/student-hub/course.php:154
+#: templates/student-hub/course.php:160
 msgid "Assessments"
 msgstr ""
 
@@ -36014,6 +36149,8 @@ msgstr ""
 
 #. translators: %d: lookback days.
 #: templates/student-hub/family-report.php:41
+#: templates/student-hub/teacher-report.php:20
+#: templates/student-hub/teacher-report.php:25
 #, php-format
 msgid "Last %d days"
 msgstr ""
@@ -36035,22 +36172,28 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: templates/student-hub/family-report.php:54
+#: templates/student-hub/family-report.php:80
 msgid "No recorded home learning yet"
 msgstr ""
 
 #: templates/student-hub/family-report.php:54
+#: templates/student-hub/family-report.php:80
 msgid "Your child can choose Home learning on an activity page before starting."
 msgstr ""
 
 #: templates/student-hub/family-report.php:60
+#: templates/student-hub/family-report.php:86
 msgid "Activity no longer available"
 msgstr ""
 
 #: templates/student-hub/family-report.php:62
+#: templates/student-hub/family-report.php:57
+#: templates/student-hub/family-report.php:88
 msgid "Activity completed"
 msgstr ""
 
 #: templates/student-hub/family-report.php:66
+#: templates/student-hub/family-report.php:92
 msgid "Home-learning activity pages"
 msgstr ""
 
@@ -36374,11 +36517,13 @@ msgstr ""
 #: templates/student-hub/parent.php:59
 #: templates/student-hub/school-reports.php:170
 #: templates/student-hub/teacher.php:95
+#: templates/student-hub/teacher.php:98
 msgid "Not completed"
 msgstr ""
 
 #: templates/student-hub/parent.php:64
 #: templates/student-hub/teacher.php:102
+#: templates/student-hub/teacher.php:105
 msgid "Assigned work pages"
 msgstr ""
 
@@ -37463,10 +37608,12 @@ msgid "This class is archived. Restore it in Class settings to resume management
 msgstr ""
 
 #: templates/student-hub/teacher.php:92
+#: templates/student-hub/teacher.php:95
 msgid "Distributed class work only. Independent learning is not included."
 msgstr ""
 
 #: templates/student-hub/teacher.php:101
+#: templates/student-hub/teacher.php:104
 msgid "No distributed work on this page."
 msgstr ""
 
@@ -39285,6 +39432,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:2999
 #: build/sdk/chunks/courses.469edd03bdba.js:9360
 #: build/sdk/chunks/courses.469edd03bdba.js:9567
+#: assets/src/features/question-editor/VisualEditors.jsx:328
 msgid "Step"
 msgstr ""
 
@@ -40690,6 +40838,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:2532
 #: build/sdk/chunks/question-editor.1997bf6fa084.js:833
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3097
+#: assets/src/features/question-editor/QuestionCanvas.jsx:486
 msgid "Question image"
 msgstr ""
 
@@ -40794,6 +40943,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2773
 #: build/sdk/chunks/605.a74fa430878a.js:2773
+#: assets/src/features/question-editor/VisualEditors.jsx:37
 msgid "Minimum"
 msgstr ""
 
@@ -40802,6 +40952,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2777
 #: build/sdk/chunks/605.a74fa430878a.js:2777
+#: assets/src/features/question-editor/VisualEditors.jsx:41
 msgid "Maximum"
 msgstr ""
 
@@ -40810,6 +40961,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2781
 #: build/sdk/chunks/605.a74fa430878a.js:2781
+#: assets/src/features/question-editor/VisualEditors.jsx:47
 msgid "Minor tick"
 msgstr ""
 
@@ -40818,6 +40970,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2781
 #: build/sdk/chunks/605.a74fa430878a.js:2781
+#: assets/src/features/question-editor/VisualEditors.jsx:48
 msgid "Tick step"
 msgstr ""
 
@@ -40826,6 +40979,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2787
 #: build/sdk/chunks/605.a74fa430878a.js:2787
+#: assets/src/features/question-editor/VisualEditors.jsx:57
 msgid "Correct value"
 msgstr ""
 
@@ -40834,6 +40988,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2791
 #: build/sdk/chunks/605.a74fa430878a.js:2791
+#: assets/src/features/question-editor/VisualEditors.jsx:63
 msgid "Accepted distance"
 msgstr ""
 
@@ -40842,6 +40997,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2794
 #: build/sdk/chunks/605.a74fa430878a.js:2794
+#: assets/src/features/question-editor/VisualEditors.jsx:66
 msgid "Empty means one minor tick."
 msgstr ""
 
@@ -40850,6 +41006,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2795
 #: build/sdk/chunks/605.a74fa430878a.js:2795
+#: assets/src/features/question-editor/VisualEditors.jsx:67
 msgid "Empty means half a tick."
 msgstr ""
 
@@ -40858,6 +41015,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2801
 #: build/sdk/chunks/605.a74fa430878a.js:2801
+#: assets/src/features/question-editor/VisualEditors.jsx:77
 msgid "Snap to"
 msgstr ""
 
@@ -40866,6 +41024,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2802
 #: build/sdk/chunks/605.a74fa430878a.js:2802
+#: assets/src/features/question-editor/VisualEditors.jsx:78
 msgid "Empty means the tick step."
 msgstr ""
 
@@ -40874,6 +41033,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2831
 #: build/sdk/chunks/605.a74fa430878a.js:2831
+#: assets/src/features/question-editor/VisualEditors.jsx:111
 msgid "Shape"
 msgstr ""
 
@@ -40882,6 +41042,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2834
 #: build/sdk/chunks/605.a74fa430878a.js:2834
+#: assets/src/features/question-editor/VisualEditors.jsx:114
 msgid "Bar"
 msgstr ""
 
@@ -40890,6 +41051,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2836
 #: build/sdk/chunks/605.a74fa430878a.js:2836
+#: assets/src/features/question-editor/VisualEditors.jsx:116
 msgid "Circle"
 msgstr ""
 
@@ -40898,6 +41060,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2841
 #: build/sdk/chunks/605.a74fa430878a.js:2841
+#: assets/src/features/question-editor/VisualEditors.jsx:121
 msgid "Equal parts"
 msgstr ""
 
@@ -40909,6 +41072,8 @@ msgstr ""
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3071
 #: build/sdk/chunks/605.a74fa430878a.js:2846
 #: build/sdk/chunks/605.a74fa430878a.js:3071
+#: assets/src/features/question-editor/VisualEditors.jsx:129
+#: assets/src/features/question-editor/VisualEditors.jsx:426
 msgid "Columns"
 msgstr ""
 
@@ -40917,6 +41082,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2851
 #: build/sdk/chunks/605.a74fa430878a.js:2851
+#: assets/src/features/question-editor/VisualEditors.jsx:136
 msgid "Parts to shade"
 msgstr ""
 
@@ -40925,6 +41091,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2852
 #: build/sdk/chunks/605.a74fa430878a.js:2852
+#: assets/src/features/question-editor/VisualEditors.jsx:137
 msgid "Any parts count; the learner may shade any of them."
 msgstr ""
 
@@ -40933,6 +41100,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2870
 #: build/sdk/chunks/605.a74fa430878a.js:2870
+#: assets/src/features/question-editor/VisualEditors.jsx:162
 msgid "Blocks on offer"
 msgstr ""
 
@@ -40941,6 +41109,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2888
 #: build/sdk/chunks/605.a74fa430878a.js:2888
+#: assets/src/features/question-editor/VisualEditors.jsx:181
 msgid "Number to build"
 msgstr ""
 
@@ -40949,6 +41118,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2892
 #: build/sdk/chunks/605.a74fa430878a.js:2892
+#: assets/src/features/question-editor/VisualEditors.jsx:189
 msgid "Most blocks of one kind"
 msgstr ""
 
@@ -40957,6 +41127,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2897
 #: build/sdk/chunks/605.a74fa430878a.js:2897
+#: assets/src/features/question-editor/VisualEditors.jsx:198
 msgid "Require standard form (at most 9 of any kind, so 243 cannot be 1 hundred and 14 tens)"
 msgstr ""
 
@@ -40965,6 +41136,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2919
 #: build/sdk/chunks/605.a74fa430878a.js:2919
+#: assets/src/features/question-editor/VisualEditors.jsx:220
 msgid "Hour (1–12)"
 msgstr ""
 
@@ -40973,6 +41145,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2923
 #: build/sdk/chunks/605.a74fa430878a.js:2923
+#: assets/src/features/question-editor/VisualEditors.jsx:228
 msgid "Minutes (0–59)"
 msgstr ""
 
@@ -40981,6 +41154,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2927
 #: build/sdk/chunks/605.a74fa430878a.js:2927
+#: assets/src/features/question-editor/VisualEditors.jsx:236
 msgid "Accepted error (minutes)"
 msgstr ""
 
@@ -40989,6 +41163,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2931
 #: build/sdk/chunks/605.a74fa430878a.js:2931
+#: assets/src/features/question-editor/VisualEditors.jsx:244
 msgid "Hand moves in steps of"
 msgstr ""
 
@@ -40997,6 +41172,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2934
 #: build/sdk/chunks/605.a74fa430878a.js:2934
+#: assets/src/features/question-editor/VisualEditors.jsx:247
 msgid "1 minute"
 msgstr ""
 
@@ -41005,6 +41181,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2935
 #: build/sdk/chunks/605.a74fa430878a.js:2935
+#: assets/src/features/question-editor/VisualEditors.jsx:248
 msgid "5 minutes"
 msgstr ""
 
@@ -41013,6 +41190,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2936
 #: build/sdk/chunks/605.a74fa430878a.js:2936
+#: assets/src/features/question-editor/VisualEditors.jsx:249
 msgid "15 minutes"
 msgstr ""
 
@@ -41021,6 +41199,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2942
 #: build/sdk/chunks/605.a74fa430878a.js:2942
+#: assets/src/features/question-editor/VisualEditors.jsx:257
 msgid "Show the digital time while the learner sets the hands"
 msgstr ""
 
@@ -41029,6 +41208,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2960
 #: build/sdk/chunks/605.a74fa430878a.js:2960
+#: assets/src/features/question-editor/VisualEditors.jsx:278
 msgid "Bills and coins (separated by commas)"
 msgstr ""
 
@@ -41037,6 +41217,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2965
 #: build/sdk/chunks/605.a74fa430878a.js:2965
+#: assets/src/features/question-editor/VisualEditors.jsx:288
 msgid "Currency symbol"
 msgstr ""
 
@@ -41045,6 +41226,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2970
 #: build/sdk/chunks/605.a74fa430878a.js:2970
+#: assets/src/features/question-editor/VisualEditors.jsx:293
 msgid "Amount to make"
 msgstr ""
 
@@ -41053,6 +41235,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:2995
 #: build/sdk/chunks/605.a74fa430878a.js:2995
+#: assets/src/features/question-editor/VisualEditors.jsx:322
 msgid "Chart maximum"
 msgstr ""
 
@@ -41061,6 +41244,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3003
 #: build/sdk/chunks/605.a74fa430878a.js:3003
+#: assets/src/features/question-editor/VisualEditors.jsx:334
 msgid "Unit (optional)"
 msgstr ""
 
@@ -41069,6 +41253,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3011
 #: build/sdk/chunks/605.a74fa430878a.js:3011
+#: assets/src/features/question-editor/VisualEditors.jsx:343
 #, js-format
 msgid "Bar %d label"
 msgstr ""
@@ -41078,6 +41263,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3016
 #: build/sdk/chunks/605.a74fa430878a.js:3016
+#: assets/src/features/question-editor/VisualEditors.jsx:352
 msgid "Correct height"
 msgstr ""
 
@@ -41086,6 +41272,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3027
 #: build/sdk/chunks/605.a74fa430878a.js:3027
+#: assets/src/features/question-editor/VisualEditors.jsx:372
 msgid "Remove bar"
 msgstr ""
 
@@ -41094,6 +41281,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3032
 #: build/sdk/chunks/605.a74fa430878a.js:3032
+#: assets/src/features/question-editor/VisualEditors.jsx:380
 msgid "Add bar"
 msgstr ""
 
@@ -41102,6 +41290,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3035
 #: build/sdk/chunks/605.a74fa430878a.js:3035
+#: assets/src/features/question-editor/VisualEditors.jsx:383
 msgid "Show the data as a table above the chart"
 msgstr ""
 
@@ -41110,6 +41299,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3036
 #: build/sdk/chunks/605.a74fa430878a.js:3036
+#: assets/src/features/question-editor/VisualEditors.jsx:387
 msgid "Turn this off when the question text gives the data, so the table does not reveal the answer."
 msgstr ""
 
@@ -41118,6 +41308,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3075
 #: build/sdk/chunks/605.a74fa430878a.js:3075
+#: assets/src/features/question-editor/VisualEditors.jsx:435
 msgid "The learner must choose squares that meet all of these:"
 msgstr ""
 
@@ -41126,6 +41317,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3078
 #: build/sdk/chunks/605.a74fa430878a.js:3078
+#: assets/src/features/question-editor/VisualEditors.jsx:442
 msgid "Area (squares)"
 msgstr ""
 
@@ -41134,6 +41326,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3082
 #: build/sdk/chunks/605.a74fa430878a.js:3082
+#: assets/src/features/question-editor/VisualEditors.jsx:450
 msgid "Perimeter"
 msgstr ""
 
@@ -41142,6 +41335,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3087
 #: build/sdk/chunks/605.a74fa430878a.js:3087
+#: assets/src/features/question-editor/VisualEditors.jsx:459
 msgid "Must be a rectangle"
 msgstr ""
 
@@ -41150,6 +41344,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3092
 #: build/sdk/chunks/605.a74fa430878a.js:3092
+#: assets/src/features/question-editor/VisualEditors.jsx:464
 msgid "Squares must be connected"
 msgstr ""
 
@@ -41158,6 +41353,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3097
 #: build/sdk/chunks/605.a74fa430878a.js:3097
+#: assets/src/features/question-editor/VisualEditors.jsx:469
 msgid "Show the learner their current area and perimeter"
 msgstr ""
 
@@ -41166,6 +41362,7 @@ msgstr ""
 #: build/sdk/chunks/605.a74fa430878a.js:1
 #: assets/dist/admin/chunks/605.a74fa430878a.js:3142
 #: build/sdk/chunks/605.a74fa430878a.js:3142
+#: assets/src/features/question-editor/VisualEditors.jsx:520
 msgid "The interactive preview is not available on this screen."
 msgstr ""
 
@@ -44058,6 +44255,7 @@ msgstr ""
 #: build/sdk/chunks/courses.469edd03bdba.js:12039
 #: build/sdk/chunks/learning.90d3d3e7d866.js:5657
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3606
+#: assets/src/features/quiz-editor/QuizEditor.jsx:194
 msgid "Publish"
 msgstr ""
 
@@ -45152,6 +45350,8 @@ msgstr ""
 #: build/sdk/chunks/students.052ffe337403.js:1215
 #: build/sdk/chunks/students.052ffe337403.js:1333
 #: build/sdk/chunks/webhooks.25deef3ea769.js:1348
+#: assets/src/features/quiz-editor/QuizEditor.jsx:187
+#: assets/src/features/quiz-editor/QuizEditor.jsx:262
 msgid "Save"
 msgstr ""
 
@@ -49793,6 +49993,7 @@ msgstr ""
 msgid "Create a course bundle"
 msgstr ""
 
+#. translators: 1: questions, 2: skills
 #: assets/dist/admin/chunks/courses.469edd03bdba.js:1
 #: assets/dist/admin/chunks/memberships.2ad89d5a646a.js:1
 #: assets/src/features/courses/CourseOrganization.jsx:397
@@ -49803,6 +50004,7 @@ msgstr ""
 #: assets/dist/admin/chunks/memberships.2ad89d5a646a.js:2182
 #: build/sdk/chunks/courses.469edd03bdba.js:7279
 #: build/sdk/chunks/memberships.2ad89d5a646a.js:2182
+#: templates/admin/skill-assessments.php:64
 msgid "draft"
 msgstr ""
 
@@ -52915,6 +53117,7 @@ msgstr ""
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3659
 #: build/sdk/chunks/curriculum.4211a101a30a.js:5410
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3659
+#: assets/src/features/quiz-editor/QuizEditor.jsx:247
 msgid "Quiz title"
 msgstr ""
 
@@ -55472,6 +55675,7 @@ msgstr ""
 #: build/sdk/chunks/curriculum.4211a101a30a.js:12941
 #: build/sdk/chunks/question-bank.043949d8f6bf.js:272
 #: build/sdk/chunks/question-editor.1997bf6fa084.js:823
+#: assets/src/features/question-editor/QuestionCanvas.jsx:476
 msgid "Enter the question."
 msgstr ""
 
@@ -63239,6 +63443,7 @@ msgstr ""
 #: build/parity/assets/dist/admin/ohmylms.js:13557
 #: build/parity/assets/dist/admin/ohmylms.js:15112
 #: build/sdk/chunks/question-editor.1997bf6fa084.js:858
+#: assets/src/features/question-editor/QuestionCanvas.jsx:511
 msgid "Delete Question"
 msgstr ""
 
@@ -63259,6 +63464,7 @@ msgstr ""
 #: build/parity/assets/dist/admin/ohmylms.js:13558
 #: build/parity/assets/dist/admin/ohmylms.js:15113
 #: build/sdk/chunks/question-editor.1997bf6fa084.js:859
+#: assets/src/features/question-editor/QuestionCanvas.jsx:512
 msgid "Are you sure you want to delete this question?"
 msgstr ""
 
@@ -63571,6 +63777,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:2352
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:2352
+#: assets/src/features/quiz-editor/QuizSkills.jsx:132
 msgid "Skills covered"
 msgstr ""
 
@@ -63580,6 +63787,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:2355
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:2355
+#: assets/src/features/quiz-editor/QuizSkills.jsx:136
 #, js-format
 msgid "%d skill covered"
 msgid_plural "%d skills covered"
@@ -63592,6 +63800,7 @@ msgstr[1] ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:2386
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:2386
+#: assets/src/features/quiz-editor/QuizSkills.jsx:167
 #, js-format
 msgid "%d question has no skill"
 msgid_plural "%d questions have no skill"
@@ -63851,6 +64060,8 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3213
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3585
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3591
+#: assets/src/features/quiz-editor/QuizEditor.jsx:169
+#: assets/src/features/quiz-editor/QuizEditor.jsx:176
 msgid "Add from bank"
 msgstr ""
 
@@ -63934,6 +64145,8 @@ msgstr ""
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3559
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3544
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3559
+#: assets/src/features/quiz-editor/QuizEditor.jsx:121
+#: assets/src/features/quiz-editor/QuizEditor.jsx:139
 msgid "Preview saved quiz"
 msgstr ""
 
@@ -63942,6 +64155,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3566
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3566
+#: assets/src/features/quiz-editor/QuizEditor.jsx:146
 msgid "Export quiz (saves, then downloads a file)"
 msgstr ""
 
@@ -63950,6 +64164,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3582
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3582
+#: assets/src/features/quiz-editor/QuizEditor.jsx:162
 msgid "Export quiz"
 msgstr ""
 
@@ -63958,6 +64173,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3613
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3613
+#: assets/src/features/quiz-editor/QuizEditor.jsx:201
 msgid "Quiz settings"
 msgstr ""
 
@@ -63966,6 +64182,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3626
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3626
+#: assets/src/features/quiz-editor/QuizEditor.jsx:214
 msgid "Quiz editor sections"
 msgstr ""
 
@@ -63974,6 +64191,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3633
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3633
+#: assets/src/features/quiz-editor/QuizEditor.jsx:221
 msgid "Quiz introduction"
 msgstr ""
 
@@ -63987,6 +64205,7 @@ msgstr ""
 #: build/assets/dist/admin/ohmylms.js:19664
 #: build/parity/assets/dist/admin/ohmylms.js:19664
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3660
+#: assets/src/features/quiz-editor/QuizEditor.jsx:248
 msgid "Enter Quiz Title"
 msgstr ""
 
@@ -63995,6 +64214,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3661
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3661
+#: assets/src/features/quiz-editor/QuizEditor.jsx:249
 msgid "Quiz form editor"
 msgstr ""
 
@@ -64003,6 +64223,7 @@ msgstr ""
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:1
 #: assets/dist/admin/chunks/quiz-editor.307f6aad0827.js:3761
 #: build/sdk/chunks/quiz-editor.307f6aad0827.js:3761
+#: assets/src/features/quiz-editor/QuizEditor.jsx:349
 msgid "Use Add block to choose a question type."
 msgstr ""
 
@@ -71278,6 +71499,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:656
 #: build/sdk/extensions.js:656
+#: assets/src/features/question-bank/registerPages.js:107
 msgid "Drag a point to the right place on a number line"
 msgstr ""
 
@@ -71286,6 +71508,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:662
 #: build/sdk/extensions.js:662
+#: assets/src/features/question-bank/registerPages.js:113
 msgid "Shade parts of a bar, grid or circle"
 msgstr ""
 
@@ -71294,6 +71517,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:668
 #: build/sdk/extensions.js:668
+#: assets/src/features/question-bank/registerPages.js:119
 msgid "Build a number with base-ten blocks"
 msgstr ""
 
@@ -71302,6 +71526,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:674
 #: build/sdk/extensions.js:674
+#: assets/src/features/question-bank/registerPages.js:125
 msgid "Set the hands of an analogue clock"
 msgstr ""
 
@@ -71310,6 +71535,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:680
 #: build/sdk/extensions.js:680
+#: assets/src/features/question-bank/registerPages.js:131
 msgid "Pay an amount with bills and coins"
 msgstr ""
 
@@ -71318,6 +71544,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:686
 #: build/sdk/extensions.js:686
+#: assets/src/features/question-bank/registerPages.js:137
 msgid "Fill a jug to a marked level"
 msgstr ""
 
@@ -71326,6 +71553,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:692
 #: build/sdk/extensions.js:692
+#: assets/src/features/question-bank/registerPages.js:143
 msgid "Drag bars to the right heights"
 msgstr ""
 
@@ -71334,6 +71562,7 @@ msgstr ""
 #: build/sdk/extensions.js:1
 #: assets/dist/admin/extensions.js:698
 #: build/sdk/extensions.js:698
+#: assets/src/features/question-bank/registerPages.js:149
 msgid "Choose squares to meet area and perimeter conditions"
 msgstr ""
 
@@ -76603,4 +76832,178 @@ msgstr ""
 #: assets/src/blocks/quiz-player/block.json
 msgctxt "block description"
 msgid "Embed an existing OhMyLMS quiz in a lesson or WordPress page."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:207
+msgid "You cannot edit this course."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:233
+msgid "It already has a unit test."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:255
+msgid "The course already has a course challenge."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:288
+msgid "No skills are connected to this unit yet."
+msgstr ""
+
+#: includes/Assessment/SkillAssessment.php:299
+msgid "None of its skills have enough approved questions yet."
+msgstr ""
+
+#. translators: %d: number of assessments
+#: templates/admin/skill-assessments.php:58
+#, php-format
+msgid "%d assessment was created."
+msgid_plural "%d assessments were created."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: questions, 2: skills
+#: templates/admin/skill-assessments.php:64
+#, php-format
+msgid "%1$d questions for %2$d skills"
+msgstr ""
+
+#. translators: 1: questions, 2: skills
+#: templates/admin/skill-assessments.php:64
+msgid "published"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:69
+msgid "Skipped:"
+msgstr ""
+
+#. translators: %s: skill names
+#: templates/admin/skill-assessments.php:77
+#, php-format
+msgid "Left out for lack of approved questions: %s."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:80
+msgid "This course uses a learning program. Learners see the new assessments only after you add them to the program in the course’s learning program editor."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:195
+msgid "Or: a unit test for every unit of this course"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:196
+msgid "Creates one unit test for each unit that does not have one yet, from the skills its lessons teach, and adds it at the end of the unit. Skills without enough approved questions are left out and listed. Learners then see a Level up button on each unit."
+msgstr ""
+
+#: templates/admin/skill-assessments.php:205
+msgid "Also create a course challenge from all the skills"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:206
+msgid "Publish them now (otherwise they stay drafts)"
+msgstr ""
+
+#: templates/admin/skill-assessments.php:207
+msgid "Create for every unit"
+msgstr ""
+
+#: templates/student-hub/course.php:145
+msgid "Level up"
+msgstr ""
+
+#: templates/student-hub/course.php:146
+msgid "Take the unit test again to keep your skills sharp."
+msgstr ""
+
+#: templates/student-hub/course.php:146
+msgid "Take the unit test to level up your skills in this unit."
+msgstr ""
+
+#: templates/student-hub/course.php:197
+msgid "Take the course challenge again"
+msgstr ""
+
+#: templates/student-hub/course.php:197
+msgid "Start course challenge"
+msgstr ""
+
+#: templates/student-hub/family-report.php:54
+msgid "Learning by activity"
+msgstr ""
+
+#: templates/student-hub/family-report.php:61
+msgid "Activity by day (UTC)"
+msgstr ""
+
+#: templates/student-hub/family-report.php:69
+msgid "Most active courses (up to 10)"
+msgstr ""
+
+#: templates/student-hub/family-report.php:72
+msgid "Practice outside a course"
+msgstr ""
+
+#: templates/student-hub/family-report.php:73
+msgid "Course no longer available"
+msgstr ""
+
+#: templates/student-hub/family-report.php:78
+msgid "Recent activity"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:16
+#: templates/student-hub/teacher-report.php:21
+msgid "Class skill levels"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:17
+#: templates/student-hub/teacher-report.php:22
+msgid "Levels start at Not started for the selected period and follow the Khan rules using recorded class assessments only. Independent learning, home learning and overall skill levels are not included."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:18
+#: templates/student-hub/teacher-report.php:23
+msgid "Class report period"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:24
+#: templates/student-hub/teacher-report.php:29
+msgid "Class skill reporting requires the Khan mastery model and recorded learning context to be enabled."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:26
+#: templates/student-hub/teacher-report.php:31
+msgid "No students on this roster page."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:32
+#: templates/student-hub/teacher-report.php:37
+msgid "This period has too many assessment results to summarize. Choose a shorter period."
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:34
+#: templates/student-hub/teacher-report.php:39
+msgid "No recorded class skill assessments in this period."
+msgstr ""
+
+#. translators: %d: recorded assessment count.
+#: templates/student-hub/teacher-report.php:38
+#: templates/student-hub/teacher-report.php:43
+#, php-format
+msgid "%d assessment"
+msgid_plural "%d assessments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/student-hub/teacher-report.php:45
+#: templates/student-hub/teacher-report.php:50
+msgid "Class report roster pages"
+msgstr ""
+
+#: templates/student-hub/teacher-report.php:16
+msgid "This class report is no longer available. Return to your classes and try again."
+msgstr ""
+
+#: includes/Student/Hub.php:542
+msgid "This workspace is not available"
 msgstr ""

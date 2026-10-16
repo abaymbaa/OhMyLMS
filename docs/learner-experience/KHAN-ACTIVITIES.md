@@ -242,3 +242,20 @@ challenge card, a visitor sent to the course page, a draft hidden, and the whole
 learning 76, player templates 81, Student Home 88, assistant 28, JS 423 (422 pass, 1 skipped), Stylelint clean on the changed stylesheet.
 Browser (disposable site): the course overview with Level up, the "Unit test" and "Course challenge" rows and the challenge card, and the
 whole-course form on the authoring screen. PHPCS is still not installed here.
+
+### Subsequent local standards pass (October 16, 2026)
+
+The live Windows checkout has PHPCS installed, superseding the earlier environment limitation.
+Checked the nine new assessment/intro/Khan/MCP/REST/template files: 16 errors and 2 warnings remain
+after formatting fixes and removal of WordPress-global loop variables from the authoring template.
+Twelve errors are the retained PSR-4 filenames (a compatibility exception, with findings visible);
+the rest concern the Khan bulk-read SQL and the 200-course authoring query limit. No rules were
+disabled. See the final live-folder checkpoint in `CONTINUE-LEARNER-HUB.md` for commands, verification
+results and the remaining integration work. This pass did not rerun the disposable-site browser flows.
+
+The subsequent five-part release pass resolved the bulk SQL findings with prepared identifiers and
+documented query-local generated-placeholder annotations. The protected assessment run passed 1,049
+checks, including empty/deduplicated bulk reads. Teacher Reports now replays only attributed class
+quiz outcomes for a selected period, without reading overall skill history; its UI and privacy limits
+are in `RELEASE-READINESS.md`. That checkpoint also supersedes the earlier credential/browser blockers
+and records the remaining full-repository standards and exact-parity differences.

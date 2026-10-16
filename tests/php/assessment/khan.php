@@ -104,6 +104,9 @@ foreach ([1, 2] as $n) {
 ok($state['status'] === 'complete' && $state['correct'] === 3, 'The session did not finish: ' . wp_json_encode(array_diff_key($state, ['current' => 1])));
 ok(count($state['levels']) === 1 && $state['levels'][0]['before'] === 'not-started' && $state['levels'][0]['after'] === 'attempted' && $state['levels'][0]['change'] === 'up', 'Summary level change wrong: ' . wp_json_encode($state['levels']));
 ok(Levels::current($learner, $skill) === 'attempted', 'Level after a 67% exercise is not Attempted');
+ok( array() === Levels::current_many( $learner, array() ), 'An empty skill list must not generate an invalid IN query' );
+$bulk_levels = Levels::current_many( $learner, array( $skill, (string) $skill, 0, $skill + 1000000 ) );
+ok( 2 === count( $bulk_levels ) && 'attempted' === $bulk_levels[ $skill ] && 'not-started' === $bulk_levels[ $skill + 1000000 ], 'Bulk levels must deduplicate terms, retain unknown skills and prefer recorded Khan history' );
 $stored = $wpdb->get_var($wpdb->prepare('SELECT level FROM ' . Schema::table('student_skill_state') . ' WHERE student_id=%d AND term_id=%d', $learner, $skill));
 ok($stored === 'developing', 'The stored evidence level does not follow: ' . var_export($stored, true));
 Levels::apply_practice($state['uuid']);

@@ -457,6 +457,15 @@ final class Hub {
 	}
 
 	/**
+	 * Put the canonical workspace landmark around its content, excluding navigation.
+	 *
+	 * @return bool
+	 */
+	public static function uses_workspace_landmark() {
+		return self::is_page() && get_queried_object_id() === self::settings()['page_id'] && 'workspace' === self::state()['kind'];
+	}
+
+	/**
 	 * Respect the configured catalog even when it uses a customized page slug.
 	 *
 	 * @return string
@@ -530,7 +539,7 @@ final class Hub {
 			return ob_get_clean();
 		}
 		if ( 'unavailable' === $state['kind'] ) {
-			return '<p>' . esc_html( $state['message'] ) . '</p>';
+			return '<h1>' . esc_html__( 'This workspace is not available', 'ohmylms' ) . '</h1><p>' . esc_html( $state['message'] ) . '</p>';
 		}
 		$config       = $state['config'];
 		$section      = $state['section'];

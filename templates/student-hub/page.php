@@ -17,14 +17,14 @@ defined( 'ABSPATH' ) || exit;
 <body <?php body_class( 'oml-hub-page' ); ?>>
 	<?php wp_body_open(); ?>
 	<a class="screen-reader-text" href="#student-home-content"><?php esc_html_e( 'Skip to learning content', 'ohmylms' ); ?></a>
-	<main>
+	<div <?php echo \OhMyLMS\Student\Hub::uses_workspace_landmark() ? '' : 'role="main" id="student-home-content" tabindex="-1"'; ?>>
 		<?php
 		while ( have_posts() ) {
 			the_post();
 			the_content();
 		}
 		?>
-	</main>
+	</div>
 	<?php wp_footer(); ?>
 </body>
 </html>

@@ -67,11 +67,20 @@ final class SkillAssessment {
 		$chapter = (int) ( $args['chapter_id'] ?? 0 );
 		if ( $chapter && ! self::can_place( $chapter ) ) {
 			return new \WP_Error( 'ohmylms_skill_assessment_unit', __( 'You cannot add content to that unit.', 'ohmylms' ), array( 'status' => 403 ) ); }
-		$created = rest_do_request( self::request( 'POST', '/ohmylms/v1/quiz', array( 'name' => $title, 'status' => 'draft' ) ) );
+		$created = rest_do_request(
+			self::request(
+				'POST',
+				'/ohmylms/v1/quiz',
+				array(
+					'name'   => $title,
+					'status' => 'draft',
+				)
+			)
+		);
 		if ( $created->is_error() ) {
 			return $created->as_error(); }
-		$quiz_id = (int) $created->get_data()['id'];
-		$failed  = static function ( $error ) use ( $quiz_id ) {
+		$quiz_id  = (int) $created->get_data()['id'];
+		$failed   = static function ( $error ) use ( $quiz_id ) {
 			wp_delete_post( $quiz_id, true );
 			return $error;
 		};
@@ -264,14 +273,14 @@ final class SkillAssessment {
 	/**
 	 * Build one assessment from the skills that have enough questions, noting the ones that do not.
 	 *
-	 * @param string   $title      Title.
-	 * @param string   $style      Style.
-	 * @param array[]  $skills     Skills from unit_skills().
-	 * @param int      $per_skill  Questions per skill.
-	 * @param int      $cap        Most skills one assessment may cover.
-	 * @param int      $chapter_id Unit to place it in.
-	 * @param bool     $publish    Publish it.
-	 * @param array    $report     Report being built; skills left out are added to left_out.
+	 * @param string  $title      Title.
+	 * @param string  $style      Style.
+	 * @param array[] $skills     Skills from unit_skills().
+	 * @param int     $per_skill  Questions per skill.
+	 * @param int     $cap        Most skills one assessment may cover.
+	 * @param int     $chapter_id Unit to place it in.
+	 * @param bool    $publish    Publish it.
+	 * @param array   $report     Report being built; skills left out are added to left_out.
 	 * @return array|\WP_Error
 	 */
 	private static function build_from( $title, $style, array $skills, $per_skill, $cap, $chapter_id, $publish, array &$report ) {

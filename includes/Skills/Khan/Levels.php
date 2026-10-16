@@ -145,15 +145,15 @@ final class Levels {
 		$seen    = array();
 		if ( Schema::ready() ) {
 			$table = Schema::table();
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Placeholders are generated above.
-			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT e.term_id, e.level_after FROM $table e JOIN (SELECT MAX(id) AS id FROM $table WHERE student_id=%d AND term_id IN ($holders) GROUP BY term_id) m ON m.id=e.id", array_merge( array( (int) $student_id ), $terms ) ), ARRAY_A );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Fresh private read. $holders contains one literal %d per integer term; both identifiers and every value are prepared.
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT e.term_id, e.level_after FROM %i e JOIN (SELECT MAX(id) AS id FROM %i WHERE student_id=%d AND term_id IN ($holders) GROUP BY term_id) m ON m.id=e.id", array_merge( array( $table, $table, (int) $student_id ), $terms ) ), ARRAY_A );
 			foreach ( $rows as $row ) {
 				$result[ (int) $row['term_id'] ] = (string) $row['level_after'];
 				$seen[ (int) $row['term_id'] ]   = true;
 			}
 		}
 		if ( AssessmentSchema::ready() ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Placeholders are generated above.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Fresh private read. $holders contains one literal %d per integer term; the identifier and every value are prepared.
 			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT term_id, level FROM %i WHERE student_id=%d AND term_id IN ($holders)", array_merge( array( AssessmentSchema::table( 'student_skill_state' ), (int) $student_id ), $terms ) ), ARRAY_A );
 			foreach ( $rows as $row ) {
 				if ( empty( $seen[ (int) $row['term_id'] ] ) ) {
