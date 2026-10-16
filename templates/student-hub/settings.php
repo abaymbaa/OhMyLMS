@@ -30,7 +30,7 @@ $hub_open = static function ( $card ) use ( $hub_action, $teacher_mode, $parent_
 	echo '<input type="hidden" name="action" value="' . esc_attr( SettingsSave::ACTION ) . '">';
 	echo '<input type="hidden" name="card" value="' . esc_attr( $card ) . '">';
 	echo '<input type="hidden" name="hub_role" value="' . esc_attr( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : ( $school_mode ? 'school' : 'learner' ) ) ) . '">';
-	wp_nonce_field( SettingsSave::ACTION . '_' . $card );
+	Hub::nonce_field( SettingsSave::ACTION . '_' . $card );
 };
 /**
  * Save button, disabled until the form differs from how it loaded.

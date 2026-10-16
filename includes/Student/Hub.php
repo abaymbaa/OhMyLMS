@@ -43,6 +43,7 @@ final class Hub {
 		add_action( 'template_redirect', array( __CLASS__, 'private_response' ), 1 );
 		add_filter( 'template_include', array( __CLASS__, 'page_template' ) );
 		add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
+		add_filter( 'document_title_parts', array( __CLASS__, 'document_title_parts' ) );
 		add_filter( 'ohmylms_get_endpoint_url', array( __CLASS__, 'endpoint_link' ), 10, 4 );
 		foreach ( array( 'student_dashboard', 'student_profile', 'student_courses' ) as $page ) {
 			add_filter( 'ohmylms_get_' . $page . '_page_permalink', array( __CLASS__, 'legacy_permalink' ) );
@@ -501,17 +502,68 @@ final class Hub {
 	 * @return string
 	 */
 	public static function shortcode() {
+		$state = self::state();
+		if ( 'activation' === $state['kind'] ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/school-activation.php', array( 'activation_token' => $state['token'] ) );
+			return ob_get_clean();
+		}
+		if ( 'child_setup' === $state['kind'] ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/child-setup.php', array( 'setup_token' => $state['token'] ) );
+			return ob_get_clean();
+		}
+		if ( 'signin' === $state['kind'] ) {
+			ob_start();
+			ohmylms_get_template(
+				'student-hub/signin.php',
+				array(
+					'signin_role'   => $state['role'],
+					'signin_return' => $state['return'],
+				)
+			);
+			return ob_get_clean();
+		}
+		if ( 'family_invite' === $state['kind'] ) {
+			ob_start();
+			ohmylms_get_template( 'student-hub/family-invite.php', array( 'family_token' => $state['token'] ) );
+			return ob_get_clean();
+		}
+		if ( 'unavailable' === $state['kind'] ) {
+			return '<p>' . esc_html( $state['message'] ) . '</p>';
+		}
+		$config       = $state['config'];
+		$section      = $state['section'];
+		$views        = $state['views'];
+		$view         = $state['view'];
+		$teacher_mode = $state['teacher_mode'];
+		$parent_mode  = $state['parent_mode'];
+		$school_mode  = $state['school_mode'];
+		$student      = new Student( get_current_user_id() );
+		ob_start();
+		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student', 'teacher_mode', 'parent_mode', 'school_mode' ) );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Resolve what the current request shows, shared by the page body and its document title.
+	 *
+	 * @return array Request state; `kind` selects the screen.
+	 */
+	private static function state() {
 		$activation_token = get_query_var( 'ohmylms_invite' );
 		if ( is_string( $activation_token ) && preg_match( '/^[a-f0-9]{64}$/', $activation_token ) && 'activation' === \OhMyLMS\Schools\Service::invite_role( $activation_token ) ) {
-			ob_start();
-			ohmylms_get_template( 'student-hub/school-activation.php', array( 'activation_token' => $activation_token ) );
-			return ob_get_clean();
+			return array(
+				'kind'  => 'activation',
+				'token' => $activation_token,
+			);
 		}
 		$setup_token = get_query_var( 'ohmylms_child_setup' );
 		if ( ! is_user_logged_in() && is_string( $setup_token ) && preg_match( '/^[a-f0-9]{64}$/', $setup_token ) ) {
-			ob_start();
-			ohmylms_get_template( 'student-hub/child-setup.php', array( 'setup_token' => $setup_token ) );
-			return ob_get_clean();
+			return array(
+				'kind'  => 'child_setup',
+				'token' => $setup_token,
+			);
 		}
 		if ( ! is_user_logged_in() ) {
 			$role   = get_query_var( 'hub_role' );
@@ -525,21 +577,18 @@ final class Hub {
 			if ( is_string( $family_invite ) && preg_match( '/^[a-f0-9]{64}$/', $family_invite ) ) {
 				$return = add_query_arg( 'ohmylms_family_invite', $family_invite, self::url() );
 			}
-			ob_start();
-			ohmylms_get_template(
-				'student-hub/signin.php',
-				array(
-					'signin_role'   => $role,
-					'signin_return' => $return,
-				)
+			return array(
+				'kind'   => 'signin',
+				'role'   => $role,
+				'return' => $return,
 			);
-			return ob_get_clean();
 		}
 		$family_invite = get_query_var( 'ohmylms_family_invite' );
 		if ( is_string( $family_invite ) && preg_match( '/^[a-f0-9]{64}$/', $family_invite ) ) {
-			ob_start();
-			ohmylms_get_template( 'student-hub/family-invite.php', array( 'family_token' => $family_invite ) );
-			return ob_get_clean();
+			return array(
+				'kind'  => 'family_invite',
+				'token' => $family_invite,
+			);
 		}
 		$config        = self::settings();
 		$section       = get_query_var( 'hub_section' );
@@ -563,7 +612,6 @@ final class Hub {
 		$views    = self::views( $section );
 		$view     = get_query_var( 'hub_view' );
 		$view     = is_string( $view ) && isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
-		$student  = new Student( get_current_user_id() );
 		$hub_role = get_query_var( 'hub_role' );
 		if ( '' === $hub_role && ! get_query_var( 'hub_section' ) && ParentWorkspace::parent_only() ) {
 			$hub_role = 'parent';
@@ -573,7 +621,10 @@ final class Hub {
 		$school_mode  = 'school' === $hub_role;
 		if ( $school_mode ) {
 			if ( ! SchoolWorkspace::available() ) {
-				return '<p>' . esc_html__( 'The school workspace is not available for this account.', 'ohmylms' ) . '</p>';
+				return array(
+					'kind'    => 'unavailable',
+					'message' => __( 'The school workspace is not available for this account.', 'ohmylms' ),
+				);
 			}
 			$config['tabs']                       = array( 'school-overview', 'school-classes', 'school-reports', 'school-gradebook', 'school-people', 'school-invites', 'school-settings', 'account' );
 			$config['title']                      = __( 'School workspace', 'ohmylms' );
@@ -590,7 +641,10 @@ final class Hub {
 		}
 		if ( $parent_mode ) {
 			if ( ! ParentWorkspace::available() ) {
-				return '<p>' . esc_html__( 'The parent workspace is not available for this account.', 'ohmylms' ) . '</p>';
+				return array(
+					'kind'    => 'unavailable',
+					'message' => __( 'The parent workspace is not available for this account.', 'ohmylms' ),
+				);
 			}
 			$config['tabs']             = array( 'family', 'account' );
 			$config['title']            = __( 'Family workspace', 'ohmylms' );
@@ -601,7 +655,10 @@ final class Hub {
 		}
 		if ( $teacher_mode ) {
 			if ( ! TeacherWorkspace::available() ) {
-				return '<p>' . esc_html__( 'The teacher workspace is not available for this account.', 'ohmylms' ) . '</p>';
+				return array(
+					'kind'    => 'unavailable',
+					'message' => __( 'The teacher workspace is not available for this account.', 'ohmylms' ),
+				);
 			}
 			$config['tabs']                     = array( 'classes', 'work', 'roster', 'progress', 'class-settings', 'library', 'account' );
 			$config['title']                    = __( 'Teacher workspace', 'ohmylms' );
@@ -614,9 +671,73 @@ final class Hub {
 			$views                              = in_array( $section, array( 'classes', 'work', 'roster', 'progress', 'class-settings' ), true ) ? array() : self::views( $section );
 			$view                               = isset( $views[ $view ] ) ? $view : ( array_key_first( $views ) ?? '' );
 		}
-		ob_start();
-		ohmylms_get_template( 'student-hub/workspace.php', compact( 'config', 'section', 'views', 'view', 'student', 'teacher_mode', 'parent_mode', 'school_mode' ) );
-		return ob_get_clean();
+		return compact( 'config', 'section', 'views', 'view', 'teacher_mode', 'parent_mode', 'school_mode' ) + array( 'kind' => 'workspace' );
+	}
+
+	/**
+	 * Give every hub screen its own document title (WCAG 2.4.2), most specific first.
+	 *
+	 * @param array $parts Title parts from WordPress.
+	 * @return array
+	 */
+	public static function document_title_parts( $parts ) {
+		if ( ! is_array( $parts ) || ! self::is_page() || get_queried_object_id() !== self::settings()['page_id'] ) {
+			return $parts;
+		}
+		$state = self::state();
+		$names = array();
+		switch ( $state['kind'] ) {
+			case 'activation':
+				$names[] = __( 'Activate your account', 'ohmylms' );
+				break;
+			case 'child_setup':
+				$names[] = __( 'Set up your account', 'ohmylms' );
+				break;
+			case 'signin':
+				$names[] = __( 'Sign in', 'ohmylms' );
+				break;
+			case 'family_invite':
+				$names[] = __( 'Family invitation', 'ohmylms' );
+				break;
+			case 'unavailable':
+				$names[] = __( 'Not available', 'ohmylms' );
+				break;
+			default:
+				$config  = $state['config'];
+				$section = $state['section'];
+				$views   = $state['views'];
+				$view    = $state['view'];
+				$course  = absint( get_query_var( 'hub_course', 0 ) );
+				if ( 'family' === $section && absint( get_query_var( 'hub_child', 0 ) ) ) {
+					$names[] = 'home_learning' === get_query_var( 'hub_scope', '' ) ? __( 'Home-learning activity', 'ohmylms' ) : __( 'Learner overview', 'ohmylms' );
+				} elseif ( 'library' === $section && $course && OHMYLMS_COURSE_CPT === get_post_type( $course ) && 'publish' === get_post_status( $course ) ) {
+					$names[] = get_the_title( $course );
+				} elseif ( $views && isset( $views[ $view ] ) ) {
+					$names[] = $views[ $view ];
+				}
+				$names[] = $config['labels'][ $section ] ?? '';
+				$names[] = $config['title'];
+		}
+		$names = array_values( array_unique( array_filter( array_map( 'wp_strip_all_tags', $names ), 'strlen' ) ) );
+		if ( $names ) {
+			$separator      = apply_filters( 'document_title_separator', '-' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core filter.
+			$parts['title'] = implode( ' ' . ( is_string( $separator ) ? $separator : '-' ) . ' ', $names );
+		}
+		return $parts;
+	}
+
+	/**
+	 * Hidden nonce field with a document-unique id, for pages that carry several forms.
+	 *
+	 * The field name stays `_wpnonce`, so every handler keeps verifying the same request key.
+	 *
+	 * @param string $action Nonce action.
+	 */
+	public static function nonce_field( $action ) {
+		static $count = 0;
+		++$count;
+		echo '<input type="hidden" id="' . esc_attr( 'oml-nonce-' . $count ) . '" name="_wpnonce" value="' . esc_attr( wp_create_nonce( $action ) ) . '">';
+		wp_referer_field();
 	}
 
 	/**

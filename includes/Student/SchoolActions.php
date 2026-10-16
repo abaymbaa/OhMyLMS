@@ -37,7 +37,7 @@ final class SchoolActions {
 		echo '<input type="hidden" name="operation" value="' . esc_attr( $operation ) . '">';
 		echo '<input type="hidden" name="school_id" value="' . esc_attr( $school_id ) . '">';
 		echo '<input type="hidden" name="return_section" value="' . esc_attr( $section ) . '">';
-		wp_nonce_field( self::ACTION . '_' . $operation );
+		Hub::nonce_field( self::ACTION . '_' . $operation );
 	}
 
 	/**

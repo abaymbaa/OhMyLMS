@@ -84,6 +84,6 @@ $matrix_url = add_query_arg(
 </nav>
 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 	<input type="hidden" name="action" value="<?php echo esc_attr( SchoolGradebook::EXPORT_ACTION ); ?>"><input type="hidden" name="school_id" value="<?php echo esc_attr( $school_id ); ?>"><input type="hidden" name="class_id" value="<?php echo esc_attr( $class_id ); ?>"><input type="hidden" name="course_id" value="<?php echo esc_attr( $matrix_course ); ?>">
-	<?php wp_nonce_field( SchoolGradebook::EXPORT_ACTION ); ?>
+	<?php Hub::nonce_field( SchoolGradebook::EXPORT_ACTION ); ?>
 	<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Download full class CSV', 'ohmylms' ); ?></button></p>
 </form>

@@ -38,7 +38,7 @@ final class TeacherActions {
 		echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '">';
 		echo '<input type="hidden" name="operation" value="' . esc_attr( $operation ) . '">';
 		echo '<input type="hidden" name="class_id" value="' . esc_attr( $class_id ) . '">';
-		wp_nonce_field( self::ACTION . '_' . $operation );
+		Hub::nonce_field( self::ACTION . '_' . $operation );
 	}
 
 	/**

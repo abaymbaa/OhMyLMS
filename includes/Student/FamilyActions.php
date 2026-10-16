@@ -46,7 +46,7 @@ final class FamilyActions {
 	public static function fields( $operation ) {
 		echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '">';
 		echo '<input type="hidden" name="operation" value="' . esc_attr( $operation ) . '">';
-		wp_nonce_field( self::ACTION . '_' . $operation );
+		Hub::nonce_field( self::ACTION . '_' . $operation );
 	}
 
 	/**

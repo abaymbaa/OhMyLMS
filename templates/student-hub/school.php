@@ -163,7 +163,7 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 		?>
 		<section class="oml-hub-card oml-hub-settings-card">
 			<h2><?php esc_html_e( 'People', 'ohmylms' ); ?></h2>
-			<form method="get" action="<?php echo esc_url( Hub::base_url() ? Hub::base_url() : home_url( '/' ) ); ?>">
+			<form class="oml-hub-people-search" method="get" action="<?php echo esc_url( Hub::base_url() ? Hub::base_url() : home_url( '/' ) ); ?>">
 				<?php if ( ! get_option( 'permalink_structure' ) ) : ?>
 					<input type="hidden" name="page_id" value="<?php echo esc_attr( Hub::settings()['page_id'] ); ?>">
 				<?php endif; ?>

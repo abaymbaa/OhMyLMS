@@ -1812,3 +1812,51 @@ Run on the disposable site (`ohmylms_source_test`, served at 127.0.0.1:8099 for 
 8. Separate feature work, unchanged: parent-dashboard reference comparison and richer home-learning reports.
 
 Cleanup: fixture users, school, class, family links and the temporary scripts were removed (count queries return zero); the family `activity`, `audit` and `invitations` tables on the disposable database were also emptied. The test server was stopped.
+
+## Khan activity study and runner parity checkpoint (October 16, 2026)
+
+Studied khanacademy.org (signed out) with the built-in browser: exercises, Quiz, Unit test, Course challenge link, unit page, and the
+official mastery rules from the Help Center. Findings, the gap matrix and the five proposed slices are in
+`docs/learner-experience/KHAN-ACTIVITIES.md`. Owner choices: build runner parity first, and add the Khan level rules later as an
+option beside the current evidence and SmartScore model (not a replacement).
+
+Slice 1 built (standard practice runner only; no scoring, schema or mastery change): progress dots, Skip, stepped hints (`<hr>` between
+steps), tiered correct feedback, Start over. Details, limits and what was deliberately not built (retry after a wrong answer) are in
+section 7 of that doc. Checks: JS practice tests 6 pass, assessment phases skip/lesson/xp/evidence 320 checks, learning 76, player
+templates 81, Student Home 88, browser check on the disposable site. PHPCS was not available in this environment, so it is outstanding for
+`Sessions.php`, `Frontend.php` and `PracticeController.php`. Uncommitted: the working tree also holds the separate translation/accessibility
+session's edits, so commit by path.
+
+Next: slice 2 (Khan level rules as an option, including retry after a wrong answer), then slice 3 (mixed-skill Quiz and Unit test).
+
+## Release verification fixes (October 16, 2026)
+
+Fixes for items 1-5 of the release verification checkpoint above; items 6-8 are unchanged. Nothing committed.
+
+1. **Translation catalog.** `languages/ohmylms.pot` was regenerated with the WP-CLI 2.12 phar that ships with Local (`i18n make-pot`, run through Local's PHP with mbstring; about 7 minutes). Command: `sh C:/Users/Byambaa/ohmylms-test/php.sh -d memory_limit=3072M "<Local>/resources/extraResources/bin/wp-cli/wp-cli.phar" i18n make-pot . languages/ohmylms.pot --slug=ohmylms --domain=ohmylms --skip-audit`. It now has 9,666 msgids (was 7,081) and covers `templates/student-hub` (667 references), `includes/Student`, `includes/Family` and `includes/Schools`. Strings that no longer exist in code dropped out of the catalog. Wording is untouched, so "Course bundle" stays. The es_ES, nl_NL and bn_BD `.po` files were merged append-only: the existing files are kept as they were and the new msgids were added untranslated (29 more were added across two later runs for the Practice runner, Khan settings and mastery-model strings). Translated entries before and after: es_ES 4,910/4,910, nl_NL 4,781/4,781, bn_BD 7/7, none lost or changed. `wp i18n update-po` was not used because it deletes translations whose source string is gone (222 in es_ES, 154 in nl_NL). The `.mo` and `.json` files were not rebuilt: the added entries are untranslated, so their content would not change. All three `.po` files compile with `i18n make-mo` (checked in a scratch folder).
+2. **Document titles.** `Hub::document_title_parts()` gives each screen its own title, most specific first, for example "Join a class – My classes – Student Home – site", "Roster – Teacher workspace – site", "Sign in – site". To keep the title and the page body on the same logic, the section resolution in `Hub::shortcode()` moved unchanged into a private `Hub::state()`. Titles never include a child's name.
+3. **Parent school-child view.** The child's name is now the h1 in `templates/student-hub/parent.php`, and so is the "This learner is not available" heading. A `.oml-hub-class-panel > h1` rule keeps the h2 look.
+4. **Unique nonce ids.** `Hub::nonce_field()` prints the same `_wpnonce` field with an id of `oml-nonce-N`. It is used by the family, school and teacher action forms, the settings cards, the gradebook export and the parent sign-in. The field name is unchanged, so every handler verifies as before. The single-form pre-sign-in pages and the admin editor still use `wp_nonce_field()`.
+5. **Target sizes.** In `student-hub.css`, the remove/reset confirmation checkboxes are 24x24px and the People search box and button are 40px high (measured at 375px in the built-in browser on a static page using the real stylesheet). The People form now has the class `oml-hub-people-search`.
+
+Checks: `student-hub-integration` 88; schools, school reports 32/31/19, family 56, learning 76, player templates 81, account blocks 44, teacher classes 47, gradebook and student directory pass; `npm test` 420 pass, 0 fail, 1 skipped (the earlier 417 plus tests another session added). A render probe on the disposable site showed a distinct title and one h1 for each learner section, account view and teacher page, and no duplicate nonce ids. Stylelint is clean on `student-hub.css`; PHPCS has no errors on the touched PHP (its remaining warnings were there before). Not run: the parent-home and school-people titles and the parent-child h1 were not rendered live (only the protected suites cover those screens), and `student-dashboard-integration` needs the separate `ohmylms_streak_test` database.
+
+Catalog note: regenerate again after the Practice runner strings settle. The last run was after the Khan level settings and mastery-model strings were added (about 14:25 on October 16).
+
+Slice 2 built (October 16, 2026): Khan level rules as an option (`ohmylms_mastery_settings`, default evidence), retry after a wrong
+practice answer, level log table `ohmylms_khan_level_events`, quiz-driven up/down steps, Khan display and a level summary after practice.
+Details, rules and limits are in section 8 of `docs/learner-experience/KHAN-ACTIVITIES.md`. The admin setting lives on Gamification, XP &
+mastery; `npm run build` regenerated `assets/dist/admin/chunks/gamification.*` and `extensions.*`. PHPCS still outstanding for the new
+files. Next: slice 3 (mixed-skill Quiz and Unit test with intro and a level-change result screen).
+
+Slice 3 built (October 16, 2026): mixed-skill quiz, unit test and course challenge on the existing question pools. Builder
+`POST /ohmylms/v1/skill-assessments`, assessment setting `style`, intro screen (`Quiz\Intro`, `assets/css/quiz-intro.css`) and a level
+change list on the result screen. Section 9 of `docs/learner-experience/KHAN-ACTIVITIES.md` has the draw explained, the API and the limits.
+Next candidates: an authoring screen for the builder, the unit page "Level up" button, then the Khan-style course challenge placement. PHPCS
+outstanding for all new files.
+
+Authoring screen and AI building (October 16, 2026): **OhMyLMS -> Skill assessments** (PHP page, no build), assistant and MCP tools
+`list_unit_skills` and `create_skill_assessment` (draft only, approval in chat), `SkillAssessment::unit_skills()`, `Pools::available()`. Fixed
+`SkillCatalogue::search` hiding skills without code, objective or UUID. See section 10 of `docs/learner-experience/KHAN-ACTIVITIES.md`,
+`docs/ADMIN-ASSISTANT.md` and `docs/MCP.md`. PHPCS outstanding for all new files; `mcp-integration.php` cannot finish on the test site (adapter
+server not registered), unrelated to this change.

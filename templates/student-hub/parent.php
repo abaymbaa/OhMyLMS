@@ -28,7 +28,7 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 ?>
 <?php if ( $family_child_id && ! $family_selected ) : ?>
 	<div class="oml-hub-empty">
-		<h2><?php esc_html_e( 'This learner is not available', 'ohmylms' ); ?></h2>
+		<h1><?php esc_html_e( 'This learner is not available', 'ohmylms' ); ?></h1>
 		<p><?php esc_html_e( 'You can only see learners that a school currently links to your account.', 'ohmylms' ); ?></p>
 		<p><a class="oml-hub-pill" href="<?php echo esc_url( ParentWorkspace::url() ); ?>">&larr; <?php esc_html_e( 'My children', 'ohmylms' ); ?></a></p>
 	</div>
@@ -41,7 +41,7 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 	?>
 	<section class="oml-hub-card oml-hub-settings-card oml-hub-class-panel">
 		<a class="oml-hub-pill oml-hub-back" href="<?php echo esc_url( ParentWorkspace::url() ); ?>">&larr; <?php esc_html_e( 'My children', 'ohmylms' ); ?></a>
-		<h2><?php echo esc_html( $family_selected['display_name'] ); ?></h2>
+		<h1><?php echo esc_html( $family_selected['display_name'] ); ?></h1>
 		<p><?php echo esc_html( $family_selected['school_name'] ); ?> · <?php esc_html_e( 'School-assigned work only. Independent learning is not included.', 'ohmylms' ); ?></p>
 		<?php if ( ! $family_work ) : ?>
 			<div class="oml-hub-empty"><h3><?php esc_html_e( 'No assigned work yet', 'ohmylms' ); ?></h3><p><?php esc_html_e( 'Work your child’s teacher assigns will appear here.', 'ohmylms' ); ?></p></div>

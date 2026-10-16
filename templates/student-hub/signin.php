@@ -53,7 +53,7 @@ $signup_role      = $signin_role ? $signin_role : 'learner';
 			<?php endif; ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" autocomplete="off">
 				<input type="hidden" name="action" value="<?php echo esc_attr( ParentActions::ACTION ); ?>">
-				<?php wp_nonce_field( ParentActions::ACTION ); ?>
+				<?php Hub::nonce_field( ParentActions::ACTION ); ?>
 				<input type="hidden" name="role" value="<?php echo esc_attr( $signup_text[2] ); ?>">
 				<div class="oml-hub-field"><label for="parent-first"><?php esc_html_e( 'First name', 'ohmylms' ); ?></label><input id="parent-first" name="first_name" type="text" required maxlength="60" autocomplete="given-name"></div>
 				<div class="oml-hub-field"><label for="parent-last"><?php esc_html_e( 'Last name', 'ohmylms' ); ?></label><input id="parent-last" name="last_name" type="text" maxlength="60" autocomplete="family-name"></div>

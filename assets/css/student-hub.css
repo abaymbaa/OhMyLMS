@@ -387,7 +387,8 @@
 	color: var(--hub-text);
 }
 
-.ohmylms-student-hub .oml-hub-card h2 {
+.ohmylms-student-hub .oml-hub-card h2,
+.ohmylms-student-hub .oml-hub-class-panel > h1 {
 	margin: 0 0 20px;
 	font-size: 20px;
 }
@@ -1720,6 +1721,32 @@
 	align-items: center;
 	gap: 6px;
 	font-size: 13px;
+}
+
+/* Keep the remove/reset confirmations and the people search at least 24px (WCAG 2.5.8). */
+.ohmylms-student-hub .oml-hub-family-confirm input[type="checkbox"] {
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	flex: none;
+}
+
+.ohmylms-student-hub .oml-hub-people-search input[type="search"] {
+	min-height: 40px;
+	box-sizing: border-box;
+	padding: 8px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 6px;
+	background: var(--hub-surface);
+	color: inherit;
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-people-search .oml-hub-pill {
+	display: inline-flex;
+	align-items: center;
+	min-height: 40px;
+	box-sizing: border-box;
 }
 
 .ohmylms-student-hub .oml-hub-pill-danger {
