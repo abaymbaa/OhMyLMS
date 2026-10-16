@@ -115,40 +115,59 @@ final class MasteryDisplay {
 	 * @return array<int,array{key:string,label:string,score:?float,source:string}>
 	 */
 	public static function for_student( $student_id, array $term_ids ) {
-		global $wpdb;
-		$terms  = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
-		$result = array();
-		foreach ( $terms as $term ) {
-			$result[ $term ] = self::entry( 'not-started', null, 'none' );
-		}
 		$student_id = (int) $student_id;
-		if ( ! $student_id || ! $terms ) {
+		return self::for_students( array( $student_id ), $term_ids )[ $student_id ];
+	}
+
+	/**
+	 * Display level for each skill of several learners, with one query per table however many
+	 * learners there are. Each learner's entries are exactly what for_student() returns for them.
+	 *
+	 * @param int[] $student_ids Learner IDs.
+	 * @param int[] $term_ids Skill term IDs.
+	 * @return array<int,array<int,array{key:string,label:string,score:?float,source:string}>> Learner => skill => entry.
+	 */
+	public static function for_students( array $student_ids, array $term_ids ) {
+		global $wpdb;
+		$terms    = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
+		$students = array_values( array_unique( array_map( 'intval', $student_ids ) ) );
+		$blank    = array();
+		foreach ( $terms as $term ) {
+			$blank[ $term ] = self::entry( 'not-started', null, 'none' );
+		}
+		$result = array();
+		foreach ( $students as $student ) {
+			$result[ $student ] = $blank;
+		}
+		$students = array_values( array_filter( $students ) );
+		if ( ! $students || ! $terms ) {
 			return $result;
 		}
 		$levels = array();
 		if ( AssessmentSchema::ready() ) {
 			$holders = implode( ',', array_fill( 0, count( $terms ), '%d' ) );
-			$query   = $wpdb->prepare( "SELECT term_id, level FROM %i WHERE student_id=%d AND term_id IN ($holders)", array_merge( array( AssessmentSchema::table( 'student_skill_state' ), $student_id ), $terms ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- The IN list is only %d placeholders.
+			$people  = implode( ',', array_fill( 0, count( $students ), '%d' ) );
+			$query   = $wpdb->prepare( "SELECT student_id, term_id, level FROM %i WHERE student_id IN ($people) AND term_id IN ($holders)", array_merge( array( AssessmentSchema::table( 'student_skill_state' ) ), $students, $terms ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- The IN lists are only %d placeholders.
 			foreach ( $wpdb->get_results( $query, ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Read-only batch lookup, prepared above; not cached so revisions show at once.
-				$levels[ (int) $row['term_id'] ] = $row['level'];
+				$levels[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = $row['level'];
 			}
 		}
-		$scores = Score::enabled() ? Score::summary( $student_id ) : array();
-		$bands  = $scores ? Score::config()['bands'] : array();
+		$all_scores = Score::enabled() ? Score::summary_many( $students ) : array();
+		$bands      = array_filter( $all_scores ) ? Score::config()['bands'] : array();
 		// With the Khan level rules on, a skill that has Khan history shows that level.
-		$khan = array();
-		if ( Khan\Settings::enabled() ) {
-			$with = array_intersect( $terms, Khan\Levels::terms_with_history( $student_id ) );
-			$khan = $with ? Khan\Levels::current_many( $student_id, $with ) : array();
-		}
-		foreach ( $terms as $term ) {
-			if ( isset( $khan[ $term ] ) ) {
-				$result[ $term ] = self::entry( $khan[ $term ], null, 'khan' );
-			} elseif ( isset( $scores[ $term ] ) && ( (int) $scores[ $term ]['scored'] > 0 || (float) $scores[ $term ]['score'] > 0 ) ) {
-				$score           = (float) $scores[ $term ]['score'];
-				$result[ $term ] = self::entry( self::from_score( $score, $scores[ $term ]['scored'], $bands ), $score, 'score' );
-			} elseif ( isset( $levels[ $term ] ) ) {
-				$result[ $term ] = self::entry( self::from_level( $levels[ $term ] ), null, 'level' );
+		$all_khan = Khan\Settings::enabled() ? Khan\Levels::latest_many( $students, $terms ) : array();
+		foreach ( $students as $student ) {
+			$scores = $all_scores[ $student ] ?? array();
+			$khan   = $all_khan[ $student ] ?? array();
+			foreach ( $terms as $term ) {
+				if ( isset( $khan[ $term ] ) ) {
+					$result[ $student ][ $term ] = self::entry( $khan[ $term ], null, 'khan' );
+				} elseif ( isset( $scores[ $term ] ) && ( (int) $scores[ $term ]['scored'] > 0 || (float) $scores[ $term ]['score'] > 0 ) ) {
+					$score                       = (float) $scores[ $term ]['score'];
+					$result[ $student ][ $term ] = self::entry( self::from_score( $score, $scores[ $term ]['scored'], $bands ), $score, 'score' );
+				} elseif ( isset( $levels[ $student ][ $term ] ) ) {
+					$result[ $student ][ $term ] = self::entry( self::from_level( $levels[ $student ][ $term ] ), null, 'level' );
+				}
 			}
 		}
 		return $result;

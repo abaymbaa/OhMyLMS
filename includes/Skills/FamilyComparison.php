@@ -5,7 +5,8 @@
  * Callers pass only children the guardian is currently approved for (ParentWorkspace::children()).
  * Only display levels and class aggregates are returned: no answer logs, and no learner other than
  * the guardian's own children is ever named or identifiable. A class aggregate needs at least
- * UnitReport::MIN_COHORT learners and can be switched off with a filter.
+ * UnitReport::MIN_PEERS classmates besides the child, is shown only as a coarse band, and can be
+ * switched off with a filter.
  *
  * @package OhMyLMS
  */
@@ -77,7 +78,7 @@ final class FamilyComparison {
 	 * @param int   $child_id  Approved child.
 	 * @param int   $school_id School the guardian link belongs to.
 	 * @param int[] $skills    Skills to read.
-	 * @return array<int,string[]> Skill => levels of every classmate (including the child). Empty when not permitted or too small.
+	 * @return array<int,string[]> Skill => levels of every classmate except the child. Empty when not permitted or too small.
 	 */
 	private static function cohort( $child_id, $school_id, array $skills ) {
 		global $wpdb;
@@ -107,15 +108,16 @@ final class FamilyComparison {
 				self::COHORT_LIMIT
 			)
 		);
-		$members = array_map( 'intval', $members );
-		if ( count( $members ) < UnitReport::MIN_COHORT ) {
+		// Classmates only: the child is left out so the average never contains (or is shifted by) their own level.
+		$members = array_values( array_diff( array_map( 'intval', $members ), array( (int) $child_id ) ) );
+		if ( count( $members ) < UnitReport::MIN_PEERS ) {
 			return array();
 		}
-		$cohort = array_fill_keys( $skills, array() );
+		$cohort  = array_fill_keys( $skills, array() );
+		$display = MasteryDisplay::for_students( $members, $skills );
 		foreach ( $members as $member ) {
-			$display = MasteryDisplay::for_student( $member, $skills );
 			foreach ( $skills as $skill ) {
-				$cohort[ $skill ][] = $display[ $skill ]['key'] ?? 'not-started';
+				$cohort[ $skill ][] = $display[ $member ][ $skill ]['key'] ?? 'not-started';
 			}
 		}
 		return $cohort;

@@ -16,8 +16,18 @@ defined( 'ABSPATH' ) || exit;
 /** Which unit a skill belongs to, and how learners and groups compare per skill. */
 final class UnitReport {
 
-	/** A class average is only shown for at least this many learners, so one child is never identifiable. */
+	/** A staff-facing class average is only shown for at least this many learners, so one child is never identifiable. */
 	const MIN_COHORT = 5;
+
+	/**
+	 * A guardian-facing class comparison needs at least this many classmates besides their own child.
+	 * Larger than MIN_COHORT because the guardian already knows one value in the group and sees no counts.
+	 */
+	const MIN_PEERS = 8;
+
+	/** Share of classmates at Proficient or above from which "Most" is shown, and below which "Few" is. */
+	const BAND_MOST = 70;
+	const BAND_FEW  = 30;
 
 	/** Id of the group holding skills that no unit claims. */
 	const OTHER = 0;
@@ -186,11 +196,40 @@ final class UnitReport {
 	}
 
 	/**
+	 * Anonymous classmate summary for a guardian: the typical level and a coarse band, never counts or an exact share.
+	 *
+	 * Returns null below MIN_PEERS. The levels must be the classmates' only, without the guardian's own child.
+	 *
+	 * @param string[] $keys Display level of each classmate.
+	 * @return array{key:string,band:string}|null Band is most, half or few: how many classmates are Proficient or above.
+	 */
+	public static function peer_average( array $keys ) {
+		$total = count( $keys );
+		if ( $total < self::MIN_PEERS ) {
+			return null;
+		}
+		$sum    = 0;
+		$strong = 0;
+		foreach ( $keys as $key ) {
+			$key  = in_array( $key, MasteryDisplay::LEVELS, true ) ? $key : 'not-started';
+			$sum += MasteryDisplay::rank( $key );
+			if ( MasteryDisplay::is_proficient( $key ) ) {
+				++$strong;
+			}
+		}
+		$share = 100 * $strong / $total;
+		return array(
+			'key'  => MasteryDisplay::LEVELS[ (int) round( $sum / $total ) ],
+			'band' => $share >= self::BAND_MOST ? 'most' : ( $share < self::BAND_FEW ? 'few' : 'half' ),
+		);
+	}
+
+	/**
 	 * Side-by-side rows: one per skill, one cell per learner, optional class average per skill.
 	 *
 	 * @param int[]                          $term_ids Skills to show, in order.
 	 * @param array<int,array<int,string>>   $levels Learner => skill => display level (missing = Not started).
-	 * @param array<int,array<int,string[]>> $cohorts Optional learner => skill => levels of the class they sit in.
+	 * @param array<int,array<int,string[]>> $cohorts Optional learner => skill => levels of their classmates (not the learner).
 	 * @return array<int,array{skill:int,cells:array<int,string>,class:array<int,array|null>}>
 	 */
 	public static function compare( array $term_ids, array $levels, array $cohorts = array() ) {
@@ -201,7 +240,7 @@ final class UnitReport {
 			foreach ( $levels as $learner => $by_skill ) {
 				$cells[ $learner ] = $by_skill[ $term ] ?? 'not-started';
 				if ( isset( $cohorts[ $learner ] ) ) {
-					$class[ $learner ] = self::average( $cohorts[ $learner ][ $term ] ?? array() );
+					$class[ $learner ] = self::peer_average( $cohorts[ $learner ][ $term ] ?? array() );
 				}
 			}
 			$rows[] = array(

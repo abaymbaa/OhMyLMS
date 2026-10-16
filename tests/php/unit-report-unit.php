@@ -120,7 +120,7 @@ $levels  = array(
 	8 => array( 11 => 'familiar' ),
 );
 $cohorts = array(
-	7 => array( 11 => array( 'proficient', 'proficient', 'familiar', 'mastered', 'attempted', 'proficient' ) ),
+	7 => array( 11 => array( 'proficient', 'proficient', 'familiar', 'mastered', 'attempted', 'proficient', 'proficient', 'familiar' ) ),
 );
 $rows    = U::compare( array( 11, 12 ), $levels, $cohorts );
 check( 'mastered' === $rows[0]['cells'][7] && 'familiar' === $rows[0]['cells'][8], 'Each child gets a cell per skill' );
@@ -128,6 +128,19 @@ check( 'not-started' === $rows[1]['cells'][8], 'An unpractised skill is Not star
 check( isset( $rows[0]['class'][7] ) && ! isset( $rows[0]['class'][8] ), 'Only a learner with a class gets an average' );
 check( 'proficient' === $rows[0]['class'][7]['key'], 'Class average is the rounded mean level' );
 check( null === $rows[1]['class'][7], 'A skill nobody in the class has started shows no average (too few answers)' );
+check( array( 'key', 'band' ) === array_keys( $rows[0]['class'][7] ), 'A guardian only gets a level and a band, never counts or a share' );
+
+// Guardian class comparison: classmates only, at least MIN_PEERS, coarse bands.
+check( U::MIN_PEERS >= 8 && U::MIN_PEERS > U::MIN_COHORT, 'Guardians need more classmates than staff' );
+check( null === U::peer_average( array_fill( 0, U::MIN_PEERS - 1, 'mastered' ) ), 'One classmate short of the minimum shows nothing' );
+check( 'most' === U::peer_average( array_fill( 0, 8, 'mastered' ) )['band'], 'Everyone Proficient or above is Most' );
+check( 'few' === U::peer_average( array_fill( 0, 8, 'familiar' ) )['band'], 'Nobody Proficient or above is Few' );
+$half = U::peer_average( array( 'proficient', 'proficient', 'proficient', 'proficient', 'familiar', 'familiar', 'attempted', 'not-started' ) );
+check( 'half' === $half['band'], 'Half the class is About half' );
+check( ! isset( $half['counts'] ) && ! isset( $half['total'] ) && ! isset( $half['proficient_share'] ), 'No counts or percentage are returned' );
+check( 'half' === U::peer_average( array( 'mastered', 'mastered', 'mastered', 'mastered', 'mastered', 'familiar', 'familiar', 'familiar' ) )['band'], '5 of 8 is About half' );
+check( 'most' === U::peer_average( array( 'mastered', 'mastered', 'mastered', 'mastered', 'mastered', 'mastered', 'familiar', 'familiar' ) )['band'], '6 of 8 is Most' );
+check( 'few' === U::peer_average( array( 'mastered', 'mastered', 'familiar', 'familiar', 'familiar', 'familiar', 'familiar', 'familiar' ) )['band'], '2 of 8 is Few' );
 
 // Skills shown are the ones any child has started, by name.
 $names = array(

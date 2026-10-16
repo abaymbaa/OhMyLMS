@@ -165,6 +165,32 @@ final class Levels {
 	}
 
 	/**
+	 * Current Khan level of several learners for the skills each has history for: one query.
+	 *
+	 * @param int[] $student_ids Learners.
+	 * @param int[] $term_ids    Skills.
+	 * @return array<int,array<int,string>> Learner => skill => level, only for skills with history.
+	 */
+	public static function latest_many( array $student_ids, array $term_ids ) {
+		global $wpdb;
+		$students = array_values( array_unique( array_filter( array_map( 'intval', $student_ids ) ) ) );
+		$terms    = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
+		$result   = array();
+		if ( ! $students || ! $terms || ! Schema::ready() ) {
+			return $result;
+		}
+		$table      = Schema::table();
+		$students_h = implode( ',', array_fill( 0, count( $students ), '%d' ) );
+		$terms_h    = implode( ',', array_fill( 0, count( $terms ), '%d' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Fresh private read. The holders are literal %d per integer; the identifiers and every value are prepared.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT e.student_id, e.term_id, e.level_after FROM %i e JOIN (SELECT MAX(id) AS id FROM %i WHERE student_id IN ($students_h) AND term_id IN ($terms_h) GROUP BY student_id, term_id) m ON m.id=e.id", array_merge( array( $table, $table ), $students, $terms ) ), ARRAY_A );
+		foreach ( $rows as $row ) {
+			$result[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = (string) $row['level_after'];
+		}
+		return $result;
+	}
+
+	/**
 	 * Current level for one skill.
 	 *
 	 * @param int $student_id Learner.

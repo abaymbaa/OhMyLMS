@@ -139,9 +139,10 @@ final class ReportData {
 		$groups   = UnitReport::group( $term_ids, $context['map'], $context['units'], __( 'Other skills', 'ohmylms' ) );
 		$learners = array();
 		$levels   = array();
+		$displays = MasteryDisplay::for_students( array_map( 'intval', $students ), $term_ids );
 		foreach ( $students as $id ) {
 			$user    = get_userdata( $id );
-			$display = MasteryDisplay::for_student( $id, $term_ids );
+			$display = $displays[ (int) $id ] ?? array();
 			$cells   = array();
 			foreach ( $term_ids as $term ) {
 				$key               = $display[ $term ]['key'] ?? 'not-started';

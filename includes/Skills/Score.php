@@ -243,16 +243,33 @@ final class Score {
 	 * (practised before the feature was switched on) is computed here, once.
 	 */
 	public static function summary( $student_id ) {
+		return self::summary_many( array( $student_id ) )[ (int) $student_id ] ?? array();
+	}
+
+	/**
+	 * Every scored skill of several learners: three queries however many learners there are
+	 * (plus one recompute for each skill with evidence but no stored score yet).
+	 *
+	 * @param int[] $student_ids Learner IDs.
+	 * @return array<int,array<int,array>> Learner => term => described score; every learner given is present.
+	 */
+	public static function summary_many( array $student_ids ) {
 		global $wpdb;
-		if ( ! self::enabled() ) {
-			return array(); }
-		$terms = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT term_id FROM ' . Schema::table( 'student_skill_state' ) . ' WHERE student_id=%d', (int) $student_id ) ) );
-		$have  = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT term_id FROM ' . XpSchema::table( 'skill_scores' ) . ' WHERE student_id=%d', (int) $student_id ) ) );
-		foreach ( array_diff( $terms, $have ) as $term ) {
-			self::recompute( $student_id, $term ); }
-		$result = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . XpSchema::table( 'skill_scores' ) . ' WHERE student_id=%d', (int) $student_id ), ARRAY_A ) as $row ) {
-			$result[ (int) $row['term_id'] ] = self::describe( $row ); }
+		$students = array_values( array_unique( array_filter( array_map( 'intval', $student_ids ) ) ) );
+		$result   = array_fill_keys( $students, array() );
+		if ( ! $students || ! self::enabled() ) {
+			return $result; }
+		$holders = implode( ',', array_fill( 0, count( $students ), '%d' ) );
+		$state   = $wpdb->get_results( $wpdb->prepare( "SELECT student_id, term_id FROM %i WHERE student_id IN ($holders)", array_merge( array( Schema::table( 'student_skill_state' ) ), $students ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The IN list is only %d placeholders; fresh read.
+		$have    = array();
+		foreach ( $wpdb->get_results( $wpdb->prepare( "SELECT student_id, term_id FROM %i WHERE student_id IN ($holders)", array_merge( array( XpSchema::table( 'skill_scores' ) ), $students ) ), ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The IN list is only %d placeholders; fresh read.
+			$have[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = true; }
+		foreach ( $state as $row ) {
+			if ( empty( $have[ (int) $row['student_id'] ][ (int) $row['term_id'] ] ) ) {
+				self::recompute( (int) $row['student_id'], (int) $row['term_id'] ); }
+		}
+		foreach ( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE student_id IN ($holders)", array_merge( array( XpSchema::table( 'skill_scores' ) ), $students ) ), ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The IN list is only %d placeholders; fresh read.
+			$result[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = self::describe( $row ); }
 		return $result;
 	}
 }

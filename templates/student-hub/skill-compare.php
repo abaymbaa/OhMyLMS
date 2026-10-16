@@ -7,6 +7,8 @@
  * @package OhMyLMS
  */
 
+use OhMyLMS\Skills\UnitReport;
+
 defined( 'ABSPATH' ) || exit;
 
 wp_enqueue_style( 'ohmylms-skill-matrix', plugins_url( 'assets/css/skill-matrix.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/skill-matrix.css' ) );
@@ -43,7 +45,11 @@ wp_enqueue_style( 'ohmylms-skill-matrix', plugins_url( 'assets/css/skill-matrix.
 										'student-hub/skill-cell.php',
 										array(
 											'cell_key'   => $compare_class['key'],
-											'cell_title' => sprintf( /* translators: %d: percentage of the class. */ __( '%d%% of the class is Proficient or above', 'ohmylms' ), (int) $compare_class['proficient_share'] ),
+											'cell_title' => array(
+												'most' => __( 'Most of the class is Proficient or above', 'ohmylms' ),
+												'half' => __( 'About half of the class is Proficient or above', 'ohmylms' ),
+												'few'  => __( 'Few of the class are Proficient or above', 'ohmylms' ),
+											)[ $compare_class['band'] ] ?? '',
 										)
 									);
 								} else {
@@ -57,5 +63,5 @@ wp_enqueue_style( 'ohmylms-skill-matrix', plugins_url( 'assets/css/skill-matrix.
 			</tbody>
 		</table>
 	</div>
-	<p class="ohmylms-mx-note"><?php echo esc_html( $compare['class'] ? __( 'The class average is anonymous and only shown for classes of five or more learners. It never names other learners.', 'ohmylms' ) : __( 'Levels use the Khan mastery names and are separate from grades.', 'ohmylms' ) ); ?></p>
+	<p class="ohmylms-mx-note"><?php echo esc_html( $compare['class'] ? sprintf( /* translators: %d: smallest number of classmates. */ __( 'The class average leaves out your child, is anonymous and only shown for classes with at least %d other learners. It never names other learners.', 'ohmylms' ), UnitReport::MIN_PEERS ) : __( 'Levels use the Khan mastery names and are separate from grades.', 'ohmylms' ) ); ?></p>
 <?php endif; ?>
