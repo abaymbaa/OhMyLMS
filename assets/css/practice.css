@@ -399,6 +399,95 @@
 	accent-color: #5753fa;
 }
 
+/* Progress dots: one per problem. Shape and the hidden label carry the state as well as colour. */
+.ohmylms-practice-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 8px 0 16px;
+}
+
+.ohmylms-practice-dots {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-practice-dots li {
+	position: relative;
+	box-sizing: border-box;
+	width: 14px;
+	height: 14px;
+	border: 2px solid #71717a;
+	border-radius: 50%;
+	background: transparent;
+}
+
+.ohmylms-practice-dots li.is-current {
+	border-color: #5753fa;
+	box-shadow: 0 0 0 2px #dcdcff;
+}
+
+.ohmylms-practice-dots li.is-right {
+	border-color: #15803d;
+	background: #15803d;
+}
+
+.ohmylms-practice-dots li.is-right::after {
+	position: absolute;
+	top: -3px;
+	left: 2px;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 14px;
+	content: "\2713";
+}
+
+.ohmylms-practice-dots li.is-help {
+	border-color: #71717a;
+	background: #a1a1aa;
+}
+
+.ohmylms-practice-dots li.is-wrong {
+	border-color: #b91c1c;
+	background: #fff;
+}
+
+.ohmylms-practice-dots li.is-wrong::after {
+	position: absolute;
+	top: -3px;
+	left: 3px;
+	color: #b91c1c;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 14px;
+	content: "\00d7";
+}
+
+.ohmylms-practice-restart {
+	padding: 4px 8px;
+	border: 0;
+	background: transparent;
+	color: #5753fa;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.ohmylms-practice-skip {
+	margin-inline-start: auto;
+}
+
+.ohmylms-practice-hint-step + .ohmylms-practice-hint-step,
+.ohmylms-practice-hint-step + .ohmylms-practice-more-hint {
+	margin-top: 8px;
+}
+
 .ohmylms-practice-question img {
 	max-width: 100%;
 	height: auto;

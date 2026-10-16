@@ -431,10 +431,54 @@
 		mount.appendChild( reply );
 	}
 
+	/**
+	 * One dot per problem in the session: right first time, right with help, not right, the
+	 * current question, or not reached yet. Colour is never the only cue (each dot has a label).
+	 */
+	function fillDots( list, state ) {
+		var total = Math.max( state.item_limit, state.answered, 1 );
+		var results = state.results || [];
+		var labels = {
+			right: i18n.dotRight || 'Right first time',
+			help: i18n.dotHelp || 'Right with help',
+			wrong: i18n.dotWrong || 'Not right',
+			current: i18n.dotCurrent || 'Current question',
+			left: i18n.dotLeft || 'Not answered yet',
+		};
+		list.innerHTML = '';
+		for ( var i = 0; i < total; i++ ) {
+			var status =
+				results[ i ] ||
+				( i === results.length && state.current ? 'current' : 'left' );
+			var item = el( 'li', { class: 'is-' + status } );
+			item.appendChild(
+				el( 'span', {
+					class: 'screen-reader-text',
+					text: labels[ status ],
+				} )
+			);
+			list.appendChild( item );
+		}
+	}
+
+	/** Splits an authored hint into steps; a horizontal rule in the hint starts a new step. */
+	function hintSteps( html ) {
+		return String( html || '' )
+			.split( /<hr\s*\/?>/i )
+			.map( function ( step ) {
+				return step.trim();
+			} )
+			.filter( Boolean );
+	}
+
 	function renderQuestion( state ) {
 		stage.innerHTML = '';
 		var view = state.current;
 		var lesson = state.style === 'lesson';
+		var hinted = false;
+		var dots = lesson
+			? null
+			: el( 'ol', { class: 'ohmylms-practice-dots' } );
 		var progress = el( 'p', {
 			class: 'ohmylms-practice-progress',
 			tabindex: '-1',
@@ -475,13 +519,62 @@
 			} );
 			hint.addEventListener( 'click', function () {
 				hint.disabled = true;
+				hinted = true;
 				request( 'practice/sessions/' + state.uuid + '/hint', {
 					item_id: view.item_id,
 				} ).then( function ( result ) {
+					var steps = hintSteps( result.hint );
+					var shown = 0;
 					var box = el( 'div', {
 						class: 'ohmylms-practice-hint',
-						html: result.hint || '',
+						'aria-live': 'polite',
 					} );
+					var more = el( 'button', {
+						type: 'button',
+						class: 'ohmylms-button outline ohmylms-practice-more-hint',
+					} );
+					function reveal() {
+						if ( steps.length < 2 ) {
+							box.appendChild(
+								el( 'div', { html: steps[ 0 ] || '' } )
+							);
+							shown = steps.length;
+						} else {
+							box.insertBefore(
+								el(
+									'div',
+									{ class: 'ohmylms-practice-hint-step' },
+									[
+										el( 'strong', {
+											text: format(
+												i18n.hintStep ||
+													'Hint %1$d of %2$d',
+												shown + 1,
+												steps.length
+											),
+										} ),
+										el( 'div', { html: steps[ shown ] } ),
+									]
+								),
+								more
+							);
+							shown++;
+						}
+						if ( shown < steps.length ) {
+							more.textContent = format(
+								i18n.anotherHint ||
+									'Get another hint (%1$d/%2$d)',
+								shown,
+								steps.length
+							);
+						} else if ( more.parentNode ) {
+							more.remove();
+						}
+						if ( window.ohmylmsTypeset )
+							window.ohmylmsTypeset( box );
+					}
+					more.addEventListener( 'click', reveal );
+					if ( steps.length > 1 ) box.appendChild( more );
 					( result.lessons || [] ).forEach( function ( lesson ) {
 						box.appendChild(
 							el( 'a', {
@@ -491,14 +584,45 @@
 						);
 					} );
 					feedback.appendChild( box );
+					reveal();
 				} );
 			} );
 			controls.appendChild( hint );
+		}
+		if ( state.can_skip && ! lesson ) {
+			var skip = el( 'button', {
+				type: 'button',
+				class: 'ohmylms-button outline ohmylms-practice-skip',
+				text: i18n.skip || 'Skip',
+			} );
+			skip.addEventListener( 'click', function () {
+				if ( skip.disabled || check.disabled ) return;
+				skip.disabled = true;
+				check.disabled = true;
+				request( 'practice/sessions/' + state.uuid + '/skip', {
+					item_id: view.item_id,
+				} )
+					.then( function ( result ) {
+						show( result.session );
+					} )
+					.catch( function ( error ) {
+						feedback.textContent = error.message;
+						skip.disabled = false;
+						check.disabled = false;
+					} );
+			} );
+			controls.appendChild( skip );
 		}
 		var tutor = el( 'div', { class: 'ohmylms-tutor' } );
 		if ( state.ai && state.ai.hint )
 			tutorButton( state, view, 'hint', i18n.tutorHint, tutor );
 		form.appendChild( tutor );
+		// Says "Not quite" while a wrong answer can still be tried again; the answer is not revealed.
+		var verdict = el( 'p', {
+			class: 'ohmylms-practice-verdict',
+			'aria-live': 'polite',
+		} );
+		form.appendChild( verdict );
 		form.appendChild( feedback );
 		form.appendChild( controls );
 		form.addEventListener( 'submit', function ( event ) {
@@ -512,6 +636,17 @@
 				.then( function ( result ) {
 					if ( window.ohmylmsRememberPractice )
 						window.ohmylmsRememberPractice( result );
+					if ( result.retry ) {
+						tone( false );
+						verdict.className = 'ohmylms-practice-verdict is-wrong';
+						verdict.textContent =
+							i18n.notQuite || 'Not quite! Give it another try!';
+						check.textContent = i18n.tryAgain || 'Try again';
+						check.disabled = false;
+						return;
+					}
+					verdict.className = 'ohmylms-practice-verdict';
+					verdict.textContent = '';
 					feedback.className =
 						'ohmylms-practice-feedback ' +
 						( result.correct ? 'is-correct' : 'is-wrong' );
@@ -522,10 +657,20 @@
 								? 'ohmylms-inline-correct'
 								: 'ohmylms-inline-incorrect',
 							text: result.correct
-								? i18n.correct
+								? ( result.assisted || hinted
+										? i18n.niceWork
+										: i18n.greatWork ) || i18n.correct
 								: i18n.incorrect,
 						} )
 					);
+					// The dots move on as soon as the answer is graded.
+					if ( dots && result.session )
+						fillDots(
+							dots,
+							Object.assign( {}, result.session, {
+								current: null,
+							} )
+						);
 					( result.feedback.correct_options || [] ).forEach(
 						function ( correct ) {
 							var input = form.querySelector(
@@ -604,14 +749,41 @@
 				);
 		}
 		stage.appendChild( progress );
-		stage.appendChild(
-			el( 'progress', {
-				class: 'ohmylms-practice-meter',
-				max: Math.max( state.item_limit, state.answered, 1 ),
-				value: state.answered,
-				'aria-label': i18n.checked || i18n.progress,
-			} )
-		);
+		if ( lesson ) {
+			stage.appendChild(
+				el( 'progress', {
+					class: 'ohmylms-practice-meter',
+					max: Math.max( state.item_limit, state.answered, 1 ),
+					value: state.answered,
+					'aria-label': i18n.checked || i18n.progress,
+				} )
+			);
+		} else {
+			dots.setAttribute(
+				'aria-label',
+				format( i18n.problems || 'Do %d problems', state.item_limit )
+			);
+			fillDots( dots, state );
+			var restart = el( 'button', {
+				type: 'button',
+				class: 'ohmylms-practice-restart',
+				text: i18n.restart || 'Start over',
+			} );
+			restart.addEventListener( 'click', function () {
+				if (
+					typeof window.confirm === 'function' &&
+					! window.confirm( i18n.restartAsk || '' )
+				)
+					return;
+				start();
+			} );
+			stage.appendChild(
+				el( 'div', { class: 'ohmylms-practice-bar' }, [
+					dots,
+					restart,
+				] )
+			);
+		}
 		stage.appendChild( form );
 		if ( window.ohmylmsTypeset ) window.ohmylmsTypeset( stage );
 		progress.focus();
@@ -741,6 +913,38 @@
 				: format( i18n.done, state.correct, state.answered ),
 		} );
 		stage.appendChild( summary );
+		if ( state.levels && state.levels.length ) {
+			var changes = el( 'ul', { class: 'ohmylms-level-changes' } );
+			state.levels.forEach( function ( entry ) {
+				var name = function ( key ) {
+					return i18n[ 'level_' + key ] || key;
+				};
+				var verb =
+					entry.change === 'up'
+						? i18n.levelUp || 'Leveled up'
+						: entry.change === 'down'
+							? i18n.levelDown || 'Leveled down'
+							: i18n.levelSame || 'Stayed at';
+				changes.appendChild(
+					el( 'li', { class: 'is-' + entry.change }, [
+						el( 'strong', { text: entry.skill + ': ' } ),
+						document.createTextNode(
+							entry.change === 'same'
+								? verb + ' ' + name( entry.after )
+								: verb +
+										': ' +
+										name( entry.before ) +
+										' → ' +
+										name( entry.after )
+						),
+					] )
+				);
+			} );
+			stage.appendChild(
+				el( 'h3', { text: i18n.levelsTitle || 'Skill level' } )
+			);
+			stage.appendChild( changes );
+		}
 		if ( lessonResult ) {
 			var missed = state.missed || [];
 			if ( ! missed.length ) {

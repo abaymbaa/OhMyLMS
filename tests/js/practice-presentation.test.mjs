@@ -4,7 +4,12 @@ import vm from 'node:vm';
 import fs from 'node:fs';
 
 // A small DOM double runs the authored runner; no grading or selection logic is duplicated.
-function fixture( failAnswer = false, remembered = null ) {
+function fixture(
+	failAnswer = false,
+	remembered = null,
+	extra = {},
+	answerResult = null
+) {
 	let focus;
 	class Element {
 		constructor( tag ) {
@@ -20,6 +25,16 @@ function fixture( failAnswer = false, remembered = null ) {
 		}
 		appendChild( child ) {
 			this.children.push( child );
+			child.parentNode = this;
+			return child;
+		}
+		insertBefore( child, before ) {
+			const at = this.children.indexOf( before );
+			this.children.splice(
+				at < 0 ? this.children.length : at,
+				0,
+				child
+			);
 			child.parentNode = this;
 			return child;
 		}
@@ -58,12 +73,18 @@ function fixture( failAnswer = false, remembered = null ) {
 		answered: 0,
 		correct: 0,
 		current: { item_id: 10, name: 'Add', settings: { type: 'numerical' } },
+		...extra,
 	};
 	let stored = remembered;
 	const context = {
 		document: {
 			querySelector: () => root,
 			createElement: ( tag ) => new Element( tag ),
+			createTextNode: ( text ) => ( {
+				text,
+				children: [],
+				attributes: {},
+			} ),
 		},
 		window: {
 			ohmylmsPractice: {
@@ -94,6 +115,8 @@ function fixture( failAnswer = false, remembered = null ) {
 		},
 		fetch: async ( url, options ) => {
 			requests.push( { url, options } );
+			if ( url.endsWith( '/answer' ) && answerResult )
+				return { ok: true, json: async () => answerResult };
 			if ( url.endsWith( '/answer' ) )
 				return {
 					ok: ! failAnswer,
@@ -111,6 +134,30 @@ function fixture( failAnswer = false, remembered = null ) {
 										current: null,
 									},
 								},
+				};
+			if ( url.endsWith( '/hint' ) )
+				return {
+					ok: true,
+					json: async () => ( {
+						hint: '<p>First</p><hr><p>Second</p>',
+						lessons: [],
+					} ),
+				};
+			if ( url.endsWith( '/skip' ) )
+				return {
+					ok: true,
+					json: async () => ( {
+						session: {
+							...state,
+							results: [],
+							skipped: 1,
+							current: {
+								item_id: 11,
+								name: 'Next',
+								settings: { type: 'numerical' },
+							},
+						},
+					} ),
 				};
 			return { ok: true, json: async () => state };
 		},
@@ -190,4 +237,169 @@ test( 'resume reads the remembered session without creating or answering one', a
 	assert.equal( f.requests.length, 1 );
 	assert.equal( f.requests[ 0 ].options.method, 'GET' );
 	assert.equal( f.requests[ 0 ].url, '/api/practice/sessions/session-a' );
+} );
+
+test( 'progress dots follow the server results and Skip replaces the question without grading it', async () => {
+	const f = fixture( false, null, {
+		can_skip: true,
+		results: [ 'right', 'help', 'wrong' ],
+		answered: 3,
+		item_limit: 5,
+	} );
+	f.button( 'Start' ).events.click();
+	await settle();
+	const dots = f
+		.all()
+		.find( ( node ) => node.attributes.class === 'ohmylms-practice-dots' );
+	assert.deepEqual(
+		dots.children.map( ( dot ) => dot.attributes.class ),
+		[ 'is-right', 'is-help', 'is-wrong', 'is-current', 'is-left' ]
+	);
+	assert.ok( f.all().find( ( node ) => node.text === 'Skip' ) );
+	f.all()
+		.find( ( node ) => node.text === 'Skip' )
+		.events.click();
+	await settle();
+	assert.equal(
+		f.requests.filter( ( r ) => r.url.endsWith( '/skip' ) ).length,
+		1
+	);
+	assert.equal(
+		f.requests.filter( ( r ) => r.url.endsWith( '/answer' ) ).length,
+		0
+	);
+} );
+
+test( 'Skip is not offered when the server does not allow it, or in lesson style', async () => {
+	const f = fixture();
+	f.button( 'Start' ).events.click();
+	await settle();
+	assert.equal(
+		f.all().find( ( node ) => node.text === 'Skip' ),
+		undefined
+	);
+	const g = fixture( false, null, {
+		can_skip: true,
+		style: 'lesson',
+		planned: 3,
+	} );
+	g.button( 'Start' ).events.click();
+	await settle();
+	assert.equal(
+		g.all().find( ( node ) => node.text === 'Skip' ),
+		undefined
+	);
+} );
+
+test( 'a hint with horizontal rules is shown one step at a time', async () => {
+	const f = fixture( false, null, {
+		current: {
+			item_id: 10,
+			name: 'Add',
+			has_hint: true,
+			settings: { type: 'numerical' },
+		},
+	} );
+	f.button( 'Start' ).events.click();
+	await settle();
+	const hint = f
+		.all()
+		.find(
+			( node ) =>
+				node.tag === 'button' &&
+				node.attributes.class === 'ohmylms-button outline'
+		);
+	hint.events.click();
+	await settle();
+	const steps = () =>
+		f
+			.all()
+			.filter(
+				( node ) =>
+					node.attributes.class === 'ohmylms-practice-hint-step'
+			);
+	assert.equal( steps().length, 1 );
+	const more = f
+		.all()
+		.find( ( node ) =>
+			String( node.attributes.class ).includes(
+				'ohmylms-practice-more-hint'
+			)
+		);
+	assert.ok( more );
+	more.events.click();
+	assert.equal( steps().length, 2 );
+	assert.equal(
+		f
+			.all()
+			.some( ( node ) =>
+				String( node.attributes.class ).includes(
+					'ohmylms-practice-more-hint'
+				)
+			),
+		false
+	);
+} );
+
+test( 'a wrong answer that can be tried again keeps the question open and reveals nothing', async () => {
+	const f = fixture(
+		false,
+		null,
+		{ retry: true },
+		{
+			correct: false,
+			retry: true,
+			feedback: {},
+		}
+	);
+	f.button( 'Start' ).events.click();
+	await settle();
+	const form = f.all().find( ( node ) => node.tag === 'form' );
+	const check = f.button( 'Check' );
+	form.events.submit( { preventDefault() {} } );
+	await settle();
+	assert.equal( check.text, 'Try again' );
+	assert.equal( check.disabled, false );
+	assert.equal( check.hidden, undefined );
+	assert.equal( f.button( 'Next' ), undefined );
+	const verdict = f
+		.all()
+		.find(
+			( node ) => node.className === 'ohmylms-practice-verdict is-wrong'
+		);
+	assert.equal( verdict.text, 'Not quite! Give it another try!' );
+	assert.equal( f.stored(), 'session-a' );
+} );
+
+test( 'a finished practice lists how each skill level changed', async () => {
+	const f = fixture( false, null, {
+		status: 'complete',
+		current: null,
+		answered: 3,
+		correct: 2,
+		levels: [
+			{
+				skill: 'Decimals',
+				before: 'attempted',
+				after: 'familiar',
+				change: 'up',
+			},
+			{
+				skill: 'Rounding',
+				before: 'proficient',
+				after: 'proficient',
+				change: 'same',
+			},
+		],
+	} );
+	f.button( 'Start' ).events.click();
+	await settle();
+	const list = f
+		.all()
+		.find( ( node ) => node.attributes.class === 'ohmylms-level-changes' );
+	assert.equal( list.children.length, 2 );
+	assert.deepEqual(
+		list.children.map( ( item ) => item.attributes.class ),
+		[ 'is-up', 'is-same' ]
+	);
 } );

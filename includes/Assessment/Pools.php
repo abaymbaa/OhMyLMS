@@ -155,6 +155,25 @@ final class Pools {
 		return (int) $candidates[0]['version_id'];
 	}
 
+	/**
+	 * How many questions a skill can supply to a pool: distinct families among its approved questions.
+	 *
+	 * @param int $term_id Skill.
+	 * @return int
+	 */
+	public static function available( $term_id ) {
+		$families = array();
+		foreach ( self::candidates(
+			array(
+				'term_id'        => (int) $term_id,
+				'include_secure' => true,
+			)
+		) as $row ) {
+			$families[ self::family_key( $row ) ] = true;
+		}
+		return count( $families );
+	}
+
 	/** Approved, non-archived versions matching a rule. */
 	public static function candidates( array $rule ) {
 		global $wpdb;

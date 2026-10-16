@@ -14,6 +14,7 @@ Enable the existing MCP add-on for LMS tools. The first version offers exactly t
 | List lessons; read a lesson for editing context | Create a new shared skill |
 | List syllabuses; list syllabus objectives | |
 | List shared skills; read a shared skill | |
+| Search the skill catalogue; list a unit's skills with how many questions exist for each | Propose a new **draft** quiz, unit test or course challenge for chosen skills (see below) |
 
 There is no publication, deletion, enrolment, grading, question-answer-key access, existing-lesson replacement, arbitrary REST invocation, or filesystem execution in the LMS tools. Creation IDs and extra arguments are rejected. Each proposed write shows its concrete fields and waits for **Create now**. A receipt records the actual tool result. A subsequent provider outage does not make an executed write replayable.
 
@@ -30,3 +31,16 @@ Up to three files can accompany a message. Each may be up to 5 MB, subject to th
 The server validates actual HTTP uploads, file types, size and ownership, and uses opaque administrator-bound handles rather than accepting arbitrary provider file IDs. Documents use Responses input_file and images use input_image. Provider uploads have an explicit one-hour expiry; abandoned uploads also expire. Attachment filenames appear beside the submitted message. Removing an unsent, already-uploaded file requests provider deletion. Files cannot become tool instructions or bypass action review. See the [official file-input guide](https://developers.openai.com/api/docs/guides/file-inputs) and [Files expiry reference](https://developers.openai.com/api/reference/resources/files/methods/create).
 
 The development section and its worker routes are no longer registered in the chat. Existing worker source/journals are retained without an active in-LMS entry point.
+
+## Building quizzes and unit tests with the assistant
+
+Ask in plain words, for example "Make a unit test for Unit 3 with two questions per skill." The assistant reads the unit (`get_course_chapters`,
+`list_unit_skills`), looks for skills if needed (`search_skill_catalogue`) and proposes `create_skill_assessment`. Like the other creation
+tools it only proposes: nothing is made until the administrator approves the action in the chat.
+
+- It can only create a **draft** and can never publish; a person publishes it from the quiz editor.
+- It uses existing approved questions from the bank, in their own question types. It cannot write questions, answers or marks. New questions
+  from AI go through the import tools and wait for human approval before any assessment can draw them.
+- It names skills the unit already teaches, and `list_unit_skills` shows how many different approved questions each skill has. A skill with
+  fewer than the requested questions makes the build fail with the shortage message, and nothing is left behind.
+- Up to 40 skills, 1 to 10 questions per skill and 60 questions in all. The unit placement needs edit rights on the unit's course.

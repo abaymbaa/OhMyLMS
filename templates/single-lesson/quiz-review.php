@@ -111,6 +111,35 @@ $stamp          = static function ( $row ) {
 				<?php endforeach; ?>
 			</ul>
 
+			<?php if ( ! empty( $levels ) ) : ?>
+				<div class="ohmylms-review-levels">
+					<h3><?php esc_html_e( 'Skill levels', 'ohmylms' ); ?></h3>
+					<ul>
+						<?php
+						foreach ( $levels as $level ) :
+							$level_before = \OhMyLMS\Skills\MasteryDisplay::label( $level['before'] );
+							$level_after  = \OhMyLMS\Skills\MasteryDisplay::label( $level['after'] );
+							?>
+							<li class="is-<?php echo esc_attr( $level['change'] ); ?>">
+								<strong><?php echo esc_html( $level['skill'] ); ?>:</strong>
+								<?php
+								if ( 'up' === $level['change'] ) {
+									/* translators: 1: level before, 2: level after */
+									echo esc_html( sprintf( __( 'Leveled up: %1$s → %2$s', 'ohmylms' ), $level_before, $level_after ) );
+								} elseif ( 'down' === $level['change'] ) {
+									/* translators: 1: level before, 2: level after */
+									echo esc_html( sprintf( __( 'Leveled down: %1$s → %2$s', 'ohmylms' ), $level_before, $level_after ) );
+								} else {
+									/* translators: %s: level */
+									echo esc_html( sprintf( __( 'Stayed at %s', 'ohmylms' ), $level_after ) );
+								}
+								?>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
+
 			<?php if ( $retry && ! $retrying && $attempt ) : ?>
 				<p class="ohmylms-review-actions">
 					<a class="ohmylms-button ohmylms-review-retry-button" href="<?php echo esc_url( AnswerReview::url( $attempt['quiz_attempt_id'], array( 'retry' => 1 ) ) . '#' . $anchor . '-retry' ); ?>">

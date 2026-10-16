@@ -55,7 +55,12 @@ try {
     wp_set_current_user( $owner->ID );
     assistant_check( is_wp_error( AssistantTools::validate( 'save_lesson', array( 'id' => 1, 'name' => 'Bad', 'content' => '' ) ) ), 'Existing lesson edit accepted.' );
     assistant_check( is_wp_error( AssistantTools::validate( 'delete_course', array( 'id' => 1 ) ) ), 'Deletion exposed.' );
-    assistant_check( count( AssistantTools::definitions() ) === 11, 'Unexpected assistant tool coverage.' );
+    assistant_check( count( AssistantTools::definitions() ) === 14, 'Unexpected assistant tool coverage.' );
+    $assistant_tools = AssistantTools::definitions();
+    assistant_check( $assistant_tools['create_skill_assessment']['write'] && ! $assistant_tools['list_unit_skills']['write'] && ! $assistant_tools['search_skill_catalogue']['write'], 'Skill assessment tool write flags wrong.' );
+    assistant_check( ! is_wp_error( AssistantTools::validate( 'create_skill_assessment', array( 'title' => 'T', 'style' => 'unit-test', 'skills' => array( 1, 2 ), 'per_skill' => 1, 'chapter_id' => 0, 'time_limit' => 0 ) ) ), 'A valid skill assessment proposal was refused.' );
+    assistant_check( is_wp_error( AssistantTools::validate( 'create_skill_assessment', array( 'title' => 'T', 'style' => 'unit-test', 'skills' => array( 1 ), 'per_skill' => 1, 'chapter_id' => 0, 'time_limit' => 0, 'publish' => true ) ) ), 'The assistant could ask to publish.' );
+    assistant_check( is_wp_error( AssistantTools::validate( 'create_skill_assessment', array( 'title' => 'T', 'style' => 'exam', 'skills' => array( 1 ), 'per_skill' => 1, 'chapter_id' => 0, 'time_limit' => 0 ) ) ), 'An unknown style was accepted.' );
     $status = assistant_request( '' ); assistant_check( 200 === $status->get_status() && ! isset( $status->get_data()['settings']['key'] ), 'Unsafe configuration response.' );
     $settings = AssistantSettings::save( array( 'enabled' => true, 'model' => 'test-model', 'key' => 'isolated-test-key-123456789' ) );
     assistant_check( ! is_wp_error( $settings ) && $settings['configured'] && ! str_contains( wp_json_encode( $settings ), 'isolated-test-key' ), 'Key exposure or settings failure.' );

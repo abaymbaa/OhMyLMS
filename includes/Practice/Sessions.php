@@ -99,7 +99,8 @@ final class Sessions {
 			$replay = self::next_replay( $items, (int) $session['item_limit'] );
 			return $replay ? self::add_item( (int) $session['id'], (int) $replay['version_id'], count( $items ) + 1, null, array( 'replay_of' => (int) $replay['id'] ) ) : self::complete( $session, 'limit' );
 		}
-		if ( ! $lesson && count( $items ) >= (int) $session['item_limit'] ) {
+		// A skipped question is replaced, so it does not use up one of the learner's problems.
+		if ( ! $lesson && self::counted( $items ) >= (int) $session['item_limit'] ) {
 			return self::complete( $session, 'limit' ); }
 		$band   = Selector::band(
 			$policy['band'] ?? 'standard',
@@ -108,7 +109,7 @@ final class Sessions {
 					$items,
 					static function ( $item ) {
 						// Replays do not move the difficulty band: they repeat a question already judged.
-						return $item['answered_at'] !== null && empty( $item['display']['replay_of'] );
+						return $item['answered_at'] !== null && empty( $item['display']['replay_of'] ) && ! self::skipped( $item );
 					}
 				)
 			)
@@ -119,6 +120,23 @@ final class Sessions {
 			return $replay ? self::add_item( (int) $session['id'], (int) $replay['version_id'], count( $items ) + 1, null, array( 'replay_of' => (int) $replay['id'] ) ) : self::complete( $session, 'exhausted' ); }
 		$wpdb->update( Schema::table( 'practice_sessions' ), array( 'policy' => wp_json_encode( array( 'band' => $band ) + $policy ) ), array( 'id' => (int) $session['id'] ) );
 		return self::add_item( (int) $session['id'], (int) $next['version_id'], count( $items ) + 1 );
+	}
+
+	/** Whether an item was skipped by the learner instead of answered. */
+	private static function skipped( array $item ) {
+		return ! empty( $item['display']['skipped'] );
+	}
+
+	/** Items that use up one of the session's problems: everything except skipped questions. */
+	private static function counted( array $items ) {
+		return count(
+			array_filter(
+				$items,
+				static function ( $item ) {
+					return ! self::skipped( $item );
+				}
+			)
+		);
 	}
 
 	/**
@@ -134,7 +152,7 @@ final class Sessions {
 		if ( count( $replayed ) >= max( 1, (int) ceil( $planned / 2 ) ) ) {
 			return null; }
 		foreach ( $items as $item ) {
-			if ( empty( $item['display']['replay_of'] ) && $item['answered_at'] !== null && (int) $item['correct'] === 0 && empty( $replayed[ (int) $item['id'] ] ) ) {
+			if ( empty( $item['display']['replay_of'] ) && $item['answered_at'] !== null && (int) $item['correct'] === 0 && ! self::skipped( $item ) && empty( $replayed[ (int) $item['id'] ] ) ) {
 				return $item; }
 		}
 		return null;
@@ -286,7 +304,7 @@ final class Sessions {
 			array_filter(
 				$items,
 				static function ( $item ) {
-					return $item['answered_at'] !== null;
+					return $item['answered_at'] !== null && ! self::skipped( $item );
 				}
 			)
 		);
@@ -301,6 +319,14 @@ final class Sessions {
 			) : null,
 			'item_limit' => (int) $session['item_limit'],
 			'answered'   => count( $answered ),
+			// One entry per answered question, in order: right, help (right after a hint), or wrong.
+			'results'    => array_map(
+				static function ( $item ) {
+					return (int) $item['correct'] === 1 ? ( (int) $item['assisted'] === 1 ? 'help' : 'right' ) : 'wrong';
+				},
+				$answered
+			),
+			'skipped'    => count( $items ) - self::counted( $items ),
 			'correct'    => count(
 				array_filter(
 					$answered,
@@ -314,6 +340,10 @@ final class Sessions {
 			// What tutor help the learner can ask for (AI hint and explanation), never keys or settings.
 			'ai'         => \OhMyLMS\AI\Feedback::availability( $session ),
 		);
+		$state['attempts'] = $current ? (int) $current['tries'] : 0;
+		$state['retry']    = 'active' === $session['status'] && self::retry_allowed( $session );
+		// Skipping is for the standard runner only, and bounded so it cannot be used to cycle the pool.
+		$state['can_skip'] = ( $session['policy']['style'] ?? '' ) !== 'lesson' && 'active' === $session['status'] && $state['skipped'] < (int) $session['item_limit'];
 		if ( ( $session['policy']['style'] ?? '' ) === 'lesson' ) {
 			$replays          = array_filter( $items, static function ( $item ) {
 				return ! empty( $item['display']['replay_of'] );
@@ -331,6 +361,9 @@ final class Sessions {
 			$state['notice'] = __( 'You have answered every available practice question for this skill. Ask your teacher for more, or come back later for a review.', 'ohmylms' );
 		}
 		if ( $session['status'] === 'complete' && (int) $session['student_id'] ) {
+			// With the Khan level rules on: what this practice did to the skill's level.
+			if ( \OhMyLMS\Skills\Khan\Settings::enabled() ) {
+				$state['levels'] = \OhMyLMS\Skills\Khan\Levels::changes( (int) $session['student_id'], 'practice', (int) $session['id'] ); }
 			$state['recommendations'] = Recommendations::for_student( (int) $session['student_id'], 3 );
 			// XP, the daily goal, the mastery score change and the streak, when those are on.
 			$reward = \OhMyLMS\Engagement\SessionReward::for_session( $session );
@@ -360,19 +393,67 @@ final class Sessions {
 			return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) ); }
 		if ( $item['answered_at'] !== null ) {
 			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
-		$graded = self::grade_item( $session, $item, $response, 'practice' );
+		$graded = self::grade_item( $session, $item, $response, 'practice', null, self::retry_allowed( $session ) );
 		if ( is_wp_error( $graded ) ) {
 			return $graded; }
-		$fresh = self::get( $session['uuid'] );
-		self::issue( $fresh );
-		return $graded + array( 'session' => self::state( self::get( $session['uuid'] ) ) );
+		// A wrong answer that may be tried again leaves the question open: nothing new is issued yet.
+		if ( empty( $graded['retry'] ) ) {
+			self::issue( self::get( $session['uuid'] ) ); }
+		// "assisted" lets the runner say well done differently when a hint was used first.
+		return $graded + array(
+			'assisted' => 1 === (int) $item['assisted'],
+			'session'  => self::state( self::get( $session['uuid'] ) ),
+		);
+	}
+
+	/**
+	 * Skip the current question: it is not graded, creates no evidence and is replaced by another
+	 * question, so it does not use up one of the session's problems. Standard runner only.
+	 *
+	 * @param array $session Session row.
+	 * @param int   $item_id Current item id.
+	 * @return array|\WP_Error New session state.
+	 */
+	public static function skip( array $session, $item_id ) {
+		global $wpdb;
+		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );
+		if ( is_wp_error( $access ) ) {
+			return $access; }
+		if ( 'active' !== $session['status'] || ( $session['policy']['style'] ?? '' ) === 'lesson' ) {
+			return new \WP_Error( 'ohmylms_practice_closed', __( 'This question cannot be skipped.', 'ohmylms' ), array( 'status' => 409 ) ); }
+		$items = self::items( $session['id'] );
+		$item  = null;
+		foreach ( $items as $candidate ) {
+			if ( (int) $candidate['id'] === (int) $item_id ) {
+				$item = $candidate; }
+		}
+		if ( ! $item ) {
+			return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) ); }
+		if ( null !== $item['answered_at'] ) {
+			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
+		if ( count( $items ) - self::counted( $items ) >= (int) $session['item_limit'] ) {
+			return new \WP_Error( 'ohmylms_practice_skip_limit', __( 'You have skipped as many questions as this practice allows. Answer this one.', 'ohmylms' ), array( 'status' => 409 ) ); }
+		$display            = $item['display'];
+		$display['skipped'] = 1;
+		$updated            = $wpdb->query(
+			$wpdb->prepare(
+				'UPDATE ' . Schema::table( 'practice_items' ) . ' SET display=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL',
+				wp_json_encode( $display ),
+				current_time( 'mysql', true ),
+				(int) $item['id']
+			)
+		);
+		if ( 1 !== $updated ) {
+			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
+		self::issue( self::get( $session['uuid'] ) );
+		return array( 'session' => self::state( self::get( $session['uuid'] ) ) );
 	}
 
 	/**
 	 * Shared grading for practice and inline items: record response, grade event and receipt.
 	 * $scope is the token scope the learner's form was rendered with (default: the item).
 	 */
-	public static function grade_item( array $session, array $item, $response, $source_type, $scope = null ) {
+	public static function grade_item( array $session, array $item, $response, $source_type, $scope = null, $retry = false ) {
 		global $wpdb;
 		$snapshot = AttemptItems::snapshot( $item );
 		if ( ! $snapshot ) {
@@ -384,6 +465,11 @@ final class Sessions {
 			return $grade; }
 		if ( $grade['pending'] ) {
 			return new \WP_Error( 'ohmylms_practice_manual', __( 'This question needs teacher marking and cannot be practised here.', 'ohmylms' ), array( 'status' => 409 ) ); }
+		if ( $retry && 'practice' === $source_type ) {
+			$retried = self::grade_retry( $session, $item, $snapshot, $scope, $grade );
+			if ( null !== $retried ) {
+				return $retried; }
+		}
 		$receipt = hash_hmac( 'sha256', $session['uuid'] . ':' . $item['id'] . ':' . $grade['fraction'], wp_salt( 'auth' ) );
 		try {
 			Transaction::run(
@@ -427,6 +513,93 @@ final class Sessions {
 		return array(
 			'item_id'       => (int) $item['id'],
 			'correct'       => $grade['correct'],
+			'fraction'      => $grade['fraction'],
+			'feedback'      => self::feedback( $snapshot, $scope ),
+			'receipt'       => $receipt,
+			'question_uuid' => $item['question_uuid'],
+		);
+	}
+
+	/**
+	 * Whether a wrong practice answer may be tried again: only with the Khan level rules on, and not in
+	 * the fast-feedback lesson style, which has its own replay of misses.
+	 *
+	 * @param array $session Session row.
+	 * @return bool
+	 */
+	public static function retry_allowed( array $session ) {
+		return \OhMyLMS\Skills\Khan\Settings::enabled() && ( $session['policy']['style'] ?? '' ) !== 'lesson';
+	}
+
+	/**
+	 * Grade a practice answer where wrong answers can be tried again.
+	 *
+	 * The first answer is the learner's first try and is recorded as a grade event exactly as before, right or
+	 * wrong. A wrong first answer leaves the question open: nothing is revealed and the question is not closed.
+	 * Later answers are not new evidence; the first one that is right closes the question as "right with help".
+	 *
+	 * @param array            $session  Session row.
+	 * @param array            $item     Item row, read before this answer.
+	 * @param QuestionSnapshot $snapshot Frozen question.
+	 * @param string           $scope    Token scope.
+	 * @param array            $grade    Grader result.
+	 * @return array|\WP_Error|null Null when the ordinary path should handle it (a right first answer).
+	 */
+	private static function grade_retry( array $session, array $item, QuestionSnapshot $snapshot, $scope, array $grade ) {
+		global $wpdb;
+		$table = Schema::table( 'practice_items' );
+		$first = 0 === (int) $item['tries'];
+		if ( $first && $grade['correct'] ) {
+			return null; }
+		$taken = new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) );
+		if ( ! $grade['correct'] ) {
+			try {
+				Transaction::run(
+					static function () use ( $wpdb, $table, $session, $item, $grade, $first ) {
+						$updated = $wpdb->query( $wpdb->prepare( "UPDATE $table SET response=%s, fraction=%f, correct=0, tries=tries+1 WHERE id=%d AND answered_at IS NULL", wp_json_encode( $grade['answer'] ), $grade['fraction'], (int) $item['id'] ) );
+						if ( 1 !== $updated ) {
+							throw new \RuntimeException( 'Item already answered' ); }
+						if ( $first ) {
+							GradeEvents::record(
+								array(
+									'source_type' => 'practice',
+									'source_id'   => (int) $session['id'],
+									'item_id'     => (int) $item['id'],
+									'student_id'  => (int) $session['student_id'],
+									'question_id' => (int) $item['question_id'],
+									'version_id'  => (int) $item['version_id'],
+									'awarded'     => $grade['fraction'],
+									'max_marks'   => 1,
+									'fraction'    => $grade['fraction'],
+									'correct'     => false,
+									'grader'      => 'auto',
+									'reason'      => $grade['present'] ? 'answered' : 'unanswered',
+								)
+							); }
+					}
+				);
+			} catch ( \Throwable $error ) {
+				return $taken; }
+			if ( $first ) {
+				Evidence::soon();
+				do_action( 'ohmylms_practice_answered', (int) $session['id'], (int) $item['id'], false, 'practice' ); }
+			return array(
+				'item_id'       => (int) $item['id'],
+				'correct'       => false,
+				'retry'         => true,
+				'fraction'      => $grade['fraction'],
+				'feedback'      => array(),
+				'question_uuid' => $item['question_uuid'],
+			);
+		}
+		$receipt = hash_hmac( 'sha256', $session['uuid'] . ':' . $item['id'] . ':' . $grade['fraction'], wp_salt( 'auth' ) );
+		$closed  = $wpdb->query( $wpdb->prepare( "UPDATE $table SET response=%s, fraction=%f, correct=1, assisted=1, tries=tries+1, receipt=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL", wp_json_encode( $grade['answer'] ), $grade['fraction'], $receipt, current_time( 'mysql', true ), (int) $item['id'] ) );
+		if ( 1 !== $closed ) {
+			return $taken; }
+		return array(
+			'item_id'       => (int) $item['id'],
+			'correct'       => true,
+			'assisted'      => true,
 			'fraction'      => $grade['fraction'],
 			'feedback'      => self::feedback( $snapshot, $scope ),
 			'receipt'       => $receipt,

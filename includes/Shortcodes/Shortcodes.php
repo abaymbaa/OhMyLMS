@@ -19,6 +19,7 @@ class Shortcodes {
 		\OhMyLMS\Student\Hub::init();
 		\OhMyLMS\Utility\Terminology::init();
 		\OhMyLMS\QuestionBank\ImportPage::init();
+		\OhMyLMS\Assessment\SkillAssessmentPage::init();
 		\OhMyLMS\Student\LearnerCatalog::init();
 		\OhMyLMS\Student\SettingsSave::init();
 		\OhMyLMS\Student\PlayerContext::init();

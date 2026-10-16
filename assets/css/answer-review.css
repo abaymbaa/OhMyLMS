@@ -424,3 +424,26 @@
 	color: var(--review-orange-edge);
 	font-weight: 800;
 }
+
+/* What the attempt did to each skill's level. */
+.ohmylms-review-levels {
+	margin: 12px 0 0;
+}
+
+.ohmylms-review-levels h3 {
+	margin: 0 0 4px;
+	font-size: 1rem;
+}
+
+.ohmylms-review-levels ul {
+	margin: 0;
+	padding-left: 20px;
+}
+
+.ohmylms-review-levels li.is-up {
+	color: #166534;
+}
+
+.ohmylms-review-levels li.is-down {
+	color: #991b1b;
+}

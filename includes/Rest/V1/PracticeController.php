@@ -78,6 +78,17 @@ class PracticeController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/practice/sessions/(?P<uuid>[0-9a-f-]{36})/skip',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'skip' ),
+					'permission_callback' => array( $this, 'owner_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/practice/sessions/(?P<uuid>[0-9a-f-]{36})/ai',
 			array(
 				array(
@@ -220,6 +231,14 @@ class PracticeController extends RestController {
 		if ( is_wp_error( $session ) ) {
 			return $session; }
 		$result = Sessions::hint( $session, (int) $request['item_id'] );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
+	}
+
+	public function skip( WP_REST_Request $request ) {
+		$session = $this->session( $request );
+		if ( is_wp_error( $session ) ) {
+			return $session; }
+		$result = Sessions::skip( $session, (int) $request['item_id'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 

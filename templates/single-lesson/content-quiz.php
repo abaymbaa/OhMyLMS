@@ -20,6 +20,8 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 	<div class="ohmylms-lesson-content-body content-type-quiz">
 		<h1><?php echo get_the_title(); ?></h1>
 
+		<?php echo \OhMyLMS\Quiz\Intro::render( $quiz ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped by the intro. ?>
+
 		<ul class="ohmylms-assignment-quiz-meta">
 			<li class="duratioin">
 				<strong><?php echo __( 'Questions: ', 'ohmylms' ); ?></strong>

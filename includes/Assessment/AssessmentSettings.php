@@ -12,11 +12,14 @@ defined( 'ABSPATH' ) || exit;
 final class AssessmentSettings {
 	const META     = '_ohmylms_assessment_settings';
 	const KINDS    = array( 'quiz', 'exam', 'practice' );
+	// How the assessment is presented: a short quiz, a unit test, or a course challenge (mixed-skill checks).
+	const STYLES   = array( 'quiz', 'unit-test', 'course-challenge' );
 	const FEEDBACK = array( 'immediate', 'after_close', 'manual' );
 
 	public static function defaults() {
 		return array(
 			'kind'             => 'quiz',
+			'style'            => 'quiz',
 			'feedback_release' => 'immediate',
 			'released'         => false,
 			'available_from'   => '',
@@ -49,6 +52,8 @@ final class AssessmentSettings {
 			$settings = array_merge( $settings, self::exam_preset() ); }
 		if ( ! in_array( $settings['kind'], self::KINDS, true ) ) {
 			return self::invalid( __( 'Unknown assessment kind.', 'ohmylms' ) ); }
+		if ( ! in_array( $settings['style'], self::STYLES, true ) ) {
+			return self::invalid( __( 'Unknown assessment style.', 'ohmylms' ) ); }
 		if ( ! in_array( $settings['feedback_release'], self::FEEDBACK, true ) ) {
 			return self::invalid( __( 'Unknown feedback release policy.', 'ohmylms' ) ); }
 		$settings['released'] = rest_sanitize_boolean( $settings['released'] );

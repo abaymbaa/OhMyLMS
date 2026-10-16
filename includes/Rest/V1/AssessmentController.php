@@ -67,6 +67,18 @@ class AssessmentController extends RestController {
 				),
 			)
 		);
+		// A quiz, unit test or course challenge that draws questions for a list of skills.
+		register_rest_route(
+			$this->namespace,
+			'/skill-assessments',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_skill_assessment' ),
+					'permission_callback' => array( $this, 'author_permission' ),
+				),
+			)
+		);
 		register_rest_route(
 			$this->namespace,
 			'/quiz/(?P<id>[\d]+)/revisions',
@@ -87,6 +99,19 @@ class AssessmentController extends RestController {
 
 	public function admin_permission() {
 		return AccessPolicy::check( current_user_can( 'manage_options' ) );
+	}
+
+	public function author_permission() {
+		return AccessPolicy::check( current_user_can( 'edit_posts' ) );
+	}
+
+	public function create_skill_assessment( WP_REST_Request $request ) {
+		$result = \OhMyLMS\Assessment\SkillAssessment::create( (array) $request->get_json_params() );
+		if ( is_wp_error( $result ) ) {
+			return $result; }
+		$response = rest_ensure_response( $result );
+		$response->set_status( 201 );
+		return $response;
 	}
 
 	public function quiz_permission( WP_REST_Request $request ) {

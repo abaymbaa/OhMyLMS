@@ -51,6 +51,8 @@ final class Mastery {
 			ARRAY_A
 		);
 		$state               = self::evaluate( $rows, $rules, time() );
+		// With the Khan model on, a skill that has Khan history takes its level from those rules.
+		$state               = Khan\Levels::override_state( $state, (int) $student_id, (int) $term_id );
 		$state['student_id'] = (int) $student_id;
 		$state['term_id']    = (int) $term_id;
 		$state['updated_at'] = current_time( 'mysql', true );

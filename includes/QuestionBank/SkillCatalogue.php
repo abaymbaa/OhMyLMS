@@ -53,7 +53,8 @@ final class SkillCatalogue {
 		$score_args = array();
 		foreach ( $words as $word ) {
 			$like       = '%' . $wpdb->esc_like( $word ) . '%';
-			$score[]    = '(MAX(t.name LIKE %s)*3 + MAX(c.meta_value LIKE %s)*3 + MAX(o.meta_value LIKE %s) + MAX(tt.description LIKE %s) + MAX(u.meta_value=%s)*10)';
+			// A skill without a code, objective or UUID has NULL there; COALESCE keeps its score from turning NULL and hiding it.
+			$score[]    = '(COALESCE(MAX(t.name LIKE %s),0)*3 + COALESCE(MAX(c.meta_value LIKE %s),0)*3 + COALESCE(MAX(o.meta_value LIKE %s),0) + COALESCE(MAX(tt.description LIKE %s),0) + COALESCE(MAX(u.meta_value=%s),0)*10)';
 			$score_args = array_merge( $score_args, array( $like, $like, $like, $like, $word ) );
 		}
 		$score_sql   = $score ? implode( ' + ', $score ) : '0';
@@ -61,7 +62,7 @@ final class SkillCatalogue {
 		$filter      = $parent_id >= 0 ? ' WHERE tt.parent=%d' : '';
 		$filter_args = $parent_id >= 0 ? array( (int) $parent_id ) : array();
 		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Read-only lookup; the fragments hold only placeholders and core table names.
-		$inner = "SELECT t.term_id, MIN(c.meta_value) AS code, MIN(t.name) AS name, MAX(c.meta_value=%s) AS exact, $score_sql AS score $joins$filter GROUP BY t.term_id $having";
+		$inner = "SELECT t.term_id, MIN(c.meta_value) AS code, MIN(t.name) AS name, COALESCE(MAX(c.meta_value=%s),0) AS exact, $score_sql AS score $joins$filter GROUP BY t.term_id $having";
 		$base  = array_merge( array( $search ), $score_args, $args, $filter_args );
 		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM ($inner) m", $base ) );
 		$ids   = array_map(

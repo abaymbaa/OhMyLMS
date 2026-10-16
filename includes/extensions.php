@@ -32,6 +32,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Assessment\MathLive::init();
 \OhMyLMS\Engagement\StreakHooks::init();
 \OhMyLMS\Engagement\XpHooks::init();
+\OhMyLMS\Skills\Khan\Levels::init();
 \OhMyLMS\Practice\Dashboard::init();
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Learning\NativeLessonEditor::init();

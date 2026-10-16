@@ -306,3 +306,14 @@ For real HTTP transport verification, start a separate PHP development server on
 Run the suite with `OHMYLMS_MCP_TEST_URL=http://127.0.0.1:8107/?rest_route=/ohmylms/v1/mcp`.
 Stop the development server when finished. The loopback router permits HTTP only for this
 disposable environment and must never be deployed publicly.
+
+## Skill assessments: read a unit, propose a draft
+
+Two tools (ability IDs `ohmylms/list-unit-skills` and `ohmylms/create-skill-assessment`, internal routes under `/mcp-skill-assessments`):
+
+- `list_unit_skills` (read only): the skills taught in one unit (chapter), each with `available`, the number of different approved questions.
+- `create_skill_assessment`: `title`, `style` (`quiz`, `unit-test`, `course-challenge`), `skills` (1-40 skill IDs), `per_skill` (1-10),
+  optional `chapter_id` and `time_limit`. It always creates a **draft**; a `publish` argument is ignored. It draws existing approved
+  questions per skill (see section 9 of `docs/learner-experience/KHAN-ACTIVITIES.md`) and never creates questions.
+
+The same builder is available to people on **OhMyLMS -> Skill assessments** and as `POST /ohmylms/v1/skill-assessments`.

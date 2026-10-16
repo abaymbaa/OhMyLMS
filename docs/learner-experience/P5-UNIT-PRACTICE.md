@@ -16,7 +16,8 @@ a fresh pixel-for-pixel reference comparison.
 - Practice entry counts the authorized selector pool without exposing question IDs, snapshots or
   answer keys. Finite questions are counted once; templates may fill the configured 3–30 limit.
   Counts are an upper bound at page load. Session limits, pool exhaustion and lesson-style review
-  remain engine decisions. The progress meter counts checked answers against the session limit.
+  remain engine decisions. The standard runner shows one progress dot per problem (see KHAN-ACTIVITIES.md); the
+  lesson style keeps its own segmented bar.
 - Check, hints, server feedback, Next, summary and Practice again retain the real runner behavior.
   Controls stay in reach and focus follows question progress, Next and the summary. Submitting twice
   while a check is pending sends one answer request; an error permits retry.
@@ -30,7 +31,8 @@ replay, hint assistance, rewards and completion policies are unchanged. Formal q
 exit confirmation and renderer contracts. Generic public/guest practice retains its existing page and
 permissions. No new schema or generated bundle is required; authored assets use file modification versions.
 
-Drawing and Skip are not supported by this practice runner and are not added as decorative controls.
+Drawing is not supported by this practice runner and is not added as a decorative control. Skip was added on
+October 16, 2026 for the standard runner only (see KHAN-ACTIVITIES.md, section 7).
 Related lesson links appear only when the existing hint/recommendation response supplies them. No global
 mastery is substituted for home-only report evidence. Program lesson pages join the private context-header
 scope; provenance selection and source ownership checks are unchanged.

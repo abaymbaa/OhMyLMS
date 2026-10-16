@@ -15,7 +15,7 @@ use WP_Error;
  */
 class EngagementController extends RestController {
 	private function valid_group( $group ) {
-		return in_array( $group, apply_filters( 'ohmylms_engagement_setting_groups', array( 'point', 'badge', 'level', 'reward', 'leaderboard', 'streak', 'xp', 'score' ) ), true );
+		return in_array( $group, apply_filters( 'ohmylms_engagement_setting_groups', array( 'point', 'badge', 'level', 'reward', 'leaderboard', 'streak', 'xp', 'score', 'mastery' ) ), true );
 	}
 
 	private function validate_settings( $group, $settings ) {
@@ -23,6 +23,8 @@ class EngagementController extends RestController {
 			return \OhMyLMS\Engagement\XpSettings::validate( $settings ); }
 		if ( $group === 'score' ) {
 			return \OhMyLMS\Skills\Score::validate( $settings ); }
+		if ( $group === 'mastery' ) {
+			return \OhMyLMS\Skills\Khan\Settings::validate( $settings ); }
 		if ( $group === 'streak' ) {
 			$validated = \OhMyLMS\Engagement\StreakSettings::validate( $settings );
 			if ( is_wp_error( $validated ) ) {
@@ -174,6 +176,8 @@ class EngagementController extends RestController {
 			return rest_ensure_response( \OhMyLMS\Engagement\XpSettings::get() ); }
 		if ( $group_id === 'score' ) {
 			return rest_ensure_response( \OhMyLMS\Skills\Score::get() ); }
+		if ( $group_id === 'mastery' ) {
+			return rest_ensure_response( \OhMyLMS\Skills\Khan\Settings::get() ); }
 		$function_name = 'get_' . $group_id . '_default_settings';
 		$settings      = get_option( 'ohmylms_' . $group_id . '_settings' );
 		return rest_ensure_response( $settings );
@@ -208,6 +212,9 @@ class EngagementController extends RestController {
 		}
 		if ( in_array( $group_id, array( 'xp', 'score' ), true ) && $settings['enable'] && ! \OhMyLMS\Engagement\XpSchema::install() ) {
 			return new WP_Error( 'xp_schema', __( 'Could not install XP and mastery score storage.', 'ohmylms' ), array( 'status' => 500 ) );
+		}
+		if ( 'mastery' === $group_id && 'khan' === $settings['model'] && ! \OhMyLMS\Skills\Khan\Schema::install() ) {
+			return new WP_Error( 'khan_schema', __( 'Could not install skill level storage.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
 		update_option( 'ohmylms_' . $group_id . '_settings', $settings );
 		if ( 'level' === $group_id ) {

@@ -4,6 +4,7 @@ import {
 	Button,
 	ToggleControl,
 	TextControl,
+	SelectControl,
 	Notice,
 	Spinner,
 } from '@wordpress/components';
@@ -11,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 
 const XP_PATH = '/ohmylms/v1/engagement/settings/xp';
 const SCORE_PATH = '/ohmylms/v1/engagement/settings/score';
+const MASTERY_PATH = '/ohmylms/v1/engagement/settings/mastery';
 const BAND_LABELS = [
 	__( 'Getting started (0–69)', 'ohmylms' ),
 	__( 'Practising (70–79)', 'ohmylms' ),
@@ -33,6 +35,7 @@ export function parseGoals( text ) {
 export function XpMasterySettings() {
 	const [ xp, setXp ] = useState( null );
 	const [ score, setScore ] = useState( null );
+	const [ mastery, setMastery ] = useState( null );
 	const [ goalText, setGoalText ] = useState( '' );
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
@@ -40,8 +43,10 @@ export function XpMasterySettings() {
 		Promise.all( [
 			window.wp.apiFetch( { path: XP_PATH } ),
 			window.wp.apiFetch( { path: SCORE_PATH } ),
+			window.wp.apiFetch( { path: MASTERY_PATH } ),
 		] )
-			.then( ( [ xpValue, scoreValue ] ) => {
+			.then( ( [ xpValue, scoreValue, masteryValue ] ) => {
+				setMastery( masteryValue );
 				setXp( xpValue );
 				setGoalText( ( xpValue.goals || [] ).join( ', ' ) );
 				setScore( scoreValue );
@@ -50,7 +55,7 @@ export function XpMasterySettings() {
 				setMessage( { status: 'error', text: error.message } )
 			);
 	}, [] );
-	if ( ! xp || ! score ) {
+	if ( ! xp || ! score || ! mastery ) {
 		return message ? (
 			<Notice status="error" isDismissible={ false }>
 				{ message.text }
@@ -115,6 +120,11 @@ export function XpMasterySettings() {
 						method: 'POST',
 						data: score,
 					} );
+					await window.wp.apiFetch( {
+						path: MASTERY_PATH,
+						method: 'POST',
+						data: mastery,
+					} );
 					// Saving answers with a status; read back what was stored (values are normalised on save).
 					const savedXp = await window.wp.apiFetch( {
 						path: XP_PATH,
@@ -125,6 +135,9 @@ export function XpMasterySettings() {
 					setXp( savedXp );
 					setGoalText( ( savedXp.goals || [] ).join( ', ' ) );
 					setScore( savedScore );
+					setMastery(
+						await window.wp.apiFetch( { path: MASTERY_PATH } )
+					);
 					setMessage( {
 						status: 'success',
 						text: __( 'XP and mastery settings saved.', 'ohmylms' ),
@@ -155,6 +168,37 @@ export function XpMasterySettings() {
 				className="ohmylms-streak-settings__fields"
 			>
 				<div className="ohmylms-streak-settings__grid">
+					<section className="ohmylms-streak-settings__card">
+						<SelectControl
+							label={ __( 'Mastery model', 'ohmylms' ) }
+							value={ mastery.model }
+							options={ [
+								{
+									label: __(
+										'Evidence rules (default)',
+										'ohmylms'
+									),
+									value: 'evidence',
+								},
+								{
+									label: __(
+										'Khan Academy levels',
+										'ohmylms'
+									),
+									value: 'khan',
+								},
+							] }
+							onChange={ ( value ) =>
+								setMastery( { model: value } )
+							}
+						/>
+						<p>
+							{ __(
+								'Khan Academy levels: an exercise sets a skill to Attempted (under 70% right first time), Familiar (70–99%) or Proficient (100%); a quiz or test moves each skill it covers up or down one step. A wrong practice answer can be tried again. Skills a learner already has keep their current level. Switching back keeps every record.',
+								'ohmylms'
+							) }
+						</p>
+					</section>
 					<section className="ohmylms-streak-settings__card">
 						<ToggleControl
 							label={ __( 'Enable XP', 'ohmylms' ) }

@@ -2,9 +2,10 @@
 /**
  * Khan-style mastery names for display: Attempted, Familiar, Proficient, Mastered.
  *
- * View only. It reads the SmartScore (and, without one, the stored evidence level) and
- * never writes anything or feeds completion, awards or recommendations. Those keep using
- * the stored evidence level, so showing "Familiar" here cannot change anyone's progress.
+ * View only. It reads the Khan level (when that model is on and the skill has history), the
+ * SmartScore and, without one, the stored evidence level. It never writes anything. Completion,
+ * awards and recommendations use the stored evidence level, which follows the Khan level when
+ * that model is on, and is independent of this display when it is off.
  *
  * @package OhMyLMS
  */
@@ -134,8 +135,16 @@ final class MasteryDisplay {
 		}
 		$scores = Score::enabled() ? Score::summary( $student_id ) : array();
 		$bands  = $scores ? Score::config()['bands'] : array();
+		// With the Khan level rules on, a skill that has Khan history shows that level.
+		$khan = array();
+		if ( Khan\Settings::enabled() ) {
+			$with = array_intersect( $terms, Khan\Levels::terms_with_history( $student_id ) );
+			$khan = $with ? Khan\Levels::current_many( $student_id, $with ) : array();
+		}
 		foreach ( $terms as $term ) {
-			if ( isset( $scores[ $term ] ) && ( (int) $scores[ $term ]['scored'] > 0 || (float) $scores[ $term ]['score'] > 0 ) ) {
+			if ( isset( $khan[ $term ] ) ) {
+				$result[ $term ] = self::entry( $khan[ $term ], null, 'khan' );
+			} elseif ( isset( $scores[ $term ] ) && ( (int) $scores[ $term ]['scored'] > 0 || (float) $scores[ $term ]['score'] > 0 ) ) {
 				$score           = (float) $scores[ $term ]['score'];
 				$result[ $term ] = self::entry( self::from_score( $score, $scores[ $term ]['scored'], $bands ), $score, 'score' );
 			} elseif ( isset( $levels[ $term ] ) ) {
@@ -174,6 +183,9 @@ final class MasteryDisplay {
 		if ( Score::enabled() ) {
 			$terms = array_merge( $terms, array_keys( Score::summary( $student_id ) ) );
 		}
+		if ( Khan\Settings::enabled() ) {
+			$terms = array_merge( $terms, Khan\Levels::terms_with_history( $student_id ) );
+		}
 		foreach ( self::for_student( $student_id, array_unique( $terms ) ) as $entry ) {
 			if ( isset( $counts[ $entry['key'] ] ) ) {
 				++$counts[ $entry['key'] ];
@@ -188,7 +200,7 @@ final class MasteryDisplay {
 	 *
 	 * @param string     $key Display level.
 	 * @param float|null $score SmartScore when it decided the level.
-	 * @param string     $source score, level or none.
+	 * @param string     $source score, level, khan or none.
 	 * @return array{key:string,label:string,score:?float,source:string}
 	 */
 	private static function entry( $key, $score, $source ) {

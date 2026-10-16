@@ -375,6 +375,7 @@ final class QuizPlayerBlock {
 				?>
 			<?php endif; ?>
 			<?php if ( $remaining ) : ?>
+			<?php echo \OhMyLMS\Quiz\Intro::render( $quiz ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped by the intro. ?>
 			<p><?php esc_html_e( 'Start a new quiz attempt. Your results are saved to your account.', 'ohmylms' ); ?></p>
 			<form method="post" action="<?php echo esc_url( self::url( $quiz_id ) ); ?>" <?php if ( self::$inline_quiz ) { echo 'data-wp-on--submit="actions.startInline"'; } ?>>
 				<input type="hidden" name="action" value="quiz-action">

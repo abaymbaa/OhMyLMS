@@ -31,6 +31,10 @@ final class AssistantTools {
 			'get_shared_skill'         => array( 'id' ),
 			'save_lesson'              => array( 'name', 'content' ),
 			'save_shared_skill'        => array( 'name', 'description', 'subject', 'topic' ),
+			// Mixed-skill assessments: find skills, see a unit's skills, propose a draft quiz or unit test.
+			'search_skill_catalogue'   => array( 'search', 'page' ),
+			'list_unit_skills'         => array( 'chapter_id' ),
+			'create_skill_assessment'  => array( 'title', 'style', 'skills', 'per_skill', 'chapter_id', 'time_limit' ),
 		);
 		$available = Server::tools();
 		$tools     = array();
@@ -41,8 +45,10 @@ final class AssistantTools {
 			$definition               = $available[ $name ];
 			$definition['properties'] = array_intersect_key( $definition['properties'], array_flip( $fields ) );
 			$definition['required']   = $fields;
-			$definition['write']      = in_array( $name, array( 'save_lesson', 'save_shared_skill' ), true );
-			if ( $definition['write'] ) {
+			$definition['write']      = in_array( $name, array( 'save_lesson', 'save_shared_skill', 'create_skill_assessment' ), true );
+			if ( 'create_skill_assessment' === $name ) {
+				$definition['description'] = 'Propose a NEW DRAFT quiz, unit test or course challenge that draws existing approved questions for the chosen skills; administrator review is required and it is never published here. ' . $definition['description'];
+			} elseif ( $definition['write'] ) {
 				$definition['description'] = 'Propose creating a NEW draft lesson or NEW shared skill; administrator review is required. Existing IDs, edits, placement and publication are not allowed. ' . $definition['description'];
 			}
 			if ( isset( $definition['properties']['content'] ) ) {

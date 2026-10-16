@@ -177,6 +177,8 @@ final class AnswerReview {
 				'attempts' => $reviewable,
 				'attempt'  => $attempt,
 				'retry'    => self::retry_items( $entries ),
+				// What this attempt did to the learner's skill levels (only with the Khan level rules on).
+				'levels'   => \OhMyLMS\Skills\Khan\Settings::enabled() ? \OhMyLMS\Skills\Khan\Levels::changes( get_current_user_id(), 'quiz', (int) $attempt['quiz_attempt_id'] ) : array(),
 				// Practice opens only on the attempt the address names, so other quizzes on the page stay closed.
 				'retrying' => (int) $attempt['quiz_attempt_id'] === $requested && isset( $_GET['retry'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['retry'] ) ), // phpcs:ignore WordPress.Security.NonceVerification -- display only.
 				'anchor'   => 'ohmylms-answer-review-' . (int) $quiz->get_id(),
