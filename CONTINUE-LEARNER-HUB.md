@@ -28,6 +28,7 @@ implementation exists", this section wins.
 | Teacher: independent classes, roster, invitations, archive/restore | `hub_role=teacher` | `Schools/ClassManagement.php`, `Student/TeacherActions.php`, `TeacherWorkspace.php` |
 | Parent: school-linked children (read-only work overview) and home-learning children (managed accounts, setup links, invitations, grade and followed collections, revocation) | `hub_role=parent` | `Student/ParentWorkspace.php`, `ParentActions.php`, `FamilyActions.php`, `includes/Family/*` (own schema `ohmylms_family_schema`) |
 | Home-learning activity reports: explicit launch provenance, current-link scope, 7/30/90 days and pagination | `hub_role=parent&hub_section=family&hub_scope=home_learning&hub_child=ID` | `Family/Provenance.php`, `Family/Reports.php`, `templates/student-hub/family-report.php`; contract in `docs/learner-experience/HOME-LEARNING-REPORTS.md` |
+| Unit/practice presentation: Learn/Practice/Assessments, mastery legend, focused program lessons and course practice, collapsible outline and unit return | course overview, `?ohmylms_learning=COURSE&learning_item=UUID`, `?ohmylms_practice=SKILL&learning_course=COURSE` | `Student/PlayerContext.php`, `Practice/Presentation.php`, `templates/student-hub/activity-page.php`; `docs/learner-experience/P5-UNIT-PRACTICE.md` |
 | School: overview, classes and years, people, parent links, invitations, roster CSV import, settings, member removal, managed-student recovery and previewed rollover | `hub_role=school` | `Student/SchoolWorkspace.php`, `SchoolActions.php`, `Schools/Lifecycle.php`, `templates/student-hub/school.php` |
 | School reports and gradebook: completion/overdue counts, assigned-work drill-down, stored skill summaries, submission review/feedback, quiz/assignment matrix, weighted totals and CSV | `hub_role=school&hub_section=school-reports` or `school-gradebook` | `Student/SchoolReports.php`, `SchoolGradebook.php`, `SchoolActions.php`, `templates/student-hub/school-reports.php` |
 | Sign-in chooser and sign-up (learner, teacher, parent) | signed out | `templates/student-hub/signin.php`, `ParentActions.php` |
@@ -41,7 +42,7 @@ no-referrer headers, one-time results travel through short per-user transients.
 
 ### Verification record
 
-- `npm test` (asset parity plus 415 JS tests): 414 pass, 0 fail, 1 skipped.
+- `npm test` (asset parity plus 418 JS tests): 417 pass, 0 fail, 1 skipped.
 - PHPCS: 0 errors on all new files; remaining warnings are database/cache calls in the school and
   class services. Repository-wide PHP/JS/CSS standards debt is large and unchanged.
 - Ad-hoc probes live in `test-results/` which is **git-ignored**: they are not in the repository.
@@ -91,6 +92,9 @@ work, teacher classes and legacy retirement, plus documentation commits.
    uses grade then collections, with Back/Cancel and a usable no-JavaScript form. These refinements
    use the existing hub style; the original reference layouts remain unobserved.
 6. Protected integration verification is complete; retain the disposable-database guards for future runs.
+7. P5 unit/practice refinements are implemented and browser-verified. Remaining: observed reference
+   comparison (including proposed parent dashboard layouts), richer source-scoped home reports if
+   desired, and release verification/localization. Do not invent unsupported drawing, skip or unit-test controls.
 
 
 ## Parent and child UI extension (October 16, 2026)
@@ -1746,3 +1750,43 @@ family-recovery.png and family-choices-mobile.png. This checkpoint is committed 
 Remaining product work: observed reference comparison for proposed parent dashboard layouts, and
 any richer home-only accuracy/skill reports, which require source-scoped evidence rather than global
 mastery or unknown historical results. Those are separate slices from the completed family flow.
+
+## Unit and practice presentation checkpoint (October 16, 2026)
+
+P5 groups real unit activities into Learn, Practice and Assessments, shows the existing five-band
+skill mastery legend, and opens the selected unit when returning through its anchor. Program lesson
+and authorized standalone course-practice routes now share the focused activity document and course
+outline. The document retains WordPress head/body/footer integrations. Navigation can collapse, starts
+collapsed on mobile, supports keyboard toggling and Escape, and distinguishes skill term IDs from
+content post IDs when highlighting the current activity. Active formal quizzes keep their existing
+exit/attempt behavior and extension renderers.
+
+Practice entry counts the same authorized pool used by Sessions (finite unique questions, repeatable
+templates, 3–30 configured limit). The entry says "up to"; the live progress label identifies the session
+limit because availability can change and a finite pool may finish early. Sticky controls retain the
+existing Check/hint/Next actions and server feedback; duplicate submits are ignored while a request is
+in flight. Focus moves to the question progress, Next, and completion summary. Existing session storage
+keeps the course/skill resume context. Unsubmitted inputs are not saved. No engine, scoring, completion,
+published-version or assessment-contract changes, no new schema or generated-asset build. Existing
+learning-path award evaluation remains unchanged. Program pages now receive private context headers too.
+
+Verification: 76 protected learning integration checks (13 new presentation checks), six pool-count
+unit checks, 88 Student Home, 81 player-template and 56 family checks. Asset parity and JS: 417 pass,
+0 fail, 1 skipped; the three new runner tests cover passive entry, single-flight checking, error retry,
+server-driven advancement/summary focus and GET-only resume. PHP syntax, changed authored JS ESLint,
+and all three changed stylesheets pass. New/modified player, practice presentation and template PHP
+pass PHPCS; Practice/Frontend has six existing read-only query nonce warnings. Legacy Learning/Frontend
+retains 34 existing standards errors (no new errors); the older integration fixture has existing debt.
+The local PHP installation still emits its missing-Imagick startup warning.
+
+Built-in browser: real disposable course/program/learner and five approved questions. Verified grouped
+unit navigation, lesson entry without marking completion, current practice highlighting, correct and
+incorrect feedback, a real hint, Enter for Next, exit to an expanded unit, resume at question two after
+visiting the lesson, mobile default collapse and keyboard Escape, and a final 4/5 summary after pool
+exhaustion. Dark 390px layout has a 375px document width. View-as returned to admin; the viewport was
+reset and original teacher page restored. Fixture learner, course, lesson, quiz, questions, skills,
+enrollment, programs, practice/evidence/score/streak rows and preview audit were removed. Remaining
+fixture user/session counts were zero; the outside-web-root helper was deleted. Browser proof is ignored
+at test-results/p5-unit-overview.png, p5-practice-desktop.png, p5-practice-mobile.png and
+p5-practice-complete.png. Committed locally, not pushed. These are hub-style refinements; fresh visual
+reference parity and final release acceptance remain separate work.

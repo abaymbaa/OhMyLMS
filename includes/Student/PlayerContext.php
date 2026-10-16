@@ -40,6 +40,71 @@ final class PlayerContext {
 	}
 
 	/**
+	 * Open course navigation for authorized standalone skill practice.
+	 *
+	 * @param int $course_id Course ID.
+	 * @param int $skill_id Skill term ID, never a content post ID.
+	 * @return bool Whether the shell opened.
+	 */
+	public static function open_practice( $course_id, $skill_id ) {
+		if ( ! is_user_logged_in() || ! $course_id || is_wp_error( \OhMyLMS\Learning\PracticeAccessPolicy::check( array( 'student_id' => get_current_user_id() ), $skill_id, $course_id ) ) ) {
+			return false;
+		}
+		return self::open_outline( $course_id, $skill_id, 'practice' );
+	}
+
+	/**
+	 * Open the same shell for a lesson in the learner's frozen course program.
+	 *
+	 * @param int    $course_id Course ID.
+	 * @param string $placement Program placement UUID.
+	 * @return bool Whether the shell opened.
+	 */
+	public static function open_learning( $course_id, $placement ) {
+		if ( ! is_user_logged_in() || ! $placement || 'publish' !== get_post_status( $course_id ) ) {
+			return false;
+		}
+		$state = \OhMyLMS\Learning\CompletionPolicy::status( get_current_user_id(), $course_id );
+		if ( is_wp_error( $state ) ) {
+			return false;
+		}
+		foreach ( $state['program']['items'] as $item ) {
+			if ( $item['id'] === $placement && 'lesson' === $item['type'] && \OhMyLMS\Learning\LearningPath::available( $item, get_current_user_id(), $course_id ) ) {
+				return self::open_outline( $course_id, $item['content_id'], 'content' );
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Render navigation after the caller's activity access check.
+	 *
+	 * @param int    $course_id Course ID.
+	 * @param int    $current Content post or skill term ID.
+	 * @param string $kind Identifier namespace.
+	 * @return bool
+	 */
+	private static function open_outline( $course_id, $current, $kind ) {
+		$outline = CourseOutline::get( $course_id, get_current_user_id() );
+		if ( is_wp_error( $outline ) || $outline['locked'] ) {
+			return false;
+		}
+		wp_enqueue_style( 'ohmylms-player-context', plugins_url( 'assets/css/player-context.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/player-context.css' ) );
+		wp_enqueue_script( 'ohmylms-player-context', plugins_url( 'assets/js/player-context.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/player-context.js' ), true );
+		self::$active = true;
+		ohmylms_get_template(
+			'student-hub/player.php',
+			array(
+				'player_outline' => $outline,
+				'player_quiz'    => false,
+				'player_current' => $current,
+				'player_kind'    => $kind,
+			)
+		);
+		return true;
+	}
+
+	/**
 	 * Open the focused shell after the single-activity access gate has passed.
 	 *
 	 * Active quizzes retain their own exit confirmation and avoid extra navigation

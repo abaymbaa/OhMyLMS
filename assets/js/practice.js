@@ -382,11 +382,10 @@
 				/* remembered for this page only */
 			}
 		} );
-		return el(
-			'label',
-			{ class: 'ohmylms-practice-sound' },
-			[ box, document.createTextNode( ' ' + ( i18n.sound || 'Sound' ) ) ]
-		);
+		return el( 'label', { class: 'ohmylms-practice-sound' }, [
+			box,
+			document.createTextNode( ' ' + ( i18n.sound || 'Sound' ) ),
+		] );
 	}
 
 	/** A button that asks the tutor and shows its reply as plain text below. */
@@ -414,7 +413,9 @@
 					reply.className = 'ohmylms-ai-reply';
 					reply.textContent = '';
 					reply.appendChild(
-						el( 'strong', { text: ( i18n.tutor || 'Tutor' ) + ': ' } )
+						el( 'strong', {
+							text: ( i18n.tutor || 'Tutor' ) + ': ',
+						} )
 					);
 					reply.appendChild( document.createTextNode( result.text ) );
 					if ( window.ohmylmsTypeset ) window.ohmylmsTypeset( reply );
@@ -436,6 +437,7 @@
 		var lesson = state.style === 'lesson';
 		var progress = el( 'p', {
 			class: 'ohmylms-practice-progress',
+			tabindex: '-1',
 			text: format(
 				i18n.progress,
 				Math.min( state.answered + 1, state.item_limit ),
@@ -443,6 +445,7 @@
 			),
 		} );
 		var form = el( 'form', { class: 'ohmylms-practice-question' } );
+		var controls = el( 'div', { class: 'ohmylms-practice-controls' } );
 		if ( ! view.inline_blanks )
 			form.appendChild(
 				el( 'p', { class: 'the-question', html: view.name } )
@@ -463,7 +466,7 @@
 			class: 'ohmylms-button',
 			text: i18n.check,
 		} );
-		form.appendChild( check );
+		controls.appendChild( check );
 		if ( view.has_hint ) {
 			var hint = el( 'button', {
 				type: 'button',
@@ -490,15 +493,17 @@
 					feedback.appendChild( box );
 				} );
 			} );
-			form.appendChild( hint );
+			controls.appendChild( hint );
 		}
 		var tutor = el( 'div', { class: 'ohmylms-tutor' } );
 		if ( state.ai && state.ai.hint )
 			tutorButton( state, view, 'hint', i18n.tutorHint, tutor );
 		form.appendChild( tutor );
 		form.appendChild( feedback );
+		form.appendChild( controls );
 		form.addEventListener( 'submit', function ( event ) {
 			event.preventDefault();
+			if ( check.disabled ) return;
 			check.disabled = true;
 			request( 'practice/sessions/' + state.uuid + '/answer', {
 				item_id: view.item_id,
@@ -577,7 +582,8 @@
 					next.addEventListener( 'click', function () {
 						show( result.session );
 					} );
-					feedback.appendChild( next );
+					check.hidden = true;
+					controls.appendChild( next );
 					next.focus();
 				} )
 				.catch( function ( error ) {
@@ -598,8 +604,17 @@
 				);
 		}
 		stage.appendChild( progress );
+		stage.appendChild(
+			el( 'progress', {
+				class: 'ohmylms-practice-meter',
+				max: Math.max( state.item_limit, state.answered, 1 ),
+				value: state.answered,
+				'aria-label': i18n.checked || i18n.progress,
+			} )
+		);
 		stage.appendChild( form );
 		if ( window.ohmylmsTypeset ) window.ohmylmsTypeset( stage );
+		progress.focus();
 	}
 
 	/** XP and the daily goal, the mastery score change and the streak after a lesson. */
@@ -634,7 +649,9 @@
 						value: String( Math.min( xp.today, xp.goal ) ),
 						'aria-label': format( i18n.xpToday, xp.today, xp.goal ),
 					} ),
-					el( 'p', { text: format( i18n.xpToday, xp.today, xp.goal ) } ),
+					el( 'p', {
+						text: format( i18n.xpToday, xp.today, xp.goal ),
+					} ),
 					xp.goal_met
 						? el( 'p', {
 								class: 'ohmylms-reward-goal',
@@ -667,12 +684,17 @@
 							Math.round( score.before ),
 							Math.round( score.after )
 						) +
-						( change ? ' (' + ( change > 0 ? '+' : '' ) + change + ')' : '' ),
+						( change
+							? ' (' + ( change > 0 ? '+' : '' ) + change + ')'
+							: '' ),
 				} ),
 				el( 'progress', {
 					max: '100',
 					value: String( Math.round( score.after ) ),
-					'aria-label': ( i18n.mastery || 'Mastery' ) + ' ' + Math.round( score.after ),
+					'aria-label':
+						( i18n.mastery || 'Mastery' ) +
+						' ' +
+						Math.round( score.after ),
 				} ),
 			];
 			( score.reached || [] ).forEach( function ( at ) {
@@ -690,7 +712,9 @@
 						text: i18n.unlocked,
 					} )
 				);
-			card.appendChild( el( 'div', { class: 'ohmylms-reward-mastery' }, lines ) );
+			card.appendChild(
+				el( 'div', { class: 'ohmylms-reward-mastery' }, lines )
+			);
 		}
 		if ( reward.streak && reward.streak.current > 0 )
 			card.appendChild(
@@ -705,18 +729,18 @@
 	function renderSummary( state ) {
 		stage.innerHTML = '';
 		var lessonResult = state.style === 'lesson';
-		stage.appendChild(
-			el( 'p', {
-				class: 'ohmylms-practice-summary',
-				text: lessonResult
-					? format(
-							i18n.lessonDone,
-							state.planned_right,
-							state.planned_answered
-						)
-					: format( i18n.done, state.correct, state.answered ),
-			} )
-		);
+		var summary = el( 'p', {
+			class: 'ohmylms-practice-summary',
+			tabindex: '-1',
+			text: lessonResult
+				? format(
+						i18n.lessonDone,
+						state.planned_right,
+						state.planned_answered
+					)
+				: format( i18n.done, state.correct, state.answered ),
+		} );
+		stage.appendChild( summary );
 		if ( lessonResult ) {
 			var missed = state.missed || [];
 			if ( ! missed.length ) {
@@ -751,9 +775,7 @@
 						)
 					);
 				} );
-				stage.appendChild(
-					el( 'h3', { text: i18n.missedTitle } )
-				);
+				stage.appendChild( el( 'h3', { text: i18n.missedTitle } ) );
 				stage.appendChild( list );
 				if ( window.ohmylmsTypeset ) window.ohmylmsTypeset( list );
 			}
@@ -794,6 +816,7 @@
 		} );
 		again.addEventListener( 'click', start );
 		stage.appendChild( again );
+		summary.focus();
 	}
 
 	function show( state ) {

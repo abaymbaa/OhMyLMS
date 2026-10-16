@@ -8,9 +8,12 @@ role contexts and sign-in chooser, parent sign-up, the parent workspace with sch
 (P2), independent family links with managed children, invitations and learning choices (P3a to P3d),
 and the school workspace. Home-learning activity reports now use explicit, immutable launch context
 (see [the reporting contract](HOME-LEARNING-REPORTS.md)); older unknown activity and global mastery
-are excluded. Still planned or unobserved: the parent dashboard layout, recovery and
-personalization step two, and the
-unit/practice presentation refinements (P5). The slice list below is the original plan, not a
+are excluded. Managed-child recovery and grade-then-collections refinements are implemented.
+P5 now adds grouped unit activities, a mastery legend, focused program lessons and course practice,
+collapsible course navigation, unit return links, and keyboard-friendly practice controls/progress.
+See [the P5 checkpoint](P5-UNIT-PRACTICE.md) for verification and supported-player limits.
+Remaining visual acceptance includes parent dashboard references and same-viewport reference comparison.
+The slice list below is the original plan, not a
 progress record.
 The user requested extending the development plan and explicitly requested UI
 replication. This document adds that scope to [PLAN.md](PLAN.md). Resume from

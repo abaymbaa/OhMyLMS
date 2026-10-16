@@ -40,7 +40,7 @@ final class Provenance {
 	 */
 	private static function learning_page() {
 		$post = get_post();
-		return is_singular( \OhMyLMS\Student\PlayerContext::TYPES ) || (bool) get_query_var( 'ohmylms_practice' ) || ( $post && has_shortcode( $post->post_content, 'ohmylms_practice' ) );
+		return is_singular( \OhMyLMS\Student\PlayerContext::TYPES ) || (bool) get_query_var( 'ohmylms_practice' ) || (bool) get_query_var( 'ohmylms_learning' ) || ( $post && has_shortcode( $post->post_content, 'ohmylms_practice' ) );
 	}
 
 	/** Keep signed context choices out of shared caches and cross-origin referrers. */

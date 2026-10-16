@@ -1846,3 +1846,18 @@
 .ohmylms-student-hub [data-family-choices] [hidden] {
 	display: none;
 }
+
+/* Unit groups retain real activity types and the original activity URLs. */
+.ohmylms-student-hub .oml-hub-unit-group {
+	padding: 16px 20px;
+	border-top: 1px solid var(--hub-border);
+}
+
+.ohmylms-student-hub .oml-hub-unit-group h3 {
+	margin: 0 0 8px;
+	font-size: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-unit-group .oml-hub-rows {
+	padding: 0;
+}

@@ -119,6 +119,14 @@ $hub_units   = $hub_outline['units'];
 	</ol>
 </details>
 
+<?php if ( $hub_summary['skills'] && $hub_outline['enrolled'] ) : ?>
+	<ul class="oml-hub-legend" aria-label="<?php esc_attr_e( 'Skill mastery legend', 'ohmylms' ); ?>">
+		<?php foreach ( \OhMyLMS\Skills\MasteryDisplay::LEVELS as $hub_level ) : ?>
+			<li class="is-<?php echo esc_attr( $hub_level ); ?>"><span class="oml-hub-swatch" aria-hidden="true"></span><?php echo esc_html( \OhMyLMS\Skills\MasteryDisplay::label( $hub_level ) ); ?></li>
+		<?php endforeach; ?>
+	</ul>
+<?php endif; ?>
+
 <div class="oml-hub-units-head">
 	<h2><?php esc_html_e( 'Units', 'ohmylms' ); ?></h2>
 	<button type="button" class="oml-hub-link-button" data-hub-expand-all data-expand="<?php esc_attr_e( 'Expand all', 'ohmylms' ); ?>" data-collapse="<?php esc_attr_e( 'Collapse all', 'ohmylms' ); ?>"><?php esc_html_e( 'Expand all', 'ohmylms' ); ?></button>
@@ -132,8 +140,36 @@ $hub_units   = $hub_outline['units'];
 					<span class="oml-hub-unit-count"><?php /* translators: 1: completed, 2: total. */ echo esc_html( sprintf( __( '%1$d/%2$d', 'ohmylms' ), $hub_unit['done'], $hub_unit['total'] ) ); ?></span>
 				<?php endif; ?>
 			</summary>
-			<ul class="oml-hub-rows">
-				<?php foreach ( $hub_unit['items'] as $hub_row ) : ?>
+			<?php
+			$hub_groups = array(
+				'learn'       => array(
+					'label' => __( 'Learn', 'ohmylms' ),
+					'kinds' => array( 'lesson' ),
+				),
+				'practice'    => array(
+					'label' => __( 'Practice', 'ohmylms' ),
+					'kinds' => array( 'practice' ),
+				),
+				'assessments' => array(
+					'label' => __( 'Assessments', 'ohmylms' ),
+					'kinds' => array( 'quiz', 'assignment' ),
+				),
+			);
+			foreach ( $hub_groups as $hub_group_key => $hub_group ) :
+				$hub_group_items = array_filter(
+					$hub_unit['items'],
+					static function ( $item ) use ( $hub_group ) {
+						return in_array( $item['kind'], $hub_group['kinds'], true );
+					}
+				);
+				if ( ! $hub_group_items ) {
+					continue;
+				}
+				?>
+			<section class="oml-hub-unit-group" aria-labelledby="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-<?php echo esc_attr( $hub_group_key ); ?>">
+				<h3 id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-<?php echo esc_attr( $hub_group_key ); ?>"><?php echo esc_html( $hub_group['label'] ); ?></h3>
+				<ul class="oml-hub-rows">
+				<?php foreach ( $hub_group_items as $hub_row ) : ?>
 					<li>
 						<a class="oml-hub-row" href="<?php echo esc_url( $hub_row['url'] ); ?>">
 							<span class="oml-hub-row-icon <?php echo esc_attr( $hub_row['level'] ? 'is-' . $hub_row['level'] : ( $hub_row['complete'] ? 'is-complete' : '' ) ); ?>"><?php echo $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist. ?></span>
@@ -143,6 +179,8 @@ $hub_units   = $hub_outline['units'];
 					</li>
 				<?php endforeach; ?>
 			</ul>
+			</section>
+			<?php endforeach; ?>
 		</details>
 	<?php endforeach; ?>
 </div>

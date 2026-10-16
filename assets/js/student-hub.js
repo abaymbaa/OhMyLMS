@@ -2,6 +2,17 @@
 ( () => {
 	const hub = document.querySelector( '.ohmylms-student-hub' );
 	if ( hub ) {
+		const openUnit = () => {
+			const hash = window.location.hash;
+			if ( /^#hub-unit-\d+$/.test( hash ) ) {
+				const unit = hub.querySelector( hash );
+				if ( unit?.matches( 'details.oml-hub-unit' ) ) {
+					unit.open = true;
+				}
+			}
+		};
+		openUnit();
+		window.addEventListener( 'hashchange', openUnit );
 		// Remember section names only; course, class and invoice IDs stay out of storage.
 		if ( hub.dataset.role === 'learner' ) {
 			const destination = new URL( window.location.href );

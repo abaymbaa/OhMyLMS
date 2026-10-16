@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Existing PSR-4 class/file mapping.
+/**
+ * Skill practice pages and entry presentation.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\Engine;
@@ -15,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * ?ohmylms_practice=ID page). Logged-in pages also load the guest-claim prompt.
  */
 final class Frontend {
+	/** Register practice pages, shortcodes and assets. */
 	public static function init() {
 		add_shortcode( 'ohmylms_skills', array( __CLASS__, 'skills' ) );
 		add_shortcode( 'ohmylms_practice', array( __CLASS__, 'practice' ) );
@@ -22,7 +28,8 @@ final class Frontend {
 			'ohmylms_lms_student_profile_after_dashboard_content',
 			static function () {
 				if ( ! Dashboard::$rendered ) {
-					echo self::skills(); }
+					echo self::skills(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped markup from the skills renderer.
+				}
 			}
 		);
 		add_filter(
@@ -36,6 +43,11 @@ final class Frontend {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'claim_assets' ) );
 	}
 
+	/**
+	 * Check whether the practice engine is available.
+	 *
+	 * @return bool
+	 */
 	public static function enabled() {
 		return Schema::ready() && Engine::practice();
 	}
@@ -48,6 +60,11 @@ final class Frontend {
 		wp_localize_script( 'ohmylms-inline-check', 'ohmylmsInlineCheck', Inline::client_config() );
 	}
 
+	/**
+	 * Render the skill dashboard.
+	 *
+	 * @return string Escaped HTML.
+	 */
 	public static function skills() {
 		if ( ! self::enabled() || ! is_user_logged_in() ) {
 			return ''; }
@@ -64,7 +81,11 @@ final class Frontend {
 				<p><?php esc_html_e( 'Answer quiz questions, lesson checks or practice to see your skills here.', 'ohmylms' ); ?></p>
 			<?php } else { ?>
 				<table class="ohmylms-skill-table">
-					<thead><tr><th><?php esc_html_e( 'Skill', 'ohmylms' ); ?></th><th><?php esc_html_e( 'Level', 'ohmylms' ); ?></th><?php if ( \OhMyLMS\Skills\Score::enabled() ) { ?><th><?php esc_html_e( 'Mastery', 'ohmylms' ); ?></th><?php } ?><th><?php esc_html_e( 'Evidence', 'ohmylms' ); ?></th><th></th></tr></thead>
+					<thead><tr><th><?php esc_html_e( 'Skill', 'ohmylms' ); ?></th><th><?php esc_html_e( 'Level', 'ohmylms' ); ?></th>
+					<?php
+					if ( \OhMyLMS\Skills\Score::enabled() ) {
+						?>
+						<th><?php esc_html_e( 'Mastery', 'ohmylms' ); ?></th><?php } ?><th><?php esc_html_e( 'Evidence', 'ohmylms' ); ?></th><th></th></tr></thead>
 					<tbody>
 					<?php foreach ( $skills as $skill ) { ?>
 						<tr>
@@ -114,7 +135,7 @@ final class Frontend {
 							<?php
 							foreach ( $item['prerequisites'] as $prerequisite ) {
 								?>
-								<a href="<?php echo esc_url( add_query_arg( 'ohmylms_practice', $prerequisite['id'], home_url( '/' ) ) ); ?>"><?php echo esc_html( sprintf( __( 'Practice %s', 'ohmylms' ), $prerequisite['name'] ) ); ?></a><?php } ?>
+								<a href="<?php echo esc_url( add_query_arg( 'ohmylms_practice', $prerequisite['id'], home_url( '/' ) ) ); ?>"><?php /* translators: %s: prerequisite skill name. */ echo esc_html( sprintf( __( 'Practice %s', 'ohmylms' ), $prerequisite['name'] ) ); ?></a><?php } ?>
 							<a href="<?php echo esc_url( add_query_arg( 'ohmylms_practice', $item['skill']['id'], home_url( '/' ) ) ); ?>"><?php esc_html_e( 'Practice', 'ohmylms' ); ?></a>
 						</li>
 					<?php } ?>
@@ -125,6 +146,12 @@ final class Frontend {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Render an entry without creating an attempt or disclosing question data.
+	 *
+	 * @param array $attributes Shortcode attributes.
+	 * @return string Escaped practice markup.
+	 */
 	public static function practice( $attributes ) {
 		if ( ! self::enabled() ) {
 			return ''; }
@@ -148,68 +175,76 @@ final class Frontend {
 			wp_localize_script( 'ohmylms-inline-check', 'ohmylmsInlineCheck', Inline::client_config() );
 		}
 		\OhMyLMS\Assessment\Interactive::enqueue();
-		wp_enqueue_script( 'ohmylms-practice', plugins_url( 'assets/js/practice.js', OHMYLMS_FILE ), array( 'ohmylms-inline-check', 'ohmylms-interactive-visual' ), OHMYLMS_VERSION, true );
+		wp_enqueue_script( 'ohmylms-practice', plugins_url( 'assets/js/practice.js', OHMYLMS_FILE ), array( 'ohmylms-inline-check', 'ohmylms-interactive-visual' ), (string) filemtime( OHMYLMS_DIR . '/assets/js/practice.js' ), true );
 		wp_enqueue_style( 'ohmylms-quiz-a11y', plugins_url( 'assets/css/quiz-a11y.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
-		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
+		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/practice.css' ) );
 		wp_localize_script(
 			'ohmylms-practice',
 			'ohmylmsPractice',
 			Inline::client_config() + array(
 				'studentId'    => get_current_user_id(),
 				'practiceI18n' => array(
-					'start'    => __( 'Start practice', 'ohmylms' ),
-					'resume'   => __( 'Resume practice', 'ohmylms' ),
-					'check'    => __( 'Check answer', 'ohmylms' ),
-					'next'     => __( 'Next question', 'ohmylms' ),
-					'hint'     => __( 'Show a hint', 'ohmylms' ),
+					'start'         => __( 'Start practice', 'ohmylms' ),
+					'resume'        => __( 'Resume practice', 'ohmylms' ),
+					'check'         => __( 'Check answer', 'ohmylms' ),
+					'next'          => __( 'Next question', 'ohmylms' ),
+					'hint'          => __( 'Show a hint', 'ohmylms' ),
 					/* translators: 1: answered, 2: total */
-					'progress' => __( 'Question %1$d of %2$d', 'ohmylms' ),
+					'progress'      => __( 'Question %1$d · session limit %2$d', 'ohmylms' ),
+					'checked'       => __( 'Answers checked', 'ohmylms' ),
 					/* translators: 1: correct, 2: answered */
-					'done'     => __( 'Practice complete: %1$d of %2$d correct.', 'ohmylms' ),
-					'empty'    => __( 'There are no practice questions for this skill yet.', 'ohmylms' ),
-					'again'    => __( 'Practice again', 'ohmylms' ),
-					'continue' => __( 'Continue', 'ohmylms' ),
-					'tutorHint' => __( 'Ask the tutor for a hint', 'ohmylms' ),
-					'explain'  => __( 'Explain my answer', 'ohmylms' ),
-					'thinking' => __( 'The tutor is thinking…', 'ohmylms' ),
-					'tutor'    => __( 'Tutor', 'ohmylms' ),
-					'solution' => __( 'Worked solution', 'ohmylms' ),
-					'replay'   => __( 'Let\'s try that one again.', 'ohmylms' ),
-					'recognize' => __( 'Recognise', 'ohmylms' ),
-					'guided'   => __( 'Build', 'ohmylms' ),
-					'produce'  => __( 'Solve', 'ohmylms' ),
-					'sound'    => __( 'Sound', 'ohmylms' ),
+					'done'          => __( 'Practice complete: %1$d of %2$d correct.', 'ohmylms' ),
+					'empty'         => __( 'There are no practice questions for this skill yet.', 'ohmylms' ),
+					'again'         => __( 'Practice again', 'ohmylms' ),
+					'continue'      => __( 'Continue', 'ohmylms' ),
+					'tutorHint'     => __( 'Ask the tutor for a hint', 'ohmylms' ),
+					'explain'       => __( 'Explain my answer', 'ohmylms' ),
+					'thinking'      => __( 'The tutor is thinking…', 'ohmylms' ),
+					'tutor'         => __( 'Tutor', 'ohmylms' ),
+					'solution'      => __( 'Worked solution', 'ohmylms' ),
+					'replay'        => __( 'Let\'s try that one again.', 'ohmylms' ),
+					'recognize'     => __( 'Recognise', 'ohmylms' ),
+					'guided'        => __( 'Build', 'ohmylms' ),
+					'produce'       => __( 'Solve', 'ohmylms' ),
+					'sound'         => __( 'Sound', 'ohmylms' ),
 					/* translators: 1: right first time, 2: planned questions */
-					'lessonDone' => __( 'Lesson complete: %1$d of %2$d right first time.', 'ohmylms' ),
-					'missedTitle' => __( 'Questions to review', 'ohmylms' ),
-					'fixed'    => __( 'put right on the second try', 'ohmylms' ),
-					'notFixed' => __( 'still tricky, worth another look', 'ohmylms' ),
-					'perfect'  => __( 'No mistakes. Well done!', 'ohmylms' ),
-					'rewardTitle' => __( 'Your rewards', 'ohmylms' ),
-					'xp_lesson' => __( 'Lesson', 'ohmylms' ),
-					'xp_perfect' => __( 'No mistakes', 'ohmylms' ),
-					'xp_challenge' => __( 'Challenge zone', 'ohmylms' ),
+					'lessonDone'    => __( 'Lesson complete: %1$d of %2$d right first time.', 'ohmylms' ),
+					'missedTitle'   => __( 'Questions to review', 'ohmylms' ),
+					'fixed'         => __( 'put right on the second try', 'ohmylms' ),
+					'notFixed'      => __( 'still tricky, worth another look', 'ohmylms' ),
+					'perfect'       => __( 'No mistakes. Well done!', 'ohmylms' ),
+					'rewardTitle'   => __( 'Your rewards', 'ohmylms' ),
+					'xp_lesson'     => __( 'Lesson', 'ohmylms' ),
+					'xp_perfect'    => __( 'No mistakes', 'ohmylms' ),
+					'xp_challenge'  => __( 'Challenge zone', 'ohmylms' ),
 					/* translators: 1: XP earned today, 2: the daily goal */
-					'xpToday'  => __( '%1$d of %2$d XP today', 'ohmylms' ),
-					'goalMet'  => __( 'Daily goal reached!', 'ohmylms' ),
-					'xpCapped' => __( 'You have reached today\'s XP limit. Keep practising; it counts toward your skills.', 'ohmylms' ),
-					'mastery'  => __( 'Mastery', 'ohmylms' ),
+					'xpToday'       => __( '%1$d of %2$d XP today', 'ohmylms' ),
+					'goalMet'       => __( 'Daily goal reached!', 'ohmylms' ),
+					'xpCapped'      => __( 'You have reached today\'s XP limit. Keep practising; it counts toward your skills.', 'ohmylms' ),
+					'mastery'       => __( 'Mastery', 'ohmylms' ),
 					/* translators: 1: score before, 2: score after */
 					'masteryChange' => __( '%1$d → %2$d out of 100', 'ohmylms' ),
-					'medal_80' => __( 'Bronze medal: skill at 80', 'ohmylms' ),
-					'medal_90' => __( 'Silver medal: skill at 90', 'ohmylms' ),
-					'medal_100' => __( 'Gold medal: skill mastered!', 'ohmylms' ),
-					'unlocked' => __( 'Next skill unlocked', 'ohmylms' ),
+					'medal_80'      => __( 'Bronze medal: skill at 80', 'ohmylms' ),
+					'medal_90'      => __( 'Silver medal: skill at 90', 'ohmylms' ),
+					'medal_100'     => __( 'Gold medal: skill mastered!', 'ohmylms' ),
+					'unlocked'      => __( 'Next skill unlocked', 'ohmylms' ),
 					/* translators: %d: days in a row */
-					'streakDays' => __( '%d-day streak', 'ohmylms' ),
+					'streakDays'    => __( '%d-day streak', 'ohmylms' ),
 				),
 			)
 		);
+		$practice_available = Presentation::available( $term->term_id, (int) $attributes['course'], (int) $attributes['items'] );
 		ob_start();
 		?>
 		<?php \OhMyLMS\Family\Provenance::render( (int) $attributes['course'], $term->term_id, 'practice' ); ?>
-		<section class="ohmylms-practice" data-style="<?php echo esc_attr( $attributes['style'] === 'lesson' ? 'lesson' : 'standard' ); ?>" data-skill="<?php echo esc_attr( $term->term_id ); ?>" data-course="<?php echo esc_attr( (int) $attributes['course'] ); ?>" data-items="<?php echo esc_attr( (int) $attributes['items'] ); ?>">
-			<h2><?php echo esc_html( sprintf( __( 'Practice: %s', 'ohmylms' ), $term->name ) ); ?></h2>
+		<section class="ohmylms-practice" data-style="<?php echo esc_attr( 'lesson' === $attributes['style'] ? 'lesson' : 'standard' ); ?>" data-skill="<?php echo esc_attr( $term->term_id ); ?>" data-course="<?php echo esc_attr( (int) $attributes['course'] ); ?>" data-items="<?php echo esc_attr( (int) $attributes['items'] ); ?>">
+			<h2><?php /* translators: %s: skill name. */ echo esc_html( sprintf( __( 'Practice: %s', 'ohmylms' ), $term->name ) ); ?></h2>
+			<p class="ohmylms-practice-entry"><?php /* translators: %d: maximum questions in a new session from the current authorized pool. */ echo esc_html( sprintf( _n( 'Up to %d question in a new session.', 'Up to %d questions in a new session.', $practice_available, 'ohmylms' ), $practice_available ) ); ?> <?php esc_html_e( 'Check each answer for feedback. You can leave and resume on this device; unanswered work is not submitted.', 'ohmylms' ); ?>
+			<?php
+			if ( 'lesson' === $attributes['style'] ) :
+				?>
+				<?php esc_html_e( 'Missed questions may return for review.', 'ohmylms' ); ?><?php endif; ?></p>
+			<noscript><p><?php esc_html_e( 'Enable JavaScript to start or resume practice.', 'ohmylms' ); ?></p></noscript>
 			<?php
 			if ( ! is_user_logged_in() ) {
 				?>
@@ -234,14 +269,25 @@ final class Frontend {
 			$args['style'] = sanitize_key( wp_unslash( $_GET['style'] ) ); }
 		if ( isset( $_GET['items'] ) ) {
 			$args['items'] = absint( $_GET['items'] ); }
-		$html   = self::practice( $args );
-		if ( $html === '' ) {
+		$html = self::practice( $args );
+		if ( '' === $html ) {
 			return; }
-		if ( $course ) {
-			$html = '<p><a href="' . esc_url( \OhMyLMS\Learning\Frontend::url( $course ) ) . '">' . esc_html__( 'Back to learning path', 'ohmylms' ) . '</a></p>' . $html; }
+		ob_start();
+		$focused = \OhMyLMS\Student\PlayerContext::open_practice( $course, $skill );
+		$shell   = ob_get_clean();
 		status_header( 200 );
+		if ( $focused ) {
+			ohmylms_get_template(
+				'student-hub/activity-page.php',
+				array(
+					'activity_shell' => $shell,
+					'activity_html'  => $html,
+				)
+			);
+			exit;
+		}
 		get_header();
-		echo '<main class="ohmylms-container" style="max-width:780px;margin:40px auto;padding:0 16px">' . $html . '</main>';
+		echo '<main class="ohmylms-container" style="max-width:780px;margin:40px auto;padding:0 16px">' . $html . '</main>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped practice renderer above.
 		get_footer();
 		exit;
 	}

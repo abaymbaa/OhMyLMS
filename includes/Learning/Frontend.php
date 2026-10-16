@@ -59,7 +59,7 @@ final class Frontend {
 		return self::render( (int) $attributes['course'] );
 	}
 
-	public static function render( $course_id, $placement = '' ) {
+	public static function render( $course_id, $placement = '', $focused = false ) {
 		if ( get_post_type( $course_id ) !== OHMYLMS_COURSE_CPT || get_post_status( $course_id ) !== 'publish' ) {
 			return '<p>' . esc_html__( 'This course is not available.', 'ohmylms' ) . '</p>'; }
 		if ( ! is_user_logged_in() ) {
@@ -78,19 +78,21 @@ final class Frontend {
 		ob_start();
 		?>
 		<section class="ohmylms-learning-program" data-course="<?php echo esc_attr( $course_id ); ?>">
+			<?php if ( ! $focused ) : ?>
 			<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Course overview', 'ohmylms' ); ?></a>
 			<h1><?php echo esc_html( get_the_title( $course_id ) ); ?></h1>
 			<p>
-			<?php
-			echo esc_html(
-				array(
-					'traditional' => __( 'Traditional', 'ohmylms' ),
-					'skill-based' => __( 'Skill-based', 'ohmylms' ),
-					'blended'     => __( 'Blended', 'ohmylms' ),
-				)[ $program['mode'] ]
-			);
-			?>
+				<?php
+				echo esc_html(
+					array(
+						'traditional' => __( 'Traditional', 'ohmylms' ),
+						'skill-based' => __( 'Skill-based', 'ohmylms' ),
+						'blended'     => __( 'Blended', 'ohmylms' ),
+					)[ $program['mode'] ]
+				);
+				?>
 				· <?php echo esc_html( sprintf( __( 'Program version %d', 'ohmylms' ), $program['version'] ) ); ?></p>
+			<?php endif; ?>
 			<?php
 			if ( $state['completed'] ) {
 				?>
@@ -103,6 +105,7 @@ final class Frontend {
 			} elseif ( $state['pending'] ) {
 				?>
 				<p role="status"><?php esc_html_e( 'Skill evidence is being evaluated. Your progress will update when evaluation finishes.', 'ohmylms' ); ?></p><?php } ?>
+			<?php if ( ! $focused ) : ?>
 			<dl class="ohmylms-learning-dimensions">
 				<?php
 				foreach ( array(
@@ -115,6 +118,7 @@ final class Frontend {
 					<div><dt><?php echo esc_html( $label ); ?></dt><dd><?php echo esc_html( sprintf( __( '%1$d of %2$d required', 'ohmylms' ), $count['met'], $count['total'] ) ); ?></dd></div>
 				<?php } ?>
 			</dl>
+			<?php endif; ?>
 			<?php
 			if ( $placement ) {
 				$found = false;
@@ -122,7 +126,9 @@ final class Frontend {
 					if ( $item['id'] !== $placement ) {
 						continue; }
 					$found = true;
-					echo '<p><a href="' . esc_url( self::url( $course_id ) ) . '">' . esc_html__( 'Back to learning path', 'ohmylms' ) . '</a></p>';
+					if ( ! $focused ) {
+						echo '<p><a href="' . esc_url( self::url( $course_id ) ) . '">' . esc_html__( 'Back to learning path', 'ohmylms' ) . '</a></p>';
+					}
 					if ( ! LearningPath::available( $item, $student, $course_id ) ) {
 						echo '<p>' . esc_html__( 'This activity is currently unavailable.', 'ohmylms' ) . '</p>';
 						break; }
@@ -249,7 +255,21 @@ final class Frontend {
 		if ( get_post_type( $course ) !== OHMYLMS_COURSE_CPT || get_post_status( $course ) !== 'publish' ) {
 			return; }
 		nocache_headers();
-		$html = self::render( $course, (string) get_query_var( 'learning_item' ) );
+		$placement = (string) get_query_var( 'learning_item' );
+		ob_start();
+		$focused = \OhMyLMS\Student\PlayerContext::open_learning( $course, $placement );
+		$shell   = ob_get_clean();
+		$html    = self::render( $course, $placement, $focused );
+		if ( $focused ) {
+			ohmylms_get_template(
+				'student-hub/activity-page.php',
+				array(
+					'activity_shell' => $shell,
+					'activity_html'  => $html,
+				)
+			);
+			exit;
+		}
 		get_header();
 		echo '<main class="ohmylms-learning-main">' . $html . '</main>';
 		get_footer();
