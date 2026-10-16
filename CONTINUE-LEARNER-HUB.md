@@ -1790,3 +1790,25 @@ fixture user/session counts were zero; the outside-web-root helper was deleted. 
 at test-results/p5-unit-overview.png, p5-practice-desktop.png, p5-practice-mobile.png and
 p5-practice-complete.png. Committed locally, not pushed. These are hub-style refinements; fresh visual
 reference parity and final release acceptance remain separate work.
+
+## Release verification checkpoint (October 16, 2026)
+
+Run on the disposable site (`ohmylms_source_test`, served at 127.0.0.1:8099 for the browser pane), never the real 800.local data.
+
+**Passed.** Protected suites: Student Home 88, teacher classes 47, schools (all areas), school reports 32/lifecycle 31/matrix 19, family provenance/report/management 56, learning 76, player templates 81, account blocks 44, gradebook, student directory. `npm test`: 417 pass, 0 fail, 1 skipped. Two suites (gradebook, student directory) need the site path as an argument and `WP_ENVIRONMENT_TYPE=local`; without them they print usage or die silently (debug.log shows the guard).
+
+**Cross-role browser pass (built-in browser, disposable teacher, school admin, two parents, learner, empty learner).** Rendered HTML of every reachable section per role: status 200, no PHP notices, one main landmark, no unlabelled controls, no unnamed links/buttons, no images without alt. Layout at 375px: no horizontal overflow on any learner, parent, teacher or school page checked (parent 5, learner 8, teacher/school 7 pages). Access: a second parent could not open another parent's home or school child (clear "not available" page); a parent could not open the teacher or school workspaces; empty states render on every learner section and on the parent and school-child views.
+
+**Migration and rollback rehearsal.** Full mysqldump, simulated an older state (family schema marker 1, hub settings version 3), reran install and upgrade: schema back to 2, hub settings back to 4, no table lost, no row count changed, second run identical. `OHMYLMS_FAMILY_ENABLED=false`: family service reports no children, parent workspace still renders, link rows retained. Restored the dump: database checksums identical to the pre-migration snapshot. Not rehearsed: a v1 database that truly lacks the `activity` table (the table held rows, so it was not dropped), a production-size database, the school schema upgrade path.
+
+**Remaining issues, in suggested order**
+1. **Translations (release blocker if non-English is shipped).** `languages/ohmylms.pot` is dated Oct 3. 444 of 512 unique strings in `templates/student-hub`, 107 of 127 in `includes/Student`, all 23 in `includes/Family` and 10 of 21 in `includes/Schools` are missing from it, so es_ES, nl_NL and bn_BD show English for the hub. No Mongolian locale ships. No xgettext or wp-cli is installed here, so the catalog was not regenerated.
+2. Every hub section has the same `<title>` ("Student Home – math"), so screen-reader users get no page context (WCAG 2.4.2).
+3. Parent school-child view has no h1 (child name is an h2).
+4. Duplicate `id="_wpnonce"` on pages with several forms (invalid HTML; no functional break seen).
+5. School People: remove/reset checkboxes render at 13x13px and the search box is 21px high on mobile (WCAG 2.5.8 target size).
+6. `<main>` wraps the whole shell including the left rail, so landmark navigation is imprecise.
+7. Not covered: real screen-reader and keyboard-only passes, colour contrast measurement, dark theme on every page, large rosters/catalogs, a real cross-school/home parent with children in both on the same account, revoked-link flow in the browser (covered by the 56 protected checks only), outbound email.
+8. Separate feature work, unchanged: parent-dashboard reference comparison and richer home-learning reports.
+
+Cleanup: fixture users, school, class, family links and the temporary scripts were removed (count queries return zero); the family `activity`, `audit` and `invitations` tables on the disposable database were also emptied. The test server was stopped.
