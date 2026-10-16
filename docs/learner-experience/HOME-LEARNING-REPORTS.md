@@ -60,7 +60,7 @@ is used for displayed timestamps; the active-date aggregate explicitly says UTC.
 
 ## Verification and remaining design work
 
-- Protected disposable database: 33 provenance/report checks; source ownership, signed transport,
+- Protected disposable database: 56 family checks (33 provenance/report and 23 management); source ownership, signed transport,
   invalid contexts, school recipient revocation, immutable replay/resume, unknown-history exclusion,
   all four source types, cross-child/guardian denial, period/pagination, reapproval, email-verification
   policy, additive migration, no-school operation and feature rollback with retained data.
@@ -73,8 +73,13 @@ is used for displayed timestamps; the active-date aggregate explicitly says UTC.
   entry or real-account role change was needed. All fixture users, posts, links, enrollments,
   activity, submissions and preview audit records were removed; screenshots are ignored artifacts.
 
-Managed-child recovery and learning-choice forms already exist. The next visual-design decision
-is whether to retain their current composition or adapt a supplied reference for a recovery
-dialog and grade-then-collection second step. Those unobserved layouts are not silently treated
-as replicated designs. Rich home-only skill/accuracy reports would need source-scoped evidence
+Managed-child recovery now requires explicit replacement confirmation, explains link expiry and
+password behavior, and rejects accounts promoted to staff or parent roles or staff capabilities.
+Issuance and consumption serialize on the learner account and recheck management authorization.
+Learning choices uses grade then collections with Next/Back/Save/Cancel; closing or Escape discards
+unsaved changes. Both sections remain usable without JavaScript. Cards preview public courses and
+following never grants enrollment/access. These refinements passed built-in browser persistence,
+cancellation, recovery confirmation/link creation and dark 390px layout checks using disposable users.
+The existing hub style is used; unobserved reference layouts are not claimed as replicated designs.
+Rich home-only skill/accuracy reports would need source-scoped evidence
 queries; they must not substitute global mastery or unknown historical results.

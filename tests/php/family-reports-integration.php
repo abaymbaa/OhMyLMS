@@ -22,6 +22,7 @@ require $credentials['site'] . '/wp-load.php';
 if ( ! defined( 'OHMYLMS_TEST_SITE' ) || ! OHMYLMS_TEST_SITE || 'ohmylms_source_test' !== DB_NAME ) {
 	throw new RuntimeException( 'Disposable database required.' ); }
 require_once __DIR__ . '/support/school-report-checks.php';
+require_once __DIR__ . '/support/family-management-checks.php';
 $fixture             = array();
 $count               = 0;
 $check               = static function ( $value, $message ) use ( &$count ) {
@@ -258,6 +259,7 @@ try {
 		)
 	);
 	$check( 25 === (int) Reports::read( $learner, 90 )['summary']['activities'], 'Out-of-period activity was counted.' );
+	$count += ohmylms_family_management_checks( $guardian, $other['child_id'], $learner, $course );
 	update_option( 'ohmylms_school_schema', 'disabled-for-test' );
 	$check( \OhMyLMS\Student\ParentWorkspace::available() && 25 === (int) Reports::read( $learner, 90 )['summary']['activities'], 'Home reports depend on school installation.' );
 	update_option( 'ohmylms_school_schema', $school_schema_saved );

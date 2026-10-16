@@ -128,31 +128,18 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 								);
 								?>
 								<a class="oml-hub-pill" href="<?php echo esc_url( $family_report_url ); ?>"><?php esc_html_e( 'View home-learning report', 'ohmylms' ); ?></a>
-								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><?php FamilyActions::fields( 'issue_setup' ); ?><input type="hidden" name="child_id" value="<?php echo esc_attr( $family_kid['learner_user_id'] ); ?>"><button type="submit" class="oml-hub-pill"><?php esc_html_e( 'New setup link', 'ohmylms' ); ?></button></form>
 								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><?php FamilyActions::fields( 'revoke_link' ); ?><input type="hidden" name="link_id" value="<?php echo esc_attr( $family_kid['link_id'] ); ?>"><label class="oml-hub-family-confirm"><input type="checkbox" name="confirm" value="yes" required> <?php esc_html_e( 'Confirm removal', 'ohmylms' ); ?></label> <button type="submit" class="oml-hub-pill oml-hub-pill-danger"><?php esc_html_e( 'Remove link', 'ohmylms' ); ?></button></form>
 							</div>
 							<?php if ( Family::is_managed( $family_kid['learner_user_id'] ) ) : ?>
-								<?php $family_choice = Family::choices( $family_kid['learner_user_id'] ); ?>
-								<details class="oml-hub-family-choices">
-									<summary><?php esc_html_e( 'Learning choices', 'ohmylms' ); ?></summary>
-									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-										<?php FamilyActions::fields( 'update_choices' ); ?>
-										<input type="hidden" name="child_id" value="<?php echo esc_attr( $family_kid['learner_user_id'] ); ?>">
-										<div class="oml-hub-field"><label for="family-grade-<?php echo esc_attr( $family_kid['learner_user_id'] ); ?>"><?php esc_html_e( 'Grade', 'ohmylms' ); ?></label><input id="family-grade-<?php echo esc_attr( $family_kid['learner_user_id'] ); ?>" name="grade" type="text" maxlength="50" value="<?php echo esc_attr( $family_choice['grade'] ); ?>"></div>
-										<?php if ( $family_catalog ) : ?>
-											<fieldset class="oml-hub-family-fieldset">
-												<legend><?php esc_html_e( 'Collections to follow', 'ohmylms' ); ?></legend>
-												<p class="oml-hub-family-meta"><?php esc_html_e( 'Following only lists a collection on your child’s My learning page. It does not enrol them or give access to anything.', 'ohmylms' ); ?></p>
-												<?php foreach ( $family_catalog as $family_bundle ) : ?>
-													<label class="oml-hub-family-confirm"><input type="checkbox" name="bundles[]" value="<?php echo esc_attr( $family_bundle['id'] ); ?>" <?php checked( in_array( (int) $family_bundle['id'], $family_choice['followed'], true ) ); ?>> <?php echo esc_html( $family_bundle['title'] ); ?></label>
-												<?php endforeach; ?>
-											</fieldset>
-										<?php else : ?>
-											<p class="oml-hub-family-meta"><?php esc_html_e( 'No collections are available yet.', 'ohmylms' ); ?></p>
-										<?php endif; ?>
-										<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Save choices', 'ohmylms' ); ?></button></p>
-									</form>
-								</details>
+								<?php
+								ohmylms_get_template(
+									'student-hub/family-managed.php',
+									array(
+										'family_kid'     => $family_kid,
+										'family_catalog' => $family_catalog,
+									)
+								);
+								?>
 							<?php endif; ?>
 						</li>
 					<?php endforeach; ?>

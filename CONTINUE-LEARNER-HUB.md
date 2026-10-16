@@ -53,7 +53,7 @@ no-referrer headers, one-time results travel through short per-user transients.
 - Protected disposable-database suites passed without bypassing their guards: school reports
   (82 checks: 32 report, 31 lifecycle, 19 matrix), schools, teacher classes (47), student hub (88),
   legacy account blocks (44), and gradebook. The isolated site blocks outbound HTTP/email and uses the current plugin source.
-- Home-learning provenance/report suite: 33 protected checks, including migration, rollback,
+- Family provenance/report/management suite: 56 protected checks, including migration, rollback,
   no-school operation, context replay, cross-child/guardian scope and revocation. The hub (88)
   and school reports (82) were rerun after the provenance hooks were added.
 - Live browser verification passed for roster import, non-admin teacher invitation acceptance and
@@ -86,9 +86,10 @@ work, teacher classes and legacy retirement, plus documentation commits.
 4. Dormant frontend portal screens and standalone renderers are removed. The wp-admin Account Hub
    and platform school/class editors are preserved; old links, blocks and shortcodes lead to the hub.
 5. Home-learning activity reports and explicit origin recording are implemented. Global mastery,
-   unknown historical activity and inline/guest evidence remain excluded. Parent dashboard,
-   recovery and personalization step-two reference layouts remain unobserved/proposed; current
-   managed-child setup/recovery and learning-choice forms already function.
+   unknown historical activity and inline/guest evidence remain excluded. Managed-child recovery
+   now requires replacement confirmation and rejects promoted staff accounts. Learning choices
+   uses grade then collections, with Back/Cancel and a usable no-JavaScript form. These refinements
+   use the existing hub style; the original reference layouts remain unobserved.
 6. Protected integration verification is complete; retain the disposable-database guards for future runs.
 
 
@@ -1713,6 +1714,35 @@ were removed; count checks returned zero. No password entry or real-account role
 Screenshots remain ignored at test-results/home-learning-report.png, home-learning-report-mobile.png
 and learning-context-choice.png. Temporary CLI helpers outside the web root were removed.
 
-Next: review the proposed parent dashboard/recovery and grade-then-collection layouts if those visual
-refinements are wanted. Current managed-child setup/recovery and learning-choice forms already work.
-The new report uses the existing hub design; it is not claimed as an observed reference replica.
+The next checkpoint implements recovery and grade-then-collection refinements using the hub design.
+Neither the report nor these refinements are claimed as an observed reference replica.
+
+## Managed-family flow refinement checkpoint (October 16, 2026)
+
+Recovery now explains the private 48-hour link, replacement of old unused links, unchanged password
+until consumption and no email delivery. A required replacement checkbox is checked server-side too.
+Managed accounts promoted to staff/parent or granted staff capabilities cannot be recovered or have
+choices changed through an old family link; old setup links also reject those accounts. Replacement
+and consumption use the same account-first lock order, with authorization refreshed under the lock.
+
+Learning choices is a progressively enhanced grade-then-collections form. Next/Back preserve edits;
+Cancel, Escape and closing the editor discard them. Save persists grade and followed collections.
+Collection cards show public course previews and explain that following grants no enrollment/access.
+Without JavaScript both sections and Save remain usable. No schema or asset build change is required.
+
+Verification: 56 protected family checks (33 provenance/report plus 23 management), 88 Student Home
+checks, asset parity and JS tests (414 pass, 0 fail, 1 skipped). Modified runtime PHP passes PHPCS;
+the new fixture helper has six database warnings and the existing guarded runner retains its warnings.
+Changed PHP syntax, ESLint and Stylelint pass. Existing missing-Imagick startup warning remains.
+
+Built-in browser checks passed for Next/Back, Cancel reset, saved grade/collection persistence,
+required recovery confirmation and private link creation. Dark mobile layout fits a 390px viewport
+(375px document width). No browser password change or real-account role change occurred. Returned
+to admin and the original teacher page, reset the viewport, removed disposable users/course/collection,
+links/invitations and preview audits; remaining fixture users/links count zero. The temporary helper
+outside the web root was deleted. Proof stays ignored at test-results/family-learning-choices.png,
+family-recovery.png and family-choices-mobile.png. This checkpoint is committed locally, not pushed.
+
+Remaining product work: observed reference comparison for proposed parent dashboard layouts, and
+any richer home-only accuracy/skill reports, which require source-scoped evidence rather than global
+mastery or unknown historical results. Those are separate slices from the completed family flow.

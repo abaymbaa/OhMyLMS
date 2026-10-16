@@ -67,9 +67,12 @@ final class FamilyActions {
 					'setup_url' => self::setup_url( $setup['token'] ),
 				);
 			case 'issue_setup':
+				if ( 'yes' !== ( $data['confirm'] ?? '' ) ) {
+					throw new \RuntimeException( 'Confirm replacement of older setup or reset links.', 400 );
+				}
 				$setup = Family::issue_setup( absint( $data['child_id'] ?? 0 ) );
 				return array(
-					'message'   => __( 'New setup link created. Older links no longer work.', 'ohmylms' ),
+					'message'   => __( 'Private setup/reset link created. It expires in 48 hours. Older links no longer work; the password stays unchanged until your child uses this link. No email was sent.', 'ohmylms' ),
 					'setup_url' => self::setup_url( $setup['token'] ),
 				);
 			case 'invite_existing':

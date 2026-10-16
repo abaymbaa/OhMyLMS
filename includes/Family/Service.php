@@ -223,13 +223,23 @@ final class Service {
 	 */
 	public static function issue_setup( $learner_id ) {
 		self::actor_guardian();
-		$child = self::child( $learner_id );
-		self::need( $child && (int) get_user_meta( $learner_id, self::MANAGED_META, true ) === get_current_user_id(), __( 'You cannot manage this learner.', 'ohmylms' ) );
-		global $wpdb;
-		$wpdb->query( $wpdb->prepare( "UPDATE %i SET revoked_at=%s WHERE kind='setup' AND learner_user_id=%d AND consumed_at IS NULL AND revoked_at IS NULL", Schema::table( 'invitations' ), self::now(), $learner_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Revoke superseded links.
-		$issued = self::issue( 'setup', (int) $learner_id, '' );
-		self::audit( 'setup_issued', (int) $child['link_id'] );
-		return $issued;
+		return SchoolService::transaction(
+			static function () use ( $learner_id ) {
+				global $wpdb;
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Serialize replacement and consumption for this account.
+				$person = $wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM %i WHERE ID=%d FOR UPDATE', $wpdb->users, $learner_id ) );
+				clean_user_cache( $learner_id );
+				wp_cache_delete( $learner_id, 'user_meta' );
+				self::actor_guardian();
+				self::need( $person && self::is_managed( $learner_id ), __( 'You cannot manage this learner.', 'ohmylms' ) );
+				$child = self::child( $learner_id );
+				$done  = $wpdb->query( $wpdb->prepare( "UPDATE %i SET revoked_at=%s WHERE kind='setup' AND learner_user_id=%d AND consumed_at IS NULL AND revoked_at IS NULL", Schema::table( 'invitations' ), self::now(), $learner_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Revoke superseded links under the account lock.
+				self::need( false !== $done, __( 'Unable to replace this setup link.', 'ohmylms' ), 409 );
+				$issued = self::issue( 'setup', (int) $learner_id, '' );
+				self::audit( 'setup_issued', (int) $child['link_id'] );
+				return $issued;
+			}
+		);
 	}
 
 	/**
@@ -323,14 +333,20 @@ final class Service {
 		self::need( is_string( $token ) && preg_match( '/^[a-f0-9]{64}$/', $token ), __( 'Invalid invitation.', 'ohmylms' ), 400 );
 		self::need( is_string( $password ) && strlen( $password ) >= 12 && strlen( $password ) <= 128, __( 'Choose a password between 12 and 128 characters.', 'ohmylms' ), 400 );
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Candidate lookup stays outside the transaction to avoid a stale authorization snapshot.
+		$candidate = (int) $wpdb->get_var( $wpdb->prepare( "SELECT learner_user_id FROM %i WHERE token_hash=%s AND kind='setup'", Schema::table( 'invitations' ), hash( 'sha256', $token ) ) );
 		return SchoolService::transaction(
-			static function () use ( $wpdb, $token, $password ) {
+			static function () use ( $wpdb, $token, $password, $candidate ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Same account-first lock order as replacement.
+				$person = $wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM %i WHERE ID=%d FOR UPDATE', $wpdb->users, $candidate ) );
 				$invite = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE token_hash=%s FOR UPDATE', Schema::table( 'invitations' ), hash( 'sha256', $token ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Row lock for single-use acceptance.
-				self::need( $invite && 'setup' === $invite['kind'] && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This setup link has expired or has already been used.', 400 );
+				self::need( $person && $invite && $candidate === (int) $invite['learner_user_id'] && 'setup' === $invite['kind'] && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This setup link has expired or has already been used.', 400 );
 				$learner  = (int) $invite['learner_user_id'];
 				$guardian = (int) $invite['issuer_id'];
-				$link     = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM %i WHERE guardian_user_id=%d AND learner_user_id=%d AND scope=%s AND status='active'", Schema::table( 'links' ), $guardian, $learner, Schema::SCOPE ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Fresh authorization read.
-				self::need( $link && self::guardian_eligible( $guardian ) && (int) get_user_meta( $learner, self::MANAGED_META, true ) === $guardian, 'The invitation issuer no longer has permission.' );
+				clean_user_cache( $learner );
+				wp_cache_delete( $learner, 'user_meta' );
+				$link = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM %i WHERE guardian_user_id=%d AND learner_user_id=%d AND scope=%s AND status='active'", Schema::table( 'links' ), $guardian, $learner, Schema::SCOPE ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Fresh authorization read.
+				self::need( $link && self::guardian_eligible( $guardian ) && self::ordinary_learner( $learner ) && (int) get_user_meta( $learner, self::MANAGED_META, true ) === $guardian, 'The invitation issuer no longer has permission.' );
 				wp_set_password( $password, $learner );
 				$wpdb->update( Schema::table( 'invitations' ), array( 'consumed_at' => self::now() ), array( 'id' => $invite['id'] ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-use consume.
 				self::audit( 'setup_completed', (int) $link['id'], $learner );
@@ -450,7 +466,19 @@ final class Service {
 	 * @return bool
 	 */
 	public static function is_managed( $learner_id ) {
-		return null !== self::child( $learner_id ) && (int) get_user_meta( $learner_id, self::MANAGED_META, true ) === get_current_user_id();
+		return self::ordinary_learner( $learner_id ) && null !== self::child( $learner_id ) && (int) get_user_meta( $learner_id, self::MANAGED_META, true ) === get_current_user_id();
+	}
+
+	/**
+	 * A previously managed account must not become a path into a staff account.
+	 *
+	 * @param int $learner_id Learner ID.
+	 * @return bool
+	 */
+	private static function ordinary_learner( $learner_id ) {
+		$user = get_userdata( $learner_id );
+		return $user && ! user_can( $user, 'manage_options' ) && ! user_can( $user, 'edit_users' ) && ! user_can( $user, 'edit_posts' )
+			&& ! array_intersect( array( 'administrator', 'ohmylms_school_admin', 'ohmylms_teacher', 'ohmylms_parent' ), $user->roles );
 	}
 
 	/**

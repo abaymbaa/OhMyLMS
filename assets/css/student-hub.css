@@ -1813,3 +1813,36 @@
 	background: #5753fa;
 	color: #fff;
 }
+
+.ohmylms-student-hub .oml-hub-family-collection {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 14px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-family-collection input {
+	margin-top: 4px;
+}
+
+.ohmylms-student-hub .oml-hub-family-collection small {
+	display: block;
+	margin-top: 4px;
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-family-cancel {
+	margin-top: 16px;
+}
+
+.ohmylms-student-hub [data-family-step] h3 {
+	margin-top: 16px;
+}
+
+.ohmylms-student-hub [data-family-step][hidden],
+.ohmylms-student-hub [data-family-choices] [hidden] {
+	display: none;
+}
