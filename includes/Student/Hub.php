@@ -49,7 +49,7 @@ final class Hub {
 		add_action( 'admin_init', array( __CLASS__, 'install_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'upgrade' ) );
 		add_action( 'admin_init', array( __CLASS__, 'migrate_slug' ) );
-		add_action( 'admin_init', array( __CLASS__, 'redirect_admin_page' ), 1 );
+		add_action( 'load-admin_page_' . self::ADMIN_PAGE, array( __CLASS__, 'redirect_admin_page' ) );
 		add_action( 'init', array( __CLASS__, 'upgrade' ), 20 );
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ), 30 );
 		add_action( 'admin_post_ohmylms_student_hub', array( __CLASS__, 'save' ) );
@@ -365,10 +365,6 @@ final class Hub {
 
 	/** Send the retired Student Home admin address to the Account Hub home tab. */
 	public static function redirect_admin_page() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only navigation.
-		if ( ! isset( $_GET['page'] ) || self::ADMIN_PAGE !== sanitize_key( wp_unslash( $_GET['page'] ) ) || ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
 		wp_safe_redirect( self::admin_home_url() );
 		exit;
 	}
@@ -1055,6 +1051,8 @@ final class Hub {
 
 	/** Register the administration editor beside the other OhMyLMS menus. */
 	public static function admin_menu() {
+		// Hidden and empty: WordPress refuses unregistered pages before any redirect could run, so the old address is registered only to forward it.
+		add_submenu_page( null, __( 'Student Home', 'ohmylms' ), __( 'Student Home', 'ohmylms' ), 'manage_options', self::ADMIN_PAGE, '__return_null' );
 		// Hidden: the Account Hub home tab embeds this editor in a frame.
 		add_submenu_page( null, __( 'Student Home', 'ohmylms' ), __( 'Student Home', 'ohmylms' ), 'manage_options', self::EDITOR_PAGE, array( __CLASS__, 'editor' ) );
 	}
