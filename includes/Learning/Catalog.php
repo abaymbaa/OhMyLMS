@@ -515,11 +515,12 @@ final class Catalog {
 		$changed = ProgramGroups::replace_unit( $draft, (int) $chapter_id, $spec, 'wp_generate_uuid4' );
 		if ( is_string( $changed ) ) {
 			$messages = array(
-				'item'      => __( 'A lesson group can only hold items and skills placed in this unit.', 'ohmylms' ),
-				'duplicate' => __( 'Put each item in only one lesson group.', 'ohmylms' ),
-				'id'        => __( 'Lesson group identifiers must be unique.', 'ohmylms' ),
-				'title'     => __( 'Name each lesson group.', 'ohmylms' ),
-				'group'     => __( 'The lesson group does not exist in this unit.', 'ohmylms' ),
+				'item'          => __( 'A lesson group can only hold items and skills placed in this unit.', 'ohmylms' ),
+				'duplicate'     => __( 'Put each item in only one lesson group.', 'ohmylms' ),
+				'id'            => __( 'Lesson group identifiers must be unique.', 'ohmylms' ),
+				'title'         => __( 'Name each lesson group.', 'ohmylms' ),
+				'group'         => __( 'The lesson group does not exist in this unit.', 'ohmylms' ),
+				'group_chapter' => __( 'That lesson group belongs to another unit.', 'ohmylms' ),
 			);
 			return self::error( $messages[ $changed ] ?? __( 'Invalid lesson group.', 'ohmylms' ) ); }
 		$program = CourseProgram::normalize( (int) $course_id, $changed );
