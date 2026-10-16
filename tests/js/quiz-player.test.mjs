@@ -180,7 +180,12 @@ test( 'per-page validation moves to the page containing the first unanswered que
 
 test( 'timer mount uses the injected scoped expiry and cleanup allows remounting', ( t ) => {
 	t.mock.timers.enable( { apis: [ 'setInterval', 'Date' ] } );
-	const context = { timed: true, remaining: 1, quizId: 9 };
+	const context = {
+		timed: true,
+		remaining: 1,
+		quizId: 9,
+		layout: 'one_question_per_page',
+	};
 	const box = { querySelector: () => ( { getAttribute: () => 'single-choice' } ) };
 	const root = { querySelectorAll: () => [ box ] };
 	let expired = 0;
@@ -204,4 +209,87 @@ test( 'timer mount uses the injected scoped expiry and cleanup allows remounting
 	cleanupAgain();
 	t.mock.timers.tick( 2000 );
 	assert.equal( expired, 1 );
+} );
+
+test( 'an answer change re-reads only its own question, and only in the one-question-per-page layout', () => {
+	const reads = [];
+	const makeBox = ( name, answered ) => ( {
+		name,
+		answered,
+		querySelector: () => ( { getAttribute: () => 'single-choice' } ),
+	} );
+	const boxes = [
+		makeBox( 'one', false ),
+		makeBox( 'two', false ),
+		makeBox( 'three', false ),
+	];
+	const build = ( context ) => {
+		const root = { querySelectorAll: () => boxes };
+		root.closest = () => root;
+		return createQuizPlayer( {
+			getContext: () => context,
+			getElement: () => ( { ref: root } ),
+			withScope: ( callback ) => callback,
+			withSyncEvent: ( callback ) => callback,
+			emit: () => true,
+			isAnswered: ( box ) => {
+				reads.push( box.name );
+				return box.answered;
+			},
+		} );
+	};
+	const input = ( box ) => ( {
+		getAttribute: () => null,
+		matches: () => false,
+		parentElement: { querySelector: () => null },
+		closest: () => box,
+		value: '',
+	} );
+	const event = ( target ) => ( { stopPropagation() {}, target } );
+
+	const context = { layout: 'one_question_per_page', quizId: 1, errors: {} };
+	const player = build( context );
+	player.callbacks.mount();
+	assert.deepEqual(
+		reads,
+		[ 'one', 'two', 'three' ],
+		'mount reads every question once'
+	);
+	assert.deepEqual( context.answered, { 1: false, 2: false, 3: false } );
+
+	reads.length = 0;
+	boxes[ 1 ].answered = true;
+	context.questionNumber = 2;
+	player.actions.answerChanged( event( input( boxes[ 1 ] ) ) );
+	assert.deepEqual(
+		reads,
+		[ 'two' ],
+		'a change reads only the changed question'
+	);
+	assert.deepEqual( context.answered, { 1: false, 2: true, 3: false } );
+
+	reads.length = 0;
+	context.questionNumber = 3;
+	boxes[ 2 ].answered = true;
+	const noClosest = input( boxes[ 2 ] );
+	delete noClosest.closest;
+	player.actions.answerChanged( event( noClosest ) );
+	assert.deepEqual(
+		reads,
+		[ 'three' ],
+		'the box is found by number without closest()'
+	);
+
+	reads.length = 0;
+	const other = {
+		layout: 'all_questions',
+		quizId: 2,
+		errors: {},
+		questionNumber: 1,
+	};
+	const plain = build( other );
+	plain.callbacks.mount();
+	plain.actions.answerChanged( event( input( boxes[ 0 ] ) ) );
+	assert.deepEqual( reads, [], 'other layouts never read answers' );
+	assert.equal( other.answered, undefined );
 } );

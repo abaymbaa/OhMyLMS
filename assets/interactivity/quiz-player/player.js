@@ -24,16 +24,44 @@ export function createQuizPlayer( {
 	inlineSubmit,
 } ) {
 	const roots = new WeakMap();
-	// Which questions hold an answer, so the step button can switch between Skip and Next.
-	const markAnswered = ( root, context ) => {
+	// Which questions hold an answer, so the step button can switch between Skip and Next. Only the
+	// one-question-per-page layout shows that button, so no other layout tracks it.
+	const holdsAnswer = ( box ) => {
+		const type = box
+			.querySelector( '.is-required' )
+			?.getAttribute( 'question-type' );
+		return type ? isAnswered( box, type ) : false;
+	};
+	const tracksAnswers = ( context ) =>
+		context.layout === 'one_question_per_page';
+	// Every question once, when the quiz mounts.
+	const scanAnswered = ( root, context ) => {
+		if ( ! tracksAnswers( context ) ) {
+			return;
+		}
 		const answered = {};
-		root.querySelectorAll( '.ohmylms-quiz-box' ).forEach( ( box, index ) => {
-			const type = box
-				.querySelector( '.is-required' )
-				?.getAttribute( 'question-type' );
-			answered[ index + 1 ] = type ? isAnswered( box, type ) : false;
-		} );
+		root.querySelectorAll( '.ohmylms-quiz-box' ).forEach(
+			( box, index ) => {
+				answered[ index + 1 ] = holdsAnswer( box );
+			}
+		);
 		context.answered = answered;
+	};
+	// Only the question that changed.
+	const markAnswered = ( root, context, input ) => {
+		const number = Number( context.questionNumber );
+		if ( ! tracksAnswers( context ) || ! number ) {
+			return;
+		}
+		const box =
+			input?.closest?.( '.ohmylms-quiz-box' ) ||
+			root.querySelectorAll( '.ohmylms-quiz-box' )[ number - 1 ];
+		if ( box ) {
+			context.answered = {
+				...context.answered,
+				[ number ]: holdsAnswer( box ),
+			};
+		}
 	};
 	const rootOf = () =>
 		getElement().ref.closest( '[data-wp-interactive="ohmylms/quiz"]' );
@@ -144,7 +172,7 @@ export function createQuizPlayer( {
 				if ( c.questionNumber ) {
 					c.errors = { ...c.errors, [ c.questionNumber ]: false };
 				}
-				markAnswered( rootOf(), c );
+				markAnswered( rootOf(), c, input );
 				emit( rootOf(), 'quiz-answer-changed', {
 					quizId: c.quizId,
 					questionNumber: c.questionNumber,
@@ -254,7 +282,7 @@ export function createQuizPlayer( {
 						}
 					}, 250 );
 				}
-				markAnswered( root, c );
+				scanAnswered( root, c );
 				roots.set( root, true );
 				emit( root, 'quiz-mounted', { quizId: c.quizId } );
 				return () => {
