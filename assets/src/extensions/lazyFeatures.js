@@ -164,6 +164,7 @@ export const questionBankComponents = lazyComponents(
 	[
 		'QuestionBankPage',
 		'SkillsPage',
+		'PerformancePage',
 		'BankPicker',
 		'SkillMapEditor',
 		'QuestionVersionBar',

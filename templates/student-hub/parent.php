@@ -7,6 +7,7 @@
 
 use OhMyLMS\Family\Schema as FamilySchema;
 use OhMyLMS\Family\Service as Family;
+use OhMyLMS\Skills\FamilyComparison;
 use OhMyLMS\Student\FamilyActions;
 use OhMyLMS\Student\LearnerCatalog;
 use OhMyLMS\Student\ParentWorkspace;
@@ -70,6 +71,13 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 			<?php endif; ?>
 		</nav>
 	</section>
+	<?php if ( \OhMyLMS\Assessment\Schema::ready() && \OhMyLMS\Practice\Frontend::enabled() ) : ?>
+		<section class="oml-hub-card oml-hub-settings-card oml-hub-class-panel">
+			<h2><?php esc_html_e( 'Skills', 'ohmylms' ); ?></h2>
+			<p class="oml-hub-family-meta"><?php esc_html_e( 'Skill levels are separate from grades. Your child is compared with an anonymous class average when the class is large enough.', 'ohmylms' ); ?></p>
+			<?php ohmylms_get_template( 'student-hub/skill-compare.php', array( 'compare' => FamilyComparison::build( array( $family_selected ), (int) $family_selected['school_id'] ) ) ); ?>
+		</section>
+	<?php endif; ?>
 <?php else : ?>
 	<div class="oml-hub-family">
 	<section class="oml-hub-banner">
@@ -107,6 +115,13 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 		<?php if ( count( $family_children ) >= ParentWorkspace::LIMIT ) : ?>
 			<p><?php esc_html_e( 'Showing the first 100 linked learners.', 'ohmylms' ); ?></p>
 		<?php endif; ?>
+	<?php endif; ?>
+	<?php if ( count( array_unique( array_map( 'intval', array_column( $family_children, 'student_user_id' ) ) ) ) > 1 && \OhMyLMS\Assessment\Schema::ready() && \OhMyLMS\Practice\Frontend::enabled() ) : ?>
+		<section class="oml-hub-card oml-hub-settings-card">
+			<h2><?php esc_html_e( 'Compare your children', 'ohmylms' ); ?></h2>
+			<p class="oml-hub-family-meta"><?php esc_html_e( 'Skill levels side by side. They are separate from grades.', 'ohmylms' ); ?></p>
+			<?php ohmylms_get_template( 'student-hub/skill-compare.php', array( 'compare' => FamilyComparison::build( $family_children ) ) ); ?>
+		</section>
 	<?php endif; ?>
 	<?php if ( FamilySchema::enabled() && Family::guardian_eligible( get_current_user_id() ) ) : ?>
 		<section class="oml-hub-card oml-hub-settings-card">

@@ -164,7 +164,6 @@ final class MasteryDisplay {
 	 * @return array{attempted:int,familiar:int,proficient:int,mastered:int,total:int}
 	 */
 	public static function counts( $student_id ) {
-		global $wpdb;
 		$student_id = (int) $student_id;
 		$counts     = array(
 			'attempted'  => 0,
@@ -176,7 +175,28 @@ final class MasteryDisplay {
 		if ( ! $student_id ) {
 			return $counts;
 		}
-		$terms = array();
+		foreach ( self::for_student( $student_id, self::started_terms( $student_id ) ) as $entry ) {
+			if ( isset( $counts[ $entry['key'] ] ) ) {
+				++$counts[ $entry['key'] ];
+				++$counts['total'];
+			}
+		}
+		return $counts;
+	}
+
+	/**
+	 * Skills a learner has any recorded state, score or Khan history for.
+	 *
+	 * @param int $student_id Learner ID.
+	 * @return int[]
+	 */
+	public static function started_terms( $student_id ) {
+		global $wpdb;
+		$student_id = (int) $student_id;
+		$terms      = array();
+		if ( ! $student_id ) {
+			return $terms;
+		}
 		if ( AssessmentSchema::ready() ) {
 			$terms = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT term_id FROM %i WHERE student_id=%d', AssessmentSchema::table( 'student_skill_state' ), $student_id ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One learner's own rows, read-only.
 		}
@@ -186,13 +206,7 @@ final class MasteryDisplay {
 		if ( Khan\Settings::enabled() ) {
 			$terms = array_merge( $terms, Khan\Levels::terms_with_history( $student_id ) );
 		}
-		foreach ( self::for_student( $student_id, array_unique( $terms ) ) as $entry ) {
-			if ( isset( $counts[ $entry['key'] ] ) ) {
-				++$counts[ $entry['key'] ];
-				++$counts['total'];
-			}
-		}
-		return $counts;
+		return array_values( array_unique( array_map( 'intval', $terms ) ) );
 	}
 
 	/**

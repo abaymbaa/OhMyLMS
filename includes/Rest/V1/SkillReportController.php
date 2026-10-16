@@ -13,8 +13,11 @@ use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Mastery;
+use OhMyLMS\Skills\MasteryDisplay;
 use OhMyLMS\Skills\Recommendations;
+use OhMyLMS\Skills\ReportData;
 use OhMyLMS\Skills\Taxonomy;
+use OhMyLMS\Skills\UnitReport;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -121,68 +124,79 @@ class SkillReportController extends RestController {
 	}
 
 	public function matrix( WP_REST_Request $request ) {
-		global $wpdb;
 		Evidence::process( 100 );
 		$students = $this->scope_students( $request );
-		$skills   = array();
-		$rows     = array();
-		if ( $students ) {
-			$placeholders = implode( ',', array_fill( 0, count( $students ), '%d' ) );
-			$states       = $wpdb->get_results( $wpdb->prepare( 'SELECT student_id, term_id, level, review_due, evidence_count, independent_correct, families FROM ' . Schema::table( 'student_skill_state' ) . " WHERE student_id IN ($placeholders)", $students ), ARRAY_A );
-			foreach ( $states as $state ) {
-				$skills[ (int) $state['term_id'] ]                             = true;
-				$rows[ (int) $state['student_id'] ][ (int) $state['term_id'] ] = array(
-					'level'               => $state['level'],
-					'review_due'          => (bool) $state['review_due'],
-					'evidence'            => (int) $state['evidence_count'],
-					'independent_correct' => (int) $state['independent_correct'],
-					'families'            => (int) $state['families'],
-				);
-			}
+		if ( is_wp_error( $students ) ) {
+			return $students; }
+		$course  = (int) $request['course_id'];
+		$class   = (int) $request['class_id'];
+		$courses = $class ? ReportData::enrolled_courses( $students ) : ( $course ? array( $course ) : array() );
+		$extra   = array();
+		if ( $class && $course ) {
+			// A class report only narrows to a course its learners are enrolled in.
+			if ( ! in_array( $course, $courses, true ) ) {
+				return new WP_Error( 'ohmylms_forbidden', __( 'This course is not part of the class.', 'ohmylms' ), array( 'status' => 403 ) ); }
+			$all     = $courses;
+			$courses = array( $course );
 		}
-		if ( (int) $request['course_id'] ) {
-			foreach ( wp_get_object_terms( (int) $request['course_id'], Taxonomy::NAME, array( 'fields' => 'ids' ) ) as $term ) {
-				$skills[ (int) $term ] = true; }
+		if ( $course && ! $class ) {
+			$extra = array_map( 'intval', wp_get_object_terms( $course, Taxonomy::NAME, array( 'fields' => 'ids' ) ) );
 		}
-		$skill_list = array_values( array_filter( array_map( array( Taxonomy::class, 'describe' ), array_keys( $skills ) ) ) );
-		usort(
-			$skill_list,
-			static function ( $left, $right ) {
-				return strcmp( $left['name'], $right['name'] );
-			}
-		);
-		$learners = array_map(
-			static function ( $id ) use ( $rows ) {
-				$user = get_userdata( $id );
-				return array(
-					'id'     => $id,
-					'name'   => $user ? $user->display_name : '#' . $id,
-					'skills' => (object) ( $rows[ $id ] ?? array() ),
-				);
-			},
-			$students
-		);
-		usort(
-			$learners,
-			static function ( $left, $right ) {
-				return strcmp( $left['name'], $right['name'] );
-			}
-		);
-		return rest_ensure_response(
-			array(
-				'skills'   => array_map(
-					static function ( $skill ) {
-						return array(
-							'id'   => $skill['id'],
-							'name' => $skill['name'],
-							'code' => $skill['code'],
-						);
-					},
-					$skill_list
-				),
-				'students' => $learners,
-				'levels'   => array_map( array( Mastery::class, 'label' ), array_combine( Mastery::LEVELS, Mastery::LEVELS ) ),
-			)
+		$data = ReportData::matrix( $students, $courses, (int) $request['chapter_id'], $extra );
+		if ( is_wp_error( $data ) ) {
+			return $data; }
+		$data['course_id'] = $course;
+		if ( $class ) {
+			$data['courses'] = array_map(
+				static function ( $id ) {
+					return array(
+						'id'    => $id,
+						'title' => wp_strip_all_tags( get_the_title( $id ) ),
+					);
+				},
+				$all ?? $courses
+			);
+		}
+		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * One learner's skills with Khan display levels and unit ids, optionally narrowed to a unit of a
+	 * published course. Only unit names are added; it never widens what the viewer may see.
+	 *
+	 * @param WP_REST_Request $request Report request.
+	 * @param array           $skills  Evidence::summary rows.
+	 * @return array|WP_Error
+	 */
+	private function unit_view( WP_REST_Request $request, array $skills ) {
+		$course  = (int) $request['course_id'];
+		$chapter = (int) $request['chapter_id'];
+		$courses = $course && OHMYLMS_COURSE_CPT === get_post_type( $course ) && 'publish' === get_post_status( $course ) ? array( $course ) : array();
+		$context = ReportData::context( $courses );
+		if ( $chapter && ! in_array( $chapter, array_column( $context['units'], 'id' ), true ) ) {
+			return new WP_Error( 'ohmylms_unit_unknown', __( 'This unit does not belong to the chosen course.', 'ohmylms' ), array( 'status' => 400 ) ); }
+		$display = MasteryDisplay::for_student( (int) $request['student'], array_column( $skills, 'id' ) );
+		foreach ( $skills as &$skill ) {
+			$skill['unit_id']       = (int) ( $context['map'][ $skill['id'] ] ?? 0 );
+			$skill['display']       = $display[ $skill['id'] ]['key'] ?? 'not-started';
+			$skill['display_label'] = $display[ $skill['id'] ]['label'] ?? MasteryDisplay::label( 'not-started' );
+		}
+		unset( $skill );
+		if ( $chapter ) {
+			$keep   = UnitReport::filter( array_column( $skills, 'id' ), $context['map'], $chapter );
+			$skills = array_values(
+				array_filter(
+					$skills,
+					static function ( $skill ) use ( $keep ) {
+						return in_array( $skill['id'], $keep, true );
+					}
+				)
+			);
+		}
+		return array(
+			'skills' => $skills,
+			'units'  => UnitReport::with_counts( $context['units'], $context['map'] ),
+			'unit'   => $chapter,
 		);
 	}
 
@@ -190,10 +204,15 @@ class SkillReportController extends RestController {
 		global $wpdb;
 		$student = (int) $request['student'];
 		Evidence::process( 100 );
+		$view = $this->unit_view( $request, Evidence::summary( $student ) );
+		if ( is_wp_error( $view ) ) {
+			return $view; }
 		if ( $this->student_access( $request ) !== 'full' ) {
 			return rest_ensure_response(
 				array(
-					'skills'          => Evidence::summary( $student ),
+					'skills'          => $view['skills'],
+					'units'           => $view['units'],
+					'unit'            => $view['unit'],
 					'recommendations' => Recommendations::for_student( $student ),
 					'evidence'        => array(),
 				)
@@ -211,7 +230,9 @@ class SkillReportController extends RestController {
 			$row['question'] = get_the_title( (int) $row['question_id'] ); }
 		return rest_ensure_response(
 			array(
-				'skills'          => Evidence::summary( $student ),
+				'skills'          => $view['skills'],
+				'units'           => $view['units'],
+				'unit'            => $view['unit'],
 				'recommendations' => Recommendations::for_student( $student ),
 				'evidence'        => $evidence,
 			)

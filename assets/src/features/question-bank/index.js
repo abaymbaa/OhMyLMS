@@ -5,6 +5,7 @@ import { BankPicker } from './BankPicker';
 import { SkillMapEditor } from './SkillMapEditor';
 import { QuestionVersionBar } from './QuestionVersionBar';
 import { AssessmentSettingsPanel } from '../assessment/AssessmentSettingsPanel';
+import { PerformancePage } from '../assessment/PerformancePage';
 import { InlineCheckPanel } from '../assessment/InlineCheckPanel';
 import {
 	NumericalEditor,
@@ -36,6 +37,7 @@ export const questionBankComponents = {
 	SkillMapEditor,
 	QuestionVersionBar,
 	AssessmentSettingsPanel,
+	PerformancePage,
 	InlineCheckPanel,
 	NumericalEditor,
 	StructuredEditor,

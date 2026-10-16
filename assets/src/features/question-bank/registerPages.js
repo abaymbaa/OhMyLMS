@@ -9,6 +9,7 @@ export function registerQuestionBankPages( registry, components ) {
 	const {
 		QuestionBankPage,
 		SkillsPage,
+		PerformancePage,
 		AssessmentSettingsPanel,
 		InlineCheckPanel,
 		NumericalEditor,
@@ -155,6 +156,11 @@ export function registerQuestionBankPages( registry, components ) {
 	].forEach( ( [ type, label, description, render ] ) =>
 		registry.registerQuestionEditor( type, { label, description, render } )
 	);
+	registry.registerAdminPage( 'performance', {
+		label: __( 'Skill performance', 'ohmylms' ),
+		render: PerformancePage,
+		priority: 1,
+	} );
 	registry.registerAdminPage( 'skills', {
 		label: __( 'Skills', 'ohmylms' ),
 		render: SkillsPage,

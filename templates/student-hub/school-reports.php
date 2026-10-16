@@ -129,6 +129,21 @@ try {
 			<p class="oml-hub-family-meta"><?php esc_html_e( 'Current students’ stored skill levels across their learning. These levels are separate from grades and are not a measure of work done in this school.', 'ohmylms' ); ?></p>
 			<?php if ( ! $report_rows ) : ?>
 				<p><?php esc_html_e( 'No skill report is available. Skills may be disabled or this roster page is empty.', 'ohmylms' ); ?></p>
+			<?php else : ?>
+				<?php
+				$report_course = absint( get_query_var( 'hub_skill_course', 0 ) );
+				$report_matrix = SchoolReports::matrix( $school_id, $report_class_id, $school_page, $report_course, absint( get_query_var( 'hub_skill_unit', 0 ) ) );
+				if ( $report_matrix ) {
+					ohmylms_get_template(
+						'student-hub/skill-matrix.php',
+						array(
+							'matrix'        => $report_matrix,
+							'matrix_url'    => $report_url,
+							'matrix_course' => $report_course,
+						)
+					);
+				}
+				?>
 			<?php endif; ?>
 			<?php foreach ( $report_rows as $skill_student ) : ?>
 				<?php

@@ -115,4 +115,43 @@ final class SchoolReports {
 		unset( $student );
 		return $students;
 	}
+
+	/**
+	 * Unit-grouped skill matrix for the class's current students, optionally narrowed to a course and unit.
+	 *
+	 * @param int $school_id School ID.
+	 * @param int $class_id Class ID.
+	 * @param int $page Roster page number.
+	 * @param int $course Course ID the class is enrolled in, or 0 for all of them.
+	 * @param int $chapter Unit ID, or 0 for all units.
+	 * @return array Matrix with a 'courses' list; empty when skills are off.
+	 */
+	public static function matrix( $school_id, $class_id, $page = 1, $course = 0, $chapter = 0 ) {
+		self::classroom( $school_id, $class_id );
+		if ( ! \OhMyLMS\Assessment\Schema::ready() || ! \OhMyLMS\Practice\Frontend::enabled() ) {
+			return array();
+		}
+		$ids = array();
+		foreach ( Service::roster( $school_id, $class_id, $page ) as $member ) {
+			if ( 'student' === $member['role'] ) {
+				$ids[] = (int) $member['user_id'];
+			}
+		}
+		$all     = \OhMyLMS\Skills\ReportData::enrolled_courses( $ids );
+		$courses = in_array( (int) $course, $all, true ) ? array( (int) $course ) : $all;
+		$data    = \OhMyLMS\Skills\ReportData::matrix( $ids, $courses, $chapter );
+		if ( is_wp_error( $data ) ) {
+			$data = \OhMyLMS\Skills\ReportData::matrix( $ids, $courses );
+		}
+		$data['courses'] = array_map(
+			static function ( $id ) {
+				return array(
+					'id'    => $id,
+					'title' => wp_strip_all_tags( get_the_title( $id ) ),
+				);
+			},
+			$all
+		);
+		return $data;
+	}
 }
